@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { DynamicOpenCallForm } from "@/components/open-call/DynamicOpenCallForm";
 import type { ApplicationFormField } from "@/services/open-calls.service";
 import { theme } from "@/lib/theme";
@@ -24,6 +25,7 @@ export function TripBookingForm({
   currency = "USD",
   fields,
 }: TripBookingFormProps) {
+  const tt = useTranslations("Dashboard.applicationForm.tripBooking");
   const resolvedFields =
     fields && fields.length > 0 ? fields : DEFAULT_TRIP_BOOKING_FORM_FIELDS;
 
@@ -66,7 +68,7 @@ export function TripBookingForm({
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-[color:var(--tott-panel-text)]">
-            Choose your contribution
+            {tt("chooseContribution")}
           </p>
         </div>
         <span className="shrink-0 text-lg font-bold tabular-nums text-[color:var(--tott-panel-text)]">
@@ -75,7 +77,7 @@ export function TripBookingForm({
       </div>
       <div className="flex items-center justify-between gap-2 text-xs text-gray-500">
         <span className="tabular-nums">{formatTripPriceAmount(minNum, currency)}</span>
-        <span className="text-gray-400">More</span>
+        <span className="text-gray-400">{tt("more")}</span>
       </div>
       <input
         type="range"
@@ -89,12 +91,12 @@ export function TripBookingForm({
         aria-valuemin={minNum}
         aria-valuemax={uiMax}
         aria-valuenow={selected}
-        aria-label="Contribution amount"
+        aria-label={tt("ariaContribution")}
       />
     </div>
   ) : (
     <div className="flex items-center justify-between rounded-lg border px-4 py-3" style={wellStyle}>
-      <span className="text-sm text-gray-400">Trip price:</span>
+      <span className="text-sm text-gray-400">{tt("tripPrice")}</span>
       <span className="text-lg font-bold text-[color:var(--tott-panel-text)]">{summaryLabel}</span>
     </div>
   );
@@ -108,22 +110,17 @@ export function TripBookingForm({
         color: theme.panelForeground,
       }}
     >
-      <h3 className="text-lg font-semibold text-[color:var(--tott-panel-text)]">Join this adventure</h3>
-      <p className="mt-1 text-xs text-gray-400">
-        Secure your spot on this amazing journey!
-      </p>
+      <h3 className="text-lg font-semibold text-[color:var(--tott-panel-text)]">{tt("joinTitle")}</h3>
+      <p className="mt-1 text-xs text-gray-400">{tt("joinSubtitle")}</p>
 
       <div className="mt-5">
         <DynamicOpenCallForm
           fields={resolvedFields}
-          submitLabel="Book Now"
+          submitLabel={tt("bookNow")}
           showHomeLink={false}
           beforeSubmitSlot={priceSlot}
           afterSubmitSlot={
-            <p className="text-center text-xs text-gray-500">
-              By booking, you agree to our terms and conditions. You&apos;ll receive a confirmation
-              email shortly.
-            </p>
+            <p className="text-center text-xs text-gray-500">{tt("termsNote")}</p>
           }
         />
       </div>

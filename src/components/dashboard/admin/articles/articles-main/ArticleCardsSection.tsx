@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArticleCard } from "./ArticleCard";
 import type { ArticleCardAction } from "./ArticleCard";
 import type { ReactNode } from "react";

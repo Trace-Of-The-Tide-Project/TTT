@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 
 type ForgotPasswordSubmitEvent = React.FormEvent<HTMLFormElement>;
 
 export function useForgotPasswordForm() {
+  const t = useTranslations("Auth.forms.forgotPassword");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -17,7 +19,7 @@ export function useForgotPasswordForm() {
     const email = (form.elements.namedItem("email") as HTMLInputElement).value.trim();
 
     if (!email) {
-      setError("Please enter your email address.");
+      setError(t("errorEmail"));
       return;
     }
 
@@ -31,7 +33,7 @@ export function useForgotPasswordForm() {
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError((data.message as string) || "Something went wrong. Please try again.");
+        setError((data.message as string) || t("errorGeneric"));
         setLoading(false);
         return;
       }
@@ -42,7 +44,7 @@ export function useForgotPasswordForm() {
       router.push("/auth/forgot-password/email-sent");
       router.refresh();
     } catch {
-      setError("Unable to reach the server. Please try again.");
+      setError(t("errorNetwork"));
     } finally {
       setLoading(false);
     }

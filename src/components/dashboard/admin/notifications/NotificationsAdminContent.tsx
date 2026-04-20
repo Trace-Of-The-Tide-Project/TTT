@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isAxiosError } from "axios";
+import { useTranslations } from "next-intl";
 import { SearchIcon } from "@/components/ui/icons";
 import { FilterDropdown } from "@/components/dashboard/admin/users/FilterDropdown";
 import { theme } from "@/lib/theme";
@@ -16,25 +17,10 @@ import {
 
 const PAGE_LIMIT = 20;
 
-const TYPE_OPTIONS = [
-  { value: "all", label: "All types" },
-  { value: "system", label: "System" },
-  { value: "review", label: "Review" },
-  { value: "update", label: "Update" },
-] as const;
+const ROW_TYPES = ["system", "review", "update"] as const;
+const ROW_STATUSES = ["unread", "read", "sent"] as const;
 
-const STATUS_OPTIONS = [
-  { value: "all", label: "All status" },
-  { value: "unread", label: "Unread" },
-  { value: "read", label: "Read" },
-] as const;
-
-const ORDER_OPTIONS = [
-  { value: "DESC", label: "Newest first" },
-  { value: "ASC", label: "Oldest first" },
-] as const;
-
-function listErrMessage(e: unknown): string {
+function listErrMessage(e: unknown, fallback: string): string {
   if (isAxiosError(e)) {
     const d = e.response?.data;
     if (typeof d === "string" && d.trim()) return d;
@@ -42,15 +28,30 @@ function listErrMessage(e: unknown): string {
       const o = d as Record<string, unknown>;
       if (typeof o.message === "string") return o.message;
     }
-    return e.message || "Failed to load notifications";
+    return e.message || fallback;
   }
   if (e instanceof Error) return e.message;
-  return "Failed to load notifications";
+  return fallback;
+}
+
+function notifyTypeLabel(nt: (key: string) => string, type: string): string {
+  if ((ROW_TYPES as readonly string[]).includes(type)) {
+    return nt(`rowType.${type as (typeof ROW_TYPES)[number]}`);
+  }
+  return type;
+}
+
+function notifyStatusLabel(nt: (key: string) => string, status: string): string {
+  if ((ROW_STATUSES as readonly string[]).includes(status)) {
+    return nt(`rowStatus.${status as (typeof ROW_STATUSES)[number]}`);
+  }
+  return status;
 }
 
 const emptyMeta: NotificationsListMeta = { total: 0, page: 1, limit: PAGE_LIMIT, totalPages: 1 };
 
 export function NotificationsAdminContent() {
+  const nt = useTranslations("Dashboard.notificationsPage");
   const user = useStoredAuthUser();
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -66,6 +67,33 @@ export function NotificationsAdminContent() {
   const [error, setError] = useState<string | null>(null);
   const [nowMs, setNowMs] = useState(() => Date.now());
 
+  const typeOptions = useMemo(
+    () =>
+      (["all", "system", "review", "update"] as const).map((value) => ({
+        value,
+        label: nt(`filters.types.${value}`),
+      })),
+    [nt],
+  );
+
+  const statusOptions = useMemo(
+    () =>
+      (["all", "unread", "read"] as const).map((value) => ({
+        value,
+        label: nt(`filters.status.${value}`),
+      })),
+    [nt],
+  );
+
+  const orderOptions = useMemo(
+    () =>
+      (["DESC", "ASC"] as const).map((value) => ({
+        value,
+        label: nt(`filters.order.${value}`),
+      })),
+    [nt],
+  );
+
   useEffect(() => {
     setNowMs(Date.now());
     const id = window.setInterval(() => setNowMs(Date.now()), 60_000);
@@ -73,8 +101,8 @@ export function NotificationsAdminContent() {
   }, []);
 
   useEffect(() => {
-    const t = window.setTimeout(() => setDebouncedSearch(searchInput.trim()), 400);
-    return () => window.clearTimeout(t);
+    const timeoutId = window.setTimeout(() => setDebouncedSearch(searchInput.trim()), 400);
+    return () => window.clearTimeout(timeoutId);
   }, [searchInput]);
 
   const prevDebouncedRef = useRef(debouncedSearch);
@@ -109,13 +137,13 @@ export function NotificationsAdminContent() {
       setRows(mine);
       setMeta(res.meta);
     } catch (e) {
-      setError(listErrMessage(e));
+      setError(listErrMessage(e, nt("errors.generic")));
       setRows([]);
       setMeta(emptyMeta);
     } finally {
       setLoading(false);
     }
-  }, [user?.id, page, debouncedSearch, typeFilter, statusFilter, sortBy, order]);
+  }, [user?.id, page, debouncedSearch, typeFilter, statusFilter, sortBy, order, nt]);
 
   useEffect(() => {
     void load();
@@ -148,16 +176,14 @@ export function NotificationsAdminContent() {
   if (!user?.id) {
     return (
       <div className="px-4 py-12 text-center text-sm text-gray-500 sm:px-6 md:px-8">
-        Sign in to view notifications.
+        {nt("signInRequired")}
       </div>
     );
   }
 
   return (
     <div className="mx-auto max-w-full space-y-4 px-3 py-4 sm:space-y-6 sm:px-4 sm:py-6 md:px-6 md:py-8 lg:px-8">
-      <p className="text-xs text-gray-500">
-        Only notifications for your account are shown (matched by user id).
-      </p>
+      <p className="text-xs text-gray-500">{nt("accountHint")}</p>
 
       <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:gap-4">
         <div className="relative min-w-0 flex-1">
@@ -166,24 +192,16 @@ export function NotificationsAdminContent() {
           </span>
           <input
             type="text"
-            placeholder="Search message or type…"
+            placeholder={nt("searchPlaceholder")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full min-w-0 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-3 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none sm:pr-4"
           />
         </div>
         <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-stretch sm:gap-2 lg:items-center">
-          <FilterDropdown
-            options={[...TYPE_OPTIONS]}
-            value={typeFilter}
-            onChange={handleTypeChange}
-          />
-          <FilterDropdown
-            options={[...STATUS_OPTIONS]}
-            value={statusFilter}
-            onChange={handleStatusChange}
-          />
-          <FilterDropdown options={[...ORDER_OPTIONS]} value={order} onChange={handleOrderChange} />
+          <FilterDropdown options={typeOptions} value={typeFilter} onChange={handleTypeChange} />
+          <FilterDropdown options={statusOptions} value={statusFilter} onChange={handleStatusChange} />
+          <FilterDropdown options={orderOptions} value={order} onChange={handleOrderChange} />
         </div>
       </div>
 
@@ -195,44 +213,44 @@ export function NotificationsAdminContent() {
             onClick={() => void load()}
             className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
           >
-            Try again
+            {nt("tryAgain")}
           </button>
         </div>
       ) : null}
 
       <div className="-mx-1 w-full max-w-full overflow-x-auto overscroll-x-contain rounded-lg border border-[var(--tott-card-border)] [touch-action:pan-x] sm:mx-0">
-        <table className="min-w-[640px] w-full border-collapse text-left text-sm">
+        <table className="min-w-[640px] w-full border-collapse text-start text-sm">
           <thead>
             <tr className="border-b border-[var(--tott-card-border)]">
               <th
                 className="bg-transparent px-3 py-2.5 text-xs font-semibold sm:px-4 sm:py-3"
                 style={{ color: theme.accentGoldFocus }}
               >
-                Message
+                {nt("table.message")}
               </th>
               <th
                 className="bg-transparent px-2 py-2.5 text-xs font-semibold sm:px-4 sm:py-3"
                 style={{ color: theme.accentGoldFocus }}
               >
-                Type
+                {nt("table.type")}
               </th>
               <th
                 className="bg-transparent px-2 py-2.5 text-xs font-semibold sm:px-4 sm:py-3"
                 style={{ color: theme.accentGoldFocus }}
               >
-                Status
+                {nt("table.status")}
               </th>
               <th
                 className="bg-transparent px-2 py-2.5 text-xs font-semibold sm:px-4 sm:py-3"
                 style={{ color: theme.accentGoldFocus }}
               >
-                User
+                {nt("table.user")}
               </th>
               <th
                 className="bg-transparent px-2 py-2.5 text-xs font-semibold whitespace-nowrap sm:px-4 sm:py-3"
                 style={{ color: theme.accentGoldFocus }}
               >
-                When
+                {nt("table.when")}
               </th>
             </tr>
           </thead>
@@ -240,13 +258,13 @@ export function NotificationsAdminContent() {
             {loading ? (
               <tr>
                 <td colSpan={5} className="px-5 py-12 text-center text-gray-500">
-                  Loading…
+                  {nt("loading")}
                 </td>
               </tr>
             ) : rows.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-5 py-12 text-center text-gray-500">
-                  No notifications match your filters.
+                  {nt("empty")}
                 </td>
               </tr>
             ) : (
@@ -258,8 +276,8 @@ export function NotificationsAdminContent() {
                   <td className="max-w-[280px] px-3 py-2.5 text-foreground sm:max-w-md sm:px-4 sm:py-3">
                     <p className="line-clamp-2 text-sm">{n.message}</p>
                   </td>
-                  <td className="px-2 py-2.5 capitalize text-gray-400 sm:px-4 sm:py-3">{n.type}</td>
-                  <td className="px-2 py-2.5 capitalize text-gray-400 sm:px-4 sm:py-3">{n.status}</td>
+                  <td className="px-2 py-2.5 text-gray-400 sm:px-4 sm:py-3">{notifyTypeLabel(nt, n.type)}</td>
+                  <td className="px-2 py-2.5 text-gray-400 sm:px-4 sm:py-3">{notifyStatusLabel(nt, n.status)}</td>
                   <td className="px-2 py-2.5 text-gray-400 sm:px-4 sm:py-3">
                     {n.user?.full_name?.trim() || n.user?.username || "—"}
                   </td>
@@ -275,7 +293,11 @@ export function NotificationsAdminContent() {
 
       <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
         <p className="text-center text-sm text-gray-500 sm:text-left">
-          Showing {meta.total === 0 ? 0 : startItem} to {endItem} of {meta.total} (your account)
+          {nt("pagination.summary", {
+            start: meta.total === 0 ? 0 : startItem,
+            end: endItem,
+            total: meta.total,
+          })}
         </p>
         <div className="flex items-center justify-center gap-2 sm:justify-end">
           <button
@@ -284,10 +306,10 @@ export function NotificationsAdminContent() {
             disabled={loading || effectivePage <= 1 || meta.total === 0}
             className="min-h-[44px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2 text-sm font-medium text-foreground transition-colors disabled:cursor-not-allowed disabled:opacity-50 hover:bg-[var(--tott-dash-surface-inset)] sm:min-h-0"
           >
-            Previous
+            {nt("pagination.previous")}
           </button>
           <span className="min-w-26 shrink-0 text-center text-xs text-gray-500 sm:min-w-0">
-            Page {effectivePage} of {totalPages}
+            {nt("pagination.pageOf", { page: effectivePage, totalPages })}
           </span>
           <button
             type="button"
@@ -295,7 +317,7 @@ export function NotificationsAdminContent() {
             disabled={loading || effectivePage >= totalPages || meta.total === 0}
             className="min-h-[44px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2 text-sm font-medium text-foreground transition-colors disabled:cursor-not-allowed disabled:opacity-50 hover:bg-[var(--tott-dash-surface-inset)] sm:min-h-0"
           >
-            Next
+            {nt("pagination.next")}
           </button>
         </div>
       </div>

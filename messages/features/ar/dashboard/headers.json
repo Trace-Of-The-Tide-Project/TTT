@@ -1,0 +1,86 @@
+{
+  "Dashboard": {
+    "headers": {
+      "adminSettings": {
+        "title": "إعدادات الإدارة",
+        "subtitle": "إدارة أو تعديل إعداداتك الشخصية."
+      },
+      "users": {
+        "title": "إدارة المستخدمين",
+        "subtitle": "إدارة جميع المستخدمين والأدوار والصلاحيات على المنصة.",
+        "exportCsv": "تصدير CSV",
+        "addUser": "إضافة مستخدم"
+      },
+      "roles": {
+        "title": "الأدوار والصلاحيات",
+        "subtitle": "إدارة أدوار المستخدمين والصلاحيات وطلبات المحررين."
+      },
+      "contentLibrary": {
+        "title": "مكتبة المحتوى",
+        "subtitle": "تصفح والبحث وإدارة كل المحتوى المنشور."
+      },
+      "visualEditor": {
+        "title": "CMS / المحرر المرئي",
+        "subtitle": "تعديل واجهة المنصة وأقسام الصفحة الرئيسية والصفحات الثابتة.",
+        "preview": "معاينة",
+        "publishChanges": "نشر التغييرات"
+      },
+      "engagements": {
+        "title": "التفاعل",
+        "subtitle": "إدارة تفاعلات المجتمع والتعليقات والتقدير",
+        "stats": {
+          "totalComments": "إجمالي التعليقات",
+          "totalLikes": "إجمالي الإعجابات",
+          "activeDiscussions": "مناقشات نشطة",
+          "badgesAwarded": "شارات ممنوحة"
+        }
+      },
+      "analytics": {
+        "title": "التحليلات",
+        "subtitle": "أداء المنصة ومقاييس النمو",
+        "last30Days": "آخر 30 يوماً",
+        "exportReports": "تصدير التقارير",
+        "cards": {
+          "pageViews": "إجمالي مشاهدات الصفحات",
+          "userRetention": "احتفاظ المستخدمين",
+          "avgSession": "متوسط الجلسة",
+          "bounceRate": "معدل الارتداد"
+        }
+      },
+      "reports": {
+        "title": "التقارير والإشراف",
+        "subtitle": "مراجعة المحتوى المُبلغ عنه وإدارة انتهاكات المستخدمين وسجلات التدقيق",
+        "cards": {
+          "pendingReports": "تقارير معلقة",
+          "contentFlagged": "محتوى مُعلَّم",
+          "usersReported": "مستخدمون مُبلَّغ عنهم",
+          "resolvedToday": "حُلّت اليوم"
+        }
+      },
+      "finance": {
+        "title": "إدارة المالية",
+        "subtitle": "مراقبة التبرعات والمدفوعات والنشاط المالي",
+        "exportReports": "تصدير التقارير",
+        "cards": {
+          "todaysDonations": "تبرعات اليوم",
+          "monthlyRevenue": "الإيراد الشهري",
+          "pendingPayouts": "مدفوعات معلقة",
+          "pendingCount": "3 معلقة",
+          "platformFees": "رسوم المنصة",
+          "feeRate": "نسبة 10٪"
+        }
+      },
+      "messaging": {
+        "title": "مركز الرسائل",
+        "subtitle": "إدارة التواصل مع المستخدمين وإرسال البثّات",
+        "newBroadcast": "بث جديد",
+        "cards": {
+          "unreadMessages": "رسائل غير مقروءة",
+          "highPriority": "أولوية عالية",
+          "pendingResponse": "في انتظار الرد",
+          "resolvedThisWeek": "حُلّت هذا الأسبوع"
+        }
+      }
+    }
+  }
+}

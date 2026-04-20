@@ -21,21 +21,23 @@ export type OpenCallMainMedia = {
   size_mb: number;
 };
 
+/** Optional participant-facing label (e.g. Arabic). `name` stays the stable API key. */
+type ApplicationFormFieldBase = { name: string; label?: string };
+
 export type ApplicationFormField =
-  | { name: string; type: "text"; required: boolean }
-  | { name: string; type: "email"; required: boolean }
-  | { name: string; type: "phone"; required: boolean }
-  | { name: string; type: "textarea"; required: boolean }
-  | { name: string; type: "checkbox"; required: boolean }
-  | { name: string; type: "select"; required: boolean; options: string[] }
-  | {
-      name: string;
+  | (ApplicationFormFieldBase & { type: "text"; required: boolean })
+  | (ApplicationFormFieldBase & { type: "email"; required: boolean })
+  | (ApplicationFormFieldBase & { type: "phone"; required: boolean })
+  | (ApplicationFormFieldBase & { type: "textarea"; required: boolean })
+  | (ApplicationFormFieldBase & { type: "checkbox"; required: boolean })
+  | (ApplicationFormFieldBase & { type: "select"; required: boolean; options: string[] })
+  | (ApplicationFormFieldBase & {
       type: "file_multiple";
       required: boolean;
       max_files: number;
       allowed_types: string[];
       max_size_mb: number;
-    };
+    });
 
 export type OpenCallSettings = {
   status: "draft" | "published" | "scheduled";
@@ -88,21 +90,33 @@ export const DEFAULT_OPEN_CALL_APPLICATION_FIELDS: ApplicationFormField[] = [
   { name: "terms_agreement", type: "checkbox", required: true },
 ];
 
-export function validateOpenCallApplicationFields(fields: ApplicationFormField[]): string | null {
-  if (!fields.length) return "Add at least one field to the application form.";
+/** Structured validation result for application-form fields (translate in UI). */
+export type ApplicationFormValidationIssue =
+  | { code: "no_fields" }
+  | { code: "empty_field_name" }
+  | { code: "duplicate_name"; name: string }
+  | { code: "select_no_options"; name: string }
+  | { code: "file_max_files"; name: string }
+  | { code: "file_no_types"; name: string }
+  | { code: "file_max_size"; name: string };
+
+export function validateOpenCallApplicationFields(
+  fields: ApplicationFormField[],
+): ApplicationFormValidationIssue | null {
+  if (!fields.length) return { code: "no_fields" };
   const names = new Set<string>();
   for (const f of fields) {
     const n = f.name.trim();
-    if (!n) return "Each field needs a non-empty name.";
-    if (names.has(n)) return `Duplicate field name: ${n}`;
+    if (!n) return { code: "empty_field_name" };
+    if (names.has(n)) return { code: "duplicate_name", name: n };
     names.add(n);
     if (f.type === "select" && (!f.options || f.options.length === 0)) {
-      return `Select field "${n}" needs at least one option.`;
+      return { code: "select_no_options", name: n };
     }
     if (f.type === "file_multiple") {
-      if (f.max_files < 1) return `Field "${n}": max_files must be at least 1.`;
-      if (!f.allowed_types?.length) return `Field "${n}": add at least one allowed file type.`;
-      if (f.max_size_mb < 1) return `Field "${n}": max_size_mb must be at least 1.`;
+      if (f.max_files < 1) return { code: "file_max_files", name: n };
+      if (!f.allowed_types?.length) return { code: "file_no_types", name: n };
+      if (f.max_size_mb < 1) return { code: "file_max_size", name: n };
     }
   }
   return null;

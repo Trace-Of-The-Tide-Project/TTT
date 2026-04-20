@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { theme } from "@/lib/theme";
 import { Grid2x2Icon, PersonIcon, CalendarIcon } from "@/components/ui/icons";
 

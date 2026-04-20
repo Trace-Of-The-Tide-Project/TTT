@@ -1,17 +1,19 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { EmailIcon } from "@/components/ui/icons";
 import { AuthInput } from "@/components/ui/AuthInput";
 import { theme } from "@/lib/theme";
 import { useForgotPasswordForm } from "./useForgotPasswordForm";
 
 export function ForgotPasswordForm() {
+  const t = useTranslations("Auth.forms.forgotPassword");
   const { loading, error, handleSubmit } = useForgotPasswordForm();
 
   return (
-    <form onSubmit={handleSubmit} className="relative space-y-6 w-full max-w-md">
+    <form onSubmit={handleSubmit} className="relative w-full max-w-md space-y-6">
       {error && (
-        <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/30 rounded-lg px-3 py-2">
+        <p className="rounded-lg border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-400">
           {error}
         </p>
       )}
@@ -19,8 +21,8 @@ export function ForgotPasswordForm() {
         id="email"
         name="email"
         type="email"
-        label="Email address"
-        placeholder="Enter your email address"
+        label={t("emailLabel")}
+        placeholder={t("emailPlaceholder")}
         required
         autoComplete="email"
         icon={<EmailIcon />}
@@ -28,11 +30,11 @@ export function ForgotPasswordForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 rounded-lg font-medium text-black transition-colors disabled:opacity-60 cursor-pointer select-none"
+        className="w-full cursor-pointer select-none rounded-lg py-3 font-medium text-black transition-colors disabled:cursor-not-allowed disabled:opacity-60"
         style={{ backgroundColor: theme.accentGold }}
         suppressHydrationWarning
       >
-        {loading ? "Sending…" : "Send reset email"}
+        {loading ? t("submitting") : t("submit")}
       </button>
     </form>
   );

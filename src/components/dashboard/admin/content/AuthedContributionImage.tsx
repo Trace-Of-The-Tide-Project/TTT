@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getArticleApiBaseUrl, resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+import { contributionFileApiUrl } from "@/services/contributions.service";
 import { getStoredToken } from "@/services/auth.service";
-import { contributionFilePublicUrl } from "@/services/contributions.service";
 
 type AuthedContributionImageProps = {
   path: string;
@@ -10,16 +11,27 @@ type AuthedContributionImageProps = {
   className?: string;
 };
 
+/** True when the resolved URL is on the API host (Bearer may be required). */
+function isApiOriginUrl(resolvedUrl: string): boolean {
+  try {
+    const u = new URL(resolvedUrl);
+    const api = new URL(getArticleApiBaseUrl());
+    return u.origin === api.origin;
+  } catch {
+    return false;
+  }
+}
+
 /**
- * Contribution `path` values are often relative (`uploads/...`) on the API host. Those GETs may
- * require a Bearer token, which a plain {@code <img src>} cannot send. Article content usually stores
- * a full public URL after upload, so it still loads. This component fetches with the session token
- * and displays a blob URL when needed.
+ * Prefer signed/public `https` refs as-is. For relative keys, try **Bearer fetch on the API**
+ * (`{api}/{path}`) first so private GCS buckets work when the backend proxies the file; then fall
+ * back to {@link resolveArticleMediaSrc} (public GCS / CDN) as a plain {@code <img>} src.
  */
 export function AuthedContributionImage({ path, alt = "", className }: AuthedContributionImageProps) {
   const [src, setSrc] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
 
+  /* eslint-disable react-hooks/set-state-in-effect -- resolve `path` to blob/https for <img> */
   useEffect(() => {
     const raw = path.trim();
     if (!raw) {
@@ -28,30 +40,63 @@ export function AuthedContributionImage({ path, alt = "", className }: AuthedCon
       return;
     }
 
-    const abs = contributionFilePublicUrl(path);
-    if (!abs) {
-      setSrc(null);
-      setStatus("error");
-      return;
-    }
-
     if (/^https?:\/\//i.test(raw)) {
-      setSrc(abs);
+      setSrc(raw);
       setStatus("ready");
       return;
     }
 
-    setStatus("loading");
     let objectUrl: string | null = null;
     const ac = new AbortController();
+    setStatus("loading");
 
     (async () => {
+      const token = getStoredToken();
+
+      const fetchInit = (): RequestInit => {
+        const init: RequestInit = { signal: ac.signal };
+        if (token) {
+          init.headers = { Authorization: `Bearer ${token}` };
+        }
+        return init;
+      };
+
+      if (token) {
+        try {
+          const apiUrl = contributionFileApiUrl(raw);
+          const res = await fetch(apiUrl, fetchInit());
+          if (!ac.signal.aborted && res.ok) {
+            const blob = await res.blob();
+            if (ac.signal.aborted) return;
+            objectUrl = URL.createObjectURL(blob);
+            setSrc(objectUrl);
+            setStatus("ready");
+            return;
+          }
+        } catch {
+          /* fall through */
+        }
+      }
+
+      const abs = resolveArticleMediaSrc(raw);
+      if (!abs) {
+        if (!ac.signal.aborted) {
+          setSrc(null);
+          setStatus("error");
+        }
+        return;
+      }
+
+      if (!isApiOriginUrl(abs)) {
+        if (!ac.signal.aborted) {
+          setSrc(abs);
+          setStatus("ready");
+        }
+        return;
+      }
+
       try {
-        const token = getStoredToken();
-        const res = await fetch(abs, {
-          signal: ac.signal,
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
+        const res = await fetch(abs, fetchInit());
         if (ac.signal.aborted) return;
         if (!res.ok) {
           setSrc(null);
@@ -76,7 +121,7 @@ export function AuthedContributionImage({ path, alt = "", className }: AuthedCon
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, [path]);
-
+  /* eslint-enable react-hooks/set-state-in-effect */
   if (status === "loading" || status === "idle") {
     return (
       <div

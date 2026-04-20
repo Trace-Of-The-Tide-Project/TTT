@@ -1,0 +1,231 @@
+{
+  "Dashboard": {
+    "articles": {
+      "editor": {
+        "layout": {
+          "loadingArticle": "جاري تحميل المحرر…",
+          "backToArticles": "← المقالات",
+          "editArticle": "تعديل المقال",
+          "preview": "معاينة",
+          "articleNotFound": "المقال غير موجود.",
+          "tryAgain": "إعادة المحاولة",
+          "misconfigured": "إعداد المحرر غير صحيح: مرّر config لوضع الإنشاء.",
+          "uploadingTitle": "جاري رفع الملفات…",
+          "uploadingDetail": "اترك هذا التبويب مفتوحًا حتى ينتهي الرفع.",
+          "successRedirect": "جاري التوجيه إلى المقالات…",
+          "errorRequestFailed": "فشل الطلب",
+          "errorGeneric": "حدث خطأ ما",
+          "validationTitle": "العنوان مطلوب.",
+          "validationCategory": "التصنيف مطلوب.",
+          "validationBlocksDraft": "أضف كتلة واحدة على الأقل بمحتوى (لا تُرسل العناصر النائبة الفارغة).",
+          "validationBlocksPublish": "النشر يتطلب كتلة واحدة على الأقل بمحتوى.",
+          "validationBlocksSchedule": "الجدولة تتطلب كتلة واحدة على الأقل بمحتوى.",
+          "errorCreateNoIdPublish": "تم إنشاء المقال لكن لم يُرجع معرف؛ لا يمكن النشر.",
+          "errorCreateNoIdSchedule": "تم إنشاء المقال لكن لم يُرجع معرف؛ لا يمكن الجدولة.",
+          "successChangesSaved": "تم حفظ التغييرات",
+          "successDraftSaved": "تم حفظ المسودة",
+          "successArticleSubmitted": "تم إرسال المقال",
+          "successArticleScheduled": "تم جدولة المقال",
+          "imageBlockShort": "صورة",
+          "validationOpenCallBlocksDraft": "أضف كتلة محتوى واحدة على الأقل بمحتوى.",
+          "validationOpenCallBlocksPublish": "النشر يتطلب كتلة محتوى واحدة على الأقل بمحتوى.",
+          "validationOpenCallBlocksSchedule": "الجدولة تتطلب كتلة محتوى واحدة على الأقل بمحتوى."
+        },
+        "footer": {
+          "schedule": "جدولة",
+          "defaults": {
+            "publishNow": "نشر الآن",
+            "saveDraft": "حفظ مسودة",
+            "saveChanges": "حفظ التغييرات"
+          }
+        },
+        "forms": {
+          "article": {
+            "titlePlaceholder": "أدخل عنوان المقال…",
+            "settingsTitle": "إعدادات المقال",
+            "primaryButton": "نشر الآن",
+            "blockLabels": {
+              "paragraph": "ابدأ كتابة مقالك…",
+              "heading": "عنوان القسم",
+              "quote": "اقتباس",
+              "callout": "مربع بارز",
+              "author-note": "ملاحظة المؤلف"
+            }
+          },
+          "video": {
+            "titlePlaceholder": "أدخل عنوان الفيديو…",
+            "settingsTitle": "إعدادات الفيديو",
+            "primaryButton": "نشر الفيديو",
+            "blockLabels": {
+              "paragraph": "صف الفيديو",
+              "heading": "عنوان القسم",
+              "quote": "اقتباس",
+              "callout": "مربع بارز",
+              "author-note": "ملاحظة المؤلف"
+            }
+          },
+          "audio": {
+            "titlePlaceholder": "أدخل عنوان الصوت…",
+            "settingsTitle": "إعدادات الصوت",
+            "primaryButton": "نشر الصوت",
+            "blockLabels": {
+              "paragraph": "ملاحظات الحلقة…",
+              "heading": "عنوان القسم",
+              "quote": "اقتباس",
+              "callout": "مربع بارز",
+              "author-note": "ملاحظة المؤلف"
+            }
+          },
+          "thread": {
+            "titlePlaceholder": "أدخل عنوان السلسلة…",
+            "settingsTitle": "إعدادات السلسلة",
+            "primaryButton": "نشر السلسلة",
+            "blockLabels": {
+              "paragraph": "الجزء الأول من قصتك…",
+              "heading": "عنوان القسم",
+              "quote": "اقتباس",
+              "callout": "مربع بارز",
+              "author-note": "ملاحظة المؤلف"
+            }
+          },
+          "openCall": {
+            "titlePlaceholder": "أدخل عنوان المحتوى هنا…",
+            "settingsTitle": "إعدادات المحتوى",
+            "primaryButton": "نشر الآن",
+            "blockLabels": {
+              "paragraph": "صف المحتوى…",
+              "quote": "اقتباس",
+              "callout": "مربع بارز",
+              "author-note": "ملاحظة المؤلف"
+            }
+          }
+        },
+        "mainMedia": {
+          "article": {
+            "blockName": "غلاف",
+            "uploadTitle": "رفع غلاف",
+            "uploadDetail": "صورة ~1200×630 بكسل (أو فيديو/صوت) — تظهر أولًا في صفحة المقال العامة.",
+            "pasteUrlHint": "أو الصق رابط صورة أو فيديو أو صوت للغلاف",
+            "addBlockButton": "إضافة كتلة غلاف",
+            "missingHeroBlurb": "لا يوجد غلاف بعد. أضف كتلة الغلاف — إنها العنصر البارز أعلى الصفحة العامة."
+          },
+          "video": {
+            "blockName": "فيديو",
+            "uploadTitle": "رفع الفيديو",
+            "uploadDetail": "MP4 أو WebM أو QuickTime — ما يُعرض بعرض كامل أعلى صفحة الفيديو العامة.",
+            "pasteUrlHint": "أو الصق رابط الفيديو",
+            "addBlockButton": "إضافة كتلة فيديو",
+            "missingHeroBlurb": "لا يوجد فيديو بعد. أضف كتلة الفيديو — إنها العنصر البارز أعلى الصفحة العامة."
+          },
+          "audio": {
+            "blockName": "صوت",
+            "uploadTitle": "رفع الصوت",
+            "uploadDetail": "MP3 أو WAV أو AAC وغيرها — يُعرض كعنصر صوتي بارز في صفحة الصوت العامة.",
+            "pasteUrlHint": "أو الصق رابط ملف الصوت",
+            "addBlockButton": "إضافة كتلة صوت",
+            "missingHeroBlurb": "لا يوجد صوت بعد. أضف كتلة الصوت — إنها العنصر البارز أعلى الصفحة العامة."
+          },
+          "thread": {
+            "blockName": "غلاف",
+            "uploadTitle": "رفع غلاف",
+            "uploadDetail": "صورة ~1200×630 بكسل (أو فيديو/صوت) — تظهر أولًا في صفحة السلسلة العامة.",
+            "pasteUrlHint": "أو الصق رابط صورة أو فيديو أو صوت للغلاف",
+            "addBlockButton": "إضافة كتلة غلاف",
+            "missingHeroBlurb": "لا يوجد غلاف بعد. أضف كتلة الغلاف — إنها العنصر البارز أعلى الصفحة العامة."
+          },
+          "openCall": {
+            "blockName": "الوسائط الرئيسية",
+            "uploadTitle": "رفع الملف الرئيسي",
+            "uploadDetail": "صورة أو فيديو أو صوت — ما يراه الزوار أولًا لهذه الدعوة المفتوحة.",
+            "pasteUrlHint": "أو الصق رابط الملف الرئيسي (صورة أو فيديو أو صوت)",
+            "addBlockButton": "إضافة كتلة الوسائط الرئيسية",
+            "missingHeroBlurb": "لا توجد وسائط رئيسية بعد. أضف كتلة الوسائط الرئيسية — إنها العنصر البارز أعلى الصفحة العامة."
+          }
+        },
+        "availableBlocks": {
+          "title": "الكتل المتاحة",
+          "palette": {
+            "paragraph": "فقرة",
+            "heading": "عنوان",
+            "quote": "اقتباس",
+            "image": "صورة",
+            "gallery": "معرض",
+            "callout": "مربع بارز",
+            "author-note": "ملاحظة المؤلف",
+            "divider": "فاصل"
+          }
+        },
+        "modals": {
+          "closeDialog": "إغلاق الحوار",
+          "close": "إغلاق",
+          "delete": {
+            "title": "حذف المقال؟",
+            "description": "سيتم حذف \"{title}\" نهائيًا. لا يمكن التراجع عن ذلك.",
+            "cancel": "إلغاء",
+            "confirm": "حذف",
+            "confirmBusy": "جاري الحذف…"
+          },
+          "schedule": {
+            "title": "جدولة النشر",
+            "subtitle": "اختر وقت نشر المقال.",
+            "datetimeLabel": "التاريخ والوقت (توقيتك المحلي)",
+            "hintInvalid": "اختر تاريخًا ووقتًا صالحين.",
+            "cancel": "إلغاء",
+            "confirm": "جدولة",
+            "confirmBusy": "جاري الجدولة…"
+          }
+        },
+        "settings": {
+          "defaultPanelTitle": "إعدادات المقال",
+          "collectionsLoadError": "تعذر تحميل المجموعات.",
+          "tagsLoadError": "تعذر تحميل الوسوم.",
+          "status": {
+            "label": "الحالة",
+            "draft": "مسودة",
+            "published": "منشور",
+            "scheduled": "مجدول",
+            "goesLive": "يُنشر في:",
+            "hint": "عندما تكون الحالة منشورًا أو مجدولًا، استخدم «نشر الآن» أو «جدولة»."
+          },
+          "category": {
+            "label": "التصنيف",
+            "placeholder": "مثال: وثائقي، فن"
+          },
+          "collection": {
+            "label": "المجموعة (اختياري)",
+            "none": "بدون مجموعة",
+            "currentPrefix": "الحالي:"
+          },
+          "collectionLoading": "جاري تحميل المجموعات…",
+          "tags": {
+            "label": "الوسوم",
+            "loading": "جاري تحميل الوسوم…",
+            "addPlaceholder": "إضافة وسم…",
+            "allSelected": "تم اختيار كل الوسوم المتاحة.",
+            "unknownName": "وسم ({prefix})",
+            "fallbackName": "وسم",
+            "removeAria": "إزالة {name}"
+          },
+          "language": {
+            "label": "اللغة",
+            "en": "الإنجليزية",
+            "ar": "العربية",
+            "he": "العبرية"
+          },
+          "visibility": {
+            "label": "الظهور",
+            "private": "خاص",
+            "public": "عام"
+          },
+          "seo": {
+            "label": "تحسين محركات البحث",
+            "previewPlaceholder": "أضف وصفًا ميتًا لتحسين الظهور في البحث.",
+            "seoTitlePlaceholder": "عنوان SEO",
+            "metaDescriptionPlaceholder": "الوصف الميتا",
+            "previewUrlStub": "yoursite.com/articles/…"
+          }
+        }
+      }
+    }
+  }
+}

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isAxiosError } from "axios";
+import { useLocale, useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import {
   SearchIcon,
@@ -20,8 +21,8 @@ import { HexIconOutlined } from "@/components/dashboard/admin/articles/articles-
 import { AuthedContributionImage } from "@/components/dashboard/admin/content/AuthedContributionImage";
 import {
   contributionFilePublicUrl,
-  firstContributionPreviewableImageFile,
   getContributions,
+  type ContributionFile,
   type ContributionListItem,
   type ContributionListMeta,
 } from "@/services/contributions.service";
@@ -31,7 +32,13 @@ const ROWS_PER_PAGE = 10;
 /** Match image extensions when API omits image/* mime type. */
 const CONTRIBUTION_IMAGE_EXT = /\.(jpe?g|png|gif|webp|avif|bmp|svg)(\?.*)?$/i;
 
-function errMessage(e: unknown): string {
+function contributionFileRef(f: ContributionFile): string {
+  const u = f.url?.trim();
+  if (u) return u;
+  return (f.path ?? "").trim();
+}
+
+function errMessage(e: unknown, requestFailed: string, generic: string): string {
   if (isAxiosError(e)) {
     const d = e.response?.data;
     if (typeof d === "string" && d.trim()) return d;
@@ -39,21 +46,17 @@ function errMessage(e: unknown): string {
       const o = d as Record<string, unknown>;
       if (typeof o.message === "string") return o.message;
     }
-    return e.message || "Request failed";
+    return e.message || requestFailed;
   }
   if (e instanceof Error) return e.message;
-  return "Something went wrong";
+  return generic;
 }
 
 type ContributionStatus = "all" | "pending" | "published" | "archived" | "rejected";
 
-const TABS: { id: ContributionStatus; label: string }[] = [
-  { id: "all", label: "All Content" },
-  { id: "published", label: "Published" },
-  { id: "pending", label: "Pending" },
-  { id: "archived", label: "Archived" },
-  { id: "rejected", label: "Rejected" },
-];
+const TYPE_FILTER_ALL = "__all__";
+
+const TAB_IDS: ContributionStatus[] = ["all", "published", "pending", "archived", "rejected"];
 
 const statusColorMap: Record<string, string> = {
   published: "#2ECC71",
@@ -72,9 +75,10 @@ function capitalize(s: string): string {
 }
 
 
-function formatDate(iso: string | null): string {
+function formatDate(iso: string | null, locale: string): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("en-US", {
+  const loc = locale.startsWith("ar") ? "ar" : "en-US";
+  return new Date(iso).toLocaleDateString(loc, {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -87,12 +91,6 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-const ROW_ACTIONS = [
-  { id: "view", label: "View" },
-  { id: "archive", label: "Archive" },
-  { id: "delete", label: "Delete", destructive: true },
-];
-
 function ContentActionsDropdown({
   contentId,
   onAction,
@@ -100,6 +98,7 @@ function ContentActionsDropdown({
   contentId: string;
   onAction?: (actionId: string, contentId: string) => void;
 }) {
+  const ta = useTranslations("Dashboard.contentLibrary.actions");
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -120,14 +119,20 @@ function ContentActionsDropdown({
         onClick={() => setIsOpen((o) => !o)}
         className="rounded p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
         style={{ color: "#A3A3A3" }}
-        aria-label="More actions"
+        aria-label={ta("menuAria")}
         aria-expanded={isOpen}
       >
         <MoreDotsIcon />
       </button>
       {isOpen && (
         <div className="absolute right-0 top-full z-20 mt-1 min-w-[140px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-1 shadow-lg">
-          {ROW_ACTIONS.map((action) => (
+          {(
+            [
+              { id: "view", labelKey: "view" as const },
+              { id: "archive", labelKey: "archive" as const },
+              { id: "delete", labelKey: "delete" as const, destructive: true },
+            ] as const
+          ).map((action) => (
             <button
               key={action.id}
               type="button"
@@ -136,41 +141,16 @@ function ContentActionsDropdown({
                 setIsOpen(false);
               }}
               className={`w-full px-4 py-2 text-left text-sm transition-colors hover:bg-[var(--tott-dash-surface-inset)] ${
-                action.destructive ? "text-red-400 hover:bg-red-500/10" : "text-foreground"
+                "destructive" in action && action.destructive
+                  ? "text-red-400 hover:bg-red-500/10"
+                  : "text-foreground"
               }`}
             >
-              {action.label}
+              {ta(action.labelKey)}
             </button>
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function ContributionListThumbnail({
-  item,
-  variant = "inline",
-}: {
-  item: ContributionListItem;
-  variant?: "inline" | "card";
-}) {
-  const file = firstContributionPreviewableImageFile(item.files ?? []);
-  if (!file?.path?.trim()) return null;
-  if (variant === "card") {
-    return (
-      <div className="-mx-4 -mt-4 mb-3 overflow-hidden rounded-t-xl border-b border-[var(--tott-card-border)] bg-black/40">
-        <AuthedContributionImage
-          path={file.path}
-          alt=""
-          className="max-h-44 w-full object-cover sm:max-h-52"
-        />
-      </div>
-    );
-  }
-  return (
-    <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
-      <AuthedContributionImage path={file.path} alt="" className="h-full w-full object-cover" />
     </div>
   );
 }
@@ -192,6 +172,18 @@ function ContributionDetailModal({
   item: ContributionListItem;
   onClose: () => void;
 }) {
+  const td = useTranslations("Dashboard.contentLibrary.detail");
+  const ts = useTranslations("Dashboard.contentLibrary");
+  const locale = useLocale();
+
+  const statusText = (raw: string) => {
+    const k = raw.trim().toLowerCase();
+    if (["published", "pending", "archived", "rejected", "draft"].includes(k)) {
+      return (ts as (key: string) => string)(`statusLabels.${k}`);
+    }
+    return capitalize(raw);
+  };
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -210,7 +202,7 @@ function ContributionDetailModal({
         type="button"
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
-        aria-label="Close modal"
+        aria-label={td("closeModalAria")}
       />
 
       <div
@@ -235,7 +227,7 @@ function ContributionDetailModal({
                     color: statusColor(item.status),
                   }}
                 >
-                  {item.status}
+                  {statusText(item.status)}
                 </span>
               </div>
             </div>
@@ -244,7 +236,7 @@ function ContributionDetailModal({
             type="button"
             onClick={onClose}
             className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
-            aria-label="Close"
+            aria-label={td("closeAria")}
           >
             <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 6 6 18" />
@@ -258,45 +250,51 @@ function ContributionDetailModal({
           {/* Description */}
           {item.description && (
             <div>
-              <h3 className="mb-1.5 text-xs font-semibold uppercase text-gray-500">Description</h3>
+              <h3 className="mb-1.5 text-xs font-semibold uppercase text-gray-500">{td("description")}</h3>
               <p className="text-sm leading-relaxed text-gray-300">{item.description}</p>
             </div>
           )}
 
           {/* Info grid */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <InfoCard label="Contributor" value={item.user?.full_name ?? item.contributor_name ?? "—"} />
-            <InfoCard label="Email" value={item.user?.email ?? item.contributor_email ?? "—"} />
-            <InfoCard label="Phone" value={item.phone_number ?? item.contributor_phone ?? "—"} />
-            <InfoCard label="Submitted" value={formatDate(item.submission_date)} />
-            <InfoCard label="Consent" value={item.consent_given ? "Yes" : "No"} />
-            {item.open_call_id && <InfoCard label="Open Call" value={item.open_call_id.slice(0, 8) + "…"} />}
+            <InfoCard label={td("labelContributor")} value={item.user?.full_name ?? item.contributor_name ?? "—"} />
+            <InfoCard label={td("labelEmail")} value={item.user?.email ?? item.contributor_email ?? "—"} />
+            <InfoCard label={td("labelPhone")} value={item.phone_number ?? item.contributor_phone ?? "—"} />
+            <InfoCard label={td("labelSubmitted")} value={formatDate(item.submission_date, locale)} />
+            <InfoCard
+              label={td("labelConsent")}
+              value={item.consent_given ? td("consentYes") : td("consentNo")}
+            />
+            {item.open_call_id && (
+              <InfoCard label={td("labelOpenCall")} value={item.open_call_id.slice(0, 8) + "…"} />
+            )}
           </div>
 
           {/* Files */}
           {(item.files ?? []).length > 0 && (
             <div>
               <h3 className="mb-2 text-xs font-semibold uppercase text-gray-500">
-                Files ({(item.files ?? []).length})
+                {td("filesHeading", { count: (item.files ?? []).length })}
               </h3>
               <div className="space-y-2">
                 {(item.files ?? []).map((f) => {
+                  const ref = contributionFileRef(f);
                   const isImage =
                     (f.mime_type ?? "").startsWith("image/") ||
-                    CONTRIBUTION_IMAGE_EXT.test(`${f.file_name ?? ""} ${f.path ?? ""}`);
+                    CONTRIBUTION_IMAGE_EXT.test(`${f.file_name ?? ""} ${f.path ?? ""} ${f.url ?? ""}`);
                   const isAudio = (f.mime_type ?? "").startsWith("audio/");
                   const isVideo = (f.mime_type ?? "").startsWith("video/");
-                  const fileUrl = contributionFilePublicUrl(f.path);
+                  const fileUrl = contributionFilePublicUrl(ref);
 
                   return (
                     <div
                       key={f.id}
                       className="overflow-hidden rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)]"
                     >
-                      {isImage && (
+                      {isImage && ref && (
                         <div className="relative w-full bg-black/30">
                           <AuthedContributionImage
-                            path={f.path}
+                            path={ref}
                             alt={f.file_name}
                             className="max-h-64 w-full object-contain"
                           />
@@ -340,7 +338,7 @@ function ContributionDetailModal({
           {item.collections.length > 0 && (
             <div>
               <h3 className="mb-2 text-xs font-semibold uppercase text-gray-500">
-                Collections ({item.collections.length})
+                {td("collectionsHeading", { count: item.collections.length })}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {item.collections.map((c) => (
@@ -363,7 +361,7 @@ function ContributionDetailModal({
             onClick={onClose}
             className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-foreground"
           >
-            Close
+            {td("close")}
           </button>
         </div>
       </div>
@@ -381,9 +379,11 @@ function InfoCard({ label, value }: { label: string; value: string }) {
 }
 
 export function ContentLibraryContent() {
+  const t = useTranslations("Dashboard.contentLibrary");
+  const locale = useLocale();
   const [activeTab, setActiveTab] = useState<ContributionStatus>("all");
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState("All Types");
+  const [typeFilter, setTypeFilter] = useState(TYPE_FILTER_ALL);
 
   const [items, setItems] = useState<ContributionListItem[]>([]);
   const [meta, setMeta] = useState<ContributionListMeta | null>(null);
@@ -393,21 +393,24 @@ export function ContentLibraryContent() {
   const [previewItem, setPreviewItem] = useState<ContributionListItem | null>(null);
   const loadedPagesRef = useRef<Set<number>>(new Set());
 
-  const fetchData = useCallback(async (p: number, force = false) => {
-    if (!force && loadedPagesRef.current.has(p)) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await getContributions(p, ROWS_PER_PAGE);
-      setItems(res.items);
-      setMeta(res.meta);
-      loadedPagesRef.current.add(p);
-    } catch (e) {
-      setError(errMessage(e));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const fetchData = useCallback(
+    async (p: number, force = false) => {
+      if (!force && loadedPagesRef.current.has(p)) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await getContributions(p, ROWS_PER_PAGE);
+        setItems(res.items);
+        setMeta(res.meta);
+        loadedPagesRef.current.add(p);
+      } catch (e) {
+        setError(errMessage(e, t("errors.requestFailed"), t("errors.generic")));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [t],
+  );
 
   useEffect(() => {
     void fetchData(page);
@@ -419,12 +422,12 @@ export function ContentLibraryContent() {
       if (i.type?.name) types.add(i.type.name);
     });
     return [
-      { value: "All Types", label: "All Types" },
+      { value: TYPE_FILTER_ALL, label: t("allTypes") },
       ...Array.from(types)
         .sort()
-        .map((t) => ({ value: t, label: t })),
+        .map((ty) => ({ value: ty, label: ty })),
     ];
-  }, [items]);
+  }, [items, t]);
 
   const filtered = useMemo(() => {
     return items.filter((item) => {
@@ -435,11 +438,27 @@ export function ContentLibraryContent() {
         item.title.toLowerCase().includes(search.toLowerCase()) ||
         (item.description ?? "").toLowerCase().includes(search.toLowerCase()) ||
         (item.user?.full_name ?? "").toLowerCase().includes(search.toLowerCase());
-      const matchesType =
-        typeFilter === "All Types" || item.type?.name === typeFilter;
+      const matchesType = typeFilter === TYPE_FILTER_ALL || item.type?.name === typeFilter;
       return matchesTab && matchesSearch && matchesType;
     });
   }, [items, activeTab, search, typeFilter]);
+
+  const tabButtons = useMemo(
+    () =>
+      TAB_IDS.map((id) => ({
+        id,
+        label: (t as (key: string) => string)(`tabs.${id}`),
+      })),
+    [t],
+  );
+
+  const statusLabel = (raw: string) => {
+    const k = raw.trim().toLowerCase();
+    if (["published", "pending", "archived", "rejected", "draft"].includes(k)) {
+      return (t as (key: string) => string)(`statusLabels.${k}`);
+    }
+    return capitalize(raw);
+  };
 
   const totalPages = meta?.totalPages ?? 1;
 
@@ -454,7 +473,7 @@ export function ContentLibraryContent() {
 
       {/* Tabs */}
       <div className="flex flex-col gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1 sm:w-fit sm:flex-row">
-        {TABS.map((tab) => (
+        {tabButtons.map((tab) => (
           <button
             key={tab.id}
             type="button"
@@ -478,7 +497,7 @@ export function ContentLibraryContent() {
           </span>
           <input
             type="text"
-            placeholder="Search contributions..."
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
@@ -493,7 +512,7 @@ export function ContentLibraryContent() {
           <button
             type="button"
             className="flex items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-2.5 text-gray-400 transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground"
-            aria-label="Filter"
+            aria-label={t("filterAria")}
           >
             <FilterIcon />
           </button>
@@ -509,7 +528,7 @@ export function ContentLibraryContent() {
             onClick={() => void fetchData(page, true)}
             className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
           >
-            Try again
+            {t("tryAgain")}
           </button>
         </div>
       )}
@@ -517,13 +536,11 @@ export function ContentLibraryContent() {
       {/* Content */}
       {loading ? (
         <div className="rounded-xl border border-[var(--tott-card-border)] px-5 py-16 text-center text-sm text-gray-500">
-          Loading contributions…
+          {t("loading")}
         </div>
       ) : filtered.length === 0 ? (
         <div className="rounded-xl border border-[var(--tott-card-border)] px-5 py-16 text-center text-sm text-gray-500">
-          {search.trim() || activeTab !== "all"
-            ? "No contributions match your filters."
-            : "No contributions yet."}
+          {search.trim() || activeTab !== "all" ? t("emptyFiltered") : t("emptyNone")}
         </div>
       ) : (
         <>
@@ -534,12 +551,11 @@ export function ContentLibraryContent() {
                 key={item.id}
                 className="overflow-hidden rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] p-4"
               >
-                <ContributionListThumbnail item={item} variant="card" />
                 <div className="mb-2 flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-foreground">{item.title}</p>
                     {item.description && (
-                      <p className="mt-0.5 text-xs text-gray-500 line-clamp-2">
+                      <p className="mt-0.5 whitespace-pre-wrap break-words text-xs text-gray-500">
                         {item.description}
                       </p>
                     )}
@@ -549,7 +565,7 @@ export function ContentLibraryContent() {
                       type="button"
                       onClick={() => setPreviewItem(item)}
                       className="rounded p-1.5 text-gray-500 transition-colors hover:text-foreground"
-                      aria-label={`View ${item.title}`}
+                      aria-label={t("table.viewItemAria", { title: item.title })}
                     >
                       <EyeIcon />
                     </button>
@@ -563,47 +579,48 @@ export function ContentLibraryContent() {
                     className="font-medium"
                     style={{ color: statusColor(item.status) }}
                   >
-                    {capitalize(item.status)}
+                    {statusLabel(item.status)}
                   </span>
                   {(item.files ?? []).length > 0 && (
-                    <span>
-                      {(item.files ?? []).length} file{(item.files ?? []).length > 1 ? "s" : ""}
-                    </span>
+                    <span>{t("table.fileCount", { count: (item.files ?? []).length })}</span>
                   )}
-                  <span>{formatDate(item.submission_date)}</span>
+                  <span>{formatDate(item.submission_date, locale)}</span>
                 </div>
+                {item.collections.length > 0 && (
+                  <p className="mt-2 text-xs text-gray-500">
+                    <span className="font-semibold text-gray-400">{t("table.collection")}: </span>
+                    {item.collections.map((c) => c.name).join(", ")}
+                  </p>
+                )}
               </div>
             ))}
           </div>
 
-          {/* Table layout — large screens */}
-          <div className="hidden overflow-hidden rounded-xl border border-[var(--tott-card-border)] lg:block">
-            <table className="w-full border-collapse text-left text-sm">
+          {/* Table layout — large screens (horizontal scroll keeps all columns + full text visible) */}
+          <div className="hidden overflow-x-auto rounded-xl border border-[var(--tott-card-border)] lg:block">
+            <table className="w-full min-w-[56rem] border-collapse text-start text-sm">
               <thead>
                 <tr className="border-b border-[var(--tott-card-border)]">
-                  <th className="w-14 px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    Preview
-                  </th>
-                  <th className="px-3 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    Title
+                  <th className="min-w-[12rem] px-3 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
+                    {t("table.title")}
                   </th>
                   <th className="whitespace-nowrap px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    Type
+                    {t("table.type")}
+                  </th>
+                  <th className="min-w-[8rem] px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
+                    {t("table.contributor")}
                   </th>
                   <th className="whitespace-nowrap px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    Contributor
+                    {t("table.status")}
                   </th>
                   <th className="whitespace-nowrap px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    Status
+                    {t("table.files")}
                   </th>
-                  <th className="whitespace-nowrap px-2 py-3 text-xs font-semibold xl:table-cell" style={{ color: theme.accentGoldFocus }}>
-                    Files
-                  </th>
-                  <th className="whitespace-nowrap px-2 py-3 text-xs font-semibold xl:table-cell" style={{ color: theme.accentGoldFocus }}>
-                    Collection
+                  <th className="min-w-[10rem] px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
+                    {t("table.collection")}
                   </th>
                   <th className="whitespace-nowrap px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    Submitted
+                    {t("table.submitted")}
                   </th>
                   <th className="w-16 px-2 py-3" aria-hidden />
                 </tr>
@@ -614,55 +631,48 @@ export function ContentLibraryContent() {
                     key={item.id}
                     className="border-b border-[var(--tott-card-border)] transition-colors last:border-b-0"
                   >
-                    <td className="px-2 py-3 align-middle">
-                      <div className="flex justify-center">
-                        <ContributionListThumbnail item={item} />
-                      </div>
-                    </td>
-                    <td className="px-3 py-3">
-                      <span className="block truncate font-medium text-foreground">
+                    <td className="align-top px-3 py-3">
+                      <span className="block break-words font-medium text-foreground">
                         {item.title}
                       </span>
                       {item.description && (
-                        <span className="block truncate text-xs text-gray-500">
+                        <span className="mt-1 block whitespace-pre-wrap break-words text-xs text-gray-500">
                           {item.description}
                         </span>
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-2 py-3 text-gray-400">
+                    <td className="align-top whitespace-nowrap px-2 py-3 text-gray-400">
                       {item.type?.name ?? "—"}
                     </td>
-                    <td className="whitespace-nowrap px-2 py-3 text-gray-400">
+                    <td className="align-top break-words px-2 py-3 text-gray-400">
                       {item.user?.full_name ?? item.contributor_name ?? "—"}
                     </td>
-                    <td className="whitespace-nowrap px-2 py-3">
+                    <td className="align-top whitespace-nowrap px-2 py-3">
                       <span
                         className="text-xs font-medium"
                         style={{ color: statusColor(item.status) }}
                       >
-                        {capitalize(item.status)}
+                        {statusLabel(item.status)}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-2 py-3 text-gray-400 xl:table-cell">
-                      {(item.files ?? []).length > 0
-                        ? `${(item.files ?? []).length} file${(item.files ?? []).length > 1 ? "s" : ""}`
-                        : "—"}
+                    <td className="align-top whitespace-nowrap px-2 py-3 text-gray-400">
+                      {(item.files ?? []).length > 0 ? t("table.fileCount", { count: (item.files ?? []).length }) : "—"}
                     </td>
-                    <td className="whitespace-nowrap px-2 py-3 text-gray-400 xl:table-cell">
+                    <td className="align-top break-words px-2 py-3 text-gray-400">
                       {item.collections.length > 0
                         ? item.collections.map((c) => c.name).join(", ")
                         : "—"}
                     </td>
-                    <td className="whitespace-nowrap px-2 py-3 text-gray-400">
-                      {formatDate(item.submission_date)}
+                    <td className="align-top whitespace-nowrap px-2 py-3 text-gray-400">
+                      {formatDate(item.submission_date, locale)}
                     </td>
-                    <td className="whitespace-nowrap px-2 py-3">
+                    <td className="align-top whitespace-nowrap px-2 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <button
                           type="button"
                           onClick={() => setPreviewItem(item)}
                           className="rounded p-1.5 text-gray-500 transition-colors hover:text-foreground"
-                          aria-label={`View ${item.title}`}
+                          aria-label={t("table.viewItemAria", { title: item.title })}
                         >
                           <EyeIcon />
                         </button>
@@ -681,7 +691,7 @@ export function ContentLibraryContent() {
       {!loading && meta && meta.total > 0 && (
         <div className="flex flex-col items-center gap-3 text-sm sm:flex-row sm:justify-between">
           <span className="text-gray-500">
-            Page {page} of {totalPages} &middot; {meta.total} contribution{meta.total !== 1 ? "s" : ""}
+            {t("pagination.summary", { page, totalPages, total: meta.total })}
           </span>
           <div className="flex gap-2">
             <button
@@ -690,7 +700,7 @@ export function ContentLibraryContent() {
               onClick={() => setPage((p) => p - 1)}
               className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-gray-400 transition-colors hover:text-foreground disabled:opacity-40"
             >
-              Previous
+              {t("pagination.previous")}
             </button>
             <button
               type="button"
@@ -698,7 +708,7 @@ export function ContentLibraryContent() {
               onClick={() => setPage((p) => p + 1)}
               className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-gray-400 transition-colors hover:text-foreground disabled:opacity-40"
             >
-              Next
+              {t("pagination.next")}
             </button>
           </div>
         </div>

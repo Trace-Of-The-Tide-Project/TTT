@@ -2,7 +2,8 @@ import type { ComponentType } from "react";
 
 export type SidebarItemConfig = {
   kind: "item";
-  label: string;
+  /** Key under `Dashboard` messages, e.g. `sidebar.allArticles`. */
+  labelKey: string;
   href: string;
   icon: ComponentType;
   badge?: string | number;
@@ -10,7 +11,10 @@ export type SidebarItemConfig = {
 
 export type SidebarGroupConfig = {
   kind: "group";
-  label: string;
+  /** Stable id for open/close state (not translated). */
+  groupId: string;
+  /** Key under `Dashboard` messages, e.g. `sidebar.articles`. */
+  labelKey: string;
   icon: ComponentType;
   defaultOpen?: boolean;
   items: SidebarItemConfig[];

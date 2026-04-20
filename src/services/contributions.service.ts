@@ -1,3 +1,4 @@
+import { getArticleApiBaseUrl, resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { api } from "@/services/api";
 import { getStoredToken } from "@/services/auth.service";
 
@@ -16,6 +17,8 @@ export type ContributionFile = {
   mime_type: string;
   file_size: number;
   path: string;
+  /** When the API returns a signed/public URL, prefer it for previews over `path`. */
+  url?: string | null;
   upload_date: string;
   createdAt: string;
   updatedAt: string;
@@ -150,26 +153,45 @@ export async function createContribution(formData: FormData): Promise<CreatedCon
 }
 
 /**
- * Append a `files` multipart part whose **filename** is the storage path or URL from POST /upload
- * (body is a minimal placeholder so the part is valid).
+ * Append a `files` multipart part: **full file bytes** (same as POST /upload) and the part
+ * **filename** set to the storage key from that upload (e.g. `images/….png`). A 1-byte placeholder
+ * produced invalid stored images (`file_size: 1`) and broken previews.
  */
-export function appendContributionFileByUrl(formData: FormData, storagePathOrUrl: string, mimeType: string): void {
-  const name = storagePathOrUrl.trim();
-  const type = mimeType.trim() || "application/octet-stream";
-  const placeholder = new File([new Uint8Array([32])], name, { type });
-  formData.append("files", placeholder);
+export function appendContributionFile(
+  formData: FormData,
+  storageKey: string,
+  mimeType: string,
+  file: File,
+): void {
+  const name = storageKey.trim();
+  if (!name) return;
+  const type = (mimeType.trim() || file.type || "application/octet-stream").trim();
+  const body =
+    file.type === type ? file : new File([file], file.name, { type, lastModified: file.lastModified });
+  formData.append("files", body, name);
 }
 
-const DEFAULT_API_BASE = "https://backend-phd7.onrender.com";
-
-/** Absolute URL to load a contribution file by storage `path` or full URL. */
+/**
+ * Absolute URL for a contribution file `path` (same rules as article body / hero media:
+ * {@link resolveArticleMediaSrc}).
+ */
 export function contributionFilePublicUrl(path: string | null | undefined): string {
   const raw = (path ?? "").trim();
   if (!raw) return "";
+  return resolveArticleMediaSrc(raw);
+}
+
+/**
+ * URL on the API origin for a relative storage key (e.g. `images/…`). Many backends proxy or
+ * authorize reads here while the bucket stays private.
+ */
+export function contributionFileApiUrl(path: string | null | undefined): string {
+  const raw = (path ?? "").trim();
+  if (!raw) return "";
   if (/^https?:\/\//i.test(raw)) return raw;
-  const base = (process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_API_BASE).replace(/\/+$/, "");
   const rel = raw.replace(/^\/+/, "");
-  return `${base}/${rel}`;
+  const base = getArticleApiBaseUrl();
+  return `${base}/${rel.split("/").map(encodeURIComponent).join("/")}`;
 }
 
 const IMAGE_EXT = /\.(jpe?g|png|gif|webp|avif|bmp|svg)(\?.*)?$/i;

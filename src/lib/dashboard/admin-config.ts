@@ -27,25 +27,26 @@ export const adminConfig: DashboardConfig = {
       items: [
         {
           kind: "item",
-          label: "Main Dashboard",
+          labelKey: "sidebar.mainDashboard",
           href: "/admin",
           icon: LayoutDashboardIcon,
         },
         {
           kind: "group",
-          label: "Articles",
+          groupId: "articles",
+          labelKey: "sidebar.articles",
           icon: FileTextIcon,
           defaultOpen: true,
           items: [
             {
               kind: "item",
-              label: "All Articles",
+              labelKey: "sidebar.allArticles",
               href: "/admin/articles",
               icon: FileTextIcon,
             },
             {
               kind: "item",
-              label: "Create Articles",
+              labelKey: "sidebar.createArticles",
               href: "/admin/articles/create",
               icon: PenLineIcon,
             },
@@ -53,19 +54,20 @@ export const adminConfig: DashboardConfig = {
         },
         {
           kind: "group",
-          label: "Contributions",
+          groupId: "contributions",
+          labelKey: "sidebar.contributions",
           icon: HeartHandshakeIcon,
           defaultOpen: true,
           items: [
             {
               kind: "item",
-              label: "Supporters",
+              labelKey: "sidebar.supporters",
               href: "/admin/supporters",
               icon: UsersIcon,
             },
             {
               kind: "item",
-              label: "Analytics",
+              labelKey: "sidebar.contributionsAnalytics",
               href: "/admin/contributions-analytics",
               icon: BarChartIcon,
             },
@@ -73,20 +75,21 @@ export const adminConfig: DashboardConfig = {
         },
         {
           kind: "group",
-          label: "Management",
+          groupId: "management",
+          labelKey: "sidebar.management",
           icon: UsersIcon,
           defaultOpen: true,
           items: [
             {
               kind: "item",
-              label: "Users",
+              labelKey: "sidebar.users",
               href: "/admin/users",
               icon: UsersIcon,
               badge: "12.4k",
             },
             {
               kind: "item",
-              label: "Roles & Permissions",
+              labelKey: "sidebar.rolesPermissions",
               href: "/admin/roles",
               icon: ShieldIcon,
             },
@@ -94,19 +97,20 @@ export const adminConfig: DashboardConfig = {
         },
         {
           kind: "group",
-          label: "CONTENT",
+          groupId: "content",
+          labelKey: "sidebar.content",
           icon: FolderIcon,
           defaultOpen: true,
           items: [
             {
               kind: "item",
-              label: "Content Library",
+              labelKey: "sidebar.contentLibrary",
               href: "/admin/content",
               icon: FolderIcon,
             },
             {
               kind: "item",
-              label: "Visual Editor (CMS)",
+              labelKey: "sidebar.visualEditor",
               href: "/admin/editor",
               icon: CodeIcon,
             },
@@ -114,19 +118,20 @@ export const adminConfig: DashboardConfig = {
         },
         {
           kind: "group",
-          label: "Community",
+          groupId: "community",
+          labelKey: "sidebar.community",
           icon: HeartHandshakeIcon,
           defaultOpen: true,
           items: [
             {
               kind: "item",
-              label: "Engagements",
+              labelKey: "sidebar.engagements",
               href: "/admin/engagements",
               icon: HeartHandshakeIcon,
             },
             {
               kind: "item",
-              label: "Messaging",
+              labelKey: "sidebar.messaging",
               href: "/admin/messaging",
               icon: MessageSquareIcon,
             },
@@ -134,19 +139,20 @@ export const adminConfig: DashboardConfig = {
         },
         {
           kind: "group",
-          label: "Business",
+          groupId: "business",
+          labelKey: "sidebar.business",
           icon: DollarSignIcon,
           defaultOpen: true,
           items: [
             {
               kind: "item",
-              label: "Finance & Payout",
+              labelKey: "sidebar.financePayout",
               href: "/admin/finance",
               icon: DollarSignIcon,
             },
             {
               kind: "item",
-              label: "Analytics",
+              labelKey: "sidebar.businessAnalytics",
               href: "/admin/analytics",
               icon: BarChartIcon,
             },
@@ -154,26 +160,27 @@ export const adminConfig: DashboardConfig = {
         },
         {
           kind: "group",
-          label: "SYSTEM Settings",
+          groupId: "system",
+          labelKey: "sidebar.systemSettings",
           icon: SettingsIcon,
           defaultOpen: true,
           items: [
             {
               kind: "item",
-              label: "Reports & Moderations",
+              labelKey: "sidebar.reportsModeration",
               href: "/admin/reports",
               icon: AlertTriangleIcon,
               badge: 8,
             },
             {
               kind: "item",
-              label: "Security & Auth",
+              labelKey: "sidebar.securityAuth",
               href: "/admin/security",
               icon: LockIcon,
             },
             {
               kind: "item",
-              label: "System Settings",
+              labelKey: "sidebar.systemSettingsPage",
               href: "/admin/settings",
               icon: SettingsIcon,
             },
@@ -181,43 +188,44 @@ export const adminConfig: DashboardConfig = {
         },
         {
           kind: "group",
-          label: "Admin Settings",
+          groupId: "adminSettings",
+          labelKey: "sidebar.adminSettings",
           icon: SettingsIcon,
           defaultOpen: true,
           items: [
             {
               kind: "item",
-              label: "Profile",
+              labelKey: "sidebar.profile",
               href: "/admin/profile",
               icon: PersonIcon,
             },
             {
               kind: "item",
-              label: "Availability",
+              labelKey: "sidebar.availability",
               href: "/admin/availability",
               icon: EyeIcon,
             },
             {
               kind: "item",
-              label: "Notifications",
+              labelKey: "sidebar.notifications",
               href: "/admin/notifications",
               icon: BellIcon,
             },
             {
               kind: "item",
-              label: "Privacy",
+              labelKey: "sidebar.privacy",
               href: "/admin/privacy",
               icon: ShieldIcon,
             },
             {
               kind: "item",
-              label: "Password",
+              labelKey: "sidebar.password",
               href: "/admin/password",
               icon: LockIcon,
             },
             {
               kind: "item",
-              label: "Account",
+              labelKey: "sidebar.account",
               href: "/admin/account",
               icon: UserCheckIcon,
             },

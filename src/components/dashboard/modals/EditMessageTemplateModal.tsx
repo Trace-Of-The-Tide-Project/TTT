@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ChevronDownIcon, XIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
 import type { MessageTemplate, MessageTemplateCategory } from "@/components/dashboard/modals/CreateMessageTemplateModal";
@@ -12,15 +13,16 @@ type EditMessageTemplateModalProps = {
   onSave: (template: MessageTemplate) => void;
 };
 
-const CATEGORY_OPTIONS: Array<{ value: MessageTemplateCategory; label: string }> = [
-  { value: "onboarding", label: "onboarding" },
-  { value: "payment", label: "payment" },
-  { value: "moderation", label: "moderation" },
-  { value: "broadcast", label: "broadcast" },
-  { value: "support", label: "support" },
+const TEMPLATE_CATEGORY_VALUES: MessageTemplateCategory[] = [
+  "onboarding",
+  "payment",
+  "moderation",
+  "broadcast",
+  "support",
 ];
 
 export function EditMessageTemplateModal({ open, template, onClose, onSave }: EditMessageTemplateModalProps) {
+  const te = useTranslations("Dashboard.messagingEditTemplateModal");
   const [name, setName] = useState("");
   const [category, setCategory] = useState<MessageTemplateCategory>("onboarding");
   const [categoryOpen, setCategoryOpen] = useState(false);
@@ -93,20 +95,20 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
         type="button"
         className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
         onClick={onClose}
-        aria-label="Close modal"
+        aria-label={te("closeModalAria")}
       />
 
       <div className="relative mx-4 w-full max-w-lg rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6">
         <div className="mb-5 flex items-start justify-between border-b border-[var(--tott-card-border)] pb-5">
           <div>
-            <h2 className="text-lg font-bold text-foreground">Edit Template</h2>
-            <p className="mt-1 text-sm text-gray-500">Update this message template</p>
+            <h2 className="text-lg font-bold text-foreground">{te("title")}</h2>
+            <p className="mt-1 text-sm text-gray-500">{te("subtitle")}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
-            aria-label="Close"
+            aria-label={te("closeAria")}
           >
             <XIcon />
           </button>
@@ -128,16 +130,17 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
           }}
         >
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">Template Name</label>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">{te("nameLabel")}</label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
+              placeholder={te("namePlaceholder")}
               className="h-[44px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">Category</label>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">{te("categoryLabel")}</label>
             <div className="relative">
               <button
                 ref={categoryButtonRef}
@@ -147,7 +150,7 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
                 aria-haspopup="listbox"
                 aria-expanded={categoryOpen}
               >
-                <span className="capitalize text-gray-200">{category}</span>
+                <span className="text-gray-200">{(te as (key: string) => string)(`categories.${category}`)}</span>
                 <span className="text-gray-500">
                   <ChevronDownIcon />
                 </span>
@@ -159,17 +162,17 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
                   role="listbox"
                   className="absolute left-0 right-0 top-full z-10 mt-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-2 shadow-xl"
                 >
-                  {CATEGORY_OPTIONS.map((opt) => (
+                  {TEMPLATE_CATEGORY_VALUES.map((opt) => (
                     <button
-                      key={opt.value}
+                      key={opt}
                       type="button"
                       onClick={() => {
-                        setCategory(opt.value);
+                        setCategory(opt);
                         setCategoryOpen(false);
                       }}
-                      className="w-full rounded-md px-3 py-2 text-left text-sm text-foreground hover:bg-[var(--tott-dash-ghost-hover)]"
+                      className="w-full rounded-md px-3 py-2 text-start text-sm text-foreground hover:bg-[var(--tott-dash-ghost-hover)]"
                     >
-                      {opt.label.charAt(0).toUpperCase() + opt.label.slice(1)}
+                      {(te as (key: string) => string)(`categories.${opt}`)}
                     </button>
                   ))}
                 </div>
@@ -178,25 +181,27 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">Subject Line</label>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">{te("subjectLabel")}</label>
             <input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
+              placeholder={te("subjectPlaceholder")}
               className="h-[44px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">Message Body</label>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">{te("bodyLabel")}</label>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
+              placeholder={te("bodyPlaceholder")}
               rows={5}
               className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-3 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
             />
             <p className="mt-2 text-xs text-gray-500">
-              Available variables:{" "}
-              <span className="text-gray-400">{"{{name}}, {{email}}, {{role}}, {{date}}"}</span>
+              {te("variablesHint")}{" "}
+              <span className="text-gray-400">{te("variablesList")}</span>
             </p>
           </div>
 
@@ -206,7 +211,7 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
               onClick={onClose}
               className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-foreground"
             >
-              Cancel
+              {te("cancel")}
             </button>
             <button
               type="submit"
@@ -214,7 +219,7 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
               className="rounded-lg px-6 py-2 text-sm font-medium text-black transition-colors disabled:opacity-50"
               style={{ backgroundColor: theme.accentGoldFocus }}
             >
-              Save Changes
+              {te("submit")}
             </button>
           </div>
         </form>

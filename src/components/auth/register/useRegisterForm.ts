@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import axios from "axios";
 import { clearStoredAuth, signup } from "@/services/auth.service";
 import type { SignupRequest } from "@/types/auth.types";
@@ -9,6 +10,7 @@ import type { SignupRequest } from "@/types/auth.types";
 type RegisterSubmitEvent = React.FormEvent<HTMLFormElement>;
 
 export function useRegisterForm() {
+  const t = useTranslations("Auth.forms.register");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,15 +30,15 @@ export function useRegisterForm() {
     };
 
     if (!agreedToTerms) {
-      setError("Please agree to the terms and privacy policy.");
+      setError(t("errorTerms"));
       return;
     }
     if (data.password.length < 8) {
-      setError("Password must be at least 8 characters.");
+      setError(t("errorPasswordLength"));
       return;
     }
     if (!data.username || !data.email || !data.full_name) {
-      setError("Please fill in all required fields.");
+      setError(t("errorRequired"));
       return;
     }
 
@@ -68,7 +70,8 @@ export function useRegisterForm() {
       if (!msg && (axios.isAxiosError(err) || errWithResponse.message)) {
         msg = (err as Error).message;
       }
-      setError(msg ?? `Registration failed (${errWithResponse.response?.status ?? "network error"}).`);
+      const reason = String(errWithResponse.response?.status ?? t("networkReason"));
+      setError(msg ?? t("errorFailed", { reason }));
     } finally {
       setLoading(false);
     }

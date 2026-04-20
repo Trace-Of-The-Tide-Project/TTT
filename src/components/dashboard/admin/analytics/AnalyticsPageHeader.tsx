@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
 import { theme } from "@/lib/theme";
 import {
@@ -12,11 +13,12 @@ import {
 } from "@/components/ui/icons";
 
 export function AnalyticsPageHeader() {
+  const t = useTranslations("Dashboard.headers.analytics");
   return (
     <div className="px-6 py-6 sm:px-8 sm:py-8">
       <DashboardHeader
-        title="Analytics"
-        subtitle="Platform performance and growth metrics"
+        title={t("title")}
+        subtitle={t("subtitle")}
         compactPadding
         actions={
           <>
@@ -27,8 +29,8 @@ export function AnalyticsPageHeader() {
               <span className="[&_svg]:h-4 [&_svg]:w-4 text-gray-400">
                 <CalendarIcon />
               </span>
-              Last 30 days
-              <span className="ml-1 text-gray-500">▾</span>
+              {t("last30Days")}
+              <span className="ms-1 text-gray-500">▾</span>
             </button>
 
             <button
@@ -39,7 +41,7 @@ export function AnalyticsPageHeader() {
               <span className="[&_svg]:h-4 [&_svg]:w-4">
                 <DownloadIcon />
               </span>
-              Export Reports
+              {t("exportReports")}
             </button>
           </>
         }
@@ -51,7 +53,7 @@ export function AnalyticsPageHeader() {
             <EyeIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">2.4M</span>
-          <span className="text-xs text-gray-500">Total Page views...</span>
+          <span className="text-xs text-gray-500">{t("cards.pageViews")}</span>
           <span className="text-xs text-emerald-400">↗ 18%</span>
         </div>
 
@@ -60,7 +62,7 @@ export function AnalyticsPageHeader() {
             <UserCheckIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">68%</span>
-          <span className="text-xs text-gray-500">User Retention</span>
+          <span className="text-xs text-gray-500">{t("cards.userRetention")}</span>
           <span className="text-xs text-emerald-400">↗ 5%</span>
         </div>
 
@@ -69,7 +71,7 @@ export function AnalyticsPageHeader() {
             <ClockIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">8m 42s</span>
-          <span className="text-xs text-gray-500">Avg. Session</span>
+          <span className="text-xs text-gray-500">{t("cards.avgSession")}</span>
           <span className="text-xs text-emerald-400">↗ 12%</span>
         </div>
 
@@ -78,11 +80,10 @@ export function AnalyticsPageHeader() {
             <TrendingUpIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">32%</span>
-          <span className="text-xs text-gray-500">Bounce Rate</span>
+          <span className="text-xs text-gray-500">{t("cards.bounceRate")}</span>
           <span className="text-xs text-red-400">↘ 3%</span>
         </div>
       </div>
     </div>
   );
 }
-

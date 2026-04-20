@@ -22,25 +22,26 @@ export const userConfig: DashboardConfig = {
       items: [
         {
           kind: "item",
-          label: "Main Dashboard",
+          labelKey: "sidebar.mainDashboard",
           href: "/profile",
           icon: LayoutDashboardIcon,
         },
         {
           kind: "group",
-          label: "Articles",
+          groupId: "articles",
+          labelKey: "sidebar.articles",
           icon: FileTextIcon,
           defaultOpen: true,
           items: [
             {
               kind: "item",
-              label: "All Articles",
+              labelKey: "sidebar.allArticles",
               href: "/profile/articles",
               icon: FileTextIcon,
             },
             {
               kind: "item",
-              label: "Create Articles",
+              labelKey: "sidebar.createArticles",
               href: "/profile/articles/create",
               icon: PenLineIcon,
             },
@@ -48,19 +49,20 @@ export const userConfig: DashboardConfig = {
         },
         {
           kind: "group",
-          label: "Contributions",
+          groupId: "contributions",
+          labelKey: "sidebar.contributions",
           icon: HeartHandshakeIcon,
           defaultOpen: true,
           items: [
             {
               kind: "item",
-              label: "Supporters",
+              labelKey: "sidebar.supporters",
               href: "/profile/supporters",
               icon: UsersIcon,
             },
             {
               kind: "item",
-              label: "Analytics",
+              labelKey: "sidebar.profileAnalytics",
               href: "/profile/analytics",
               icon: BarChartIcon,
             },
@@ -72,43 +74,44 @@ export const userConfig: DashboardConfig = {
       items: [
         {
           kind: "group",
-          label: "Settings",
+          groupId: "settings",
+          labelKey: "sidebar.settingsGroup",
           icon: SettingsIcon,
           defaultOpen: true,
           items: [
             {
               kind: "item",
-              label: "Profile",
+              labelKey: "sidebar.profile",
               href: "/profile/settings",
               icon: PersonIcon,
             },
             {
               kind: "item",
-              label: "Availability",
+              labelKey: "sidebar.availability",
               href: "/profile/settings/availability",
               icon: EyeIcon,
             },
             {
               kind: "item",
-              label: "Notifications",
+              labelKey: "sidebar.notifications",
               href: "/profile/settings/notifications",
               icon: BellIcon,
             },
             {
               kind: "item",
-              label: "Privacy",
+              labelKey: "sidebar.privacy",
               href: "/profile/settings/privacy",
               icon: ShieldIcon,
             },
             {
               kind: "item",
-              label: "Password",
+              labelKey: "sidebar.password",
               href: "/profile/settings/password",
               icon: LockIcon,
             },
             {
               kind: "item",
-              label: "Account",
+              labelKey: "sidebar.account",
               href: "/profile/settings/account",
               icon: UserCheckIcon,
             },

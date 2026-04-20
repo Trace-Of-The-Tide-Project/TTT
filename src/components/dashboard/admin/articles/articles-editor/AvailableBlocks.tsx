@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import {
   FileTextIcon,
   QuoteIcon,
@@ -19,15 +20,15 @@ export type BlockType =
   | "author-note"
   | "divider";
 
-const BLOCKS: { id: BlockType; label: string; icon: React.ReactNode }[] = [
-  { id: "paragraph", label: "Paragraph", icon: <FileTextIcon /> },
-  { id: "heading", label: "Title", icon: <HeadingIcon /> },
-  { id: "quote", label: "Quote", icon: <QuoteIcon /> },
-  { id: "image", label: "Image", icon: <ImageIcon /> },
-  { id: "gallery", label: "Gallery", icon: <GalleryIcon /> },
-  { id: "callout", label: "Callout", icon: <StarIcon /> },
-  { id: "author-note", label: "Author note", icon: <FileTextIcon /> },
-  { id: "divider", label: "Divider", icon: <MoreDotsIcon /> },
+const BLOCKS: { id: BlockType; icon: React.ReactNode }[] = [
+  { id: "paragraph", icon: <FileTextIcon /> },
+  { id: "heading", icon: <HeadingIcon /> },
+  { id: "quote", icon: <QuoteIcon /> },
+  { id: "image", icon: <ImageIcon /> },
+  { id: "gallery", icon: <GalleryIcon /> },
+  { id: "callout", icon: <StarIcon /> },
+  { id: "author-note", icon: <FileTextIcon /> },
+  { id: "divider", icon: <MoreDotsIcon /> },
 ];
 
 type AvailableBlocksProps = {
@@ -43,6 +44,7 @@ export function AvailableBlocks({
   allowedBlockTypes,
   imageBlockLabel,
 }: AvailableBlocksProps) {
+  const t = useTranslations("Dashboard.articles.editor.availableBlocks");
   const blocksToShow =
     allowedBlockTypes && allowedBlockTypes.length
       ? BLOCKS.filter((b) => allowedBlockTypes.includes(b.id))
@@ -50,7 +52,7 @@ export function AvailableBlocks({
 
   return (
     <div className="shrink-0 rounded-lg border border-[var(--tott-card-border)] p-4">
-      <h3 className="mb-4 text-base font-bold text-foreground">Available Blocks</h3>
+      <h3 className="mb-4 text-base font-bold text-foreground">{t("title")}</h3>
       <div className="flex flex-col gap-2">
         {blocksToShow.map((block) => (
           <button
@@ -66,7 +68,7 @@ export function AvailableBlocks({
               <span className="text-sm font-medium text-gray-400">
                 {block.id === "image" && imageBlockLabel?.trim()
                   ? imageBlockLabel.trim()
-                  : block.label}
+                  : t(`palette.${block.id}`)}
               </span>
             </div>
             <span className="shrink-0 text-gray-400">+</span>

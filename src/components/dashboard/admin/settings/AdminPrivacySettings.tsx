@@ -1,17 +1,16 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import { SettingsRow, settingsCardClass, SettingsToggle } from "./SettingsPrimitives";
 
-const VISIBILITY_OPTIONS = [
-  { value: "public", label: "Public" },
-  { value: "followers", label: "Followers only" },
-  { value: "private", label: "Private" },
-] as const;
+const VISIBILITY_VALUES = ["public", "followers", "private"] as const;
 
 export function AdminPrivacySettings() {
-  const [profileVisibility, setProfileVisibility] = useState<(typeof VISIBILITY_OPTIONS)[number]["value"]>("public");
+  const t = useTranslations("Dashboard.adminPrivacy");
+  const [profileVisibility, setProfileVisibility] =
+    useState<(typeof VISIBILITY_VALUES)[number]>("public");
   const [showEmail, setShowEmail] = useState(true);
   const [showActivity, setShowActivity] = useState(false);
   const [allowFollows, setAllowFollows] = useState(true);
@@ -28,23 +27,23 @@ export function AdminPrivacySettings() {
   return (
     <div className="mx-auto max-w-3xl">
       <div className={settingsCardClass} style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.04) inset" }}>
-        <h1 className="text-lg font-bold text-foreground">Privacy Settings</h1>
+        <h1 className="text-lg font-bold text-foreground">{t("pageTitle")}</h1>
 
         <div className="mt-6">
           <SettingsRow
-            title="Profile Visibility"
-            description="Control who can see your profile"
+            title={t("profileVisibility")}
+            description={t("profileVisibilityDescription")}
             control={
               <div className="relative">
                 <select
                   value={profileVisibility}
                   onChange={(e) => setProfileVisibility(e.target.value as typeof profileVisibility)}
                   className={selectClass}
-                  aria-label="Profile visibility"
+                  aria-label={t("profileVisibilityAria")}
                 >
-                  {VISIBILITY_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
+                  {VISIBILITY_VALUES.map((value) => (
+                    <option key={value} value={value}>
+                      {t(`visibility.${value}`)}
                     </option>
                   ))}
                 </select>
@@ -55,23 +54,25 @@ export function AdminPrivacySettings() {
             }
           />
           <SettingsRow
-            title="Show Email"
-            description="Display your email on your profile"
+            title={t("showEmail")}
+            description={t("showEmailDescription")}
             control={
-              <SettingsToggle checked={showEmail} onChange={setShowEmail} aria-label="Show email on profile" />
+              <SettingsToggle checked={showEmail} onChange={setShowEmail} aria-label={t("showEmailAria")} />
             }
           />
           <SettingsRow
-            title="Show Activity"
-            description="Show your recent activity on your profile"
+            title={t("showActivity")}
+            description={t("showActivityDescription")}
             control={
-              <SettingsToggle checked={showActivity} onChange={setShowActivity} aria-label="Show activity" />
+              <SettingsToggle checked={showActivity} onChange={setShowActivity} aria-label={t("showActivityAria")} />
             }
           />
           <SettingsRow
-            title="Allow Follows"
-            description="Allow other users to follow you"
-            control={<SettingsToggle checked={allowFollows} onChange={setAllowFollows} aria-label="Allow follows" />}
+            title={t("allowFollows")}
+            description={t("allowFollowsDescription")}
+            control={
+              <SettingsToggle checked={allowFollows} onChange={setAllowFollows} aria-label={t("allowFollowsAria")} />
+            }
             showDivider={false}
           />
         </div>
@@ -83,7 +84,7 @@ export function AdminPrivacySettings() {
             className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
             style={{ backgroundColor: theme.accentGold }}
           >
-            {savedFlash ? "Saved" : "Save changes"}
+            {savedFlash ? t("saved") : t("saveChanges")}
           </button>
         </div>
       </div>

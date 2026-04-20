@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import type { SidebarGroupConfig } from "@/lib/dashboard/types";
 import { SidebarItem } from "./SidebarItem";
@@ -11,13 +12,15 @@ type SidebarGroupProps = SidebarGroupConfig & {
 };
 
 export function SidebarGroup({
-  label,
+  labelKey,
   icon: Icon,
   items,
   isOpen,
   onToggle,
   onItemClick,
 }: SidebarGroupProps) {
+  const t = useTranslations("Dashboard");
+  const label = (t as (key: string) => string)(labelKey);
   const { isDark } = useTheme();
   const groupBtn = isDark
     ? "flex w-full items-center gap-3 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-2.5 text-sm text-gray-400 transition-colors hover:bg-[#222] hover:text-foreground"
@@ -29,7 +32,7 @@ export function SidebarGroup({
         <span className="shrink-0">
           <Icon />
         </span>
-        <span className="flex-1 truncate text-left">{label}</span>
+        <span className="flex-1 truncate text-start">{label}</span>
         <svg
           width="14"
           height="14"

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
 import { EmailIcon } from "@/components/ui/icons";
 import { AuthInput } from "@/components/ui/AuthInput";
 import { theme } from "@/lib/theme";
@@ -11,6 +12,7 @@ import { resendVerificationEmail, verifyEmail } from "@/services/auth.service";
 type Status = "loading" | "success" | "error" | "missing";
 
 export function VerifyEmailClient() {
+  const t = useTranslations("Auth.forms.verifyEmail");
   const router = useRouter();
   const searchParams = useSearchParams();
   const ran = useRef(false);
@@ -32,7 +34,7 @@ export function VerifyEmailClient() {
     const token = searchParams.get("token");
     if (!token) {
       setStatus("missing");
-      setMessage("This verification link is missing a token. Use the link from your email.");
+      setMessage(t("missingToken"));
       return;
     }
     if (ran.current) return;
@@ -42,20 +44,16 @@ export function VerifyEmailClient() {
       try {
         const result = await verifyEmail(token);
         setStatus("success");
-        setMessage(
-          result.loggedIn
-            ? "Your email is verified. Starting your journey…"
-            : "Your email is verified. Sign in to open your profile."
-        );
+        setMessage(result.loggedIn ? t("successLoggedIn") : t("successSignIn"));
         const dest = result.loggedIn ? "/profile" : "/auth/login";
         router.replace(dest);
         router.refresh();
       } catch (err) {
         setStatus("error");
-        setMessage(err instanceof Error ? err.message : "Verification failed.");
+        setMessage(err instanceof Error ? err.message : t("verifyError"));
       }
     })();
-  }, [router, searchParams]);
+  }, [router, searchParams, t]);
 
   async function handleResendVerification() {
     setResendFeedback(null);
@@ -64,12 +62,12 @@ export function VerifyEmailClient() {
       await resendVerificationEmail(resendEmail);
       setResendFeedback({
         tone: "success",
-        text: "Check your inbox for a new verification link.",
+        text: t("resendSuccess"),
       });
     } catch (err) {
       setResendFeedback({
         tone: "error",
-        text: err instanceof Error ? err.message : "Could not resend the email.",
+        text: err instanceof Error ? err.message : t("resendError"),
       });
     } finally {
       setResendBusy(false);
@@ -77,37 +75,37 @@ export function VerifyEmailClient() {
   }
 
   return (
-    <div className="w-full max-w-md flex flex-col items-center text-center">
+    <div className="flex w-full max-w-md flex-col items-center text-center">
       {status === "loading" && (
         <>
           <div
-            className="h-12 w-12 rounded-full border-2 border-t-transparent animate-spin mb-6"
+            className="mb-6 h-12 w-12 animate-spin rounded-full border-2 border-t-transparent"
             style={{ borderColor: `${theme.accentGold} transparent transparent transparent` }}
             aria-hidden
           />
-          <h1 className="text-xl font-semibold text-white mb-2">Verifying your email…</h1>
-          <p className="text-neutral-400 text-sm">Please wait a moment.</p>
+          <h1 className="mb-2 text-xl font-semibold text-foreground">{t("loadingTitle")}</h1>
+          <p className="text-sm text-foreground/70">{t("loadingSubtitle")}</p>
         </>
       )}
       {(status === "error" || status === "missing") && (
         <>
           <div
-            className="w-16 h-16 rounded-full flex items-center justify-center mb-6 bg-red-500/20 border border-red-400/40"
+            className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-red-400/40 bg-red-500/20"
             aria-hidden
           >
             <span className="text-2xl text-red-300">!</span>
           </div>
-          <h1 className="text-xl font-semibold text-white mb-2">Could not verify email</h1>
-          <p className="text-neutral-400 text-sm mb-8">{message}</p>
+          <h1 className="mb-2 text-xl font-semibold text-foreground">{t("errorTitle")}</h1>
+          <p className="mb-8 text-sm text-foreground/70">{message}</p>
 
-          <div className="w-full border-t border-white/10 pt-8 mt-2 text-left space-y-4">
-            <p className="text-sm text-white font-medium text-center">Need a new link?</p>
+          <div className="mt-2 w-full space-y-4 border-t border-foreground/10 pt-8 text-left">
+            <p className="text-center text-sm font-medium text-foreground">{t("resendSectionTitle")}</p>
             <AuthInput
               id="resend-email"
               name="resend-email"
               type="email"
-              label="Email address"
-              placeholder="you@example.com"
+              label={t("resendEmailLabel")}
+              placeholder={t("resendEmailPlaceholder")}
               autoComplete="email"
               value={resendEmail}
               onChange={(ev) => setResendEmail(ev.target.value)}
@@ -115,7 +113,7 @@ export function VerifyEmailClient() {
             />
             {resendFeedback && (
               <p
-                className={`text-sm text-center ${resendFeedback.tone === "success" ? "text-green-400" : "text-red-400"}`}
+                className={`text-center text-sm ${resendFeedback.tone === "success" ? "text-green-400" : "text-red-400"}`}
               >
                 {resendFeedback.text}
               </p>
@@ -124,33 +122,40 @@ export function VerifyEmailClient() {
               type="button"
               onClick={() => void handleResendVerification()}
               disabled={resendBusy}
-              className="w-full py-3 rounded-lg font-medium text-black transition-colors disabled:opacity-60 cursor-pointer select-none"
+              className="w-full cursor-pointer select-none rounded-lg py-3 font-medium text-black transition-colors disabled:cursor-not-allowed disabled:opacity-60"
               style={{ backgroundColor: theme.accentGold }}
             >
-              {resendBusy ? "Sending…" : "Resend verification email"}
+              {resendBusy ? t("resendSubmitting") : t("resendSubmit")}
             </button>
           </div>
 
           <Link
             href="/auth/login"
-            className="w-full mt-8 py-3 rounded-lg font-medium text-white transition-colors hover:opacity-90 cursor-pointer select-none block text-center border border-white/20"
+            className="mt-8 block w-full cursor-pointer select-none rounded-lg border border-foreground/20 py-3 text-center font-medium text-foreground transition-colors hover:opacity-90"
           >
-            Back to log in
+            {t("backToLogin")}
           </Link>
         </>
       )}
       {status === "success" && (
         <>
           <div
-            className="w-16 h-16 rounded-full flex items-center justify-center mb-6 bg-green-500/20 border border-green-400/40"
+            className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-green-400/40 bg-green-500/20"
             aria-hidden
           >
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-green-400">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              className="text-green-400"
+            >
               <path d="M20 6L9 17l-5-5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h1 className="text-xl font-semibold text-white mb-2">Email verified</h1>
-          <p className="text-neutral-400 text-sm">{message}</p>
+          <h1 className="mb-2 text-xl font-semibold text-foreground">{t("successTitle")}</h1>
+          <p className="text-sm text-foreground/70">{message}</p>
         </>
       )}
     </div>

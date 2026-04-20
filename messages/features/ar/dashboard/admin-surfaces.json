@@ -1,0 +1,248 @@
+{
+  "Dashboard": {
+    "profileSupporters": {
+      "title": "الداعمون",
+      "subtitle": "عرض داعميك ومساهماتهم.",
+      "filterAll": "الكل",
+      "filterOneTime": "مرة واحدة",
+      "filterRecurring": "متكرر",
+      "typeOneTime": "مرة واحدة",
+      "typeRecurring": "متكرر",
+      "thankContributor": "شكر المساهم"
+    },
+    "analyticsPage": {
+      "tabs": {
+        "overview": "نظرة عامة",
+        "contentPerformance": "أداء المحتوى",
+        "topCreators": "أبرز المبدعين",
+        "conversionFunnel": "مسار التحويل"
+      },
+      "overview": {
+        "platformGrowth": "نمو المنصة",
+        "platformGrowthHint": "تسجيلات المستخدمين بمرور الوقت",
+        "engagementTrends": "اتجاهات التفاعل",
+        "engagementTrendsHint": "المستخدمون النشطون يومياً والتفاعلات",
+        "chartPlaceholder": "رسم بياني"
+      },
+      "contentPerformance": {
+        "title": "أبرز التصنيفات",
+        "subtitle": "أكثر تصنيفات المحتوى مشاهدة",
+        "views": "مشاهدة"
+      },
+      "topCategories": {
+        "c1": "وثائقي",
+        "c2": "موسيقى",
+        "c3": "تصوير",
+        "c4": "مقال",
+        "c5": "تجريبي"
+      },
+      "topCreators": {
+        "title": "أبرز المبدعين",
+        "subtitle": "أفضل أداءً للمبدعين على المنصة",
+        "colCreator": "المبدع",
+        "colFollowers": "المتابعون",
+        "colContent": "المحتوى",
+        "colEarnings": "الأرباح"
+      },
+      "funnel": {
+        "title": "مسار التحويل",
+        "subtitle": "رحلة المستخدم من الزائر إلى المحرر",
+        "conversion": "تحويل {pct}٪",
+        "visitors": "زائرون",
+        "registeredUsers": "مستخدمون مسجّلون",
+        "contributors": "مساهمون",
+        "authors": "مؤلفون",
+        "editors": "محررون"
+      }
+    },
+    "rolesPermissions": {
+      "tabs": {
+        "overview": "نظرة عامة",
+        "permissions": "مصفوفة الصلاحيات",
+        "editor-apps": "طلبات المحرر"
+      },
+      "matrix": {
+        "title": "مصفوفة الصلاحيات",
+        "subtitle": "ضبط صلاحيات دقيقة لكل دور",
+        "colPermission": "الصلاحية",
+        "permissionNames": {
+          "view_content": "عرض المحتوى",
+          "create_content": "إنشاء محتوى",
+          "edit_own_content": "تعديل محتواه",
+          "edit_all_content": "تعديل كل المحتوى",
+          "delete_content": "حذف المحتوى",
+          "manage_users": "إدارة المستخدمين",
+          "manage_donations": "إدارة التبرعات",
+          "access_analytics": "الوصول للتحليلات",
+          "moderate_content": "إشراف على المحتوى",
+          "system_settings": "إعدادات النظام"
+        },
+        "columns": {
+          "user": "مستخدم",
+          "contributor": "مساهم",
+          "author": "مؤلف",
+          "editor": "محرر",
+          "admin": "مسؤول"
+        }
+      },
+      "stats": {
+        "users": "مستخدمون",
+        "contributors": "مساهمون",
+        "authors": "مؤلفون",
+        "editors": "محررون",
+        "admins": "مسؤولون"
+      },
+      "hierarchy": {
+        "title": "تسلسل الأدوار",
+        "subtitle": "فهم توريث الصلاحيات بين الأدوار. انقر «مسؤول أعلى» لتعديل الصلاحيات.",
+        "configureSuperAdminAria": "ضبط صلاحيات المسؤول الأعلى",
+        "labels": {
+          "user": "مستخدم",
+          "contributor": "مساهم",
+          "author": "مؤلف",
+          "editor": "محرر",
+          "admin": "مسؤول أعلى"
+        }
+      },
+      "editorApps": {
+        "searchPlaceholder": "البحث في الطلبات…",
+        "filterAll": "الكل",
+        "filterPending": "قيد الانتظار",
+        "filterApproved": "موافَق",
+        "filterRejected": "مرفوض",
+        "review": "مراجعة",
+        "approve": "موافقة",
+        "reject": "رفض",
+        "appliedLine": "تقديم {date} · {years} سنوات في النشر · {articles} مقال منشور",
+        "empty": "لا طلبات مطابقة للمرشحات.",
+        "status": {
+          "pending": "قيد الانتظار",
+          "approved": "موافَق",
+          "rejected": "مرفوض"
+        },
+        "actions": {
+          "menuAria": "المزيد من الإجراءات",
+          "viewApplication": "عرض الطلب",
+          "revokeApproval": "سحب الموافقة",
+          "reconsider": "إعادة النظر"
+        }
+      },
+      "configureModal": {
+        "title": "ضبط {role}",
+        "subtitle": "إدارة الصلاحيات ومستويات الوصول لهذا الدور",
+        "closeModalAria": "إغلاق النافذة",
+        "closeAria": "إغلاق",
+        "cancel": "إلغاء",
+        "save": "حفظ التغييرات",
+        "rows": {
+          "manage_users": {
+            "title": "إدارة المستخدمين",
+            "description": "إنشاء المستخدمين وتعديلهم وحذفهم"
+          },
+          "manage_content": {
+            "title": "إدارة المحتوى",
+            "description": "إنشاء المحتوى وتعديله ونشره"
+          },
+          "financial": {
+            "title": "العمليات المالية",
+            "description": "عرض المدفوعات والمدفوعات وإدارتها"
+          },
+          "moderation": {
+            "title": "إشراف المحتوى",
+            "description": "مراجعة محتوى المستخدمين والإشراف عليه"
+          },
+          "analytics": {
+            "title": "عرض التحليلات",
+            "description": "الوصول إلى التحليلات والتقارير"
+          },
+          "settings": {
+            "title": "إعدادات النظام",
+            "description": "تعديل إعدادات المنصة"
+          },
+          "security": {
+            "title": "ضوابط الأمان",
+            "description": "إدارة الأمان والوصول"
+          },
+          "messaging": {
+            "title": "الرسائل والبث",
+            "description": "إرسال الرسائل والبثّات"
+          }
+        }
+      },
+      "superAdminRoleName": "مسؤول أعلى"
+    },
+    "contentLibrary": {
+      "tabs": {
+        "all": "كل المحتوى",
+        "published": "منشور",
+        "pending": "قيد المراجعة",
+        "archived": "مؤرشف",
+        "rejected": "مرفوض"
+      },
+      "allTypes": "كل الأنواع",
+      "searchPlaceholder": "البحث في المساهمات…",
+      "filterAria": "تصفية",
+      "tryAgain": "إعادة المحاولة",
+      "loading": "جاري تحميل المساهمات…",
+      "emptyFiltered": "لا مساهمات مطابقة للمرشحات.",
+      "emptyNone": "لا مساهمات بعد.",
+      "table": {
+        "title": "العنوان",
+        "type": "النوع",
+        "contributor": "المساهم",
+        "status": "الحالة",
+        "files": "الملفات",
+        "collection": "المجموعة",
+        "submitted": "تاريخ الإرسال",
+        "fileCount": "{count} ملف",
+        "viewItemAria": "عرض {title}"
+      },
+      "statusLabels": {
+        "published": "منشور",
+        "pending": "قيد المراجعة",
+        "archived": "مؤرشف",
+        "rejected": "مرفوض",
+        "draft": "مسودة"
+      },
+      "pagination": {
+        "summary": "صفحة {page} من {totalPages} · {total} مساهمة",
+        "previous": "السابق",
+        "next": "التالي"
+      },
+      "errors": {
+        "requestFailed": "فشل الطلب",
+        "generic": "حدث خطأ ما"
+      },
+      "actions": {
+        "menuAria": "المزيد من الإجراءات",
+        "view": "عرض",
+        "archive": "أرشفة",
+        "delete": "حذف"
+      },
+      "detail": {
+        "closeModalAria": "إغلاق النافذة",
+        "closeAria": "إغلاق",
+        "description": "الوصف",
+        "labelContributor": "المساهم",
+        "labelEmail": "البريد",
+        "labelPhone": "الهاتف",
+        "labelSubmitted": "تاريخ الإرسال",
+        "labelConsent": "الموافقة",
+        "labelOpenCall": "نداء مفتوح",
+        "consentYes": "نعم",
+        "consentNo": "لا",
+        "filesHeading": "الملفات ({count})",
+        "collectionsHeading": "المجموعات ({count})",
+        "close": "إغلاق"
+      }
+    },
+    "cmsEditor": {
+      "tabs": {
+        "home": "الصفحة الرئيسية",
+        "static": "صفحات ثابتة",
+        "nav": "التنقل والتذييل",
+        "branding": "الهوية البصرية"
+      }
+    }
+  }
+}

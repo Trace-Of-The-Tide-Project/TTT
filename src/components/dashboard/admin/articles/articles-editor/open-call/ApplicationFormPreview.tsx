@@ -1,28 +1,30 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ApplicationFormField } from "@/services/open-calls.service";
 import { CONTRIBUTION_FORM_INPUT_BASE as inputBase } from "@/lib/constants";
-
-function labelForName(name: string): string {
-  return name
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
+import {
+  resolveFieldParticipantLabel,
+  resolveSelectOptionLabel,
+} from "@/lib/application-form-labels";
 
 export function ApplicationFormPreview({ fields }: { fields: ApplicationFormField[] }) {
+  const tApp = useTranslations("Dashboard.applicationForm");
+  const tp = useTranslations("Dashboard.applicationForm.preview");
+
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5">
-      <h4 className="mb-4 text-sm font-semibold text-foreground">Preview</h4>
+      <h4 className="mb-4 text-sm font-semibold text-foreground">{tp("title")}</h4>
       <div className="flex flex-col gap-4">
         {fields.map((f, i) => (
-          <PreviewField key={`preview-${i}`} field={f} />
+          <PreviewField key={`preview-${i}`} field={f} tApp={tApp} tp={tp} />
         ))}
         <div className="pt-2 text-center">
           <span
             className="inline-block rounded-lg px-8 py-2.5 text-sm font-medium text-black"
             style={{ backgroundColor: "#C9A96E" }}
           >
-            Submit application
+            {tp("submitButton")}
           </span>
         </div>
       </div>
@@ -30,8 +32,16 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
   );
 }
 
-function PreviewField({ field: f }: { field: ApplicationFormField }) {
-  const label = labelForName(f.name);
+function PreviewField({
+  field: f,
+  tApp,
+  tp,
+}: {
+  field: ApplicationFormField;
+  tApp: ReturnType<typeof useTranslations<"Dashboard.applicationForm">>;
+  tp: ReturnType<typeof useTranslations<"Dashboard.applicationForm.preview">>;
+}) {
+  const label = resolveFieldParticipantLabel(f, tApp);
   const req = f.required ? " *" : "";
 
   if (f.type === "checkbox") {
@@ -52,7 +62,7 @@ function PreviewField({ field: f }: { field: ApplicationFormField }) {
           {req}
         </p>
         <textarea
-          placeholder={`Enter ${label.toLowerCase()}`}
+          placeholder={tp("enterField", { label })}
           className={`${inputBase} min-h-[100px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-3 py-2.5 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500`}
         />
       </div>
@@ -72,11 +82,11 @@ function PreviewField({ field: f }: { field: ApplicationFormField }) {
             defaultValue=""
           >
             <option value="" disabled className="text-gray-500">
-              Select
+              {tp("selectPlaceholder")}
             </option>
             {f.options.map((opt, i) => (
               <option key={i} value={opt}>
-                {opt}
+                {resolveSelectOptionLabel(opt, tApp)}
               </option>
             ))}
           </select>
@@ -106,7 +116,11 @@ function PreviewField({ field: f }: { field: ApplicationFormField }) {
           {req}
         </p>
         <div className="rounded-lg border border-dashed border-gray-600 bg-[var(--tott-dash-input-bg)] px-4 py-8 text-center text-xs text-gray-500">
-          Drag and drop files (max {f.max_files}, {f.allowed_types.join(", ")}, up to {f.max_size_mb} MB)
+          {tp("fileDropHint", {
+            maxFiles: f.max_files,
+            types: f.allowed_types.join(", "),
+            maxSizeMb: f.max_size_mb,
+          })}
         </div>
       </div>
     );
@@ -120,7 +134,7 @@ function PreviewField({ field: f }: { field: ApplicationFormField }) {
       </p>
       <input
         type={f.type === "email" ? "email" : f.type === "phone" ? "tel" : "text"}
-        placeholder={`Enter ${label.toLowerCase()}`}
+        placeholder={tp("enterField", { label })}
         className={`${inputBase} h-10 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-3 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500`}
       />
     </div>

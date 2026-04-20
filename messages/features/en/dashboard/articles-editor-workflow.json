@@ -1,0 +1,231 @@
+{
+  "Dashboard": {
+    "articles": {
+      "editor": {
+        "layout": {
+          "loadingArticle": "Loading article…",
+          "backToArticles": "← Articles",
+          "editArticle": "Edit article",
+          "preview": "Preview",
+          "articleNotFound": "Article not found.",
+          "tryAgain": "Try again",
+          "misconfigured": "Editor misconfigured: pass config for create mode.",
+          "uploadingTitle": "Uploading files…",
+          "uploadingDetail": "Keep this tab open until upload finishes.",
+          "successRedirect": "Redirecting to articles…",
+          "errorRequestFailed": "Request failed",
+          "errorGeneric": "Something went wrong",
+          "validationTitle": "Title is required.",
+          "validationCategory": "Category is required.",
+          "validationBlocksDraft": "Add at least one block with content (empty placeholders are not sent).",
+          "validationBlocksPublish": "Publishing requires at least one block with content.",
+          "validationBlocksSchedule": "Scheduling requires at least one block with content.",
+          "errorCreateNoIdPublish": "Article was created but no id was returned; cannot publish.",
+          "errorCreateNoIdSchedule": "Article was created but no id was returned; cannot schedule.",
+          "successChangesSaved": "Changes saved",
+          "successDraftSaved": "Draft saved",
+          "successArticleSubmitted": "Article submitted",
+          "successArticleScheduled": "Article scheduled",
+          "imageBlockShort": "Image",
+          "validationOpenCallBlocksDraft": "Add at least one content block with content.",
+          "validationOpenCallBlocksPublish": "Publishing requires at least one content block with content.",
+          "validationOpenCallBlocksSchedule": "Scheduling requires at least one content block with content."
+        },
+        "footer": {
+          "schedule": "Schedule",
+          "defaults": {
+            "publishNow": "Publish Now",
+            "saveDraft": "Save Draft",
+            "saveChanges": "Save changes"
+          }
+        },
+        "forms": {
+          "article": {
+            "titlePlaceholder": "Enter your article title...",
+            "settingsTitle": "Article Settings",
+            "primaryButton": "Publish Now",
+            "blockLabels": {
+              "paragraph": "Start writing your article...",
+              "heading": "Section title",
+              "quote": "Quote",
+              "callout": "Callout",
+              "author-note": "Author note"
+            }
+          },
+          "video": {
+            "titlePlaceholder": "Enter your Video title...",
+            "settingsTitle": "Video Settings",
+            "primaryButton": "Publish Video",
+            "blockLabels": {
+              "paragraph": "Describe your video",
+              "heading": "Section title",
+              "quote": "Quote",
+              "callout": "Callout",
+              "author-note": "Author note"
+            }
+          },
+          "audio": {
+            "titlePlaceholder": "Enter your Audio title...",
+            "settingsTitle": "Audio Settings",
+            "primaryButton": "Publish Audio",
+            "blockLabels": {
+              "paragraph": "Episode notes...",
+              "heading": "Section title",
+              "quote": "Quote",
+              "callout": "Callout",
+              "author-note": "Author note"
+            }
+          },
+          "thread": {
+            "titlePlaceholder": "Enter your Thread title...",
+            "settingsTitle": "Thread Settings",
+            "primaryButton": "Publish Thread",
+            "blockLabels": {
+              "paragraph": "First part of your story...",
+              "heading": "Section title",
+              "quote": "Quote",
+              "callout": "Callout",
+              "author-note": "Author note"
+            }
+          },
+          "openCall": {
+            "titlePlaceholder": "Enter your content title here...",
+            "settingsTitle": "Content Settings",
+            "primaryButton": "Publish Now",
+            "blockLabels": {
+              "paragraph": "Describe your content...",
+              "quote": "Quote",
+              "callout": "Callout",
+              "author-note": "Author note"
+            }
+          }
+        },
+        "mainMedia": {
+          "article": {
+            "blockName": "Cover",
+            "uploadTitle": "Upload cover",
+            "uploadDetail": "Image ~1200×630px (or video/audio) — shown first on the public article page.",
+            "pasteUrlHint": "Or paste cover image, video, or audio URL",
+            "addBlockButton": "Add cover block",
+            "missingHeroBlurb": "No cover yet. Add the cover block — it is the hero at the top of the public page."
+          },
+          "video": {
+            "blockName": "Video",
+            "uploadTitle": "Upload video",
+            "uploadDetail": "MP4, WebM, or QuickTime — this is what plays full-width at the top of the public video page.",
+            "pasteUrlHint": "Or paste your video URL",
+            "addBlockButton": "Add video block",
+            "missingHeroBlurb": "No video yet. Add the video block — it is the hero at the top of the public page."
+          },
+          "audio": {
+            "blockName": "Audio",
+            "uploadTitle": "Upload audio",
+            "uploadDetail": "MP3, WAV, AAC, and other audio — shown as the playable hero on the public audio page.",
+            "pasteUrlHint": "Or paste your audio file URL",
+            "addBlockButton": "Add audio block",
+            "missingHeroBlurb": "No audio yet. Add the audio block — it is the hero at the top of the public page."
+          },
+          "thread": {
+            "blockName": "Cover",
+            "uploadTitle": "Upload cover",
+            "uploadDetail": "Image ~1200×630px (or video/audio) — shown first on the public thread page.",
+            "pasteUrlHint": "Or paste cover image, video, or audio URL",
+            "addBlockButton": "Add cover block",
+            "missingHeroBlurb": "No cover yet. Add the cover block — it is the hero at the top of the public page."
+          },
+          "openCall": {
+            "blockName": "Main media",
+            "uploadTitle": "Upload main file",
+            "uploadDetail": "Image, video, or audio — the hero visitors see first for this open call.",
+            "pasteUrlHint": "Or paste main file URL (image, video, or audio)",
+            "addBlockButton": "Add main media block",
+            "missingHeroBlurb": "No main media yet. Add the main media block — it is the hero at the top of the public page."
+          }
+        },
+        "availableBlocks": {
+          "title": "Available Blocks",
+          "palette": {
+            "paragraph": "Paragraph",
+            "heading": "Title",
+            "quote": "Quote",
+            "image": "Image",
+            "gallery": "Gallery",
+            "callout": "Callout",
+            "author-note": "Author note",
+            "divider": "Divider"
+          }
+        },
+        "modals": {
+          "closeDialog": "Close dialog",
+          "close": "Close",
+          "delete": {
+            "title": "Delete article?",
+            "description": "\"{title}\" will be removed permanently. This cannot be undone.",
+            "cancel": "Cancel",
+            "confirm": "Delete",
+            "confirmBusy": "Deleting…"
+          },
+          "schedule": {
+            "title": "Schedule publication",
+            "subtitle": "Pick when this article should go live.",
+            "datetimeLabel": "Date and time (your local timezone)",
+            "hintInvalid": "Choose a valid date and time.",
+            "cancel": "Cancel",
+            "confirm": "Schedule",
+            "confirmBusy": "Scheduling…"
+          }
+        },
+        "settings": {
+          "defaultPanelTitle": "Article Settings",
+          "collectionsLoadError": "Could not load collections.",
+          "tagsLoadError": "Could not load tags.",
+          "status": {
+            "label": "Status",
+            "draft": "Draft",
+            "published": "Published",
+            "scheduled": "Scheduled",
+            "goesLive": "Goes live:",
+            "hint": "When status is Published or Scheduled, use Publish now or Schedule."
+          },
+          "category": {
+            "label": "Category",
+            "placeholder": "e.g., Documentary, Art"
+          },
+          "collection": {
+            "label": "Collection (optional)",
+            "none": "No collection",
+            "currentPrefix": "Current:"
+          },
+          "collectionLoading": "Loading collections…",
+          "tags": {
+            "label": "Tags",
+            "loading": "Loading tags…",
+            "addPlaceholder": "Add a tag…",
+            "allSelected": "All available tags are selected.",
+            "unknownName": "Tag ({prefix})",
+            "fallbackName": "tag",
+            "removeAria": "Remove {name}"
+          },
+          "language": {
+            "label": "Language",
+            "en": "English",
+            "ar": "Arabic",
+            "he": "Hebrew"
+          },
+          "visibility": {
+            "label": "Visibility",
+            "private": "Private",
+            "public": "Public"
+          },
+          "seo": {
+            "label": "SEO",
+            "previewPlaceholder": "Add a meta description to improve search visibility.",
+            "seoTitlePlaceholder": "SEO Title",
+            "metaDescriptionPlaceholder": "Meta description",
+            "previewUrlStub": "yoursite.com/articles/…"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "Dashboard": {
+    "engagementsPage": {
+      "tabs": {
+        "comments": "التعليقات",
+        "trending": "النقاشات الرائجة",
+        "badges": "الشارات والتقدير"
+      },
+      "filter": {
+        "all": "الكل",
+        "flagged": "مُبلَّغ عنها ({count})"
+      },
+      "comments": {
+        "searchPlaceholder": "البحث في التعليقات…",
+        "emptyFiltered": "لا تعليقات مطابقة للمرشحات.",
+        "on": "على",
+        "flaggedBadge": "مُبلَّغ",
+        "replies": "{count, plural, one {رد واحد} other {# رد}}",
+        "menuAria": "المزيد من الإجراءات",
+        "view": "عرض",
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "trending": {
+        "commentsCount": "{count, plural, one {تعليق واحد} other {# تعليق}}",
+        "participantsCount": "{count, plural, one {مشارك واحد} other {# مشارك}}",
+        "view": "عرض",
+        "unlock": "فتح",
+        "lock": "قفل",
+        "lockDiscussionAria": "قفل النقاش",
+        "unlockDiscussionAria": "فتح النقاش",
+        "empty": "لا نقاشات رائجة."
+      },
+      "badges": {
+        "searchPlaceholder": "البحث في الشارات…",
+        "createBadge": "إنشاء شارة",
+        "recipients": "{count, plural, one {مستلم واحد} other {# مستلم}}",
+        "awardBadge": "منح الشارة",
+        "emptySearch": "لا شارات مطابقة للبحث."
+      },
+      "createBadgeModal": {
+        "closeModalAria": "إغلاق النافذة",
+        "closeAria": "إغلاق",
+        "title": "إنشاء شارة جديدة",
+        "icon": "الأيقونة",
+        "iconAria": {
+          "award": "جائزة",
+          "star": "نجمة",
+          "heart": "قلب",
+          "check": "صح",
+          "spark": "وميض"
+        },
+        "badgeName": "اسم الشارة",
+        "namePlaceholder": "مثال: أفضل مساهم",
+        "roleLabel": "أو اختر دوراً",
+        "rolePlaceholder": "منح لدور…",
+        "roles": {
+          "allUsers": "كل المستخدمين",
+          "allAuthors": "كل المؤلفين",
+          "allEditors": "كل المحررين",
+          "allContributors": "كل المساهمين"
+        },
+        "reasonLabel": "السبب",
+        "optional": "(اختياري)",
+        "reasonPlaceholder": "لماذا تُمنح هذه الشارة؟",
+        "cancel": "إلغاء",
+        "submit": "إنشاء الشارة"
+      },
+      "awardBadgeModal": {
+        "closeModalAria": "إغلاق النافذة",
+        "closeAria": "إغلاق",
+        "title": "منح «{name}»",
+        "searchUser": "بحث عن مستخدم",
+        "userPlaceholder": "اكتب اسم مستخدم أو بريداً…",
+        "description": "الوصف",
+        "descriptionPlaceholder": "ماذا تمثل هذه الشارة؟",
+        "criteria": "معايير المنح",
+        "criteriaPlaceholder": "متى تُمنح هذه الشارة؟",
+        "cancel": "إلغاء",
+        "submit": "منح الشارة"
+      }
+    }
+  }
+}

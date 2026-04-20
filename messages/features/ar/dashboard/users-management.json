@@ -1,0 +1,58 @@
+{
+  "Dashboard": {
+    "usersManagement": {
+      "searchPlaceholder": "ابحث باسم المستخدم أو الاسم الكامل أو البريد…",
+      "status": {
+        "all": "كل الحالات",
+        "active": "نشط",
+        "pending": "قيد الانتظار",
+        "suspended": "موقوف",
+        "inactive": "غير نشط"
+      },
+      "sort": {
+        "username": "اسم المستخدم",
+        "email": "البريد الإلكتروني",
+        "full_name": "الاسم الكامل"
+      },
+      "order": {
+        "ASC": "تصاعدي",
+        "DESC": "تنازلي"
+      },
+      "table": {
+        "contributor": "المساهم",
+        "role": "الدور",
+        "status": "الحالة",
+        "joined": "تاريخ الانضمام",
+        "lastActive": "آخر نشاط",
+        "contributions": "المساهمات"
+      },
+      "statusLabels": {
+        "active": "نشط",
+        "pending": "قيد الانتظار",
+        "suspended": "موقوف",
+        "inactive": "غير نشط"
+      },
+      "loading": "جاري تحميل المستخدمين…",
+      "empty": "لا يوجد مستخدمون مطابقون للمرشحات.",
+      "pagination": {
+        "showing": "عرض {start} إلى {end} من أصل {total} مستخدم",
+        "previous": "السابق",
+        "next": "التالي",
+        "pageOf": "صفحة {page} من {totalPages}"
+      },
+      "tryAgain": "إعادة المحاولة",
+      "tryExportAgain": "إعادة محاولة التصدير",
+      "errors": {
+        "loadFailed": "تعذّر تحميل المستخدمين"
+      },
+      "rowActions": {
+        "menuAria": "المزيد من الإجراءات",
+        "viewProfile": "عرض الملف",
+        "editUser": "تعديل المستخدم",
+        "changeRole": "تغيير الدور",
+        "verifyUser": "توثيق المستخدم",
+        "suspendUser": "إيقاف المستخدم"
+      }
+    }
+  }
+}

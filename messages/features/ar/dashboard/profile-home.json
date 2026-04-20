@@ -1,0 +1,72 @@
+{
+  "Dashboard": {
+    "profileHome": {
+      "title": "لوحتي",
+      "editProfile": "تعديل الملف",
+      "createArticle": "إنشاء مقالة",
+      "recentArticles": "أحدث المقالات",
+      "recentContributors": "أحدث المساهمين"
+    },
+    "adminProfile": {
+      "pageTitle": "معلومات الملف الشخصي",
+      "changePhoto": "تغيير الصورة",
+      "photoHint": "JPG أو PNG أو GIF. الحد الأقصى 2 ميجابايت.",
+      "errors": {
+        "fileType": "استخدم JPG أو PNG أو GIF.",
+        "maxSize": "الحد الأقصى للحجم 2 ميجابايت."
+      },
+      "fullName": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "company": "الشركة",
+      "location": "الموقع",
+      "externalLink": "رابط خارجي",
+      "externalLinkPlaceholder": "https://…",
+      "biography": "نبذة",
+      "socialLinks": "روابط التواصل",
+      "presets": {
+        "facebook": "فيسبوك",
+        "twitter": "إكس / تويتر",
+        "instagram": "إنستغرام",
+        "linkedin": "لينكدإن"
+      },
+      "removePresetAria": "إزالة {label}",
+      "otherLinkPlaceholder": "أضف أي روابط أخرى",
+      "additionalLinkPlaceholder": "https://…",
+      "additionalLinkAria": "رابط إضافي",
+      "removeLinkAria": "إزالة الرابط",
+      "addNewLink": "إضافة رابط جديد",
+      "saved": "تم الحفظ",
+      "saveChanges": "حفظ التغييرات"
+    },
+    "adminPrivacy": {
+      "pageTitle": "إعدادات الخصوصية",
+      "profileVisibility": "ظهور الملف الشخصي",
+      "profileVisibilityDescription": "تحكم في من يمكنه رؤية ملفك",
+      "profileVisibilityAria": "ظهور الملف الشخصي",
+      "visibility": {
+        "public": "عام",
+        "followers": "المتابعون فقط",
+        "private": "خاص"
+      },
+      "showEmail": "إظهار البريد",
+      "showEmailDescription": "عرض بريدك على ملفك الشخصي",
+      "showEmailAria": "إظهار البريد على الملف",
+      "showActivity": "إظهار النشاط",
+      "showActivityDescription": "عرض نشاطك الأخير على ملفك",
+      "showActivityAria": "إظهار النشاط",
+      "allowFollows": "السماح بالمتابعة",
+      "allowFollowsDescription": "السماح للمستخدمين الآخرين بمتابعتك",
+      "allowFollowsAria": "السماح بالمتابعة",
+      "saved": "تم الحفظ",
+      "saveChanges": "حفظ التغييرات"
+    },
+    "adminAccount": {
+      "pageTitle": "أمان الحساب",
+      "deactivateTitle": "تعطيل الحساب",
+      "deactivateDescription": "بعد تعطيل حسابك، يُخفى ملفك ومقالاتك. يمكنك إعادة التفعيل في أي وقت بتسجيل الدخول.",
+      "deactivateButton": "تعطيل الحساب",
+      "deactivateConfirm": "هل تريد تعطيل حسابك؟ يُخفى ملفك ومقالاتك حتى تسجّل الدخول مجدداً."
+    }
+  }
+}

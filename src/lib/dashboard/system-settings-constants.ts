@@ -1,13 +1,13 @@
-export const SYSTEM_SETTINGS_TABS = [
-  { id: "categories", label: "Categories" },
-  { id: "tags", label: "Tags & Themes" },
-  { id: "badges", label: "Badges" },
-  { id: "email", label: "Email Templates" },
-  { id: "localisation", label: "Localisation" },
-  { id: "guidelines", label: "Guidelines" },
+export const SYSTEM_SETTINGS_TAB_IDS = [
+  "categories",
+  "tags",
+  "badges",
+  "email",
+  "localisation",
+  "guidelines",
 ] as const;
 
-export type SystemSettingsTabId = (typeof SYSTEM_SETTINGS_TABS)[number]["id"];
+export type SystemSettingsTabId = (typeof SYSTEM_SETTINGS_TAB_IDS)[number];
 
 export type ContentCategoryRow = {
   id: string;

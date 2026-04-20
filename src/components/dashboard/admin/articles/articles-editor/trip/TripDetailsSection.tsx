@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { isEndDatetimeBeforeStart } from "@/lib/datetime-local";
 
 const inputClass =
@@ -52,29 +53,30 @@ export function TripDetailsSection({
   category,
   onCategoryChange,
 }: TripDetailsSectionProps) {
+  const t = useTranslations("Dashboard.trips.editor.details");
   return (
     <section className="rounded-lg border border-[var(--tott-card-border)] p-4 space-y-4">
       <h3 className="flex items-center gap-2 text-sm font-bold text-foreground">
         <CompassIcon />
-        Trip Details
+        {t("heading")}
       </h3>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="mb-1.5 block text-xs font-medium text-gray-400">
-            Category <span className="text-amber-500">*</span>
+            {t("category")} <span className="text-amber-500">{t("categoryRequired")}</span>
           </label>
           <input
             type="text"
             value={category}
             onChange={(e) => onCategoryChange(e.target.value)}
-            placeholder="e.g., cultural, adventure"
+            placeholder={t("categoryPlaceholder")}
             className={inputClass}
           />
         </div>
         <div>
           <label className="mb-1.5 block text-xs font-medium text-gray-400">
-            Difficulty
+            {t("difficulty")}
           </label>
           <select
             value={difficulty}
@@ -83,7 +85,7 @@ export function TripDetailsSection({
           >
             {DIFFICULTIES.map((d) => (
               <option key={d} value={d}>
-                {d.charAt(0).toUpperCase() + d.slice(1)}
+                {t(`difficulties.${d}`)}
               </option>
             ))}
           </select>
@@ -93,7 +95,7 @@ export function TripDetailsSection({
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="mb-1.5 block text-xs font-medium text-gray-400">
-            Start Date
+            {t("startDate")}
           </label>
           <div className="relative">
             <input
@@ -115,7 +117,7 @@ export function TripDetailsSection({
         </div>
         <div>
           <label className="mb-1.5 block text-xs font-medium text-gray-400">
-            End Date
+            {t("endDate")}
           </label>
           <input
             type="datetime-local"
@@ -137,7 +139,7 @@ export function TripDetailsSection({
       <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="mb-1.5 block text-xs font-medium text-gray-400">
-            Duration <span className="text-gray-500">(hours)</span>
+            {t("durationHours")}
           </label>
           <input
             type="number"
@@ -149,7 +151,7 @@ export function TripDetailsSection({
         </div>
         <div>
           <label className="mb-1.5 block text-xs font-medium text-gray-400">
-            Max Participants
+            {t("maxParticipants")}
           </label>
           <input
             type="number"
@@ -161,7 +163,7 @@ export function TripDetailsSection({
         </div>
         <div>
           <label className="mb-1.5 block text-xs font-medium text-gray-400">
-            Min Participants
+            {t("minParticipants")}
           </label>
           <input
             type="number"

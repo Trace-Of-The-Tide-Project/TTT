@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   PersonIcon,
   EmailIcon,
@@ -59,6 +60,7 @@ function WifiIcon() {
 }
 
 export function OpenCallForm() {
+  const td = useTranslations("Dashboard.applicationForm.demoOpenCall");
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -110,7 +112,7 @@ export function OpenCallForm() {
       {/* First name / Last name */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">First name</label>
+          <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">{td("firstName")}</label>
           <div
             className="flex items-center gap-3 rounded-lg border px-3 py-2 sm:px-4 sm:py-3"
             style={fieldRowStyle}
@@ -121,13 +123,13 @@ export function OpenCallForm() {
             <input
               name="firstName"
               type="text"
-              placeholder="Enter your first name"
+              placeholder={td("firstNamePlaceholder")}
               className="w-full bg-transparent text-sm text-[color:var(--tott-panel-text)] placeholder:text-gray-500 focus:outline-none sm:text-base"
             />
           </div>
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">Last name</label>
+          <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">{td("lastName")}</label>
           <div
             className="flex items-center gap-3 rounded-lg border px-3 py-2 sm:px-4 sm:py-3"
             style={fieldRowStyle}
@@ -138,7 +140,7 @@ export function OpenCallForm() {
             <input
               name="lastName"
               type="text"
-              placeholder="Enter your last name"
+              placeholder={td("lastNamePlaceholder")}
               className="w-full bg-transparent text-sm text-[color:var(--tott-panel-text)] placeholder:text-gray-500 focus:outline-none sm:text-base"
             />
           </div>
@@ -147,7 +149,7 @@ export function OpenCallForm() {
 
       {/* Email */}
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">Email address</label>
+        <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">{td("email")}</label>
         <div
           className="flex items-center gap-3 rounded-lg border px-3 py-2 sm:px-4 sm:py-3"
           style={fieldRowStyle}
@@ -158,7 +160,7 @@ export function OpenCallForm() {
           <input
             name="email"
             type="email"
-            placeholder="Placeholder..."
+            placeholder={td("emailPlaceholder")}
             className="w-full bg-transparent text-sm text-[color:var(--tott-panel-text)] placeholder:text-gray-500 focus:outline-none sm:text-base"
           />
         </div>
@@ -166,7 +168,7 @@ export function OpenCallForm() {
 
       {/* Phone number */}
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">Phone number</label>
+        <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">{td("phone")}</label>
         <div
           className="flex items-stretch overflow-hidden rounded-lg border"
           style={{ borderColor: theme.inputBorder }}
@@ -197,19 +199,19 @@ export function OpenCallForm() {
           <input
             name="phone"
             type="tel"
-            placeholder="Enter your phone number"
+            placeholder={td("phonePlaceholder")}
             className={`${inputBase} min-w-0 flex-1 rounded-none border-0`}
             style={{ borderColor: "transparent" }}
           />
         </div>
         <p className="mt-1 text-xs text-gray-500">
-          Don&apos;t forget to write the phone number with your country code
+          {td("phoneHint")}
         </p>
       </div>
 
       {/* Experience field */}
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">Experience field</label>
+        <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">{td("experienceField")}</label>
         <div
           className="flex items-center gap-3 rounded-lg border px-3 py-2 sm:px-4 sm:py-3"
           style={fieldRowStyle}
@@ -222,34 +224,34 @@ export function OpenCallForm() {
             className="w-full appearance-none bg-transparent text-sm text-[color:var(--tott-panel-text)] placeholder:text-gray-500 focus:outline-none sm:text-base"
           >
             <option value="" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-              Select or write your experience field
+              {td("experiencePlaceholder")}
             </option>
             <option value="journalism" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-              Journalism
+              {td("experienceJournalism")}
             </option>
             <option value="research" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-              Research
+              {td("experienceResearch")}
             </option>
             <option value="photography" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-              Photography
+              {td("experiencePhotography")}
             </option>
             <option value="filmmaking" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-              Filmmaking
+              {td("experienceFilmmaking")}
             </option>
             <option value="writing" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-              Writing
+              {td("experienceWriting")}
             </option>
             <option value="art" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-              Art
+              {td("experienceArt")}
             </option>
             <option value="education" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-              Education
+              {td("experienceEducation")}
             </option>
             <option value="technology" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-              Technology
+              {td("experienceTechnology")}
             </option>
             <option value="other" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-              Other
+              {td("experienceOther")}
             </option>
           </select>
           <span className="pointer-events-none shrink-0 text-gray-500">
@@ -261,12 +263,12 @@ export function OpenCallForm() {
       {/* Tell us about yourself */}
       <div>
         <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">
-          Tell us about yourself
+          {td("about")}
         </label>
         <textarea
           name="about"
           rows={4}
-          placeholder="Describe yourself, experience, or your projects. and why we should accept you in the collective teams."
+          placeholder={td("aboutPlaceholder")}
           className={inputBase}
           style={{ borderColor: theme.inputBorder }}
         />
@@ -275,7 +277,7 @@ export function OpenCallForm() {
       {/* Country / City */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">Country</label>
+          <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">{td("country")}</label>
           <div
             className="flex items-center gap-3 rounded-lg border px-3 py-2 sm:px-4 sm:py-3"
             style={fieldRowStyle}
@@ -285,22 +287,22 @@ export function OpenCallForm() {
               className="w-full appearance-none bg-transparent text-sm text-[color:var(--tott-panel-text)] placeholder:text-gray-500 focus:outline-none sm:text-base"
             >
               <option value="" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-                Select
+                {td("select")}
               </option>
               <option value="palestine" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-                Palestine
+                {td("countryPalestine")}
               </option>
               <option value="egypt" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-                Egypt
+                {td("countryEgypt")}
               </option>
               <option value="jordan" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-                Jordan
+                {td("countryJordan")}
               </option>
               <option value="lebanon" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-                Lebanon
+                {td("countryLebanon")}
               </option>
               <option value="other" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-                Other
+                {td("countryOther")}
               </option>
             </select>
             <span className="pointer-events-none shrink-0 text-gray-500">
@@ -309,7 +311,7 @@ export function OpenCallForm() {
           </div>
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">City</label>
+          <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">{td("city")}</label>
           <div
             className="flex items-center gap-3 rounded-lg border px-3 py-2 sm:px-4 sm:py-3"
             style={fieldRowStyle}
@@ -319,7 +321,7 @@ export function OpenCallForm() {
               className="w-full appearance-none bg-transparent text-sm text-[color:var(--tott-panel-text)] placeholder:text-gray-500 focus:outline-none sm:text-base"
             >
               <option value="" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-                Select
+                {td("select")}
               </option>
             </select>
             <span className="pointer-events-none shrink-0 text-gray-500">
@@ -332,7 +334,8 @@ export function OpenCallForm() {
       {/* Upload files */}
       <div>
         <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">
-          Upload files <span className="font-normal text-gray-500">Upload as many as you want</span>
+          {td("uploadLabel")}{" "}
+          <span className="font-normal text-gray-500">{td("uploadHint")}</span>
         </label>
         <div
           onDrop={onDrop}
@@ -356,12 +359,8 @@ export function OpenCallForm() {
             <span style={{ color: theme.accentGoldFocus }}>
               <CloudUploadIcon />
             </span>
-            <span className="text-center text-sm">
-              Drag and drop files here, or click to browse
-            </span>
-            <span className="text-xs text-gray-500">
-              Supported formats: JPG, PNG, PDF, MP3, MP4, DOC (Max 20MB)
-            </span>
+            <span className="text-center text-sm">{td("uploadDrop")}</span>
+            <span className="text-xs text-gray-500">{td("uploadFormats")}</span>
           </label>
         </div>
 
@@ -384,7 +383,7 @@ export function OpenCallForm() {
                   type="button"
                   onClick={() => removeFile(id)}
                   className="rounded p-1 text-gray-500 hover:bg-black/10 hover:text-[color:var(--tott-panel-text)] focus:outline-none focus:ring-2 focus:ring-[#C9A96E]"
-                  aria-label="Remove file"
+                  aria-label={td("removeFileAria")}
                 >
                   <TrashIcon />
                 </button>
@@ -403,15 +402,15 @@ export function OpenCallForm() {
           className="h-4 w-4 rounded border-gray-600 bg-transparent accent-[#C9A96E] focus:ring-[#C9A96E]"
         />
         <span className="text-sm text-gray-400">
-          I agree to the{" "}
+          {td("terms")}{" "}
           <Link href="/terms" className="hover:underline" style={{ color: theme.accentGold }}>
-            terms
+            {td("termsLink")}
           </Link>{" "}
-          and{" "}
+          {td("and")}{" "}
           <Link href="/privacy" className="hover:underline" style={{ color: theme.accentGold }}>
-            privacy policy
+            {td("privacyLink")}
           </Link>
-          .
+          {td("termsEnd")}
         </span>
       </label>
 
@@ -426,14 +425,14 @@ export function OpenCallForm() {
           color: theme.bgDark,
         }}
       >
-        Submit
+        {td("submit")}
       </button>
 
       {/* Go back */}
       <p className="text-center text-sm text-gray-400">
-        Go back to{" "}
+        {td("homeBack")}{" "}
         <Link href="/" className="hover:underline" style={{ color: theme.accentGold }}>
-          Home page
+          {td("homePage")}
         </Link>
       </p>
     </form>

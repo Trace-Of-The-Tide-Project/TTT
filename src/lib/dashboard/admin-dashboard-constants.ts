@@ -85,8 +85,6 @@ export const alerts = [
 ];
 
 export const pendingEditorApplicationsModal = {
-  title: "Pending Editor Applications",
-  description: "Review and approve editor applications.",
   items: [
     { id: "p1", title: "Mariam Ali", subtitle: "Applied for Editor role", processButtons: true },
     { id: "p2", title: "Fatima Zahra", subtitle: "Applied for Editor role", processButtons: true },
@@ -95,11 +93,13 @@ export const pendingEditorApplicationsModal = {
   viewAllHref: "/admin/users",
 };
 
+export type QuickActionId = "sendBroadcast" | "approveEditor" | "featureContent" | "maintenanceMode";
+
 export const quickActions = [
-  { id: "1", icon: SendIcon, label: "Send Broadcast", description: "Message all users or specific roles", href: "/admin/messaging" },
-  { id: "2", icon: PersonPlusIcon, label: "Approve editor", description: "5 pending applications", href: "/admin/users" },
-  { id: "3", icon: StarIcon, label: "Feature content", description: "Highlight on homepage", href: "/admin/content" },
-  { id: "4", icon: SettingsIcon, label: "Maintenance mode", description: "Enable platform maintenance", href: "/admin/settings" },
+  { id: "1", actionId: "sendBroadcast" as const, icon: SendIcon, href: "/admin/messaging" },
+  { id: "2", actionId: "approveEditor" as const, icon: PersonPlusIcon, href: "/admin/users" },
+  { id: "3", actionId: "featureContent" as const, icon: StarIcon, href: "/admin/content" },
+  { id: "4", actionId: "maintenanceMode" as const, icon: SettingsIcon, href: "/admin/settings" },
 ];
 
 export const editorApps = [
@@ -107,37 +107,41 @@ export const editorApps = [
   { id: "2", initials: "A", name: "Ahmed Hassan", badge: "Editor", experience: "3 years in journalism", timeAgo: "4 hours ago" },
 ];
 
+export type ContentCategoryKey = "articles" | "films" | "music" | "photography" | "essays" | "podcasts";
+
 export const contentRows = [
-  { id: "1", icon: FileTextIcon, category: "Articles", published: 1247, drafts: 23, flagged: 3 },
-  { id: "2", icon: FilmIcon, category: "Films", published: 342, drafts: 15, flagged: "—" },
-  { id: "3", icon: MusicIcon, category: "Music", published: 567, drafts: 64, flagged: 2 },
-  { id: "4", icon: CameraIcon, category: "Photography", published: 892, drafts: 34, flagged: "—" },
-  { id: "5", icon: BookIcon, category: "Essays", published: 234, drafts: 17, flagged: 1 },
-  { id: "6", icon: MicIcon, category: "Podcasts", published: 156, drafts: 5, flagged: "—" },
+  { id: "1", icon: FileTextIcon, categoryKey: "articles" as const, published: 1247, drafts: 23, flagged: 3 },
+  { id: "2", icon: FilmIcon, categoryKey: "films" as const, published: 342, drafts: 15, flagged: "—" },
+  { id: "3", icon: MusicIcon, categoryKey: "music" as const, published: 567, drafts: 64, flagged: 2 },
+  { id: "4", icon: CameraIcon, categoryKey: "photography" as const, published: 892, drafts: 34, flagged: "—" },
+  { id: "5", icon: BookIcon, categoryKey: "essays" as const, published: 234, drafts: 17, flagged: 1 },
+  { id: "6", icon: MicIcon, categoryKey: "podcasts" as const, published: 156, drafts: 5, flagged: "—" },
 ];
 
+export type UserRoleKey = "users" | "contributors" | "authors" | "editors" | "admins";
+
 export const userRoles = [
-  { id: "1", icon: UsersIcon, label: "Users", count: "10,234", percentage: 82, change: "+12%" },
-  { id: "2", icon: HeartHandshakeIcon, label: "Contributors", count: "1,847", percentage: 35, change: "+8%" },
-  { id: "3", icon: PenLineIcon, label: "Authors", count: "423", percentage: 20, change: "+15%" },
-  { id: "4", icon: BarChartIcon, label: "Editors", count: "38", percentage: 8, change: "+5%" },
-  { id: "5", icon: ShieldIcon, label: "Admins", count: "4", percentage: 3 },
+  { id: "1", icon: UsersIcon, roleKey: "users" as const, count: "10,234", percentage: 82, change: "+12%" },
+  { id: "2", icon: HeartHandshakeIcon, roleKey: "contributors" as const, count: "1,847", percentage: 35, change: "+8%" },
+  { id: "3", icon: PenLineIcon, roleKey: "authors" as const, count: "423", percentage: 20, change: "+15%" },
+  { id: "4", icon: BarChartIcon, roleKey: "editors" as const, count: "38", percentage: 8, change: "+5%" },
+  { id: "5", icon: ShieldIcon, roleKey: "admins" as const, count: "4", percentage: 3 },
 ];
 
 export const financeCards = [
-  { id: "1", icon: DollarSignIcon, amount: "$1,247", label: "Today's Donations...", sublabel: "23 transactions...", trend: { value: "18%", direction: "up" as const } },
-  { id: "2", icon: TrendingUpIcon, amount: "$34,892", label: "This Month...", sublabel: "vs $28,450 last month...", trend: { value: "22%", direction: "up" as const } },
-  { id: "3", icon: CreditCardIcon, amount: "$8,234", label: "Pending Payouts...", sublabel: "47 creators..." },
-  { id: "4", icon: CreditCardIcon, amount: "$3,489", label: "Platform Fees...", sublabel: "10% of transactions..." },
+  { id: "1", icon: DollarSignIcon, amount: "$1,247", trend: { value: "18%", direction: "up" as const } },
+  { id: "2", icon: TrendingUpIcon, amount: "$34,892", trend: { value: "22%", direction: "up" as const } },
+  { id: "3", icon: CreditCardIcon, amount: "$8,234" },
+  { id: "4", icon: CreditCardIcon, amount: "$3,489" },
 ];
 
 export const recentActivity = [
-  { id: "1", icon: PersonIcon, title: "New author joined", description: "Sara Marzouq signed ...", time: "2 minutes ago" },
-  { id: "2", icon: FileTextIcon, title: "Article published", description: "The Future of Cinema ...", time: "2 minutes ago" },
-  { id: "3", icon: DollarSignIcon, title: "Donation received", description: "$50 donation to Elena ...", time: "2 minutes ago" },
-  { id: "4", icon: AlertTriangleIcon, title: "Content flagged", description: "Review required: Communi ...", time: "2 minutes ago" },
-  { id: "5", icon: StarIcon, title: "Content featured", description: '"Digital Art Revolution" a ...', time: "2 minutes ago" },
-  { id: "6", icon: ShieldIcon, title: "Login from new device", description: "Editor account accessed ...", time: "2 minutes ago" },
+  { id: "1", icon: PersonIcon },
+  { id: "2", icon: FileTextIcon },
+  { id: "3", icon: DollarSignIcon },
+  { id: "4", icon: AlertTriangleIcon },
+  { id: "5", icon: StarIcon },
+  { id: "6", icon: ShieldIcon },
 ];
 
 export const topPerformingArticles = [
@@ -179,8 +183,28 @@ export const topPerformingArticles = [
 ];
 
 export const commandCenterStats = [
-  { icon: UsersIcon, value: "12,546", label: "Total Users", trend: { value: "12.5%", direction: "up" as const, comparison: "VS last month" } },
-  { icon: FileTextIcon, value: "3,438", label: "Content Published", trend: { value: "8.2%", direction: "up" as const, comparison: "VS last month" } },
-  { icon: DollarSignIcon, value: "$34,892", label: "Monthly Donations", trend: { value: "22.4%", direction: "up" as const, comparison: "VS last month" } },
-  { icon: EyeIcon, value: "2,847", label: "Active Today", trend: { value: "3.1%", direction: "down" as const, comparison: "VS yesterday" } },
-];
+  {
+    icon: UsersIcon,
+    value: "12,546",
+    labelKey: "stats.totalUsers",
+    trend: { value: "12.5%", direction: "up" as const, comparisonKey: "vsLastMonth" },
+  },
+  {
+    icon: FileTextIcon,
+    value: "3,438",
+    labelKey: "stats.contentPublished",
+    trend: { value: "8.2%", direction: "up" as const, comparisonKey: "vsLastMonth" },
+  },
+  {
+    icon: DollarSignIcon,
+    value: "$34,892",
+    labelKey: "stats.monthlyDonations",
+    trend: { value: "22.4%", direction: "up" as const, comparisonKey: "vsLastMonth" },
+  },
+  {
+    icon: EyeIcon,
+    value: "2,847",
+    labelKey: "stats.activeToday",
+    trend: { value: "3.1%", direction: "down" as const, comparisonKey: "vsYesterday" },
+  },
+] as const;

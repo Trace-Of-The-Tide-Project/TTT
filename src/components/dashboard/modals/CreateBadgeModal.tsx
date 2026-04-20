@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   GiftIcon,
   HeartHandshakeIcon,
@@ -21,20 +22,21 @@ type CreateBadgeModalProps = {
   onCreate: (badge: Omit<Badge, "id" | "recipients">) => void;
 };
 
-const ROLE_OPTIONS = ["All Users", "All Authors", "All Editors", "All Contributors"] as const;
+const ROLE_IDS = ["allUsers", "allAuthors", "allEditors", "allContributors"] as const;
 
-const ICON_OPTIONS: Array<{ id: BadgeIconOption; label: string; icon: React.ReactNode }> = [
-  { id: "award", label: "Award", icon: <ThreadIcon /> },
-  { id: "star", label: "Star", icon: <StarIcon /> },
-  { id: "heart", label: "Heart", icon: <HeartHandshakeIcon /> },
-  { id: "check", label: "Check", icon: <SquareCheckIcon /> },
-  { id: "spark", label: "Spark", icon: <SunIcon /> },
+const ICON_OPTIONS: Array<{ id: BadgeIconOption; icon: React.ReactNode }> = [
+  { id: "award", icon: <ThreadIcon /> },
+  { id: "star", icon: <StarIcon /> },
+  { id: "heart", icon: <HeartHandshakeIcon /> },
+  { id: "check", icon: <SquareCheckIcon /> },
+  { id: "spark", icon: <SunIcon /> },
 ];
 
 export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalProps) {
+  const tc = useTranslations("Dashboard.engagementsPage.createBadgeModal");
   const [selectedIcon, setSelectedIcon] = useState<BadgeIconOption>("award");
   const [name, setName] = useState("");
-  const [role, setRole] = useState<(typeof ROLE_OPTIONS)[number] | "">("");
+  const [role, setRole] = useState<(typeof ROLE_IDS)[number] | "">("");
   const [reason, setReason] = useState("");
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
 
@@ -99,19 +101,19 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
         type="button"
         className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
         onClick={onClose}
-        aria-label="Close modal"
+        aria-label={tc("closeModalAria")}
       />
 
       <div className="relative mx-4 w-full max-w-lg rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6">
         <div className="mb-5 flex items-start justify-between border-b border-[var(--tott-card-border)] pb-5">
           <div>
-            <h2 className="text-lg font-bold text-foreground">Create New Badge</h2>
+            <h2 className="text-lg font-bold text-foreground">{tc("title")}</h2>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
-            aria-label="Close"
+            aria-label={tc("closeAria")}
           >
             <XIcon />
           </button>
@@ -131,7 +133,7 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
           }}
         >
           <div>
-            <label className="mb-2 block text-sm font-medium text-foreground">Icon</label>
+            <label className="mb-2 block text-sm font-medium text-foreground">{tc("icon")}</label>
             <div className="flex flex-wrap gap-3">
               {ICON_OPTIONS.map((opt) => (
                 <button
@@ -145,7 +147,7 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
                     color:
                       selectedIcon === opt.id ? theme.accentGoldFocus : "var(--tott-dash-control-fg)",
                   }}
-                  aria-label={opt.label}
+                  aria-label={(tc as (key: string) => string)(`iconAria.${opt.id}`)}
                 >
                   {opt.id === "award" ? <GiftIcon /> : opt.icon}
                 </button>
@@ -154,19 +156,19 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">Badge Name</label>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">{tc("badgeName")}</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g Top Contributor"
+              placeholder={tc("namePlaceholder")}
               className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
               style={{ color: "#e5e7eb" }}
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">Or select a role</label>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">{tc("roleLabel")}</label>
             <div className="relative">
               <button
                 ref={roleButtonRef}
@@ -177,7 +179,9 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
                 aria-haspopup="listbox"
                 aria-expanded={roleMenuOpen}
               >
-                <span className="truncate">{role || "Award to role..."}</span>
+                <span className="truncate">
+                  {role ? (tc as (key: string) => string)(`roles.${role}`) : tc("rolePlaceholder")}
+                </span>
                 <span className="text-gray-500">
                   <svg
                     width="14"
@@ -200,7 +204,7 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
                   className="absolute left-0 right-0 top-full z-10 mt-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-2 shadow-xl"
                   role="listbox"
                 >
-                  {ROLE_OPTIONS.map((opt) => (
+                  {ROLE_IDS.map((opt) => (
                     <button
                       key={opt}
                       type="button"
@@ -208,9 +212,9 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
                         setRole(opt);
                         setRoleMenuOpen(false);
                       }}
-                      className="w-full rounded-md px-3 py-2 text-left text-sm text-foreground hover:bg-[var(--tott-dash-ghost-hover)]"
+                      className="w-full rounded-md px-3 py-2 text-start text-sm text-foreground hover:bg-[var(--tott-dash-ghost-hover)]"
                     >
-                      {opt}
+                      {(tc as (key: string) => string)(`roles.${opt}`)}
                     </button>
                   ))}
                 </div>
@@ -220,12 +224,13 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-foreground">
-              Reason <span className="text-gray-500">(Optional)</span>
+              {tc("reasonLabel")}{" "}
+              <span className="text-gray-500">{tc("optional")}</span>
             </label>
             <textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Why is this badge being awarded?"
+              placeholder={tc("reasonPlaceholder")}
               rows={4}
               className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
               style={{ color: "#e5e7eb" }}
@@ -238,7 +243,7 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
               onClick={onClose}
               className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-foreground"
             >
-              Cancel
+              {tc("cancel")}
             </button>
             <button
               type="submit"
@@ -246,7 +251,7 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
               className="rounded-lg px-6 py-2 text-sm font-medium text-black transition-colors disabled:opacity-50"
               style={{ backgroundColor: theme.accentGoldFocus }}
             >
-              Create Badge
+              {tc("submit")}
             </button>
           </div>
         </form>

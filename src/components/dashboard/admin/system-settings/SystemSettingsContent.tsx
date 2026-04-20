@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import {
   ContributeIcon,
   FolderIcon,
@@ -17,7 +18,7 @@ import { EditMessageTemplateModal } from "@/components/dashboard/modals/EditMess
 import { BadgeIconRenderer } from "@/components/dashboard/admin/system-settings/badge-icon-options";
 import { TagHexShell } from "@/components/dashboard/admin/system-settings/TagHexShell";
 import {
-  SYSTEM_SETTINGS_TABS,
+  SYSTEM_SETTINGS_TAB_IDS,
   sampleAchievementBadges,
   sampleContentCategories,
   sampleContentTags,
@@ -32,7 +33,6 @@ import {
 } from "@/lib/dashboard/email-templates-constants";
 
 const ACCENT = "#E8DDC0";
-const PANEL_BG = "#000000";
 
 /** Chamfered row (matches Reports audit log cards). */
 const ROW_CLIP =
@@ -54,6 +54,8 @@ type BadgeModalState =
   | { type: "edit"; badge: AchievementBadgeRow };
 
 export function SystemSettingsContent() {
+  const locale = useLocale();
+  const tSettings = useTranslations("Dashboard.systemSettings");
   const [activeTab, setActiveTab] = useState<SystemSettingsTabId>("categories");
   const [categories, setCategories] = useState<ContentCategoryRow[]>(() => [...sampleContentCategories]);
   const [categoryModal, setCategoryModal] = useState<CategoryModalState>({ type: "closed" });
@@ -67,15 +69,16 @@ export function SystemSettingsContent() {
   const [editEmailOpen, setEditEmailOpen] = useState(false);
   const [selectedEmailTemplate, setSelectedEmailTemplate] = useState<MessageTemplate | null>(null);
   const [defaultLanguage, setDefaultLanguage] = useState("English");
-  const [timezone, setTimezone] = useState("UTC");
-  const [dateFormat, setDateFormat] = useState("MM/DD/YYYY");
+  const [timezone, setTimezone] = useState<"utc" | "eastern" | "pacific" | "gmt">("utc");
+  const [dateFormat, setDateFormat] = useState<"mdy" | "dmy" | "ymd">("mdy");
   const [multiLanguageEnabled, setMultiLanguageEnabled] = useState(false);
-  const [communityGuidelines, setCommunityGuidelines] = useState(
-    "1. Be respectful to all community members\n2. No hate speech or discrimination\n3. Original content only - no plagiarism\n4. Credit sources when applicable\n5. No spam or self-promotion"
-  );
-  const [contentPolicy, setContentPolicy] = useState(
-    "All content must be original or properly licensed. Copyrighted material without permission will be removed. Adult content must be properly tagged."
-  );
+  const [communityGuidelines, setCommunityGuidelines] = useState("");
+  const [contentPolicy, setContentPolicy] = useState("");
+
+  useEffect(() => {
+    setCommunityGuidelines(tSettings("guidelines.sampleCommunity"));
+    setContentPolicy(tSettings("guidelines.sampleContentPolicy"));
+  }, [locale, tSettings]);
 
   const handleCategorySave = (payload: { id?: string; name: string; slug: string }) => {
     if (categoryModal.type === "add") {
@@ -143,13 +146,13 @@ export function SystemSettingsContent() {
 
   const formatLastEdited = (iso: string) => {
     try {
-      return new Date(iso).toLocaleDateString("en-US", {
+      return new Date(iso).toLocaleDateString(locale, {
         month: "short",
         day: "numeric",
         year: "numeric",
       });
     } catch {
-      return "—";
+      return tSettings("dateUnknown");
     }
   };
 
@@ -161,18 +164,18 @@ export function SystemSettingsContent() {
       <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 lg:p-8">
         <div className="flex flex-col gap-3">
           <div className="flex w-full flex-wrap items-center gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
-            {SYSTEM_SETTINGS_TABS.map((tab) => (
+            {SYSTEM_SETTINGS_TAB_IDS.map((tabId) => (
               <button
-                key={tab.id}
+                key={tabId}
                 type="button"
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => setActiveTab(tabId)}
                 className={`rounded-md px-4 py-2.5 text-sm font-medium transition-all sm:px-5 ${
-                  activeTab === tab.id
+                  activeTab === tabId
                     ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
                     : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
                 }`}
               >
-                {tab.label}
+                {tSettings(`tabs.${tabId}`)}
               </button>
             ))}
           </div>
@@ -188,7 +191,7 @@ export function SystemSettingsContent() {
                 <span className="[&_svg]:h-4 [&_svg]:w-4">
                   <PlusIcon />
                 </span>
-                Add Category
+                {tSettings("categories.add")}
               </button>
             </div>
           )}
@@ -204,7 +207,7 @@ export function SystemSettingsContent() {
                 <span className="[&_svg]:h-4 [&_svg]:w-4">
                   <PlusIcon />
                 </span>
-                Add Tag
+                {tSettings("tags.add")}
               </button>
             </div>
           )}
@@ -220,7 +223,7 @@ export function SystemSettingsContent() {
                 <span className="[&_svg]:h-4 [&_svg]:w-4">
                   <PlusIcon />
                 </span>
-                Create Badge
+                {tSettings("badges.add")}
               </button>
             </div>
           )}
@@ -228,10 +231,8 @@ export function SystemSettingsContent() {
 
         {activeTab === "categories" && (
           <div className="mt-8">
-            <h2 className="text-lg font-bold text-foreground">Content Categories</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Manage content classification categories.
-            </p>
+            <h2 className="text-lg font-bold text-foreground">{tSettings("categories.title")}</h2>
+            <p className="mt-1 text-sm text-gray-500">{tSettings("categories.subtitle")}</p>
             <div className="mt-6 space-y-3">
               {categories.map((cat) => (
                 <div
@@ -251,15 +252,17 @@ export function SystemSettingsContent() {
                     <p className="mt-0.5 font-mono text-sm text-gray-500">{cat.slug}</p>
                   </div>
                   <span className="hidden shrink-0 text-sm text-gray-500 sm:inline">
-                    {cat.itemCount} items
+                    {tSettings("itemCount", { count: cat.itemCount })}
                   </span>
                   <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-                    <span className="sm:hidden text-xs text-gray-500">{cat.itemCount} items</span>
+                    <span className="sm:hidden text-xs text-gray-500">
+                      {tSettings("itemCount", { count: cat.itemCount })}
+                    </span>
                     <button
                       type="button"
                       onClick={() => setCategoryModal({ type: "edit", category: cat })}
                       className="rounded-lg p-2 text-[#E8DDC0] transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
-                      aria-label={`Edit ${cat.name}`}
+                      aria-label={tSettings("categories.editAria", { name: cat.name })}
                     >
                       <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
                         <ContributeIcon />
@@ -269,7 +272,7 @@ export function SystemSettingsContent() {
                       type="button"
                       onClick={() => setCategories((prev) => prev.filter((c) => c.id !== cat.id))}
                       className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
-                      aria-label={`Delete ${cat.name}`}
+                      aria-label={tSettings("categories.deleteAria", { name: cat.name })}
                     >
                       <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
                         <TrashIcon />
@@ -284,8 +287,8 @@ export function SystemSettingsContent() {
 
         {activeTab === "tags" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
-            <h2 className="text-lg font-bold text-foreground">Content Tags</h2>
-            <p className="mt-1 text-sm text-gray-500">Special tags for content highlighting</p>
+            <h2 className="text-lg font-bold text-foreground">{tSettings("tags.title")}</h2>
+            <p className="mt-1 text-sm text-gray-500">{tSettings("tags.subtitle")}</p>
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
               {tags.map((tag) => (
                 <div
@@ -301,7 +304,7 @@ export function SystemSettingsContent() {
                       type="button"
                       onClick={() => setTagModal({ type: "edit", tag })}
                       className="rounded-lg p-2 text-[#E8DDC0] transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
-                      aria-label={`Edit ${tag.label}`}
+                      aria-label={tSettings("tags.editAria", { name: tag.label })}
                     >
                       <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
                         <ContributeIcon />
@@ -311,7 +314,7 @@ export function SystemSettingsContent() {
                       type="button"
                       onClick={() => setTags((prev) => prev.filter((t) => t.id !== tag.id))}
                       className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
-                      aria-label={`Delete ${tag.label}`}
+                      aria-label={tSettings("tags.deleteAria", { name: tag.label })}
                     >
                       <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
                         <TrashIcon />
@@ -326,10 +329,8 @@ export function SystemSettingsContent() {
 
         {activeTab === "badges" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
-            <h2 className="text-lg font-bold text-foreground">Achievement Badges</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Configure user achievement badges and milestones.
-            </p>
+            <h2 className="text-lg font-bold text-foreground">{tSettings("badges.title")}</h2>
+            <p className="mt-1 text-sm text-gray-500">{tSettings("badges.subtitle")}</p>
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
               {badges.map((badge) => (
                 <div
@@ -347,7 +348,7 @@ export function SystemSettingsContent() {
                     type="button"
                     onClick={() => setBadgeModal({ type: "edit", badge })}
                     className="shrink-0 rounded-lg p-2 text-gray-500 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-[#E8DDC0]"
-                    aria-label={`Edit ${badge.name}`}
+                    aria-label={tSettings("badges.editAria", { name: badge.name })}
                   >
                     <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
                       <PenLineIcon />
@@ -361,8 +362,8 @@ export function SystemSettingsContent() {
 
         {activeTab === "email" && (
           <div className="mt-8">
-            <h2 className="text-lg font-bold text-foreground">Email Templates</h2>
-            <p className="mt-1 text-sm text-gray-500">Customize automated email communications</p>
+            <h2 className="text-lg font-bold text-foreground">{tSettings("email.title")}</h2>
+            <p className="mt-1 text-sm text-gray-500">{tSettings("email.subtitle")}</p>
 
             <div className="mt-6 space-y-4">
               {emailTemplates.map((tpl) => (
@@ -390,7 +391,7 @@ export function SystemSettingsContent() {
                     <div className="min-w-0">
                       <p className="truncate text-lg font-semibold text-foreground">{tpl.name}</p>
                       <p className="mt-1 text-sm text-gray-500">
-                        Last edited: {formatLastEdited(tpl.lastEditedAt)}
+                        {tSettings("lastEdited", { date: formatLastEdited(tpl.lastEditedAt) })}
                       </p>
                     </div>
                   </div>
@@ -405,7 +406,7 @@ export function SystemSettingsContent() {
                     <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: ACCENT }}>
                       <ContributeIcon />
                     </span>
-                    Edit Template
+                    {tSettings("email.editTemplate")}
                   </button>
                 </div>
               ))}
@@ -415,50 +416,62 @@ export function SystemSettingsContent() {
 
         {activeTab === "localisation" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
-            <h2 className="text-lg font-bold text-foreground">Language Settings</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Configure platform language and regional settings
-            </p>
+            <h2 className="text-lg font-bold text-foreground">{tSettings("localisation.title")}</h2>
+            <p className="mt-1 text-sm text-gray-500">{tSettings("localisation.subtitle")}</p>
 
             <div className="mt-6 space-y-6">
               <div>
-                <p className="text-sm font-semibold text-foreground">Default Language</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {tSettings("localisation.defaultLanguage")}
+                </p>
                 <select
                   value={defaultLanguage}
                   onChange={(e) => setDefaultLanguage(e.target.value)}
                   className={inputShell}
                 >
-                  <option value="English">English</option>
-                  <option value="Spanish">Spanish</option>
-                  <option value="French">French</option>
-                  <option value="German">German</option>
-                  <option value="Arabic">Arabic</option>
+                  <option value="English">{tSettings("localisation.languageNames.English")}</option>
+                  <option value="Spanish">{tSettings("localisation.languageNames.Spanish")}</option>
+                  <option value="French">{tSettings("localisation.languageNames.French")}</option>
+                  <option value="German">{tSettings("localisation.languageNames.German")}</option>
+                  <option value="Arabic">{tSettings("localisation.languageNames.Arabic")}</option>
                 </select>
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-foreground">Timezone</p>
-                <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className={inputShell}>
-                  <option value="UTC">UTC</option>
-                  <option value="Eastern Time">Eastern Time</option>
-                  <option value="Pacific Time">Pacific Time</option>
-                  <option value="GMT">GMT</option>
+                <p className="text-sm font-semibold text-foreground">{tSettings("localisation.timezone")}</p>
+                <select
+                  value={timezone}
+                  onChange={(e) =>
+                    setTimezone(e.target.value as "utc" | "eastern" | "pacific" | "gmt")
+                  }
+                  className={inputShell}
+                >
+                  <option value="utc">{tSettings("localisation.timezones.utc")}</option>
+                  <option value="eastern">{tSettings("localisation.timezones.eastern")}</option>
+                  <option value="pacific">{tSettings("localisation.timezones.pacific")}</option>
+                  <option value="gmt">{tSettings("localisation.timezones.gmt")}</option>
                 </select>
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-foreground">Date Format</p>
-                <select value={dateFormat} onChange={(e) => setDateFormat(e.target.value)} className={inputShell}>
-                  <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                  <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                  <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                <p className="text-sm font-semibold text-foreground">{tSettings("localisation.dateFormat")}</p>
+                <select
+                  value={dateFormat}
+                  onChange={(e) => setDateFormat(e.target.value as "mdy" | "dmy" | "ymd")}
+                  className={inputShell}
+                >
+                  <option value="mdy">{tSettings("localisation.dateFormats.mdy")}</option>
+                  <option value="dmy">{tSettings("localisation.dateFormats.dmy")}</option>
+                  <option value="ymd">{tSettings("localisation.dateFormats.ymd")}</option>
                 </select>
               </div>
 
               <div className="flex items-center justify-between gap-6">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Enable Multi-language</p>
-                  <p className="mt-1 text-sm text-gray-500">Allow users to switch between languages</p>
+                  <p className="text-sm font-semibold text-foreground">
+                    {tSettings("localisation.multiLanguage")}
+                  </p>
+                  <p className="mt-1 text-sm text-gray-500">{tSettings("localisation.multiLanguageHint")}</p>
                 </div>
                 <button
                   type="button"
@@ -467,7 +480,7 @@ export function SystemSettingsContent() {
                     multiLanguageEnabled ? "bg-[#E8DDC0]" : "bg-[var(--tott-dash-surface-inset)]"
                   }`}
                   aria-pressed={multiLanguageEnabled}
-                  aria-label="Toggle multi-language"
+                  aria-label={tSettings("toggleMultiLanguageAria")}
                 >
                   <span
                     className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full transition-all ${
@@ -498,7 +511,7 @@ export function SystemSettingsContent() {
                     <path d="M17 21v-8H7v8" />
                     <path d="M7 3v5h8" />
                   </svg>
-                  Save Changes
+                  {tSettings("saveChanges")}
                 </button>
               </div>
             </div>
@@ -507,12 +520,12 @@ export function SystemSettingsContent() {
 
         {activeTab === "guidelines" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
-            <h2 className="text-lg font-bold text-foreground">Platform Guidelines</h2>
-            <p className="mt-1 text-sm text-gray-500">Community rules and content guidelines</p>
+            <h2 className="text-lg font-bold text-foreground">{tSettings("guidelines.title")}</h2>
+            <p className="mt-1 text-sm text-gray-500">{tSettings("guidelines.subtitle")}</p>
 
             <div className="mt-6 space-y-6">
               <div>
-                <p className="text-sm font-semibold text-foreground">Community Guidelines</p>
+                <p className="text-sm font-semibold text-foreground">{tSettings("guidelines.communityLabel")}</p>
                 <textarea
                   value={communityGuidelines}
                   onChange={(e) => setCommunityGuidelines(e.target.value)}
@@ -522,7 +535,9 @@ export function SystemSettingsContent() {
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-foreground">Content Policy</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {tSettings("guidelines.contentPolicyLabel")}
+                </p>
                 <textarea
                   value={contentPolicy}
                   onChange={(e) => setContentPolicy(e.target.value)}
@@ -533,8 +548,10 @@ export function SystemSettingsContent() {
 
               <div className="flex items-center justify-between gap-6">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Enable Multi-language</p>
-                  <p className="mt-1 text-sm text-gray-500">Allow users to switch between languages</p>
+                  <p className="text-sm font-semibold text-foreground">
+                    {tSettings("localisation.multiLanguage")}
+                  </p>
+                  <p className="mt-1 text-sm text-gray-500">{tSettings("localisation.multiLanguageHint")}</p>
                 </div>
                 <button
                   type="button"
@@ -543,7 +560,7 @@ export function SystemSettingsContent() {
                     multiLanguageEnabled ? "bg-[#E8DDC0]" : "bg-[var(--tott-dash-surface-inset)]"
                   }`}
                   aria-pressed={multiLanguageEnabled}
-                  aria-label="Toggle multi-language"
+                  aria-label={tSettings("toggleMultiLanguageAria")}
                 >
                   <span
                     className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full transition-all ${
@@ -574,22 +591,13 @@ export function SystemSettingsContent() {
                     <path d="M17 21v-8H7v8" />
                     <path d="M7 3v5h8" />
                   </svg>
-                  Save Changes
+                  {tSettings("saveChanges")}
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {activeTab !== "categories" &&
-          activeTab !== "tags" &&
-          activeTab !== "badges" &&
-          activeTab !== "email" && (
-            <div className="mt-8 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-6 py-12 text-center text-sm text-gray-500">
-              {SYSTEM_SETTINGS_TABS.find((t) => t.id === activeTab)?.label ?? "This section"} — coming
-              soon.
-            </div>
-          )}
       </div>
 
       <CategoryFormModal

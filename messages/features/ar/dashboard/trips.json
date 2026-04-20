@@ -1,0 +1,144 @@
+{
+  "Dashboard": {
+    "trips": {
+      "management": {
+        "tryAgain": "إعادة المحاولة",
+        "searchPlaceholder": "البحث في الأرشيف…",
+        "loading": "جاري تحميل الرحلات…",
+        "headers": {
+          "title": "العنوان",
+          "route": "المسار",
+          "startDate": "تاريخ البدء",
+          "endDate": "تاريخ الانتهاء",
+          "duration": "المدة",
+          "status": "الحالة"
+        },
+        "empty": {
+          "noMatch": "لا توجد رحلات مطابقة لبحثك.",
+          "none": "لا توجد رحلات بعد."
+        },
+        "pagination": {
+          "showing": "عرض {from} إلى {to} من {total} رحلة",
+          "previous": "السابق",
+          "next": "التالي"
+        },
+        "tabs": {
+          "create": "إنشاء رحلة",
+          "archive": "الأرشيف"
+        },
+        "duration": {
+          "hours": "{count} ساعة",
+          "days": "{count} يوم"
+        },
+        "status": {
+          "completed": "مكتملة",
+          "archived": "مؤرشفة",
+          "draft": "مسودة",
+          "past": "سابقة"
+        },
+        "previewAria": "معاينة {title}",
+        "deleteAria": "حذف {title}"
+      },
+      "editor": {
+        "validation": {
+          "titleRequired": "العنوان مطلوب.",
+          "categoryRequired": "التصنيف مطلوب."
+        },
+        "errors": {
+          "requestFailed": "فشل الطلب",
+          "generic": "حدث خطأ ما"
+        },
+        "joinForm": {
+          "title": "نموذج الانضمام للرحلة",
+          "hint": "يرى المسافرون هذا في صفحة الرحلة العامة. نفس أنواع الحقول كطلبات الدعوة المفتوحة؛ إعادة التعيين تستعيد القالب الافتراضي (الاسم، البريد، رسالة اختيارية)."
+        },
+        "sidebar": {
+          "previewTrip": "معاينة الرحلة",
+          "duplicateTrip": "تكرار الرحلة",
+          "archive": "أرشفة"
+        },
+        "footer": {
+          "publishNow": "نشر الآن"
+        },
+        "summary": {
+          "heading": "ملخص الرحلة",
+          "untitled": "رحلة بلا عنوان",
+          "title": "العنوان",
+          "route": "المسار",
+          "startDate": "تاريخ البدء",
+          "duration": "المدة",
+          "durationHours": "{hours} س",
+          "lastStop": "المحطة الأخيرة",
+          "price": "السعر",
+          "placeholder": "—"
+        },
+        "basicInfo": {
+          "heading": "معلومات أساسية",
+          "tripTitle": "عنوان الرحلة",
+          "tripTitlePlaceholder": "مثال: جولة تراثية: القدس القديمة",
+          "moderatorName": "اسم المنسق",
+          "moderatorPlaceholder": "مثال: أحمد محمد",
+          "description": "الوصف",
+          "descriptionPlaceholder": "صف تجربة الرحلة…",
+          "highlights": "أبرز النقاط",
+          "highlightPlaceholder": "نقطة {number}",
+          "removeHighlightAria": "إزالة النقطة {number}",
+          "addHighlight": "+ إضافة نقطة بارزة"
+        },
+        "details": {
+          "heading": "تفاصيل الرحلة",
+          "category": "التصنيف",
+          "categoryRequired": "*",
+          "categoryPlaceholder": "مثال: ثقافي، مغامرة",
+          "difficulty": "الصعوبة",
+          "startDate": "تاريخ البدء",
+          "endDate": "تاريخ الانتهاء",
+          "durationHours": "المدة (ساعات)",
+          "maxParticipants": "الحد الأقصى للمشاركين",
+          "minParticipants": "الحد الأدنى للمشاركين",
+          "difficulties": {
+            "easy": "سهل",
+            "moderate": "متوسط",
+            "hard": "صعب",
+            "extreme": "شديد"
+          }
+        },
+        "pricing": {
+          "heading": "التسعير",
+          "hint": "الحد الأدنى للمساهمة فقط. في صفحة الرحلة العامة يستخدم المسافرون مقياساً يبدأ من هذا المبلغ ويمكنهم الزيادة دون حد أقصى ثابت في المحرر.",
+          "minimumPrice": "الحد الأدنى للسعر",
+          "currency": "العملة"
+        },
+        "languages": {
+          "heading": "اللغات",
+          "selectLabel": "اختر لغة",
+          "selectPlaceholder": "اختر…",
+          "removeAria": "إزالة {label}",
+          "labels": {
+            "AR": "العربية",
+            "EN": "الإنجليزية",
+            "HE": "العبرية",
+            "FR": "الفرنسية",
+            "ES": "الإسبانية",
+            "DE": "الألمانية",
+            "TR": "التركية"
+          }
+        },
+        "itinerary": {
+          "heading": "المحطات",
+          "addStop": "+ إضافة محطة",
+          "stopNumber": "المحطة {number}",
+          "stopTitle": "عنوان المحطة",
+          "stopTitlePlaceholder": "مثال: نقطة التجمع عند باب يافا",
+          "description": "الوصف",
+          "descriptionPlaceholder": "ماذا يحدث في هذه المحطة…",
+          "arrivalTime": "وقت الوصول",
+          "durationMinutes": "المدة (دقيقة)",
+          "removeStopAria": "إزالة المحطة {number}",
+          "searchPlaceholder": "ابحث عن مكان…",
+          "searching": "جاري البحث…"
+        }
+      }
+    }
+  }
+}

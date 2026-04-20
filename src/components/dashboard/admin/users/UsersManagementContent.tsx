@@ -1,14 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isAxiosError } from "axios";
+import { useLocale, useTranslations } from "next-intl";
 import { SearchIcon } from "@/components/ui/icons";
 import { FilterDropdown } from "./FilterDropdown";
 import { UserActionsDropdown } from "./UserActionsDropdown";
 import { theme } from "@/lib/theme";
 import {
   formatContributionsCount,
-  formatUserJoinedDate,
   formatUserLastActiveRelative,
   formatUserRoleLabel,
   formatUserStatusLabel,
@@ -24,25 +24,6 @@ import {
 } from "@/services/users.service";
 
 const PAGE_LIMIT = 10;
-
-const STATUS_OPTIONS = [
-  { value: "all", label: "All status" },
-  { value: "active", label: "Active" },
-  { value: "pending", label: "Pending" },
-  { value: "suspended", label: "Suspended" },
-  { value: "inactive", label: "Inactive" },
-] as const;
-
-const SORT_OPTIONS = [
-  { value: "username", label: "Username" },
-  { value: "email", label: "Email" },
-  { value: "full_name", label: "Full name" },
-] as const;
-
-const ORDER_OPTIONS = [
-  { value: "ASC", label: "Ascending" },
-  { value: "DESC", label: "Descending" },
-] as const;
 
 function displayName(u: AdminUserListItem): string {
   const n = u.full_name?.trim();
@@ -64,7 +45,7 @@ function statusColor(status: string): string {
   return USER_STATUS_COLORS[key] ?? "#9CA3AF";
 }
 
-function listErrMessage(e: unknown): string {
+function listErrMessage(e: unknown, fallback: string): string {
   if (isAxiosError(e)) {
     const d = e.response?.data;
     if (typeof d === "string" && d.trim()) return d;
@@ -72,15 +53,62 @@ function listErrMessage(e: unknown): string {
       const o = d as Record<string, unknown>;
       if (typeof o.message === "string") return o.message;
     }
-    return e.message || "Failed to load users";
+    return e.message || fallback;
   }
   if (e instanceof Error) return e.message;
-  return "Failed to load users";
+  return fallback;
 }
 
 const emptyMeta: UsersListMeta = { total: 0, page: 1, limit: PAGE_LIMIT, totalPages: 1 };
 
+const API_USER_STATUSES = new Set(["active", "pending", "suspended", "inactive"]);
+
+function formatJoinedDateLocal(iso: string | null | undefined, locale: string): string {
+  if (!iso?.trim()) return "—";
+  const d = new Date(iso.trim());
+  if (Number.isNaN(d.getTime())) return "—";
+  const loc = locale.startsWith("ar") ? "ar" : "en-US";
+  return d.toLocaleDateString(loc, { month: "short", day: "numeric", year: "numeric" });
+}
+
+function displayUserStatus(status: string, t: (key: string) => string): string {
+  const key = status.trim().toLowerCase();
+  if (!key) return "—";
+  if (API_USER_STATUSES.has(key)) {
+    return t(`statusLabels.${key}`);
+  }
+  return formatUserStatusLabel(status);
+}
+
 export function UsersManagementContent() {
+  const t = useTranslations("Dashboard.usersManagement");
+  const loadFailedMessage = t("errors.loadFailed");
+
+  const statusOptions = useMemo(
+    () =>
+      (["all", "active", "pending", "suspended", "inactive"] as const).map((value) => ({
+        value,
+        label: t(`status.${value}`),
+      })),
+    [t],
+  );
+  const sortOptions = useMemo(
+    () =>
+      (["username", "email", "full_name"] as const).map((value) => ({
+        value,
+        label: t(`sort.${value}`),
+      })),
+    [t],
+  );
+  const orderOptions = useMemo(
+    () =>
+      (["ASC", "DESC"] as const).map((value) => ({
+        value,
+        label: t(`order.${value}`),
+      })),
+    [t],
+  );
+
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -132,13 +160,13 @@ export function UsersManagementContent() {
       setUsers(res.users);
       setMeta(res.meta);
     } catch (e) {
-      setError(listErrMessage(e));
+      setError(listErrMessage(e, loadFailedMessage));
       setUsers([]);
       setMeta(emptyMeta);
     } finally {
       setLoading(false);
     }
-  }, [page, debouncedSearch, statusFilter, sortBy, order]);
+  }, [page, debouncedSearch, statusFilter, sortBy, order, loadFailedMessage]);
 
   useEffect(() => {
     void load();
@@ -180,11 +208,11 @@ export function UsersManagementContent() {
       });
       downloadUsersCsv(list, "trace-users");
     } catch (e) {
-      setExportError(listErrMessage(e));
+      setExportError(listErrMessage(e, loadFailedMessage));
     } finally {
       exportBusyRef.current = false;
     }
-  }, [debouncedSearch, statusFilter, sortBy, order]);
+  }, [debouncedSearch, statusFilter, sortBy, order, loadFailedMessage]);
 
   useEffect(() => {
     const onExportRequest = () => {
@@ -207,7 +235,7 @@ export function UsersManagementContent() {
           </span>
           <input
             type="text"
-            placeholder="Search username, full name, email…"
+            placeholder={t("searchPlaceholder")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full min-w-0 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-3 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none sm:pr-4"
@@ -215,12 +243,12 @@ export function UsersManagementContent() {
         </div>
         <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-stretch sm:gap-2 lg:flex-nowrap lg:items-center">
           <FilterDropdown
-            options={[...STATUS_OPTIONS]}
+            options={statusOptions}
             value={statusFilter}
             onChange={handleStatusChange}
           />
-          <FilterDropdown options={[...SORT_OPTIONS]} value={sortBy} onChange={handleSortChange} />
-          <FilterDropdown options={[...ORDER_OPTIONS]} value={order} onChange={handleOrderChange} />
+          <FilterDropdown options={sortOptions} value={sortBy} onChange={handleSortChange} />
+          <FilterDropdown options={orderOptions} value={order} onChange={handleOrderChange} />
         </div>
       </div>
 
@@ -232,7 +260,7 @@ export function UsersManagementContent() {
             onClick={() => void runExport()}
             className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
           >
-            Try export again
+            {t("tryExportAgain")}
           </button>
         </div>
       ) : null}
@@ -245,50 +273,50 @@ export function UsersManagementContent() {
             onClick={() => void load()}
             className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
           >
-            Try again
+            {t("tryAgain")}
           </button>
         </div>
       ) : null}
 
       <div className="-mx-1 w-full max-w-full overflow-x-auto overscroll-x-contain rounded-lg border border-[var(--tott-card-border)] [touch-action:pan-x] sm:mx-0">
-        <table className="min-w-[720px] w-full border-collapse text-left text-sm">
+        <table className="min-w-[720px] w-full border-collapse text-start text-sm">
           <thead>
             <tr className="border-b border-[var(--tott-card-border)]">
               <th
                 className="bg-transparent px-3 py-2.5 text-xs font-semibold sm:px-5 sm:py-3"
                 style={{ color: theme.accentGoldFocus }}
               >
-                Contributor
+                {t("table.contributor")}
               </th>
               <th
                 className="bg-transparent px-2 py-2.5 text-xs font-semibold sm:px-4 sm:py-3"
                 style={{ color: theme.accentGoldFocus }}
               >
-                Role
+                {t("table.role")}
               </th>
               <th
                 className="bg-transparent px-2 py-2.5 text-xs font-semibold sm:px-4 sm:py-3"
                 style={{ color: theme.accentGoldFocus }}
               >
-                Status
+                {t("table.status")}
               </th>
               <th
                 className="bg-transparent px-2 py-2.5 text-xs font-semibold whitespace-nowrap sm:px-4 sm:py-3"
                 style={{ color: theme.accentGoldFocus }}
               >
-                Joined
+                {t("table.joined")}
               </th>
               <th
                 className="bg-transparent px-2 py-2.5 text-xs font-semibold whitespace-nowrap sm:px-4 sm:py-3"
                 style={{ color: theme.accentGoldFocus }}
               >
-                Last active
+                {t("table.lastActive")}
               </th>
               <th
                 className="bg-transparent px-2 py-2.5 text-center text-xs font-semibold sm:px-4 sm:py-3"
                 style={{ color: theme.accentGoldFocus }}
               >
-                Contributions
+                {t("table.contributions")}
               </th>
               <th className="w-10 px-1 py-2.5 sm:px-4 sm:py-3" aria-hidden />
             </tr>
@@ -297,17 +325,17 @@ export function UsersManagementContent() {
             {loading ? (
               <tr>
                 <td colSpan={7} className="px-5 py-12 text-center text-gray-500">
-                  Loading users…
+                  {t("loading")}
                 </td>
               </tr>
             ) : users.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-5 py-12 text-center text-gray-500">
-                  No users match your filters.
+                  {t("empty")}
                 </td>
               </tr>
             ) : (
-              users.map((user) => <UserRow key={user.id} user={user} nowMs={nowMs} />)
+              users.map((user) => <UserRow key={user.id} user={user} nowMs={nowMs} t={t} />)
             )}
           </tbody>
         </table>
@@ -315,7 +343,11 @@ export function UsersManagementContent() {
 
       <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
         <p className="text-center text-sm text-gray-500 sm:text-left">
-          Showing {meta.total === 0 ? 0 : startItem} to {endItem} of {meta.total} users
+          {t("pagination.showing", {
+            start: meta.total === 0 ? 0 : startItem,
+            end: endItem,
+            total: meta.total,
+          })}
         </p>
         <div className="flex items-center justify-center gap-2 sm:justify-end">
           <button
@@ -324,10 +356,10 @@ export function UsersManagementContent() {
             disabled={loading || effectivePage <= 1 || meta.total === 0}
             className="min-h-[44px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2 text-sm font-medium text-foreground transition-colors disabled:cursor-not-allowed disabled:opacity-50 hover:bg-[var(--tott-dash-surface-inset)] sm:min-h-0"
           >
-            Previous
+            {t("pagination.previous")}
           </button>
           <span className="min-w-26 shrink-0 text-center text-xs text-gray-500 sm:min-w-0">
-            Page {effectivePage} of {totalPages}
+            {t("pagination.pageOf", { page: effectivePage, totalPages })}
           </span>
           <button
             type="button"
@@ -335,7 +367,7 @@ export function UsersManagementContent() {
             disabled={loading || effectivePage >= totalPages || meta.total === 0}
             className="min-h-[44px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2 text-sm font-medium text-foreground transition-colors disabled:cursor-not-allowed disabled:opacity-50 hover:bg-[var(--tott-dash-surface-inset)] sm:min-h-0"
           >
-            Next
+            {t("pagination.next")}
           </button>
         </div>
       </div>
@@ -343,7 +375,16 @@ export function UsersManagementContent() {
   );
 }
 
-function UserRow({ user, nowMs }: { user: AdminUserListItem; nowMs: number }) {
+function UserRow({
+  user,
+  nowMs,
+  t,
+}: {
+  user: AdminUserListItem;
+  nowMs: number;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  const locale = useLocale();
   const color = statusColor(user.status);
   return (
     <tr className="border-b border-[var(--tott-card-border)] last:border-b-0 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]">
@@ -377,12 +418,12 @@ function UserRow({ user, nowMs }: { user: AdminUserListItem; nowMs: number }) {
         <span className="flex min-w-0 items-center gap-1.5">
           <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
           <span className="truncate text-xs sm:text-sm" style={{ color }}>
-            {formatUserStatusLabel(user.status)}
+            {displayUserStatus(user.status, t)}
           </span>
         </span>
       </td>
       <td className="whitespace-nowrap px-2 py-2.5 text-xs text-gray-400 sm:px-4 sm:py-3 sm:text-sm">
-        {formatUserJoinedDate(user.joined_at)}
+        {formatJoinedDateLocal(user.joined_at, locale)}
       </td>
       <td className="whitespace-nowrap px-2 py-2.5 text-xs text-gray-400 sm:px-4 sm:py-3 sm:text-sm">
         {formatUserLastActiveRelative(user.last_active_at, nowMs)}

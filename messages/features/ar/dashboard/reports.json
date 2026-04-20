@@ -1,0 +1,38 @@
+{
+  "Dashboard": {
+    "reportsPage": {
+      "tabs": {
+        "content": "محتوى مُبلَّغ عنه ({count})",
+        "users": "مستخدمون مُبلَّغ عنهم ({count})",
+        "audit": "سجل التدقيق"
+      },
+      "filters": {
+        "all": "الكل",
+        "pending": "قيد الانتظار",
+        "underReview": "قيد المراجعة"
+      },
+      "searchPlaceholder": "البحث في البلاغات…",
+      "emptyFiltered": "لا بلاغات مطابقة للمرشحات.",
+      "selectPrompt": "اختر بلاغاً للمراجعة",
+      "reportedBy": "أبلغ عنه:",
+      "statusLabels": {
+        "pending": "قيد الانتظار",
+        "underReview": "قيد المراجعة"
+      },
+      "typeLabels": {
+        "comment": "تعليق",
+        "content": "محتوى"
+      },
+      "users": {
+        "reportsCount": "{count, plural, one {بلاغ واحد} other {# بلاغات}}",
+        "viewProfile": "عرض الملف",
+        "warn": "تحذير",
+        "suspend": "تعليق الحساب"
+      },
+      "audit": {
+        "title": "سجل التدقيق",
+        "subtitle": "تتبع جميع إجراءات الإشراف"
+      }
+    }
+  }
+}

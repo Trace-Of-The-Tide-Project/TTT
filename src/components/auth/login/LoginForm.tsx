@@ -1,26 +1,28 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { EmailIcon, LockIcon } from '@/components/ui/icons'
-import { AuthInput } from '@/components/ui/AuthInput'
-import { theme } from '@/lib/theme'
-import { useLoginForm } from './useLoginForm'
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { EmailIcon, LockIcon } from "@/components/ui/icons";
+import { AuthInput } from "@/components/ui/AuthInput";
+import { theme } from "@/lib/theme";
+import { useLoginForm } from "./useLoginForm";
 
 export function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false)
+  const t = useTranslations("Auth.forms.login");
+  const [showPassword, setShowPassword] = useState(false);
   const { loading, error, registered, email, setEmail, rememberMe, setRememberMe, handleSubmit } =
-    useLoginForm()
+    useLoginForm();
 
   return (
-    <form onSubmit={handleSubmit} className="relative space-y-6 w-full max-w-md">
-      {registered === '1' && (
-        <p className="text-sm text-green-400 bg-green-400/10 border border-green-400/30 rounded-lg px-3 py-2">
-          Account created. You can log in now.
+    <form onSubmit={handleSubmit} className="relative w-full max-w-md space-y-6">
+      {registered === "1" && (
+        <p className="rounded-lg border border-green-400/30 bg-green-400/10 px-3 py-2 text-sm text-green-400">
+          {t("registeredBanner")}
         </p>
       )}
       {error && (
-        <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/30 rounded-lg px-3 py-2">
+        <p className="rounded-lg border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-400">
           {error}
         </p>
       )}
@@ -28,8 +30,8 @@ export function LoginForm() {
         id="email"
         name="email"
         type="email"
-        label="Email address"
-        placeholder="Enter your email address"
+        label={t("emailLabel")}
+        placeholder={t("emailPlaceholder")}
         required
         autoComplete="email"
         icon={<EmailIcon />}
@@ -39,9 +41,9 @@ export function LoginForm() {
       <AuthInput
         id="password"
         name="password"
-        type={showPassword ? 'text' : 'password'}
-        label="Password"
-        placeholder="Enter your password"
+        type={showPassword ? "text" : "password"}
+        label={t("passwordLabel")}
+        placeholder={t("passwordPlaceholder")}
         required
         autoComplete="current-password"
         icon={<LockIcon />}
@@ -51,7 +53,7 @@ export function LoginForm() {
             className="text-sm hover:underline"
             style={{ color: theme.accentGold }}
           >
-            Forgot password?
+            {t("forgotPassword")}
           </Link>
         }
         rightSlot={
@@ -59,7 +61,7 @@ export function LoginForm() {
             type="button"
             onClick={() => setShowPassword((p) => !p)}
             className="text-neutral-500 hover:text-foreground"
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-label={showPassword ? t("hidePassword") : t("showPassword")}
             suppressHydrationWarning
           >
             👁
@@ -76,19 +78,19 @@ export function LoginForm() {
           style={{ borderColor: theme.inputBorder }}
           suppressHydrationWarning
         />
-        <label htmlFor="remember" className="text-sm text-white cursor-default select-none">
-          Remember me
+        <label htmlFor="remember" className="cursor-default select-none text-sm text-foreground">
+          {t("rememberMe")}
         </label>
       </div>
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 rounded-lg font-medium text-black transition-colors disabled:opacity-60 cursor-pointer select-none"
+        className="w-full cursor-pointer select-none rounded-lg py-3 font-medium text-black transition-colors disabled:cursor-not-allowed disabled:opacity-60"
         style={{ backgroundColor: theme.accentGold }}
         suppressHydrationWarning
       >
-        {loading ? 'Logging in…' : 'Log in'}
+        {loading ? t("submitting") : t("submit")}
       </button>
     </form>
-  )
+  );
 }

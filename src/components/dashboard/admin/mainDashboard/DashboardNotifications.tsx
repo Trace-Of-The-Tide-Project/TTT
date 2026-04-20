@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { isAxiosError } from "axios";
 import {
@@ -43,7 +44,7 @@ function HexIcon({ children }: { children: React.ReactNode }) {
   );
 }
 
-function errMessage(e: unknown): string {
+function errMessage(e: unknown, fallback: string): string {
   if (isAxiosError(e)) {
     const d = e.response?.data;
     if (typeof d === "string" && d.trim()) return d;
@@ -51,13 +52,14 @@ function errMessage(e: unknown): string {
       const o = d as Record<string, unknown>;
       if (typeof o.message === "string") return o.message;
     }
-    return e.message || "Failed to load notifications";
+    return e.message || fallback;
   }
   if (e instanceof Error) return e.message;
-  return "Failed to load notifications";
+  return fallback;
 }
 
 export function DashboardNotifications() {
+  const t = useTranslations("Dashboard.adminHome.notifications");
   const user = useStoredAuthUser();
   const [items, setItems] = useState<NotificationListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,12 +89,12 @@ export function DashboardNotifications() {
       });
       setItems(filterNotificationsForUser(res.notifications, user.id));
     } catch (e) {
-      setError(errMessage(e));
+      setError(errMessage(e, t("loadFailed")));
       setItems([]);
     } finally {
       setLoading(false);
     }
-  }, [user?.id]);
+  }, [user?.id, t]);
 
   useEffect(() => {
     void load();
@@ -101,18 +103,18 @@ export function DashboardNotifications() {
   return (
     <div>
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h3 className="text-lg font-bold text-foreground">Alerts &amp; Notifications</h3>
+        <h3 className="text-lg font-bold text-foreground">{t("title")}</h3>
         <Link
           href="/admin/notifications"
           className="shrink-0 text-xs font-medium text-[#C9A96E] transition-colors hover:text-[#DBC99E]"
         >
-          View all &rsaquo;
+          {t("viewAll")}
         </Link>
       </div>
 
       {!user?.id ? (
         <p className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-8 text-center text-sm text-gray-500">
-          Sign in to see your notifications.
+          {t("signInPrompt")}
         </p>
       ) : null}
 
@@ -124,20 +126,20 @@ export function DashboardNotifications() {
             onClick={() => void load()}
             className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
           >
-            Try again
+            {t("tryAgain")}
           </button>
         </div>
       ) : null}
 
       {user?.id && !error && loading ? (
         <p className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-8 text-center text-sm text-gray-500">
-          Loading notifications…
+          {t("loading")}
         </p>
       ) : null}
 
       {user?.id && !error && !loading && items.length === 0 ? (
         <p className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-8 text-center text-sm text-gray-500">
-          No notifications yet.
+          {t("empty")}
         </p>
       ) : null}
 
@@ -159,7 +161,7 @@ export function DashboardNotifications() {
                   <p className="mt-0.5 text-xs text-gray-500">
                     <span className="capitalize">{n.type}</span>
                     {n.status === "unread" ? (
-                      <span className="text-[#C9A96E]"> · Unread</span>
+                      <span className="text-[#C9A96E]"> · {t("unread")}</span>
                     ) : null}
                     <span className="text-gray-600"> · {time}</span>
                   </p>
@@ -168,7 +170,7 @@ export function DashboardNotifications() {
                   href="/admin/notifications"
                   className="shrink-0 text-xs font-medium text-gray-400 transition-colors hover:text-foreground"
                 >
-                  Open &rsaquo;
+                  {t("open")}
                 </Link>
               </div>
             );

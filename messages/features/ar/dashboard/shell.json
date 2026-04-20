@@ -1,0 +1,177 @@
+{
+  "Dashboard": {
+    "layout": {
+      "loadingAdmin": "جاري تحميل لوحة الإدارة",
+      "dashboard": "لوحة التحكم",
+      "adminSettings": "إعدادات الإدارة",
+      "openSidebar": "فتح الشريط الجانبي",
+      "closeSidebar": "إغلاق الشريط الجانبي"
+    },
+    "topbar": {
+      "searchPlaceholder": "ابحث عن المستخدمين والمحتوى والإعدادات…",
+      "activity": "النشاط",
+      "settings": "الإعدادات",
+      "notifications": "الإشعارات",
+      "systemHealthy": "النظام سليم"
+    },
+    "sidebarUser": {
+      "fallbackName": "زائر",
+      "signOut": "تسجيل الخروج"
+    },
+    "sidebar": {
+      "mainDashboard": "الرئيسية",
+      "articles": "المقالات",
+      "allArticles": "كل المقالات",
+      "createArticles": "إنشاء مقالات",
+      "contributions": "المساهمات",
+      "supporters": "الداعمون",
+      "contributionsAnalytics": "التحليلات",
+      "profileAnalytics": "التحليلات",
+      "management": "الإدارة",
+      "users": "المستخدمون",
+      "rolesPermissions": "الأدوار والصلاحيات",
+      "content": "المحتوى",
+      "contentLibrary": "مكتبة المحتوى",
+      "visualEditor": "المحرر المرئي (CMS)",
+      "community": "المجتمع",
+      "engagements": "التفاعلات",
+      "messaging": "الرسائل",
+      "business": "الأعمال",
+      "financePayout": "المالية والمدفوعات",
+      "businessAnalytics": "التحليلات",
+      "systemSettings": "إعدادات النظام",
+      "reportsModeration": "التقارير والإشراف",
+      "securityAuth": "الأمان والمصادقة",
+      "systemSettingsPage": "إعدادات النظام",
+      "adminSettings": "إعدادات المشرف",
+      "settingsGroup": "الإعدادات",
+      "profile": "الملف الشخصي",
+      "availability": "التوفر",
+      "notifications": "الإشعارات",
+      "privacy": "الخصوصية",
+      "password": "كلمة المرور",
+      "account": "الحساب"
+    },
+    "systemSettings": {
+      "tabs": {
+        "categories": "التصنيفات",
+        "tags": "الوسوم والسمات",
+        "badges": "الشارات",
+        "email": "قوالب البريد",
+        "localisation": "التوطين",
+        "guidelines": "الإرشادات"
+      },
+      "saveChanges": "حفظ التغييرات",
+      "itemCount": "{count, plural, one {# عنصر} other {# عناصر}}",
+      "lastEdited": "آخر تعديل: {date}",
+      "dateUnknown": "—",
+      "toggleMultiLanguageAria": "تبديل تعدد اللغات",
+      "categories": {
+        "add": "إضافة تصنيف",
+        "title": "تصنيفات المحتوى",
+        "subtitle": "إدارة تصنيفات تصنيف المحتوى.",
+        "editAria": "تعديل {name}",
+        "deleteAria": "حذف {name}"
+      },
+      "tags": {
+        "add": "إضافة وسم",
+        "title": "وسوم المحتوى",
+        "subtitle": "وسوم خاصة لإبراز المحتوى",
+        "editAria": "تعديل {name}",
+        "deleteAria": "حذف {name}"
+      },
+      "badges": {
+        "add": "إنشاء شارة",
+        "title": "شارات الإنجاز",
+        "subtitle": "ضبط شارات الإنجاز والمعالم للمستخدمين.",
+        "editAria": "تعديل {name}"
+      },
+      "email": {
+        "title": "قوالب البريد",
+        "subtitle": "تخصيص رسائل البريد الآلية",
+        "editTemplate": "تعديل القالب"
+      },
+      "localisation": {
+        "title": "إعدادات اللغة",
+        "subtitle": "ضبط لغة المنصة والإعدادات الإقليمية",
+        "defaultLanguage": "اللغة الافتراضية",
+        "timezone": "المنطقة الزمنية",
+        "dateFormat": "تنسيق التاريخ",
+        "multiLanguage": "تفعيل تعدد اللغات",
+        "multiLanguageHint": "السماح للمستخدمين بالتبديل بين اللغات",
+        "languageNames": {
+          "English": "الإنجليزية",
+          "Spanish": "الإسبانية",
+          "French": "الفرنسية",
+          "German": "الألمانية",
+          "Arabic": "العربية"
+        },
+        "timezones": {
+          "utc": "التوقيت العالمي المنسّق",
+          "eastern": "التوقيت الشرقي",
+          "pacific": "التوقيت الهادئ",
+          "gmt": "توقيت غرينتش"
+        },
+        "dateFormats": {
+          "mdy": "شهر/يوم/سنة (أمريكا)",
+          "dmy": "يوم/شهر/سنة",
+          "ymd": "سنة-شهر-يوم"
+        }
+      },
+      "guidelines": {
+        "title": "إرشادات المنصة",
+        "subtitle": "قواعد المجتمع وإرشادات المحتوى",
+        "communityLabel": "إرشادات المجتمع",
+        "contentPolicyLabel": "سياسة المحتوى",
+        "sampleCommunity": "1. احترام جميع أعضاء المجتمع\n2. لا خطاب كراهية ولا تمييز\n3. محتوى أصلي فقط — دون انتحال\n4. ذكر المصادر عند الاقتضاء\n5. لا بريد عشوائي ولا دعاية ذاتية مفرطة",
+        "sampleContentPolicy": "يجب أن يكون المحتوى أصلياً أو مرخّصاً بشكل صحيح. يُزال المحتوى المحمي بحقوق النشر دون إذن. يجب وسم المحتوى البالغ بشكل واضح."
+      }
+    },
+    "placeholders": {
+      "comingSoon": "قريباً",
+      "pageSoon": "ستجد {title} هنا عند الجاهزية.",
+      "pages": {
+        "profileSettings": {
+          "title": "الملف الشخصي",
+          "subtitle": "إدارة معلومات ملفك الشخصي."
+        },
+        "password": {
+          "title": "كلمة المرور",
+          "subtitle": "تحديث كلمة المرور وإعدادات الأمان."
+        },
+        "account": {
+          "title": "الحساب",
+          "subtitle": "إدارة إعدادات الحساب والتفضيلات."
+        },
+        "notifications": {
+          "title": "الإشعارات",
+          "subtitle": "ضبط تفضيلات الإشعارات."
+        },
+        "privacy": {
+          "title": "الخصوصية",
+          "subtitle": "التحكم في الخصوصية ومشاركة البيانات."
+        },
+        "availabilityProfile": {
+          "title": "التوفر",
+          "subtitle": "ضبط حالة التوفر وجدولة المواعيد."
+        },
+        "availabilityAdmin": {
+          "title": "التوفر",
+          "subtitle": "تعيين حالة التوفر."
+        },
+        "profileArticles": {
+          "title": "كل المقالات",
+          "subtitle": "عرض وإدارة مقالاتك المنشورة."
+        },
+        "createArticle": {
+          "title": "إنشاء مقال",
+          "subtitle": "كتابة ونشر مقال جديد."
+        },
+        "profileAnalytics": {
+          "title": "التحليلات",
+          "subtitle": "متابعة أداء المحتوى والجمهور."
+        }
+      }
+    }
+  }
+}

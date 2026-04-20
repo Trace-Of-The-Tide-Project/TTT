@@ -1,0 +1,167 @@
+{
+  "Dashboard": {
+    "securityPage": {
+      "toolbar": {
+        "exportLogs": "تصدير السجلات"
+      },
+      "tabs": {
+        "roles": "الأدوار والصلاحيات",
+        "sessions": "الجلسات النشطة",
+        "settings": "إعدادات الأمان",
+        "logs": "سجلات الأمان"
+      },
+      "stats": {
+        "status": "حالة النظام",
+        "admins": "مستخدمو الإدارة",
+        "sessions": "الجلسات النشطة",
+        "alerts": "تنبيهات الأمان"
+      },
+      "statValues": {
+        "status": "آمن",
+        "admins": "14",
+        "sessions": "4",
+        "alerts": "1"
+      },
+      "roles": {
+        "intro": "إدارة مستويات الوصول لأدوار الإدارة المختلفة.",
+        "configure": "تهيئة",
+        "super": {
+          "title": "مشرف رئيسي",
+          "description": "صلاحية كاملة.",
+          "userBadge": "مستخدمان"
+        },
+        "finance": {
+          "title": "مشرف مالي",
+          "description": "العمليات المالية.",
+          "userBadge": "مستخدمان"
+        },
+        "content": {
+          "title": "مشرف المحتوى",
+          "description": "إدارة المحتوى.",
+          "userBadge": "مستخدمان"
+        },
+        "support": {
+          "title": "مشرف الدعم",
+          "description": "دعم المستخدمين والإشراف.",
+          "userBadge": "مستخدمان"
+        }
+      },
+      "sessions": {
+        "intro": "مراقبة وإدارة جلسات الإدارة النشطة.",
+        "columns": {
+          "user": "المستخدم",
+          "ip": "عنوان IP",
+          "location": "الموقع",
+          "device": "الجهاز",
+          "lastActive": "آخر نشاط",
+          "status": "الحالة"
+        },
+        "status": {
+          "current": "الحالية",
+          "active": "نشطة",
+          "idle": "خاملة"
+        },
+        "end": "إنهاء",
+        "endAllOther": "إنهاء جميع الجلسات الأخرى",
+        "sampleRows": {
+          "t1": {
+            "user": "مشرف رئيسي",
+            "location": "غزة، فلسطين",
+            "device": "Chrome / Windows",
+            "lastActive": "الآن"
+          },
+          "t2": {
+            "user": "مشرف المحتوى",
+            "location": "عمّان، الأردن",
+            "device": "Safari / macOS",
+            "lastActive": "منذ 8 دقائق"
+          },
+          "t3": {
+            "user": "مشرف مالي",
+            "location": "لندن، المملكة المتحدة",
+            "device": "Edge / Windows",
+            "lastActive": "منذ 42 دقيقة"
+          },
+          "t4": {
+            "user": "مشرف الدعم",
+            "location": "برلين، ألمانيا",
+            "device": "Firefox / Linux",
+            "lastActive": "منذ ساعتين"
+          }
+        }
+      },
+      "settings": {
+        "intro": "تهيئة سياسات الأمان العامة والتنفيذ.",
+        "twoFactor": {
+          "title": "المصادقة الثنائية (2FA)",
+          "description": "إلزام 2FA لجميع حسابات الإدارة."
+        },
+        "ipAllowlist": {
+          "title": "قائمة عناوين IP المسموح بها",
+          "description": "تقييد وصول الإدارة إلى نطاقات IP معروفة."
+        },
+        "sessionTimeout": {
+          "title": "مهلة الجلسة",
+          "description": "تسجيل خروج المشرفين غير النشطين تلقائياً."
+        },
+        "timeoutOptions": {
+          "m15": "15 دقيقة",
+          "m30": "30 دقيقة",
+          "m60": "60 دقيقة"
+        },
+        "auditLogs": {
+          "title": "سجلات التدقيق",
+          "description": "الاحتفاظ بسجلات تدقيق أمان مفصّلة."
+        },
+        "backup": "نسخ احتياطي وتصدير البيانات"
+      },
+      "logs": {
+        "intro": "أحداث أمان حديثة عبر المنصة.",
+        "entries": {
+          "l1": {
+            "title": "تسجيل دخول ناجح",
+            "meta": "مشرف رئيسي • 192.168.1.1",
+            "timeAgo": "منذ دقيقتين"
+          },
+          "l2": {
+            "title": "تم تغيير كلمة المرور",
+            "meta": "مشرف المحتوى • 192.168.1.45",
+            "timeAgo": "منذ ساعة"
+          },
+          "l3": {
+            "title": "محاولة تسجيل دخول فاشلة",
+            "meta": "غير معروف • 203.0.113.88",
+            "timeAgo": "منذ 3 ساعات"
+          },
+          "l4": {
+            "title": "تم تدوير مفتاح API",
+            "meta": "مشرف رئيسي • 192.168.1.1",
+            "timeAgo": "أمس"
+          },
+          "l5": {
+            "title": "تم تحديث الدور",
+            "meta": "مشرف رئيسي • Sarah Adam → Editor",
+            "timeAgo": "منذ يومين"
+          }
+        }
+      },
+      "controlPanel": {
+        "settingsTabSubtitle": "المصادقة وضوابط الأمان على مستوى المنصة.",
+        "authenticationCardTitle": "المصادقة",
+        "authenticationCardSubtitle": "تهيئة إعدادات تسجيل الدخول والوصول",
+        "require2faTitle": "إلزام المصادقة الثنائية للمشرفين",
+        "require2faDescription": "يجب أن تستخدم جميع حسابات الإدارة المصادقة الثنائية",
+        "sessionTimeoutShortLabel": "مهلة الجلسة",
+        "sessionTimeoutShortDescription": "تسجيل خروج تلقائي بعد الخمول",
+        "lockoutTitle": "قفل الحساب بعد محاولات فاشلة",
+        "lockoutDescription": "قفل الحساب بعد محاولات تسجيل دخول فاشلة",
+        "systemControlsTitle": "ضوابط النظام",
+        "systemControlsSubtitle": "ضوابط أمان على مستوى المنصة",
+        "maintenanceTitle": "وضع الصيانة",
+        "maintenanceDescription": "تقييد الوصول على المشرفين فقط",
+        "ipWhitelistTitle": "القائمة البيضاء لعناوين IP",
+        "ipWhitelistDescription": "تقييد وصول الإدارة حسب عنوان IP"
+      }
+    }
+  }
+}

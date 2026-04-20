@@ -32,6 +32,10 @@ html {
   --tott-dash-ghost-hover: #e5e7eb;
   /* Icon / hex chip fill (white in light mode) */
   --tott-dash-icon-bg: #ffffff;
+  /* Contribute page honeycomb (inactive cells): lighter in light theme */
+  --tott-contribute-hex-outer: var(--tott-well-bg);
+  --tott-contribute-hex-outer-hover: var(--tott-dash-control-hover);
+  --tott-contribute-hex-label-inactive: #1f2937;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -60,6 +64,10 @@ html {
     --tott-dash-control-hover: #3d3d3d;
     --tott-dash-ghost-hover: rgba(255, 255, 255, 0.06);
     --tott-dash-icon-bg: #1a1a1a;
+    /* Match original contribute hex styling (not --tott-well-bg, which is darker) */
+    --tott-contribute-hex-outer: #2a2a2a;
+    --tott-contribute-hex-outer-hover: #333333;
+    --tott-contribute-hex-label-inactive: #ffffff;
   }
 }
 
@@ -88,6 +96,9 @@ html[data-theme="light"] {
   --tott-dash-control-hover: #d1d5db;
   --tott-dash-ghost-hover: #e5e7eb;
   --tott-dash-icon-bg: #ffffff;
+  --tott-contribute-hex-outer: var(--tott-well-bg);
+  --tott-contribute-hex-outer-hover: var(--tott-dash-control-hover);
+  --tott-contribute-hex-label-inactive: #1f2937;
 }
 
 html[data-theme="dark"] {
@@ -115,6 +126,9 @@ html[data-theme="dark"] {
   --tott-dash-control-hover: #3d3d3d;
   --tott-dash-ghost-hover: rgba(255, 255, 255, 0.06);
   --tott-dash-icon-bg: #1a1a1a;
+  --tott-contribute-hex-outer: #2a2a2a;
+  --tott-contribute-hex-outer-hover: #333333;
+  --tott-contribute-hex-label-inactive: #ffffff;
 }
 
 @theme inline {

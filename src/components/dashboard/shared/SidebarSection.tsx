@@ -4,7 +4,7 @@ import { SidebarGroup } from "./SidebarGroup";
 
 type SidebarSectionProps = SidebarSectionConfig & {
   openGroups: Set<string>;
-  onToggleGroup: (label: string) => void;
+  onToggleGroup: (groupId: string) => void;
   onItemClick?: () => void;
 };
 
@@ -14,10 +14,10 @@ export function SidebarSection({ items, openGroups, onToggleGroup, onItemClick }
       {items.map((entry) =>
         entry.kind === "group" ? (
           <SidebarGroup
-            key={entry.label}
+            key={entry.groupId}
             {...entry}
-            isOpen={openGroups.has(entry.label)}
-            onToggle={() => onToggleGroup(entry.label)}
+            isOpen={openGroups.has(entry.groupId)}
+            onToggle={() => onToggleGroup(entry.groupId)}
             onItemClick={onItemClick}
           />
         ) : (

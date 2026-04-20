@@ -1,12 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { BookIcon, PenLineIcon, BarChartIcon, CalendarIcon } from "@/components/ui/icons";
 import type { ComponentType } from "react";
 
 type StatItem = {
   id: string;
   value: string;
-  label: string;
+  labelKey: string;
   iconKey: string;
 };
 
@@ -22,6 +23,7 @@ type ArticlesStatCardsProps = {
 };
 
 export function ArticlesStatCards({ stats }: ArticlesStatCardsProps) {
+  const t = useTranslations("Dashboard");
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
       {stats.map((stat) => {
@@ -36,7 +38,7 @@ export function ArticlesStatCards({ stats }: ArticlesStatCardsProps) {
               <Icon />
             </span>
             <span className="text-2xl font-bold text-foreground">{stat.value}</span>
-            <span className="text-xs text-gray-500">{stat.label}</span>
+            <span className="text-xs text-gray-500">{(t as (key: string) => string)(stat.labelKey)}</span>
           </div>
         );
       })}

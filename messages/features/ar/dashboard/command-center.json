@@ -1,0 +1,17 @@
+{
+  "Dashboard": {
+    "commandCenter": {
+      "title": "مركز القيادة",
+      "subtitle": "مرحباً بعودتك. إليك ما يحدث على المنصة.",
+      "lastUpdated": "آخر تحديث: الآن",
+      "stats": {
+        "totalUsers": "إجمالي المستخدمين",
+        "contentPublished": "المحتوى المنشور",
+        "monthlyDonations": "التبرعات الشهرية",
+        "activeToday": "نشطون اليوم"
+      },
+      "vsLastMonth": "مقارنة بالشهر الماضي",
+      "vsYesterday": "مقارنة بالأمس"
+    }
+  }
+}

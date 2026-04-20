@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { XIcon } from "@/components/ui/icons";
 
 type ScheduleArticleModalProps = {
@@ -18,6 +19,8 @@ function localValueToIso(value: string): string | null {
 }
 
 export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: ScheduleArticleModalProps) {
+  const t = useTranslations("Dashboard.articles.editor.modals.schedule");
+  const tModals = useTranslations("Dashboard.articles.editor.modals");
   const [scheduleAt, setScheduleAt] = useState("");
   const [hint, setHint] = useState<string | null>(null);
 
@@ -50,7 +53,7 @@ export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: Schedul
     e.preventDefault();
     const iso = localValueToIso(scheduleAt);
     if (!iso) {
-      setHint("Choose a valid date and time.");
+      setHint(t("hintInvalid"));
       return;
     }
     setHint(null);
@@ -63,7 +66,7 @@ export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: Schedul
         type="button"
         className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
         onClick={() => !busy && onClose()}
-        aria-label="Close modal"
+        aria-label={tModals("closeDialog")}
       />
 
       <div
@@ -75,15 +78,15 @@ export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: Schedul
         <div className="mb-5 flex items-start justify-between border-b border-[var(--tott-card-border)] pb-4">
           <div>
             <h2 id="schedule-article-title" className="text-lg font-bold text-foreground">
-              Schedule publication
+              {t("title")}
             </h2>
-            <p className="mt-1 text-sm text-gray-500">Pick when this article should go live.</p>
+            <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
           </div>
           <button
             type="button"
             onClick={() => !busy && onClose()}
             className="shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground disabled:opacity-40"
-            aria-label="Close"
+            aria-label={tModals("close")}
             disabled={busy}
           >
             <XIcon />
@@ -92,7 +95,7 @@ export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: Schedul
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <label className="flex flex-col gap-1.5 text-sm text-gray-400">
-            <span>Date and time (your local timezone)</span>
+            <span>{t("datetimeLabel")}</span>
             <input
               type="datetime-local"
               value={scheduleAt}
@@ -114,7 +117,7 @@ export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: Schedul
               onClick={onClose}
               className="rounded-lg border border-[var(--tott-card-border)] bg-transparent px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               type="submit"
@@ -122,7 +125,7 @@ export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: Schedul
               className="rounded-lg px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               style={{ backgroundColor: "#C9A96E" }}
             >
-              {busy ? "Scheduling…" : "Schedule"}
+              {busy ? t("confirmBusy") : t("confirm")}
             </button>
           </div>
         </form>

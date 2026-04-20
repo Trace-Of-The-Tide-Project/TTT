@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { XIcon } from "@/components/ui/icons";
 
 type ConfirmDeleteArticleModalProps = {
@@ -20,6 +21,8 @@ export function ConfirmDeleteArticleModal({
   onClose,
   onConfirm,
 }: ConfirmDeleteArticleModalProps) {
+  const t = useTranslations("Dashboard.articles.editor.modals.delete");
+  const tModals = useTranslations("Dashboard.articles.editor.modals");
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape" && !busy) onClose();
@@ -45,7 +48,7 @@ export function ConfirmDeleteArticleModal({
         type="button"
         className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
         onClick={() => !busy && onClose()}
-        aria-label="Close dialog"
+        aria-label={tModals("closeDialog")}
       />
 
       <div
@@ -57,13 +60,13 @@ export function ConfirmDeleteArticleModal({
       >
         <div className="mb-4 flex items-start justify-between gap-4">
           <h2 id="delete-article-title" className="text-lg font-bold text-foreground">
-            Delete article?
+            {t("title")}
           </h2>
           <button
             type="button"
             onClick={() => !busy && onClose()}
             className="shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground disabled:opacity-40"
-            aria-label="Close"
+            aria-label={tModals("close")}
             disabled={busy}
           >
             <XIcon />
@@ -71,8 +74,7 @@ export function ConfirmDeleteArticleModal({
         </div>
 
         <p id="delete-article-desc" className="text-sm text-gray-400">
-          <span className="font-medium text-gray-200">&ldquo;{articleTitle}&rdquo;</span> will be
-          removed permanently. This cannot be undone.
+          {t("description", { title: articleTitle || "—" })}
         </p>
 
         {error ? (
@@ -88,7 +90,7 @@ export function ConfirmDeleteArticleModal({
             onClick={onClose}
             className="rounded-lg border border-[var(--tott-card-border)] bg-transparent px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             type="button"
@@ -96,7 +98,7 @@ export function ConfirmDeleteArticleModal({
             onClick={onConfirm}
             className="rounded-lg border border-red-900/60 bg-red-950/50 px-4 py-2 text-sm font-medium text-red-200 transition-colors hover:bg-red-950/80 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {busy ? "Deleting…" : "Delete"}
+            {busy ? t("confirmBusy") : t("confirm")}
           </button>
         </div>
       </div>

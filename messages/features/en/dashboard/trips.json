@@ -1,0 +1,144 @@
+{
+  "Dashboard": {
+    "trips": {
+      "management": {
+        "tryAgain": "Try again",
+        "searchPlaceholder": "Search archive…",
+        "loading": "Loading trips…",
+        "headers": {
+          "title": "Title",
+          "route": "Route",
+          "startDate": "Start date",
+          "endDate": "End date",
+          "duration": "Duration",
+          "status": "Status"
+        },
+        "empty": {
+          "noMatch": "No trips match your search.",
+          "none": "No trips yet."
+        },
+        "pagination": {
+          "showing": "Showing {from} to {to} of {total} trips",
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "tabs": {
+          "create": "Create trip",
+          "archive": "Archive"
+        },
+        "duration": {
+          "hours": "{count, plural, one {# hour} other {# hours}}",
+          "days": "{count, plural, one {# day} other {# days}}"
+        },
+        "status": {
+          "completed": "Completed",
+          "archived": "Archived",
+          "draft": "Draft",
+          "past": "Past"
+        },
+        "previewAria": "Preview {title}",
+        "deleteAria": "Delete {title}"
+      },
+      "editor": {
+        "validation": {
+          "titleRequired": "Title is required.",
+          "categoryRequired": "Category is required."
+        },
+        "errors": {
+          "requestFailed": "Request failed",
+          "generic": "Something went wrong"
+        },
+        "joinForm": {
+          "title": "Join trip form",
+          "hint": "Travelers see this on the public trip page. Same field types as open-call applications; reset restores the default join-trip template (name, email, optional message)."
+        },
+        "sidebar": {
+          "previewTrip": "Preview trip",
+          "duplicateTrip": "Duplicate trip",
+          "archive": "Archive"
+        },
+        "footer": {
+          "publishNow": "Publish now"
+        },
+        "summary": {
+          "heading": "Trip summary",
+          "untitled": "Untitled trip",
+          "title": "Title",
+          "route": "Route",
+          "startDate": "Start date",
+          "duration": "Duration",
+          "durationHours": "{hours} h",
+          "lastStop": "Last stop",
+          "price": "Price",
+          "placeholder": "—"
+        },
+        "basicInfo": {
+          "heading": "Basic information",
+          "tripTitle": "Trip title",
+          "tripTitlePlaceholder": "e.g., Heritage walk: Old Jerusalem",
+          "moderatorName": "Moderator name",
+          "moderatorPlaceholder": "e.g., John Doe",
+          "description": "Description",
+          "descriptionPlaceholder": "Describe the trip experience…",
+          "highlights": "Highlights",
+          "highlightPlaceholder": "Highlight {number}",
+          "removeHighlightAria": "Remove highlight {number}",
+          "addHighlight": "+ Add highlight"
+        },
+        "details": {
+          "heading": "Trip details",
+          "category": "Category",
+          "categoryRequired": "*",
+          "categoryPlaceholder": "e.g., cultural, adventure",
+          "difficulty": "Difficulty",
+          "startDate": "Start date",
+          "endDate": "End date",
+          "durationHours": "Duration (hours)",
+          "maxParticipants": "Max participants",
+          "minParticipants": "Min participants",
+          "difficulties": {
+            "easy": "Easy",
+            "moderate": "Moderate",
+            "hard": "Hard",
+            "extreme": "Extreme"
+          }
+        },
+        "pricing": {
+          "heading": "Pricing",
+          "hint": "Minimum contribution only. On the public trip page, travelers use a scale starting at this amount; they can slide higher (no fixed cap in the editor).",
+          "minimumPrice": "Minimum price",
+          "currency": "Currency"
+        },
+        "languages": {
+          "heading": "Languages",
+          "selectLabel": "Select language",
+          "selectPlaceholder": "Select…",
+          "removeAria": "Remove {label}",
+          "labels": {
+            "AR": "Arabic",
+            "EN": "English",
+            "HE": "Hebrew",
+            "FR": "French",
+            "ES": "Spanish",
+            "DE": "German",
+            "TR": "Turkish"
+          }
+        },
+        "itinerary": {
+          "heading": "Stops",
+          "addStop": "+ Add stop",
+          "stopNumber": "Stop {number}",
+          "stopTitle": "Stop title",
+          "stopTitlePlaceholder": "e.g., Jaffa Gate gathering point",
+          "description": "Description",
+          "descriptionPlaceholder": "What happens at this stop…",
+          "arrivalTime": "Arrival time",
+          "durationMinutes": "Duration (min)",
+          "removeStopAria": "Remove stop {number}",
+          "searchPlaceholder": "Search for a place…",
+          "searching": "Searching…"
+        }
+      }
+    }
+  }
+}

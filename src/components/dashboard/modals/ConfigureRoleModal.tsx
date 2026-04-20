@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { XIcon } from "@/components/ui/icons";
 import { PermissionToggle } from "@/components/dashboard/admin/roles/PermissionToggle";
 import {
@@ -12,7 +13,7 @@ const TOGGLE_GOLD = "#E8DDC0";
 
 function initialAllEnabled(): Record<ConfigurePermissionId, boolean> {
   return Object.fromEntries(
-    configureRolePermissionRows.map((r) => [r.id, true])
+    configureRolePermissionRows.map((r) => [r.id, true]),
   ) as Record<ConfigurePermissionId, boolean>;
 }
 
@@ -25,19 +26,23 @@ type ConfigureRoleModalProps = {
 export function ConfigureRoleModal({
   open,
   onClose,
-  roleDisplayName = "Super Admin",
+  roleDisplayName,
 }: ConfigureRoleModalProps) {
+  const t = useTranslations("Dashboard.rolesPermissions.configureModal");
+  const tRoles = useTranslations("Dashboard.rolesPermissions");
+  const resolvedRoleName = roleDisplayName ?? tRoles("superAdminRoleName");
+
   const [perms, setPerms] = useState<Record<ConfigurePermissionId, boolean>>(initialAllEnabled);
 
   useEffect(() => {
     if (open) setPerms(initialAllEnabled());
-  }, [open, roleDisplayName]);
+  }, [open, resolvedRoleName]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     },
-    [onClose]
+    [onClose],
   );
 
   useEffect(() => {
@@ -62,7 +67,7 @@ export function ConfigureRoleModal({
         type="button"
         className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
         onClick={onClose}
-        aria-label="Close modal"
+        aria-label={t("closeModalAria")}
       />
 
       <div
@@ -74,17 +79,15 @@ export function ConfigureRoleModal({
         <div className="flex shrink-0 items-start justify-between border-b border-[var(--tott-card-border)] px-6 py-5">
           <div>
             <h2 id="configure-role-title" className="text-lg font-bold text-foreground">
-              Configure {roleDisplayName}
+              {t("title", { role: resolvedRoleName })}
             </h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Manage permissions and access levels for this role
-            </p>
+            <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="rounded-lg p-2 text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
-            aria-label="Close"
+            aria-label={t("closeAria")}
           >
             <span className="[&_svg]:h-5 [&_svg]:w-5">
               <XIcon />
@@ -97,8 +100,12 @@ export function ConfigureRoleModal({
             {configureRolePermissionRows.map((row) => (
               <li key={row.id} className="flex items-center justify-between gap-4 py-4 first:pt-2">
                 <div className="min-w-0">
-                  <p className="font-semibold text-foreground">{row.title}</p>
-                  <p className="mt-0.5 text-sm text-gray-500">{row.description}</p>
+                  <p className="font-semibold text-foreground">
+                    {(t as (key: string) => string)(`rows.${row.id}.title`)}
+                  </p>
+                  <p className="mt-0.5 text-sm text-gray-500">
+                    {(t as (key: string) => string)(`rows.${row.id}.description`)}
+                  </p>
                 </div>
                 <PermissionToggle
                   checked={perms[row.id] ?? false}
@@ -116,7 +123,7 @@ export function ConfigureRoleModal({
             onClick={onClose}
             className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             type="button"
@@ -124,7 +131,7 @@ export function ConfigureRoleModal({
             className="rounded-lg px-5 py-2.5 text-sm font-semibold text-gray-900 transition-opacity hover:opacity-90"
             style={{ backgroundColor: TOGGLE_GOLD }}
           >
-            Save Changes
+            {t("save")}
           </button>
         </div>
       </div>

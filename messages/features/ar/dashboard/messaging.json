@@ -1,0 +1,138 @@
+{
+  "Dashboard": {
+    "messagingPage": {
+      "tabs": {
+        "inbox": "صندوق الوارد ({count})",
+        "broadcast": "بث",
+        "templates": "القوالب",
+        "archived": "الأرشيف"
+      },
+      "categories": {
+        "all": "كل الفئات",
+        "support": "الدعم",
+        "payment": "الدفع",
+        "moderation": "الإشراف",
+        "feedback": "التغذية الراجعة"
+      },
+      "priorities": {
+        "all": "كل الأولويات",
+        "high": "عالية",
+        "med": "متوسطة",
+        "low": "منخفضة"
+      },
+      "prioritiesShort": {
+        "high": "عالية",
+        "med": "متوسطة",
+        "low": "منخفضة"
+      },
+      "templatePicker": {
+        "none": "بدون قالب"
+      },
+      "templateNames": {
+        "tpl1": "رسالة ترحيب",
+        "tpl2": "تأكيد الدفع",
+        "tpl3": "تمت الموافقة على المحتوى",
+        "tpl4": "تحذير للحساب",
+        "tpl5": "إعلان عن ميزة"
+      },
+      "broadcast": {
+        "title": "رسالة بث جديدة",
+        "subtitle": "أرسل رسالة لجميع المستخدمين أو لمجموعات محددة",
+        "targetAudience": "الجمهور المستهدف",
+        "priority": "الأولوية",
+        "useTemplate": "استخدام قالب",
+        "subject": "العنوان",
+        "subjectPlaceholder": "أدخل عنوان الرسالة…",
+        "message": "الرسالة",
+        "messagePlaceholder": "اكتب رسالة البث…",
+        "cancel": "إلغاء",
+        "saveDraft": "حفظ كمسودة",
+        "send": "إرسال البث",
+        "audiences": {
+          "allUsers": "كل المستخدمين",
+          "authors": "المؤلفون فقط",
+          "editors": "المحررون فقط",
+          "contributors": "المساهمون فقط"
+        },
+        "broadcastPriority": {
+          "low": "منخفضة",
+          "normal": "عادية",
+          "high": "عالية"
+        }
+      },
+      "templates": {
+        "title": "قوالب الرسائل",
+        "subtitle": "أنشئ وعدّل وأعد استخدام قوالب الرسائل المحفوظة.",
+        "createButton": "إنشاء قالب",
+        "categoryLabels": {
+          "onboarding": "التأهيل",
+          "payment": "الدفع",
+          "moderation": "الإشراف",
+          "broadcast": "البث",
+          "support": "الدعم"
+        }
+      },
+      "inbox": {
+        "searchPlaceholder": "البحث في الرسائل…",
+        "emptyFiltered": "لا رسائل مطابقة للمرشحات.",
+        "selectConversation": "اختر محادثة لعرض الرسائل.",
+        "threadMenuAria": "المزيد من الإجراءات",
+        "viewProfile": "عرض الملف",
+        "archive": "أرشفة",
+        "delete": "حذف",
+        "attachAria": "إرفاق",
+        "sendAria": "إرسال",
+        "composerPlaceholder": "اكتب رسالتك",
+        "useTemplate": "استخدام قالب"
+      }
+    },
+    "messagingCreateTemplateModal": {
+      "closeModalAria": "إغلاق النافذة",
+      "closeAria": "إغلاق",
+      "title": "إنشاء قالب رسالة",
+      "subtitle": "ابنِ قالبًا قابلاً لإعادة الاستخدام للرسائل الشائعة",
+      "nameLabel": "اسم القالب",
+      "namePlaceholder": "مثال: رسالة ترحيب",
+      "categoryLabel": "الفئة",
+      "subjectLabel": "سطر الموضوع",
+      "subjectPlaceholder": "أدخل موضوع البريد…",
+      "bodyLabel": "نص الرسالة",
+      "bodyPlaceholder": "اكتب نص القالب… استخدم {{name}} للحقول الديناميكية.",
+      "variablesHint": "المتغيرات المتاحة:",
+      "variablesList": "{{name}}، {{email}}، {{role}}، {{date}}",
+      "categories": {
+        "onboarding": "التأهيل",
+        "payment": "الدفع",
+        "moderation": "الإشراف",
+        "broadcast": "البث",
+        "support": "الدعم"
+      },
+      "cancel": "إلغاء",
+      "submit": "إنشاء القالب"
+    },
+    "messagingEditTemplateModal": {
+      "closeModalAria": "إغلاق النافذة",
+      "closeAria": "إغلاق",
+      "title": "تعديل قالب الرسالة",
+      "subtitle": "حدّث هذا القالب القابل لإعادة الاستخدام",
+      "nameLabel": "اسم القالب",
+      "namePlaceholder": "مثال: رسالة ترحيب",
+      "categoryLabel": "الفئة",
+      "subjectLabel": "سطر الموضوع",
+      "subjectPlaceholder": "أدخل موضوع البريد…",
+      "bodyLabel": "نص الرسالة",
+      "bodyPlaceholder": "اكتب نص القالب… استخدم {{name}} للحقول الديناميكية.",
+      "variablesHint": "المتغيرات المتاحة:",
+      "variablesList": "{{name}}، {{email}}، {{role}}، {{date}}",
+      "categories": {
+        "onboarding": "التأهيل",
+        "payment": "الدفع",
+        "moderation": "الإشراف",
+        "broadcast": "البث",
+        "support": "الدعم"
+      },
+      "cancel": "إلغاء",
+      "submit": "حفظ التغييرات"
+    }
+  }
+}

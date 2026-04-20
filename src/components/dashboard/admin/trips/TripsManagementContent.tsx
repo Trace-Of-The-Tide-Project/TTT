@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { isAxiosError } from "axios";
 import { PlusIcon, EyeIcon, TrashIcon } from "@/components/ui/icons";
 import { getTrips, deleteTrip, type TripListItem } from "@/services/trips.service";
@@ -10,7 +12,7 @@ import { TripPreviewModal } from "@/components/dashboard/admin/articles/articles
 
 const ROWS_PER_PAGE = 6;
 
-function errMessage(e: unknown): string {
+function errMessage(e: unknown, requestFailed: string, generic: string): string {
   if (isAxiosError(e)) {
     const d = e.response?.data;
     if (typeof d === "string" && d.trim()) return d;
@@ -18,34 +20,35 @@ function errMessage(e: unknown): string {
       const o = d as Record<string, unknown>;
       if (typeof o.message === "string") return o.message;
     }
-    return e.message || "Request failed";
+    return e.message || requestFailed;
   }
   if (e instanceof Error) return e.message;
-  return "Something went wrong";
+  return generic;
 }
 
-function formatDate(iso: string | null): string {
+function formatDate(iso: string | null, locale: string): string {
   if (!iso) return "—";
   const d = new Date(iso);
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return d.toLocaleDateString(locale, { month: "short", day: "numeric", year: "numeric" });
 }
 
-function durationLabel(hours: number): string {
+function durationLabel(hours: number, t: (key: string, values?: Record<string, number>) => string): string {
   if (hours >= 24) {
     const days = Math.round(hours / 24);
-    return `${days} day${days !== 1 ? "s" : ""}`;
+    return t("management.duration.days", { count: days });
   }
-  return `${hours} hour${hours !== 1 ? "s" : ""}`;
+  return t("management.duration.hours", { count: hours });
 }
 
 type StatusStyle = { label: string; color: string };
 
-function statusDisplay(status: string): StatusStyle {
+function statusDisplay(status: string, t: (key: string) => string): StatusStyle {
   const s = status.toLowerCase();
-  if (s === "published" || s === "completed") return { label: "Completed", color: "#2ECC71" };
-  if (s === "archived") return { label: "Archived", color: "#E67E22" };
-  if (s === "draft") return { label: "Draft", color: "#3498DB" };
-  return { label: "Past", color: "#9ca3af" };
+  if (s === "published" || s === "completed")
+    return { label: t("management.status.completed"), color: "#2ECC71" };
+  if (s === "archived") return { label: t("management.status.archived"), color: "#E67E22" };
+  if (s === "draft") return { label: t("management.status.draft"), color: "#3498DB" };
+  return { label: t("management.status.past"), color: "#9ca3af" };
 }
 
 function SearchIcon() {
@@ -68,6 +71,8 @@ type ArchiveViewProps = {
 };
 
 function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onPreview }: ArchiveViewProps) {
+  const t = useTranslations("Dashboard.trips");
+  const locale = useLocale();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
@@ -75,10 +80,10 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
     if (!search.trim()) return trips;
     const q = search.toLowerCase();
     return trips.filter(
-      (t) =>
-        t.title.toLowerCase().includes(q) ||
-        (t.route_summary ?? "").toLowerCase().includes(q) ||
-        t.category.toLowerCase().includes(q),
+      (tr) =>
+        tr.title.toLowerCase().includes(q) ||
+        (tr.route_summary ?? "").toLowerCase().includes(q) ||
+        tr.category.toLowerCase().includes(q),
     );
   }, [trips, search]);
 
@@ -86,7 +91,12 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
   const safePage = Math.min(page, totalPages);
   const pageRows = filtered.slice((safePage - 1) * ROWS_PER_PAGE, safePage * ROWS_PER_PAGE);
 
-  useEffect(() => { setPage(1); }, [search]);
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
+
+  const fromRow = (safePage - 1) * ROWS_PER_PAGE + 1;
+  const toRow = Math.min(safePage * ROWS_PER_PAGE, filtered.length);
 
   return (
     <>
@@ -98,7 +108,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
             onClick={onRetry}
             className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
           >
-            Try again
+            {t("management.tryAgain")}
           </button>
         </div>
       )}
@@ -111,26 +121,38 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search archive..."
+          placeholder={t("management.searchPlaceholder")}
           className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500"
         />
       </div>
 
       {loading ? (
         <div className="rounded-lg border border-[var(--tott-card-border)] px-5 py-12 text-center text-sm text-gray-500">
-          Loading trips…
+          {t("management.loading")}
         </div>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-[var(--tott-card-border)]">
-          <table className="w-full border-collapse text-left text-sm">
+          <table className="w-full border-collapse text-start text-sm">
             <thead>
               <tr className="border-b border-[var(--tott-card-border)]">
-                <th className="px-5 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>Title</th>
-                <th className="px-4 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>Route</th>
-                <th className="px-4 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>Start Date</th>
-                <th className="px-4 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>End Date</th>
-                <th className="px-4 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>Duration</th>
-                <th className="px-4 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>Status</th>
+                <th className="px-5 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>
+                  {t("management.headers.title")}
+                </th>
+                <th className="px-4 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>
+                  {t("management.headers.route")}
+                </th>
+                <th className="px-4 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>
+                  {t("management.headers.startDate")}
+                </th>
+                <th className="px-4 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>
+                  {t("management.headers.endDate")}
+                </th>
+                <th className="px-4 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>
+                  {t("management.headers.duration")}
+                </th>
+                <th className="px-4 py-3 text-xs font-semibold" style={{ color: "#C9A96E" }}>
+                  {t("management.headers.status")}
+                </th>
                 <th className="w-20 px-4 py-3" aria-hidden />
               </tr>
             </thead>
@@ -138,19 +160,21 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
               {pageRows.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-5 py-10 text-center text-sm text-gray-500">
-                    {search.trim() ? "No trips match your search." : "No trips yet."}
+                    {search.trim() ? t("management.empty.noMatch") : t("management.empty.none")}
                   </td>
                 </tr>
               ) : (
                 pageRows.map((trip) => {
-                  const st = statusDisplay(trip.status);
+                  const st = statusDisplay(trip.status, t as (key: string) => string);
                   return (
                     <tr key={trip.id} className="border-b border-[var(--tott-card-border)] last:border-b-0">
                       <td className="px-5 py-3 font-medium text-foreground">{trip.title}</td>
                       <td className="px-4 py-3 text-gray-400">{trip.route_summary ?? "—"}</td>
-                      <td className="px-4 py-3 text-gray-400">{formatDate(trip.start_date)}</td>
-                      <td className="px-4 py-3 text-gray-400">{formatDate(trip.end_date)}</td>
-                      <td className="px-4 py-3 text-gray-400">{durationLabel(trip.duration_hours)}</td>
+                      <td className="px-4 py-3 text-gray-400">{formatDate(trip.start_date, locale)}</td>
+                      <td className="px-4 py-3 text-gray-400">{formatDate(trip.end_date, locale)}</td>
+                      <td className="px-4 py-3 text-gray-400">
+                        {durationLabel(trip.duration_hours, t as (key: string, v?: Record<string, number>) => string)}
+                      </td>
                       <td className="px-4 py-3">
                         <span style={{ color: st.color }} className="text-xs font-medium">
                           {st.label}
@@ -162,7 +186,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
                             type="button"
                             onClick={() => onPreview(trip)}
                             className="text-gray-500 transition-colors hover:text-foreground"
-                            aria-label={`Preview ${trip.title}`}
+                            aria-label={t("management.previewAria", { title: trip.title })}
                           >
                             <EyeIcon />
                           </button>
@@ -171,7 +195,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
                             disabled={deletingId === trip.id}
                             onClick={() => onDelete(trip.id)}
                             className="text-gray-500 transition-colors hover:text-red-400 disabled:opacity-40"
-                            aria-label={`Delete ${trip.title}`}
+                            aria-label={t("management.deleteAria", { title: trip.title })}
                           >
                             <TrashIcon />
                           </button>
@@ -187,11 +211,13 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
       )}
 
       {!loading && filtered.length > 0 && (
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
           <span className="text-gray-500">
-            Showing {(safePage - 1) * ROWS_PER_PAGE + 1} to{" "}
-            {Math.min(safePage * ROWS_PER_PAGE, filtered.length)} of{" "}
-            {filtered.length.toLocaleString()} trips…
+            {t("management.pagination.showing", {
+              from: fromRow,
+              to: toRow,
+              total: filtered.length,
+            })}
           </span>
           <div className="flex gap-2">
             <button
@@ -200,7 +226,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
               onClick={() => setPage((p) => p - 1)}
               className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-gray-400 transition-colors hover:text-foreground disabled:opacity-40"
             >
-              Previous
+              {t("management.pagination.previous")}
             </button>
             <button
               type="button"
@@ -208,7 +234,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
               onClick={() => setPage((p) => p + 1)}
               className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-gray-400 transition-colors hover:text-foreground disabled:opacity-40"
             >
-              Next
+              {t("management.pagination.next")}
             </button>
           </div>
         </div>
@@ -218,6 +244,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
 }
 
 export function TripsManagementContent() {
+  const t = useTranslations("Dashboard.trips");
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("tab") === "archive" ? "archive" : "create";
@@ -226,7 +253,7 @@ export function TripsManagementContent() {
     (tab: "create" | "archive") => {
       router.replace(tab === "archive" ? "/admin/trips?tab=archive" : "/admin/trips", { scroll: false });
     },
-    [router]
+    [router],
   );
 
   const [trips, setTrips] = useState<TripListItem[]>([]);
@@ -242,11 +269,11 @@ export function TripsManagementContent() {
       const data = await getTrips();
       setTrips(data);
     } catch (e) {
-      setTripsError(errMessage(e));
+      setTripsError(errMessage(e, t("editor.errors.requestFailed"), t("editor.errors.generic")));
     } finally {
       setTripsLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (activeTab === "archive") {
@@ -254,17 +281,20 @@ export function TripsManagementContent() {
     }
   }, [activeTab, loadTrips]);
 
-  const handleDelete = useCallback(async (id: string) => {
-    setDeletingId(id);
-    try {
-      await deleteTrip(id);
-      setTrips((prev) => prev.filter((t) => t.id !== id));
-    } catch (e) {
-      setTripsError(errMessage(e));
-    } finally {
-      setDeletingId(null);
-    }
-  }, []);
+  const handleDelete = useCallback(
+    async (id: string) => {
+      setDeletingId(id);
+      try {
+        await deleteTrip(id);
+        setTrips((prev) => prev.filter((tr) => tr.id !== id));
+      } catch (e) {
+        setTripsError(errMessage(e, t("editor.errors.requestFailed"), t("editor.errors.generic")));
+      } finally {
+        setDeletingId(null);
+      }
+    },
+    [t],
+  );
 
   return (
     <div className="space-y-4">
@@ -274,7 +304,6 @@ export function TripsManagementContent() {
         trip={previewTrip ?? undefined}
       />
 
-      {/* Tabs */}
       <div className="flex w-full gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
         <button
           type="button"
@@ -286,7 +315,7 @@ export function TripsManagementContent() {
           }`}
         >
           <PlusIcon />
-          Create Trip
+          {t("management.tabs.create")}
         </button>
         <button
           type="button"
@@ -297,11 +326,10 @@ export function TripsManagementContent() {
               : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
           }`}
         >
-          Archive
+          {t("management.tabs.archive")}
         </button>
       </div>
 
-      {/* Both tabs stay mounted, hidden via CSS to preserve state */}
       <div className={activeTab === "create" ? "" : "hidden"}>
         <TripEditorLayout />
       </div>

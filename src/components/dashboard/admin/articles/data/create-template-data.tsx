@@ -9,78 +9,94 @@ import {
   MapPinIcon,
   MegaphoneIcon,
 } from "@/components/ui/icons";
-import type { TemplateCardProps } from "../articles-create/TemplateCard";
+import type { ReactNode } from "react";
 
-const placeholderDesc = "Lorem ipsum dolor sit amet adipiscing elit s";
+export type CreateTemplateKey =
+  | "article"
+  | "video"
+  | "audio"
+  | "thread"
+  | "artwork"
+  | "figma"
+  | "trip"
+  | "openCall";
 
-export const createTemplateFilters = [
-  { id: "all", label: "Show all" },
-  { id: "articles", label: "Articles" },
-  { id: "films", label: "Films" },
-  { id: "audio", label: "Audio" },
-  { id: "thread", label: "Thread" },
-  { id: "artwork", label: "Art work" },
+export type CreateTemplateFilterId =
+  | "all"
+  | "articles"
+  | "films"
+  | "audio"
+  | "thread"
+  | "artwork";
+
+export const createTemplateFilterIds: CreateTemplateFilterId[] = [
+  "all",
+  "articles",
+  "films",
+  "audio",
+  "thread",
+  "artwork",
 ];
 
-export const createTemplates: (TemplateCardProps & { category: string })[] = [
+export type CreateTemplateDef = {
+  number: string;
+  templateKey: CreateTemplateKey;
+  icon: ReactNode;
+  href?: string;
+  category: string;
+};
+
+export const createTemplates: CreateTemplateDef[] = [
   {
     number: "01",
-    title: "Article",
-    description: "Long-form written content with rich formatting",
+    templateKey: "article",
     icon: <PenLineIcon />,
     href: "/admin/articles/create/article",
     category: "articles",
   },
   {
     number: "02",
-    title: "Video",
-    description: "Video content with description & context",
+    templateKey: "video",
     icon: <FilmIcon />,
     href: "/admin/articles/create/video",
     category: "films",
   },
   {
     number: "03",
-    title: "Audio",
-    description: "Podcast, music, or audio storytelling",
+    templateKey: "audio",
     icon: <MusicIcon />,
     href: "/admin/articles/create/audio",
     category: "audio",
   },
   {
     number: "04",
-    title: "Thread",
-    description: "Sequential story or text series",
+    templateKey: "thread",
     icon: <ThreadIcon />,
     href: "/admin/articles/create/thread",
     category: "thread",
   },
   {
     number: "05",
-    title: "Artwork",
-    description: "Showcase photography, illustration, or design",
+    templateKey: "artwork",
     icon: <PaletteIcon />,
     category: "artwork",
   },
   {
     number: "06",
-    title: "Figma",
-    description: placeholderDesc,
+    templateKey: "figma",
     icon: <PaletteIcon />,
     category: "artwork",
   },
   {
     number: "07",
-    title: "Trip",
-    description: "Plan and publish guided travel experiences",
+    templateKey: "trip",
     icon: <MapPinIcon />,
     href: "/admin/trips",
     category: "articles",
   },
   {
     number: "08",
-    title: "Open Call",
-    description: placeholderDesc,
+    templateKey: "openCall",
     icon: <MegaphoneIcon />,
     href: "/admin/articles/create/open-call",
     category: "articles",

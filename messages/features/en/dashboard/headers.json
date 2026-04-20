@@ -1,0 +1,86 @@
+{
+  "Dashboard": {
+    "headers": {
+      "adminSettings": {
+        "title": "Admin Settings",
+        "subtitle": "Manage or edit your personal settings."
+      },
+      "users": {
+        "title": "Users management",
+        "subtitle": "Manage all platform users, roles, and permissions.",
+        "exportCsv": "Export CSV",
+        "addUser": "Add user"
+      },
+      "roles": {
+        "title": "Roles & Permissions",
+        "subtitle": "Manage user roles, permissions, and editor applications."
+      },
+      "contentLibrary": {
+        "title": "Content Library",
+        "subtitle": "Browse, search, and manage all published content."
+      },
+      "visualEditor": {
+        "title": "CMS / Visual Editor",
+        "subtitle": "Edit platform UI, homepage sections, and static pages.",
+        "preview": "Preview",
+        "publishChanges": "Publish changes"
+      },
+      "engagements": {
+        "title": "Engagement",
+        "subtitle": "Manage community interactions, comments, and recognition",
+        "stats": {
+          "totalComments": "Total comments",
+          "totalLikes": "Total likes",
+          "activeDiscussions": "Active discussions",
+          "badgesAwarded": "Badges awarded"
+        }
+      },
+      "analytics": {
+        "title": "Analytics",
+        "subtitle": "Platform performance and growth metrics",
+        "last30Days": "Last 30 days",
+        "exportReports": "Export reports",
+        "cards": {
+          "pageViews": "Total page views",
+          "userRetention": "User retention",
+          "avgSession": "Avg. session",
+          "bounceRate": "Bounce rate"
+        }
+      },
+      "reports": {
+        "title": "Reports & Moderation",
+        "subtitle": "Review reported content, manage user violations, and audit logs",
+        "cards": {
+          "pendingReports": "Pending reports",
+          "contentFlagged": "Content flagged",
+          "usersReported": "Users reported",
+          "resolvedToday": "Resolved today"
+        }
+      },
+      "finance": {
+        "title": "Finance management",
+        "subtitle": "Monitor donations, payouts, and financial activity",
+        "exportReports": "Export reports",
+        "cards": {
+          "todaysDonations": "Today's donations",
+          "monthlyRevenue": "Monthly revenue",
+          "pendingPayouts": "Pending payouts",
+          "pendingCount": "3 pending",
+          "platformFees": "Platform fees",
+          "feeRate": "10% rate"
+        }
+      },
+      "messaging": {
+        "title": "Messaging Center",
+        "subtitle": "Manage communications with users and send broadcasts",
+        "newBroadcast": "New broadcast",
+        "cards": {
+          "unreadMessages": "Unread messages",
+          "highPriority": "High priority",
+          "pendingResponse": "Pending response",
+          "resolvedThisWeek": "Resolved this week"
+        }
+      }
+    }
+  }
+}

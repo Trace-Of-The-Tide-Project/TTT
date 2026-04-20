@@ -1,0 +1,84 @@
+{
+  "Dashboard": {
+    "engagementsPage": {
+      "tabs": {
+        "comments": "Comments",
+        "trending": "Trending discussions",
+        "badges": "Badges & Recognition"
+      },
+      "filter": {
+        "all": "All",
+        "flagged": "Flagged ({count})"
+      },
+      "comments": {
+        "searchPlaceholder": "Search comments…",
+        "emptyFiltered": "No comments match your filters.",
+        "on": "On",
+        "flaggedBadge": "Flagged",
+        "replies": "{count, plural, one {# reply} other {# replies}}",
+        "menuAria": "More actions",
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "trending": {
+        "commentsCount": "{count, plural, one {# comment} other {# comments}}",
+        "participantsCount": "{count, plural, one {# participant} other {# participants}}",
+        "view": "View",
+        "unlock": "Unlock",
+        "lock": "Lock",
+        "lockDiscussionAria": "Lock discussion",
+        "unlockDiscussionAria": "Unlock discussion",
+        "empty": "No trending discussions found."
+      },
+      "badges": {
+        "searchPlaceholder": "Search badges…",
+        "createBadge": "Create Badge",
+        "recipients": "{count, plural, one {# recipient} other {# recipients}}",
+        "awardBadge": "Award Badge",
+        "emptySearch": "No badges match your search."
+      },
+      "createBadgeModal": {
+        "closeModalAria": "Close modal",
+        "closeAria": "Close",
+        "title": "Create New Badge",
+        "icon": "Icon",
+        "iconAria": {
+          "award": "Award",
+          "star": "Star",
+          "heart": "Heart",
+          "check": "Check",
+          "spark": "Spark"
+        },
+        "badgeName": "Badge name",
+        "namePlaceholder": "e.g. Top Contributor",
+        "roleLabel": "Or select a role",
+        "rolePlaceholder": "Award to role…",
+        "roles": {
+          "allUsers": "All Users",
+          "allAuthors": "All Authors",
+          "allEditors": "All Editors",
+          "allContributors": "All Contributors"
+        },
+        "reasonLabel": "Reason",
+        "optional": "(optional)",
+        "reasonPlaceholder": "Why is this badge being awarded?",
+        "cancel": "Cancel",
+        "submit": "Create Badge"
+      },
+      "awardBadgeModal": {
+        "closeModalAria": "Close modal",
+        "closeAria": "Close",
+        "title": "Award “{name}”",
+        "searchUser": "Search user",
+        "userPlaceholder": "Type a username or email…",
+        "description": "Description",
+        "descriptionPlaceholder": "What does this badge represent?",
+        "criteria": "Award criteria",
+        "criteriaPlaceholder": "When should this badge be awarded?",
+        "cancel": "Cancel",
+        "submit": "Award Badge"
+      }
+    }
+  }
+}

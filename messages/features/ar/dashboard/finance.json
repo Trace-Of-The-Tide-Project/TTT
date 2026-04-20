@@ -1,0 +1,54 @@
+{
+  "Dashboard": {
+    "financePage": {
+      "tabs": {
+        "donations": "التبرعات",
+        "payouts": "المدفوعات ({count})",
+        "suspicious": "نشاط مريب ({count})",
+        "invoices": "الفواتير"
+      },
+      "donations": {
+        "title": "التبرعات الأخيرة",
+        "subtitle": "أحدث عمليات التبرع على المنصة",
+        "colDonor": "المتبرع",
+        "colRecipient": "المستلم",
+        "colAmount": "المبلغ",
+        "colDate": "التاريخ",
+        "colStatus": "الحالة",
+        "status": {
+          "completed": "مكتمل",
+          "pending": "قيد الانتظار"
+        }
+      },
+      "payouts": {
+        "title": "مدفوعات قيد الانتظار",
+        "subtitle": "طلبات دفع للمبدعين بانتظار الموافقة",
+        "colCreator": "المبدع",
+        "colAmount": "المبلغ",
+        "colRequested": "تاريخ الطلب",
+        "colStatus": "الحالة",
+        "colActions": "إجراءات",
+        "approve": "موافقة",
+        "reject": "رفض",
+        "status": {
+          "pending": "قيد الانتظار",
+          "underReview": "قيد المراجعة"
+        }
+      },
+      "suspicious": {
+        "title": "نشاط مريب",
+        "subtitle": "معاملات مُعلَّمة تحتاج مراجعة",
+        "investigate": "تحقيق",
+        "block": "حظر"
+      },
+      "invoices": {
+        "comingSoon": "قسم الفواتير قيد الإعداد."
+      },
+      "actions": {
+        "rowAria": "إجراءات الصف",
+        "viewDetails": "عرض التفاصيل",
+        "refund": "استرداد"
+      }
+    }
+  }
+}

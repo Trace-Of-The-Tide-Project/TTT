@@ -9,6 +9,7 @@ import {
   type ChangeEvent,
   type FC,
 } from "react";
+import { useTranslations } from "next-intl";
 import {
   CameraIcon,
   FacebookIcon,
@@ -43,14 +44,15 @@ function initialsFromName(name: string): string {
 
 type PresetKey = "facebook" | "twitter" | "instagram" | "linkedin";
 
-const PRESETS: { key: PresetKey; label: string; Icon: FC }[] = [
-  { key: "facebook", label: "Facebook", Icon: FacebookIcon },
-  { key: "twitter", label: "X / Twitter", Icon: TwitterXIcon },
-  { key: "instagram", label: "Instagram", Icon: InstagramIcon },
-  { key: "linkedin", label: "LinkedIn", Icon: LinkedInIcon },
+const PRESETS: { key: PresetKey; Icon: FC }[] = [
+  { key: "facebook", Icon: FacebookIcon },
+  { key: "twitter", Icon: TwitterXIcon },
+  { key: "instagram", Icon: InstagramIcon },
+  { key: "linkedin", Icon: LinkedInIcon },
 ];
 
 export function AdminProfileInformation() {
+  const t = useTranslations("Dashboard.adminProfile");
   const photoInputId = useId();
   const [fullName, setFullName] = useState("Fadi Barghouti");
   const [email, setEmail] = useState("fadi.b@example.com");
@@ -91,11 +93,11 @@ export function AdminProfileInformation() {
       setPhotoError(null);
       if (!f) return;
       if (!/^image\/(jpeg|png|gif)$/i.test(f.type)) {
-        setPhotoError("Use JPG, PNG, or GIF.");
+        setPhotoError(t("errors.fileType"));
         return;
       }
       if (f.size > MAX_AVATAR_BYTES) {
-        setPhotoError("Max size 2MB.");
+        setPhotoError(t("errors.maxSize"));
         return;
       }
       revokePreview();
@@ -103,7 +105,7 @@ export function AdminProfileInformation() {
       objectUrlRef.current = url;
       setAvatarPreview(url);
     },
-    [revokePreview],
+    [revokePreview, t],
   );
 
   const clearPreset = useCallback((key: PresetKey) => {
@@ -129,9 +131,7 @@ export function AdminProfileInformation() {
         className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]/50 p-6 sm:p-8"
         style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.04) inset" }}
       >
-        <h1 className="text-xs font-medium uppercase tracking-wide text-gray-500">
-          Profile Information
-        </h1>
+        <h1 className="text-xs font-medium uppercase tracking-wide text-gray-500">{t("pageTitle")}</h1>
 
         <div className="mt-6 flex flex-col gap-4 border-b border-[var(--tott-card-border)] pb-8 sm:flex-row sm:items-center">
           <div
@@ -159,11 +159,11 @@ export function AdminProfileInformation() {
                 className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-[#C9A96E]/60 hover:bg-[var(--tott-dash-control-hover)]"
               >
                 <CameraIcon />
-                Change photo
+                {t("changePhoto")}
               </label>
             </div>
             <p className="text-xs text-gray-500 sm:max-w-xs">
-              JPG, PNG or GIF. Max size 2MB.
+              {t("photoHint")}
               {photoError ? (
                 <span className="mt-1 block text-red-400">{photoError}</span>
               ) : null}
@@ -173,7 +173,7 @@ export function AdminProfileInformation() {
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2">
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">Full Name</label>
+            <label className="mb-1.5 block text-xs text-gray-500">{t("fullName")}</label>
             <input
               type="text"
               value={fullName}
@@ -182,7 +182,7 @@ export function AdminProfileInformation() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">Email address</label>
+            <label className="mb-1.5 block text-xs text-gray-500">{t("email")}</label>
             <input
               type="email"
               value={email}
@@ -191,11 +191,11 @@ export function AdminProfileInformation() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">Role</label>
+            <label className="mb-1.5 block text-xs text-gray-500">{t("role")}</label>
             <input type="text" value={role} onChange={(e) => setRole(e.target.value)} className={inputClass} />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">Company</label>
+            <label className="mb-1.5 block text-xs text-gray-500">{t("company")}</label>
             <input
               type="text"
               value={company}
@@ -204,7 +204,7 @@ export function AdminProfileInformation() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">Location</label>
+            <label className="mb-1.5 block text-xs text-gray-500">{t("location")}</label>
             <input
               type="text"
               value={location}
@@ -213,19 +213,19 @@ export function AdminProfileInformation() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">External Link</label>
+            <label className="mb-1.5 block text-xs text-gray-500">{t("externalLink")}</label>
             <input
               type="text"
               value={externalLink}
               onChange={(e) => setExternalLink(e.target.value)}
               className={inputClass}
-              placeholder="https://…"
+              placeholder={t("externalLinkPlaceholder")}
             />
           </div>
         </div>
 
         <div className="mt-8 border-b border-[var(--tott-card-border)] pb-8">
-          <label className="mb-1.5 block text-xs text-gray-500">Biography</label>
+          <label className="mb-1.5 block text-xs text-gray-500">{t("biography")}</label>
           <textarea
             value={biography}
             onChange={(e) => setBiography(e.target.value)}
@@ -235,9 +235,9 @@ export function AdminProfileInformation() {
         </div>
 
         <div className="mt-8">
-          <h2 className="mb-4 text-xs font-medium uppercase tracking-wide text-gray-500">Social Links</h2>
+          <h2 className="mb-4 text-xs font-medium uppercase tracking-wide text-gray-500">{t("socialLinks")}</h2>
           <ul className="flex flex-col gap-3">
-            {PRESETS.map(({ key, label, Icon }) => (
+            {PRESETS.map(({ key, Icon }) => (
               <li
                 key={key}
                 className="flex items-center gap-3 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-2 pr-2 sm:gap-4"
@@ -249,15 +249,15 @@ export function AdminProfileInformation() {
                   type="url"
                   value={presetUrls[key]}
                   onChange={(e) => setPresetUrls((p) => ({ ...p, [key]: e.target.value }))}
-                  placeholder={label}
+                  placeholder={t(`presets.${key}`)}
                   className="min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-gray-500"
-                  aria-label={label}
+                  aria-label={t(`presets.${key}`)}
                 />
                 <button
                   type="button"
                   onClick={() => clearPreset(key)}
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
-                  aria-label={`Remove ${label}`}
+                  aria-label={t("removePresetAria", { label: t(`presets.${key}`) })}
                 >
                   <TrashIcon />
                 </button>
@@ -278,7 +278,7 @@ export function AdminProfileInformation() {
                 onChange={(e) => setOtherLinkUrl(e.target.value)}
                 onFocus={() => setOtherFocused(true)}
                 onBlur={() => setOtherFocused(false)}
-                placeholder="Add any other links"
+                placeholder={t("otherLinkPlaceholder")}
                 className="min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-gray-500"
               />
               <span className="h-9 w-9 shrink-0" aria-hidden />
@@ -300,15 +300,15 @@ export function AdminProfileInformation() {
                       list.map((x) => (x.id === row.id ? { ...x, url: e.target.value } : x)),
                     )
                   }
-                  placeholder="https://…"
+                  placeholder={t("additionalLinkPlaceholder")}
                   className="min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-gray-500"
-                  aria-label="Additional link"
+                  aria-label={t("additionalLinkAria")}
                 />
                 <button
                   type="button"
                   onClick={() => removeExtra(row.id)}
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
-                  aria-label="Remove link"
+                  aria-label={t("removeLinkAria")}
                 >
                   <TrashIcon />
                 </button>
@@ -321,7 +321,7 @@ export function AdminProfileInformation() {
                 onClick={addExtraLink}
                 className="flex w-full items-center justify-between gap-3 rounded-lg border border-dashed border-[var(--tott-card-border)] bg-transparent px-3 py-3 text-left text-sm text-gray-400 transition-colors hover:border-[#C9A96E]/50 hover:text-foreground"
               >
-                <span>Add new link</span>
+                <span>{t("addNewLink")}</span>
                 <span className="flex h-9 w-9 items-center justify-center rounded-md text-[#C9A96E]">
                   <PlusIcon />
                 </span>
@@ -337,7 +337,7 @@ export function AdminProfileInformation() {
             className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
             style={{ backgroundColor: theme.accentGold }}
           >
-            {savedFlash ? "Saved" : "Save Changes"}
+            {savedFlash ? t("saved") : t("saveChanges")}
           </button>
         </div>
       </div>

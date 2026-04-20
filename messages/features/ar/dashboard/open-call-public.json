@@ -1,0 +1,15 @@
+{
+  "Dashboard": {
+    "openCallPublic": {
+      "supportTitle": "ادعم هذا الأثر",
+      "supportDescription": "ساهم في هذا المحتوى: دعمك يساعد على استمرار السرد المستقل وإبقاء هذا العمل متاحاً.",
+      "supportCta": "ادعم",
+      "loading": "جاري تحميل الدعوة المفتوحة…",
+      "errorNotFoundTitle": "الدعوة المفتوحة غير موجودة",
+      "errorLoadTitle": "تعذّر تحميل الدعوة المفتوحة",
+      "errorMissingBody": "لا توجد دعوة مفتوحة لهذا الرابط.",
+      "errorLoadBody": "تحقق من الاتصال أو أعد المحاولة لاحقاً.",
+      "backToContent": "العودة إلى المحتوى"
+    }
+  }
+}

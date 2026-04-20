@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 const inputClass =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500";
 
@@ -21,18 +23,16 @@ export function TripPricing({
   currency,
   onCurrencyChange,
 }: TripPricingProps) {
+  const t = useTranslations("Dashboard.trips.editor.pricing");
   return (
     <section className="rounded-lg border border-[var(--tott-card-border)] p-4 space-y-4">
-      <h3 className="text-sm font-bold text-foreground">Pricing</h3>
-      <p className="text-xs text-gray-500">
-        Minimum contribution only. On the public trip page, travelers use a scale starting at this amount; they can
-        slide higher (no fixed cap in the editor).
-      </p>
+      <h3 className="text-sm font-bold text-foreground">{t("heading")}</h3>
+      <p className="text-xs text-gray-500">{t("hint")}</p>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="mb-1.5 block text-xs font-medium text-gray-400">
-            Minimum price
+            {t("minimumPrice")}
           </label>
           <input
             type="text"
@@ -45,7 +45,7 @@ export function TripPricing({
         </div>
         <div>
           <label className="mb-1.5 block text-xs font-medium text-gray-400">
-            Currency
+            {t("currency")}
           </label>
           <select
             value={currency}

@@ -1,13 +1,17 @@
 "use client";
 
 import { useCallback } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
 import { AdminNotificationPreferences } from "@/components/dashboard/admin/settings/AdminNotificationPreferences";
 import { NotificationsAdminContent } from "./NotificationsAdminContent";
 
 type Tab = "settings" | "inbox";
 
 export function NotificationsAdminPage() {
+  const t = useTranslations("Dashboard.notificationsPage.adminTabs");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -16,7 +20,8 @@ export function NotificationsAdminPage() {
   const setTab = useCallback(
     (next: Tab) => {
       const q = next === "inbox" ? "?tab=inbox" : "";
-      router.replace(`${pathname ?? "/admin/notifications"}${q}`, { scroll: false });
+      const base = normalizeAppPathname(pathname) ?? "/admin/notifications";
+      router.replace(`${base}${q}`, { scroll: false });
     },
     [pathname, router],
   );
@@ -36,7 +41,7 @@ export function NotificationsAdminPage() {
               : "text-gray-500 hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
           }`}
         >
-          Notification settings
+          {t("settings")}
         </button>
         <button
           type="button"
@@ -47,7 +52,7 @@ export function NotificationsAdminPage() {
               : "text-gray-500 hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
           }`}
         >
-          Your notifications
+          {t("inbox")}
         </button>
       </div>
 

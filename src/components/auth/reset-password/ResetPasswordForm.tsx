@@ -1,94 +1,79 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { LockIcon } from '@/components/ui/icons'
-import { AuthInput } from '@/components/ui/AuthInput'
-import { theme } from '@/lib/theme'
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
+import { LockIcon } from "@/components/ui/icons";
+import { AuthInput } from "@/components/ui/AuthInput";
+import { theme } from "@/lib/theme";
 
 export function ResetPasswordForm() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const token = searchParams.get('token')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
+  const t = useTranslations("Auth.forms.resetPassword");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError('')
-    const form = e.currentTarget
-    const password = (form.elements.namedItem('password') as HTMLInputElement).value
-    const confirmPassword = (form.elements.namedItem('confirmPassword') as HTMLInputElement).value
+    e.preventDefault();
+    setError("");
+    const form = e.currentTarget;
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+    const confirmPassword = (form.elements.namedItem("confirmPassword") as HTMLInputElement).value;
 
     if (!token) {
-      setError('Invalid or missing reset link. Please request a new one.')
-      return
+      setError(t("errorInvalidToken"));
+      return;
     }
     if (password.length < 8) {
-      setError('Password must be at least 8 characters.')
-      return
+      setError(t("errorPasswordLength"));
+      return;
     }
     if (password !== confirmPassword) {
-      setError('Passwords do not match.')
-      return
+      setError(t("errorMismatch"));
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, newPassword: password, confirmPassword }),
-      })
-      const data = await res.json().catch(() => ({}))
+      });
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError((data.message as string) || 'Something went wrong. Please try again.')
-        setLoading(false)
-        return
+        setError((data.message as string) || t("errorGeneric"));
+        setLoading(false);
+        return;
       }
-      router.push('/auth/success')
-      router.refresh()
+      router.push("/auth/success");
+      router.refresh();
     } catch {
-      setError('Unable to reach the server. Please try again.')
+      setError(t("errorNetwork"));
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
-  // Allow opening reset password page without token (e.g. for testing/preview)
-  // if (!token) {
-  //   return (
-  //     <div className="w-full max-w-md space-y-4">
-  //       <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/30 rounded-lg px-3 py-2">
-  //         Invalid or missing reset link. Please request a new password reset from the login page.
-  //       </p>
-  //       <Link
-  //         href="/auth/forgot-password"
-  //         className="inline-block text-sm hover:underline"
-  //         style={{ color: theme.accentGold }}
-  //       >
-  //         Request new reset link
-  //       </Link>
-  //     </div>
-  //   )
-  // }
-
   return (
-    <form onSubmit={handleSubmit} className="relative space-y-6 w-full max-w-md">
+    <form onSubmit={handleSubmit} className="relative w-full max-w-md space-y-6">
       {error && (
-        <p className="text-sm text-red-400 bg-red-400/10 border border-red-400/30 rounded-lg px-3 py-2">
+        <p className="rounded-lg border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-400">
           {error}
         </p>
       )}
       <AuthInput
         id="password"
         name="password"
-        type={showPassword ? 'text' : 'password'}
-        label="New password"
-        placeholder="Enter a new password"
+        type={showPassword ? "text" : "password"}
+        label={t("newPasswordLabel")}
+        placeholder={t("newPasswordPlaceholder")}
         required
         minLength={8}
         autoComplete="new-password"
@@ -98,7 +83,7 @@ export function ResetPasswordForm() {
             type="button"
             onClick={() => setShowPassword((p) => !p)}
             className="text-neutral-500 hover:text-foreground"
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-label={showPassword ? t("hidePassword") : t("showPassword")}
             suppressHydrationWarning
           >
             👁
@@ -108,9 +93,9 @@ export function ResetPasswordForm() {
       <AuthInput
         id="confirmPassword"
         name="confirmPassword"
-        type={showConfirm ? 'text' : 'password'}
-        label="Confirm new password"
-        placeholder="Confirm your new password"
+        type={showConfirm ? "text" : "password"}
+        label={t("confirmLabel")}
+        placeholder={t("confirmPlaceholder")}
         required
         minLength={8}
         autoComplete="new-password"
@@ -120,7 +105,7 @@ export function ResetPasswordForm() {
             type="button"
             onClick={() => setShowConfirm((p) => !p)}
             className="text-neutral-500 hover:text-foreground"
-            aria-label={showConfirm ? 'Hide password' : 'Show password'}
+            aria-label={showConfirm ? t("hidePassword") : t("showPassword")}
             suppressHydrationWarning
           >
             👁
@@ -130,12 +115,12 @@ export function ResetPasswordForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 rounded-lg font-medium text-black transition-colors disabled:opacity-60 cursor-pointer select-none"
+        className="w-full cursor-pointer select-none rounded-lg py-3 font-medium text-black transition-colors disabled:cursor-not-allowed disabled:opacity-60"
         style={{ backgroundColor: theme.accentGold }}
         suppressHydrationWarning
       >
-        {loading ? 'Resetting…' : 'Reset password'}
+        {loading ? t("submitting") : t("submit")}
       </button>
     </form>
-  )
+  );
 }

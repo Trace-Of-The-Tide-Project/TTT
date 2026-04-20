@@ -1,0 +1,51 @@
+{
+  "Footer": {
+    "logoAlt": "خط البحر",
+    "taglineLead": "خط البحر",
+    "taglineBody": "نحافظ على ذاكرتنا الجمعية عبر القصص والشهادات والقطع الثقافية.",
+    "social": {
+      "facebook": "فيسبوك",
+      "twitter": "إكس (تويتر)",
+      "youtube": "يوتيوب",
+      "instagram": "إنستغرام"
+    },
+    "palestineHeading": "فلسطين (هندسة القصص)",
+    "palestine": {
+      "stone": { "title": "حجر", "description": "شاهد على الحياة" },
+      "salt": { "title": "ملح", "description": "أثر الزمن" },
+      "compass": { "title": "بوصلة", "description": "أثر المكان" }
+    },
+    "fieldsHeading": "المجالات (فسيفساء دروب بالي)",
+    "fields": {
+      "harbour": { "title": "دروب المرفأ", "description": "مجاورة مع الثقافة" },
+      "courtyard": { "title": "دروب الفناء", "description": "مجاورة مع المعرفة" },
+      "hill": { "title": "دروب التل", "description": "مجاورة مع الفنون" }
+    },
+    "contactHeading": "التواصل",
+    "contactLocation": "في كل مكان",
+    "copyright": "© {year} خط البحر. جميع الحقوق محفوظة.",
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الخدمة",
+    "gdpr": "اللائحة العامة لحماية البيانات"
+  },
+  "Navbar": {
+    "home": "الرئيسية",
+    "language": "اللغة",
+    "brand": "خط البحر",
+    "fields": "المجالات",
+    "beANeighbor": "كن جاراً",
+    "giftATrace": "اهدِ أثراً",
+    "traceAStory": "ارسم قصة",
+    "menu": "القائمة",
+    "logout": "تسجيل الخروج",
+    "login": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "lightMode": "الوضع الفاتح",
+    "darkMode": "الوضع الداكن",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة",
+    "switchToLight": "التبديل إلى الوضع الفاتح",
+    "switchToDark": "التبديل إلى الوضع الداكن",
+    "profile": "الملف الشخصي"
+  }
+}

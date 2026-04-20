@@ -1,0 +1,60 @@
+{
+  "Contribute": {
+    "page": {
+      "title": "Contribute to Trace of the Tides",
+      "subtitle": "What would you like to contribute?",
+      "typesLoadError": "Failed to load contribution types"
+    },
+    "types": {
+      "personal_story": "Personal Story",
+      "testimony": "Testimony",
+      "biography": "Biography",
+      "artwork": "Artwork",
+      "music": "Music",
+      "literature": "Literature",
+      "photography": "Photography",
+      "history_document": "History document",
+      "other": "Other"
+    },
+    "form": {
+      "titleLabel": "Contribution title",
+      "titlePlaceholder": "Enter a title for your contribution",
+      "collectionLabel": "Choose collection",
+      "optional": "(Optional)",
+      "collectionPlaceholder": "Enter or select collection",
+      "collectionStories": "Stories",
+      "collectionDocuments": "Documents",
+      "collectionMedia": "Media",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Enter a description for the contribution",
+      "uploadLabel": "Upload files",
+      "uploadHint": "Drag and drop files here, or click to browse",
+      "uploadFormats": "Supported formats: JPG, PNG, PDF, MP3, MP4, DOC (Max 20MB)",
+      "removeFileAria": "Remove file",
+      "nameLabel": "Your name",
+      "namePlaceholder": "Enter your full name",
+      "emailLabel": "Your email address",
+      "emailPlaceholder": "Enter your email address",
+      "mobileLabel": "Your mobile number",
+      "mobilePlaceholder": "01 2345 6789",
+      "consent": "By submitting, you agree that your contribution may be used and attributed in accordance with our terms. We may contact you regarding your submission.",
+      "technicalNote": "Each file is sent to POST /upload first, then again in the contribution form: each multipart files part uses the returned storage path as the filename and the real file bytes as the body.",
+      "submit": "Submit Contribution",
+      "submitting": "Uploading & submitting…",
+      "submitErrorDefault": "Submission failed. Please try again."
+    },
+    "success": {
+      "title": "Thank you for your contribution!",
+      "backHome": "Back to home"
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "We could not complete your submission. Please try again, or contact us if the problem continues.",
+      "tryAgain": "Try again"
+    },
+    "contact": {
+      "lead": "If you have any questions",
+      "link": "Contact us"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { tripDisplayPriceLabel } from "@/services/trips.service";
 import type { EditorStop } from "./ItineraryBuilder";
 
@@ -97,6 +98,8 @@ export function TripSummary({
   currency,
   stops,
 }: TripSummaryProps) {
+  const t = useTranslations("Dashboard.trips.editor.summary");
+  const locale = useLocale();
   const namedStops = stops
     .map((s) => (s.title.trim() || s.locationName.trim()))
     .filter(Boolean);
@@ -105,19 +108,19 @@ export function TripSummary({
 
   const routeDisplay = shortNames.length > 0
     ? shortNames.join(" \u2192 ")
-    : "---";
+    : t("placeholder");
 
   const dateDisplay = startDate
-    ? new Date(startDate).toLocaleDateString(undefined, {
+    ? new Date(startDate).toLocaleDateString(locale, {
         year: "numeric",
         month: "short",
         day: "numeric",
       })
-    : "---";
+    : t("placeholder");
 
   const lastStop = namedStops.length > 0
     ? namedStops[namedStops.length - 1]!
-    : "---";
+    : t("placeholder");
 
   const priceNum = parseFloat(price);
   const priceDisplay =
@@ -126,41 +129,41 @@ export function TripSummary({
           price,
           currency,
         })
-      : "---";
+      : t("placeholder");
 
   return (
     <div className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] p-4">
-      <h3 className="mb-4 text-base font-bold italic text-foreground">Trip Summary</h3>
+      <h3 className="mb-4 text-base font-bold italic text-foreground">{t("heading")}</h3>
 
       <div className="flex flex-col gap-3">
         <SummaryRow
           icon={<DocIcon />}
-          label="Title"
-          value={title.trim() || "Untitled Trip"}
+          label={t("title")}
+          value={title.trim() || t("untitled")}
         />
         <SummaryRow
           icon={<RouteIcon />}
-          label="Route"
+          label={t("route")}
           value={routeDisplay}
         />
         <SummaryRow
           icon={<CalendarIcon />}
-          label="Start Date"
+          label={t("startDate")}
           value={dateDisplay}
         />
         <SummaryRow
           icon={<ClockIcon />}
-          label="Duration"
-          value={`${durationHours} hours`}
+          label={t("duration")}
+          value={t("durationHours", { hours: durationHours })}
         />
         <SummaryRow
           icon={<LocationIcon />}
-          label="Last Stop"
+          label={t("lastStop")}
           value={lastStop}
         />
         <SummaryRow
           icon={<DollarIcon />}
-          label="Price"
+          label={t("price")}
           value={priceDisplay}
         />
       </div>

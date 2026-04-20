@@ -3,9 +3,9 @@ import { HomeIcon, FileTextIcon, LinkIcon, PaletteIcon } from "@/components/ui/i
 
 export type CmsTabId = "home" | "static" | "nav" | "branding";
 
-export const CMS_TABS: { id: CmsTabId; label: string; icon?: ComponentType }[] = [
-  { id: "home", label: "Home Page", icon: HomeIcon },
-  { id: "static", label: "Static Pages", icon: FileTextIcon },
-  { id: "nav", label: "Navigations & Footer", icon: LinkIcon },
-  { id: "branding", label: "Branding", icon: PaletteIcon },
+export const CMS_TABS: { id: CmsTabId; icon?: ComponentType }[] = [
+  { id: "home", icon: HomeIcon },
+  { id: "static", icon: FileTextIcon },
+  { id: "nav", icon: LinkIcon },
+  { id: "branding", icon: PaletteIcon },
 ];

@@ -1,0 +1,138 @@
+{
+  "Dashboard": {
+    "adminHome": {
+      "notifications": {
+        "title": "Alerts & Notifications",
+        "viewAll": "View all ›",
+        "signInPrompt": "Sign in to see your notifications.",
+        "tryAgain": "Try again",
+        "loadFailed": "Failed to load notifications",
+        "loading": "Loading notifications…",
+        "empty": "No notifications yet.",
+        "unread": "Unread",
+        "open": "Open ›"
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "sendBroadcast": {
+          "label": "Send Broadcast",
+          "description": "Message all users or specific roles"
+        },
+        "approveEditor": {
+          "label": "Approve editor",
+          "description": "5 pending applications"
+        },
+        "featureContent": {
+          "label": "Feature content",
+          "description": "Highlight on homepage"
+        },
+        "maintenanceMode": {
+          "label": "Maintenance mode",
+          "description": "Enable platform maintenance"
+        }
+      },
+      "contentOverview": {
+        "title": "Content Overview",
+        "manageAll": "Manage all",
+        "headers": {
+          "category": "Category",
+          "published": "Published",
+          "drafts": "Drafts",
+          "flagged": "Flagged"
+        },
+        "categories": {
+          "articles": "Articles",
+          "films": "Films",
+          "music": "Music",
+          "photography": "Photography",
+          "essays": "Essays",
+          "podcasts": "Podcasts"
+        },
+        "totalLabel": "Total content pieces"
+      },
+      "usersByRole": {
+        "title": "Users by Role",
+        "viewAll": "View all",
+        "totalLabel": "Total users",
+        "roles": {
+          "users": "Users",
+          "contributors": "Contributors",
+          "authors": "Authors",
+          "editors": "Editors",
+          "admins": "Admins"
+        }
+      },
+      "finance": {
+        "title": "Finance Snapshot",
+        "viewDetails": "View details",
+        "cards": {
+          "1": {
+            "label": "Today's Donations...",
+            "sublabel": "23 transactions..."
+          },
+          "2": {
+            "label": "This Month...",
+            "sublabel": "vs $28,450 last month..."
+          },
+          "3": {
+            "label": "Pending Payouts...",
+            "sublabel": "47 creators..."
+          },
+          "4": {
+            "label": "Platform Fees...",
+            "sublabel": "10% of transactions..."
+          }
+        }
+      },
+      "recentActivity": {
+        "title": "Recent Activity",
+        "items": {
+          "1": {
+            "title": "New author joined",
+            "description": "Sara Marzouq signed ...",
+            "time": "2 minutes ago"
+          },
+          "2": {
+            "title": "Article published",
+            "description": "The Future of Cinema ...",
+            "time": "2 minutes ago"
+          },
+          "3": {
+            "title": "Donation received",
+            "description": "$50 donation to Elena ...",
+            "time": "2 minutes ago"
+          },
+          "4": {
+            "title": "Content flagged",
+            "description": "Review required: Communi ...",
+            "time": "2 minutes ago"
+          },
+          "5": {
+            "title": "Content featured",
+            "description": "\"Digital Art Revolution\" a ...",
+            "time": "2 minutes ago"
+          },
+          "6": {
+            "title": "Login from new device",
+            "description": "Editor account accessed ...",
+            "time": "2 minutes ago"
+          }
+        }
+      },
+      "editorApplications": {
+        "title": "Editor Applications",
+        "viewAll": "View all",
+        "viewApplication": "View application",
+        "reject": "Reject",
+        "approve": "Approve"
+      },
+      "modals": {
+        "pendingEditors": {
+          "title": "Pending Editor Applications",
+          "description": "Review and approve editor applications."
+        },
+        "viewAll": "View All"
+      }
+    }
+  }
+}

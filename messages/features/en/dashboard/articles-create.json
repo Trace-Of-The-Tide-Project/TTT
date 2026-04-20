@@ -1,0 +1,52 @@
+{
+  "Dashboard": {
+    "articles": {
+      "create": {
+        "pageTitle": "Create New",
+        "pageSubtitle": "Choose a template to start building your content. Each template is optimized for specific storytelling formats.",
+        "filters": {
+          "all": "Show all",
+          "articles": "Articles",
+          "films": "Films",
+          "audio": "Audio",
+          "thread": "Thread",
+          "artwork": "Art work"
+        },
+        "templates": {
+          "article": {
+            "title": "Article",
+            "description": "Long-form written content with rich formatting"
+          },
+          "video": {
+            "title": "Video",
+            "description": "Video content with description & context"
+          },
+          "audio": {
+            "title": "Audio",
+            "description": "Podcast, music, or audio storytelling"
+          },
+          "thread": {
+            "title": "Thread",
+            "description": "Sequential story or text series"
+          },
+          "artwork": {
+            "title": "Artwork",
+            "description": "Showcase photography, illustration, or design"
+          },
+          "figma": {
+            "title": "Figma",
+            "description": "Embed or link Figma frames for design collaboration and handoff."
+          },
+          "trip": {
+            "title": "Trip",
+            "description": "Plan and publish guided travel experiences"
+          },
+          "openCall": {
+            "title": "Open Call",
+            "description": "Invite collaborators to apply and contribute to your content through a public brief and form."
+          }
+        }
+      }
+    }
+  }
+}

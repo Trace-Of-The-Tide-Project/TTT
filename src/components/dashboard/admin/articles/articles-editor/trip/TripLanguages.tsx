@@ -1,19 +1,12 @@
 "use client";
 
 import { useCallback } from "react";
+import { useTranslations } from "next-intl";
 
 const selectClass =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground outline-none focus:border-gray-500";
 
-const AVAILABLE_LANGUAGES = [
-  { code: "AR", label: "Arabic" },
-  { code: "EN", label: "English" },
-  { code: "HE", label: "Hebrew" },
-  { code: "FR", label: "French" },
-  { code: "ES", label: "Spanish" },
-  { code: "DE", label: "German" },
-  { code: "TR", label: "Turkish" },
-] as const;
+const LANGUAGE_CODES = ["AR", "EN", "HE", "FR", "ES", "DE", "TR"] as const;
 
 type TripLanguagesProps = {
   languages: string[];
@@ -21,6 +14,7 @@ type TripLanguagesProps = {
 };
 
 export function TripLanguages({ languages, onLanguagesChange }: TripLanguagesProps) {
+  const t = useTranslations("Dashboard.trips.editor.languages");
   const addLanguage = useCallback(
     (code: string) => {
       if (code && !languages.includes(code)) {
@@ -37,15 +31,15 @@ export function TripLanguages({ languages, onLanguagesChange }: TripLanguagesPro
     [languages, onLanguagesChange],
   );
 
-  const available = AVAILABLE_LANGUAGES.filter((l) => !languages.includes(l.code));
+  const available = LANGUAGE_CODES.filter((code) => !languages.includes(code));
 
   return (
     <section className="rounded-lg border border-[var(--tott-card-border)] p-4 space-y-4">
-      <h3 className="text-sm font-bold text-foreground">Languages</h3>
+      <h3 className="text-sm font-bold text-foreground">{t("heading")}</h3>
 
       <div>
         <label className="mb-1.5 block text-xs font-medium text-gray-400">
-          Select Language
+          {t("selectLabel")}
         </label>
         <select
           className={selectClass}
@@ -54,10 +48,10 @@ export function TripLanguages({ languages, onLanguagesChange }: TripLanguagesPro
             if (e.target.value) addLanguage(e.target.value);
           }}
         >
-          <option value="">Select...</option>
-          {available.map((l) => (
-            <option key={l.code} value={l.code}>
-              {l.label}
+          <option value="">{t("selectPlaceholder")}</option>
+          {available.map((code) => (
+            <option key={code} value={code}>
+              {t(`labels.${code}`)}
             </option>
           ))}
         </select>
@@ -66,7 +60,7 @@ export function TripLanguages({ languages, onLanguagesChange }: TripLanguagesPro
       {languages.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {languages.map((code) => {
-            const label = AVAILABLE_LANGUAGES.find((l) => l.code === code)?.label ?? code;
+            const label = t(`labels.${code}`);
             return (
               <span
                 key={code}
@@ -77,7 +71,7 @@ export function TripLanguages({ languages, onLanguagesChange }: TripLanguagesPro
                   type="button"
                   onClick={() => removeLanguage(code)}
                   className="ml-0.5 text-gray-500 hover:text-foreground"
-                  aria-label={`Remove ${label}`}
+                  aria-label={t("removeAria", { label })}
                 >
                   ×
                 </button>

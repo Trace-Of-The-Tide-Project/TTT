@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { ContentPageLayout } from "@/components/content/ContentPageLayout";
 import { buildArticleContentPageProps } from "@/lib/content/build-article-content-page";

@@ -1,14 +1,16 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import { EyeIcon, FileTextIcon } from "@/components/ui/icons";
 import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
 
 export function VisualEditorPageHeader() {
+  const t = useTranslations("Dashboard.headers.visualEditor");
   return (
     <DashboardHeader
-      title="CMS / Visual Editor"
-      subtitle="Edit platform UI, homepage sections, and static pages."
+      title={t("title")}
+      subtitle={t("subtitle")}
       actions={
         <>
           <button
@@ -18,7 +20,7 @@ export function VisualEditorPageHeader() {
             <span className="[&_svg]:h-4 [&_svg]:w-4">
               <EyeIcon />
             </span>
-            Preview
+            {t("preview")}
           </button>
           <button
             type="button"
@@ -28,7 +30,7 @@ export function VisualEditorPageHeader() {
             <span className="[&_svg]:h-4 [&_svg]:w-4">
               <FileTextIcon />
             </span>
-            Publish changes
+            {t("publishChanges")}
           </button>
         </>
       }

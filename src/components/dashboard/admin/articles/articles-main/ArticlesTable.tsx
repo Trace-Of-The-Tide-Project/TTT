@@ -2,24 +2,29 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { formatArticleListDate } from "@/lib/dashboard/map-articles-list";
+import { useSearchParams } from "next/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
 import { PlusIcon, MoreDotsIcon } from "@/components/ui/icons";
 import { ConfirmDeleteArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ConfirmDeleteArticleModal";
 import { deleteArticle } from "@/services/articles.service";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import { isAxiosError } from "axios";
 
-type Tab = { id: string; label: string };
+type Tab = { id: string; labelKey: string };
 
 export type ArticleRow = {
   id: string;
   slug: string;
   title: string;
   content_type: string;
-  status: "Published" | "Draft" | "Scheduled";
+  /** Normalized lifecycle key for filtering and i18n labels */
+  status: "draft" | "published" | "scheduled";
   statusColor: string;
-  lastUpdated: string;
+  /** ISO timestamp for locale-aware relative formatting in the table */
+  updatedAtIso: string;
   views: string;
   supporters: string;
 };
@@ -32,7 +37,7 @@ type ArticlesTableProps = {
   onArticleDeleted?: (articleId: string) => void | Promise<void>;
 };
 
-function deleteErrMessage(e: unknown): string {
+function deleteErrMessage(e: unknown, fallback: string): string {
   if (isAxiosError(e)) {
     const d = e.response?.data;
     if (typeof d === "string" && d.trim()) return d;
@@ -40,10 +45,10 @@ function deleteErrMessage(e: unknown): string {
       const o = d as Record<string, unknown>;
       if (typeof o.message === "string") return o.message;
     }
-    return e.message || "Delete failed";
+    return e.message || fallback;
   }
   if (e instanceof Error) return e.message;
-  return "Delete failed";
+  return fallback;
 }
 
 const statusColorMap: Record<string, string> = {
@@ -54,9 +59,9 @@ const statusColorMap: Record<string, string> = {
 
 const TAB_TO_STATUS: Record<string, ArticleRow["status"] | null> = {
   all: null,
-  drafts: "Draft",
-  published: "Published",
-  scheduled: "Scheduled",
+  drafts: "draft",
+  published: "published",
+  scheduled: "scheduled",
 };
 
 const ARTICLE_MENU_WIDTH_PX = 160;
@@ -76,6 +81,8 @@ export function ArticlesTable({
   addNewHref = "/admin/articles/create",
   onArticleDeleted,
 }: ArticlesTableProps) {
+  const t = useTranslations("Dashboard.articles.list");
+  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -104,7 +111,8 @@ export function ArticlesTable({
         params.set("tab", tabId);
       }
       const q = params.toString();
-      router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
+      const base = normalizeAppPathname(pathname) ?? pathname ?? "/admin/articles";
+      router.replace(q ? `${base}?${q}` : base, { scroll: false });
     },
     [defaultTab, pathname, router, searchParams]
   );
@@ -114,6 +122,15 @@ export function ArticlesTable({
     if (!want) return rows;
     return rows.filter((r) => r.status === want);
   }, [rows, activeTab]);
+
+  const rowsWithRelativeTime = useMemo(
+    () =>
+      filteredRows.map((row) => ({
+        ...row,
+        relativeUpdated: formatArticleListDate(row.updatedAtIso, locale, t("table.justNow")),
+      })),
+    [filteredRows, locale, t],
+  );
 
   useLayoutEffect(() => {
     if (openMenuId == null) return;
@@ -201,11 +218,11 @@ export function ArticlesTable({
       setDeleteTarget(null);
       await onArticleDeleted?.(id);
     } catch (e) {
-      setDeleteError(deleteErrMessage(e));
+      setDeleteError(deleteErrMessage(e, t("errors.deleteFailed")));
     } finally {
       setDeleteBusy(false);
     }
-  }, [deleteTarget, onArticleDeleted]);
+  }, [deleteTarget, onArticleDeleted, t]);
 
   return (
     <div>
@@ -217,7 +234,7 @@ export function ArticlesTable({
               className="fixed z-300 min-w-[148px] rounded-lg border border-[var(--tott-card-border)] bg-[#252525] py-1 shadow-lg"
               style={{ top: menuPosition.top, left: menuPosition.left }}
               role="menu"
-              aria-label={`Actions for ${openMenuRow.title}`}
+              aria-label={t("table.menuAriaFor", { title: openMenuRow.title })}
             >
               <li role="none">
                 <Link
@@ -226,7 +243,7 @@ export function ArticlesTable({
                   className="block px-3 py-2 text-sm text-gray-200 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
                   onClick={closeArticleMenu}
                 >
-                  Preview
+                  {t("table.preview")}
                 </Link>
               </li>
               <li role="none">
@@ -236,18 +253,18 @@ export function ArticlesTable({
                   className="block px-3 py-2 text-sm text-gray-200 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
                   onClick={closeArticleMenu}
                 >
-                  Edit
+                  {t("table.edit")}
                 </Link>
               </li>
               <li role="none">
                 <button
                   type="button"
                   role="menuitem"
-                  className="w-full px-3 py-2 text-left text-sm text-red-300 transition-colors hover:bg-red-950/40 hover:text-red-200"
+                  className="w-full px-3 py-2 text-start text-sm text-red-300 transition-colors hover:bg-red-950/40 hover:text-red-200"
                   disabled={deleteBusy && deleteTarget?.id === openMenuRow.id}
                   onClick={() => openDeleteModal(openMenuRow)}
                 >
-                  Delete
+                  {t("table.delete")}
                 </button>
               </li>
             </ul>,
@@ -276,102 +293,114 @@ export function ArticlesTable({
                 : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
             }`}
           >
-            {tab.label}
+            {t(`tabs.${tab.labelKey}`)}
           </button>
         ))}
       </div>
 
-      <div className="mt-4 flex justify-end">
+      <div className="mt-4 flex w-full">
         <Link
           href={addNewHref}
-          className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+          className="ms-auto flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
           style={{ color: "#C9A96E" }}
         >
           <PlusIcon />
-          Add new
+          {t("table.addNew")}
         </Link>
       </div>
 
       {/* Table - borders #444444 at top and bottom */}
       <div className="overflow-x-auto rounded-lg border border-[var(--tott-card-border)]">
-        <table className="w-full border-collapse text-left text-sm">
+        <table className="w-full border-collapse text-start text-sm">
           <thead>
             <tr className="border-b border-[var(--tott-card-border)]">
               <th
-                className="bg-transparent px-5 py-2 text-xs font-semibold"
+                className="bg-transparent px-5 py-2 text-start align-middle text-xs font-semibold"
                 style={{ color: "#C9A96E" }}
               >
-                Title
+                {t("table.title")}
               </th>
               <th
-                className="bg-transparent px-4 py-2 text-xs font-semibold"
+                className="bg-transparent px-4 py-2 text-start align-middle text-xs font-semibold"
                 style={{ color: "#C9A96E" }}
               >
-                Status
+                {t("table.status")}
               </th>
               <th
-                className="bg-transparent  px-4 py-2 text-xs font-semibold"
+                className="bg-transparent whitespace-nowrap px-4 py-2 text-start align-middle text-xs font-semibold"
                 style={{ color: "#C9A96E" }}
               >
-                Last Updated
+                {t("table.lastUpdated")}
               </th>
               <th
-                className="bg-transparent px-4 py-2 text-xs font-semibold"
+                className="bg-transparent px-4 py-2 text-start align-middle text-xs font-semibold"
                 style={{ color: "#C9A96E" }}
               >
-                Views
+                {t("table.views")}
               </th>
               <th
-                className="bg-transparent  px-4 py-2 text-xs font-semibold"
+                className="bg-transparent px-4 py-2 text-start align-middle text-xs font-semibold"
                 style={{ color: "#C9A96E" }}
               >
-                Supporters
+                {t("table.supporters")}
               </th>
-              <th className="w-10  px-4 py-2" aria-hidden />
+              <th className="w-10 px-4 py-2 align-middle" aria-hidden />
             </tr>
           </thead>
           <tbody>
-            {filteredRows.length === 0 ? (
+            {rowsWithRelativeTime.length === 0 ? (
               <tr>
                 <td
                   colSpan={6}
                   className="px-5 py-10 text-center text-sm text-gray-500"
                 >
-                  No articles in this view.
+                  {t("table.emptyView")}
                 </td>
               </tr>
             ) : (
-              filteredRows.map((row) => (
+              rowsWithRelativeTime.map((row) => (
                 <tr
                   key={row.id}
                   className="border-b border-[var(--tott-card-border)] last:border-b-0 transition-colors"
                 >
-                  <td className="px-5 pt-3.5 pb-0 font-medium" style={{ color: "#DBC99E" }}>
+                  <td
+                    className="px-5 py-3 text-start align-middle font-medium"
+                    style={{ color: "#DBC99E" }}
+                  >
                     {row.title}
                   </td>
                   <td
-                    className="px-4 pt-3.5 pb-0"
+                    className="px-4 py-3 text-start align-middle"
                     style={{ color: statusColorMap[row.statusColor] ?? "#9ca3af" }}
                   >
-                    {row.status}
+                    {t(`table.statusValues.${row.status}`)}
                   </td>
-                  <td className="px-4 pt-3.5 pb-0 font-medium" style={{ color: "#A3A3A3" }}>
-                    {row.lastUpdated}
+                  <td
+                    className="whitespace-nowrap px-4 py-3 text-start align-middle font-medium"
+                    style={{ color: "#A3A3A3" }}
+                  >
+                    {row.relativeUpdated}
                   </td>
-                  <td className="px-4 pt-3.5 pb-0 font-medium" style={{ color: "#A3A3A3" }}>
+                  <td
+                    className="px-4 py-3 text-start align-middle font-medium tabular-nums"
+                    style={{ color: "#A3A3A3" }}
+                  >
                     {row.views}
                   </td>
-                  <td className="px-4 pt-3.5 pb-0 font-medium" style={{ color: "#A3A3A3" }}>
+                  <td
+                    className="px-4 py-3 text-start align-middle font-medium tabular-nums"
+                    style={{ color: "#A3A3A3" }}
+                  >
                     {row.supporters}
                   </td>
-                  <td className="px-4 pt-3.5 pb-0">
+                  <td className="px-4 py-3 align-middle">
                     <div className="flex justify-end" data-article-actions={row.id}>
                       <button
                         type="button"
                         data-article-menu-trigger={row.id}
                         className="rounded p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] disabled:opacity-40"
                         style={{ color: "#A3A3A3" }}
-                        aria-label="Article actions"
+                        aria-label={t("table.menuAria")}
                         aria-expanded={openMenuId === row.id}
                         aria-haspopup="menu"
                         aria-controls={

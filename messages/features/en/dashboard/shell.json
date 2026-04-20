@@ -1,0 +1,177 @@
+{
+  "Dashboard": {
+    "layout": {
+      "loadingAdmin": "Loading admin",
+      "dashboard": "Dashboard",
+      "adminSettings": "Admin Settings",
+      "openSidebar": "Open sidebar",
+      "closeSidebar": "Close sidebar"
+    },
+    "topbar": {
+      "searchPlaceholder": "Search users, content, settings…",
+      "activity": "Activity",
+      "settings": "Settings",
+      "notifications": "Notifications",
+      "systemHealthy": "System healthy"
+    },
+    "sidebarUser": {
+      "fallbackName": "Guest",
+      "signOut": "Sign out"
+    },
+    "sidebar": {
+      "mainDashboard": "Main Dashboard",
+      "articles": "Articles",
+      "allArticles": "All Articles",
+      "createArticles": "Create Articles",
+      "contributions": "Contributions",
+      "supporters": "Supporters",
+      "contributionsAnalytics": "Analytics",
+      "profileAnalytics": "Analytics",
+      "management": "Management",
+      "users": "Users",
+      "rolesPermissions": "Roles & Permissions",
+      "content": "Content",
+      "contentLibrary": "Content Library",
+      "visualEditor": "Visual Editor (CMS)",
+      "community": "Community",
+      "engagements": "Engagements",
+      "messaging": "Messaging",
+      "business": "Business",
+      "financePayout": "Finance & Payout",
+      "businessAnalytics": "Analytics",
+      "systemSettings": "System settings",
+      "reportsModeration": "Reports & Moderations",
+      "securityAuth": "Security & Auth",
+      "systemSettingsPage": "System Settings",
+      "adminSettings": "Admin Settings",
+      "settingsGroup": "Settings",
+      "profile": "Profile",
+      "availability": "Availability",
+      "notifications": "Notifications",
+      "privacy": "Privacy",
+      "password": "Password",
+      "account": "Account"
+    },
+    "systemSettings": {
+      "tabs": {
+        "categories": "Categories",
+        "tags": "Tags & Themes",
+        "badges": "Badges",
+        "email": "Email Templates",
+        "localisation": "Localisation",
+        "guidelines": "Guidelines"
+      },
+      "saveChanges": "Save Changes",
+      "itemCount": "{count, plural, one {# item} other {# items}}",
+      "lastEdited": "Last edited: {date}",
+      "dateUnknown": "—",
+      "toggleMultiLanguageAria": "Toggle multi-language",
+      "categories": {
+        "add": "Add Category",
+        "title": "Content Categories",
+        "subtitle": "Manage content classification categories.",
+        "editAria": "Edit {name}",
+        "deleteAria": "Delete {name}"
+      },
+      "tags": {
+        "add": "Add Tag",
+        "title": "Content Tags",
+        "subtitle": "Special tags for content highlighting",
+        "editAria": "Edit {name}",
+        "deleteAria": "Delete {name}"
+      },
+      "badges": {
+        "add": "Create Badge",
+        "title": "Achievement Badges",
+        "subtitle": "Configure user achievement badges and milestones.",
+        "editAria": "Edit {name}"
+      },
+      "email": {
+        "title": "Email Templates",
+        "subtitle": "Customize automated email communications",
+        "editTemplate": "Edit Template"
+      },
+      "localisation": {
+        "title": "Language Settings",
+        "subtitle": "Configure platform language and regional settings",
+        "defaultLanguage": "Default Language",
+        "timezone": "Timezone",
+        "dateFormat": "Date Format",
+        "multiLanguage": "Enable Multi-language",
+        "multiLanguageHint": "Allow users to switch between languages",
+        "languageNames": {
+          "English": "English",
+          "Spanish": "Spanish",
+          "French": "French",
+          "German": "German",
+          "Arabic": "Arabic"
+        },
+        "timezones": {
+          "utc": "UTC",
+          "eastern": "Eastern Time",
+          "pacific": "Pacific Time",
+          "gmt": "GMT"
+        },
+        "dateFormats": {
+          "mdy": "MM/DD/YYYY",
+          "dmy": "DD/MM/YYYY",
+          "ymd": "YYYY-MM-DD"
+        }
+      },
+      "guidelines": {
+        "title": "Platform Guidelines",
+        "subtitle": "Community rules and content guidelines",
+        "communityLabel": "Community Guidelines",
+        "contentPolicyLabel": "Content Policy",
+        "sampleCommunity": "1. Be respectful to all community members\n2. No hate speech or discrimination\n3. Original content only - no plagiarism\n4. Credit sources when applicable\n5. No spam or self-promotion",
+        "sampleContentPolicy": "All content must be original or properly licensed. Copyrighted material without permission will be removed. Adult content must be properly tagged."
+      }
+    },
+    "placeholders": {
+      "comingSoon": "Coming soon",
+      "pageSoon": "{title} will be available here.",
+      "pages": {
+        "profileSettings": {
+          "title": "Profile",
+          "subtitle": "Manage your profile information."
+        },
+        "password": {
+          "title": "Password",
+          "subtitle": "Update your password and security settings."
+        },
+        "account": {
+          "title": "Account",
+          "subtitle": "Manage your account settings and preferences."
+        },
+        "notifications": {
+          "title": "Notifications",
+          "subtitle": "Configure your notification preferences."
+        },
+        "privacy": {
+          "title": "Privacy",
+          "subtitle": "Control your privacy and data sharing settings."
+        },
+        "availabilityProfile": {
+          "title": "Availability",
+          "subtitle": "Set your availability and scheduling preferences."
+        },
+        "availabilityAdmin": {
+          "title": "Availability",
+          "subtitle": "Set your availability status."
+        },
+        "profileArticles": {
+          "title": "All Articles",
+          "subtitle": "View and manage your published articles."
+        },
+        "createArticle": {
+          "title": "Create Article",
+          "subtitle": "Write and publish a new article."
+        },
+        "profileAnalytics": {
+          "title": "Analytics",
+          "subtitle": "Track your content performance and audience."
+        }
+      }
+    }
+  }
+}

@@ -1,15 +1,13 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { SettingsIcon, BellIcon, ClockIcon, SearchIcon } from "@/components/ui/icons";
 import { useTheme } from "@/components/providers/ThemeProvider";
-import { shouldShowAdminSettingsHeader } from "@/lib/dashboard/admin-settings-header-paths";
 
 const ACCENT_MUTED = "#E8DDC0";
 
 export function AdminTopbar() {
-  const pathname = usePathname();
-  const settingsHeader = shouldShowAdminSettingsHeader(pathname);
+  const t = useTranslations("Dashboard.topbar");
   const { isDark } = useTheme();
   const iconBtn = isDark
     ? "hover:bg-[var(--tott-dash-ghost-hover)]"
@@ -31,7 +29,7 @@ export function AdminTopbar() {
         </span>
         <input
           type="text"
-          placeholder="Search users, content, settings..."
+          placeholder={t("searchPlaceholder")}
           className={inputClass}
         />
       </div>
@@ -42,7 +40,7 @@ export function AdminTopbar() {
           type="button"
           className={`rounded-lg p-2 transition-colors ${iconBtn}`}
           style={{ color: isDark ? ACCENT_MUTED : "#78716c" }}
-          aria-label="Activity"
+          aria-label={t("activity")}
         >
           <ClockIcon />
         </button>
@@ -50,7 +48,7 @@ export function AdminTopbar() {
           type="button"
           className={`rounded-lg p-2 transition-colors ${iconBtn}`}
           style={{ color: isDark ? ACCENT_MUTED : "#78716c" }}
-          aria-label="Settings"
+          aria-label={t("settings")}
         >
           <SettingsIcon />
         </button>
@@ -58,7 +56,7 @@ export function AdminTopbar() {
           type="button"
           className={`relative rounded-lg p-2 transition-colors ${iconBtn}`}
           style={{ color: isDark ? ACCENT_MUTED : "#78716c" }}
-          aria-label="Notifications"
+          aria-label={t("notifications")}
         >
           <BellIcon />
           <span
@@ -71,7 +69,7 @@ export function AdminTopbar() {
           className="ml-1 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide"
           style={{ backgroundColor: "rgba(52, 211, 153, 0.15)", color: "#34d399" }}
         >
-          System Healthy
+          {t("systemHealthy")}
         </span>
       </div>
     </div>

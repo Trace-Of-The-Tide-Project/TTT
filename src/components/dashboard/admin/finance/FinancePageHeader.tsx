@@ -1,15 +1,17 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
 import { theme } from "@/lib/theme";
 import { DollarSignIcon, DownloadIcon, TrendingUpIcon, CreditCardIcon } from "@/components/ui/icons";
 
 export function FinancePageHeader() {
+  const t = useTranslations("Dashboard.headers.finance");
   return (
     <div className="px-6 py-6 sm:px-8 sm:py-8">
       <DashboardHeader
-        title="Finance Management"
-        subtitle="Monitor donations, payouts, and financial activity"
+        title={t("title")}
+        subtitle={t("subtitle")}
         compactPadding
         actions={
           <button
@@ -20,7 +22,7 @@ export function FinancePageHeader() {
             <span className="[&_svg]:h-4 [&_svg]:w-4">
               <DownloadIcon />
             </span>
-            Export Reports
+            {t("exportReports")}
           </button>
         }
       />
@@ -31,7 +33,7 @@ export function FinancePageHeader() {
             <DollarSignIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$2,847</span>
-          <span className="text-xs text-gray-500">Today’s Donations</span>
+          <span className="text-xs text-gray-500">{t("cards.todaysDonations")}</span>
           <span className="text-xs text-emerald-400">↗ 12%</span>
         </div>
 
@@ -40,7 +42,7 @@ export function FinancePageHeader() {
             <TrendingUpIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$34,892</span>
-          <span className="text-xs text-gray-500">Monthly Revenue</span>
+          <span className="text-xs text-gray-500">{t("cards.monthlyRevenue")}</span>
           <span className="text-xs text-emerald-400">↗ 22%</span>
         </div>
 
@@ -49,8 +51,8 @@ export function FinancePageHeader() {
             <CreditCardIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$2,596</span>
-          <span className="text-xs text-gray-500">Pending Payouts</span>
-          <span className="text-xs text-[#CBA158]">3 pending</span>
+          <span className="text-xs text-gray-500">{t("cards.pendingPayouts")}</span>
+          <span className="text-xs text-[#CBA158]">{t("cards.pendingCount")}</span>
         </div>
 
         <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
@@ -58,11 +60,10 @@ export function FinancePageHeader() {
             <DollarSignIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$3,489</span>
-          <span className="text-xs text-gray-500">Platforms Fees</span>
-          <span className="text-xs text-gray-500">10% rate</span>
+          <span className="text-xs text-gray-500">{t("cards.platformFees")}</span>
+          <span className="text-xs text-gray-500">{t("cards.feeRate")}</span>
         </div>
       </div>
     </div>
   );
 }
-

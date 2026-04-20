@@ -1,0 +1,85 @@
+{
+  "Dashboard": {
+    "notificationsPage": {
+      "signInRequired": "سجّل الدخول لعرض الإشعارات.",
+      "accountHint": "تُعرض إشعارات حسابك فقط (حسب معرّف المستخدم).",
+      "searchPlaceholder": "البحث في الرسالة أو النوع…",
+      "tryAgain": "إعادة المحاولة",
+      "adminTabs": {
+        "settings": "إعدادات الإشعارات",
+        "inbox": "إشعاراتك"
+      },
+      "preferences": {
+        "pageTitle": "إعدادات الإشعارات",
+        "emailSection": "إشعارات البريد",
+        "pushSection": "الإشعارات الفورية",
+        "articleUpdates": "تحديثات المقالات",
+        "articleUpdatesDescription": "استلام إشعار عند تحديث مقالات تتابعها",
+        "articleUpdatesAria": "تحديثات المقالات",
+        "newFollowers": "متابعون جدد",
+        "newFollowersDescription": "استلام إشعار عند متابعتك",
+        "newFollowersAria": "متابعون جدد",
+        "newContributor": "مساهم جديد",
+        "newContributorDescription": "إشعار فوري عند داعمين جدد",
+        "newContributorAria": "مساهم جديد",
+        "comments": "التعليقات",
+        "commentsDescription": "استلام إشعار عند التعليق على مقالاتك",
+        "commentsAria": "التعليقات",
+        "weeklyDigest": "ملخص أسبوعي",
+        "weeklyDigestDescription": "ملخص أسبوعي للمقالات الأكثر شعبية",
+        "weeklyDigestAria": "الملخص الأسبوعي",
+        "browserNotifications": "إشعارات المتصفح",
+        "browserNotificationsDescription": "استلام الإشعارات في المتصفح",
+        "browserNotificationsAria": "إشعارات المتصفح",
+        "saved": "تم الحفظ",
+        "saveChanges": "حفظ التغييرات"
+      },
+      "errors": {
+        "requestFailed": "تعذّر تحميل الإشعارات",
+        "generic": "تعذّر تحميل الإشعارات"
+      },
+      "filters": {
+        "types": {
+          "all": "كل الأنواع",
+          "system": "النظام",
+          "review": "مراجعة",
+          "update": "تحديث"
+        },
+        "status": {
+          "all": "كل الحالات",
+          "unread": "غير مقروء",
+          "read": "مقروء"
+        },
+        "order": {
+          "DESC": "الأحدث أولاً",
+          "ASC": "الأقدم أولاً"
+        }
+      },
+      "table": {
+        "message": "الرسالة",
+        "type": "النوع",
+        "status": "الحالة",
+        "user": "المستخدم",
+        "when": "الوقت"
+      },
+      "rowType": {
+        "system": "النظام",
+        "review": "مراجعة",
+        "update": "تحديث"
+      },
+      "rowStatus": {
+        "unread": "غير مقروء",
+        "read": "مقروء",
+        "sent": "مرسل"
+      },
+      "loading": "جاري التحميل…",
+      "empty": "لا إشعارات مطابقة للمرشحات.",
+      "pagination": {
+        "summary": "عرض {start} إلى {end} من {total} (حسابك)",
+        "pageOf": "صفحة {page} من {totalPages}",
+        "previous": "السابق",
+        "next": "التالي"
+      }
+    }
+  }
+}

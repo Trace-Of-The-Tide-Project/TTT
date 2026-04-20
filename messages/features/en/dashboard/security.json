@@ -1,0 +1,167 @@
+{
+  "Dashboard": {
+    "securityPage": {
+      "toolbar": {
+        "exportLogs": "Export Logs"
+      },
+      "tabs": {
+        "roles": "Roles & Permissions",
+        "sessions": "Active Sessions",
+        "settings": "Security Settings",
+        "logs": "Security Logs"
+      },
+      "stats": {
+        "status": "System Status",
+        "admins": "Admin Users",
+        "sessions": "Active Sessions",
+        "alerts": "Security Alerts"
+      },
+      "statValues": {
+        "status": "Secure",
+        "admins": "14",
+        "sessions": "4",
+        "alerts": "1"
+      },
+      "roles": {
+        "intro": "Manage access levels for different admin roles.",
+        "configure": "Configure",
+        "super": {
+          "title": "Super Admin",
+          "description": "Full access.",
+          "userBadge": "2 users"
+        },
+        "finance": {
+          "title": "Finance Admin",
+          "description": "Financial operations.",
+          "userBadge": "2 users"
+        },
+        "content": {
+          "title": "Content Admin",
+          "description": "Content management.",
+          "userBadge": "2 users"
+        },
+        "support": {
+          "title": "Support Admin",
+          "description": "User support & moderation.",
+          "userBadge": "2 users"
+        }
+      },
+      "sessions": {
+        "intro": "Monitor and manage active admin sessions.",
+        "columns": {
+          "user": "User",
+          "ip": "IP Address",
+          "location": "Location",
+          "device": "Device",
+          "lastActive": "Last Active",
+          "status": "Status"
+        },
+        "status": {
+          "current": "Current",
+          "active": "Active",
+          "idle": "Idle"
+        },
+        "end": "End",
+        "endAllOther": "End all other sessions",
+        "sampleRows": {
+          "t1": {
+            "user": "Super Admin",
+            "location": "Gaza, PS",
+            "device": "Chrome / Windows",
+            "lastActive": "Just now"
+          },
+          "t2": {
+            "user": "Content Admin",
+            "location": "Amman, JO",
+            "device": "Safari / macOS",
+            "lastActive": "8 min ago"
+          },
+          "t3": {
+            "user": "Finance Admin",
+            "location": "London, UK",
+            "device": "Edge / Windows",
+            "lastActive": "42 min ago"
+          },
+          "t4": {
+            "user": "Support Admin",
+            "location": "Berlin, DE",
+            "device": "Firefox / Linux",
+            "lastActive": "2 hours ago"
+          }
+        }
+      },
+      "settings": {
+        "intro": "Configure global security policies and enforcement.",
+        "twoFactor": {
+          "title": "Two-Factor Authentication (2FA)",
+          "description": "Require 2FA for all admin accounts."
+        },
+        "ipAllowlist": {
+          "title": "IP Allowlist",
+          "description": "Restrict admin access to known IP ranges."
+        },
+        "sessionTimeout": {
+          "title": "Session Timeout",
+          "description": "Automatically sign out inactive admins."
+        },
+        "timeoutOptions": {
+          "m15": "15 minutes",
+          "m30": "30 minutes",
+          "m60": "60 minutes"
+        },
+        "auditLogs": {
+          "title": "Audit Logs",
+          "description": "Retain detailed security audit trails."
+        },
+        "backup": "Backup & Export Data"
+      },
+      "logs": {
+        "intro": "Recent security-related events across the platform.",
+        "entries": {
+          "l1": {
+            "title": "Login successful",
+            "meta": "Super Admin • 192.168.1.1",
+            "timeAgo": "2 min ago"
+          },
+          "l2": {
+            "title": "Password changed",
+            "meta": "Content Admin • 192.168.1.45",
+            "timeAgo": "1 hour ago"
+          },
+          "l3": {
+            "title": "Failed login attempt",
+            "meta": "Unknown • 203.0.113.88",
+            "timeAgo": "3 hours ago"
+          },
+          "l4": {
+            "title": "API key rotated",
+            "meta": "Super Admin • 192.168.1.1",
+            "timeAgo": "Yesterday"
+          },
+          "l5": {
+            "title": "Role updated",
+            "meta": "Super Admin • Sarah Adam → Editor",
+            "timeAgo": "2 days ago"
+          }
+        }
+      },
+      "controlPanel": {
+        "settingsTabSubtitle": "Authentication and platform-wide security controls.",
+        "authenticationCardTitle": "Authentication",
+        "authenticationCardSubtitle": "Configure login and access settings",
+        "require2faTitle": "Require 2FA for Admins",
+        "require2faDescription": "All admin accounts must use two-factor authentication",
+        "sessionTimeoutShortLabel": "Session Timeout",
+        "sessionTimeoutShortDescription": "Auto-logout after inactivity",
+        "lockoutTitle": "Failed Login Lockout",
+        "lockoutDescription": "Lock account after failed attempts",
+        "systemControlsTitle": "System Controls",
+        "systemControlsSubtitle": "Platform-wide security controls",
+        "maintenanceTitle": "Maintenance Mode",
+        "maintenanceDescription": "Restrict access to admins only",
+        "ipWhitelistTitle": "IP Whitelist",
+        "ipWhitelistDescription": "Restrict admin access by IP"
+      }
+    }
+  }
+}

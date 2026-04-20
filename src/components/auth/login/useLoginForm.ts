@@ -1,7 +1,10 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
+import { stripLocalePrefixesFromPath } from "@/lib/i18n/strip-locale-from-path";
 import axios from "axios"
 import { login } from "@/services/auth.service"
 import type { LoginRequest } from "@/types/auth.types"
@@ -9,10 +12,14 @@ import type { LoginRequest } from "@/types/auth.types"
 const REMEMBERED_EMAIL_KEY = "remembered_login_email"
 
 export function useLoginForm() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const registered = searchParams.get("registered")
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/admin"
+  const t = useTranslations("Auth.forms.login");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const registered = searchParams.get("registered");
+  const rawCallback = searchParams.get("callbackUrl")?.trim();
+  const callbackUrl = stripLocalePrefixesFromPath(
+    rawCallback && rawCallback.length > 0 ? rawCallback : "/admin",
+  );
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
@@ -37,8 +44,8 @@ export function useLoginForm() {
     }
 
     if (!data.email || !data.password) {
-      setError("Please enter your email and password.")
-      return
+      setError(t("errorMissing"));
+      return;
     }
 
     setLoading(true)
@@ -49,8 +56,8 @@ export function useLoginForm() {
         window.localStorage.removeItem(REMEMBERED_EMAIL_KEY)
       }
 
-      await login(data)
-      router.push(callbackUrl)
+      await login(data);
+      router.push(callbackUrl);
       router.refresh()
     } catch (err) {
       if (process.env.NODE_ENV === "development") {
@@ -71,9 +78,10 @@ export function useLoginForm() {
       if (!msg && (axios.isAxiosError(err) || errWithResponse.message)) {
         msg = (err as Error).message
       }
-      setError(msg ?? `Login failed (${errWithResponse.response?.status ?? "network error"}).`)
+      const reason = String(errWithResponse.response?.status ?? t("networkReason"));
+      setError(msg ?? t("errorFailed", { reason }));
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 

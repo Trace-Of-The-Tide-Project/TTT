@@ -1,8 +1,11 @@
 "use client";
 
 import { useCallback, useId, useState, type FormEvent } from "react";
+import { isAxiosError } from "axios";
+import { useTranslations } from "next-intl";
 import { EyeIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
+import { changePassword } from "@/services/auth.service";
 import { settingsCardClass } from "./SettingsPrimitives";
 
 const inputWrapClass =
@@ -25,10 +28,25 @@ type PasswordFieldProps = {
   placeholder: string;
   value: string;
   onChange: (v: string) => void;
+  autoComplete: "current-password" | "new-password";
+  showLabel: string;
+  hideLabel: string;
+  visible: boolean;
+  onToggleVisible: () => void;
 };
 
-function PasswordField({ id, label, placeholder, value, onChange }: PasswordFieldProps) {
-  const [visible, setVisible] = useState(false);
+function PasswordField({
+  id,
+  label,
+  placeholder,
+  value,
+  onChange,
+  autoComplete,
+  showLabel,
+  hideLabel,
+  visible,
+  onToggleVisible,
+}: PasswordFieldProps) {
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block text-xs text-gray-500">
@@ -42,13 +60,13 @@ function PasswordField({ id, label, placeholder, value, onChange }: PasswordFiel
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className={inputClass}
-          autoComplete={label.toLowerCase().includes("current") ? "current-password" : "new-password"}
+          autoComplete={autoComplete}
         />
         <button
           type="button"
-          onClick={() => setVisible((v) => !v)}
+          onClick={onToggleVisible}
           className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-gray-500 transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
-          aria-label={visible ? "Hide password" : "Show password"}
+          aria-label={visible ? hideLabel : showLabel}
         >
           {visible ? <EyeOffIcon /> : <EyeIcon />}
         </button>
@@ -57,7 +75,28 @@ function PasswordField({ id, label, placeholder, value, onChange }: PasswordFiel
   );
 }
 
+function changePasswordErrMessage(e: unknown, fallback: string): string {
+  if (isAxiosError(e)) {
+    const d = e.response?.data;
+    if (typeof d === "string" && d.trim()) return d;
+    if (d && typeof d === "object") {
+      const o = d as Record<string, unknown>;
+      const nested = o.data;
+      if (nested && typeof nested === "object") {
+        const m = (nested as Record<string, unknown>).message;
+        if (typeof m === "string" && m.trim()) return m;
+      }
+      if (typeof o.message === "string" && o.message.trim()) return o.message;
+      if (typeof o.error === "string" && o.error.trim()) return o.error;
+    }
+    return e.message || fallback;
+  }
+  if (e instanceof Error) return e.message;
+  return fallback;
+}
+
 export function AdminChangePassword() {
+  const t = useTranslations("Dashboard.changePassword");
   const baseId = useId();
   const currentId = `${baseId}-current`;
   const newId = `${baseId}-new`;
@@ -65,15 +104,50 @@ export function AdminChangePassword() {
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [savedFlash, setSavedFlash] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSubmit = useCallback(
-    (e: FormEvent) => {
+    async (e: FormEvent) => {
       e.preventDefault();
-      setSavedFlash(true);
-      window.setTimeout(() => setSavedFlash(false), 2000);
+      setError(null);
+      setSuccessMessage(null);
+
+      if (!current.trim() || !next.trim() || !confirm.trim()) {
+        setError(t("validation.allFields"));
+        return;
+      }
+      if (next.length < 8) {
+        setError(t("validation.minLength"));
+        return;
+      }
+      if (next !== confirm) {
+        setError(t("validation.mismatch"));
+        return;
+      }
+
+      setSubmitting(true);
+      try {
+        const { message } = await changePassword({
+          currentPassword: current,
+          newPassword: next,
+        });
+        setSuccessMessage(message);
+        setCurrent("");
+        setNext("");
+        setConfirm("");
+        window.setTimeout(() => setSuccessMessage(null), 4000);
+      } catch (err) {
+        setError(changePasswordErrMessage(err, t("errors.generic")));
+      } finally {
+        setSubmitting(false);
+      }
     },
-    [],
+    [current, next, confirm, t],
   );
 
   return (
@@ -83,39 +157,66 @@ export function AdminChangePassword() {
         className={settingsCardClass}
         style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.04) inset" }}
       >
-        <h1 className="text-lg font-bold text-foreground">Change Password</h1>
+        <h1 className="text-lg font-bold text-foreground">{t("title")}</h1>
 
         <div className="mt-6 space-y-5">
           <PasswordField
             id={currentId}
-            label="Current password"
-            placeholder="Enter your current password"
+            label={t("currentPassword")}
+            placeholder={t("currentPasswordPlaceholder")}
             value={current}
             onChange={setCurrent}
+            autoComplete="current-password"
+            showLabel={t("showPassword")}
+            hideLabel={t("hidePassword")}
+            visible={showCurrent}
+            onToggleVisible={() => setShowCurrent((v) => !v)}
           />
           <PasswordField
             id={newId}
-            label="New password"
-            placeholder="New password (+8 characters)"
+            label={t("newPassword")}
+            placeholder={t("newPasswordPlaceholder")}
             value={next}
             onChange={setNext}
+            autoComplete="new-password"
+            showLabel={t("showPassword")}
+            hideLabel={t("hidePassword")}
+            visible={showNew}
+            onToggleVisible={() => setShowNew((v) => !v)}
           />
           <PasswordField
             id={confirmId}
-            label="Confirm new password"
-            placeholder="Confirm new password"
+            label={t("confirmPassword")}
+            placeholder={t("confirmPasswordPlaceholder")}
             value={confirm}
             onChange={setConfirm}
+            autoComplete="new-password"
+            showLabel={t("showPassword")}
+            hideLabel={t("hidePassword")}
+            visible={showConfirm}
+            onToggleVisible={() => setShowConfirm((v) => !v)}
           />
         </div>
+
+        {error ? (
+          <p className="mt-4 text-sm text-red-600" role="alert">
+            {error}
+          </p>
+        ) : null}
+        {successMessage ? (
+          <p className="mt-4 text-sm text-green-700" role="status">
+            {successMessage}
+          </p>
+        ) : null}
 
         <div className="mt-8">
           <button
             type="submit"
-            className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+            disabled={submitting}
+            className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             style={{ backgroundColor: theme.accentGold }}
           >
-            {savedFlash ? "Saved" : "Change my password"}
+            {submitting ? t("submitting") : t("submit")}
           </button>
         </div>
       </form>

@@ -1,0 +1,51 @@
+{
+  "Footer": {
+    "logoAlt": "Trace of The Tide",
+    "taglineLead": "Trace of the tide",
+    "taglineBody": "Preserving our collective memory through stories, testimonies, and cultural artifacts.",
+    "social": {
+      "facebook": "Facebook",
+      "twitter": "X (Twitter)",
+      "youtube": "YouTube",
+      "instagram": "Instagram"
+    },
+    "palestineHeading": "Palestine (Architecture of stories)",
+    "palestine": {
+      "stone": { "title": "Stone", "description": "Witness of life" },
+      "salt": { "title": "Salt", "description": "Trace of time" },
+      "compass": { "title": "Compass", "description": "Trace of place" }
+    },
+    "fieldsHeading": "Fields (Mosaic of Bali trails)",
+    "fields": {
+      "harbour": { "title": "Harbour trails", "description": "Mujaawarah with Culture" },
+      "courtyard": { "title": "Courtyard trails", "description": "Mujaawarah with Knowledge" },
+      "hill": { "title": "Hill trails", "description": "Mujaawarah with Arts" }
+    },
+    "contactHeading": "Contact",
+    "contactLocation": "Everywhere",
+    "copyright": "© {year} Trace of the Tides. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "gdpr": "GDPR"
+  },
+  "Navbar": {
+    "home": "Home",
+    "language": "Language",
+    "brand": "Trace of The Tide",
+    "fields": "Fields",
+    "beANeighbor": "Be a neighbor",
+    "giftATrace": "Gift a trace",
+    "traceAStory": "Trace a story",
+    "menu": "Menu",
+    "logout": "Logout",
+    "login": "Login",
+    "signUp": "Sign up",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme",
+    "profile": "Profile"
+  }
+}

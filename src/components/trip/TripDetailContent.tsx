@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { TripHero } from "@/components/trip/TripHero";

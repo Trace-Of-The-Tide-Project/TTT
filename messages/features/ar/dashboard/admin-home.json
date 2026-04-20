@@ -1,0 +1,138 @@
+{
+  "Dashboard": {
+    "adminHome": {
+      "notifications": {
+        "title": "التنبيهات والإشعارات",
+        "viewAll": "عرض الكل ›",
+        "signInPrompt": "سجّل الدخول لعرض إشعاراتك.",
+        "tryAgain": "إعادة المحاولة",
+        "loadFailed": "تعذّر تحميل الإشعارات",
+        "loading": "جاري تحميل الإشعارات…",
+        "empty": "لا إشعارات بعد.",
+        "unread": "غير مقروء",
+        "open": "فتح ›"
+      },
+      "quickActions": {
+        "title": "إجراءات سريعة",
+        "sendBroadcast": {
+          "label": "إرسال بث",
+          "description": "مراسلة كل المستخدمين أو أدوار محددة"
+        },
+        "approveEditor": {
+          "label": "اعتماد محرر",
+          "description": "5 طلبات معلقة"
+        },
+        "featureContent": {
+          "label": "إبراز محتوى",
+          "description": "إظهاره في الصفحة الرئيسية"
+        },
+        "maintenanceMode": {
+          "label": "وضع الصيانة",
+          "description": "تفعيل صيانة المنصة"
+        }
+      },
+      "contentOverview": {
+        "title": "نظرة على المحتوى",
+        "manageAll": "إدارة الكل",
+        "headers": {
+          "category": "التصنيف",
+          "published": "منشور",
+          "drafts": "مسودات",
+          "flagged": "مُعلَّم"
+        },
+        "categories": {
+          "articles": "مقالات",
+          "films": "أفلام",
+          "music": "موسيقى",
+          "photography": "تصوير",
+          "essays": "مقالات رأي",
+          "podcasts": "بودكاست"
+        },
+        "totalLabel": "إجمالي عناصر المحتوى"
+      },
+      "usersByRole": {
+        "title": "المستخدمون حسب الدور",
+        "viewAll": "عرض الكل",
+        "totalLabel": "إجمالي المستخدمين",
+        "roles": {
+          "users": "مستخدمون",
+          "contributors": "مساهمون",
+          "authors": "مؤلفون",
+          "editors": "محررون",
+          "admins": "مشرفون"
+        }
+      },
+      "finance": {
+        "title": "لمحة مالية",
+        "viewDetails": "عرض التفاصيل",
+        "cards": {
+          "1": {
+            "label": "تبرعات اليوم…",
+            "sublabel": "23 عملية…"
+          },
+          "2": {
+            "label": "هذا الشهر…",
+            "sublabel": "مقارنة بـ 28,450$ الشهر الماضي…"
+          },
+          "3": {
+            "label": "مدفوعات معلقة…",
+            "sublabel": "47 مبدعاً…"
+          },
+          "4": {
+            "label": "رسوم المنصة…",
+            "sublabel": "10٪ من المعاملات…"
+          }
+        }
+      },
+      "recentActivity": {
+        "title": "النشاط الأخير",
+        "items": {
+          "1": {
+            "title": "انضم مؤلف جديد",
+            "description": "سارا مرزوق سجّلت…",
+            "time": "منذ دقيقتين"
+          },
+          "2": {
+            "title": "نُشرت مقالة",
+            "description": "مستقبل السينما …",
+            "time": "منذ دقيقتين"
+          },
+          "3": {
+            "title": "استُلم تبرع",
+            "description": "تبرع 50$ لإيلينا …",
+            "time": "منذ دقيقتين"
+          },
+          "4": {
+            "title": "محتوى مُعلَّم",
+            "description": "يلزم المراجعة: تواصل …",
+            "time": "منذ دقيقتين"
+          },
+          "5": {
+            "title": "محتوى مُبرز",
+            "description": "\"ثورة الفن الرقمي\" …",
+            "time": "منذ دقيقتين"
+          },
+          "6": {
+            "title": "دخول من جهاز جديد",
+            "description": "وصول حساب محرر …",
+            "time": "منذ دقيقتين"
+          }
+        }
+      },
+      "editorApplications": {
+        "title": "طلبات المحررين",
+        "viewAll": "عرض الكل",
+        "viewApplication": "عرض الطلب",
+        "reject": "رفض",
+        "approve": "قبول"
+      },
+      "modals": {
+        "pendingEditors": {
+          "title": "طلبات محررين معلقة",
+          "description": "راجع واعتمد طلبات المحررين."
+        },
+        "viewAll": "عرض الكل"
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import {
   ArticlesTable,
   ArticleCardsSection,
@@ -13,6 +14,7 @@ import {
   formatScheduledSubtitle,
   isArticleListItemScheduled,
   mapArticleListItemToTableRow,
+  normalizeAdminArticleListStatus,
 } from "@/lib/dashboard/map-articles-list";
 import {
   commitAdminArticlesList,
@@ -41,7 +43,7 @@ function editArticleHref(id: string): string {
   return `/admin/articles/edit/${encodeURIComponent(id)}`;
 }
 
-function listErrMessage(e: unknown): string {
+function listErrMessage(e: unknown, loadFailed: string): string {
   if (isAxiosError(e)) {
     const d = e.response?.data;
     if (typeof d === "string" && d.trim()) return d;
@@ -50,13 +52,13 @@ function listErrMessage(e: unknown): string {
       if (typeof o.message === "string") return o.message;
       if (Array.isArray(o.message)) return o.message.map(String).join("; ");
     }
-    return e.message || "Failed to load articles";
+    return e.message || loadFailed;
   }
   if (e instanceof Error) return e.message;
-  return "Failed to load articles";
+  return loadFailed;
 }
 
-function deleteErrMessage(e: unknown): string {
+function deleteErrMessage(e: unknown, deleteFailed: string): string {
   if (isAxiosError(e)) {
     const d = e.response?.data;
     if (typeof d === "string" && d.trim()) return d;
@@ -64,24 +66,28 @@ function deleteErrMessage(e: unknown): string {
       const o = d as Record<string, unknown>;
       if (typeof o.message === "string") return o.message;
     }
-    return e.message || "Delete failed";
+    return e.message || deleteFailed;
   }
   if (e instanceof Error) return e.message;
-  return "Delete failed";
+  return deleteFailed;
 }
 
-function toDraftCards(items: ArticleListItem[]): ArticleCardItem[] {
+function toDraftCards(
+  items: ArticleListItem[],
+  t: (key: string) => string,
+  locale: string,
+): ArticleCardItem[] {
   return items.map((a) => ({
     id: a.id,
     icon: <FileTextIcon />,
-    statusLabel: "Drafted Article",
+    statusLabel: t("cards.draftStatus"),
     title: articleListItemDisplayTitle(a),
-    subtitle: formatArticleListDate(a.updatedAt),
+    subtitle: formatArticleListDate(a.updatedAt, locale, t("table.justNow")),
     useHexIcon: true,
     compact: true,
     actions: [
       {
-        label: "Continue Writing",
+        label: t("cards.continueWriting"),
         icon: <ChevronRightIcon />,
         href: editArticleHref(a.id),
       },
@@ -92,50 +98,56 @@ function toDraftCards(items: ArticleListItem[]): ArticleCardItem[] {
 function toScheduledIconCards(
   items: ArticleListItem[],
   onRequestDelete: (item: ArticleListItem) => void,
+  t: (key: string) => string,
+  locale: string,
 ): ArticleCardItem[] {
   return items.map((a) => ({
     id: a.id,
     icon: <SquareCheckIcon />,
-    statusLabel: "Scheduled Article",
+    statusLabel: t("cards.scheduledStatus"),
     title: a.title,
-    subtitle: formatScheduledSubtitle(a.scheduled_at),
+    subtitle: formatScheduledSubtitle(a.scheduled_at, locale),
     useHexIcon: true,
     compact: true,
     actions: [
       {
         icon: <ContributeIcon />,
-        ariaLabel: "Edit article",
+        ariaLabel: t("cards.editArticle"),
         href: editArticleHref(a.id),
       },
       {
         icon: <XIcon />,
-        ariaLabel: "Delete scheduled article",
+        ariaLabel: t("cards.deleteScheduledArticle"),
         onClick: () => onRequestDelete(a),
       },
     ],
   }));
 }
 
-function toScheduledShareCards(items: ArticleListItem[]): ArticleCardItem[] {
+function toScheduledShareCards(
+  items: ArticleListItem[],
+  t: (key: string) => string,
+  locale: string,
+): ArticleCardItem[] {
   const fmtViews = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n));
   return items.map((a) => ({
     id: `${a.id}-share`,
     icon: <SquareCheckIcon />,
-    statusLabel: "Scheduled Article",
+    statusLabel: t("cards.scheduledStatus"),
     title: a.title,
-    subtitle: formatScheduledSubtitle(a.scheduled_at),
+    subtitle: formatScheduledSubtitle(a.scheduled_at, locale),
     views: fmtViews(a.view_count ?? 0),
     useHexIcon: true,
     compact: true,
     actions: [
       {
         icon: <ContributeIcon />,
-        ariaLabel: "Edit article",
+        ariaLabel: t("cards.editArticle"),
         href: editArticleHref(a.id),
       },
-      { label: "Share", icon: <ShareIcon />, onClick: () => {} },
+      { label: t("cards.share"), icon: <ShareIcon />, onClick: () => {} },
       {
-        label: "View",
+        label: t("cards.view"),
         icon: <EyeIcon />,
         href: previewHrefForContentType(a.content_type, a.id),
       },
@@ -144,6 +156,9 @@ function toScheduledShareCards(items: ArticleListItem[]): ArticleCardItem[] {
 }
 
 export function AdminArticlesPageContent() {
+  const t = useTranslations("Dashboard.articles.list");
+  const locale = useLocale();
+
   const [articleList, setArticleList] = useState<ArticleListItem[]>(
     () => peekValidAdminArticlesList() ?? [],
   );
@@ -155,7 +170,8 @@ export function AdminArticlesPageContent() {
   const [scheduledDeleteError, setScheduledDeleteError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    setLoading(true);
+    const warmSnapshot = peekValidAdminArticlesList() !== undefined;
+    if (!warmSnapshot) setLoading(true);
     setError(null);
     try {
       const res = await getArticles();
@@ -163,16 +179,17 @@ export function AdminArticlesPageContent() {
       setArticleList(list);
       commitAdminArticlesList(list);
     } catch (e) {
-      setError(listErrMessage(e));
+      setError(listErrMessage(e, t("errors.loadFailed")));
       setArticleList([]);
       invalidateAdminArticlesListCache();
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
-    if (peekValidAdminArticlesList() !== undefined) return;
+    const snap = peekValidAdminArticlesList();
+    if (snap !== undefined) setArticleList(snap);
     void load();
   }, [load]);
 
@@ -202,11 +219,11 @@ export function AdminArticlesPageContent() {
       setScheduledDeleteTarget(null);
       onArticleRemoved(id);
     } catch (e) {
-      setScheduledDeleteError(deleteErrMessage(e));
+      setScheduledDeleteError(deleteErrMessage(e, t("errors.deleteFailed")));
     } finally {
       setScheduledDeleteBusy(false);
     }
-  }, [scheduledDeleteTarget, onArticleRemoved]);
+  }, [scheduledDeleteTarget, onArticleRemoved, t]);
 
   const rows: ArticleRow[] = useMemo(
     () => articleList.map(mapArticleListItemToTableRow),
@@ -214,26 +231,26 @@ export function AdminArticlesPageContent() {
   );
 
   const draftCards = useMemo(() => {
-    const drafts = articleList.filter((a) => a.status.toLowerCase() === "draft");
-    return toDraftCards(drafts.slice(0, 8));
-  }, [articleList]);
+    const drafts = articleList.filter((a) => normalizeAdminArticleListStatus(a.status) === "draft");
+    return toDraftCards(drafts.slice(0, 8), t, locale);
+  }, [articleList, t, locale]);
 
   const { scheduledIconCards, scheduledShareCards } = useMemo(() => {
     const scheduled = articleList.filter(isArticleListItemScheduled);
     const mid = Math.ceil(scheduled.length / 2) || scheduled.length;
     return {
-      scheduledIconCards: toScheduledIconCards(scheduled.slice(0, mid), openScheduledDelete),
-      scheduledShareCards: toScheduledShareCards(scheduled.slice(mid)),
+      scheduledIconCards: toScheduledIconCards(scheduled.slice(0, mid), openScheduledDelete, t, locale),
+      scheduledShareCards: toScheduledShareCards(scheduled.slice(mid), t, locale),
     };
-  }, [articleList, openScheduledDelete]);
+  }, [articleList, openScheduledDelete, t, locale]);
 
   const fallback = useMemo(
     () => (
       <div className="rounded-lg border border-[var(--tott-card-border)] px-5 py-12 text-center text-sm text-gray-500">
-        Loading articles…
+        {t("loading")}
       </div>
     ),
-    [],
+    [t],
   );
 
   if (loading) {
@@ -261,7 +278,7 @@ export function AdminArticlesPageContent() {
             onClick={() => void load()}
             className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
           >
-            Try again
+            {t("tryAgain")}
           </button>
         </div>
       ) : null}
@@ -274,14 +291,14 @@ export function AdminArticlesPageContent() {
       />
 
       <ArticleCardsSection
-        title="Drafted Articles"
+        title={t("sections.draftedArticles")}
         items={draftCards}
         viewAllHref="/admin/articles?tab=drafts"
         compactGap
       />
 
       <ArticleCardsSection
-        title="Scheduled Articles"
+        title={t("sections.scheduledArticles")}
         items={scheduledIconCards}
         viewAllHref="/admin/articles?tab=scheduled"
         compactGap

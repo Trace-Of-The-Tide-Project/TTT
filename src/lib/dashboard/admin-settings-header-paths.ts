@@ -1,3 +1,5 @@
+import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
+
 /**
  * Routes where the admin topbar shows the "Admin Settings" context title
  * (personal admin settings + system settings / security from the dashboard nav).
@@ -14,8 +16,9 @@ const ADMIN_SETTINGS_HEADER_PREFIXES = [
 ] as const;
 
 export function shouldShowAdminSettingsHeader(pathname: string | null): boolean {
-  if (!pathname || !pathname.startsWith("/admin")) return false;
+  const path = normalizeAppPathname(pathname);
+  if (!path || !path.startsWith("/admin")) return false;
   return ADMIN_SETTINGS_HEADER_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`),
   );
 }

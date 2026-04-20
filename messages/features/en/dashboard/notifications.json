@@ -1,0 +1,85 @@
+{
+  "Dashboard": {
+    "notificationsPage": {
+      "signInRequired": "Sign in to view notifications.",
+      "accountHint": "Only notifications for your account are shown (matched by user id).",
+      "searchPlaceholder": "Search message or type…",
+      "tryAgain": "Try again",
+      "adminTabs": {
+        "settings": "Notification settings",
+        "inbox": "Your notifications"
+      },
+      "preferences": {
+        "pageTitle": "Notifications Settings",
+        "emailSection": "Email Notifications",
+        "pushSection": "Push Notifications",
+        "articleUpdates": "Article Updates",
+        "articleUpdatesDescription": "Get notified when articles you follow are updated",
+        "articleUpdatesAria": "Article updates",
+        "newFollowers": "New Followers",
+        "newFollowersDescription": "Get notified when someone follows you",
+        "newFollowersAria": "New followers",
+        "newContributor": "New Contributor",
+        "newContributorDescription": "Real-time notification for new supporters",
+        "newContributorAria": "New contributor",
+        "comments": "Comments",
+        "commentsDescription": "Get notified when someone comments on your articles",
+        "commentsAria": "Comments",
+        "weeklyDigest": "Weekly Digest",
+        "weeklyDigestDescription": "Get a weekly summary of popular articles",
+        "weeklyDigestAria": "Weekly digest",
+        "browserNotifications": "Browser Notifications",
+        "browserNotificationsDescription": "Receive notifications in your browser",
+        "browserNotificationsAria": "Browser notifications",
+        "saved": "Saved",
+        "saveChanges": "Save changes"
+      },
+      "errors": {
+        "requestFailed": "Failed to load notifications",
+        "generic": "Failed to load notifications"
+      },
+      "filters": {
+        "types": {
+          "all": "All types",
+          "system": "System",
+          "review": "Review",
+          "update": "Update"
+        },
+        "status": {
+          "all": "All status",
+          "unread": "Unread",
+          "read": "Read"
+        },
+        "order": {
+          "DESC": "Newest first",
+          "ASC": "Oldest first"
+        }
+      },
+      "table": {
+        "message": "Message",
+        "type": "Type",
+        "status": "Status",
+        "user": "User",
+        "when": "When"
+      },
+      "rowType": {
+        "system": "System",
+        "review": "Review",
+        "update": "Update"
+      },
+      "rowStatus": {
+        "unread": "Unread",
+        "read": "Read",
+        "sent": "Sent"
+      },
+      "loading": "Loading…",
+      "empty": "No notifications match your filters.",
+      "pagination": {
+        "summary": "Showing {start} to {end} of {total} (your account)",
+        "pageOf": "Page {page} of {totalPages}",
+        "previous": "Previous",
+        "next": "Next"
+      }
+    }
+  }
+}

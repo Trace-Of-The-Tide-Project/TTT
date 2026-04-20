@@ -1,12 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
 
 export function AdminSettingsPageHeader() {
-  return (
-    <DashboardHeader
-      title="Admin Settings"
-      subtitle="Manage or edit your personal settings."
-    />
-  );
+  const t = useTranslations("Dashboard.headers.adminSettings");
+  return <DashboardHeader title={t("title")} subtitle={t("subtitle")} />;
 }

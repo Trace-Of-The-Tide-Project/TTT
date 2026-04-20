@@ -1,0 +1,64 @@
+{
+  "Dashboard": {
+    "articles": {
+      "page": {
+        "title": "Articles",
+        "subtitle": "Manage or share articles on your platform.",
+        "lastUpdated": "Last updated: Just now"
+      },
+      "stats": {
+        "published": "Articles published",
+        "contributions": "Contributions",
+        "totalReads": "Total reads",
+        "daysActive": "Days active"
+      },
+      "list": {
+        "loading": "Loading articles…",
+        "tryAgain": "Try again",
+        "errors": {
+          "loadFailed": "Failed to load articles",
+          "deleteFailed": "Delete failed"
+        },
+        "tabs": {
+          "all": "All",
+          "drafts": "Drafts",
+          "published": "Published",
+          "scheduled": "Scheduled"
+        },
+        "sections": {
+          "draftedArticles": "Drafted Articles",
+          "scheduledArticles": "Scheduled Articles"
+        },
+        "cards": {
+          "draftStatus": "Drafted Article",
+          "scheduledStatus": "Scheduled Article",
+          "continueWriting": "Continue Writing",
+          "editArticle": "Edit article",
+          "deleteScheduledArticle": "Delete scheduled article",
+          "share": "Share",
+          "view": "View"
+        },
+        "table": {
+          "addNew": "Add new",
+          "title": "Title",
+          "status": "Status",
+          "statusValues": {
+            "draft": "Draft",
+            "published": "Published",
+            "scheduled": "Scheduled"
+          },
+          "justNow": "Just now",
+          "lastUpdated": "Last Updated",
+          "views": "Views",
+          "supporters": "Supporters",
+          "emptyView": "No articles in this view.",
+          "menuAria": "Article actions",
+          "menuAriaFor": "Actions for {title}",
+          "preview": "Preview",
+          "edit": "Edit",
+          "delete": "Delete"
+        }
+      }
+    }
+  }
+}

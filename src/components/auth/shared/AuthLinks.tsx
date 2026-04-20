@@ -1,39 +1,48 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { theme } from '@/lib/theme'
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { theme } from "@/lib/theme";
 
 type AuthLinksProps = {
-  /** Primary CTA text, e.g. "Already have an account? Login" */
-  primaryText: React.ReactNode
-  primaryHref: string
-  primaryLinkLabel: string
-  /** Secondary link, e.g. "Back to Home page" */
-  backHref?: string
-  backLabel?: string
-}
+  /** Primary CTA text, e.g. "Already have an account? " */
+  primaryText: React.ReactNode;
+  primaryHref: string;
+  primaryLinkLabel: string;
+  /** Secondary link, e.g. home */
+  backHref?: string;
+  backLabel?: string;
+};
 
 export function AuthLinks({
   primaryText,
   primaryHref,
   primaryLinkLabel,
-  backHref = '/',
-  backLabel = 'Home page',
+  backHref = "/",
+  backLabel,
 }: AuthLinksProps) {
+  const t = useTranslations("Auth.shared");
+  const home = backLabel ?? t("homePage");
+
   return (
     <>
-      <p className="text-center mt-6 text-foreground text-sm cursor-default select-none">
-        {primaryText}{' '}
-        <Link href={primaryHref} className="hover:underline cursor-pointer" style={{ color: theme.accentGold }}>
+      <p className="mt-6 cursor-default select-none text-center text-sm text-foreground">
+        {primaryText ? (
+          <>
+            {primaryText}
+            {" "}
+          </>
+        ) : null}
+        <Link href={primaryHref} className="cursor-pointer hover:underline" style={{ color: theme.accentGold }}>
           {primaryLinkLabel}
         </Link>
       </p>
-      <div className="text-center mt-6">
-        <span className="text-sm text-foreground cursor-default select-none">Back to </span>
-        <Link href={backHref} className="text-sm hover:underline cursor-pointer" style={{ color: theme.accentGold }}>
-          {backLabel}
+      <div className="mt-6 text-center">
+        <span className="cursor-default select-none text-sm text-foreground">{t("backToPrefix")}</span>
+        <Link href={backHref} className="cursor-pointer text-sm hover:underline" style={{ color: theme.accentGold }}>
+          {home}
         </Link>
       </div>
     </>
-  )
+  );
 }

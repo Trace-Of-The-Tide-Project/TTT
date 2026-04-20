@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { isAxiosError } from "axios";
 import {
   CloudUploadIcon,
@@ -12,8 +13,8 @@ import {
 } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
 import { CONTRIBUTION_FORM_INPUT_BASE as inputBase, COUNTRY_CODES } from "@/lib/constants";
-import { appendContributionFileByUrl, createContribution } from "@/services/contributions.service";
-import { uploadFileToUrl } from "@/services/uploads.service";
+import { appendContributionFile, createContribution } from "@/services/contributions.service";
+import { uploadFileForContribution } from "@/services/uploads.service";
 
 type UploadedFile = { id: string; file: File; sizeLabel: string };
 
@@ -27,7 +28,10 @@ type ContributionFormProps = {
   selectedTypeId: string | null;
 };
 
+const borderVar = { borderColor: "var(--tott-card-border)" } as const;
+
 export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
+  const t = useTranslations("Contribute.form");
   const router = useRouter();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -54,7 +58,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
       setIsDragging(false);
       addFiles(e.dataTransfer.files);
     },
-    [addFiles]
+    [addFiles],
   );
 
   const onDragOver = useCallback((e: React.DragEvent) => {
@@ -86,6 +90,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
 
     setSubmitError(null);
     setIsSubmitting(true);
+    const defaultSubmitError = t("submitErrorDefault");
     try {
       const fd = new FormData();
       fd.append("title", title.trim());
@@ -97,18 +102,19 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
       if (phone && phone !== countryCode) fd.append("contributor_phone", phone);
 
       for (const f of files) {
-        const storagePathOrUrl = await uploadFileToUrl(f.file);
-        appendContributionFileByUrl(
+        const { storageKey, mimeType } = await uploadFileForContribution(f.file);
+        appendContributionFile(
           fd,
-          storagePathOrUrl,
-          f.file.type || "application/octet-stream",
+          storageKey,
+          mimeType || f.file.type || "application/octet-stream",
+          f.file,
         );
       }
 
       await createContribution(fd);
       router.push("/contribute/success");
     } catch (err) {
-      let msg = "Submission failed. Please try again.";
+      let msg = defaultSubmitError;
       if (isAxiosError(err)) {
         const d = err.response?.data;
         if (typeof d === "string" && d.trim()) msg = d;
@@ -122,7 +128,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
           if (m) msg = m;
           else if (typeof o.error === "string") msg = o.error;
         }
-        if (msg === "Submission failed. Please try again." && err.message) msg = err.message;
+        if (msg === defaultSubmitError && err.message) msg = err.message;
       } else if (err instanceof Error) {
         msg = err.message;
       }
@@ -139,35 +145,34 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
     >
       <div>
         <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          Contribution title
+          {t("titleLabel")}
         </label>
         <input
           name="title"
           type="text"
-          placeholder="Enter a title for your contribution"
+          placeholder={t("titlePlaceholder")}
           className={inputBase}
-          style={{
-            borderColor: theme.inputBorder,
-          }}
+          style={borderVar}
         />
       </div>
 
       <div>
-        <label className="mb-1 block select-none text-xs cursor-pointer font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          Choose collection <span className="text-gray-500">(Optional)</span>
+        <label className="mb-1 block cursor-pointer select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
+          {t("collectionLabel")}{" "}
+          <span className="text-gray-500 dark:text-gray-400">{t("optional")}</span>
         </label>
         <div className="relative select-none">
           <select
             name="collection"
             className={`${inputBase} appearance-none pr-10`}
-            style={{ borderColor: theme.inputBorder }}
+            style={borderVar}
           >
-            <option value="">Enter or select collection</option>
-            <option value="stories">Stories</option>
-            <option value="documents">Documents</option>
-            <option value="media">Media</option>
+            <option value="">{t("collectionPlaceholder")}</option>
+            <option value="stories">{t("collectionStories")}</option>
+            <option value="documents">{t("collectionDocuments")}</option>
+            <option value="media">{t("collectionMedia")}</option>
           </select>
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none text-gray-500">
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none text-gray-500 dark:text-gray-400">
             <ChevronDownIcon />
           </span>
         </div>
@@ -175,27 +180,29 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
 
       <div>
         <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          Description
+          {t("descriptionLabel")}
         </label>
         <textarea
           name="description"
           rows={4}
-          placeholder="Enter a description for the contribution"
+          placeholder={t("descriptionPlaceholder")}
           className={inputBase}
-          style={{ borderColor: theme.inputBorder }}
+          style={borderVar}
         />
       </div>
 
       <div>
         <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          Upload files
+          {t("uploadLabel")}
         </label>
         <div
           onDrop={onDrop}
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           className={`flex select-none flex-col items-center justify-center rounded-lg border-2 border-dashed px-4 py-6 transition-colors sm:px-6 sm:py-10 ${
-            isDragging ? "border-[#C9A96E] bg-[#C9A96E]/10" : "border-gray-600 bg-[#1a1a1a]"
+            isDragging
+              ? "border-[#C9A96E] bg-[#C9A96E]/10"
+              : "border-[var(--tott-card-border)] bg-[var(--tott-well-bg)]"
           }`}
         >
           <input
@@ -207,17 +214,13 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
           />
           <label
             htmlFor="file-upload"
-            className="flex cursor-pointer select-none flex-col items-center gap-2 text-gray-400"
+            className="flex cursor-pointer select-none flex-col items-center gap-2 text-gray-600 dark:text-gray-400"
           >
             <span style={{ color: theme.accentGoldFocus }}>
               <CloudUploadIcon />
             </span>
-            <span className="text-center text-xs sm:text-sm">
-              Drag and drop files here, or click to browse
-            </span>
-            <span className="text-xs text-gray-500">
-              Supported formats: JPG, PNG, PDF, MP3, MP4, DOC (Max 20MB)
-            </span>
+            <span className="text-center text-xs sm:text-sm">{t("uploadHint")}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{t("uploadFormats")}</span>
           </label>
         </div>
 
@@ -226,18 +229,18 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
             {files.map(({ id, file, sizeLabel }) => (
               <li
                 key={id}
-                className="flex select-none items-center gap-2 rounded-lg border border-gray-700 bg-[#1a1a1a] px-3 py-2 sm:gap-3 sm:px-4 sm:py-3"
+                className="flex select-none items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] px-3 py-2 sm:gap-3 sm:px-4 sm:py-3"
               >
-                <span className="text-gray-500">
+                <span className="text-gray-500 dark:text-gray-400">
                   <FileTextIcon />
                 </span>
                 <span className="min-w-0 flex-1 truncate text-sm text-foreground">{file.name}</span>
-                <span className="text-xs text-gray-500">{sizeLabel}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">{sizeLabel}</span>
                 <button
                   type="button"
                   onClick={() => removeFile(id)}
-                  className="select-none rounded p-1 text-gray-500 hover:bg-black/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A96E]"
-                  aria-label="Remove file"
+                  className="select-none rounded p-1 text-gray-600 hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A96E] dark:text-gray-400"
+                  aria-label={t("removeFileAria")}
                 >
                   <TrashIcon />
                 </button>
@@ -249,45 +252,42 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
 
       <div>
         <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          Your name
+          {t("nameLabel")}
         </label>
         <input
           name="name"
           type="text"
-          placeholder="Enter your full name"
+          placeholder={t("namePlaceholder")}
           className={inputBase}
-          style={{ borderColor: theme.inputBorder }}
+          style={borderVar}
         />
       </div>
 
       <div>
         <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          Your email address
+          {t("emailLabel")}
         </label>
         <input
           name="email"
           type="email"
-          placeholder="Enter your email address"
+          placeholder={t("emailPlaceholder")}
           className={inputBase}
-          style={{ borderColor: theme.inputBorder }}
+          style={borderVar}
         />
       </div>
 
       <div>
         <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          Your mobile number <span className="text-gray-500">(Optional)</span>
+          {t("mobileLabel")}{" "}
+          <span className="text-gray-500 dark:text-gray-400">{t("optional")}</span>
         </label>
         <div
-          className="flex select-none items-stretch overflow-hidden rounded-lg border"
-          style={{ borderColor: theme.inputBorder }}
+          className="flex select-none items-stretch overflow-hidden rounded-lg border border-[var(--tott-card-border)]"
         >
-          <div
-            className="relative flex w-[120px] shrink-0 cursor-pointer select-none items-center border-r bg-[#1a1a1a] sm:w-[140px]"
-            style={{ borderColor: theme.inputBorder }}
-          >
+          <div className="relative flex w-[120px] shrink-0 cursor-pointer select-none items-center border-r border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] sm:w-[140px]">
             <select
               name="countryCode"
-              className="absolute inset-0 z-10 cursor-pointer select-none appearance-none border-0 bg-transparent py-2 pl-6 pr-6 text-xs text-gray-400 focus:outline-none focus:ring-0 sm:py-2.5 sm:pl-8 sm:pr-8"
+              className="absolute inset-0 z-10 cursor-pointer select-none appearance-none border-0 bg-transparent py-2 pl-6 pr-6 text-xs text-foreground focus:outline-none focus:ring-0 sm:py-2.5 sm:pl-8 sm:pr-8"
               defaultValue="+20"
             >
               {COUNTRY_CODES.map(({ code, country }) => (
@@ -300,11 +300,11 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
                 </option>
               ))}
             </select>
-            <span className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 [&>svg]:h-4 [&>svg]:w-4">
+            <span className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 [&>svg]:h-4 [&>svg]:w-4">
               <Grid2x2Icon />
             </span>
             <span
-              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 [&>svg]:h-4 [&>svg]:w-4"
+              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 [&>svg]:h-4 [&>svg]:w-4"
               aria-hidden
             >
               <ChevronDownIcon />
@@ -313,25 +313,20 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
           <input
             name="mobile"
             type="tel"
-            placeholder="01 2345 6789"
+            placeholder={t("mobilePlaceholder")}
             className={`${inputBase} min-w-0 flex-1 rounded-none border-0 border-l-0`}
             style={{ borderColor: "transparent" }}
           />
         </div>
       </div>
 
-      <p className="select-none text-xs text-gray-500">
-        By submitting, you agree that your contribution may be used and attributed in accordance
-        with our terms. We may contact you regarding your submission.
-      </p>
-      <p className="select-none text-xs text-gray-600">
-        Each file is sent to <span className="text-gray-500">POST /upload</span> first. The contribution uses
-        multipart <span className="text-gray-500">files</span> parts whose <span className="text-gray-500">filename</span>{" "}
-        is that upload path or URL.
-      </p>
+      <p className="select-none text-xs text-gray-600 dark:text-gray-400">{t("consent")}</p>
+      <p className="select-none text-xs text-gray-500 dark:text-gray-500">{t("technicalNote")}</p>
 
       {submitError ? (
-        <p className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-300">{submitError}</p>
+        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-200">
+          {submitError}
+        </p>
       ) : null}
 
       <div className="pt-2">
@@ -345,7 +340,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
             color: theme.bgDark,
           }}
         >
-          {isSubmitting ? "Uploading & submitting…" : "Submit Contribution"}
+          {isSubmitting ? t("submitting") : t("submit")}
         </button>
       </div>
     </form>

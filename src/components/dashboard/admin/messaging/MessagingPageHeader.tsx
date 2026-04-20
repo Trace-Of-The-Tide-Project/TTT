@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
 import { theme } from "@/lib/theme";
 import {
@@ -11,11 +12,12 @@ import {
 } from "@/components/ui/icons";
 
 export function MessagingPageHeader() {
+  const t = useTranslations("Dashboard.headers.messaging");
   return (
     <div className="px-6 py-6 sm:px-8 sm:py-8">
       <DashboardHeader
-        title="Messaging Center"
-        subtitle="Manage communications with users and send broadcasts"
+        title={t("title")}
+        subtitle={t("subtitle")}
         compactPadding
         actions={
           <button
@@ -26,7 +28,7 @@ export function MessagingPageHeader() {
             <span className="[&_svg]:h-4 [&_svg]:w-4">
               <ContributeIcon />
             </span>
-            New Broadcast
+            {t("newBroadcast")}
           </button>
         }
       />
@@ -37,7 +39,7 @@ export function MessagingPageHeader() {
             <MessageSquareIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">23</span>
-          <span className="text-xs text-gray-500">Unread Messages</span>
+          <span className="text-xs text-gray-500">{t("cards.unreadMessages")}</span>
         </div>
 
         <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
@@ -45,7 +47,7 @@ export function MessagingPageHeader() {
             <TrendingUpIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">5</span>
-          <span className="text-xs text-gray-500">High Priority...</span>
+          <span className="text-xs text-gray-500">{t("cards.highPriority")}</span>
         </div>
 
         <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
@@ -53,7 +55,7 @@ export function MessagingPageHeader() {
             <ClockIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">12</span>
-          <span className="text-xs text-gray-500">Pending Response</span>
+          <span className="text-xs text-gray-500">{t("cards.pendingResponse")}</span>
         </div>
 
         <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
@@ -61,10 +63,9 @@ export function MessagingPageHeader() {
             <SquareCheckIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">156</span>
-          <span className="text-xs text-gray-500">Resolved This Week...</span>
+          <span className="text-xs text-gray-500">{t("cards.resolvedThisWeek")}</span>
         </div>
       </div>
     </div>
   );
 }
-

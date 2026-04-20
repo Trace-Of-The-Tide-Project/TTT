@@ -434,6 +434,8 @@ type ContentBlocksProps = {
   /** Move block `activeId` to the position of `overId` (HTML5 drag-and-drop). */
   onReorderBlock: (activeId: string, overId: string) => void;
   config: ContentFormConfig;
+  /** When set, overrides `mainMediaEditorCopy(config.contentType)` for hero UI. */
+  mainMediaCopy?: MainMediaEditorCopy;
 };
 
 export function ContentBlocks({
@@ -444,8 +446,12 @@ export function ContentBlocks({
   onAddCoverBlock,
   onReorderBlock,
   config,
+  mainMediaCopy,
 }: ContentBlocksProps) {
-  const heroCopy = useMemo(() => mainMediaEditorCopy(config.contentType), [config.contentType]);
+  const heroCopy = useMemo(
+    () => mainMediaCopy ?? mainMediaEditorCopy(config.contentType),
+    [config.contentType, mainMediaCopy],
+  );
   const firstImageBlockId = blocks.find((b) => b.type === "image")?.id;
   const hasImageBlock = firstImageBlockId != null;
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { CameraIcon, SaveIcon, CalendarIcon } from "./ArticleEditorIcons";
 import type { ArticleWorkflowStatus } from "./ArticleSettings";
 
@@ -16,8 +17,8 @@ type ContentEditorFooterProps = {
 };
 
 export function ContentEditorFooter({
-  primaryButtonLabel = "Publish Now",
-  saveDraftLabel = "Save Draft",
+  primaryButtonLabel,
+  saveDraftLabel,
   workflowStatus,
   busy = false,
   error,
@@ -25,6 +26,9 @@ export function ContentEditorFooter({
   onSaveDraft,
   onOpenSchedule,
 }: ContentEditorFooterProps) {
+  const t = useTranslations("Dashboard.articles.editor.footer");
+  const primary = primaryButtonLabel ?? t("defaults.publishNow");
+  const saveDraft = saveDraftLabel ?? t("defaults.saveDraft");
   const publishFlowEnabled = workflowStatus === "published" || workflowStatus === "scheduled";
   const disabledPrimary = busy || !publishFlowEnabled;
 
@@ -47,7 +51,7 @@ export function ContentEditorFooter({
           style={{ backgroundColor: "#C9A96E" }}
         >
           <CameraIcon />
-          {primaryButtonLabel}
+          {primary}
         </button>
         <div className="flex gap-3">
           <button
@@ -57,7 +61,7 @@ export function ContentEditorFooter({
             className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[var(--tott-dash-control-bg)] py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <SaveIcon />
-            {saveDraftLabel}
+            {saveDraft}
           </button>
           <button
             type="button"
@@ -66,7 +70,7 @@ export function ContentEditorFooter({
             className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[var(--tott-dash-control-bg)] py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] disabled:cursor-not-allowed disabled:opacity-40"
           >
             <CalendarIcon />
-            Schedule
+            {t("schedule")}
           </button>
         </div>
       </div>

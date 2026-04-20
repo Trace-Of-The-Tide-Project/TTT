@@ -1,0 +1,64 @@
+{
+  "Dashboard": {
+    "articles": {
+      "page": {
+        "title": "المقالات",
+        "subtitle": "إدارة أو مشاركة المقالات على منصتك.",
+        "lastUpdated": "آخر تحديث: الآن"
+      },
+      "stats": {
+        "published": "مقالات منشورة",
+        "contributions": "مساهمات",
+        "totalReads": "إجمالي القراءات",
+        "daysActive": "أيام النشاط"
+      },
+      "list": {
+        "loading": "جاري تحميل المقالات…",
+        "tryAgain": "إعادة المحاولة",
+        "errors": {
+          "loadFailed": "تعذّر تحميل المقالات",
+          "deleteFailed": "فشل الحذف"
+        },
+        "tabs": {
+          "all": "الكل",
+          "drafts": "مسودات",
+          "published": "منشورة",
+          "scheduled": "مجدولة"
+        },
+        "sections": {
+          "draftedArticles": "مقالات مسودة",
+          "scheduledArticles": "مقالات مجدولة"
+        },
+        "cards": {
+          "draftStatus": "مسودة",
+          "scheduledStatus": "مجدولة",
+          "continueWriting": "متابعة الكتابة",
+          "editArticle": "تعديل المقالة",
+          "deleteScheduledArticle": "حذف المقالة المجدولة",
+          "share": "مشاركة",
+          "view": "عرض"
+        },
+        "table": {
+          "addNew": "إضافة جديد",
+          "title": "العنوان",
+          "status": "الحالة",
+          "statusValues": {
+            "draft": "مسودة",
+            "published": "منشورة",
+            "scheduled": "مجدولة"
+          },
+          "justNow": "الآن",
+          "lastUpdated": "آخر تحديث",
+          "views": "المشاهدات",
+          "supporters": "الداعمون",
+          "emptyView": "لا توجد مقالات في هذا العرض.",
+          "menuAria": "إجراءات المقالة",
+          "menuAriaFor": "إجراءات المقالة: {title}",
+          "preview": "معاينة",
+          "edit": "تعديل",
+          "delete": "حذف"
+        }
+      }
+    }
+  }
+}

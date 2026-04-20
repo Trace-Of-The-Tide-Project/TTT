@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { useCallback, useEffect, useState } from "react";
 import {
   GridIcon,
@@ -22,11 +23,11 @@ import { clearStoredAuth } from "@/services/auth.service";
 import { getNavAccountHref } from "@/lib/auth/nav-account-href";
 import { theme } from "@/lib/theme";
 
-const navItems = [
-  { href: "/fields", label: "Fields", icon: GridIcon },
-  { href: "/be-a-neighbor", label: "Be a neighbor", icon: PersonPlusIcon },
-  { href: "/gift-a-trace", label: "Gift a trace", icon: GiftIcon },
-  { href: "/contribute", label: "Trace a story", icon: PenLineIcon },
+const navLinks = [
+  { href: "/fields", messageKey: "fields" as const, icon: GridIcon },
+  { href: "/be-a-neighbor", messageKey: "beANeighbor" as const, icon: PersonPlusIcon },
+  { href: "/gift-a-trace", messageKey: "giftATrace" as const, icon: GiftIcon },
+  { href: "/contribute", messageKey: "traceAStory" as const, icon: PenLineIcon },
 ];
 
 function getInitial(name: string | null | undefined, email: string | null | undefined): string {
@@ -36,6 +37,7 @@ function getInitial(name: string | null | undefined, email: string | null | unde
 }
 
 export function Navbar() {
+  const t = useTranslations("Navbar");
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -75,8 +77,8 @@ export function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full border-b py-2 ${
-        isDark ? "border-[#333333] bg-black" : "border-gray-200 bg-white"
+      className={`sticky top-0 z-50 w-full py-2 ${
+        isDark ? "bg-black" : "bg-white"
       }`}
     >
       <nav className="flex h-14 w-full items-center justify-between gap-8 px-6">
@@ -90,40 +92,36 @@ export function Navbar() {
           >
             <Image
               src="/images/Logo.png"
-              alt="Trace of The Tide"
+              alt={t("brand")}
               width={100}
               height={24}
               className="h-6 w-auto object-contain"
             />
 
-            <span className="font-medium">Trace of The Tide</span>
+            <span className="font-medium">{t("brand")}</span>
           </Link>
         </div>
 
         {/* Part 2: Links + auth - right. From 900px down: auth + hamburger only */}
         <div className="flex items-center justify-end gap-2 lg:gap-4">
           {/* Nav links: visible from 901px up */}
-          {navItems.map(({ href, label, icon: Icon }) => (
+          {navLinks.map(({ href, messageKey, icon: Icon }) => (
             <Link
               key={href}
               href={href}
               className={`hidden lg:flex items-center gap-2 transition-colors ${navMuted}`}
             >
               <Icon />
-              <span>{label}</span>
+              <span>{t(messageKey)}</span>
             </Link>
           ))}
           <span
             className={`mx-1 hidden h-8 w-px lg:block ${isDark ? "bg-[#333333]" : "bg-gray-200"}`}
           />
-          <button
-            type="button"
-            className={`hidden lg:flex items-center gap-2 rounded px-2 py-1.5 transition-colors ${navMuted}`}
-            aria-label="Select language"
-          >
+          <div className={`hidden items-center gap-2 lg:flex ${navMuted}`}>
             <LanguagesIcon />
-            <span className="text-sm">EN</span>
-          </button>
+            <LanguageSwitcher />
+          </div>
           {user ? (
             <>
               {/* 900px and below: avatar button (rounded square) */}
@@ -131,7 +129,7 @@ export function Navbar() {
                 href="/profile"
                 className="flex lg:hidden h-11 w-11 shrink-0 items-center justify-center rounded-lg transition-opacity hover:opacity-90"
                 style={{ backgroundColor: chipBg }}
-                aria-label="Profile"
+                aria-label={t("profile")}
               >
                 <span
                   className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium"
@@ -175,7 +173,7 @@ export function Navbar() {
                 }}
               >
                 <LogOutIcon />
-                Logout
+                {t("logout")}
               </button>
             </>
           ) : (
@@ -189,7 +187,7 @@ export function Navbar() {
                   backgroundColor: chipBg,
                 }}
               >
-                Login
+                {t("login")}
               </Link>
               <Link
                 href="/auth/register"
@@ -199,7 +197,7 @@ export function Navbar() {
                   color: theme.bgDark,
                 }}
               >
-                Sign up
+                {t("signUp")}
               </Link>
             </>
           )}
@@ -212,7 +210,7 @@ export function Navbar() {
             style={{
               backgroundColor: iconBtnBg,
             }}
-            aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+            aria-label={isDark ? t("switchToLight") : t("switchToDark")}
             aria-pressed={isDark}
           >
             {isDark ? <SunIcon /> : <MoonIcon />}
@@ -228,7 +226,7 @@ export function Navbar() {
             style={{
               backgroundColor: iconBtnBg,
             }}
-            aria-label="Open menu"
+            aria-label={t("openMenu")}
           >
             <MenuIcon />
           </button>
@@ -247,7 +245,7 @@ export function Navbar() {
           className={`absolute inset-0 transition-opacity ${
             isMobileMenuOpen ? "bg-black/60 opacity-100" : "bg-transparent opacity-0"
           }`}
-          aria-label="Close menu"
+          aria-label={t("closeMenu")}
         />
         {/* Panel */}
         <div
@@ -259,7 +257,7 @@ export function Navbar() {
             className={`flex flex-col gap-1 border-b p-4 ${isDark ? "border-[#333333]" : "border-gray-200"}`}
           >
             <div className="flex items-center justify-between gap-2">
-              <span className={`font-medium ${isDark ? "text-white" : "text-gray-900"}`}>Menu</span>
+              <span className={`font-medium ${isDark ? "text-white" : "text-gray-900"}`}>{t("menu")}</span>
               <button
                 type="button"
                 onClick={closeMobileMenu}
@@ -267,14 +265,14 @@ export function Navbar() {
                   isDark ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"
                 }`}
                 style={{ backgroundColor: iconBtnBg }}
-                aria-label="Close menu"
+                aria-label={t("closeMenu")}
               >
                 <XIcon />
               </button>
             </div>
           </div>
           <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-4">
-            {navItems.map(({ href, label, icon: Icon }) => (
+            {navLinks.map(({ href, messageKey, icon: Icon }) => (
               <Link
                 key={href}
                 href={href}
@@ -282,18 +280,16 @@ export function Navbar() {
                 className={`flex items-center gap-3 rounded-md px-4 py-3 transition-colors ${navMuted} ${navRowHover}`}
               >
                 <Icon />
-                <span>{label}</span>
+                <span>{t(messageKey)}</span>
               </Link>
             ))}
             <span className={`my-2 h-px w-full ${isDark ? "bg-[#333333]" : "bg-gray-200"}`} />
-            <button
-              type="button"
-              className={`flex items-center gap-3 rounded-md px-4 py-3 text-left transition-colors ${navMuted} ${navRowHover}`}
-              aria-label="Select language"
+            <div
+              className={`flex items-center gap-3 rounded-md px-4 py-3 transition-colors ${navMuted} ${navRowHover}`}
             >
               <LanguagesIcon />
-              <span>EN</span>
-            </button>
+              <LanguageSwitcher />
+            </div>
             {user ? (
               <>
                 <Link
@@ -321,7 +317,7 @@ export function Navbar() {
                   style={{ backgroundColor: chipBg }}
                 >
                   <LogOutIcon />
-                  Logout
+                  {t("logout")}
                 </button>
               </>
             ) : (
@@ -334,7 +330,7 @@ export function Navbar() {
                   }`}
                   style={{ backgroundColor: chipBg }}
                 >
-                  Login
+                  {t("login")}
                 </Link>
                 <Link
                   href="/auth/register"
@@ -345,7 +341,7 @@ export function Navbar() {
                     color: theme.bgDark,
                   }}
                 >
-                  Sign up
+                  {t("signUp")}
                 </Link>
               </>
             )}
@@ -354,11 +350,11 @@ export function Navbar() {
               type="button"
               onClick={toggleScheme}
               className={`flex w-full items-center gap-3 rounded-md px-4 py-3 text-left transition-colors ${navMuted} ${navRowHover}`}
-              aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+              aria-label={isDark ? t("switchToLight") : t("switchToDark")}
               aria-pressed={isDark}
             >
               {isDark ? <SunIcon /> : <MoonIcon />}
-              <span>{isDark ? "Light mode" : "Dark mode"}</span>
+              <span>{isDark ? t("lightMode") : t("darkMode")}</span>
             </button>
           </div>
         </div>

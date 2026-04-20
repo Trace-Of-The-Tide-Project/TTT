@@ -1,0 +1,52 @@
+{
+  "Dashboard": {
+    "articles": {
+      "create": {
+        "pageTitle": "إنشاء جديد",
+        "pageSubtitle": "اختر قالبًا لبدء بناء المحتوى. كل قالب مُحسَّن لتنسيقات سرد محددة.",
+        "filters": {
+          "all": "عرض الكل",
+          "articles": "مقالات",
+          "films": "أفلام",
+          "audio": "صوت",
+          "thread": "سلسلة",
+          "artwork": "عمل فني"
+        },
+        "templates": {
+          "article": {
+            "title": "مقال",
+            "description": "محتوى كتابي طويل بتنسيق غني"
+          },
+          "video": {
+            "title": "فيديو",
+            "description": "فيديو مع وصف وسياق"
+          },
+          "audio": {
+            "title": "صوت",
+            "description": "بودكاست أو موسيقى أو سرد صوتي"
+          },
+          "thread": {
+            "title": "سلسلة",
+            "description": "قصة متتابعة أو سلسلة نصية"
+          },
+          "artwork": {
+            "title": "عمل فني",
+            "description": "عرض تصوير أو رسم أو تصميم"
+          },
+          "figma": {
+            "title": "Figma",
+            "description": "تضمين أو ربط إطارات Figma للتعاون في التصميم وتسليم الملفات."
+          },
+          "trip": {
+            "title": "رحلة",
+            "description": "خطط وانشر تجارب سفر موجهة"
+          },
+          "openCall": {
+            "title": "دعوة مفتوحة",
+            "description": "ادعُ المتعاونين للتقديم والمساهمة في محتواك عبر نص توجيهي ونموذج عام."
+          }
+        }
+      }
+    }
+  }
+}

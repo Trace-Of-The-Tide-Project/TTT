@@ -13,7 +13,7 @@ import {
   type TripStop,
   type TripListItem,
 } from "@/services/trips.service";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { RouteMapPoint } from "./TripPreviewRouteMap";
 
 const TripPreviewRouteMap = dynamic(() => import("./TripPreviewRouteMap"), {

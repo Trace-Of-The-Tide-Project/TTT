@@ -1,5 +1,6 @@
 "use client";
 import { useState, useCallback, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { MenuIcon } from "@/components/ui/icons";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import type { DashboardConfig } from "@/lib/dashboard/types";
@@ -10,7 +11,7 @@ type DashboardLayoutProps = {
   config: DashboardConfig;
   header?: React.ReactNode;
   commandCenter?: React.ReactNode;
-  /** Shown next to the menu button on small screens (default: "Dashboard"). */
+  /** Shown next to the menu button on small screens (defaults to translated “Dashboard”). */
   mobileBarTitle?: string;
   children: React.ReactNode;
 };
@@ -19,9 +20,11 @@ export function DashboardLayout({
   config,
   header,
   commandCenter,
-  mobileBarTitle = "Dashboard",
+  mobileBarTitle,
   children,
 }: DashboardLayoutProps) {
+  const t = useTranslations("Dashboard.layout");
+  const resolvedMobileTitle = mobileBarTitle ?? t("dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isDark } = useTheme();
 
@@ -58,11 +61,11 @@ export function DashboardLayout({
             type="button"
             onClick={() => setMobileOpen(true)}
             className={mobileMenuBtn}
-            aria-label="Open sidebar"
+            aria-label={t("openSidebar")}
           >
             <MenuIcon />
           </button>
-          <span className={mobileTitle}>{mobileBarTitle}</span>
+          <span className={mobileTitle}>{resolvedMobileTitle}</span>
         </div>
 
         <div className="flex flex-col gap-6 px-4 py-6 sm:px-8 md:px-16 lg:px-24 xl:px-40 xl:py-12">
@@ -98,7 +101,7 @@ export function DashboardLayout({
           className={`absolute inset-0 transition-opacity duration-300 ${
             mobileOpen ? "bg-black/60 opacity-100" : "opacity-0"
           }`}
-          aria-label="Close sidebar"
+          aria-label={t("closeSidebar")}
         />
         <div
           className={`absolute left-0 top-0 h-full w-72 border-r border-[var(--tott-card-border)] bg-[var(--tott-panel-bg)] transition-transform duration-300 ease-out ${

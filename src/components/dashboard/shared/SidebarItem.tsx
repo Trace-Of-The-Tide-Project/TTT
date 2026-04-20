@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import type { SidebarItemConfig } from "@/lib/dashboard/types";
+import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
 
 const ACTIVE_COLOR = "#C9A96E";
 
@@ -11,9 +12,14 @@ type SidebarItemProps = SidebarItemConfig & {
   onClick?: () => void;
 };
 
-export function SidebarItem({ label, href, icon: Icon, badge, onClick }: SidebarItemProps) {
+export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick }: SidebarItemProps) {
+  const t = useTranslations("Dashboard");
+  const label = (t as (key: string) => string)(labelKey);
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const path = normalizeAppPathname(pathname) ?? "";
+  const isActive =
+    path === href ||
+    ((href !== "/admin" && href !== "/profile") && path.startsWith(`${href}/`));
   const { isDark } = useTheme();
   const inactive =
     "border border-transparent " +

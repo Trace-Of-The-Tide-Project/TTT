@@ -1,7 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { useTranslations } from "next-intl";
+import { matrixRoleColumnKey, permissionRowKey } from "@/lib/dashboard/matrix-i18n";
 import {
   roleStats,
   roleHierarchy,
@@ -72,11 +74,8 @@ function RoleHierarchyHex({ children }: { children: ReactNode }) {
   );
 }
 
-const TABS = [
-  { id: "overview", label: "Overview" },
-  { id: "permissions", label: "Permissions Matrix" },
-  { id: "editor-apps", label: "Editor Applications" },
-] as const;
+const TAB_IDS = ["overview", "permissions", "editor-apps"] as const;
+type RolesTabId = (typeof TAB_IDS)[number];
 
 type MatrixState = Record<string, Record<string, boolean>>;
 
@@ -101,13 +100,6 @@ function getInitialMatrix(): MatrixState {
   return matrix;
 }
 
-const STATUS_FILTERS: { value: EditorAppStatus | "all"; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "pending", label: "Pending" },
-  { value: "approved", label: "Approved" },
-  { value: "rejected", label: "Rejected" },
-];
-
 function EditorAppActionsDropdown({
   app,
   onAction,
@@ -115,6 +107,7 @@ function EditorAppActionsDropdown({
   app: EditorApplication;
   onAction?: (action: string, appId: string) => void;
 }) {
+  const t = useTranslations("Dashboard.rolesPermissions.editorApps.actions");
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -129,11 +122,11 @@ function EditorAppActionsDropdown({
   }, []);
 
   const actions = [
-    { id: "view", label: "View Application" },
+    { id: "view", labelKey: "viewApplication" as const },
     ...(app.status === "approved"
-      ? [{ id: "revoke", label: "Revoke Approval", destructive: true }]
+      ? [{ id: "revoke", labelKey: "revokeApproval" as const, destructive: true }]
       : app.status === "rejected"
-        ? [{ id: "reconsider", label: "Reconsider" }]
+        ? [{ id: "reconsider", labelKey: "reconsider" as const }]
         : []),
   ];
 
@@ -144,7 +137,7 @@ function EditorAppActionsDropdown({
         onClick={() => setIsOpen((o) => !o)}
         className="rounded-full p-2 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
         style={{ backgroundColor: "#333", color: "#A3A3A3" }}
-        aria-label="More actions"
+        aria-label={t("menuAria")}
         aria-expanded={isOpen}
       >
         <MoreDotsIcon />
@@ -165,7 +158,7 @@ function EditorAppActionsDropdown({
                   : "text-foreground"
               }`}
             >
-              {action.label}
+              {t(action.labelKey)}
             </button>
           ))}
         </div>
@@ -175,10 +168,27 @@ function EditorAppActionsDropdown({
 }
 
 function EditorApplications() {
+  const te = useTranslations("Dashboard.rolesPermissions.editorApps");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<EditorAppStatus | "all">("all");
   const [applications, setApplications] = useState<EditorApplication[]>(
     () => sampleEditorApplications
+  );
+
+  const statusFilters = useMemo(
+    () =>
+      (["all", "pending", "approved", "rejected"] as const).map((value) => ({
+        value,
+        label:
+          value === "all"
+            ? te("filterAll")
+            : value === "pending"
+              ? te("filterPending")
+              : value === "approved"
+                ? te("filterApproved")
+                : te("filterRejected"),
+      })),
+    [te],
   );
 
   const filtered = applications.filter((app) => {
@@ -228,14 +238,14 @@ function EditorApplications() {
           </span>
           <input
             type="text"
-            placeholder="Search applications..."
+            placeholder={te("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
           />
         </div>
         <div className="flex gap-2">
-          {STATUS_FILTERS.map((f) => (
+          {statusFilters.map((f) => (
             <button
               key={f.value}
               type="button"
@@ -276,7 +286,7 @@ function EditorApplications() {
               </div>
               <div className="flex shrink-0 flex-wrap items-center gap-2">
                 <span className={statusBadgeStyle(app.status)}>
-                  {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                  {te(`status.${app.status}`)}
                 </span>
                 {app.status === "pending" && (
                   <>
@@ -288,7 +298,7 @@ function EditorApplications() {
                       <span className="[&>svg]:h-4 [&>svg]:w-4">
                         <EyeIcon />
                       </span>
-                      Review
+                      {te("review")}
                     </button>
                     <button
                       type="button"
@@ -298,7 +308,7 @@ function EditorApplications() {
                       <span className="[&>svg]:h-4 [&>svg]:w-4">
                         <SquareCheckIcon />
                       </span>
-                      Approve
+                      {te("approve")}
                     </button>
                     <button
                       type="button"
@@ -308,7 +318,7 @@ function EditorApplications() {
                       <span className="[&>svg]:h-4 [&>svg]:w-4">
                         <XIcon />
                       </span>
-                      Reject
+                      {te("reject")}
                     </button>
                   </>
                 )}
@@ -320,20 +330,25 @@ function EditorApplications() {
               <span className="flex h-4 w-4 shrink-0 items-center justify-center [&>svg]:h-4 [&>svg]:w-4">
                 <ClockIcon />
               </span>
-              Applied {app.appliedAt} {app.yearsInPublishing} years in publishing {app.publishedArticles} published articles
+              {te("appliedLine", {
+                date: app.appliedAt,
+                years: app.yearsInPublishing,
+                articles: app.publishedArticles,
+              })}
             </p>
           </div>
         ))}
       </div>
 
       {filtered.length === 0 && (
-        <p className="py-12 text-center text-gray-500">No applications match your filters.</p>
+        <p className="py-12 text-center text-gray-500">{te("empty")}</p>
       )}
     </div>
   );
 }
 
 function PermissionsMatrix() {
+  const tm = useTranslations("Dashboard.rolesPermissions.matrix");
   const [matrix, setMatrix] = useState<MatrixState>(getInitialMatrix);
 
   const setCell = (permission: string, role: string, value: boolean) => {
@@ -346,18 +361,18 @@ function PermissionsMatrix() {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-bold text-foreground">Permission Matrix</h3>
-        <p className="mt-1 text-sm text-gray-500">Configure granular permissions for each role</p>
+        <h3 className="text-lg font-bold text-foreground">{tm("title")}</h3>
+        <p className="mt-1 text-sm text-gray-500">{tm("subtitle")}</p>
       </div>
       <div className="overflow-x-auto rounded-xl border border-[var(--tott-card-border)]">
-        <table className="w-full min-w-[600px] border-collapse">
+        <table className="w-full min-w-[600px] border-collapse text-start">
           <thead>
             <tr className="border-b border-[var(--tott-card-border)]">
               <th
-                className="px-4 py-3 text-left text-sm font-semibold"
+                className="px-4 py-3 text-start text-sm font-semibold"
                 style={{ color: theme.accentGoldFocus }}
               >
-                Permission
+                {tm("colPermission")}
               </th>
               {MATRIX_ROLES.map((role) => (
                 <th
@@ -365,7 +380,7 @@ function PermissionsMatrix() {
                   className="px-4 py-3 text-center text-sm font-semibold"
                   style={{ color: theme.accentGoldFocus }}
                 >
-                  {role}
+                  {(tm as (key: string) => string)(`columns.${matrixRoleColumnKey(role)}`)}
                 </th>
               ))}
             </tr>
@@ -373,7 +388,9 @@ function PermissionsMatrix() {
           <tbody className="divide-y divide-[#444]/60">
             {PERMISSIONS.map((permission) => (
               <tr key={permission} className="transition-colors hover:bg-white/2">
-                <td className="px-4 py-3 text-sm text-foreground">{permission}</td>
+                <td className="px-4 py-3 text-sm text-foreground">
+                  {(tm as (key: string) => string)(`permissionNames.${permissionRowKey(permission)}`)}
+                </td>
                 {MATRIX_ROLES.map((role) => (
                   <td key={role} className="px-4 py-3 text-center">
                     <div className="flex justify-center">
@@ -395,25 +412,26 @@ function PermissionsMatrix() {
 }
 
 export function RolesPermissionsContent() {
-  const [activeTab, setActiveTab] = useState<(typeof TABS)[number]["id"]>("overview");
+  const tr = useTranslations("Dashboard.rolesPermissions");
+  const [activeTab, setActiveTab] = useState<RolesTabId>("overview");
   const [configureRoleOpen, setConfigureRoleOpen] = useState(false);
 
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
       {/* Tabs - left-aligned */}
       <div className="flex w-fit gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
-        {TABS.map((tab) => (
+        {TAB_IDS.map((tabId) => (
           <button
-            key={tab.id}
+            key={tabId}
             type="button"
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => setActiveTab(tabId)}
             className={`rounded-md px-6 py-3 text-sm font-medium transition-all ${
-              activeTab === tab.id
+              activeTab === tabId
                 ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
                 : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
             }`}
           >
-            {tab.label}
+            {(tr as (key: string) => string)(`tabs.${tabId}`)}
           </button>
         ))}
       </div>
@@ -446,7 +464,9 @@ export function RolesPermissionsContent() {
                       <Icon />
                     </span>
                     <span className="text-2xl font-bold text-foreground">{stat.value}</span>
-                    <span className="text-center text-sm text-gray-500">{stat.label}</span>
+                    <span className="text-center text-sm text-gray-500">
+                      {(tr as (key: string) => string)(`stats.${stat.id}`)}
+                    </span>
                   </div>
                 );
               })}
@@ -454,11 +474,8 @@ export function RolesPermissionsContent() {
 
             {/* Role Hierarchy */}
             <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
-              <h3 className="text-lg font-bold text-foreground">Role Hierarchy</h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Understanding the permission inheritance between roles. Click Super Admin to edit
-                permissions.
-              </p>
+              <h3 className="text-lg font-bold text-foreground">{tr("hierarchy.title")}</h3>
+              <p className="mt-1 text-sm text-gray-500">{tr("hierarchy.subtitle")}</p>
               <div className="mt-6 flex flex-nowrap items-center justify-center gap-0 overflow-x-auto">
                 {roleHierarchy.map((role, index) => {
                   const Icon = role.icon;
@@ -468,7 +485,9 @@ export function RolesPermissionsContent() {
                       <RoleHierarchyHex>
                         <Icon />
                       </RoleHierarchyHex>
-                      <span className="text-sm font-medium text-foreground">{role.label}</span>
+                      <span className="text-sm font-medium text-foreground">
+                        {(tr as (key: string) => string)(`hierarchy.labels.${role.id}`)}
+                      </span>
                     </>
                   );
                   return (
@@ -478,7 +497,7 @@ export function RolesPermissionsContent() {
                           type="button"
                           onClick={() => setConfigureRoleOpen(true)}
                           className="flex flex-col items-center gap-2 rounded-xl p-1 transition-colors hover:bg-white/6 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8DDC0]/40"
-                          aria-label="Configure Super Admin permissions"
+                          aria-label={tr("hierarchy.configureSuperAdminAria")}
                         >
                           {inner}
                         </button>
@@ -523,7 +542,7 @@ export function RolesPermissionsContent() {
       <ConfigureRoleModal
         open={configureRoleOpen}
         onClose={() => setConfigureRoleOpen(false)}
-        roleDisplayName="Super Admin"
+        roleDisplayName={tr("superAdminRoleName")}
       />
     </div>
   );

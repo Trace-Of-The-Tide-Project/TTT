@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocale } from "next-intl";
 import L from "leaflet";
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -24,14 +25,16 @@ type LocationMapPickerProps = {
   latitude: string;
   longitude: string;
   onLocationSelect: (loc: { latitude: string; longitude: string; name?: string }) => void;
+  searchPlaceholder: string;
+  searchingLabel: string;
 };
 
 /* ── Reverse-geocode a lat/lng into a display name ── */
-async function reverseGeocode(lat: number, lng: number): Promise<string | undefined> {
+async function reverseGeocode(lat: number, lng: number, acceptLanguage: string): Promise<string | undefined> {
   try {
     const res = await fetch(
       `${NOMINATIM_BASE}/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=0`,
-      { headers: { "Accept-Language": "en" } }
+      { headers: { "Accept-Language": acceptLanguage } }
     );
     const data = await res.json();
     return data?.display_name ?? undefined;
@@ -42,12 +45,13 @@ async function reverseGeocode(lat: number, lng: number): Promise<string | undefi
 
 /* ── Forward-geocode a search query into results ── */
 async function forwardGeocode(
-  query: string
+  query: string,
+  acceptLanguage: string,
 ): Promise<{ lat: number; lng: number; name: string }[]> {
   try {
     const res = await fetch(
       `${NOMINATIM_BASE}/search?format=json&q=${encodeURIComponent(query)}&limit=5`,
-      { headers: { "Accept-Language": "en" } }
+      { headers: { "Accept-Language": acceptLanguage } }
     );
     const data = await res.json();
     if (!Array.isArray(data)) return [];
@@ -84,7 +88,11 @@ export default function LocationMapPicker({
   latitude,
   longitude,
   onLocationSelect,
+  searchPlaceholder,
+  searchingLabel,
 }: LocationMapPickerProps) {
+  const uiLocale = useLocale();
+  const acceptLanguage = uiLocale.startsWith("ar") ? "ar" : uiLocale.startsWith("he") ? "he" : "en";
   const lat = parseFloat(latitude);
   const lng = parseFloat(longitude);
   const hasPosition = !Number.isNaN(lat) && !Number.isNaN(lng);
@@ -107,7 +115,7 @@ export default function LocationMapPicker({
             latitude: pos.lat.toFixed(6),
             longitude: pos.lng.toFixed(6),
           });
-          reverseGeocode(pos.lat, pos.lng).then((name) => {
+          reverseGeocode(pos.lat, pos.lng, acceptLanguage).then((name) => {
             if (name)
               onLocationSelect({
                 latitude: pos.lat.toFixed(6),
@@ -118,7 +126,7 @@ export default function LocationMapPicker({
         }
       },
     }),
-    [onLocationSelect]
+    [onLocationSelect, acceptLanguage]
   );
 
   const handleMapClick = useCallback(
@@ -128,13 +136,13 @@ export default function LocationMapPicker({
         longitude: clickLng.toFixed(6),
       });
       setFlyTarget({ lat: clickLat, lng: clickLng });
-      reverseGeocode(clickLat, clickLng).then((name) => {
+      reverseGeocode(clickLat, clickLng, acceptLanguage).then((name) => {
         if (name) {
           onLocationSelect({ latitude: clickLat.toFixed(6), longitude: clickLng.toFixed(6), name });
         }
       });
     },
-    [onLocationSelect]
+    [onLocationSelect, acceptLanguage]
   );
 
   const handleSearch = useCallback((q: string) => {
@@ -144,11 +152,11 @@ export default function LocationMapPicker({
     if (!q.trim()) return;
     debounceRef.current = setTimeout(async () => {
       setSearching(true);
-      const r = await forwardGeocode(q);
+      const r = await forwardGeocode(q, acceptLanguage);
       setResults(r);
       setSearching(false);
     }, 500);
-  }, []);
+  }, [acceptLanguage]);
 
   const selectResult = useCallback(
     (r: { lat: number; lng: number; name: string }) => {
@@ -172,12 +180,12 @@ export default function LocationMapPicker({
           type="text"
           value={searchQuery}
           onChange={(e) => handleSearch(e.target.value)}
-          placeholder="Search for a place..."
+          placeholder={searchPlaceholder}
           className={inputClass}
         />
         {searching && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
-            Searching…
+            {searchingLabel}
           </span>
         )}
         {results.length > 0 && (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import { CreateBadgeModal } from "@/components/dashboard/modals/CreateBadgeModal";
 import { AwardBadgeModal } from "@/components/dashboard/modals/AwardBadgeModal";
@@ -27,18 +28,10 @@ import {
   type TrendingDiscussion,
 } from "@/lib/dashboard/engagements-constants";
 
-const ENGAGEMENT_TABS = [
-  { id: "comments", label: "Comments" },
-  { id: "trending", label: "Trending discussions" },
-  { id: "badges", label: "Badges & Recognition" },
-] as const;
-
-const FILTER_OPTIONS = [
-  { id: "all", label: "All" },
-  { id: "flagged", label: (count: number) => `Flagged (${count})` },
-] as const;
+const ENGAGEMENT_TAB_IDS = ["comments", "trending", "badges"] as const;
 
 function CommentCard({ comment }: { comment: Comment }) {
+  const t = useTranslations("Dashboard.engagementsPage.comments");
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -61,12 +54,12 @@ function CommentCard({ comment }: { comment: Comment }) {
       <div className="min-w-0 flex-1">
         <p className="text-sm text-foreground">
           <span className="font-medium">{comment.author}</span>
-          {" On "}
+          <span className="text-gray-400"> {t("on")} </span>
           <span className="text-gray-400">
             {comment.contentTitle}
             {comment.flagged && (
-              <span className="ml-2 inline-flex rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium text-red-400">
-                FLAGGED
+              <span className="ms-2 inline-flex rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium uppercase text-red-400">
+                {t("flaggedBadge")}
               </span>
             )}
           </span>
@@ -89,7 +82,7 @@ function CommentCard({ comment }: { comment: Comment }) {
             >
               <MessageSquareIcon />
             </span>
-            {comment.replies} Replies
+            {t("replies", { count: comment.replies })}
           </span>
           <span>{comment.timeAgo}</span>
         </div>
@@ -100,20 +93,29 @@ function CommentCard({ comment }: { comment: Comment }) {
           onClick={() => setIsOpen((o) => !o)}
           className="rounded p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
           style={{ color: "#A3A3A3" }}
-          aria-label="More actions"
+          aria-label={t("menuAria")}
         >
           <MoreDotsIcon />
         </button>
         {isOpen && (
-          <div className="absolute right-0 top-full z-20 mt-1 min-w-[140px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-1 shadow-lg">
-            <button className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-[var(--tott-dash-surface-inset)]">
-              View
+          <div className="absolute end-0 top-full z-20 mt-1 min-w-[140px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-1 shadow-lg">
+            <button
+              type="button"
+              className="w-full px-4 py-2 text-start text-sm text-foreground hover:bg-[var(--tott-dash-surface-inset)]"
+            >
+              {t("view")}
             </button>
-            <button className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-[var(--tott-dash-surface-inset)]">
-              Edit
+            <button
+              type="button"
+              className="w-full px-4 py-2 text-start text-sm text-foreground hover:bg-[var(--tott-dash-surface-inset)]"
+            >
+              {t("edit")}
             </button>
-            <button className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/10">
-              Delete
+            <button
+              type="button"
+              className="w-full px-4 py-2 text-start text-sm text-red-400 hover:bg-red-500/10"
+            >
+              {t("delete")}
             </button>
           </div>
         )}
@@ -131,6 +133,7 @@ function TrendingDiscussionCard({
   onToggleLocked: () => void;
   onView: () => void;
 }) {
+  const t = useTranslations("Dashboard.engagementsPage.trending");
   return (
     <div className="flex items-start justify-between gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-4">
       <div className="flex min-w-0 gap-4">
@@ -151,7 +154,7 @@ function TrendingDiscussionCard({
               >
                 <MessageSquareIcon />
               </span>
-              {discussion.comments} Comments
+              {t("commentsCount", { count: discussion.comments })}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span
@@ -160,7 +163,7 @@ function TrendingDiscussionCard({
               >
                 <UsersIcon />
               </span>
-              {discussion.participants} participants
+              {t("participantsCount", { count: discussion.participants })}
             </span>
           </div>
         </div>
@@ -173,16 +176,16 @@ function TrendingDiscussionCard({
           className="inline-flex h-[40px] w-[120px] items-center justify-center gap-2 rounded-md border border-[#555] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] whitespace-nowrap"
         >
           <EyeIcon />
-          View
+          {t("view")}
         </button>
         <button
           type="button"
           onClick={onToggleLocked}
           className="inline-flex h-[40px] w-[120px] items-center justify-center gap-2 rounded-md border border-[#555] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] whitespace-nowrap"
-          aria-label={discussion.locked ? "Unlock discussion" : "Lock discussion"}
+          aria-label={discussion.locked ? t("unlockDiscussionAria") : t("lockDiscussionAria")}
         >
           <LockIcon />
-          {discussion.locked ? "Unlock" : "Lock"}
+          {discussion.locked ? t("unlock") : t("lock")}
         </button>
       </div>
     </div>
@@ -196,6 +199,7 @@ function BadgeCard({
   badge: Badge;
   onAward: () => void;
 }) {
+  const t = useTranslations("Dashboard.engagementsPage.badges");
   const icon =
     badge.icon === "award" ? (
       <GiftIcon />
@@ -220,7 +224,7 @@ function BadgeCard({
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-base font-semibold text-foreground">{badge.name}</p>
-          <p className="mt-1 text-sm text-gray-500">{badge.recipients} recipients</p>
+          <p className="mt-1 text-sm text-gray-500">{t("recipients", { count: badge.recipients })}</p>
         </div>
       </div>
 
@@ -231,14 +235,15 @@ function BadgeCard({
         onClick={onAward}
         className="mt-5 w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-bg)]"
       >
-        Award Badge
+        {t("awardBadge")}
       </button>
     </div>
   );
 }
 
 export function EngagementsContent() {
-  const [activeTab, setActiveTab] = useState<(typeof ENGAGEMENT_TABS)[number]["id"]>("comments");
+  const t = useTranslations("Dashboard.engagementsPage");
+  const [activeTab, setActiveTab] = useState<(typeof ENGAGEMENT_TAB_IDS)[number]>("comments");
   const [filter, setFilter] = useState<"all" | "flagged">("all");
   const [commentSearch, setCommentSearch] = useState("");
   const [badgeSearch, setBadgeSearch] = useState("");
@@ -293,18 +298,18 @@ export function EngagementsContent() {
       />
       {/* Tabs */}
       <div className="flex w-fit gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
-        {ENGAGEMENT_TABS.map((tab) => (
+        {ENGAGEMENT_TAB_IDS.map((tabId) => (
           <button
-            key={tab.id}
+            key={tabId}
             type="button"
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => setActiveTab(tabId)}
             className={`rounded-md px-6 py-3 text-sm font-medium transition-all ${
-              activeTab === tab.id
+              activeTab === tabId
                 ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
                 : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
             }`}
           >
-            {tab.label}
+            {t(`tabs.${tabId}`)}
           </button>
         ))}
       </div>
@@ -319,7 +324,7 @@ export function EngagementsContent() {
               </span>
               <input
                 type="text"
-                placeholder="Search comments..."
+                placeholder={t("comments.searchPlaceholder")}
                 value={commentSearch}
                 onChange={(e) => setCommentSearch(e.target.value)}
                 className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
@@ -335,7 +340,7 @@ export function EngagementsContent() {
                     : "border-[var(--tott-card-border)] bg-transparent text-gray-400 hover:text-foreground"
                 }`}
               >
-                All
+                {t("filter.all")}
               </button>
               <button
                 type="button"
@@ -346,9 +351,7 @@ export function EngagementsContent() {
                     : "border-[var(--tott-card-border)] bg-transparent text-gray-400 hover:text-foreground"
                 }`}
               >
-                {typeof FILTER_OPTIONS[1].label === "function"
-                  ? FILTER_OPTIONS[1].label(flaggedCount)
-                  : FILTER_OPTIONS[1].label}
+                {t("filter.flagged", { count: flaggedCount })}
               </button>
             </div>
           </div>
@@ -361,7 +364,7 @@ export function EngagementsContent() {
           </div>
 
           {filtered.length === 0 && (
-            <p className="py-12 text-center text-gray-500">No comments match your filters.</p>
+            <p className="py-12 text-center text-gray-500">{t("comments.emptyFiltered")}</p>
           )}
         </>
       )}
@@ -386,7 +389,7 @@ export function EngagementsContent() {
           </div>
 
           {trendingDiscussions.length === 0 && (
-            <p className="py-12 text-center text-gray-500">No trending discussions found.</p>
+            <p className="py-12 text-center text-gray-500">{t("trending.empty")}</p>
           )}
         </>
       )}
@@ -400,7 +403,7 @@ export function EngagementsContent() {
               </span>
               <input
                 type="text"
-                placeholder="Search badges..."
+                placeholder={t("badges.searchPlaceholder")}
                 value={badgeSearch}
                 onChange={(e) => setBadgeSearch(e.target.value)}
                 className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
@@ -416,7 +419,7 @@ export function EngagementsContent() {
               style={{ backgroundColor: theme.accentGoldFocus }}
             >
               <PlusIcon />
-              Create Badge
+              {t("badges.createBadge")}
             </button>
           </div>
 
@@ -434,7 +437,7 @@ export function EngagementsContent() {
           </div>
 
           {filteredBadges.length === 0 && (
-            <p className="py-12 text-center text-gray-500">No badges match your search.</p>
+            <p className="py-12 text-center text-gray-500">{t("badges.emptySearch")}</p>
           )}
         </>
       )}

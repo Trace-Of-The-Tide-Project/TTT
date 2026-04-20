@@ -1,0 +1,60 @@
+{
+  "Contribute": {
+    "page": {
+      "title": "ساهم في Trace of the Tides",
+      "subtitle": "ماذا تود أن تساهم به؟",
+      "typesLoadError": "تعذّر تحميل أنواع المساهمة"
+    },
+    "types": {
+      "personal_story": "قصة شخصية",
+      "testimony": "شهادة",
+      "biography": "سيرة ذاتية",
+      "artwork": "عمل فني",
+      "music": "موسيقى",
+      "literature": "أدب",
+      "photography": "تصوير فوتوغرافي",
+      "history_document": "وثيقة تاريخية",
+      "other": "أخرى"
+    },
+    "form": {
+      "titleLabel": "عنوان المساهمة",
+      "titlePlaceholder": "أدخل عنواناً لمساهمتك",
+      "collectionLabel": "اختر المجموعة",
+      "optional": "(اختياري)",
+      "collectionPlaceholder": "أدخل مجموعة أو اختر من القائمة",
+      "collectionStories": "قصص",
+      "collectionDocuments": "مستندات",
+      "collectionMedia": "وسائط",
+      "descriptionLabel": "الوصف",
+      "descriptionPlaceholder": "صف مساهمتك",
+      "uploadLabel": "رفع الملفات",
+      "uploadHint": "اسحب الملفات وأفلتها هنا، أو انقر للاستعراض",
+      "uploadFormats": "الصيغ المدعومة: JPG، PNG، PDF، MP3، MP4، DOC (حد أقصى 20 ميجابايت)",
+      "removeFileAria": "إزالة الملف",
+      "nameLabel": "اسمك",
+      "namePlaceholder": "أدخل اسمك الكامل",
+      "emailLabel": "بريدك الإلكتروني",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "mobileLabel": "رقم الجوال",
+      "mobilePlaceholder": "01 2345 6789",
+      "consent": "بإرسال هذا النموذج، توافق على أن تُستخدم مساهمتك وتُنسب إليك وفق شروطنا. قد نتواصل معك بخصوص ما أرسلت.",
+      "technicalNote": "يُرفع كل ملف أولاً عبر POST /upload، ثم يُعاد إرساله مع المساهمة: كل جزء files يستخدم مسار التخزين كاسم ملف ومحتوى الملف الحقيقي كجسم الجزء.",
+      "submit": "إرسال المساهمة",
+      "submitting": "جاري الرفع والإرسال…",
+      "submitErrorDefault": "فشل الإرسال. يرجى المحاولة مرة أخرى."
+    },
+    "success": {
+      "title": "شكراً لمساهمتك!",
+      "backHome": "العودة إلى الرئيسية"
+    },
+    "error": {
+      "title": "حدث خطأ ما",
+      "description": "لم نتمكن من إكمال الإرسال. حاول مرة أخرى، أو تواصل معنا إذا استمرت المشكلة.",
+      "tryAgain": "حاول مرة أخرى"
+    },
+    "contact": {
+      "lead": "إذا كان لديك أي استفسار",
+      "link": "تواصل معنا"
+    }
+  }
+}

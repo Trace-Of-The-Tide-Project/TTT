@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { Link } from "@/i18n/navigation";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import {
   AvailableBlocks,
   type BlockType,
@@ -23,9 +24,12 @@ import { articleDetailBlocksToContentBlocks } from "@/components/dashboard/admin
 import {
   articleConfig,
   contentFormConfigForType,
-  mainMediaEditorCopy,
   type ContentFormConfig,
 } from "./content-form-config";
+import {
+  localizeContentFormConfig,
+  localizeMainMediaEditorCopy,
+} from "@/lib/dashboard/localize-article-editor-config";
 import { invalidateAdminArticlesListCache } from "@/lib/dashboard/admin-articles-list-cache";
 import {
   createArticle,
@@ -42,22 +46,6 @@ import { previewHrefForContentType } from "@/lib/content/public-article-preview-
 
 const titleClass =
   "w-full border-0 bg-transparent px-0 py-2 text-lg text-foreground placeholder:text-foreground outline-none";
-
-function errMessage(e: unknown): string {
-  if (isAxiosError(e)) {
-    const d = e.response?.data;
-    if (typeof d === "string" && d.trim()) return d;
-    if (d && typeof d === "object") {
-      const o = d as Record<string, unknown>;
-      if (typeof o.message === "string") return o.message;
-      if (Array.isArray(o.message)) return o.message.map(String).join("; ");
-      if (typeof o.error === "string") return o.error;
-    }
-    return e.message || "Request failed";
-  }
-  if (e instanceof Error) return e.message;
-  return "Something went wrong";
-}
 
 function editPatchFromPayload(payload: CreateArticlePayload) {
   return {
@@ -81,6 +69,28 @@ const ADMIN_ARTICLES_PATH = "/admin/articles";
 const SUCCESS_TOAST_MS = 3200;
 
 export function ContentEditorLayout({ config: configFromProps, articleId }: ContentEditorLayoutProps) {
+  const t = useTranslations("Dashboard.articles.editor");
+  const tLayout = useTranslations("Dashboard.articles.editor.layout");
+
+  const translateErr = useCallback(
+    (e: unknown): string => {
+      if (isAxiosError(e)) {
+        const d = e.response?.data;
+        if (typeof d === "string" && d.trim()) return d;
+        if (d && typeof d === "object") {
+          const o = d as Record<string, unknown>;
+          if (typeof o.message === "string") return o.message;
+          if (Array.isArray(o.message)) return o.message.map(String).join("; ");
+          if (typeof o.error === "string") return o.error;
+        }
+        return e.message || tLayout("errorRequestFailed");
+      }
+      if (e instanceof Error) return e.message;
+      return tLayout("errorGeneric");
+    },
+    [tLayout],
+  );
+
   const router = useRouter();
   const invalidateArticlesListAndLeave = useCallback(() => {
     invalidateAdminArticlesListCache();
@@ -94,6 +104,16 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
   const [toastEntered, setToastEntered] = useState(false);
 
   const [config, setConfig] = useState<ContentFormConfig>(() => configFromProps ?? articleConfig);
+
+  const localizedConfig = useMemo(
+    () => localizeContentFormConfig(config, (key) => t(key)),
+    [config, t],
+  );
+
+  const localizedMainMedia = useMemo(
+    () => localizeMainMediaEditorCopy(config.contentType, (key) => t(key)),
+    [config.contentType, t],
+  );
 
   const [title, setTitle] = useState("");
   const [blocks, setBlocks] = useState<ContentBlock[]>(() => configFromProps?.defaultBlocks ?? articleConfig.defaultBlocks);
@@ -135,7 +155,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
         const a = await getArticleById(articleId);
         if (cancelled) return;
         if (!a) {
-          setLoadError("Article not found.");
+          setLoadError(tLayout("articleNotFound"));
           return;
         }
         setConfig(contentFormConfigForType(a.content_type));
@@ -159,7 +179,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
         setCollectionId(a.collection_id?.trim() ?? "");
         setTagIds(
           Array.isArray(a.tags)
-            ? a.tags.map((t) => t.id).filter((id): id is string => typeof id === "string")
+            ? a.tags.map((tagItem) => tagItem.id).filter((id): id is string => typeof id === "string")
             : [],
         );
         const mapped = articleDetailBlocksToContentBlocks(a.blocks);
@@ -169,7 +189,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
             : [{ id: crypto.randomUUID(), type: "paragraph", content: "" }],
         );
       } catch (e) {
-        if (!cancelled) setLoadError(errMessage(e));
+        if (!cancelled) setLoadError(translateErr(e));
       } finally {
         if (!cancelled) setArticleLoading(false);
       }
@@ -177,7 +197,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     return () => {
       cancelled = true;
     };
-  }, [articleId, loadKey]);
+  }, [articleId, loadKey, tLayout, translateErr]);
 
   useEffect(() => {
     if (!successToast) {
@@ -294,11 +314,11 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
 
   const handleSaveDraft = useCallback(async () => {
     if (!title.trim()) {
-      setError("Title is required.");
+      setError(tLayout("validationTitle"));
       return;
     }
     if (!category.trim()) {
-      setError("Category is required.");
+      setError(tLayout("validationCategory"));
       return;
     }
     setError(null);
@@ -306,7 +326,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     try {
       const payload = await buildPayload();
       if (payload.blocks.length === 0) {
-        setError("Add at least one block with content (empty placeholders are not sent).");
+        setError(tLayout("validationBlocksDraft"));
         return;
       }
       if (isEditMode && articleId) {
@@ -317,13 +337,13 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
               ? "published"
               : "scheduled";
         await updateArticle(articleId, { ...editPatchFromPayload(payload), status });
-        notifySuccessAndLeave("Changes saved");
+        notifySuccessAndLeave(tLayout("successChangesSaved"));
         return;
       }
       await createArticle(payload);
-      notifySuccessAndLeave("Draft saved");
+      notifySuccessAndLeave(tLayout("successDraftSaved"));
     } catch (e) {
-      setError(errMessage(e));
+      setError(translateErr(e));
     } finally {
       if (!pendingDelayedNavRef.current) setBusy(false);
     }
@@ -335,16 +355,18 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     isEditMode,
     articleId,
     workflowStatus,
+    tLayout,
+    translateErr,
   ]);
 
   const handlePublish = useCallback(async () => {
     if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
     if (!title.trim()) {
-      setError("Title is required.");
+      setError(tLayout("validationTitle"));
       return;
     }
     if (!category.trim()) {
-      setError("Category is required.");
+      setError(tLayout("validationCategory"));
       return;
     }
     setError(null);
@@ -352,7 +374,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     try {
       const payload = await buildPayload();
       if (payload.blocks.length === 0) {
-        setError("Publishing requires at least one block with content.");
+        setError(tLayout("validationBlocksPublish"));
         return;
       }
       if (isEditMode && articleId) {
@@ -361,34 +383,44 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
           await publishArticle(articleId);
           initialWasDraftRef.current = false;
         }
-        notifySuccessAndLeave("Article submitted");
+        notifySuccessAndLeave(tLayout("successArticleSubmitted"));
         return;
       }
       const res = await createArticle(payload);
       const id = getArticleIdFromCreateResponse(res);
       if (!id) {
-        setError("Article was created but no id was returned; cannot publish.");
+        setError(tLayout("errorCreateNoIdPublish"));
         return;
       }
       await publishArticle(id);
-      notifySuccessAndLeave("Article submitted");
+      notifySuccessAndLeave(tLayout("successArticleSubmitted"));
     } catch (e) {
-      setError(errMessage(e));
+      setError(translateErr(e));
     } finally {
       if (!pendingDelayedNavRef.current) setBusy(false);
     }
-  }, [workflowStatus, title, category, buildPayload, notifySuccessAndLeave, isEditMode, articleId]);
+  }, [
+    workflowStatus,
+    title,
+    category,
+    buildPayload,
+    notifySuccessAndLeave,
+    isEditMode,
+    articleId,
+    tLayout,
+    translateErr,
+  ]);
 
   const handleScheduleConfirm = useCallback(
     async (iso: string) => {
       if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
       if (!title.trim()) {
-        setError("Title is required.");
+        setError(tLayout("validationTitle"));
         setScheduleModalOpen(false);
         return;
       }
       if (!category.trim()) {
-        setError("Category is required.");
+        setError(tLayout("validationCategory"));
         setScheduleModalOpen(false);
         return;
       }
@@ -397,7 +429,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
       try {
         const payload = await buildPayload();
         if (payload.blocks.length === 0) {
-          setError("Scheduling requires at least one block with content.");
+          setError(tLayout("validationBlocksSchedule"));
           setScheduleModalOpen(false);
           return;
         }
@@ -408,33 +440,43 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
           });
           await scheduleArticle(articleId, iso);
           setScheduleModalOpen(false);
-          notifySuccessAndLeave("Article scheduled");
+          notifySuccessAndLeave(tLayout("successArticleScheduled"));
           return;
         }
         const res = await createArticle(payload);
         const id = getArticleIdFromCreateResponse(res);
         if (!id) {
-          setError("Article was created but no id was returned; cannot schedule.");
+          setError(tLayout("errorCreateNoIdSchedule"));
           setScheduleModalOpen(false);
           return;
         }
         await scheduleArticle(id, iso);
         setScheduleModalOpen(false);
-        notifySuccessAndLeave("Article scheduled");
+        notifySuccessAndLeave(tLayout("successArticleScheduled"));
       } catch (e) {
-        setError(errMessage(e));
+        setError(translateErr(e));
         setScheduleModalOpen(false);
       } finally {
         if (!pendingDelayedNavRef.current) setBusy(false);
       }
     },
-    [workflowStatus, title, category, buildPayload, notifySuccessAndLeave, isEditMode, articleId],
+    [
+      workflowStatus,
+      title,
+      category,
+      buildPayload,
+      notifySuccessAndLeave,
+      isEditMode,
+      articleId,
+      tLayout,
+      translateErr,
+    ],
   );
 
   if (isEditMode && articleLoading) {
     return (
       <div className="flex min-h-0 flex-col p-8 text-sm text-gray-500" role="status">
-        Loading article…
+        {tLayout("loadingArticle")}
       </div>
     );
   }
@@ -443,7 +485,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     return (
       <div className="flex min-h-0 flex-col gap-4 p-8 text-foreground">
         <Link href={ADMIN_ARTICLES_PATH} className="text-sm text-[#C9A96E] hover:underline">
-          ← Articles
+          {tLayout("backToArticles")}
         </Link>
         <p className="text-sm text-red-300">{loadError}</p>
         <button
@@ -451,7 +493,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
           onClick={() => setLoadKey((k: number) => k + 1)}
           className="w-fit text-sm text-gray-400 underline hover:text-foreground"
         >
-          Try again
+          {tLayout("tryAgain")}
         </button>
       </div>
     );
@@ -460,7 +502,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
   if (!isEditMode && !configFromProps) {
     return (
       <div className="p-8 text-sm text-red-300">
-        Editor misconfigured: pass <code className="text-foreground">config</code> for create mode.
+        {tLayout("misconfigured")}
       </div>
     );
   }
@@ -481,9 +523,9 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
                 aria-hidden
               />
               <p id="article-editor-uploading-title" className="text-lg font-semibold text-foreground">
-                Uploading files…
+                {tLayout("uploadingTitle")}
               </p>
-              <p className="mt-2 text-sm text-gray-400">Keep this tab open until upload finishes.</p>
+              <p className="mt-2 text-sm text-gray-400">{tLayout("uploadingDetail")}</p>
             </div>
           </div>,
           document.body,
@@ -502,7 +544,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
           >
             <div className="pointer-events-auto rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-3 shadow-lg">
               <p className="text-sm font-semibold text-foreground">{successToast}</p>
-              <p className="mt-0.5 text-xs text-gray-400">Redirecting to articles…</p>
+              <p className="mt-0.5 text-xs text-gray-400">{tLayout("successRedirect")}</p>
             </div>
           </div>,
           document.body,
@@ -526,9 +568,9 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4">
               <div className="flex flex-wrap items-center gap-3 text-sm">
                 <Link href={ADMIN_ARTICLES_PATH} className="text-[#C9A96E] hover:underline">
-                  ← Articles
+                  {tLayout("backToArticles")}
                 </Link>
-                <span className="text-gray-500">Edit article</span>
+                <span className="text-gray-500">{tLayout("editArticle")}</span>
               </div>
               <Link
                 href={previewHrefForContentType(config.contentType, articleId)}
@@ -536,7 +578,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
                 rel="noopener noreferrer"
                 className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[#C9A96E]/50 hover:bg-[#252525]"
               >
-                Preview
+                {tLayout("preview")}
               </Link>
             </div>
           ) : null}
@@ -544,7 +586,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder={config.titlePlaceholder}
+            placeholder={localizedConfig.titlePlaceholder}
             className={titleClass}
           />
           <ContentBlocks
@@ -554,7 +596,8 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
             onUpdateBlock={updateBlock}
             onAddCoverBlock={addCoverBlock}
             onReorderBlock={reorderBlocks}
-            config={config}
+            config={localizedConfig}
+            mainMediaCopy={localizedMainMedia}
           />
         </div>
 
@@ -563,12 +606,12 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
             onAddBlock={addBlock}
             imageBlockLabel={
               config.contentType === "video" || config.contentType === "audio"
-                ? "Image"
-                : mainMediaEditorCopy(config.contentType).blockName
+                ? tLayout("imageBlockShort")
+                : localizedMainMedia.blockName
             }
           />
           <ContentSettings
-            title={config.settingsTitle}
+            title={localizedConfig.settingsTitle}
             workflowStatus={workflowStatus}
             onWorkflowStatusChange={setWorkflowStatus}
             scheduledAt={scheduledAt}
@@ -591,8 +634,8 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
       </div>
 
       <ContentEditorFooter
-        primaryButtonLabel={config.primaryButtonLabel}
-        saveDraftLabel={isEditMode ? "Save changes" : undefined}
+        primaryButtonLabel={localizedConfig.primaryButtonLabel}
+        saveDraftLabel={isEditMode ? t("footer.defaults.saveChanges") : undefined}
         workflowStatus={workflowStatus}
         busy={busy}
         error={error}

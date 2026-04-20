@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { GripIcon, TrashIcon } from "../ArticleEditorIcons";
 import type { TripStop } from "@/services/trips.service";
@@ -86,6 +87,7 @@ function StopEntry({
   onDrop,
   onDragEnd,
 }: StopEntryProps) {
+  const t = useTranslations("Dashboard.trips.editor.itinerary");
   return (
     <div
       onDragOver={onDragOver}
@@ -113,7 +115,7 @@ function StopEntry({
           className="flex flex-1 items-center gap-2 text-left text-sm text-foreground"
         >
           <span className="font-medium">
-            {stop.title.trim() || stop.locationName.trim() || `Stop ${index + 1}`}
+            {stop.title.trim() || stop.locationName.trim() || t("stopNumber", { number: index + 1 })}
           </span>
           <svg
             width={12}
@@ -131,7 +133,7 @@ function StopEntry({
           type="button"
           onClick={onRemove}
           className="text-gray-500 hover:text-red-400"
-          aria-label={`Remove stop ${index + 1}`}
+          aria-label={t("removeStopAria", { number: index + 1 })}
         >
           <TrashIcon />
         </button>
@@ -142,22 +144,22 @@ function StopEntry({
           <div className="flex gap-4">
             <div className="min-w-0 flex-1 space-y-3">
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-400">Stop Title</label>
+                <label className="mb-1 block text-xs font-medium text-gray-400">{t("stopTitle")}</label>
                 <input
                   type="text"
                   value={stop.title}
                   onChange={(e) => onChange({ title: e.target.value })}
-                  placeholder="e.g., Jaffa Gate Gathering Point"
+                  placeholder={t("stopTitlePlaceholder")}
                   className={inputClass}
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-400">Description</label>
+                <label className="mb-1 block text-xs font-medium text-gray-400">{t("description")}</label>
                 <textarea
                   value={stop.description}
                   onChange={(e) => onChange({ description: e.target.value })}
-                  placeholder="What happens at this stop..."
+                  placeholder={t("descriptionPlaceholder")}
                   rows={3}
                   className={inputClass}
                 />
@@ -166,7 +168,7 @@ function StopEntry({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-400">
-                    Arrival Time
+                    {t("arrivalTime")}
                   </label>
                   <input
                     type="datetime-local"
@@ -177,7 +179,7 @@ function StopEntry({
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-400">
-                    Duration (min)
+                    {t("durationMinutes")}
                   </label>
                   <input
                     type="number"
@@ -194,6 +196,8 @@ function StopEntry({
               <LocationMapPicker
                 latitude={stop.latitude}
                 longitude={stop.longitude}
+                searchPlaceholder={t("searchPlaceholder")}
+                searchingLabel={t("searching")}
                 onLocationSelect={(sel) => {
                   const patch: Partial<EditorStop> = {
                     latitude: sel.latitude,
@@ -220,6 +224,7 @@ type ItineraryBuilderProps = {
 };
 
 export function ItineraryBuilder({ stops, onChange }: ItineraryBuilderProps) {
+  const t = useTranslations("Dashboard.trips.editor.itinerary");
   const [expandedIdx, setExpandedIdx] = useState<number | null>(stops.length > 0 ? 0 : null);
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
@@ -294,7 +299,7 @@ export function ItineraryBuilder({ stops, onChange }: ItineraryBuilderProps) {
 
   return (
     <section className="rounded-lg border border-[var(--tott-card-border)] p-4 space-y-4">
-      <h3 className="text-sm font-bold text-foreground">Stops</h3>
+      <h3 className="text-sm font-bold text-foreground">{t("heading")}</h3>
 
       <div className="space-y-3">
         {stops.map((stop, i) => (
@@ -321,7 +326,7 @@ export function ItineraryBuilder({ stops, onChange }: ItineraryBuilderProps) {
         onClick={addStop}
         className="w-full rounded-lg border border-dashed border-[var(--tott-card-border)] py-2.5 text-sm text-gray-400 hover:border-gray-400 hover:text-foreground"
       >
-        + Add Stop
+        {t("addStop")}
       </button>
     </section>
   );

@@ -1,20 +1,21 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { MoreDotsIcon } from "@/components/ui/icons";
 
 type ActionItem = {
   id: string;
-  label: string;
+  labelKey: "viewProfile" | "editUser" | "changeRole" | "verifyUser" | "suspendUser";
   destructive?: boolean;
 };
 
 const ACTIONS: ActionItem[] = [
-  { id: "view", label: "View Profile" },
-  { id: "edit", label: "Edit User" },
-  { id: "role", label: "Change Role" },
-  { id: "verify", label: "Verify User" },
-  { id: "suspend", label: "Suspend User", destructive: true },
+  { id: "view", labelKey: "viewProfile" },
+  { id: "edit", labelKey: "editUser" },
+  { id: "role", labelKey: "changeRole" },
+  { id: "verify", labelKey: "verifyUser" },
+  { id: "suspend", labelKey: "suspendUser", destructive: true },
 ];
 
 type UserActionsDropdownProps = {
@@ -23,6 +24,7 @@ type UserActionsDropdownProps = {
 };
 
 export function UserActionsDropdown({ userId, onAction }: UserActionsDropdownProps) {
+  const t = useTranslations("Dashboard.usersManagement.rowActions");
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -43,7 +45,7 @@ export function UserActionsDropdown({ userId, onAction }: UserActionsDropdownPro
         onClick={() => setIsOpen((o) => !o)}
         className="rounded p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
         style={{ color: "#A3A3A3" }}
-        aria-label="More actions"
+        aria-label={t("menuAria")}
         aria-expanded={isOpen}
       >
         <MoreDotsIcon />
@@ -62,7 +64,7 @@ export function UserActionsDropdown({ userId, onAction }: UserActionsDropdownPro
                 action.destructive ? "text-red-400 hover:bg-red-500/10" : "text-foreground"
               }`}
             >
-              {action.label}
+              {t(action.labelKey)}
             </button>
           ))}
         </div>

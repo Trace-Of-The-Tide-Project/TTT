@@ -1,0 +1,58 @@
+{
+  "Dashboard": {
+    "usersManagement": {
+      "searchPlaceholder": "Search username, full name, email…",
+      "status": {
+        "all": "All status",
+        "active": "Active",
+        "pending": "Pending",
+        "suspended": "Suspended",
+        "inactive": "Inactive"
+      },
+      "sort": {
+        "username": "Username",
+        "email": "Email",
+        "full_name": "Full name"
+      },
+      "order": {
+        "ASC": "Ascending",
+        "DESC": "Descending"
+      },
+      "table": {
+        "contributor": "Contributor",
+        "role": "Role",
+        "status": "Status",
+        "joined": "Joined",
+        "lastActive": "Last active",
+        "contributions": "Contributions"
+      },
+      "statusLabels": {
+        "active": "Active",
+        "pending": "Pending",
+        "suspended": "Suspended",
+        "inactive": "Inactive"
+      },
+      "loading": "Loading users…",
+      "empty": "No users match your filters.",
+      "pagination": {
+        "showing": "Showing {start} to {end} of {total} users",
+        "previous": "Previous",
+        "next": "Next",
+        "pageOf": "Page {page} of {totalPages}"
+      },
+      "tryAgain": "Try again",
+      "tryExportAgain": "Try export again",
+      "errors": {
+        "loadFailed": "Failed to load users"
+      },
+      "rowActions": {
+        "menuAria": "More actions",
+        "viewProfile": "View Profile",
+        "editUser": "Edit User",
+        "changeRole": "Change Role",
+        "verifyUser": "Verify User",
+        "suspendUser": "Suspend User"
+      }
+    }
+  }
+}

@@ -8,8 +8,6 @@ export const DEFAULT_TRIP_BOOKING_FORM_FIELDS: ApplicationFormField[] = [
   { name: "message", type: "textarea", required: false },
 ];
 
-export type TripBookingFormConfig = { fields: ApplicationFormField[] };
-
 export type TripStopLocation = {
   name: string;
   description?: string;
@@ -57,8 +55,6 @@ export type CreateTripPayload = {
   languages?: string[];
   highlights?: string[];
   moderator_name?: string;
-  /** Join-trip form (same field model as open-call application form). */
-  booking_form?: TripBookingFormConfig;
   stops: TripStop[];
 };
 
@@ -92,7 +88,6 @@ export type TripListItem = {
   updatedAt: string;
   creator?: { id: string; username: string; full_name: string };
   stops?: TripStop[];
-  booking_form?: TripBookingFormConfig | null;
 };
 
 /** Tags from API: JSON array or comma-separated string. */
@@ -182,12 +177,8 @@ export function sliderUiMaxForMinPrice(min: number): number {
   return Math.max(Math.round(min * 25), Math.round(min + 8000), 3000);
 }
 
-/** Resolve join form fields from API trip (fallback to default template). */
-export function tripBookingFormFields(trip: TripListItem): ApplicationFormField[] {
-  const raw = trip.booking_form;
-  if (raw && Array.isArray(raw.fields) && raw.fields.length > 0) {
-    return raw.fields as ApplicationFormField[];
-  }
+/** Default join form for trip pages (trips API does not expose stored form fields). */
+export function tripBookingFormFields(_trip: TripListItem): ApplicationFormField[] {
   return DEFAULT_TRIP_BOOKING_FORM_FIELDS.map((f) => JSON.parse(JSON.stringify(f)));
 }
 

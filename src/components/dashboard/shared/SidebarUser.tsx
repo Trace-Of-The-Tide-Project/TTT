@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { theme } from "@/lib/theme";
 import { LogOutIcon } from "@/components/ui/icons";
@@ -15,11 +16,12 @@ function getInitial(name?: string | null, email?: string | null): string {
 
 export function SidebarUser() {
   const router = useRouter();
+  const t = useTranslations("Dashboard.sidebarUser");
   const { isDark } = useTheme();
   const user = useStoredAuthUser();
   const name = user?.full_name || user?.username;
   const email = user?.email;
-  const displayName = name || email || "Super Admin";
+  const displayName = name || email || t("fallbackName");
 
   return (
     <div className="flex items-center gap-3 px-3 py-4">
@@ -46,7 +48,7 @@ export function SidebarUser() {
             ? "shrink-0 text-gray-500 transition-colors hover:text-foreground"
             : "shrink-0 text-gray-500 transition-colors hover:text-gray-900"
         }
-        aria-label="Sign out"
+        aria-label={t("signOut")}
       >
         <LogOutIcon />
       </button>

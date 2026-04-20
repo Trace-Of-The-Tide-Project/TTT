@@ -14,7 +14,7 @@ function getDefaultOpenGroups(config: DashboardConfig): Set<string> {
   const open = new Set<string>();
   for (const section of config.sections) {
     for (const entry of section.items) {
-      if (entry.kind === "group" && entry.defaultOpen) open.add(entry.label);
+      if (entry.kind === "group" && entry.defaultOpen) open.add(entry.groupId);
     }
   }
   return open;
@@ -25,11 +25,11 @@ export function DashboardSidebar({ config, onItemClick }: DashboardSidebarProps)
     () => getDefaultOpenGroups(config)
   );
 
-  const handleToggleGroup = (label: string) => {
+  const handleToggleGroup = (groupId: string) => {
     setOpenGroups((prev) => {
       const next = new Set(prev);
-      if (next.has(label)) next.delete(label);
-      else next.add(label);
+      if (next.has(groupId)) next.delete(groupId);
+      else next.add(groupId);
       return next;
     });
   };

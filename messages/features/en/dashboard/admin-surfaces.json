@@ -1,0 +1,248 @@
+{
+  "Dashboard": {
+    "profileSupporters": {
+      "title": "Supporters",
+      "subtitle": "View your supporters and their contributions.",
+      "filterAll": "All",
+      "filterOneTime": "One-Time",
+      "filterRecurring": "Recurring",
+      "typeOneTime": "One-time",
+      "typeRecurring": "Recurring",
+      "thankContributor": "Thank the contributor"
+    },
+    "analyticsPage": {
+      "tabs": {
+        "overview": "Overview",
+        "contentPerformance": "Content Performance",
+        "topCreators": "Top Creators",
+        "conversionFunnel": "Conversion Funnel"
+      },
+      "overview": {
+        "platformGrowth": "Platform Growth",
+        "platformGrowthHint": "User registrations over time",
+        "engagementTrends": "Engagement Trends",
+        "engagementTrendsHint": "Daily active users and interactions",
+        "chartPlaceholder": "Chart"
+      },
+      "contentPerformance": {
+        "title": "Top Categories",
+        "subtitle": "Most viewed content categories",
+        "views": "views"
+      },
+      "topCategories": {
+        "c1": "Documentary",
+        "c2": "Music",
+        "c3": "Photography",
+        "c4": "Essay",
+        "c5": "Experimental"
+      },
+      "topCreators": {
+        "title": "Top Creators",
+        "subtitle": "Highest performing creators on the platform",
+        "colCreator": "Creator",
+        "colFollowers": "Followers",
+        "colContent": "Content",
+        "colEarnings": "Earnings"
+      },
+      "funnel": {
+        "title": "Conversion Funnel",
+        "subtitle": "User journey from visitor to editor",
+        "conversion": "{pct}% conversion",
+        "visitors": "Visitors",
+        "registeredUsers": "Registered Users",
+        "contributors": "Contributors",
+        "authors": "Authors",
+        "editors": "Editors"
+      }
+    },
+    "rolesPermissions": {
+      "tabs": {
+        "overview": "Overview",
+        "permissions": "Permissions Matrix",
+        "editor-apps": "Editor Applications"
+      },
+      "matrix": {
+        "title": "Permission Matrix",
+        "subtitle": "Configure granular permissions for each role",
+        "colPermission": "Permission",
+        "permissionNames": {
+          "view_content": "View Content",
+          "create_content": "Create Content",
+          "edit_own_content": "Edit Own Content",
+          "edit_all_content": "Edit All Content",
+          "delete_content": "Delete Content",
+          "manage_users": "Manage Users",
+          "manage_donations": "Manage Donations",
+          "access_analytics": "Access Analytics",
+          "moderate_content": "Moderate Content",
+          "system_settings": "System Settings"
+        },
+        "columns": {
+          "user": "User",
+          "contributor": "Contributor",
+          "author": "Author",
+          "editor": "Editor",
+          "admin": "Admin"
+        }
+      },
+      "stats": {
+        "users": "Users",
+        "contributors": "Contributors",
+        "authors": "Authors",
+        "editors": "Editors",
+        "admins": "Admins"
+      },
+      "hierarchy": {
+        "title": "Role Hierarchy",
+        "subtitle": "Understanding the permission inheritance between roles. Click Super Admin to edit permissions.",
+        "configureSuperAdminAria": "Configure Super Admin permissions",
+        "labels": {
+          "user": "User",
+          "contributor": "Contributor",
+          "author": "Author",
+          "editor": "Editor",
+          "admin": "Super Admin"
+        }
+      },
+      "editorApps": {
+        "searchPlaceholder": "Search applications...",
+        "filterAll": "All",
+        "filterPending": "Pending",
+        "filterApproved": "Approved",
+        "filterRejected": "Rejected",
+        "review": "Review",
+        "approve": "Approve",
+        "reject": "Reject",
+        "appliedLine": "Applied {date} · {years} years in publishing · {articles} published articles",
+        "empty": "No applications match your filters.",
+        "status": {
+          "pending": "Pending",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "actions": {
+          "menuAria": "More actions",
+          "viewApplication": "View Application",
+          "revokeApproval": "Revoke Approval",
+          "reconsider": "Reconsider"
+        }
+      },
+      "configureModal": {
+        "title": "Configure {role}",
+        "subtitle": "Manage permissions and access levels for this role",
+        "closeModalAria": "Close modal",
+        "closeAria": "Close",
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "rows": {
+          "manage_users": {
+            "title": "Manage Users",
+            "description": "Create, edit, and delete users"
+          },
+          "manage_content": {
+            "title": "Manage Content",
+            "description": "Create, edit, and publish content"
+          },
+          "financial": {
+            "title": "Financial Operations",
+            "description": "View and manage payments & payouts"
+          },
+          "moderation": {
+            "title": "Content Moderation",
+            "description": "Review and moderate user content"
+          },
+          "analytics": {
+            "title": "View Analytics",
+            "description": "Access analytics and reports"
+          },
+          "settings": {
+            "title": "System Settings",
+            "description": "Modify platform settings"
+          },
+          "security": {
+            "title": "Security Controls",
+            "description": "Manage security and access"
+          },
+          "messaging": {
+            "title": "Messaging & Broadcasts",
+            "description": "Send messages and broadcasts"
+          }
+        }
+      },
+      "superAdminRoleName": "Super Admin"
+    },
+    "contentLibrary": {
+      "tabs": {
+        "all": "All Content",
+        "published": "Published",
+        "pending": "Pending",
+        "archived": "Archived",
+        "rejected": "Rejected"
+      },
+      "allTypes": "All Types",
+      "searchPlaceholder": "Search contributions...",
+      "filterAria": "Filter",
+      "tryAgain": "Try again",
+      "loading": "Loading contributions…",
+      "emptyFiltered": "No contributions match your filters.",
+      "emptyNone": "No contributions yet.",
+      "table": {
+        "title": "Title",
+        "type": "Type",
+        "contributor": "Contributor",
+        "status": "Status",
+        "files": "Files",
+        "collection": "Collection",
+        "submitted": "Submitted",
+        "fileCount": "{count, plural, one {# file} other {# files}}",
+        "viewItemAria": "View {title}"
+      },
+      "statusLabels": {
+        "published": "Published",
+        "pending": "Pending",
+        "archived": "Archived",
+        "rejected": "Rejected",
+        "draft": "Draft"
+      },
+      "pagination": {
+        "summary": "Page {page} of {totalPages} · {total, plural, one {# contribution} other {# contributions}}",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "errors": {
+        "requestFailed": "Request failed",
+        "generic": "Something went wrong"
+      },
+      "actions": {
+        "menuAria": "More actions",
+        "view": "View",
+        "archive": "Archive",
+        "delete": "Delete"
+      },
+      "detail": {
+        "closeModalAria": "Close modal",
+        "closeAria": "Close",
+        "description": "Description",
+        "labelContributor": "Contributor",
+        "labelEmail": "Email",
+        "labelPhone": "Phone",
+        "labelSubmitted": "Submitted",
+        "labelConsent": "Consent",
+        "labelOpenCall": "Open Call",
+        "consentYes": "Yes",
+        "consentNo": "No",
+        "filesHeading": "Files ({count})",
+        "collectionsHeading": "Collections ({count})",
+        "close": "Close"
+      }
+    },
+    "cmsEditor": {
+      "tabs": {
+        "home": "Home Page",
+        "static": "Static Pages",
+        "nav": "Navigations & Footer",
+        "branding": "Branding"
+      }
+    }
+  }
+}

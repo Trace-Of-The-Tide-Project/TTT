@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { isAxiosError } from "axios";
 import { AvailableBlocks, type BlockType } from "./AvailableBlocks";
 import { ContentBlocks, type ContentBlock } from "./ContentBlocks";
@@ -13,11 +14,11 @@ import { ContentEditorFooter } from "./ContentEditorFooter";
 import { ScheduleArticleModal } from "./modals/ScheduleArticleModal";
 import { buildOpenCallContentBlocksAndMainMedia } from "./lib/build-open-call-payload";
 import { buildArticleBlocksFromEditor } from "./lib/build-api-blocks";
+import { openCallConfig, openCallAllowedBlockTypes } from "./content-form-config";
 import {
-  mainMediaEditorCopy,
-  openCallConfig,
-  openCallAllowedBlockTypes,
-} from "./content-form-config";
+  localizeContentFormConfig,
+  localizeMainMediaEditorCopy,
+} from "@/lib/dashboard/localize-article-editor-config";
 import { ApplicationFormBuilder } from "./open-call/ApplicationFormBuilder";
 import { invalidateAdminArticlesListCache } from "@/lib/dashboard/admin-articles-list-cache";
 import { getAdminTags } from "@/services/admin-tags.service";
@@ -30,27 +31,13 @@ import {
   type ApplicationFormField,
   type CreateOpenCallPayload,
 } from "@/services/open-calls.service";
+import { resolveApplicationFieldLabel, resolveFieldParticipantLabel } from "@/lib/application-form-labels";
+import { formatApplicationFormValidationIssue } from "@/lib/application-form-validation-messages";
 
 const titleClass =
   "w-full border-0 bg-transparent px-0 py-2 text-lg text-foreground placeholder:text-foreground outline-none";
 
 const ADMIN_ARTICLES_PATH = "/admin/articles";
-
-function errMessage(e: unknown): string {
-  if (isAxiosError(e)) {
-    const d = e.response?.data;
-    if (typeof d === "string" && d.trim()) return d;
-    if (d && typeof d === "object") {
-      const o = d as Record<string, unknown>;
-      if (typeof o.message === "string") return o.message;
-      if (Array.isArray(o.message)) return o.message.map(String).join("; ");
-      if (typeof o.error === "string") return o.error;
-    }
-    return e.message || "Request failed";
-  }
-  if (e instanceof Error) return e.message;
-  return "Something went wrong";
-}
 
 function apiLanguage(lang: string): "en" | "ar" {
   return lang.trim().toLowerCase() === "ar" ? "ar" : "en";
@@ -58,6 +45,39 @@ function apiLanguage(lang: string): "en" | "ar" {
 
 export function OpenCallEditorLayout() {
   const router = useRouter();
+  const t = useTranslations("Dashboard.articles.editor");
+  const tLayout = useTranslations("Dashboard.articles.editor.layout");
+  const tAppForm = useTranslations("Dashboard.applicationForm");
+
+  const translateErr = useCallback(
+    (e: unknown): string => {
+      if (isAxiosError(e)) {
+        const d = e.response?.data;
+        if (typeof d === "string" && d.trim()) return d;
+        if (d && typeof d === "object") {
+          const o = d as Record<string, unknown>;
+          if (typeof o.message === "string") return o.message;
+          if (Array.isArray(o.message)) return o.message.map(String).join("; ");
+          if (typeof o.error === "string") return o.error;
+        }
+        return e.message || tLayout("errorRequestFailed");
+      }
+      if (e instanceof Error) return e.message;
+      return tLayout("errorGeneric");
+    },
+    [tLayout],
+  );
+
+  const localizedConfig = useMemo(
+    () => localizeContentFormConfig(openCallConfig, (key) => t(key)),
+    [t],
+  );
+
+  const localizedMainMedia = useMemo(
+    () => localizeMainMediaEditorCopy(openCallConfig.contentType, (key) => t(key)),
+    [t],
+  );
+
   const config = openCallConfig;
 
   const [title, setTitle] = useState("");
@@ -221,10 +241,16 @@ export function OpenCallEditorLayout() {
   );
 
   const validateBeforeSubmit = useCallback(() => {
-    if (!title.trim()) return "Title is required.";
-    if (!category.trim()) return "Category is required.";
-    return validateOpenCallApplicationFields(applicationFields);
-  }, [title, category, applicationFields]);
+    if (!title.trim()) return tAppForm("editorOpenCall.titleRequired");
+    if (!category.trim()) return tAppForm("editorOpenCall.categoryRequired");
+    const issue = validateOpenCallApplicationFields(applicationFields);
+    if (issue)
+      return formatApplicationFormValidationIssue(issue, tAppForm, (n) => {
+        const f = applicationFields.find((x) => x.name === n);
+        return f ? resolveFieldParticipantLabel(f, tAppForm) : resolveApplicationFieldLabel(n, tAppForm);
+      });
+    return null;
+  }, [title, category, applicationFields, tAppForm]);
 
   const handleSaveDraft = useCallback(async () => {
     const v = validateBeforeSubmit();
@@ -241,7 +267,7 @@ export function OpenCallEditorLayout() {
         settingsStatus: "draft",
       });
       if (openCall.content_blocks.length === 0) {
-        setError("Add at least one content block with content.");
+        setError(tLayout("validationOpenCallBlocksDraft"));
         return;
       }
       const ocRes = await createOpenCall(openCall);
@@ -250,11 +276,11 @@ export function OpenCallEditorLayout() {
       invalidateAdminArticlesListCache();
       router.push(ADMIN_ARTICLES_PATH);
     } catch (e) {
-      setError(errMessage(e));
+      setError(translateErr(e));
     } finally {
       setBusy(false);
     }
-  }, [validateBeforeSubmit, buildPayloads, createArticleFromBlocks, router]);
+  }, [validateBeforeSubmit, buildPayloads, createArticleFromBlocks, router, translateErr, tLayout]);
 
   const handlePublish = useCallback(async () => {
     if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
@@ -272,7 +298,7 @@ export function OpenCallEditorLayout() {
         settingsStatus: "published",
       });
       if (openCall.content_blocks.length === 0) {
-        setError("Publishing requires at least one content block with content.");
+        setError(tLayout("validationOpenCallBlocksPublish"));
         return;
       }
       const ocRes = await createOpenCall(openCall);
@@ -281,11 +307,19 @@ export function OpenCallEditorLayout() {
       invalidateAdminArticlesListCache();
       router.push(ADMIN_ARTICLES_PATH);
     } catch (e) {
-      setError(errMessage(e));
+      setError(translateErr(e));
     } finally {
       setBusy(false);
     }
-  }, [workflowStatus, validateBeforeSubmit, buildPayloads, createArticleFromBlocks, router]);
+  }, [
+    workflowStatus,
+    validateBeforeSubmit,
+    buildPayloads,
+    createArticleFromBlocks,
+    router,
+    translateErr,
+    tLayout,
+  ]);
 
   const handleScheduleConfirm = useCallback(
     async (iso: string) => {
@@ -305,7 +339,7 @@ export function OpenCallEditorLayout() {
           settingsStatus: "scheduled",
         });
         if (openCall.content_blocks.length === 0) {
-          setError("Scheduling requires at least one content block with content.");
+          setError(tLayout("validationOpenCallBlocksSchedule"));
           setScheduleModalOpen(false);
           return;
         }
@@ -321,13 +355,21 @@ export function OpenCallEditorLayout() {
         setScheduleModalOpen(false);
         router.push(ADMIN_ARTICLES_PATH);
       } catch (e) {
-        setError(errMessage(e));
+        setError(translateErr(e));
         setScheduleModalOpen(false);
       } finally {
         setBusy(false);
       }
     },
-    [workflowStatus, validateBeforeSubmit, buildPayloads, createArticleFromBlocks, router],
+    [
+      workflowStatus,
+      validateBeforeSubmit,
+      buildPayloads,
+      createArticleFromBlocks,
+      router,
+      translateErr,
+      tLayout,
+    ],
   );
 
   useEffect(() => {
@@ -349,7 +391,7 @@ export function OpenCallEditorLayout() {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder={config.titlePlaceholder}
+            placeholder={localizedConfig.titlePlaceholder}
             className={titleClass}
           />
           <ContentBlocks
@@ -359,7 +401,8 @@ export function OpenCallEditorLayout() {
             onUpdateBlock={updateBlock}
             onAddCoverBlock={addCoverBlock}
             onReorderBlock={reorderBlocks}
-            config={config}
+            config={localizedConfig}
+            mainMediaCopy={localizedMainMedia}
           />
 
           <ApplicationFormBuilder fields={applicationFields} onChange={setApplicationFields} />
@@ -369,10 +412,10 @@ export function OpenCallEditorLayout() {
           <AvailableBlocks
             onAddBlock={addBlock}
             allowedBlockTypes={openCallAllowedBlockTypes}
-            imageBlockLabel={mainMediaEditorCopy(config.contentType).blockName}
+            imageBlockLabel={localizedMainMedia.blockName}
           />
           <ContentSettings
-            title={config.settingsTitle}
+            title={localizedConfig.settingsTitle}
             workflowStatus={workflowStatus}
             onWorkflowStatusChange={setWorkflowStatus}
             scheduledAt={scheduledAt}
@@ -395,7 +438,7 @@ export function OpenCallEditorLayout() {
       </div>
 
       <ContentEditorFooter
-        primaryButtonLabel={config.primaryButtonLabel}
+        primaryButtonLabel={localizedConfig.primaryButtonLabel}
         workflowStatus={workflowStatus}
         busy={busy}
         error={error}

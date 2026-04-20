@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { theme } from "@/lib/theme";
 
 type ContributeResultButtonProps = {
@@ -19,12 +19,20 @@ export function ContributeResultButton({
   return (
     <Link
       href={href}
-      className={`select-none inline-block rounded-lg px-5 py-2 text-center text-sm font-medium text-white transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#C9A96E] focus:ring-offset-2 focus:ring-offset-black ${
-        isOutline ? "border border-gray-500" : ""
+      className={`inline-block select-none rounded-lg px-5 py-2 text-center text-sm font-medium transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#C9A96E] focus:ring-offset-2 focus:ring-offset-[var(--background)] ${
+        isOutline
+          ? "border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-foreground hover:bg-[var(--tott-well-bg)]"
+          : ""
       }`}
-      style={{
-        backgroundColor: theme.cardBorder,
-      }}
+      style={
+        isOutline
+          ? undefined
+          : {
+              backgroundColor: theme.accentGold,
+              color: theme.bgDark,
+              boxShadow: `0 0 0 1px ${theme.accentGold}`,
+            }
+      }
     >
       {children}
     </Link>

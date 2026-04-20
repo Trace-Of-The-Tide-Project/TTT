@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { CMS_TABS, type CmsTabId } from "./cms-tabs-config";
 import { HomePageTab, StaticPagesTab, NavigationsFooterTab, BrandingTab } from "./tabs";
 
@@ -19,11 +20,11 @@ function TabContent({ activeTab }: { activeTab: CmsTabId }) {
 }
 
 export function VisualEditorContent() {
+  const t = useTranslations("Dashboard.cmsEditor");
   const [activeTab, setActiveTab] = useState<CmsTabId>("home");
 
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
-      {/* Tabs */}
       <div className="flex w-fit gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
         {CMS_TABS.map((tab) => {
           const Icon = tab.icon ?? null;
@@ -43,13 +44,12 @@ export function VisualEditorContent() {
                   <Icon />
                 </span>
               )}
-              {tab.label}
+              {t(`tabs.${tab.id}`)}
             </button>
           );
         })}
       </div>
 
-      {/* Tab content */}
       <TabContent activeTab={activeTab} />
     </div>
   );

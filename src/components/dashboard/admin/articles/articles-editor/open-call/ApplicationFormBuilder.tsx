@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import type { ApplicationFormField } from "@/services/open-calls.service";
+import { resolveApplicationFieldLabel } from "@/lib/application-form-labels";
 import { DEFAULT_OPEN_CALL_APPLICATION_FIELDS } from "@/services/open-calls.service";
 import { GripIcon } from "../ArticleEditorIcons";
 import { ApplicationFormPreview } from "./ApplicationFormPreview";
@@ -48,6 +50,7 @@ function newFieldForType(type: ApplicationFormField["type"]): ApplicationFormFie
 }
 
 export function ApplicationFormBuilder({ fields, onChange, defaultTemplateFields }: Props) {
+  const tb = useTranslations("Dashboard.applicationForm.builder");
   const [showPreview, setShowPreview] = useState(false);
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
@@ -123,21 +126,21 @@ export function ApplicationFormBuilder({ fields, onChange, defaultTemplateFields
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h3 className="text-lg font-bold text-foreground">Edit form fields</h3>
+        <h3 className="text-lg font-bold text-foreground">{tb("title")}</h3>
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setShowPreview(true)}
             className="rounded-lg border border-[#C9A96E] px-4 py-1.5 text-xs font-medium text-[#C9A96E] transition-colors hover:bg-[#C9A96E]/10"
           >
-            Preview form
+            {tb("previewForm")}
           </button>
           <button
             type="button"
             onClick={resetDefaults}
             className="text-xs font-medium text-[#C9A96E] underline hover:text-[#DBC99E]"
           >
-            Reset to default template
+            {tb("resetTemplate")}
           </button>
         </div>
       </div>
@@ -160,17 +163,17 @@ export function ApplicationFormBuilder({ fields, onChange, defaultTemplateFields
         ))}
 
         <div className="flex flex-wrap items-center gap-2 pt-2">
-          <span className="text-xs text-gray-500">Add field:</span>
+          <span className="text-xs text-gray-500">{tb("addField")}</span>
           {(
             ["text", "email", "phone", "textarea", "select", "checkbox", "file_multiple"] as const
-          ).map((t) => (
+          ).map((fieldType) => (
             <button
-              key={t}
+              key={fieldType}
               type="button"
-              onClick={() => addField(t)}
+              onClick={() => addField(fieldType)}
               className="rounded border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-2 py-1 text-xs text-gray-300 hover:border-gray-500"
             >
-              + {t}
+              + {tb(`fieldTypeLabels.${fieldType}`)}
             </button>
           ))}
         </div>
@@ -190,6 +193,7 @@ function PreviewModal({
   fields: ApplicationFormField[];
   onClose: () => void;
 }) {
+  const tb = useTranslations("Dashboard.applicationForm.builder");
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
@@ -199,10 +203,11 @@ function PreviewModal({
     >
       <div className="relative mx-4 max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-2xl">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-foreground">Form Preview</h3>
+          <h3 className="text-lg font-bold text-foreground">{tb("previewModalTitle")}</h3>
           <button
             type="button"
             onClick={onClose}
+            aria-label={tb("closePreviewAria")}
             className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
           >
             <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -240,6 +245,30 @@ function FieldRow({
   onRemove: (i: number) => void;
   onReplace: (i: number, f: ApplicationFormField) => void;
 }) {
+  const tb = useTranslations("Dashboard.applicationForm.builder");
+  const tApp = useTranslations("Dashboard.applicationForm");
+  const resolvedParticipant = useMemo(
+    () => resolveApplicationFieldLabel(field.name, tApp),
+    [field.name, tApp],
+  );
+  const [participantLabelFocused, setParticipantLabelFocused] = useState(false);
+  const [participantLabelDraft, setParticipantLabelDraft] = useState("");
+  const participantLabelInputValue = participantLabelFocused
+    ? participantLabelDraft
+    : (field.label ?? resolvedParticipant);
+
+  const commitParticipantLabel = useCallback(() => {
+    const trimmed = participantLabelDraft.trim();
+    const res = resolvedParticipant.trim();
+    if (!trimmed || trimmed === res) {
+      const next = { ...field } as ApplicationFormField & { label?: string };
+      delete next.label;
+      onReplace(index, next as ApplicationFormField);
+    } else {
+      onReplace(index, { ...field, label: trimmed } as ApplicationFormField);
+    }
+  }, [field, index, participantLabelDraft, onReplace, resolvedParticipant]);
+
   const [localOptions, setLocalOptions] = useState(
     field.type === "select" ? field.options.join("\n") : "",
   );
@@ -247,9 +276,6 @@ function FieldRow({
     field.type === "file_multiple" ? field.allowed_types.join(", ") : "",
   );
 
-  const setName = (name: string) => {
-    onReplace(index, { ...field, name } as ApplicationFormField);
-  };
   const setRequired = (required: boolean) => {
     onReplace(index, { ...field, required } as ApplicationFormField);
   };
@@ -267,8 +293,8 @@ function FieldRow({
           role="button"
           tabIndex={0}
           draggable
-          aria-label="Drag to reorder"
-          title="Drag to reorder"
+          aria-label={tb("dragReorderAria")}
+          title={tb("dragReorderTitle")}
           onDragStart={(e) => onDragStart(e, index)}
           onDragEnd={onDragEnd}
           className={`flex h-8 w-8 cursor-grab items-center justify-center rounded border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] text-foreground transition-colors select-none hover:bg-[var(--tott-dash-control-hover)] active:cursor-grabbing ${
@@ -285,32 +311,51 @@ function FieldRow({
             onClick={() => onRemove(index)}
             className="ml-auto rounded bg-red-900/40 px-2 py-1 text-xs text-red-200 hover:bg-red-900/60"
           >
-            Remove
+            {tb("remove")}
           </button>
         </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs text-gray-500">Field name (API key)</label>
-          <input className={inputClass} value={field.name} onChange={(e) => setName(e.target.value)} />
+          <label className="mb-1 block text-xs text-gray-500">{tb("participantLabelField")}</label>
+          <input
+            className={inputClass}
+            dir="auto"
+            autoComplete="off"
+            value={participantLabelInputValue}
+            onFocus={() => {
+              setParticipantLabelFocused(true);
+              setParticipantLabelDraft(field.label ?? resolvedParticipant);
+            }}
+            onChange={(e) => setParticipantLabelDraft(e.target.value)}
+            onBlur={() => {
+              commitParticipantLabel();
+              setParticipantLabelFocused(false);
+            }}
+          />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-gray-500">Type</label>
+          <label className="mb-1 block text-xs text-gray-500">{tb("typeLabel")}</label>
           <select
             className={inputClass}
             value={field.type}
             onChange={(e) => {
-              const t = e.target.value as ApplicationFormField["type"];
-              const nf = newFieldForType(t);
-              onReplace(index, { ...nf, name: field.name, required: field.required });
+              const nextType = e.target.value as ApplicationFormField["type"];
+              const nf = newFieldForType(nextType);
+              onReplace(index, {
+                ...nf,
+                name: field.name,
+                required: field.required,
+                ...(field.label ? { label: field.label } : {}),
+              } as ApplicationFormField);
             }}
           >
-            <option value="text">text</option>
-            <option value="email">email</option>
-            <option value="phone">phone</option>
-            <option value="textarea">textarea</option>
-            <option value="select">select</option>
-            <option value="checkbox">checkbox</option>
-            <option value="file_multiple">file_multiple</option>
+            {(["text", "email", "phone", "textarea", "select", "checkbox", "file_multiple"] as const).map(
+              (ty) => (
+                <option key={ty} value={ty}>
+                  {tb(`fieldTypeLabels.${ty}`)}
+                </option>
+              ),
+            )}
           </select>
         </div>
       </div>
@@ -321,12 +366,12 @@ function FieldRow({
           onChange={(e) => setRequired(e.target.checked)}
           className="rounded border-gray-600"
         />
-        Required
+        {tb("required")}
       </label>
 
       {field.type === "select" ? (
         <div className="mt-3">
-          <label className="mb-1 block text-xs text-gray-500">Options (one per line)</label>
+          <label className="mb-1 block text-xs text-gray-500">{tb("optionsLabel")}</label>
           <textarea
             className={`${inputClass} min-h-[80px] font-mono text-xs`}
             value={localOptions}
@@ -347,7 +392,7 @@ function FieldRow({
       {field.type === "file_multiple" ? (
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <div>
-            <label className="mb-1 block text-xs text-gray-500">Max files</label>
+            <label className="mb-1 block text-xs text-gray-500">{tb("maxFiles")}</label>
             <input
               type="number"
               min={1}
@@ -363,7 +408,7 @@ function FieldRow({
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-gray-500">Max size (MB)</label>
+            <label className="mb-1 block text-xs text-gray-500">{tb("maxSizeMb")}</label>
             <input
               type="number"
               min={1}
@@ -379,7 +424,7 @@ function FieldRow({
             />
           </div>
           <div className="sm:col-span-3">
-            <label className="mb-1 block text-xs text-gray-500">Allowed types (comma-separated)</label>
+            <label className="mb-1 block text-xs text-gray-500">{tb("allowedTypes")}</label>
             <input
               className={inputClass}
               value={localAllowedTypes}

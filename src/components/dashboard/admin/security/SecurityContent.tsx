@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   ShieldIcon,
   ActivityIcon,
@@ -23,25 +24,27 @@ import {
 const ACCENT = "#E8DDC0";
 
 const SECURITY_TABS = [
-  { id: "roles", label: "Admin Roles", icon: ShieldIcon },
-  { id: "sessions", label: "Active sessions", icon: ActivityIcon },
-  { id: "settings", label: "Security Settings", icon: SettingsIcon },
-  { id: "logs", label: "Security Logs", icon: UsersIcon },
-] as const;
+  { id: "roles" as const, icon: ShieldIcon },
+  { id: "sessions" as const, icon: ActivityIcon },
+  { id: "settings" as const, icon: SettingsIcon },
+  { id: "logs" as const, icon: UsersIcon },
+];
 
 type SecurityTabId = (typeof SECURITY_TABS)[number]["id"];
 
-const SESSION_TIMEOUTS = ["15 minutes", "30 minuts", "60 minutes"] as const;
+const SESSION_TIMEOUT_KEYS = ["m15", "m30", "m60"] as const;
+type SessionTimeoutKey = (typeof SESSION_TIMEOUT_KEYS)[number];
 
 export function SecurityContent() {
+  const t = useTranslations("Dashboard.securityPage");
   const [activeTab, setActiveTab] = useState<SecurityTabId>("roles");
   const [configureOpen, setConfigureOpen] = useState(false);
-  const [configureRoleTitle, setConfigureRoleTitle] = useState("Super Admin");
+  const [configureRoleTitle, setConfigureRoleTitle] = useState<string | null>(null);
 
   const [sessions, setSessions] = useState<AdminSessionTableRow[]>(() => [...adminSessionTableRows]);
 
   const [require2fa, setRequire2fa] = useState(true);
-  const [sessionTimeout, setSessionTimeout] = useState<string>("30 minuts");
+  const [sessionTimeout, setSessionTimeout] = useState<SessionTimeoutKey>("m30");
   const [lockoutAttempts, setLockoutAttempts] = useState(5);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [ipWhitelist, setIpWhitelist] = useState(false);
@@ -61,16 +64,22 @@ export function SecurityContent() {
 
   const tabIconClass = "text-[#E8DDC0] [&_svg]:h-4 [&_svg]:w-4";
 
-  const statusLabel = (s: AdminSessionTableRow["status"]) => {
-    if (s === "current") return "Current";
-    if (s === "active") return "Active";
-    return "Idle";
-  };
+  const statusLabel = (s: AdminSessionTableRow["status"]) => t(`sessions.status.${s}`);
 
   const statusClass = (s: AdminSessionTableRow["status"]) => {
     if (s === "idle") return "text-gray-500";
     return "text-emerald-400";
   };
+
+  const sessionColumns = [
+    t("sessions.columns.user"),
+    t("sessions.columns.ip"),
+    t("sessions.columns.location"),
+    t("sessions.columns.device"),
+    t("sessions.columns.lastActive"),
+    t("sessions.columns.status"),
+    "",
+  ] as const;
 
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
@@ -92,7 +101,7 @@ export function SecurityContent() {
                 <span className={tabIconClass}>
                   <Icon />
                 </span>
-                {tab.label}
+                {t(`tabs.${tab.id}`)}
               </button>
             );
           })}
@@ -100,10 +109,8 @@ export function SecurityContent() {
 
         {activeTab === "roles" && (
           <div className="mt-6">
-            <h2 className="text-lg font-bold text-foreground">Admin Roles</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Configure admin role permissions and access levels.
-            </p>
+            <h2 className="text-lg font-bold text-foreground">{t("tabs.roles")}</h2>
+            <p className="mt-1 text-sm text-gray-500">{t("roles.intro")}</p>
             <div className="mt-6 space-y-3">
               {securityAdminRoles.map((role) => (
                 <div
@@ -120,22 +127,22 @@ export function SecurityContent() {
                       </span>
                     </div>
                     <div className="min-w-0">
-                      <p className="font-semibold text-foreground">{role.title}</p>
+                      <p className="font-semibold text-foreground">{t(`roles.${role.id}.title`)}</p>
                       <span className="mt-1 inline-block rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-2.5 py-0.5 text-xs text-gray-400">
-                        {role.userBadge}
+                        {t(`roles.${role.id}.userBadge`)}
                       </span>
-                      <p className="mt-2 text-sm text-gray-500">{role.description}</p>
+                      <p className="mt-2 text-sm text-gray-500">{t(`roles.${role.id}.description`)}</p>
                     </div>
                   </div>
                   <button
                     type="button"
-                    onClick={() => openConfigure(role.configureTitle)}
+                    onClick={() => openConfigure(t(`roles.${role.id}.title`))}
                     className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-surface-inset)] sm:self-center"
                   >
                     <span className="text-foreground [&_svg]:h-4 [&_svg]:w-4">
                       <SettingsIcon />
                     </span>
-                    Configure
+                    {t("roles.configure")}
                   </button>
                 </div>
               ))}
@@ -147,10 +154,8 @@ export function SecurityContent() {
           <div className="mt-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <h2 className="text-lg font-bold text-foreground">Active Sessions</h2>
-                <p className="mt-1 text-sm text-gray-500">
-                  Monitor and manage active admin sessions.
-                </p>
+                <h2 className="text-lg font-bold text-foreground">{t("tabs.sessions")}</h2>
+                <p className="mt-1 text-sm text-gray-500">{t("sessions.intro")}</p>
               </div>
               <button
                 type="button"
@@ -161,21 +166,19 @@ export function SecurityContent() {
                 <span className="[&_svg]:h-4 [&_svg]:w-4">
                   <XIcon />
                 </span>
-                End all other sessions
+                {t("sessions.endAllOther")}
               </button>
             </div>
 
             <div className="mt-6 overflow-x-auto rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)]">
-              <table className="w-full min-w-[720px] border-collapse text-left text-sm">
+              <table className="w-full min-w-[720px] border-collapse text-start text-sm">
                 <thead>
                   <tr className="border-b border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)]">
-                    {(
-                      ["User", "IP Address", "Location", "Device", "Last Active", "Status", ""] as const
-                    ).map((h) => (
+                    {sessionColumns.map((h) => (
                       <th
                         key={h || "actions"}
                         className={`px-4 py-3 text-xs font-semibold uppercase tracking-wide text-[#E8DDC0] ${
-                          h === "" ? "w-24 text-right" : ""
+                          h === "" ? "w-24 text-end" : ""
                         }`}
                       >
                         {h}
@@ -186,15 +189,17 @@ export function SecurityContent() {
                 <tbody className="divide-y divide-[var(--tott-card-border)]">
                   {sessions.map((row) => (
                     <tr key={row.id} className="bg-[var(--tott-dash-surface)]">
-                      <td className="px-4 py-3 font-semibold text-foreground">{row.user}</td>
+                      <td className="px-4 py-3 font-semibold text-foreground">
+                        {t(`sessions.sampleRows.${row.id}.user`)}
+                      </td>
                       <td className="px-4 py-3 text-gray-400">{row.ip}</td>
-                      <td className="px-4 py-3 text-gray-400">{row.location}</td>
-                      <td className="px-4 py-3 text-gray-400">{row.device}</td>
-                      <td className="px-4 py-3 text-gray-400">{row.lastActive}</td>
+                      <td className="px-4 py-3 text-gray-400">{t(`sessions.sampleRows.${row.id}.location`)}</td>
+                      <td className="px-4 py-3 text-gray-400">{t(`sessions.sampleRows.${row.id}.device`)}</td>
+                      <td className="px-4 py-3 text-gray-400">{t(`sessions.sampleRows.${row.id}.lastActive`)}</td>
                       <td className={`px-4 py-3 font-medium ${statusClass(row.status)}`}>
                         {statusLabel(row.status)}
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-3 text-end">
                         {row.status === "current" ? (
                           <span className="text-xs text-gray-600">—</span>
                         ) : (
@@ -203,7 +208,7 @@ export function SecurityContent() {
                             onClick={() => endSession(row.id)}
                             className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-3 py-1.5 text-xs font-medium text-red-400 transition-colors hover:bg-[var(--tott-dash-surface-inset)]"
                           >
-                            End
+                            {t("sessions.end")}
                           </button>
                         )}
                       </td>
@@ -217,23 +222,19 @@ export function SecurityContent() {
 
         {activeTab === "settings" && (
           <div className="mt-6">
-            <h2 className="text-lg font-bold text-foreground">Security Settings</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Authentication and platform-wide security controls.
-            </p>
+            <h2 className="text-lg font-bold text-foreground">{t("tabs.settings")}</h2>
+            <p className="mt-1 text-sm text-gray-500">{t("controlPanel.settingsTabSubtitle")}</p>
 
             <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
               <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 sm:p-6">
-                <h3 className="text-base font-bold text-foreground">Authentication</h3>
-                <p className="mt-1 text-sm text-gray-500">Configure login and access settings</p>
+                <h3 className="text-base font-bold text-foreground">{t("controlPanel.authenticationCardTitle")}</h3>
+                <p className="mt-1 text-sm text-gray-500">{t("controlPanel.authenticationCardSubtitle")}</p>
 
                 <div className="mt-6 space-y-5 border-t border-[var(--tott-card-border)] pt-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="font-medium text-foreground">Require 2FA for Admins</p>
-                      <p className="mt-0.5 text-sm text-gray-500">
-                        All admin accounts must use two-factor authentication
-                      </p>
+                      <p className="font-medium text-foreground">{t("controlPanel.require2faTitle")}</p>
+                      <p className="mt-0.5 text-sm text-gray-500">{t("controlPanel.require2faDescription")}</p>
                     </div>
                     <PermissionToggle
                       checked={require2fa}
@@ -244,17 +245,17 @@ export function SecurityContent() {
 
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="font-medium text-foreground">Session Timeout</p>
-                      <p className="mt-0.5 text-sm text-gray-500">Auto-logout after inactivity</p>
+                      <p className="font-medium text-foreground">{t("controlPanel.sessionTimeoutShortLabel")}</p>
+                      <p className="mt-0.5 text-sm text-gray-500">{t("controlPanel.sessionTimeoutShortDescription")}</p>
                     </div>
                     <select
                       value={sessionTimeout}
-                      onChange={(e) => setSessionTimeout(e.target.value)}
+                      onChange={(e) => setSessionTimeout(e.target.value as SessionTimeoutKey)}
                       className="w-full max-w-[200px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2 text-sm text-foreground focus:border-[#555] focus:outline-none sm:w-auto"
                     >
-                      {SESSION_TIMEOUTS.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
+                      {SESSION_TIMEOUT_KEYS.map((key) => (
+                        <option key={key} value={key}>
+                          {t(`settings.timeoutOptions.${key}`)}
                         </option>
                       ))}
                     </select>
@@ -262,8 +263,8 @@ export function SecurityContent() {
 
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="font-medium text-foreground">Failed Login Lockout</p>
-                      <p className="mt-0.5 text-sm text-gray-500">Lock account after failed attempts</p>
+                      <p className="font-medium text-foreground">{t("controlPanel.lockoutTitle")}</p>
+                      <p className="mt-0.5 text-sm text-gray-500">{t("controlPanel.lockoutDescription")}</p>
                     </div>
                     <input
                       type="number"
@@ -278,14 +279,14 @@ export function SecurityContent() {
               </div>
 
               <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 sm:p-6">
-                <h3 className="text-base font-bold text-foreground">System Controls</h3>
-                <p className="mt-1 text-sm text-gray-500">Platform-wide security controls</p>
+                <h3 className="text-base font-bold text-foreground">{t("controlPanel.systemControlsTitle")}</h3>
+                <p className="mt-1 text-sm text-gray-500">{t("controlPanel.systemControlsSubtitle")}</p>
 
                 <div className="mt-6 space-y-5 border-t border-[var(--tott-card-border)] pt-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="font-medium text-foreground">Maintenance Mode</p>
-                      <p className="mt-0.5 text-sm text-gray-500">Restrict access to admins only</p>
+                      <p className="font-medium text-foreground">{t("controlPanel.maintenanceTitle")}</p>
+                      <p className="mt-0.5 text-sm text-gray-500">{t("controlPanel.maintenanceDescription")}</p>
                     </div>
                     <PermissionToggle
                       checked={maintenanceMode}
@@ -296,8 +297,8 @@ export function SecurityContent() {
 
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="font-medium text-foreground">IP Whitelist</p>
-                      <p className="mt-0.5 text-sm text-gray-500">Restrict admin access by IP</p>
+                      <p className="font-medium text-foreground">{t("controlPanel.ipWhitelistTitle")}</p>
+                      <p className="mt-0.5 text-sm text-gray-500">{t("controlPanel.ipWhitelistDescription")}</p>
                     </div>
                     <PermissionToggle
                       checked={ipWhitelist}
@@ -313,7 +314,7 @@ export function SecurityContent() {
                     <span className="text-[#E8DDC0] [&_svg]:h-4 [&_svg]:w-4">
                       <DownloadIcon />
                     </span>
-                    Backup &amp; Export Data
+                    {t("settings.backup")}
                   </button>
                 </div>
               </div>
@@ -323,8 +324,8 @@ export function SecurityContent() {
 
         {activeTab === "logs" && (
           <div className="mt-6">
-            <h2 className="text-lg font-bold text-foreground">Security Logs</h2>
-            <p className="mt-1 text-sm text-gray-500">Recent security events and activities</p>
+            <h2 className="text-lg font-bold text-foreground">{t("tabs.logs")}</h2>
+            <p className="mt-1 text-sm text-gray-500">{t("logs.intro")}</p>
             <div className="mt-6 space-y-3">
               {securityLogEntries.map((entry) => {
                 const isWarning = entry.variant === "warning";
@@ -344,10 +345,10 @@ export function SecurityContent() {
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-foreground">{entry.title}</p>
-                      <p className="mt-0.5 text-sm text-gray-500">{entry.meta}</p>
+                      <p className="font-semibold text-foreground">{t(`logs.entries.${entry.id}.title`)}</p>
+                      <p className="mt-0.5 text-sm text-gray-500">{t(`logs.entries.${entry.id}.meta`)}</p>
                     </div>
-                    <p className="shrink-0 text-sm text-gray-500">{entry.timeAgo}</p>
+                    <p className="shrink-0 text-sm text-gray-500">{t(`logs.entries.${entry.id}.timeAgo`)}</p>
                   </div>
                 );
               })}
@@ -359,7 +360,7 @@ export function SecurityContent() {
       <ConfigureRoleModal
         open={configureOpen}
         onClose={() => setConfigureOpen(false)}
-        roleDisplayName={configureRoleTitle}
+        roleDisplayName={configureRoleTitle ?? undefined}
       />
     </div>
   );

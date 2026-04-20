@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { AUTH_STATE_CHANGED_EVENT, getStoredToken } from "@/services/auth.service";
 
 /**
@@ -31,10 +31,10 @@ export function WithNavAuthGate({ children }: { children: React.ReactNode }) {
   }, [syncToken]);
 
   const redirectToLogin = useCallback(() => {
-    const path =
-      typeof window !== "undefined"
-        ? `${window.location.pathname}${window.location.search}`
-        : pathname || "/";
+    // `pathname` from next-intl is locale-stripped (e.g. `/admin`). Do not use
+    // `window.location.pathname` here — it includes `/en/...` and would double-prefix on login.
+    const search = typeof window !== "undefined" ? window.location.search : "";
+    const path = `${pathname ?? "/"}${search}`;
     const cb = encodeURIComponent(path || "/");
     router.replace(`/auth/login?callbackUrl=${cb}`);
   }, [pathname, router]);

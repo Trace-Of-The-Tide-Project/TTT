@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import { SettingsRow, settingsCardClass, SettingsToggle } from "./SettingsPrimitives";
 
 export function AdminNotificationPreferences() {
+  const t = useTranslations("Dashboard.notificationsPage.preferences");
   const [articleUpdates, setArticleUpdates] = useState(true);
   const [newFollowers, setNewFollowers] = useState(true);
   const [newContributor, setNewContributor] = useState(true);
@@ -21,55 +23,67 @@ export function AdminNotificationPreferences() {
   return (
     <div className="mx-auto max-w-3xl">
       <div className={settingsCardClass} style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.04) inset" }}>
-        <h1 className="text-lg font-bold text-foreground">Notifications Settings</h1>
+        <h1 className="text-lg font-bold text-foreground">{t("pageTitle")}</h1>
 
         <div className="mt-8">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">Email Notifications</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">{t("emailSection")}</h2>
           <div className="mt-2">
             <SettingsRow
-              title="Article Updates"
-              description="Get notified when articles you follow are updated"
+              title={t("articleUpdates")}
+              description={t("articleUpdatesDescription")}
               control={
-                <SettingsToggle checked={articleUpdates} onChange={setArticleUpdates} aria-label="Article updates" />
+                <SettingsToggle
+                  checked={articleUpdates}
+                  onChange={setArticleUpdates}
+                  aria-label={t("articleUpdatesAria")}
+                />
               }
             />
             <SettingsRow
-              title="New Followers"
-              description="Get notified when someone follows you"
-              control={<SettingsToggle checked={newFollowers} onChange={setNewFollowers} aria-label="New followers" />}
-            />
-            <SettingsRow
-              title="New Contributor"
-              description="Real-time notification for new supporters"
+              title={t("newFollowers")}
+              description={t("newFollowersDescription")}
               control={
-                <SettingsToggle checked={newContributor} onChange={setNewContributor} aria-label="New contributor" />
+                <SettingsToggle checked={newFollowers} onChange={setNewFollowers} aria-label={t("newFollowersAria")} />
               }
             />
             <SettingsRow
-              title="Comments"
-              description="Get notified when someone comments on your articles"
-              control={<SettingsToggle checked={comments} onChange={setComments} aria-label="Comments" />}
+              title={t("newContributor")}
+              description={t("newContributorDescription")}
+              control={
+                <SettingsToggle
+                  checked={newContributor}
+                  onChange={setNewContributor}
+                  aria-label={t("newContributorAria")}
+                />
+              }
             />
             <SettingsRow
-              title="Weekly Digest"
-              description="Get a weekly summary of popular articles"
-              control={<SettingsToggle checked={weeklyDigest} onChange={setWeeklyDigest} aria-label="Weekly digest" />}
+              title={t("comments")}
+              description={t("commentsDescription")}
+              control={<SettingsToggle checked={comments} onChange={setComments} aria-label={t("commentsAria")} />}
+            />
+            <SettingsRow
+              title={t("weeklyDigest")}
+              description={t("weeklyDigestDescription")}
+              control={
+                <SettingsToggle checked={weeklyDigest} onChange={setWeeklyDigest} aria-label={t("weeklyDigestAria")} />
+              }
               showDivider={false}
             />
           </div>
         </div>
 
         <div className="mt-10">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">Push Notifications</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">{t("pushSection")}</h2>
           <div className="mt-2">
             <SettingsRow
-              title="Browser Notifications"
-              description="Receive notifications in your browser"
+              title={t("browserNotifications")}
+              description={t("browserNotificationsDescription")}
               control={
                 <SettingsToggle
                   checked={browserNotifications}
                   onChange={setBrowserNotifications}
-                  aria-label="Browser notifications"
+                  aria-label={t("browserNotificationsAria")}
                 />
               }
               showDivider={false}
@@ -84,7 +98,7 @@ export function AdminNotificationPreferences() {
             className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
             style={{ backgroundColor: theme.accentGold }}
           >
-            {savedFlash ? "Saved" : "Save changes"}
+            {savedFlash ? t("saved") : t("saveChanges")}
           </button>
         </div>
       </div>

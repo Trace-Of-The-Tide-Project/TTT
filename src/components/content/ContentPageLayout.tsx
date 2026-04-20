@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { theme } from "@/lib/theme";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { ContentBreadcrumb } from "./related/ContentBreadcrumb";

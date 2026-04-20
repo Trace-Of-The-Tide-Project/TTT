@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { isAxiosError } from "axios";
 import { type ArticleWorkflowStatus } from "../ArticleSettings";
 import { ContentEditorFooter } from "../ContentEditorFooter";
@@ -24,10 +25,12 @@ import {
   validateOpenCallApplicationFields,
   type ApplicationFormField,
 } from "@/services/open-calls.service";
+import { resolveApplicationFieldLabel, resolveFieldParticipantLabel } from "@/lib/application-form-labels";
+import { formatApplicationFormValidationIssue } from "@/lib/application-form-validation-messages";
 
 const TRIPS_ARCHIVE_PATH = "/admin/trips?tab=archive";
 
-function errMessage(e: unknown): string {
+function errMessage(e: unknown, requestFailed: string, generic: string): string {
   if (isAxiosError(e)) {
     const d = e.response?.data;
     if (typeof d === "string" && d.trim()) return d;
@@ -37,13 +40,15 @@ function errMessage(e: unknown): string {
       if (Array.isArray(o.message)) return o.message.map(String).join("; ");
       if (typeof o.error === "string") return o.error;
     }
-    return e.message || "Request failed";
+    return e.message || requestFailed;
   }
   if (e instanceof Error) return e.message;
-  return "Something went wrong";
+  return generic;
 }
 
 export function TripEditorLayout() {
+  const t = useTranslations("Dashboard.trips.editor");
+  const tAppForm = useTranslations("Dashboard.applicationForm");
   const router = useRouter();
 
   // Basic info
@@ -116,14 +121,12 @@ export function TripEditorLayout() {
         highlights: filteredHighlights.length > 0 ? filteredHighlights : undefined,
         moderator_name: moderatorName.trim() || undefined,
         stops: editorStopsToTripStops(stops),
-        booking_form: { fields: bookingFormFields },
       };
     },
     [
       title, description, category, buildRouteSummary,
       startDate, endDate, price, currency, maxParticipants, minParticipants,
       difficulty, durationHours, tags, languages, highlights, moderatorName, stops,
-      bookingFormFields,
     ],
   );
 
@@ -134,12 +137,16 @@ export function TripEditorLayout() {
   }, []);
 
   const validateBeforeSubmit = useCallback(() => {
-    if (!title.trim()) return "Title is required.";
-    if (!category.trim()) return "Category is required.";
-    const formErr = validateOpenCallApplicationFields(bookingFormFields);
-    if (formErr) return formErr;
+    if (!title.trim()) return t("validation.titleRequired");
+    if (!category.trim()) return t("validation.categoryRequired");
+    const issue = validateOpenCallApplicationFields(bookingFormFields);
+    if (issue)
+      return formatApplicationFormValidationIssue(issue, tAppForm, (n) => {
+        const f = bookingFormFields.find((x) => x.name === n);
+        return f ? resolveFieldParticipantLabel(f, tAppForm) : resolveApplicationFieldLabel(n, tAppForm);
+      });
     return null;
-  }, [title, category, bookingFormFields]);
+  }, [title, category, bookingFormFields, t, tAppForm]);
 
   const handleSaveDraft = useCallback(async () => {
     const v = validateBeforeSubmit();
@@ -150,11 +157,11 @@ export function TripEditorLayout() {
       await createTrip(buildPayload("draft"));
       router.push(TRIPS_ARCHIVE_PATH);
     } catch (e) {
-      setError(errMessage(e));
+      setError(errMessage(e, t("errors.requestFailed"), t("errors.generic")));
     } finally {
       setBusy(false);
     }
-  }, [validateBeforeSubmit, buildPayload, router]);
+  }, [validateBeforeSubmit, buildPayload, router, t]);
 
   const handlePublish = useCallback(async () => {
     if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
@@ -166,11 +173,11 @@ export function TripEditorLayout() {
       await createTrip(buildPayload("published"));
       router.push(TRIPS_ARCHIVE_PATH);
     } catch (e) {
-      setError(errMessage(e));
+      setError(errMessage(e, t("errors.requestFailed"), t("errors.generic")));
     } finally {
       setBusy(false);
     }
-  }, [workflowStatus, validateBeforeSubmit, buildPayload, router]);
+  }, [workflowStatus, validateBeforeSubmit, buildPayload, router, t]);
 
   const handleScheduleConfirm = useCallback(
     async (_iso: string) => {
@@ -184,13 +191,13 @@ export function TripEditorLayout() {
         setScheduleModalOpen(false);
         router.push(TRIPS_ARCHIVE_PATH);
       } catch (e) {
-        setError(errMessage(e));
+        setError(errMessage(e, t("errors.requestFailed"), t("errors.generic")));
         setScheduleModalOpen(false);
       } finally {
         setBusy(false);
       }
     },
-    [workflowStatus, validateBeforeSubmit, buildPayload, router],
+    [workflowStatus, validateBeforeSubmit, buildPayload, router, t],
   );
 
   return (
@@ -274,11 +281,8 @@ export function TripEditorLayout() {
           />
 
           <section className="rounded-lg border border-[var(--tott-card-border)] p-4 space-y-4">
-            <h3 className="text-sm font-bold text-foreground">Join trip form</h3>
-            <p className="text-xs text-gray-500">
-              Travelers see this on the public trip page. Same field types as open-call applications;
-              reset restores the default join-trip template (name, email, optional message).
-            </p>
+            <h3 className="text-sm font-bold text-foreground">{t("joinForm.title")}</h3>
+            <p className="text-xs text-gray-500">{t("joinForm.hint")}</p>
             <ApplicationFormBuilder
               fields={bookingFormFields}
               onChange={setBookingFormFields}
@@ -304,26 +308,26 @@ export function TripEditorLayout() {
               onClick={() => setPreviewOpen(true)}
               className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#CBA158]/30 bg-[#CBA158]/10 py-2 text-sm font-medium text-[#CBA158] transition-colors hover:bg-[#CBA158]/20"
             >
-              Preview Trip
+              {t("sidebar.previewTrip")}
             </button>
             <button
               type="button"
               className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-2 text-sm text-gray-400 hover:text-foreground"
             >
-              Duplicate Trip
+              {t("sidebar.duplicateTrip")}
             </button>
             <button
               type="button"
               className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-2 text-sm text-gray-400 hover:text-foreground"
             >
-              Archive
+              {t("sidebar.archive")}
             </button>
           </div>
         </aside>
       </div>
 
       <ContentEditorFooter
-        primaryButtonLabel="Publish Now"
+        primaryButtonLabel={t("footer.publishNow")}
         workflowStatus={workflowStatus}
         busy={busy}
         error={error}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { getCollections, type CollectionItem } from "@/services/collections.service";
 import { getAdminTags, type AdminTagItem } from "@/services/admin-tags.service";
 import {
@@ -56,7 +57,7 @@ function formatScheduledAtHint(iso: string | null | undefined): string {
 }
 
 export function ContentSettings({
-  title = "Article Settings",
+  title,
   workflowStatus,
   onWorkflowStatusChange,
   scheduledAt,
@@ -75,6 +76,7 @@ export function ContentSettings({
   tagIds,
   onTagIdsChange,
 }: ContentSettingsProps) {
+  const t = useTranslations("Dashboard.articles.editor.settings");
   const [collections, setCollections] = useState<CollectionItem[]>([]);
   const [collectionsLoading, setCollectionsLoading] = useState(true);
   const [collectionsError, setCollectionsError] = useState<string | null>(null);
@@ -95,7 +97,7 @@ export function ContentSettings({
       } catch {
         if (!cancelled) {
           setCollections([]);
-          setCollectionsError("Could not load collections.");
+          setCollectionsError(t("collectionsLoadError"));
         }
       } finally {
         if (!cancelled) setCollectionsLoading(false);
@@ -122,7 +124,7 @@ export function ContentSettings({
       } catch {
         if (!cancelled) {
           setAdminTags([]);
-          setTagsError("Could not load tags.");
+          setTagsError(t("tagsLoadError"));
         }
       } finally {
         if (!cancelled) setTagsLoading(false);
@@ -162,32 +164,29 @@ export function ContentSettings({
 
   return (
     <div className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] p-4">
-      <h3 className="mb-4 text-base font-bold text-foreground">{title}</h3>
+      <h3 className="mb-4 text-base font-bold text-foreground">{title ?? t("defaultPanelTitle")}</h3>
 
       <div className="flex flex-col gap-4">
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-400">
             <FileTextIcon />
-            Status
+            {t("status.label")}
           </label>
           <select
             className={selectClass}
             value={workflowStatus}
             onChange={(e) => onWorkflowStatusChange(e.target.value as ArticleWorkflowStatus)}
           >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-            <option value="scheduled">Scheduled</option>
+            <option value="draft">{t("status.draft")}</option>
+            <option value="published">{t("status.published")}</option>
+            <option value="scheduled">{t("status.scheduled")}</option>
           </select>
           {workflowStatus === "scheduled" && formatScheduledAtHint(scheduledAt ?? null) ? (
             <p className="mt-1 text-xs text-amber-200/90">
-              Goes live: {formatScheduledAtHint(scheduledAt ?? null)}
+              {t("status.goesLive")} {formatScheduledAtHint(scheduledAt ?? null)}
             </p>
           ) : null}
-          <p className="mt-1 text-xs text-gray-500">
-            Use <span className="text-gray-400">Publish now</span> or <span className="text-gray-400">Schedule</span>{" "}
-            when status is Published or Scheduled.
-          </p>
+          <p className="mt-1 text-xs text-gray-500">{t("status.hint")}</p>
         </div>
 
         <div>
@@ -196,7 +195,7 @@ export function ContentSettings({
             htmlFor="article-settings-category"
           >
             <GridIcon />
-            Category
+            {t("category.label")}
             <span className="text-amber-500" aria-hidden>
               *
             </span>
@@ -206,7 +205,7 @@ export function ContentSettings({
             type="text"
             value={category}
             onChange={(e) => onCategoryChange(e.target.value)}
-            placeholder="e.g., Documentary, Art"
+            placeholder={t("category.placeholder")}
             className={inputClass}
             required
             aria-required="true"
@@ -219,7 +218,7 @@ export function ContentSettings({
             htmlFor="article-settings-collection"
           >
             <SettingsIcon />
-            Collection (optional)
+            {t("collection.label")}
           </label>
           <select
             id="article-settings-collection"
@@ -228,11 +227,11 @@ export function ContentSettings({
             onChange={(e) => onCollectionIdChange(e.target.value)}
             aria-busy={collectionsLoading}
           >
-            <option value="">No collection</option>
+            <option value="">{t("collection.none")}</option>
             {collectionId &&
             !collections.some((c) => c.id === collectionId) ? (
               <option value={collectionId}>
-                Current: {collectionId.slice(0, 8)}…
+                {t("collection.currentPrefix")} {collectionId.slice(0, 8)}…
               </option>
             ) : null}
             {collections.map((c) => (
@@ -246,7 +245,7 @@ export function ContentSettings({
             ))}
           </select>
           {collectionsLoading ? (
-            <p className="mt-1 text-xs text-gray-500">Loading collections…</p>
+            <p className="mt-1 text-xs text-gray-500">{t("collectionLoading")}</p>
           ) : null}
           {collectionsError ? (
             <p className="mt-1 text-xs text-amber-400">{collectionsError}</p>
@@ -259,7 +258,7 @@ export function ContentSettings({
             htmlFor="article-settings-tag-add"
           >
             <TagIcon />
-            Tags
+            {t("tags.label")}
           </label>
           <div className="flex flex-col gap-2">
             {tagIds.length > 0 ? (
@@ -270,13 +269,15 @@ export function ContentSettings({
                     className="flex max-w-full items-center gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-2.5 py-1 text-xs text-foreground"
                   >
                     <span className="truncate" title={id}>
-                      {tagNameById.get(id) ?? `Tag (${id.slice(0, 8)}…)`}
+                      {tagNameById.get(id) ?? t("tags.unknownName", { prefix: `${id.slice(0, 8)}…` })}
                     </span>
                     <button
                       type="button"
                       onClick={() => removeTagById(id)}
                       className="ml-0.5 shrink-0 text-gray-500 hover:text-foreground"
-                      aria-label={`Remove ${tagNameById.get(id) ?? "tag"}`}
+                      aria-label={t("tags.removeAria", {
+                        name: tagNameById.get(id) ?? t("tags.fallbackName"),
+                      })}
                     >
                       ×
                     </button>
@@ -296,7 +297,7 @@ export function ContentSettings({
               }}
             >
               <option value="">
-                {tagsLoading ? "Loading tags…" : "Add a tag…"}
+                {tagsLoading ? t("tags.loading") : t("tags.addPlaceholder")}
               </option>
               {tagsAvailableToAdd.map((t) => (
                 <option key={t.id} value={t.id}>
@@ -305,7 +306,7 @@ export function ContentSettings({
               ))}
             </select>
             {!tagsLoading && tagsAvailableToAdd.length === 0 && adminTags.length > 0 ? (
-              <p className="text-xs text-gray-500">All available tags are selected.</p>
+              <p className="text-xs text-gray-500">{t("tags.allSelected")}</p>
             ) : null}
             {tagsError ? <p className="text-xs text-amber-400">{tagsError}</p> : null}
           </div>
@@ -314,60 +315,60 @@ export function ContentSettings({
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-400">
             <GlobeIcon />
-            Language
+            {t("language.label")}
           </label>
           <select
             className={selectClass}
             value={language}
             onChange={(e) => onLanguageChange(e.target.value)}
           >
-            <option value="en">English</option>
-            <option value="ar">Arabic</option>
-            <option value="he">Hebrew</option>
+            <option value="en">{t("language.en")}</option>
+            <option value="ar">{t("language.ar")}</option>
+            <option value="he">{t("language.he")}</option>
           </select>
         </div>
 
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-400">
             <EyeIcon />
-            Visibility
+            {t("visibility.label")}
           </label>
           <select
             className={selectClass}
             value={visibility}
             onChange={(e) => onVisibilityChange(e.target.value as "public" | "private")}
           >
-            <option value="private">Private</option>
-            <option value="public">Public</option>
+            <option value="private">{t("visibility.private")}</option>
+            <option value="public">{t("visibility.public")}</option>
           </select>
         </div>
 
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-400">
             <SettingsIcon />
-            SEO
+            {t("seo.label")}
           </label>
           <div className="space-y-2">
             <div className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-2 text-xs text-gray-400">
-              <p className="text-foreground">yoursite.com/articles/…</p>
+              <p className="text-foreground">{t("seo.previewUrlStub")}</p>
               <p className="mt-1">
                 {metaDescription.trim()
                   ? metaDescription.slice(0, 160) + (metaDescription.length > 160 ? "…" : "")
-                  : "Add a meta description to improve search visibility."}
+                  : t("seo.previewPlaceholder")}
               </p>
             </div>
             <input
               type="text"
               value={seoTitle}
               onChange={(e) => onSeoTitleChange(e.target.value)}
-              placeholder="SEO Title"
+              placeholder={t("seo.seoTitlePlaceholder")}
               className={inputClass}
             />
             <input
               type="text"
               value={metaDescription}
               onChange={(e) => onMetaDescriptionChange(e.target.value)}
-              placeholder="Meta description"
+              placeholder={t("seo.metaDescriptionPlaceholder")}
               className={inputClass}
             />
           </div>

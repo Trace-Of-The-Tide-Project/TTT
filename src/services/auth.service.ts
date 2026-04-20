@@ -2,6 +2,7 @@ import { api } from "./api"
 import type {
   SignupRequest,
   LoginRequest,
+  ChangePasswordRequest,
   AuthResponse,
   AuthUser,
   SignupResult,
@@ -243,6 +244,24 @@ export async function login(data: LoginRequest): Promise<AuthResponse> {
   }
 
   return normalizeAuthResponse(raw, "local")
+}
+
+export type ChangePasswordResult = { message: string }
+
+/**
+ * POST /auth/change-password — updates password for the authenticated user (Bearer token).
+ */
+export async function changePassword(
+  body: ChangePasswordRequest,
+): Promise<ChangePasswordResult> {
+  const { data } = await api.post<unknown>("/auth/change-password", body)
+  const raw = data as Record<string, unknown> | null | undefined
+  const inner = (raw?.data as Record<string, unknown> | undefined) ?? raw
+  const message =
+    typeof inner?.message === "string" && inner.message.trim()
+      ? inner.message.trim()
+      : "Password changed successfully"
+  return { message }
 }
 
 /**

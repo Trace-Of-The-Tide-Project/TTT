@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, type ReactNode } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   PersonIcon,
   EmailIcon,
@@ -13,6 +14,10 @@ import {
 import { theme } from "@/lib/theme";
 import { CONTRIBUTION_FORM_INPUT_BASE as inputBase } from "@/lib/constants";
 import type { ApplicationFormField } from "@/services/open-calls.service";
+import {
+  resolveFieldParticipantLabel,
+  resolveSelectOptionLabel,
+} from "@/lib/application-form-labels";
 
 type UploadedFile = { id: string; file: File; sizeLabel: string };
 
@@ -20,10 +25,6 @@ function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-}
-
-function labelForName(name: string): string {
-  return name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function iconForType(type: ApplicationFormField["type"]) {
@@ -55,7 +56,8 @@ function TextField({
 }: {
   field: ApplicationFormField & { type: "text" | "email" | "phone" };
 }) {
-  const label = labelForName(field.name);
+  const t = useTranslations("Dashboard.applicationForm");
+  const label = resolveFieldParticipantLabel(field, t);
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">
@@ -70,7 +72,7 @@ function TextField({
         <input
           name={field.name}
           type={field.type === "email" ? "email" : field.type === "phone" ? "tel" : "text"}
-          placeholder={`Enter ${label.toLowerCase()}`}
+          placeholder={t("dynamic.enterField", { label })}
           required={field.required}
           className="w-full bg-transparent text-sm text-[color:var(--tott-panel-text)] placeholder:text-gray-500 focus:outline-none sm:text-base"
         />
@@ -80,7 +82,8 @@ function TextField({
 }
 
 function TextareaField({ field }: { field: ApplicationFormField & { type: "textarea" } }) {
-  const label = labelForName(field.name);
+  const t = useTranslations("Dashboard.applicationForm");
+  const label = resolveFieldParticipantLabel(field, t);
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">
@@ -90,7 +93,7 @@ function TextareaField({ field }: { field: ApplicationFormField & { type: "texta
       <textarea
         name={field.name}
         rows={4}
-        placeholder={`Enter ${label.toLowerCase()}`}
+        placeholder={t("dynamic.enterField", { label })}
         required={field.required}
         className={inputBase}
         style={{ borderColor: theme.inputBorder }}
@@ -100,7 +103,8 @@ function TextareaField({ field }: { field: ApplicationFormField & { type: "texta
 }
 
 function SelectField({ field }: { field: ApplicationFormField & { type: "select" } }) {
-  const label = labelForName(field.name);
+  const t = useTranslations("Dashboard.applicationForm");
+  const label = resolveFieldParticipantLabel(field, t);
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">
@@ -117,7 +121,7 @@ function SelectField({ field }: { field: ApplicationFormField & { type: "select"
           className="w-full appearance-none bg-transparent text-sm text-[color:var(--tott-panel-text)] placeholder:text-gray-500 focus:outline-none sm:text-base"
         >
           <option value="" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-            Select
+            {t("dynamic.selectPlaceholder")}
           </option>
           {field.options.map((opt) => (
             <option
@@ -125,7 +129,7 @@ function SelectField({ field }: { field: ApplicationFormField & { type: "select"
               value={opt}
               className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]"
             >
-              {opt}
+              {resolveSelectOptionLabel(opt, t)}
             </option>
           ))}
         </select>
@@ -146,7 +150,8 @@ function CheckboxField({
   checked: boolean;
   onChange: (v: boolean) => void;
 }) {
-  const label = labelForName(field.name);
+  const t = useTranslations("Dashboard.applicationForm");
+  const label = resolveFieldParticipantLabel(field, t);
   return (
     <label className="flex cursor-pointer items-center gap-3">
       <input
@@ -163,7 +168,8 @@ function CheckboxField({
 }
 
 function FileField({ field }: { field: ApplicationFormField & { type: "file_multiple" } }) {
-  const label = labelForName(field.name);
+  const t = useTranslations("Dashboard.applicationForm");
+  const label = resolveFieldParticipantLabel(field, t);
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -177,7 +183,7 @@ function FileField({ field }: { field: ApplicationFormField & { type: "file_mult
       }));
       setFiles((prev) => [...prev, ...newFiles].slice(0, field.max_files));
     },
-    [field.max_files]
+    [field.max_files],
   );
 
   const removeFile = useCallback((id: string) => {
@@ -185,6 +191,7 @@ function FileField({ field }: { field: ApplicationFormField & { type: "file_mult
   }, []);
 
   const inputId = `file-${field.name}`;
+  const typesUpper = field.allowed_types.join(", ").toUpperCase();
 
   return (
     <div>
@@ -215,7 +222,7 @@ function FileField({ field }: { field: ApplicationFormField & { type: "file_mult
           multiple
           className="hidden"
           id={inputId}
-          accept={field.allowed_types.map((t) => `.${t}`).join(",")}
+          accept={field.allowed_types.map((ty) => `.${ty}`).join(",")}
           onChange={(e) => addFiles(e.target.files)}
         />
         <label
@@ -225,10 +232,13 @@ function FileField({ field }: { field: ApplicationFormField & { type: "file_mult
           <span style={{ color: theme.accentGoldFocus }}>
             <CloudUploadIcon />
           </span>
-          <span className="text-center text-sm">Drag and drop files here, or click to browse</span>
+          <span className="text-center text-sm">{t("dynamic.fileDragBrowse")}</span>
           <span className="text-xs text-gray-500">
-            Supported: {field.allowed_types.join(", ").toUpperCase()} (Max {field.max_files} files,{" "}
-            {field.max_size_mb} MB each)
+            {t("dynamic.fileTypesLine", {
+              types: typesUpper,
+              maxFiles: field.max_files,
+              maxSizeMb: field.max_size_mb,
+            })}
           </span>
         </label>
       </div>
@@ -251,7 +261,7 @@ function FileField({ field }: { field: ApplicationFormField & { type: "file_mult
                 type="button"
                 onClick={() => removeFile(id)}
                 className="rounded p-1 text-gray-500 hover:bg-black/10 hover:text-[color:var(--tott-panel-text)]"
-                aria-label="Remove file"
+                aria-label={t("dynamic.removeFileAria")}
               >
                 <TrashIcon />
               </button>
@@ -265,23 +275,21 @@ function FileField({ field }: { field: ApplicationFormField & { type: "file_mult
 
 type DynamicOpenCallFormProps = {
   fields: ApplicationFormField[];
-  /** Primary button label (default: Submit). */
   submitLabel?: string;
-  /** When false, hide the “Home page” link under the button. */
   showHomeLink?: boolean;
-  /** Inserted after fields, before submit (e.g. trip price row). */
   beforeSubmitSlot?: ReactNode;
-  /** Inserted after submit (e.g. terms note). */
   afterSubmitSlot?: ReactNode;
 };
 
 export function DynamicOpenCallForm({
   fields,
-  submitLabel = "Submit",
+  submitLabel,
   showHomeLink = true,
   beforeSubmitSlot,
   afterSubmitSlot,
 }: DynamicOpenCallFormProps) {
+  const t = useTranslations("Dashboard.applicationForm");
+  const resolvedSubmit = submitLabel ?? t("dynamic.submit");
   const [checkboxes, setCheckboxes] = useState<Record<string, boolean>>({});
 
   const allRequiredCheckboxesChecked = fields
@@ -332,16 +340,16 @@ export function DynamicOpenCallForm({
           color: theme.bgDark,
         }}
       >
-        {submitLabel}
+        {resolvedSubmit}
       </button>
 
       {afterSubmitSlot}
 
       {showHomeLink ? (
         <p className="text-center text-sm text-gray-400">
-          Go back to{" "}
+          {t("dynamic.homeBack")}{" "}
           <Link href="/" className="hover:underline" style={{ color: theme.accentGold }}>
-            Home page
+            {t("dynamic.homePage")}
           </Link>
         </p>
       ) : null}
