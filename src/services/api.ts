@@ -3,13 +3,14 @@ import {
   AUTH_TOKEN_KEY,
   clearAuthStorageSync,
 } from "@/lib/auth/storage-keys";
+import { DEFAULT_PUBLIC_API_BASE_URL } from "@/lib/public-api-base-url";
 import { routing } from "@/i18n/routing";
 import {
   getLeadingLocaleFromPath,
   stripLocalePrefixesFromPath,
 } from "@/lib/i18n/strip-locale-from-path";
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://backend-phd7.onrender.com";
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_PUBLIC_API_BASE_URL;
 
 export const api = axios.create({
   baseURL,

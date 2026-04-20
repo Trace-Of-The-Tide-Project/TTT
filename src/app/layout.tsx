@@ -5,8 +5,8 @@ import { hasLocale } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 
-/** Inline before paint so `data-theme` matches stored preference (avoids flash). */
-const THEME_BOOTSTRAP = `(function(){try{var k='tott-color-scheme',s=localStorage.getItem(k),m=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light',t=s==='light'||s==='dark'?s:m;document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t==='dark'?'dark':'light';}catch(e){}})();`;
+/** Inline before paint so `data-theme` matches stored preference (avoids flash). Default: dark. */
+const THEME_BOOTSTRAP = `(function(){try{var k='tott-color-scheme',s=localStorage.getItem(k),t=s==='light'||s==='dark'?s:'dark';document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t==='dark'?'dark':'light';}catch(e){}})();`;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

@@ -1,74 +1,37 @@
 @import "tailwindcss";
 
 /*
- * Global theme: html[data-theme="light" | "dark"].
+ * Global theme: default is dark; `html[data-theme="light"]` overrides.
  * Inline script in root layout sets data-theme before paint; ThemeProvider keeps it in sync.
  */
 html {
-  color-scheme: light;
-  --background: #ffffff;
-  --foreground: #171717;
-  --tott-card-border: #d1d5db;
-  --tott-panel-bg: #f3f4f6;
-  --tott-panel-text: #111827;
-  --tott-well-bg: #e5e7eb;
-  /* Auth: top band + hex card + decorative hex pattern */
-  --tott-auth-band-gradient: #ffffff;
-  --tott-auth-hex-outer: #d8d2c6;
-  --tott-auth-hex-inner: #faf9f7;
-  --tott-auth-hex-inset-ring: rgba(203, 161, 88, 0.22);
-  --tott-auth-hex-stroke: #9ca3af;
-  --tott-auth-hex-stroke-opacity: 0.35;
+  color-scheme: dark;
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --tott-card-border: #333333;
+  --tott-panel-bg: #111111;
+  --tott-panel-text: #ffffff;
+  --tott-well-bg: #0d0d0d;
+  --tott-auth-band-gradient: linear-gradient(to bottom, #252525 0%, #1a1a1a 50%, #000000 100%);
+  --tott-auth-hex-outer: #333333;
+  --tott-auth-hex-inner: #000000;
+  --tott-auth-hex-inset-ring: rgba(203, 161, 88, 0.15);
+  --tott-auth-hex-stroke: #6b6b6b;
+  --tott-auth-hex-stroke-opacity: 0.3;
   --tott-auth-hex-mask-from: #ffffff;
   --tott-auth-hex-mask-to: #ffffff;
-  /* Dashboard: cards, modals, inputs, controls (nested on --tott-panel-bg) */
-  --tott-dash-surface: #ffffff;
-  --tott-dash-surface-2: #f9fafb;
-  --tott-dash-surface-inset: #f3f4f6;
-  --tott-dash-input-bg: #ffffff;
-  --tott-dash-control-bg: #e5e7eb;
-  --tott-dash-control-fg: #1f2937;
-  --tott-dash-control-hover: #d1d5db;
-  --tott-dash-ghost-hover: #e5e7eb;
-  /* Icon / hex chip fill (white in light mode) */
-  --tott-dash-icon-bg: #ffffff;
-  /* Contribute page honeycomb (inactive cells): lighter in light theme */
-  --tott-contribute-hex-outer: var(--tott-well-bg);
-  --tott-contribute-hex-outer-hover: var(--tott-dash-control-hover);
-  --tott-contribute-hex-label-inactive: #1f2937;
-}
-
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme]) {
-    color-scheme: dark;
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --tott-card-border: #333333;
-    --tott-panel-bg: #111111;
-    --tott-panel-text: #ffffff;
-    --tott-well-bg: #0d0d0d;
-    --tott-auth-band-gradient: linear-gradient(to bottom, #252525 0%, #1a1a1a 50%, #000000 100%);
-    --tott-auth-hex-outer: #333333;
-    --tott-auth-hex-inner: #000000;
-    --tott-auth-hex-inset-ring: rgba(203, 161, 88, 0.15);
-    --tott-auth-hex-stroke: #6b6b6b;
-    --tott-auth-hex-stroke-opacity: 0.3;
-    --tott-auth-hex-mask-from: #ffffff;
-    --tott-auth-hex-mask-to: #ffffff;
-    --tott-dash-surface: #0a0a0a;
-    --tott-dash-surface-2: #111111;
-    --tott-dash-surface-inset: #1a1a1a;
-    --tott-dash-input-bg: #1a1a1a;
-    --tott-dash-control-bg: #333333;
-    --tott-dash-control-fg: #d1d5db;
-    --tott-dash-control-hover: #3d3d3d;
-    --tott-dash-ghost-hover: rgba(255, 255, 255, 0.06);
-    --tott-dash-icon-bg: #1a1a1a;
-    /* Match original contribute hex styling (not --tott-well-bg, which is darker) */
-    --tott-contribute-hex-outer: #2a2a2a;
-    --tott-contribute-hex-outer-hover: #333333;
-    --tott-contribute-hex-label-inactive: #ffffff;
-  }
+  --tott-dash-surface: #0a0a0a;
+  --tott-dash-surface-2: #111111;
+  --tott-dash-surface-inset: #1a1a1a;
+  --tott-dash-input-bg: #1a1a1a;
+  --tott-dash-control-bg: #333333;
+  --tott-dash-control-fg: #d1d5db;
+  --tott-dash-control-hover: #3d3d3d;
+  --tott-dash-ghost-hover: rgba(255, 255, 255, 0.06);
+  --tott-dash-icon-bg: #1a1a1a;
+  --tott-contribute-hex-outer: #2a2a2a;
+  --tott-contribute-hex-outer-hover: #333333;
+  --tott-contribute-hex-label-inactive: #ffffff;
 }
 
 html[data-theme="light"] {
@@ -99,36 +62,6 @@ html[data-theme="light"] {
   --tott-contribute-hex-outer: var(--tott-well-bg);
   --tott-contribute-hex-outer-hover: var(--tott-dash-control-hover);
   --tott-contribute-hex-label-inactive: #1f2937;
-}
-
-html[data-theme="dark"] {
-  color-scheme: dark;
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --tott-card-border: #333333;
-  --tott-panel-bg: #111111;
-  --tott-panel-text: #ffffff;
-  --tott-well-bg: #0d0d0d;
-  --tott-auth-band-gradient: linear-gradient(to bottom, #252525 0%, #1a1a1a 50%, #000000 100%);
-  --tott-auth-hex-outer: #333333;
-  --tott-auth-hex-inner: #000000;
-  --tott-auth-hex-inset-ring: rgba(203, 161, 88, 0.15);
-  --tott-auth-hex-stroke: #6b6b6b;
-  --tott-auth-hex-stroke-opacity: 0.3;
-  --tott-auth-hex-mask-from: #ffffff;
-  --tott-auth-hex-mask-to: #ffffff;
-  --tott-dash-surface: #0a0a0a;
-  --tott-dash-surface-2: #111111;
-  --tott-dash-surface-inset: #1a1a1a;
-  --tott-dash-input-bg: #1a1a1a;
-  --tott-dash-control-bg: #333333;
-  --tott-dash-control-fg: #d1d5db;
-  --tott-dash-control-hover: #3d3d3d;
-  --tott-dash-ghost-hover: rgba(255, 255, 255, 0.06);
-  --tott-dash-icon-bg: #1a1a1a;
-  --tott-contribute-hex-outer: #2a2a2a;
-  --tott-contribute-hex-outer-hover: #333333;
-  --tott-contribute-hex-label-inactive: #ffffff;
 }
 
 @theme inline {

@@ -1,6 +1,7 @@
 import { isUsableImageSrc } from "@/lib/content/content-image-src";
+import { DEFAULT_PUBLIC_API_BASE_URL } from "@/lib/public-api-base-url";
 
-const DEFAULT_API_BASE = "https://backend-phd7.onrender.com";
+const DEFAULT_API_BASE = DEFAULT_PUBLIC_API_BASE_URL;
 
 /**
  * Default GCS bucket for object keys under `images/…` (POST /upload) and `contributions/…`

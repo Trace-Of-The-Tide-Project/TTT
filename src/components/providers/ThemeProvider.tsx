@@ -21,11 +21,6 @@ function readStored(): "light" | "dark" | null {
   return null;
 }
 
-function readSystem(): "light" | "dark" {
-  if (typeof window === "undefined") return "dark";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
 function applyDomTheme(scheme: "light" | "dark") {
   document.documentElement.dataset.theme = scheme;
   document.documentElement.style.colorScheme = scheme === "dark" ? "dark" : "light";
@@ -42,24 +37,12 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [scheme, setSchemeState] = useState<ThemeScheme>(() => readStored() ?? readSystem());
+  /** No `localStorage` value → dark (see root layout inline bootstrap). */
+  const [scheme, setSchemeState] = useState<ThemeScheme>(() => readStored() ?? "dark");
 
   useEffect(() => {
     applyDomTheme(scheme);
   }, [scheme]);
-
-  useEffect(() => {
-    if (readStored()) return;
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => {
-      if (readStored()) return;
-      const next = mq.matches ? "dark" : "light";
-      setSchemeState(next);
-      applyDomTheme(next);
-    };
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
 
   const toggleScheme = useCallback(() => {
     const next = scheme === "dark" ? "light" : "dark";
