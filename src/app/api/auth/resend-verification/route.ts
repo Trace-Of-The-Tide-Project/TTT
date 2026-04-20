@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
+import { DEFAULT_PUBLIC_API_BASE_URL } from "@/lib/public-api-base-url";
 
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://backend-phd7.onrender.com";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_PUBLIC_API_BASE_URL;
 
 export async function POST(request: Request) {
   try {
