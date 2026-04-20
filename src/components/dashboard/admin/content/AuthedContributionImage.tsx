@@ -31,6 +31,7 @@ export function AuthedContributionImage({ path, alt = "", className }: AuthedCon
   const [src, setSrc] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
 
+  /* eslint-disable react-hooks/set-state-in-effect -- resolve `path` to blob/https for <img> */
   useEffect(() => {
     const raw = path.trim();
     if (!raw) {
@@ -51,12 +52,19 @@ export function AuthedContributionImage({ path, alt = "", className }: AuthedCon
 
     (async () => {
       const token = getStoredToken();
-      const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+
+      const fetchInit = (): RequestInit => {
+        const init: RequestInit = { signal: ac.signal };
+        if (token) {
+          init.headers = { Authorization: `Bearer ${token}` };
+        }
+        return init;
+      };
 
       if (token) {
         try {
           const apiUrl = contributionFileApiUrl(raw);
-          const res = await fetch(apiUrl, { signal: ac.signal, headers: authHeaders });
+          const res = await fetch(apiUrl, fetchInit());
           if (!ac.signal.aborted && res.ok) {
             const blob = await res.blob();
             if (ac.signal.aborted) return;
@@ -88,7 +96,7 @@ export function AuthedContributionImage({ path, alt = "", className }: AuthedCon
       }
 
       try {
-        const res = await fetch(abs, { signal: ac.signal, headers: authHeaders });
+        const res = await fetch(abs, fetchInit());
         if (ac.signal.aborted) return;
         if (!res.ok) {
           setSrc(null);
@@ -113,6 +121,7 @@ export function AuthedContributionImage({ path, alt = "", className }: AuthedCon
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, [path]);
+  /* eslint-enable react-hooks/set-state-in-effect */
   if (status === "loading" || status === "idle") {
     return (
       <div
