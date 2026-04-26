@@ -1,17 +1,71 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { StatCard } from "../shared/StatCard";
-import { commandCenterStats } from "@/lib/dashboard/admin-dashboard-constants";
+import { useStoredAuthUser } from "@/hooks/useStoredAuthUser";
+import { getDashboardStats, type DashboardStats } from "@/services/dashboard.service";
+import {
+  UsersIcon,
+  FileTextIcon,
+  DollarSignIcon,
+  EyeIcon,
+} from "@/components/ui/icons";
+
+function formatStatValue(key: keyof DashboardStats, value: number): string {
+  if (key === "monthlyDonations") return `$${value.toLocaleString()}`;
+  return value.toLocaleString();
+}
+
+function formatChange(change: number): { value: string; direction: "up" | "down" } {
+  const abs = Math.abs(change);
+  return {
+    value: `${abs.toFixed(1)}%`,
+    direction: change >= 0 ? "up" : "down",
+  };
+}
+
+function SkeletonCard() {
+  return (
+    <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-panel-bg)] px-4 py-5 animate-pulse">
+      <div className="h-10 w-10 rounded-full bg-white/5" />
+      <div className="h-3 w-20 rounded bg-white/5" />
+      <div className="h-7 w-24 rounded bg-white/5" />
+      <div className="h-3 w-28 rounded bg-white/5" />
+    </div>
+  );
+}
+
+const STAT_CONFIG = [
+  { key: "totalUsers" as const, icon: UsersIcon, labelKey: "stats.totalUsers", comparisonKey: "vsLastMonth" },
+  { key: "contentPublished" as const, icon: FileTextIcon, labelKey: "stats.contentPublished", comparisonKey: "vsLastMonth" },
+  { key: "monthlyDonations" as const, icon: DollarSignIcon, labelKey: "stats.monthlyDonations", comparisonKey: "vsLastMonth" },
+  { key: "activeToday" as const, icon: EyeIcon, labelKey: "stats.activeToday", comparisonKey: "vsYesterday" },
+];
 
 export function AdminCommandCenter() {
   const t = useTranslations("Dashboard.commandCenter");
+  const user = useStoredAuthUser();
+  const name = user?.full_name || user?.username || "Super Admin";
+
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getDashboardStats()
+      .then(setStats)
+      .catch(() => setStats(null))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div>
       <div className="flex flex-col gap-2 py-6 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-xl font-bold text-foreground sm:text-2xl">{t("title")}</h1>
-          <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Welcome back, <span className="font-medium text-foreground">{name}</span>. Here&apos;s what&apos;s happening on your platform.
+          </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "#E8DDC0" }}>
@@ -23,23 +77,27 @@ export function AdminCommandCenter() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 pb-6 lg:grid-cols-4">
-        {commandCenterStats.map((stat) => (
-          <StatCard
-            key={stat.labelKey}
-            icon={stat.icon}
-            value={stat.value}
-            label={(t as (key: string) => string)(stat.labelKey)}
-            trend={
-              stat.trend
+        {loading
+          ? STAT_CONFIG.map((s) => <SkeletonCard key={s.key} />)
+          : STAT_CONFIG.map((s) => {
+              const stat = stats?.[s.key];
+              const value = stat ? formatStatValue(s.key, stat.value) : "—";
+              const trend = stat
                 ? {
-                    value: stat.trend.value,
-                    direction: stat.trend.direction,
-                    comparison: (t as (key: string) => string)(stat.trend.comparisonKey),
+                    ...formatChange(stat.change),
+                    comparison: (t as (k: string) => string)(s.comparisonKey),
                   }
-                : undefined
-            }
-          />
-        ))}
+                : undefined;
+              return (
+                <StatCard
+                  key={s.key}
+                  icon={s.icon}
+                  value={value}
+                  label={(t as (k: string) => string)(s.labelKey)}
+                  trend={trend}
+                />
+              );
+            })}
       </div>
     </div>
   );

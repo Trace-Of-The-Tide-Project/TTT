@@ -1,39 +1,33 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { isAxiosError } from "axios";
-import {
-  BellIcon,
-  FileTextIcon,
-  SettingsIcon,
-  StarIcon,
-} from "@/components/ui/icons";
-import { formatUserLastActiveRelative } from "@/lib/dashboard/user-table-formatters";
-import { useStoredAuthUser } from "@/hooks/useStoredAuthUser";
-import {
-  filterNotificationsForUser,
-  getNotifications,
-  type NotificationListItem,
-} from "@/services/notifications.service";
+import { getDashboardAlerts } from "@/services/dashboard.service";
+import { AlertTriangleIcon, PersonIcon, ShieldIcon } from "@/components/ui/icons";
+import type { ComponentType } from "react";
 
-const DASH_LIMIT = 8;
+const ALERT_CONFIG: Record<string, { icon: ComponentType; href: string; label: string }> = {
+  flagged:            { icon: AlertTriangleIcon, href: "/admin/reports",  label: "Review now" },
+  editor_application: { icon: PersonIcon,         href: "/admin/users",    label: "Process" },
+  pending_review:     { icon: ShieldIcon,          href: "/admin/content",  label: "Review" },
+};
 
-function iconForNotificationType(type: string) {
-  const t = type.trim().toLowerCase();
-  if (t === "review") return FileTextIcon;
-  if (t === "system") return SettingsIcon;
-  if (t === "update") return StarIcon;
-  return BellIcon;
-}
+type AlertDisplay = {
+  type: string;
+  title: string;
+  description: string;
+  icon: ComponentType;
+  href: string;
+  label: string;
+};
 
 function HexIcon({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative flex h-12 w-12 shrink-0 items-center justify-center">
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 48 48" fill="none">
+    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
+      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 40 40" fill="none">
         <path
-          d="M24 2L44 14V34L24 46L4 34V14Z"
+          d="M20 2L37 11.5V28.5L20 38L3 28.5V11.5Z"
           fill="var(--tott-dash-icon-bg)"
           stroke="var(--tott-card-border)"
           strokeWidth="1"
@@ -44,139 +38,103 @@ function HexIcon({ children }: { children: React.ReactNode }) {
   );
 }
 
-function errMessage(e: unknown, fallback: string): string {
-  if (isAxiosError(e)) {
-    const d = e.response?.data;
-    if (typeof d === "string" && d.trim()) return d;
-    if (d && typeof d === "object") {
-      const o = d as Record<string, unknown>;
-      if (typeof o.message === "string") return o.message;
-    }
-    return e.message || fallback;
-  }
-  if (e instanceof Error) return e.message;
-  return fallback;
+function AlertCard({ item, onDismiss }: { item: AlertDisplay; onDismiss: (type: string) => void }) {
+  const Icon = item.icon;
+  return (
+    <div className="flex items-center gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-4 sm:px-5">
+      <HexIcon>
+        <Icon />
+      </HexIcon>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-semibold text-foreground">{item.title}</p>
+        <p className="mt-0.5 text-xs text-gray-500">{item.description}</p>
+      </div>
+      <div className="flex shrink-0 items-center gap-3">
+        <Link
+          href={item.href}
+          className="text-xs font-medium text-[#C9A96E] transition-colors hover:text-[#DBC99E] whitespace-nowrap"
+        >
+          {item.label} →
+        </Link>
+        <button
+          type="button"
+          onClick={() => onDismiss(item.type)}
+          className="text-xs text-gray-600 transition-colors hover:text-gray-400"
+          aria-label="Dismiss"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export function DashboardNotifications() {
   const t = useTranslations("Dashboard.adminHome.notifications");
-  const user = useStoredAuthUser();
-  const [items, setItems] = useState<NotificationListItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [nowMs, setNowMs] = useState(() => Date.now());
+  const [items, setItems] = useState<AlertDisplay[]>([]);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const id = window.setInterval(() => setNowMs(Date.now()), 60_000);
-    return () => window.clearInterval(id);
+    getDashboardAlerts()
+      .then((data) => {
+        const mapped: AlertDisplay[] = (data.items ?? []).map((item) => {
+          const cfg = ALERT_CONFIG[item.type] ?? {
+            icon: AlertTriangleIcon,
+            href: "/admin",
+            label: "View",
+          };
+          return {
+            type: item.type,
+            title: item.message,
+            description: item.description,
+            icon: cfg.icon,
+            href: cfg.href,
+            label: cfg.label,
+          };
+        });
+        setItems(mapped);
+      })
+      .catch(() => setItems([]));
   }, []);
 
-  const load = useCallback(async () => {
-    if (!user?.id) {
-      setItems([]);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await getNotifications({
-        page: 1,
-        limit: DASH_LIMIT,
-        sortBy: "created_at",
-        order: "DESC",
-      });
-      setItems(filterNotificationsForUser(res.notifications, user.id));
-    } catch (e) {
-      setError(errMessage(e, t("loadFailed")));
-      setItems([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [user?.id, t]);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
+  const visible = items.filter((a) => !dismissed.has(a.type));
+  const dismiss = (type: string) => setDismissed((prev) => new Set([...prev, type]));
+  const dismissAll = () => setDismissed(new Set(items.map((a) => a.type)));
 
   return (
     <div>
-      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground">{t("title")}</h3>
-        <Link
-          href="/admin/notifications"
-          className="shrink-0 text-xs font-medium text-[#C9A96E] transition-colors hover:text-[#DBC99E]"
-        >
-          {t("viewAll")}
-        </Link>
+        <div className="flex items-center gap-4">
+          {visible.length > 0 && (
+            <button
+              type="button"
+              onClick={dismissAll}
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-1.5 text-xs font-medium text-gray-400 transition-colors hover:text-foreground"
+            >
+              Dismiss all
+            </button>
+          )}
+          <Link
+            href="/admin/notifications"
+            className="text-xs font-medium text-[#C9A96E] transition-colors hover:text-[#DBC99E]"
+          >
+            {t("viewAll")} →
+          </Link>
+        </div>
       </div>
 
-      {!user?.id ? (
+      {visible.length === 0 ? (
         <p className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-8 text-center text-sm text-gray-500">
-          {t("signInPrompt")}
+          No new alerts
         </p>
-      ) : null}
-
-      {user?.id && error ? (
-        <div className="rounded-xl border border-red-900/50 bg-red-950/30 px-4 py-3 text-sm text-red-200">
-          <p className="wrap-break-word">{error}</p>
-          <button
-            type="button"
-            onClick={() => void load()}
-            className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
-          >
-            {t("tryAgain")}
-          </button>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {visible.map((item) => (
+            <AlertCard key={item.type} item={item} onDismiss={dismiss} />
+          ))}
         </div>
-      ) : null}
-
-      {user?.id && !error && loading ? (
-        <p className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-8 text-center text-sm text-gray-500">
-          {t("loading")}
-        </p>
-      ) : null}
-
-      {user?.id && !error && !loading && items.length === 0 ? (
-        <p className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-8 text-center text-sm text-gray-500">
-          {t("empty")}
-        </p>
-      ) : null}
-
-      {user?.id && !error && !loading && items.length > 0 ? (
-        <div className="flex flex-col gap-5">
-          {items.map((n) => {
-            const Icon = iconForNotificationType(n.type);
-            const time = formatUserLastActiveRelative(n.created_at, nowMs);
-            return (
-              <div
-                key={n.id}
-                className="flex items-center gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-4 sm:px-5"
-              >
-                <HexIcon>
-                  <Icon />
-                </HexIcon>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-foreground">{n.message}</p>
-                  <p className="mt-0.5 text-xs text-gray-500">
-                    <span className="capitalize">{n.type}</span>
-                    {n.status === "unread" ? (
-                      <span className="text-[#C9A96E]"> · {t("unread")}</span>
-                    ) : null}
-                    <span className="text-gray-600"> · {time}</span>
-                  </p>
-                </div>
-                <Link
-                  href="/admin/notifications"
-                  className="shrink-0 text-xs font-medium text-gray-400 transition-colors hover:text-foreground"
-                >
-                  {t("open")}
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-      ) : null}
+      )}
     </div>
   );
 }

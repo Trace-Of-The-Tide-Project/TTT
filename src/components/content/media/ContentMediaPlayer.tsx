@@ -14,6 +14,8 @@ export type ContentMediaPlayerProps = {
   title?: string;
   coverLabel?: string;
   items?: GalleryItem[];
+  /** Passed to ContentImageDisplay for shared-layout morph from a content card. */
+  layoutId?: string;
 };
 
 export function ContentMediaPlayer({
@@ -24,10 +26,11 @@ export function ContentMediaPlayer({
   title,
   coverLabel,
   items,
+  layoutId,
 }: ContentMediaPlayerProps) {
   if (type === "gallery" && items) return <ContentGalleryPlayer items={items} />;
   if (type === "image") {
-    return <ContentImageDisplay src={src ?? ""} coverLabel={coverLabel} />;
+    return <ContentImageDisplay src={src ?? ""} coverLabel={coverLabel} layoutId={layoutId} />;
   }
   if (type === "audio" && src) {
     return (

@@ -114,6 +114,7 @@
         "approve": "Approve",
         "reject": "Reject",
         "appliedLine": "Applied {date} · {years} years in publishing · {articles} published articles",
+        "loading": "Loading applications…",
         "empty": "No applications match your filters.",
         "status": {
           "pending": "Pending",

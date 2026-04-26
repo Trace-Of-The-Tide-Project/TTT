@@ -6,6 +6,9 @@ import type { ComponentType } from "react";
 type ActivityItem = {
   id: string;
   icon: ComponentType;
+  title: string;
+  description: string;
+  time: string;
 };
 
 type RecentActivityProps = {
@@ -27,10 +30,10 @@ export function RecentActivity({ items }: RecentActivityProps) {
                 <Icon />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-foreground">{t(`items.${item.id}.title`)}</p>
-                <p className="mt-0.5 truncate text-xs text-[#A3A3A3]">{t(`items.${item.id}.description`)}</p>
+                <p className="text-sm font-medium text-foreground">{item.title}</p>
+                <p className="mt-0.5 truncate text-xs text-[#A3A3A3]">{item.description}</p>
               </div>
-              <span className="shrink-0 text-xs text-[#A3A3A3]">{t(`items.${item.id}.time`)}</span>
+              <span className="shrink-0 text-xs text-[#A3A3A3]">{item.time}</span>
             </div>
           );
         })}

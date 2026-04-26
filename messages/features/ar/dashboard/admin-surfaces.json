@@ -114,6 +114,7 @@
         "approve": "موافقة",
         "reject": "رفض",
         "appliedLine": "تقديم {date} · {years} سنوات في النشر · {articles} مقال منشور",
+        "loading": "جارٍ تحميل الطلبات…",
         "empty": "لا طلبات مطابقة للمرشحات.",
         "status": {
           "pending": "قيد الانتظار",

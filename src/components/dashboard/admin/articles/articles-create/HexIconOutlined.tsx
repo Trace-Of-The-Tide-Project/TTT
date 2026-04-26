@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 const sizeClasses = {
   sm: "h-7 w-7 p-1.5 [&_.relative_svg]:h-3 [&_.relative_svg]:w-3",
   md: "h-14 w-14 p-2.5 [&_.relative_svg]:h-5 [&_.relative_svg]:w-5",
+  lg: "h-18 w-18 p-3.5 [&_.relative_svg]:h-7 [&_.relative_svg]:w-7",
 } as const;
 
 type HexIconOutlinedProps = {

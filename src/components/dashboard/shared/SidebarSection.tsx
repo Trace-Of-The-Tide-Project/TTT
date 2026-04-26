@@ -6,9 +6,10 @@ type SidebarSectionProps = SidebarSectionConfig & {
   openGroups: Set<string>;
   onToggleGroup: (groupId: string) => void;
   onItemClick?: () => void;
+  badgeOverrides?: Record<string, string>;
 };
 
-export function SidebarSection({ items, openGroups, onToggleGroup, onItemClick }: SidebarSectionProps) {
+export function SidebarSection({ items, openGroups, onToggleGroup, onItemClick, badgeOverrides }: SidebarSectionProps) {
   return (
     <div className="flex flex-col gap-3">
       {items.map((entry) =>
@@ -19,9 +20,10 @@ export function SidebarSection({ items, openGroups, onToggleGroup, onItemClick }
             isOpen={openGroups.has(entry.groupId)}
             onToggle={() => onToggleGroup(entry.groupId)}
             onItemClick={onItemClick}
+            badgeOverrides={badgeOverrides}
           />
         ) : (
-          <SidebarItem key={entry.href} {...entry} onClick={onItemClick} />
+          <SidebarItem key={entry.href} {...entry} onClick={onItemClick} badgeOverrides={badgeOverrides} />
         )
       )}
     </div>

@@ -9,10 +9,16 @@ import {
   roleHierarchy,
   MATRIX_ROLES,
   PERMISSIONS,
-  sampleEditorApplications,
   type EditorApplication,
   type EditorAppStatus,
 } from "@/lib/dashboard/roles-constants";
+import {
+  getDashboardUsersByRole,
+  getEditorApplicationsFull,
+  approveEditorApplication,
+  rejectEditorApplication,
+  type FullEditorApplication,
+} from "@/services/dashboard.service";
 import { theme } from "@/lib/theme";
 import {
   SearchIcon,
@@ -171,9 +177,15 @@ function EditorApplications() {
   const te = useTranslations("Dashboard.rolesPermissions.editorApps");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<EditorAppStatus | "all">("all");
-  const [applications, setApplications] = useState<EditorApplication[]>(
-    () => sampleEditorApplications
-  );
+  const [applications, setApplications] = useState<FullEditorApplication[]>([]);
+  const [loadingApps, setLoadingApps] = useState(true);
+
+  useEffect(() => {
+    getEditorApplicationsFull(50)
+      .then((apps) => setApplications(apps))
+      .catch(() => {})
+      .finally(() => setLoadingApps(false));
+  }, []);
 
   const statusFilters = useMemo(
     () =>
@@ -211,12 +223,14 @@ function EditorApplications() {
   };
 
   const handleApprove = (id: string) => {
+    approveEditorApplication(id).catch(() => {});
     setApplications((prev) =>
       prev.map((a) => (a.id === id ? { ...a, status: "approved" as const } : a))
     );
   };
 
   const handleReject = (id: string) => {
+    rejectEditorApplication(id).catch(() => {});
     setApplications((prev) =>
       prev.map((a) => (a.id === id ? { ...a, status: "rejected" as const } : a))
     );
@@ -340,7 +354,10 @@ function EditorApplications() {
         ))}
       </div>
 
-      {filtered.length === 0 && (
+      {loadingApps && applications.length === 0 && (
+        <p className="py-12 text-center text-gray-500">{te("loading")}</p>
+      )}
+      {!loadingApps && filtered.length === 0 && (
         <p className="py-12 text-center text-gray-500">{te("empty")}</p>
       )}
     </div>
@@ -415,6 +432,29 @@ export function RolesPermissionsContent() {
   const tr = useTranslations("Dashboard.rolesPermissions");
   const [activeTab, setActiveTab] = useState<RolesTabId>("overview");
   const [configureRoleOpen, setConfigureRoleOpen] = useState(false);
+  const [liveRoleCounts, setLiveRoleCounts] = useState<Record<string, number> | null>(null);
+
+  useEffect(() => {
+    getDashboardUsersByRole()
+      .then(({ roles, totalUsers }) => {
+        const map: Record<string, number> = { users: totalUsers };
+        for (const row of roles) {
+          const normalized = row.label.toLowerCase();
+          if (normalized === "user") continue;
+          map[normalized + "s"] = row.count;
+        }
+        setLiveRoleCounts(map);
+      })
+      .catch(() => {});
+  }, []);
+
+  const displayStats = roleStats.map((stat) => ({
+    ...stat,
+    value:
+      liveRoleCounts && stat.id in liveRoleCounts
+        ? liveRoleCounts[stat.id].toLocaleString()
+        : stat.value,
+  }));
 
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
@@ -441,7 +481,7 @@ export function RolesPermissionsContent() {
           <div className="space-y-8">
             {/* Role stat cards - octagonal SVG border only, no bg */}
             <div className="flex flex-nowrap gap-6 overflow-x-auto">
-              {roleStats.map((stat) => {
+              {displayStats.map((stat) => {
                 const Icon = stat.icon;
                 return (
                   <div

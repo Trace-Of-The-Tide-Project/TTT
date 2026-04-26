@@ -7,9 +7,9 @@ import { TrendingUpIcon, TrendingDownIcon } from "@/components/ui/icons";
 export type TopArticleEntry = {
   id: string;
   title: string;
-  contributors: number;
+  contributors?: number;
   views: string;
-  trend: { value: string; direction: "up" | "down" };
+  trend?: { value: string; direction: "up" | "down" };
 };
 
 type TopPerformingArticlesProps = {
@@ -35,17 +35,21 @@ export function TopPerformingArticles({ items }: TopPerformingArticlesProps) {
               </p>
             </div>
             <div className="flex shrink-0 flex-col items-end gap-0.5">
-              <p className="text-xs text-gray-400">{entry.contributors} contributors</p>
+              {entry.contributors !== undefined && (
+                <p className="text-xs text-gray-400">{entry.contributors} contributors</p>
+              )}
               <p className="text-xs text-gray-400">{entry.views} views</p>
             </div>
-            <span
-              className={`mt-1 flex items-center gap-1 text-xs font-medium ${
-                entry.trend.direction === "up" ? "text-emerald-400" : "text-red-400"
-              }`}
-            >
-              {entry.trend.direction === "up" ? <TrendingUpIcon /> : <TrendingDownIcon />}
-              {entry.trend.value}
-            </span>
+            {entry.trend && (
+              <span
+                className={`mt-1 flex items-center gap-1 text-xs font-medium ${
+                  entry.trend.direction === "up" ? "text-emerald-400" : "text-red-400"
+                }`}
+              >
+                {entry.trend.direction === "up" ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                {entry.trend.value}
+              </span>
+            )}
           </div>
         ))}
       </div>

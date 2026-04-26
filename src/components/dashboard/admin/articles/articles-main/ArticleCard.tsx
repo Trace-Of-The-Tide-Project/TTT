@@ -2,6 +2,7 @@
 
 import { Link } from "@/i18n/navigation";
 import type { ReactNode } from "react";
+import { SpringCard } from "@/components/motion/SpringCard";
 
 export type ArticleCardAction = {
   label?: string;
@@ -71,7 +72,7 @@ export function ArticleCard({
   const detailClass = compact ? "mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-gray-500" : "mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-gray-500";
 
   return (
-    <div className={cardClass}>
+    <SpringCard className={cardClass}>
       <div className={`flex min-w-0 flex-1 items-center ${contentGap}`}>
         <div className="shrink-0 self-center">
           {useHexIcon ? <HexIcon size={compact ? "sm" : "md"}>{icon}</HexIcon> : <span className={compact ? "text-gray-400" : "text-foreground"}>{icon}</span>}
@@ -122,6 +123,6 @@ export function ArticleCard({
           );
         })}
       </div>
-    </div>
+    </SpringCard>
   );
 }

@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { theme } from "@/lib/theme";
+import { IdlePulse } from "@/components/motion/IdlePulse";
 
 type TripHeroProps = {
   image: string;
@@ -43,7 +46,9 @@ export function TripHero({ image, title, price, difficulty, from, to }: TripHero
 
           <p className="mt-2 flex items-center gap-2 text-sm text-gray-300">
             <span>{from}</span>
-            <span style={{ color: theme.accentGold }}>→</span>
+            <IdlePulse style={{ display: "inline-flex" }}>
+              <span style={{ color: theme.accentGold }}>→</span>
+            </IdlePulse>
             <span>{to}</span>
           </p>
         </div>

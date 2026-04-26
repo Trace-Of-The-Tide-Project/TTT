@@ -8,6 +8,7 @@ import { SidebarUser } from "./SidebarUser";
 type DashboardSidebarProps = {
   config: DashboardConfig;
   onItemClick?: () => void;
+  badgeOverrides?: Record<string, string>;
 };
 
 function getDefaultOpenGroups(config: DashboardConfig): Set<string> {
@@ -20,7 +21,7 @@ function getDefaultOpenGroups(config: DashboardConfig): Set<string> {
   return open;
 }
 
-export function DashboardSidebar({ config, onItemClick }: DashboardSidebarProps) {
+export function DashboardSidebar({ config, onItemClick, badgeOverrides }: DashboardSidebarProps) {
   const [openGroups, setOpenGroups] = useState<Set<string>>(
     () => getDefaultOpenGroups(config)
   );
@@ -49,6 +50,7 @@ export function DashboardSidebar({ config, onItemClick }: DashboardSidebarProps)
               openGroups={openGroups}
               onToggleGroup={handleToggleGroup}
               onItemClick={onItemClick}
+              badgeOverrides={badgeOverrides}
             />
           ))}
         </div>
@@ -57,6 +59,7 @@ export function DashboardSidebar({ config, onItemClick }: DashboardSidebarProps)
       <div className="shrink-0 border-t border-[var(--tott-card-border)]">
         <SidebarUser />
       </div>
+
     </div>
   );
 }

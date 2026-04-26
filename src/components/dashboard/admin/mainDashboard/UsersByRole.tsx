@@ -3,12 +3,10 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { ComponentType } from "react";
-import type { UserRoleKey } from "@/lib/dashboard/admin-dashboard-constants";
-
 type RoleBar = {
   id: string;
   icon: ComponentType;
-  roleKey: UserRoleKey;
+  label: string;
   count: string;
   percentage: number;
   change?: string;
@@ -46,7 +44,7 @@ export function UsersByRole({ roles, totalValue, viewAllHref }: UsersByRoleProps
                   <span className="text-gray-500">
                     <Icon />
                   </span>
-                  <span className="text-sm font-medium text-foreground">{t(`roles.${role.roleKey}`)}</span>
+                  <span className="text-sm font-medium text-foreground capitalize">{role.label}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-gray-400">{role.count}</span>

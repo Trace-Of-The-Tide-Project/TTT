@@ -111,6 +111,61 @@ export function normalizeNotificationsPayload(raw: unknown): NotificationsListRe
   return { notifications, meta, status, results };
 }
 
+// ── Notification preferences ───────────────────────────────────
+
+export interface NotificationPreferences {
+  article_updates: boolean;
+  new_followers: boolean;
+  new_contributors: boolean;
+  comments: boolean;
+  weekly_digest: boolean;
+  push_browser: boolean;
+}
+
+export async function getNotificationPreferences(): Promise<NotificationPreferences> {
+  const { data } = await api.get<{
+    email_notifications: {
+      article_updates: boolean;
+      new_followers: boolean;
+      new_contributors: boolean;
+      comments: boolean;
+      weekly_digest: boolean;
+    };
+    push_notifications: { browser: boolean };
+  }>("/author/settings/notifications");
+  return {
+    article_updates: data.email_notifications.article_updates,
+    new_followers: data.email_notifications.new_followers,
+    new_contributors: data.email_notifications.new_contributors,
+    comments: data.email_notifications.comments,
+    weekly_digest: data.email_notifications.weekly_digest,
+    push_browser: data.push_notifications.browser,
+  };
+}
+
+export async function updateNotificationPreferences(
+  prefs: Partial<NotificationPreferences>,
+): Promise<NotificationPreferences> {
+  const { data } = await api.patch<{
+    email_notifications: {
+      article_updates: boolean;
+      new_followers: boolean;
+      new_contributors: boolean;
+      comments: boolean;
+      weekly_digest: boolean;
+    };
+    push_notifications: { browser: boolean };
+  }>("/author/settings/notifications", prefs);
+  return {
+    article_updates: data.email_notifications.article_updates,
+    new_followers: data.email_notifications.new_followers,
+    new_contributors: data.email_notifications.new_contributors,
+    comments: data.email_notifications.comments,
+    weekly_digest: data.email_notifications.weekly_digest,
+    push_browser: data.push_notifications.browser,
+  };
+}
+
 /**
  * GET /notifications — list with filters and pagination (Bearer auth).
  */
@@ -126,6 +181,16 @@ export async function getNotifications(params?: GetNotificationsParams): Promise
 
   const { data } = await api.get<unknown>("/notifications", { params: query });
   return normalizeNotificationsPayload(data);
+}
+
+/** PATCH /notifications/:id — mark a single notification as read. */
+export async function markNotificationRead(id: string): Promise<void> {
+  await api.patch(`/notifications/${id}`, { status: "read" });
+}
+
+/** PATCH /notifications/mark-all-read — mark all notifications as read. */
+export async function markAllNotificationsRead(): Promise<void> {
+  await api.patch("/notifications/mark-all-read");
 }
 
 /** Keep only notifications owned by the given user (safety check on top of API). */

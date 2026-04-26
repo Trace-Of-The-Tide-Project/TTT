@@ -1,5 +1,5 @@
-import { Link } from "@/i18n/navigation";
 import { theme } from "@/lib/theme";
+import { SpringLink } from "@/components/motion/SpringLink";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { ContentBreadcrumb } from "./related/ContentBreadcrumb";
 import { ContentMediaPlayer } from "./media/ContentMediaPlayer";
@@ -24,6 +24,8 @@ export type ContentPageLayoutProps = {
     title?: string;
     /** Shown on hero image (e.g. article cover). */
     coverLabel?: string;
+    /** Connects this hero image to a RelatedContentCard image via shared-layout morph. */
+    layoutId?: string;
     items?: {
       type: "image" | "video" | "audio";
       src: string;
@@ -43,6 +45,7 @@ export type ContentPageLayoutProps = {
     sections: ContentArticleSection[];
   };
   author: {
+    id?: string;
     name: string;
     initials: string;
     link?: string;
@@ -126,9 +129,9 @@ export function ContentPageLayout({
           <div className="flex min-w-0 flex-1 flex-col gap-8">
             <ContentArticleBody sections={article.sections} />
             {isOpenCall && (openCallId || articleId) && (
-              <Link
+              <SpringLink
                 href={`/open-calls/${openCallId || articleId}`}
-                className="inline-flex w-fit items-center gap-2 rounded-lg px-8 py-3 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+                className="inline-flex w-fit items-center gap-2 rounded-lg px-8 py-3 text-sm font-semibold text-black"
                 style={{ backgroundColor: theme.accentGold }}
               >
                 Join Call
@@ -136,7 +139,7 @@ export function ContentPageLayout({
                   <path d="M5 12h14" />
                   <path d="m12 5 7 7-7 7" />
                 </svg>
-              </Link>
+              </SpringLink>
             )}
           </div>
 
@@ -146,7 +149,7 @@ export function ContentPageLayout({
               className="rounded-2xl border border-gray-800 p-5"
               style={{ backgroundColor: theme.pageBackground }}
             >
-              <ContentAuthorCard {...author} />
+              <ContentAuthorCard {...author} authorId={author.id} />
               <div className="my-5 h-px bg-gray-800" />
               <ContentContributors contributors={contributors} />
             </div>

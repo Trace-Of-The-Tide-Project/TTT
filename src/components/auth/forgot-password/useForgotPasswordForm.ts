@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { api } from "@/services/api";
 
 type ForgotPasswordSubmitEvent = React.FormEvent<HTMLFormElement>;
 
@@ -25,26 +26,15 @@ export function useForgotPasswordForm() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        setError((data.message as string) || t("errorGeneric"));
-        setLoading(false);
-        return;
-      }
-
+      await api.post("/auth/forgot-password", { email });
       if (typeof window !== "undefined") {
         sessionStorage.setItem("forgot-password-email", email);
       }
       router.push("/auth/forgot-password/email-sent");
       router.refresh();
-    } catch {
-      setError(t("errorNetwork"));
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(msg || t("errorGeneric"));
     } finally {
       setLoading(false);
     }

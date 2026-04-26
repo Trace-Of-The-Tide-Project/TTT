@@ -1,6 +1,12 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { LinkIcon, MoreDotsIcon } from "@/components/ui/icons";
+import { checkIsFollowing, toggleFollow } from "@/services/follows.service";
+import { getStoredToken } from "@/services/auth.service";
 
 type ContentAuthorCardProps = {
+  authorId?: string;
   name: string;
   initials: string;
   link?: string;
@@ -8,11 +14,34 @@ type ContentAuthorCardProps = {
 };
 
 export function ContentAuthorCard({
+  authorId,
   name,
   initials,
   link,
   color = "black",
 }: ContentAuthorCardProps) {
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [toggling, setToggling] = useState(false);
+
+  useEffect(() => {
+    if (!authorId || !getStoredToken()) return;
+    checkIsFollowing(authorId).then(setIsFollowing).catch(() => {});
+  }, [authorId]);
+
+  const handleFollow = async () => {
+    if (!authorId || toggling) return;
+    setToggling(true);
+    setIsFollowing((prev) => !prev);
+    try {
+      const followed = await toggleFollow(authorId);
+      setIsFollowing(followed);
+    } catch {
+      setIsFollowing((prev) => !prev);
+    } finally {
+      setToggling(false);
+    }
+  };
+
   return (
     <div className="flex items-center gap-4">
       <div
@@ -33,10 +62,16 @@ export function ContentAuthorCard({
           </button>
           <button
             type="button"
-            className="shrink-0 rounded-lg px-4 py-1.5 text-xs font-semibold text-[#1a1a1a] transition-colors hover:opacity-90"
-            style={{ backgroundColor: "#C9A96E" }}
+            onClick={handleFollow}
+            disabled={toggling || !authorId}
+            className="shrink-0 rounded-lg px-4 py-1.5 text-xs font-semibold transition-colors hover:opacity-90 disabled:opacity-50"
+            style={{
+              backgroundColor: isFollowing ? "transparent" : "#C9A96E",
+              color: isFollowing ? "#C9A96E" : "#1a1a1a",
+              border: isFollowing ? "1px solid #C9A96E" : "none",
+            }}
           >
-            Follow
+            {isFollowing ? "Following" : "Follow"}
           </button>
         </div>
         {link && (

@@ -85,7 +85,6 @@ export const adminConfig: DashboardConfig = {
               labelKey: "sidebar.users",
               href: "/admin/users",
               icon: UsersIcon,
-              badge: "12.4k",
             },
             {
               kind: "item",

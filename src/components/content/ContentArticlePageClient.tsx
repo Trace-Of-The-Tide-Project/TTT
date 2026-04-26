@@ -5,8 +5,16 @@ import { Link } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { ContentPageLayout } from "@/components/content/ContentPageLayout";
 import { buildArticleContentPageProps } from "@/lib/content/build-article-content-page";
-import { getArticleById, recordArticleView, type ArticleDetail } from "@/services/articles.service";
+import {
+  getArticleById,
+  recordArticleView,
+  getRelatedArticles,
+  getCollectionArticles,
+  type ArticleDetail,
+} from "@/services/articles.service";
 import { theme } from "@/lib/theme";
+import type { ContentPageLayoutProps } from "@/components/content/ContentPageLayout";
+import type { RelatedContentCardData } from "@/components/content/related/RelatedContentCard";
 import {
   CONTENT_MEDIA_ARTICLE,
   CONTENT_ARTICLE,
@@ -46,11 +54,54 @@ function StaticArticleDemo() {
   );
 }
 
+const FALLBACK_IMAGE = "/images/image.png";
+
+function formatShortDate(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime())
+    ? "—"
+    : d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+}
+
+function mapRelated(items: Awaited<ReturnType<typeof getRelatedArticles>>): RelatedContentCardData[] {
+  return items
+    .filter((a) => !!a.cover_image)
+    .map((a) => ({
+      image: a.cover_image!,
+      title: a.title,
+      author: a.author?.full_name || a.author?.username || "Author",
+      date: formatShortDate(a.published_at),
+      edition: a.edition || a.category || "Article",
+      href: `/content/article?id=${a.id}`,
+    }));
+}
+
+function mapCollection(
+  col: Awaited<ReturnType<typeof getCollectionArticles>>,
+): ContentPageLayoutProps["collection"] {
+  const hours = col.total_hours;
+  const duration = hours >= 1 ? `${hours}h` : `${Math.round(hours * 60)}min`;
+  return {
+    articleCount: col.count,
+    duration,
+    items: col.articles.map((a) => ({
+      image: a.cover_image || FALLBACK_IMAGE,
+      title: a.title,
+      author: a.author?.full_name || a.author?.username || "Author",
+      date: formatShortDate(a.published_at),
+      description: a.excerpt || "",
+    })),
+  };
+}
+
 function ArticleByIdLoader({ id }: { id: string }) {
   const setArticleHeaderMeta = useOptionalArticleReadingHeader()?.setArticleHeaderMeta;
   const [phase, setPhase] = useState<"loading" | "ok" | "missing" | "error">("loading");
   const [article, setArticle] = useState<ArticleDetail | null>(null);
   const [displayViewCount, setDisplayViewCount] = useState<number | undefined>(undefined);
+  const [liveCollection, setLiveCollection] = useState<ContentPageLayoutProps["collection"] | null>(null);
+  const [liveRelated, setLiveRelated] = useState<RelatedContentCardData[]>([]);
   const recordedIdRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -58,6 +109,8 @@ function ArticleByIdLoader({ id }: { id: string }) {
     setPhase("loading");
     setArticle(null);
     setDisplayViewCount(undefined);
+    setLiveCollection(null);
+    setLiveRelated([]);
     recordedIdRef.current = null;
     (async () => {
       try {
@@ -74,6 +127,21 @@ function ArticleByIdLoader({ id }: { id: string }) {
             : undefined
         );
         setPhase("ok");
+
+        // Fetch related and collection in parallel, non-blocking
+        const sideTasks: Promise<void>[] = [
+          getRelatedArticles(id).then((items) => {
+            if (!cancelled) setLiveRelated(mapRelated(items));
+          }),
+        ];
+        if (a.collection_id) {
+          sideTasks.push(
+            getCollectionArticles(a.collection_id).then((col) => {
+              if (!cancelled) setLiveCollection(mapCollection(col));
+            }),
+          );
+        }
+        await Promise.allSettled(sideTasks);
       } catch {
         if (!cancelled) setPhase("error");
       }
@@ -163,10 +231,9 @@ function ArticleByIdLoader({ id }: { id: string }) {
     return (
       <ContentPageLayout
         {...props}
-        article={{
-          ...props.article,
-          viewCount: displayViewCount ?? props.article.viewCount,
-        }}
+        article={{ ...props.article, viewCount: displayViewCount ?? props.article.viewCount }}
+        collection={liveCollection ?? props.collection}
+        relatedContent={liveRelated.length > 0 ? liveRelated : props.relatedContent}
       />
     );
   }

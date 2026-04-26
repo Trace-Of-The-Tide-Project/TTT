@@ -1,7 +1,6 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
-/** Next.js 16+ uses `proxy.ts` (replaces `middleware.ts`). next-intl still uses `createMiddleware`. */
 export default createMiddleware(routing);
 
 export const config = {

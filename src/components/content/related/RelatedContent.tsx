@@ -1,6 +1,8 @@
 import { Link } from "@/i18n/navigation";
 import { theme } from "@/lib/theme";
 import { RelatedContentCard, type RelatedContentCardData } from "./RelatedContentCard";
+import { StaggerContainer } from "@/components/motion/StaggerContainer";
+import { StaggerItem } from "@/components/motion/StaggerItem";
 
 type RelatedContentProps = {
   items: RelatedContentCardData[];
@@ -76,11 +78,13 @@ export function RelatedContent({ items, viewMoreHref = "#" }: RelatedContentProp
           <style>{`
             .related-scroll::-webkit-scrollbar { display: none; }
           `}</style>
-          <div className="flex" style={{ marginLeft: "-138px", paddingRight: "138px", gap: 0 }}>
+          <StaggerContainer className="flex" style={{ marginLeft: "-138px", paddingRight: "138px", gap: 0 }}>
             {items.map((item, i) => (
-              <RelatedContentCard key={i} {...item} />
+              <StaggerItem key={i} style={{ flexShrink: 0 }}>
+                <RelatedContentCard {...item} />
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </div>
     </section>
