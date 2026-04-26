@@ -10,9 +10,10 @@ const ACTIVE_COLOR = "#C9A96E";
 
 type SidebarItemProps = SidebarItemConfig & {
   onClick?: () => void;
+  badgeOverrides?: Record<string, string>;
 };
 
-export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick }: SidebarItemProps) {
+export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick, badgeOverrides }: SidebarItemProps) {
   const t = useTranslations("Dashboard");
   const label = (t as (key: string) => string)(labelKey);
   const pathname = usePathname();
@@ -44,7 +45,7 @@ export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick }: Side
         <Icon />
       </span>
       <span className="flex-1 truncate">{label}</span>
-      {badge !== undefined && (
+      {(badgeOverrides?.[href] ?? badge) !== undefined && (
         <span
           className="shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
           style={
@@ -53,7 +54,7 @@ export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick }: Side
               : { color: "#9ca3af", backgroundColor: "rgba(255,255,255,0.1)" }
           }
         >
-          {badge}
+          {badgeOverrides?.[href] ?? badge}
         </span>
       )}
     </Link>

@@ -16,6 +16,8 @@ export type EditorApplication = {
 type EditorApplicationsProps = {
   items: EditorApplication[];
   viewAllHref?: string;
+  onApprove?: (id: string) => void;
+  onReject?: (id: string) => void;
 };
 
 function ClockSmallIcon() {
@@ -27,7 +29,7 @@ function ClockSmallIcon() {
   );
 }
 
-export function EditorApplications({ items, viewAllHref }: EditorApplicationsProps) {
+export function EditorApplications({ items, viewAllHref, onApprove, onReject }: EditorApplicationsProps) {
   const t = useTranslations("Dashboard.adminHome.editorApplications");
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5">
@@ -86,6 +88,7 @@ export function EditorApplications({ items, viewAllHref }: EditorApplicationsPro
               </button>
               <button
                 type="button"
+                onClick={() => onReject?.(app.id)}
                 className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] text-foreground transition-colors hover:border-red-800 hover:text-red-400"
                 aria-label={t("reject")}
               >
@@ -95,6 +98,7 @@ export function EditorApplications({ items, viewAllHref }: EditorApplicationsPro
               </button>
               <button
                 type="button"
+                onClick={() => onApprove?.(app.id)}
                 className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] text-foreground transition-colors hover:border-emerald-800 hover:text-emerald-400"
                 aria-label={t("approve")}
               >

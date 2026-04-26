@@ -9,7 +9,7 @@ import {
   resolveArticleMediaSrc,
 } from "@/lib/content/article-media-url";
 import type { ContentPageLayoutProps } from "@/components/content/ContentPageLayout";
-import { CONTENT_COLLECTION, CONTENT_MEDIA_AUDIO, CONTENT_RELATED } from "@/lib/constants";
+import { CONTENT_MEDIA_AUDIO } from "@/lib/constants";
 
 function initialsFromName(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -161,15 +161,16 @@ export function buildArticleContentPageProps(article: ArticleDetail): ContentPag
       }),
     },
     author: {
+      id: article.author?.id,
       name: authorName,
       initials: initialsFromName(authorName),
     },
     contributors,
     collection: {
-      articleCount: CONTENT_COLLECTION.articleCount,
-      duration: CONTENT_COLLECTION.duration,
-      items: [...CONTENT_COLLECTION.items].map((item) => ({ ...item })),
+      articleCount: 0,
+      duration: "—",
+      items: [],
     },
-    relatedContent: [...CONTENT_RELATED].map((r) => ({ ...r })),
+    relatedContent: [],
   };
 }

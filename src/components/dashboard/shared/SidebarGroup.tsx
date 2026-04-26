@@ -9,6 +9,7 @@ type SidebarGroupProps = SidebarGroupConfig & {
   isOpen: boolean;
   onToggle: () => void;
   onItemClick?: () => void;
+  badgeOverrides?: Record<string, string>;
 };
 
 export function SidebarGroup({
@@ -18,6 +19,7 @@ export function SidebarGroup({
   isOpen,
   onToggle,
   onItemClick,
+  badgeOverrides,
 }: SidebarGroupProps) {
   const t = useTranslations("Dashboard");
   const label = (t as (key: string) => string)(labelKey);
@@ -51,7 +53,7 @@ export function SidebarGroup({
       {isOpen && (
         <div className="mt-1 flex flex-col gap-0.5">
           {items.map((item) => (
-            <SidebarItem key={item.href} {...item} onClick={onItemClick} />
+            <SidebarItem key={item.href} {...item} onClick={onItemClick} badgeOverrides={badgeOverrides} />
           ))}
         </div>
       )}

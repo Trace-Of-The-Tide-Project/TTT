@@ -1,8 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { SettingsIcon, BellIcon, ClockIcon, SearchIcon } from "@/components/ui/icons";
+import { SettingsIcon, HelpCircleIcon, SearchIcon } from "@/components/ui/icons";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { NotificationDropdown } from "./NotificationDropdown";
 
 const ACCENT_MUTED = "#E8DDC0";
 
@@ -40,9 +41,9 @@ export function AdminTopbar() {
           type="button"
           className={`rounded-lg p-2 transition-colors ${iconBtn}`}
           style={{ color: isDark ? ACCENT_MUTED : "#78716c" }}
-          aria-label={t("activity")}
+          aria-label="Help"
         >
-          <ClockIcon />
+          <HelpCircleIcon />
         </button>
         <button
           type="button"
@@ -52,18 +53,7 @@ export function AdminTopbar() {
         >
           <SettingsIcon />
         </button>
-        <button
-          type="button"
-          className={`relative rounded-lg p-2 transition-colors ${iconBtn}`}
-          style={{ color: isDark ? ACCENT_MUTED : "#78716c" }}
-          aria-label={t("notifications")}
-        >
-          <BellIcon />
-          <span
-            className="absolute right-1 top-1 h-2 w-2 rounded-full"
-            style={{ backgroundColor: isDark ? ACCENT_MUTED : "#a8a29e" }}
-          />
-        </button>
+        <NotificationDropdown />
 
         <span
           className="ml-1 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide"

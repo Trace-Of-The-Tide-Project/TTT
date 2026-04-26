@@ -14,6 +14,7 @@ type DashboardLayoutProps = {
   /** Shown next to the menu button on small screens (defaults to translated “Dashboard”). */
   mobileBarTitle?: string;
   children: React.ReactNode;
+  badgeOverrides?: Record<string, string>;
 };
 
 export function DashboardLayout({
@@ -22,6 +23,7 @@ export function DashboardLayout({
   commandCenter,
   mobileBarTitle,
   children,
+  badgeOverrides,
 }: DashboardLayoutProps) {
   const t = useTranslations("Dashboard.layout");
   const resolvedMobileTitle = mobileBarTitle ?? t("dashboard");
@@ -80,7 +82,7 @@ export function DashboardLayout({
             {/* Desktop sidebar */}
             <aside className="hidden w-56 shrink-0 lg:block">
               <div className={`flex h-full flex-col ${panelClass}`}>
-                <DashboardSidebar config={config} />
+                <DashboardSidebar config={config} badgeOverrides={badgeOverrides} />
               </div>
             </aside>
 
@@ -108,7 +110,7 @@ export function DashboardLayout({
             mobileOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <DashboardSidebar config={config} onItemClick={closeMobile} />
+          <DashboardSidebar config={config} onItemClick={closeMobile} badgeOverrides={badgeOverrides} />
         </div>
       </div>
     </div>

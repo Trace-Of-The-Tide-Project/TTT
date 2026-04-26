@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import {
@@ -10,12 +10,25 @@ import {
   SearchIcon,
   SendIcon,
 } from "@/components/ui/icons";
-import { sampleThreads, type Thread } from "@/lib/dashboard/messaging-constants";
 import {
   CreateMessageTemplateModal,
   type MessageTemplate,
 } from "@/components/dashboard/modals/CreateMessageTemplateModal";
+import type { MessageTemplateCategory } from "@/components/dashboard/modals/CreateMessageTemplateModal";
 import { EditMessageTemplateModal } from "@/components/dashboard/modals/EditMessageTemplateModal";
+import {
+  listConversations,
+  loadConversationMessages,
+  sendReply,
+  archiveConversation,
+  fetchTemplates,
+  createApiTemplate,
+  updateApiTemplate,
+  sendBroadcastMessage,
+  type FrontendThread,
+  type FrontendMessage,
+  type ApiTemplate,
+} from "@/services/messaging.service";
 
 const MESSAGE_TAB_IDS = ["inbox", "broadcast", "templates", "archived"] as const;
 type MessageTabId = (typeof MESSAGE_TAB_IDS)[number];
@@ -31,59 +44,6 @@ type BroadcastAudienceKey = (typeof BROADCAST_AUDIENCE_KEYS)[number];
 
 const BROADCAST_PRIORITY_KEYS = ["low", "normal", "high"] as const;
 type BroadcastPriorityKey = (typeof BROADCAST_PRIORITY_KEYS)[number];
-
-const KNOWN_TEMPLATE_IDS = new Set(["tpl1", "tpl2", "tpl3", "tpl4", "tpl5"]);
-
-const THREAD_CATEGORY_TO_KEY: Record<Thread["category"], Exclude<CategoryKey, "all">> = {
-  Support: "support",
-  Payment: "payment",
-  Moderation: "moderation",
-  Feedback: "feedback",
-};
-
-const THREAD_PRIORITY_TO_KEY: Record<NonNullable<Thread["priority"]>, Exclude<PriorityKey, "all">> = {
-  HIGH: "high",
-  MED: "med",
-  LOW: "low",
-};
-
-const DEFAULT_TEMPLATES: MessageTemplate[] = [
-  {
-    id: "tpl1",
-    name: "Welcome Message",
-    category: "onboarding",
-    subject: "Welcome to the platform",
-    body: "Hi {{name}}, welcome!",
-  },
-  {
-    id: "tpl2",
-    name: "Payment Confirmation",
-    category: "payment",
-    subject: "Payment confirmed",
-    body: "Hi {{name}}, your payment was confirmed.",
-  },
-  {
-    id: "tpl3",
-    name: "Content Approved",
-    category: "moderation",
-    subject: "Your content was approved",
-    body: "Hi {{name}}, great news — approved!",
-  },
-  {
-    id: "tpl4",
-    name: "Account Warning",
-    category: "moderation",
-    subject: "Account warning",
-    body: "Hi {{name}}, please review this warning.",
-  },
-  {
-    id: "tpl5",
-    name: "Feature Announcement",
-    category: "broadcast",
-    subject: "New feature announcement",
-    body: "Hi {{name}}, check out what's new!",
-  },
-];
 
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/).slice(0, 2);
@@ -182,12 +142,36 @@ function Dropdown({
   );
 }
 
+const THREAD_CATEGORY_TO_KEY: Record<FrontendThread["category"], Exclude<CategoryKey, "all">> = {
+  Support: "support",
+  Payment: "payment",
+  Moderation: "moderation",
+  Feedback: "feedback",
+};
+
+const THREAD_PRIORITY_TO_KEY: Record<"HIGH" | "MED" | "LOW", Exclude<PriorityKey, "all">> = {
+  HIGH: "high",
+  MED: "med",
+  LOW: "low",
+};
+
+function threadMatchesCategory(thread: FrontendThread, selected: CategoryKey) {
+  if (selected === "all") return true;
+  return THREAD_CATEGORY_TO_KEY[thread.category] === selected;
+}
+
+function threadMatchesPriority(thread: FrontendThread, selected: PriorityKey) {
+  if (selected === "all") return true;
+  if (!thread.priority) return false;
+  return THREAD_PRIORITY_TO_KEY[thread.priority] === selected;
+}
+
 function ThreadRow({
   thread,
   selected,
   onSelect,
 }: {
-  thread: Thread;
+  thread: FrontendThread;
   selected: boolean;
   onSelect: () => void;
 }) {
@@ -227,16 +211,7 @@ function ThreadRow({
   );
 }
 
-function threadMatchesCategory(thread: Thread, selected: CategoryKey) {
-  if (selected === "all") return true;
-  return THREAD_CATEGORY_TO_KEY[thread.category] === selected;
-}
-
-function threadMatchesPriority(thread: Thread, selected: PriorityKey) {
-  if (selected === "all") return true;
-  if (!thread.priority) return false;
-  return THREAD_PRIORITY_TO_KEY[thread.priority] === selected;
-}
+// ── Main component ─────────────────────────────────────────────
 
 export function MessagingContent() {
   const t = useTranslations("Dashboard.messagingPage");
@@ -256,38 +231,13 @@ export function MessagingContent() {
   const threadMenuButtonRef = useRef<HTMLButtonElement>(null);
   const threadMenuRef = useRef<HTMLDivElement>(null);
 
-  const inboxCount = useMemo(
-    () => sampleThreads.filter((th) => th.status === "Inbox").length,
-    [],
-  );
-
-  const threadsForTab = useMemo(() => {
-    if (activeTab === "archived") return sampleThreads.filter((th) => th.status === "Archived");
-    if (activeTab === "inbox") return sampleThreads.filter((th) => th.status === "Inbox");
-    return [];
-  }, [activeTab]);
-
-  const filteredThreads = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return threadsForTab.filter((th) => {
-      const categoryOk = threadMatchesCategory(th, category);
-      const priorityOk = threadMatchesPriority(th, priority);
-      const queryOk =
-        !q ||
-        th.senderName.toLowerCase().includes(q) ||
-        th.subject.toLowerCase().includes(q) ||
-        th.preview.toLowerCase().includes(q);
-      return categoryOk && priorityOk && queryOk;
-    });
-  }, [threadsForTab, query, category, priority]);
-
-  const [selectedThreadId, setSelectedThreadId] = useState<string>(() => sampleThreads[0]?.id ?? "");
-  const selectedThread = useMemo(
-    () => filteredThreads.find((th) => th.id === selectedThreadId) ?? filteredThreads[0] ?? null,
-    [filteredThreads, selectedThreadId],
-  );
-
+  // Real data state
+  const [allThreads, setAllThreads] = useState<FrontendThread[]>([]);
+  const [messagesCache, setMessagesCache] = useState<Record<string, FrontendMessage[]>>({});
+  const [loadingMessages, setLoadingMessages] = useState(false);
+  const [selectedThreadId, setSelectedThreadId] = useState<string>("");
   const [composer, setComposer] = useState("");
+  const [sendingReply, setSendingReply] = useState(false);
 
   const [broadcastAudience, setBroadcastAudience] = useState<BroadcastAudienceKey>("allUsers");
   const [broadcastPriority, setBroadcastPriority] = useState<BroadcastPriorityKey>("normal");
@@ -297,48 +247,70 @@ export function MessagingContent() {
   const [broadcastAudienceOpen, setBroadcastAudienceOpen] = useState(false);
   const [broadcastPriorityOpen, setBroadcastPriorityOpen] = useState(false);
   const [broadcastTemplateOpen, setBroadcastTemplateOpen] = useState(false);
+  const [sendingBroadcast, setSendingBroadcast] = useState(false);
+
   const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
-  const [templates, setTemplates] = useState<MessageTemplate[]>(DEFAULT_TEMPLATES);
+  const [templates, setTemplates] = useState<MessageTemplate[]>([]);
   const [editTemplateOpen, setEditTemplateOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<MessageTemplate | null>(null);
 
-  const categoryOptions = useMemo(
-    () => CATEGORY_KEYS.map((k) => ({ value: k, label: t(`categories.${k}`) })),
-    [t],
-  );
+  // ── Load conversations when tab changes ────────────────────────
+  useEffect(() => {
+    if (activeTab !== "inbox" && activeTab !== "archived") return;
+    const status = activeTab === "archived" ? "archived" : "inbox";
+    listConversations(status).then((threads) => {
+      setAllThreads((prev) => {
+        // Merge: keep other-status threads, replace loaded-status ones
+        const keep = prev.filter((t) =>
+          status === "archived" ? t.status === "Inbox" : t.status === "Archived",
+        );
+        return [...keep, ...threads];
+      });
+      if (threads.length > 0 && !selectedThreadId) {
+        setSelectedThreadId(threads[0].id);
+      }
+    }).catch(() => {});
+  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const priorityOptions = useMemo(
-    () => PRIORITY_KEYS.map((k) => ({ value: k, label: t(`priorities.${k}`) })),
-    [t],
-  );
+  // ── Load templates on mount ────────────────────────────────────
+  useEffect(() => {
+    fetchTemplates().then((tpls) => {
+      setTemplates(
+        tpls.map((t) => ({
+          id: t.id,
+          name: t.name,
+          category: (t.category as MessageTemplateCategory) || "support",
+          subject: t.subject || "",
+          body: t.body,
+        })),
+      );
+    }).catch(() => {});
+  }, []);
 
-  const broadcastAudienceOptions = useMemo(
-    () =>
-      BROADCAST_AUDIENCE_KEYS.map((k) => ({
-        value: k,
-        label: tb(`audiences.${k}`),
-      })),
-    [tb],
-  );
+  // ── Load messages when thread selected ─────────────────────────
+  const loadMessages = useCallback(async (threadId: string) => {
+    if (!threadId || messagesCache[threadId]) return;
+    setLoadingMessages(true);
+    try {
+      const msgs = await loadConversationMessages(threadId);
+      setMessagesCache((prev) => ({ ...prev, [threadId]: msgs }));
+    } catch {
+      // show empty
+    } finally {
+      setLoadingMessages(false);
+    }
+  }, [messagesCache]);
 
-  const broadcastPriorityOptions = useMemo(
-    () =>
-      BROADCAST_PRIORITY_KEYS.map((k) => ({
-        value: k,
-        label: tb(`broadcastPriority.${k}`),
-      })),
-    [tb],
-  );
+  const handleSelectThread = useCallback((id: string) => {
+    setSelectedThreadId(id);
+    loadMessages(id);
+  }, [loadMessages]);
 
-  const templatePickerOptions = useMemo((): DropdownOption[] => {
-    const tk = t as (key: string) => string;
-    const fromTemplates = templates.map((tpl) => ({
-      value: tpl.id,
-      label: KNOWN_TEMPLATE_IDS.has(tpl.id) ? tk(`templateNames.${tpl.id}`) : tpl.name,
-    }));
-    return [{ value: "none", label: t("templatePicker.none") }, ...fromTemplates];
-  }, [t, templates]);
+  useEffect(() => {
+    if (selectedThreadId) loadMessages(selectedThreadId);
+  }, [selectedThreadId]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ── Thread menu dismiss ────────────────────────────────────────
   useEffect(() => {
     if (!threadMenuOpen) return;
     function onDocMouseDown(e: MouseEvent) {
@@ -363,22 +335,167 @@ export function MessagingContent() {
     };
   }, [threadMenuOpen]);
 
+  // ── Computed ───────────────────────────────────────────────────
+  const inboxCount = allThreads.filter((t) => t.status === "Inbox").length;
+
+  const threadsForTab = useMemo(() => {
+    if (activeTab === "archived") return allThreads.filter((t) => t.status === "Archived");
+    if (activeTab === "inbox") return allThreads.filter((t) => t.status === "Inbox");
+    return [];
+  }, [activeTab, allThreads]);
+
+  const filteredThreads = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return threadsForTab.filter((th) => {
+      const categoryOk = threadMatchesCategory(th, category);
+      const priorityOk = threadMatchesPriority(th, priority);
+      const queryOk =
+        !q ||
+        th.senderName.toLowerCase().includes(q) ||
+        th.subject.toLowerCase().includes(q) ||
+        th.preview.toLowerCase().includes(q);
+      return categoryOk && priorityOk && queryOk;
+    });
+  }, [threadsForTab, query, category, priority]);
+
+  const selectedThread = useMemo(
+    () => filteredThreads.find((th) => th.id === selectedThreadId) ?? filteredThreads[0] ?? null,
+    [filteredThreads, selectedThreadId],
+  );
+
+  const activeMessages = selectedThread ? (messagesCache[selectedThread.id] ?? []) : [];
+
+  const categoryOptions = useMemo(
+    () => CATEGORY_KEYS.map((k) => ({ value: k, label: t(`categories.${k}`) })),
+    [t],
+  );
+
+  const priorityOptions = useMemo(
+    () => PRIORITY_KEYS.map((k) => ({ value: k, label: t(`priorities.${k}`) })),
+    [t],
+  );
+
+  const broadcastAudienceOptions = useMemo(
+    () => BROADCAST_AUDIENCE_KEYS.map((k) => ({ value: k, label: tb(`audiences.${k}`) })),
+    [tb],
+  );
+
+  const broadcastPriorityOptions = useMemo(
+    () => BROADCAST_PRIORITY_KEYS.map((k) => ({ value: k, label: tb(`broadcastPriority.${k}`) })),
+    [tb],
+  );
+
+  const templatePickerOptions = useMemo((): DropdownOption[] => {
+    const fromTemplates = templates.map((tpl) => ({ value: tpl.id, label: tpl.name }));
+    return [{ value: "none", label: t("templatePicker.none") }, ...fromTemplates];
+  }, [t, templates]);
+
+  // ── Handlers ───────────────────────────────────────────────────
+  const handleSendReply = async () => {
+    if (!selectedThread || !composer.trim()) return;
+    setSendingReply(true);
+    try {
+      const msg = await sendReply(
+        selectedThread.id,
+        composer.trim(),
+        composerTemplateId !== "none" ? composerTemplateId : undefined,
+      );
+      const newMsg: FrontendMessage = {
+        id: msg.id,
+        senderInitials: "AD",
+        body: msg.content,
+        timestamp: new Date().toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }),
+        align: "right",
+      };
+      setMessagesCache((prev) => ({
+        ...prev,
+        [selectedThread.id]: [...(prev[selectedThread.id] ?? []), newMsg],
+      }));
+      setComposer("");
+      setComposerTemplateId("none");
+    } catch {
+      // keep composer
+    } finally {
+      setSendingReply(false);
+    }
+  };
+
+  const handleArchiveThread = async () => {
+    if (!selectedThread) return;
+    setThreadMenuOpen(false);
+    try {
+      await archiveConversation(selectedThread.id);
+      setAllThreads((prev) =>
+        prev.map((t) => t.id === selectedThread.id ? { ...t, status: "Archived" as const } : t),
+      );
+      setSelectedThreadId("");
+    } catch {}
+  };
+
+  const handleCreateTemplate = async (tpl: Omit<MessageTemplate, "id">) => {
+    try {
+      const created = await createApiTemplate(tpl);
+      setTemplates((prev) => [
+        {
+          id: created.id,
+          name: created.name,
+          category: (created.category as MessageTemplateCategory) || "support",
+          subject: created.subject || "",
+          body: created.body,
+        },
+        ...prev,
+      ]);
+    } catch {
+      // keep optimistic if API fails? For now just swallow.
+    }
+  };
+
+  const handleSaveTemplate = async (updated: MessageTemplate) => {
+    try {
+      await updateApiTemplate(updated.id, {
+        name: updated.name,
+        category: updated.category,
+        subject: updated.subject,
+        body: updated.body,
+      });
+      setTemplates((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+    } catch {}
+  };
+
+  const handleSendBroadcast = async (sendNow: boolean) => {
+    if (!broadcastSubject.trim() || !broadcastMessage.trim()) return;
+    setSendingBroadcast(true);
+    try {
+      await sendBroadcastMessage({
+        subject: broadcastSubject.trim(),
+        message: broadcastMessage.trim(),
+        target_audience: broadcastAudience,
+        priority: broadcastPriority,
+        template_id: broadcastTemplateId !== "none" ? broadcastTemplateId : undefined,
+        send: sendNow,
+      });
+      setBroadcastSubject("");
+      setBroadcastMessage("");
+    } catch {
+      // keep form
+    } finally {
+      setSendingBroadcast(false);
+    }
+  };
+
+  // ── Render ─────────────────────────────────────────────────────
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
       <CreateMessageTemplateModal
         open={createTemplateOpen}
         onClose={() => setCreateTemplateOpen(false)}
-        onCreate={(tpl) => {
-          setTemplates((prev) => [{ id: `tpl_${Date.now()}`, ...tpl }, ...prev]);
-        }}
+        onCreate={handleCreateTemplate}
       />
       <EditMessageTemplateModal
         open={editTemplateOpen}
         template={selectedTemplate}
         onClose={() => setEditTemplateOpen(false)}
-        onSave={(updated) => {
-          setTemplates((prev) => prev.map((th) => (th.id === updated.id ? updated : th)));
-        }}
+        onSave={handleSaveTemplate}
       />
       <div className="flex w-fit gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
         {MESSAGE_TAB_IDS.map((tabId) => (
@@ -410,13 +527,7 @@ export function MessagingContent() {
                 <label className="mb-2 block text-sm font-medium text-foreground">{tb("targetAudience")}</label>
                 <Dropdown
                   open={broadcastAudienceOpen}
-                  onOpenChange={(v) => {
-                    setBroadcastAudienceOpen(v);
-                    if (v) {
-                      setBroadcastPriorityOpen(false);
-                      setBroadcastTemplateOpen(false);
-                    }
-                  }}
+                  onOpenChange={(v) => { setBroadcastAudienceOpen(v); if (v) { setBroadcastPriorityOpen(false); setBroadcastTemplateOpen(false); } }}
                   items={broadcastAudienceOptions}
                   selected={broadcastAudience}
                   onSelect={(v) => setBroadcastAudience(v as BroadcastAudienceKey)}
@@ -429,13 +540,7 @@ export function MessagingContent() {
                 <label className="mb-2 block text-sm font-medium text-foreground">{tb("priority")}</label>
                 <Dropdown
                   open={broadcastPriorityOpen}
-                  onOpenChange={(v) => {
-                    setBroadcastPriorityOpen(v);
-                    if (v) {
-                      setBroadcastAudienceOpen(false);
-                      setBroadcastTemplateOpen(false);
-                    }
-                  }}
+                  onOpenChange={(v) => { setBroadcastPriorityOpen(v); if (v) { setBroadcastAudienceOpen(false); setBroadcastTemplateOpen(false); } }}
                   items={broadcastPriorityOptions}
                   selected={broadcastPriority}
                   onSelect={(v) => setBroadcastPriority(v as BroadcastPriorityKey)}
@@ -449,13 +554,7 @@ export function MessagingContent() {
               <label className="mb-2 block text-sm font-medium text-foreground">{tb("useTemplate")}</label>
               <Dropdown
                 open={broadcastTemplateOpen}
-                onOpenChange={(v) => {
-                  setBroadcastTemplateOpen(v);
-                  if (v) {
-                    setBroadcastAudienceOpen(false);
-                    setBroadcastPriorityOpen(false);
-                  }
-                }}
+                onOpenChange={(v) => { setBroadcastTemplateOpen(v); if (v) { setBroadcastAudienceOpen(false); setBroadcastPriorityOpen(false); } }}
                 items={templatePickerOptions}
                 selected={broadcastTemplateId}
                 onSelect={setBroadcastTemplateId}
@@ -488,31 +587,18 @@ export function MessagingContent() {
             <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-3">
               <button
                 type="button"
-                onClick={() => {
-                  setBroadcastSubject("");
-                  setBroadcastMessage("");
-                }}
+                onClick={() => { setBroadcastSubject(""); setBroadcastMessage(""); }}
                 className="h-[46px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-sm font-medium text-gray-200 transition-colors hover:bg-[var(--tott-dash-control-bg)]"
               >
                 {tb("cancel")}
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  // Placeholder: wire to drafts API.
-                }}
-                className="inline-flex h-[46px] items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-sm font-medium text-gray-200 transition-colors hover:bg-[var(--tott-dash-control-bg)]"
+                disabled={sendingBroadcast}
+                onClick={() => handleSendBroadcast(false)}
+                className="inline-flex h-[46px] items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-sm font-medium text-gray-200 transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                   <polyline points="14 2 14 8 20 8" />
                 </svg>
@@ -520,10 +606,9 @@ export function MessagingContent() {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  // Placeholder: wire to send broadcast API.
-                }}
-                className="inline-flex h-[46px] items-center justify-center gap-2 rounded-lg text-sm font-semibold text-black transition-colors hover:opacity-90"
+                disabled={sendingBroadcast}
+                onClick={() => handleSendBroadcast(true)}
+                className="inline-flex h-[46px] items-center justify-center gap-2 rounded-lg text-sm font-semibold text-black transition-colors hover:opacity-90 disabled:opacity-50"
                 style={{ backgroundColor: theme.accentGoldFocus }}
               >
                 <SendIcon />
@@ -541,9 +626,7 @@ export function MessagingContent() {
             </div>
             <button
               type="button"
-              onClick={() => {
-                setCreateTemplateOpen(true);
-              }}
+              onClick={() => setCreateTemplateOpen(true)}
               className="h-[40px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 text-sm font-medium text-gray-200 transition-colors hover:bg-[var(--tott-dash-control-bg)]"
             >
               {tt("createButton")}
@@ -555,16 +638,13 @@ export function MessagingContent() {
               <button
                 key={tpl.id}
                 type="button"
-                onClick={() => {
-                  setSelectedTemplate(tpl);
-                  setEditTemplateOpen(true);
-                }}
+                onClick={() => { setSelectedTemplate(tpl); setEditTemplateOpen(true); }}
                 className="flex items-center justify-between gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-6 py-5 text-start transition-colors hover:bg-[#151515]"
               >
                 <div className="min-w-0">
                   <p className="truncate text-base font-semibold text-foreground">{tpl.name}</p>
-                  <p className="mt-1 truncate text-sm text-gray-500">
-                    {(tt as (key: string) => string)(`categoryLabels.${tpl.category}`)}…
+                  <p className="mt-1 truncate text-sm text-gray-500 capitalize">
+                    {tpl.category}
                   </p>
                 </div>
                 <span className="shrink-0 [&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
@@ -572,6 +652,9 @@ export function MessagingContent() {
                 </span>
               </button>
             ))}
+            {templates.length === 0 && (
+              <p className="col-span-2 py-10 text-center text-sm text-gray-500">No templates yet</p>
+            )}
           </div>
         </div>
       ) : (
@@ -593,20 +676,14 @@ export function MessagingContent() {
             <div className="flex flex-wrap items-center gap-2">
               <Dropdown
                 open={categoryOpen}
-                onOpenChange={(v) => {
-                  setCategoryOpen(v);
-                  if (v) setPriorityOpen(false);
-                }}
+                onOpenChange={(v) => { setCategoryOpen(v); if (v) setPriorityOpen(false); }}
                 items={categoryOptions}
                 selected={category}
                 onSelect={(v) => setCategory(v as CategoryKey)}
               />
               <Dropdown
                 open={priorityOpen}
-                onOpenChange={(v) => {
-                  setPriorityOpen(v);
-                  if (v) setCategoryOpen(false);
-                }}
+                onOpenChange={(v) => { setPriorityOpen(v); if (v) setCategoryOpen(false); }}
                 items={priorityOptions}
                 selected={priority}
                 onSelect={(v) => setPriority(v as PriorityKey)}
@@ -622,7 +699,7 @@ export function MessagingContent() {
                   key={th.id}
                   thread={th}
                   selected={selectedThread?.id === th.id}
-                  onSelect={() => setSelectedThreadId(th.id)}
+                  onSelect={() => handleSelectThread(th.id)}
                 />
               ))}
 
@@ -679,7 +756,7 @@ export function MessagingContent() {
                           <button
                             type="button"
                             className="w-full rounded-md px-3 py-2 text-start text-sm text-[#CBA158] hover:bg-[var(--tott-dash-ghost-hover)]"
-                            onClick={() => setThreadMenuOpen(false)}
+                            onClick={handleArchiveThread}
                           >
                             {ti("archive")}
                           </button>
@@ -696,7 +773,10 @@ export function MessagingContent() {
                   </div>
 
                   <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
-                    {selectedThread.messages.map((m) => (
+                    {loadingMessages && activeMessages.length === 0 && (
+                      <p className="text-center text-xs text-gray-500">Loading…</p>
+                    )}
+                    {activeMessages.map((m) => (
                       <div
                         key={m.id}
                         className={`flex items-end gap-3 ${m.align === "right" ? "justify-end" : ""}`}
@@ -750,29 +830,22 @@ export function MessagingContent() {
                         className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-gray-400 hover:text-foreground"
                         aria-label={ti("attachAria")}
                       >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
                         </svg>
                       </button>
                       <input
                         value={composer}
                         onChange={(e) => setComposer(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendReply(); } }}
                         placeholder={ti("composerPlaceholder")}
                         className="h-10 flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 text-sm text-foreground placeholder-gray-500 outline-none transition-colors focus:border-[#555]"
                       />
                       <button
                         type="button"
-                        onClick={() => setComposer("")}
-                        className="flex h-10 w-10 items-center justify-center rounded-lg text-black transition-colors hover:opacity-90"
+                        onClick={handleSendReply}
+                        disabled={sendingReply || !composer.trim()}
+                        className="flex h-10 w-10 items-center justify-center rounded-lg text-black transition-colors hover:opacity-90 disabled:opacity-50"
                         style={{ backgroundColor: theme.accentGoldFocus }}
                         aria-label={ti("sendAria")}
                       >

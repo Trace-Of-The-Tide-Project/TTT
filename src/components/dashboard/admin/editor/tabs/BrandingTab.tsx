@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { CloudUploadIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
+import { getCmsSettings, updateCmsSetting } from "@/services/cms.service";
+import { uploadFileToUrl } from "@/services/uploads.service";
+
+type SaveState = "idle" | "saving" | "saved" | "error";
 
 export function BrandingTab() {
   const [primaryColor, setPrimaryColor] = useState<string>(theme.accentGoldFocus);
@@ -14,19 +18,70 @@ export function BrandingTab() {
   const [faviconPreview, setFaviconPreview] = useState<string | null>(null);
   const [logoDragging, setLogoDragging] = useState(false);
   const [faviconDragging, setFaviconDragging] = useState(false);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
+  const [savedLogoUrl, setSavedLogoUrl] = useState<string | null>(null);
+  const [savedFaviconUrl, setSavedFaviconUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    getCmsSettings()
+      .then((settings) => {
+        const branding = settings.branding as {
+          primary_color?: string;
+          logo?: string;
+          favicon?: string;
+        } | undefined;
+        if (branding) {
+          if (branding.primary_color) setPrimaryColor(branding.primary_color);
+          if (branding.logo) {
+            setSavedLogoUrl(branding.logo);
+            setLogoPreview(branding.logo);
+          }
+          if (branding.favicon) {
+            setSavedFaviconUrl(branding.favicon);
+            setFaviconPreview(branding.favicon);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleLogoSelect = (file: File | null) => {
-    if (logoPreview) URL.revokeObjectURL(logoPreview);
-    setLogoPreview(null);
+    if (logoPreview && logoPreview !== savedLogoUrl) URL.revokeObjectURL(logoPreview);
     setLogoFile(file);
-    if (file && file.type.startsWith("image/")) setLogoPreview(URL.createObjectURL(file));
+    setLogoPreview(file && file.type.startsWith("image/") ? URL.createObjectURL(file) : null);
   };
 
   const handleFaviconSelect = (file: File | null) => {
-    if (faviconPreview) URL.revokeObjectURL(faviconPreview);
-    setFaviconPreview(null);
+    if (faviconPreview && faviconPreview !== savedFaviconUrl) URL.revokeObjectURL(faviconPreview);
     setFaviconFile(file);
-    if (file && file.type.startsWith("image/")) setFaviconPreview(URL.createObjectURL(file));
+    setFaviconPreview(file && file.type.startsWith("image/") ? URL.createObjectURL(file) : null);
+  };
+
+  const handleSave = async () => {
+    setSaveState("saving");
+    try {
+      let logoUrl = savedLogoUrl;
+      let faviconUrl = savedFaviconUrl;
+
+      if (logoFile) logoUrl = await uploadFileToUrl(logoFile);
+      if (faviconFile) faviconUrl = await uploadFileToUrl(faviconFile);
+
+      await updateCmsSetting("branding", {
+        primary_color: primaryColor,
+        logo: logoUrl ?? "",
+        favicon: faviconUrl ?? "",
+      });
+
+      setSavedLogoUrl(logoUrl);
+      setSavedFaviconUrl(faviconUrl);
+      setLogoFile(null);
+      setFaviconFile(null);
+      setSaveState("saved");
+      setTimeout(() => setSaveState("idle"), 2500);
+    } catch {
+      setSaveState("error");
+      setTimeout(() => setSaveState("idle"), 3000);
+    }
   };
 
   return (
@@ -34,6 +89,7 @@ export function BrandingTab() {
       <h3 className="text-sm font-semibold text-foreground">Brand Settings</h3>
       <p className="mt-1 text-xs text-gray-500">Logo, colors, and typography.</p>
       <div className="mt-6 space-y-6">
+        {/* Logo */}
         <div>
           <label className="mb-1.5 block text-xs font-medium text-foreground">Logo</label>
           <input
@@ -65,7 +121,9 @@ export function BrandingTab() {
             }}
             onDragLeave={() => setLogoDragging(false)}
             className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 transition-colors ${
-              logoDragging ? "border-[#C9A96E] bg-[var(--tott-dash-surface-inset)]" : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[#555]"
+              logoDragging
+                ? "border-[#C9A96E] bg-[var(--tott-dash-surface-inset)]"
+                : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[#555]"
             }`}
           >
             {logoPreview ? (
@@ -75,7 +133,7 @@ export function BrandingTab() {
                   alt="Logo preview"
                   className="mx-auto max-h-24 w-auto object-contain"
                 />
-                <p className="mt-2 text-xs text-gray-400">{logoFile?.name}</p>
+                <p className="mt-2 text-xs text-gray-400">{logoFile?.name ?? "Saved logo"}</p>
               </div>
             ) : (
               <>
@@ -92,6 +150,8 @@ export function BrandingTab() {
             )}
           </div>
         </div>
+
+        {/* Favicon */}
         <div>
           <label className="mb-1.5 block text-xs font-medium text-foreground">Favicon</label>
           <input
@@ -123,7 +183,9 @@ export function BrandingTab() {
             }}
             onDragLeave={() => setFaviconDragging(false)}
             className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 transition-colors ${
-              faviconDragging ? "border-[#C9A96E] bg-[var(--tott-dash-surface-inset)]" : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[#555]"
+              faviconDragging
+                ? "border-[#C9A96E] bg-[var(--tott-dash-surface-inset)]"
+                : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[#555]"
             }`}
           >
             {faviconPreview ? (
@@ -133,7 +195,7 @@ export function BrandingTab() {
                   alt="Favicon preview"
                   className="mx-auto max-h-16 w-auto object-contain"
                 />
-                <p className="mt-2 text-xs text-gray-400">{faviconFile?.name}</p>
+                <p className="mt-2 text-xs text-gray-400">{faviconFile?.name ?? "Saved favicon"}</p>
               </div>
             ) : (
               <>
@@ -144,12 +206,14 @@ export function BrandingTab() {
                   Drag and drop files here, or click to browse
                 </p>
                 <p className="mt-1 text-xs text-gray-500">
-                  Supported formats: JPG, PNG, WebP, SVG, ICO (Max 20MB)
+                  Supported formats: PNG, WebP, SVG, ICO (Max 20MB)
                 </p>
               </>
             )}
           </div>
         </div>
+
+        {/* Primary Color */}
         <div>
           <label className="mb-1.5 block text-xs font-medium text-foreground">Primary Color</label>
           <div className="flex items-center gap-3">
@@ -168,6 +232,28 @@ export function BrandingTab() {
             />
           </div>
         </div>
+
+        {/* Save */}
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saveState === "saving"}
+          className={`w-full rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors disabled:opacity-50 ${
+            saveState === "saved"
+              ? "border-emerald-600/50 bg-emerald-600/20 text-emerald-400"
+              : saveState === "error"
+                ? "border-red-600/50 bg-red-600/20 text-red-400"
+                : "border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] text-foreground hover:bg-[var(--tott-dash-control-hover)]"
+          }`}
+        >
+          {saveState === "saving"
+            ? "Saving…"
+            : saveState === "saved"
+              ? "Saved"
+              : saveState === "error"
+                ? "Error — retry"
+                : "Save Branding"}
+        </button>
       </div>
     </div>
   );

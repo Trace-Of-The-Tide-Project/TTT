@@ -4,6 +4,8 @@ import { Link } from "@/i18n/navigation";
 import { ArticleCard } from "./ArticleCard";
 import type { ArticleCardAction } from "./ArticleCard";
 import type { ReactNode } from "react";
+import { StaggerContainer } from "@/components/motion/StaggerContainer";
+import { StaggerItem } from "@/components/motion/StaggerItem";
 
 export type ArticleCardItem = {
   id: string;
@@ -53,21 +55,22 @@ export function ArticleCardsSection({
         </div>
       )}
 
-      <div className={`flex flex-col ${compactGap ? "gap-3" : "gap-6"}`}>
+      <StaggerContainer className={`flex flex-col ${compactGap ? "gap-3" : "gap-6"}`}>
         {items.map((item) => (
-          <ArticleCard
-            key={item.id}
-            icon={item.icon}
-            statusLabel={item.statusLabel}
-            title={item.title}
-            subtitle={item.subtitle}
-            views={item.views}
-            actions={item.actions}
-            useHexIcon={item.useHexIcon}
-            compact={item.compact}
-          />
+          <StaggerItem key={item.id}>
+            <ArticleCard
+              icon={item.icon}
+              statusLabel={item.statusLabel}
+              title={item.title}
+              subtitle={item.subtitle}
+              views={item.views}
+              actions={item.actions}
+              useHexIcon={item.useHexIcon}
+              compact={item.compact}
+            />
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerContainer>
     </div>
   );
 }

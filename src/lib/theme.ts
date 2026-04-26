@@ -41,6 +41,14 @@ export const theme = {
    */
   cardBg: "#000000",
   cardInnerGlow: "rgba(203,161,88,0.15)",
+
+  /** Motion durations — mirrors the CSS custom properties defined in globals.css. */
+  motion: {
+    hover: "var(--tott-motion-duration-hover)",
+    enter: "var(--tott-motion-duration-enter)",
+    page: "var(--tott-motion-duration-page)",
+    ease: "var(--tott-motion-ease)",
+  },
 } as const
 
 export type Theme = typeof theme

@@ -3,11 +3,14 @@
 import Image from "next/image";
 import { theme } from "@/lib/theme";
 import { isUsableImageSrc } from "@/lib/content/content-image-src";
+import { SharedImage } from "@/components/motion/SharedImage";
 
 type ContentImageDisplayProps = {
   src: string;
-  /** Optional badge on the hero (e.g. “Cover”). */
+  /** Optional badge on the hero (e.g. "Cover"). */
   coverLabel?: string;
+  /** Matches the `layoutId` on the source card image for a shared-layout morph. */
+  layoutId?: string;
 };
 
 function DefaultCoverHero({ coverLabel }: { coverLabel?: string }) {
@@ -44,7 +47,7 @@ function DefaultCoverHero({ coverLabel }: { coverLabel?: string }) {
   );
 }
 
-export function ContentImageDisplay({ src, coverLabel }: ContentImageDisplayProps) {
+export function ContentImageDisplay({ src, coverLabel, layoutId }: ContentImageDisplayProps) {
   const trimmed = src.trim();
   if (!isUsableImageSrc(trimmed)) {
     return (
@@ -60,14 +63,16 @@ export function ContentImageDisplay({ src, coverLabel }: ContentImageDisplayProp
   return (
     <div className="relative overflow-hidden rounded-xl">
       <div className="relative w-full" style={{ aspectRatio: "21 / 9" }}>
-        <Image
-          src={trimmed}
-          alt={coverLabel ? `${coverLabel} image` : ""}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 60vw"
-          unoptimized={isRemote || isData}
-        />
+        <SharedImage layoutId={layoutId} style={{ position: "absolute", inset: 0 }}>
+          <Image
+            src={trimmed}
+            alt={coverLabel ? `${coverLabel} image` : ""}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 60vw"
+            unoptimized={isRemote || isData}
+          />
+        </SharedImage>
         {coverLabel ? (
           <div
             className="pointer-events-none absolute inset-0 flex items-end justify-start bg-gradient-to-t from-black/70 via-black/20 to-transparent p-4 sm:p-6"

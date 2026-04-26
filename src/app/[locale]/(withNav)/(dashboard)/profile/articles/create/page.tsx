@@ -1,5 +1,67 @@
-import { PlaceholderPage } from "@/components/dashboard/shared/PlaceholderPage";
+"use client";
 
-export default function CreateArticlePage() {
-  return <PlaceholderPage pageKey="createArticle" />;
+import { useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
+import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
+import { CreatePageFilters } from "@/components/dashboard/admin/articles/articles-create/CreatePageFilters";
+import { TemplateCard } from "@/components/dashboard/admin/articles/articles-create/TemplateCard";
+import {
+  createTemplateFilterIds,
+  createTemplates,
+} from "@/components/dashboard/admin/articles/data/create-template-data";
+
+export default function ProfileCreateArticlePage() {
+  const t = useTranslations("Dashboard.articles");
+  const [selectedFilter, setSelectedFilter] = useState("all");
+
+  const filterOptions = useMemo(
+    () =>
+      createTemplateFilterIds.map((id) => ({
+        id,
+        label: t(`create.filters.${id}`),
+      })),
+    [t],
+  );
+
+  const filteredTemplates = useMemo(() => {
+    if (selectedFilter === "all") return createTemplates;
+    return createTemplates.filter((template) => template.category === selectedFilter);
+  }, [selectedFilter]);
+
+  return (
+    <div>
+      {/* Title + subtitle only — no actions in header, filters go below */}
+      <DashboardHeader
+        compactPadding
+        title={t("create.pageTitle")}
+        subtitle={t("create.pageSubtitle")}
+      />
+
+      <div className="px-6 pb-6 sm:px-8">
+        {/* Filters below subtitle, full-width row, outlined active style */}
+        <div className="mb-6">
+          <CreatePageFilters
+            options={filterOptions}
+            selectedId={selectedFilter}
+            onSelect={setSelectedFilter}
+            variant="outlined"
+          />
+        </div>
+
+        {/* Spacious 2-column grid */}
+        <div className="grid grid-cols-2 gap-4">
+          {filteredTemplates.map((template) => (
+            <TemplateCard
+              key={template.number}
+              number={template.number}
+              title={t(`create.templates.${template.templateKey}.title`)}
+              description={t(`create.templates.${template.templateKey}.description`)}
+              icon={template.icon}
+              href={template.href}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }

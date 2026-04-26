@@ -1,7 +1,9 @@
+import { PageTransition } from "@/components/motion/PageTransition";
+
 export default function DashboardRootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <PageTransition>{children}</PageTransition>;
 }

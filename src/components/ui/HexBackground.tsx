@@ -1,6 +1,9 @@
 "use client";
 
 import { useId } from "react";
+import { motion } from "motion/react";
+import { useIdle } from "@/hooks/useIdle";
+import { springs } from "@/lib/motion";
 
 function roundedHexPath(cx: number, cy: number, r: number) {
   const angles = [
@@ -57,16 +60,23 @@ const row2Path = ROW2_CENTERS.map((c) => roundedHexPath(c.cx, c.cy, R)).join("")
 
 export default function HexBackground() {
   const id = useId();
+  const isIdle = useIdle({ timeout: 2500 });
   const patternId = `hexagons-${id.replace(/:/g, "")}`;
   const gradientId = `hex-fade-${id.replace(/:/g, "")}`;
   const maskId = `hex-mask-${id.replace(/:/g, "")}`;
 
   return (
-    <svg
+    <motion.svg
       width="100%"
       height="100%"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMin slice"
+      animate={{ opacity: isIdle ? 0.85 : 1 }}
+      transition={
+        isIdle
+          ? { ...springs.breath, repeat: Infinity, repeatType: "reverse" }
+          : { duration: 0.4 }
+      }
     >
       <defs>
         <pattern id={patternId} x="0" y="0" width="168" height="72" patternUnits="userSpaceOnUse">
@@ -95,6 +105,6 @@ export default function HexBackground() {
         </mask>
       </defs>
       <rect width="100%" height="100%" fill={`url(#${patternId})`} mask={`url(#${maskId})`} />
-    </svg>
+    </motion.svg>
   );
 }

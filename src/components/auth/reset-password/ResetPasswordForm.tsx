@@ -7,6 +7,7 @@ import { useRouter } from "@/i18n/navigation";
 import { LockIcon } from "@/components/ui/icons";
 import { AuthInput } from "@/components/ui/AuthInput";
 import { theme } from "@/lib/theme";
+import { api } from "@/services/api";
 
 export function ResetPasswordForm() {
   const t = useTranslations("Auth.forms.resetPassword");
@@ -40,22 +41,12 @@ export function ResetPasswordForm() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword: password, confirmPassword }),
-      });
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        setError((data.message as string) || t("errorGeneric"));
-        setLoading(false);
-        return;
-      }
+      await api.post("/auth/reset-password", { token, newPassword: password, confirmPassword });
       router.push("/auth/success");
       router.refresh();
-    } catch {
-      setError(t("errorNetwork"));
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(msg || t("errorGeneric"));
     } finally {
       setLoading(false);
     }

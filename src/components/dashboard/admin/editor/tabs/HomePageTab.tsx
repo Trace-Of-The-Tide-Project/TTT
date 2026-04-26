@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   EyeIcon,
   GripVerticalIcon,
@@ -8,33 +8,77 @@ import {
   PlusIcon,
   RefreshCwIcon,
 } from "@/components/ui/icons";
+import {
+  getCmsHomepage,
+  updateCmsSection,
+  toggleCmsSection,
+  type CmsSection,
+} from "@/services/cms.service";
 
-export type SectionId = "hero" | "featured" | "categories" | "top-creators" | "cta";
+type HeroConfig = {
+  headline: string;
+  subheadline: string;
+  primary_cta: string;
+  secondary_cta: string;
+};
 
-const SECTIONS: { id: SectionId; label: string }[] = [
-  { id: "hero", label: "Hero Section" },
-  { id: "featured", label: "Featured" },
-  { id: "categories", label: "Categories" },
-  { id: "top-creators", label: "Top Creators" },
-  { id: "cta", label: "Call to Action" },
-];
+function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
+  const cfg = section?.config ?? {};
+  return {
+    headline: (cfg.headline as string) ?? "",
+    subheadline: (cfg.subheadline as string) ?? "",
+    primary_cta: (cfg.primary_cta as string) ?? "",
+    secondary_cta: (cfg.secondary_cta as string) ?? "",
+  };
+}
 
 export function HomePageTab() {
-  const [selectedSection, setSelectedSection] = useState<SectionId>("hero");
-  const [sectionVisibility, setSectionVisibility] = useState<Record<SectionId, boolean>>({
-    hero: true,
-    featured: true,
-    categories: true,
-    "top-creators": true,
-    cta: true,
-  });
+  const [pageId, setPageId] = useState<string | null>(null);
+  const [sections, setSections] = useState<CmsSection[]>([]);
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [backgroundFile, setBackgroundFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [heroConfig, setHeroConfig] = useState<HeroConfig>({
+    headline: "",
+    subheadline: "",
+    primary_cta: "",
+    secondary_cta: "",
+  });
+  const [savedHeroConfig, setSavedHeroConfig] = useState<HeroConfig>({
+    headline: "",
+    subheadline: "",
+    primary_cta: "",
+    secondary_cta: "",
+  });
+  const [saving, setSaving] = useState(false);
 
-  const toggleVisibility = (id: SectionId) => {
-    setSectionVisibility((prev) => ({ ...prev, [id]: !prev[id] }));
+  useEffect(() => {
+    getCmsHomepage()
+      .then((page) => {
+        setPageId(page.id);
+        const sorted = [...page.sections].sort((a, b) => a.section_order - b.section_order);
+        setSections(sorted);
+        const heroSection = sorted.find((s) => s.section_type === "hero");
+        if (heroSection) {
+          setSelectedSectionId(heroSection.id);
+          const cfg = parseHeroConfig(heroSection);
+          setHeroConfig(cfg);
+          setSavedHeroConfig(cfg);
+        } else if (sorted.length > 0) {
+          setSelectedSectionId(sorted[0].id);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleToggleVisibility = (section: CmsSection) => {
+    if (!pageId) return;
+    toggleCmsSection(pageId, section.id).catch(() => {});
+    setSections((prev) =>
+      prev.map((s) => (s.id === section.id ? { ...s, is_visible: !s.is_visible } : s))
+    );
   };
 
   const handleFileSelect = (file: File | null) => {
@@ -53,25 +97,39 @@ export function HomePageTab() {
     if (file) handleFileSelect(file);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
+  const heroSection = sections.find((s) => s.section_type === "hero");
+  const selectedSection = sections.find((s) => s.id === selectedSectionId);
+  const showHeroForm = selectedSection?.section_type === "hero";
+
+  const handleSaveHero = async () => {
+    if (!pageId || !heroSection) return;
+    setSaving(true);
+    try {
+      await updateCmsSection(pageId, heroSection.id, {
+        config: JSON.stringify(heroConfig),
+      });
+      setSavedHeroConfig(heroConfig);
+    } catch {}
+    finally {
+      setSaving(false);
+    }
   };
 
-  const handleDragLeave = () => setIsDragging(false);
+  const handleReset = () => setHeroConfig(savedHeroConfig);
 
   return (
     <div className="grid gap-9 lg:grid-cols-[320px_1fr]">
+      {/* Sections sidebar */}
       <div className="rounded-xl border border-[var(--tott-card-border)] p-8 px-10">
         <h3 className="text-sm font-semibold text-foreground">Quick Actions</h3>
         <p className="mt-1 text-xs text-gray-500">Drag to reorder, toggle visibility.</p>
         <div className="mt-4 flex w-full flex-col gap-4">
-          {SECTIONS.map((section) => {
-            const isSelected = selectedSection === section.id;
+          {sections.map((section) => {
+            const isSelected = section.id === selectedSectionId;
             return (
               <div
                 key={section.id}
-                onClick={() => setSelectedSection(section.id)}
+                onClick={() => setSelectedSectionId(section.id)}
                 className={`flex w-full cursor-pointer items-center gap-3 rounded-lg border px-3 py-5 transition-colors hover:bg-[var(--tott-dash-control-hover)] ${
                   isSelected ? "border-[#C9A96E]" : "border-[var(--tott-card-border)]"
                 }`}
@@ -85,18 +143,22 @@ export function HomePageTab() {
                 <span
                   className={`flex-1 text-sm font-medium ${isSelected ? "text-[#C9A96E]" : "text-foreground"}`}
                 >
-                  {section.label}
+                  {section.title}
                 </span>
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleVisibility(section.id);
+                    handleToggleVisibility(section);
                   }}
                   className={`rounded p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] ${
-                    isSelected ? "text-[#C9A96E]" : sectionVisibility[section.id] ? "text-gray-400" : "text-gray-600"
+                    isSelected
+                      ? "text-[#C9A96E]"
+                      : section.is_visible
+                        ? "text-gray-400"
+                        : "text-gray-600 opacity-40"
                   }`}
-                  aria-label={sectionVisibility[section.id] ? "Hide section" : "Show section"}
+                  aria-label={section.is_visible ? "Hide section" : "Show section"}
                 >
                   <span className="[&_svg]:h-4 [&_svg]:w-4">
                     <EyeIcon />
@@ -117,108 +179,148 @@ export function HomePageTab() {
         </button>
       </div>
 
+      {/* Section editor panel */}
       <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-semibold text-foreground">Hero Banner</h3>
-            <p className="mt-1 text-xs text-gray-500">Edit section content and settings.</p>
-          </div>
-          <button
-            type="button"
-            className="flex items-center gap-1.5 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground"
-          >
-            <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">
-              <RefreshCwIcon />
-            </span>
-            Reset
-          </button>
-        </div>
-        <div className="mt-6 space-y-4">
-          <div>
-            <label className="mb-1.5 block text-xs font-medium text-foreground">Headline</label>
-            <input
-              type="text"
-              placeholder="Discover. Create. Inspire."
-              className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-medium text-foreground">Subheadline</label>
-            <textarea
-              placeholder="Join a community of creators, authors, and editors sharing their passion with the world."
-              rows={3}
-              className="w-full resize-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-medium text-foreground">Primary CTA</label>
-            <input
-              type="text"
-              placeholder="Contribute now."
-              className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-medium text-foreground">Secondary CTA</label>
-            <input
-              type="text"
-              placeholder="Contribute now."
-              className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-medium text-foreground">Background Image</label>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              className="sr-only"
-              onChange={(e) => handleFileSelect(e.target.files?.[0] ?? null)}
-            />
-            <div
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  fileInputRef.current?.click();
-                }
-              }}
-              onClick={() => fileInputRef.current?.click()}
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 transition-colors ${
-                isDragging ? "border-[#C9A96E] bg-[var(--tott-dash-surface-inset)]" : "border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] hover:border-[#555]"
-              }`}
-            >
-              {previewUrl ? (
-                <div className="relative w-full max-h-40 overflow-hidden rounded">
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="mx-auto max-h-40 w-auto object-contain"
-                  />
-                  <p className="mt-2 text-xs text-gray-400">{backgroundFile?.name}</p>
-                </div>
-              ) : (
-                <>
-                  <span className="text-gray-500">
-                    <span className="[&_svg]:h-10 [&_svg]:w-10">
-                      <CloudUploadIcon />
-                    </span>
+        {showHeroForm ? (
+          <>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Hero Banner</h3>
+                <p className="mt-1 text-xs text-gray-500">Edit section content and settings.</p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="flex items-center gap-1.5 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-surface-inset)]"
+                >
+                  <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">
+                    <RefreshCwIcon />
                   </span>
-                  <p className="mt-2 text-sm text-foreground">
-                    Drag and drop files here, or click to browse
-                  </p>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Supported formats: JPG, PNG, WebP, GIF (Max 20MB)
-                  </p>
-                </>
-              )}
+                  Reset
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveHero}
+                  disabled={saving}
+                  className="rounded-lg border border-[#C9A96E]/40 bg-[#C9A96E]/20 px-3 py-1.5 text-xs font-medium text-[#C9A96E] transition-colors hover:bg-[#C9A96E]/30 disabled:opacity-50"
+                >
+                  {saving ? "Saving…" : "Save"}
+                </button>
+              </div>
             </div>
+            <div className="mt-6 space-y-4">
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-foreground">Headline</label>
+                <input
+                  type="text"
+                  placeholder="Discover. Create. Inspire."
+                  value={heroConfig.headline}
+                  onChange={(e) => setHeroConfig((p) => ({ ...p, headline: e.target.value }))}
+                  className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-foreground">Subheadline</label>
+                <textarea
+                  placeholder="Join a community of creators, authors, and editors sharing their passion with the world."
+                  rows={3}
+                  value={heroConfig.subheadline}
+                  onChange={(e) => setHeroConfig((p) => ({ ...p, subheadline: e.target.value }))}
+                  className="w-full resize-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-foreground">Primary CTA</label>
+                <input
+                  type="text"
+                  placeholder="Contribute now."
+                  value={heroConfig.primary_cta}
+                  onChange={(e) => setHeroConfig((p) => ({ ...p, primary_cta: e.target.value }))}
+                  className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-foreground">Secondary CTA</label>
+                <input
+                  type="text"
+                  placeholder="Explore more."
+                  value={heroConfig.secondary_cta}
+                  onChange={(e) => setHeroConfig((p) => ({ ...p, secondary_cta: e.target.value }))}
+                  className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-foreground">Background Image</label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="sr-only"
+                  onChange={(e) => handleFileSelect(e.target.files?.[0] ?? null)}
+                />
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      fileInputRef.current?.click();
+                    }
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDrop={handleDrop}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDragging(true);
+                  }}
+                  onDragLeave={() => setIsDragging(false)}
+                  className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 transition-colors ${
+                    isDragging
+                      ? "border-[#C9A96E] bg-[var(--tott-dash-surface-inset)]"
+                      : "border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] hover:border-[#555]"
+                  }`}
+                >
+                  {previewUrl ? (
+                    <div className="relative w-full max-h-40 overflow-hidden rounded">
+                      <img
+                        src={previewUrl}
+                        alt="Preview"
+                        className="mx-auto max-h-40 w-auto object-contain"
+                      />
+                      <p className="mt-2 text-xs text-gray-400">{backgroundFile?.name}</p>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-gray-500">
+                        <span className="[&_svg]:h-10 [&_svg]:w-10">
+                          <CloudUploadIcon />
+                        </span>
+                      </span>
+                      <p className="mt-2 text-sm text-foreground">
+                        Drag and drop files here, or click to browse
+                      </p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Supported formats: JPG, PNG, WebP, GIF (Max 20MB)
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+        ) : selectedSection ? (
+          <div className="flex h-full flex-col items-center justify-center gap-2 py-20 text-center">
+            <p className="text-sm font-medium text-foreground">{selectedSection.title}</p>
+            <p className="text-xs text-gray-500">
+              This section has no configurable fields. Use the eye icon to toggle its visibility.
+            </p>
           </div>
-        </div>
+        ) : (
+          <div className="flex h-full items-center justify-center py-20 text-sm text-gray-500">
+            Select a section to edit its settings.
+          </div>
+        )}
       </div>
     </div>
   );

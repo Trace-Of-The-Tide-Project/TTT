@@ -2,6 +2,7 @@
 
 import { createElement, isValidElement, type ComponentType, type ReactNode } from "react";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { SpringCard } from "@/components/motion/SpringCard";
 
 type StatCardProps = {
   /** Use `<Icon />` from Server Components, or a component ref from pure client trees. */
@@ -24,7 +25,7 @@ function renderStatIcon(icon: StatCardProps["icon"]): ReactNode {
 export function StatCard({ icon, value, label, trend }: StatCardProps) {
   const { isDark } = useTheme();
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-panel-bg)] px-4 py-5">
+    <SpringCard className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-panel-bg)] px-4 py-5">
       <span
         className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)]"
         style={{ color: isDark ? "#E8DDC0" : "#a89060" }}
@@ -41,6 +42,6 @@ export function StatCard({ icon, value, label, trend }: StatCardProps) {
           <span className="text-gray-600">{trend.comparison}</span>
         </div>
       )}
-    </div>
+    </SpringCard>
   );
 }

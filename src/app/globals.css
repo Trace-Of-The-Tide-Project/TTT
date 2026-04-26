@@ -6,8 +6,12 @@
  */
 html {
   color-scheme: dark;
-  --background: #0a0a0a;
+  --background: #171717;
   --foreground: #ededed;
+  --tott-motion-duration-hover: 180ms;
+  --tott-motion-duration-enter: 450ms;
+  --tott-motion-duration-page: 350ms;
+  --tott-motion-ease: cubic-bezier(.2, .8, .2, 1);
   --tott-card-border: #333333;
   --tott-panel-bg: #111111;
   --tott-panel-text: #ffffff;
@@ -20,7 +24,7 @@ html {
   --tott-auth-hex-stroke-opacity: 0.3;
   --tott-auth-hex-mask-from: #ffffff;
   --tott-auth-hex-mask-to: #ffffff;
-  --tott-dash-surface: #0a0a0a;
+  --tott-dash-surface: #171717;
   --tott-dash-surface-2: #111111;
   --tott-dash-surface-inset: #1a1a1a;
   --tott-dash-input-bg: #1a1a1a;
@@ -81,4 +85,15 @@ button,
 a,
 [role="button"] {
   cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

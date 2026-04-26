@@ -21,6 +21,13 @@ import { AdminSettingsPageHeader } from "@/components/dashboard/admin/settings/A
 import { adminConfig } from "@/lib/dashboard/admin-config";
 import { shouldShowAdminSettingsHeader } from "@/lib/dashboard/admin-settings-header-paths";
 import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
+import { getUsers } from "@/services/users.service";
+
+function formatCompact(n: number): string {
+  if (n >= 1_000_000) return `${+(n / 1_000_000).toFixed(1)}m`;
+  if (n >= 1_000) return `${+(n / 1_000).toFixed(1)}k`;
+  return String(n);
+}
 
 function getCommandCenter(pathname: string | null) {
   const path = normalizeAppPathname(pathname);
@@ -62,9 +69,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const tLayout = useTranslations("Dashboard.layout");
   const commandCenter = getCommandCenter(pathname);
   const [mounted, setMounted] = useState(false);
+  const [badgeOverrides, setBadgeOverrides] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setMounted(true);
+    getUsers({ limit: 1 }).then((result) => {
+      setBadgeOverrides({ "/admin/users": formatCompact(result.meta.total) });
+    }).catch(() => {});
   }, []);
 
   if (!mounted) {
@@ -87,6 +98,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       header={<AdminTopbar />}
       commandCenter={commandCenter}
       mobileBarTitle={mobileBarTitle}
+      badgeOverrides={badgeOverrides}
     >
       {children}
     </DashboardLayout>

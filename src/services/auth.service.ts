@@ -153,21 +153,8 @@ export async function signup(data: SignupRequest): Promise<SignupResult> {
     full_name: data.full_name,
   }
 
-  let raw: SignupApiResponse
-  if (typeof window !== "undefined") {
-    const res = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-    if (!res.ok) {
-      throw await createHttpError(res)
-    }
-    raw = await res.json()
-  } else {
-    const response = await api.post<SignupApiResponse>("/auth/signup", payload)
-    raw = response.data
-  }
+  const response = await api.post<SignupApiResponse>("/auth/signup", payload)
+  const raw = response.data
 
   const inner = raw?.data ?? raw
   const token =
@@ -185,15 +172,8 @@ export type VerifyEmailResult = { loggedIn: true } | { loggedIn: false }
  * If the API returns a session, it is stored like login; otherwise the caller should send the user to log in.
  */
 export async function verifyEmail(token: string): Promise<VerifyEmailResult> {
-  const res = await fetch("/api/auth/verify-email", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token }),
-  })
-  if (!res.ok) {
-    throw await createHttpError(res)
-  }
-  const raw = (await res.json().catch(() => ({}))) as SignupApiResponse
+  const response = await api.post<SignupApiResponse>("/auth/verify-email", { token })
+  const raw = response.data
   const inner = raw?.data ?? raw
   const access =
     inner?.access_token ?? inner?.accessToken ?? raw?.access_token ?? raw?.accessToken
@@ -212,38 +192,15 @@ export async function resendVerificationEmail(email: string): Promise<void> {
   if (!trimmed) {
     throw new Error("Enter your email address.");
   }
-  const res = await fetch("/api/auth/resend-verification", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: trimmed }),
-  });
-  if (!res.ok) {
-    throw await createHttpError(res);
-  }
+  await api.post("/auth/resend-verification", { email: trimmed });
 }
 
 /**
  * POST /auth/login - Authenticate user
  */
 export async function login(data: LoginRequest): Promise<AuthResponse> {
-  let raw: SignupApiResponse
-
-  if (typeof window !== "undefined") {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-    if (!res.ok) {
-      throw await createHttpError(res)
-    }
-    raw = await res.json()
-  } else {
-    const response = await api.post<SignupApiResponse>("/auth/login", data)
-    raw = response.data
-  }
-
-  return normalizeAuthResponse(raw, "local")
+  const response = await api.post<SignupApiResponse>("/auth/login", data)
+  return normalizeAuthResponse(response.data, "local")
 }
 
 export type ChangePasswordResult = { message: string }

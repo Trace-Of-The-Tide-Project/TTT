@@ -334,6 +334,57 @@ export async function getArticleById(articleId: string): Promise<ArticleDetail |
   }
 }
 
+// ── Related articles ───────────────────────────────────────────
+
+export type RelatedArticleItem = {
+  id: string;
+  title: string;
+  cover_image?: string | null;
+  published_at?: string | null;
+  edition?: string | null;
+  category?: string | null;
+  author?: { id: string; username?: string; full_name?: string | null } | null;
+};
+
+export type CollectionArticlesResult = {
+  count: number;
+  total_hours: number;
+  articles: Array<{
+    id: string;
+    title: string;
+    cover_image?: string | null;
+    excerpt?: string | null;
+    published_at?: string | null;
+    author?: { id: string; username?: string; full_name?: string | null } | null;
+  }>;
+};
+
+/** GET /articles/:id/related — returns up to 4 published articles in same category/tags. */
+export async function getRelatedArticles(articleId: string): Promise<RelatedArticleItem[]> {
+  try {
+    const { data } = await api.get<unknown>(`/articles/${encodeURIComponent(articleId)}/related`);
+    const arr = Array.isArray(data) ? data : ((data as Record<string, unknown>)?.data ?? []);
+    return arr as RelatedArticleItem[];
+  } catch {
+    return [];
+  }
+}
+
+/** GET /articles/collection/:collectionId — returns all published articles in a collection. */
+export async function getCollectionArticles(collectionId: string): Promise<CollectionArticlesResult> {
+  try {
+    const { data } = await api.get<unknown>(`/articles/collection/${encodeURIComponent(collectionId)}`);
+    const d = data as CollectionArticlesResult;
+    return {
+      count: d?.count ?? 0,
+      total_hours: d?.total_hours ?? 0,
+      articles: Array.isArray(d?.articles) ? d.articles : [],
+    };
+  } catch {
+    return { count: 0, total_hours: 0, articles: [] };
+  }
+}
+
 export type ArticleLifecycleStatus = "draft" | "published" | "scheduled" | "archived" | "flagged";
 
 export type UpdateArticlePayload = {

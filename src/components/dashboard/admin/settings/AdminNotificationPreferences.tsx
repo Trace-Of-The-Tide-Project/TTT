@@ -1,24 +1,64 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import { SettingsRow, settingsCardClass, SettingsToggle } from "./SettingsPrimitives";
+import {
+  getNotificationPreferences,
+  updateNotificationPreferences,
+  type NotificationPreferences,
+} from "@/services/notifications.service";
+
+type SaveState = "idle" | "saving" | "saved" | "error";
+
+const DEFAULTS: NotificationPreferences = {
+  article_updates: true,
+  new_followers: true,
+  new_contributors: true,
+  comments: false,
+  weekly_digest: true,
+  push_browser: true,
+};
 
 export function AdminNotificationPreferences() {
   const t = useTranslations("Dashboard.notificationsPage.preferences");
-  const [articleUpdates, setArticleUpdates] = useState(true);
-  const [newFollowers, setNewFollowers] = useState(true);
-  const [newContributor, setNewContributor] = useState(true);
-  const [comments, setComments] = useState(false);
-  const [weeklyDigest, setWeeklyDigest] = useState(true);
-  const [browserNotifications, setBrowserNotifications] = useState(true);
-  const [savedFlash, setSavedFlash] = useState(false);
+  const [prefs, setPrefs] = useState<NotificationPreferences>(DEFAULTS);
+  const [loading, setLoading] = useState(true);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
 
-  const handleSave = useCallback(() => {
-    setSavedFlash(true);
-    window.setTimeout(() => setSavedFlash(false), 2000);
+  useEffect(() => {
+    getNotificationPreferences()
+      .then(setPrefs)
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
+
+  const toggle = useCallback((key: keyof NotificationPreferences) => {
+    setPrefs((p) => ({ ...p, [key]: !p[key] }));
+  }, []);
+
+  const handleSave = useCallback(async () => {
+    setSaveState("saving");
+    try {
+      const updated = await updateNotificationPreferences(prefs);
+      setPrefs(updated);
+      setSaveState("saved");
+      window.setTimeout(() => setSaveState("idle"), 2000);
+    } catch {
+      setSaveState("error");
+      window.setTimeout(() => setSaveState("idle"), 3000);
+    }
+  }, [prefs]);
+
+  const saveLabel =
+    saveState === "saving"
+      ? "Saving…"
+      : saveState === "saved"
+        ? t("saved")
+        : saveState === "error"
+          ? "Error — try again"
+          : t("saveChanges");
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -33,8 +73,8 @@ export function AdminNotificationPreferences() {
               description={t("articleUpdatesDescription")}
               control={
                 <SettingsToggle
-                  checked={articleUpdates}
-                  onChange={setArticleUpdates}
+                  checked={prefs.article_updates}
+                  onChange={() => toggle("article_updates")}
                   aria-label={t("articleUpdatesAria")}
                 />
               }
@@ -43,7 +83,11 @@ export function AdminNotificationPreferences() {
               title={t("newFollowers")}
               description={t("newFollowersDescription")}
               control={
-                <SettingsToggle checked={newFollowers} onChange={setNewFollowers} aria-label={t("newFollowersAria")} />
+                <SettingsToggle
+                  checked={prefs.new_followers}
+                  onChange={() => toggle("new_followers")}
+                  aria-label={t("newFollowersAria")}
+                />
               }
             />
             <SettingsRow
@@ -51,8 +95,8 @@ export function AdminNotificationPreferences() {
               description={t("newContributorDescription")}
               control={
                 <SettingsToggle
-                  checked={newContributor}
-                  onChange={setNewContributor}
+                  checked={prefs.new_contributors}
+                  onChange={() => toggle("new_contributors")}
                   aria-label={t("newContributorAria")}
                 />
               }
@@ -60,13 +104,23 @@ export function AdminNotificationPreferences() {
             <SettingsRow
               title={t("comments")}
               description={t("commentsDescription")}
-              control={<SettingsToggle checked={comments} onChange={setComments} aria-label={t("commentsAria")} />}
+              control={
+                <SettingsToggle
+                  checked={prefs.comments}
+                  onChange={() => toggle("comments")}
+                  aria-label={t("commentsAria")}
+                />
+              }
             />
             <SettingsRow
               title={t("weeklyDigest")}
               description={t("weeklyDigestDescription")}
               control={
-                <SettingsToggle checked={weeklyDigest} onChange={setWeeklyDigest} aria-label={t("weeklyDigestAria")} />
+                <SettingsToggle
+                  checked={prefs.weekly_digest}
+                  onChange={() => toggle("weekly_digest")}
+                  aria-label={t("weeklyDigestAria")}
+                />
               }
               showDivider={false}
             />
@@ -81,8 +135,8 @@ export function AdminNotificationPreferences() {
               description={t("browserNotificationsDescription")}
               control={
                 <SettingsToggle
-                  checked={browserNotifications}
-                  onChange={setBrowserNotifications}
+                  checked={prefs.push_browser}
+                  onChange={() => toggle("push_browser")}
                   aria-label={t("browserNotificationsAria")}
                 />
               }
@@ -95,10 +149,11 @@ export function AdminNotificationPreferences() {
           <button
             type="button"
             onClick={handleSave}
-            className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
-            style={{ backgroundColor: theme.accentGold }}
+            disabled={loading || saveState === "saving"}
+            className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+            style={{ backgroundColor: saveState === "error" ? "#ef4444" : theme.accentGold }}
           >
-            {savedFlash ? t("saved") : t("saveChanges")}
+            {saveLabel}
           </button>
         </div>
       </div>

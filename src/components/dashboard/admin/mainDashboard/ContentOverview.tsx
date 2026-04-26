@@ -3,12 +3,10 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { ComponentType } from "react";
-import type { ContentCategoryKey } from "@/lib/dashboard/admin-dashboard-constants";
-
 type ContentRow = {
   id: string;
   icon: ComponentType;
-  categoryKey: ContentCategoryKey;
+  label: string;
   published: number;
   drafts: number;
   flagged: number | string;
@@ -63,8 +61,8 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
                     <span className="text-gray-500">
                       <Icon />
                     </span>
-                    <span className="font-medium text-foreground">
-                      {t(`categories.${row.categoryKey}`)}
+                    <span className="font-medium text-foreground capitalize">
+                      {row.label}
                     </span>
                   </td>
                   <td className="px-4 py-3.5">{row.published.toLocaleString()}</td>
