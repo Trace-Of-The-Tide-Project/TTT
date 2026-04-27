@@ -1,40 +1,62 @@
-import { NextResponse } from "next/server"
-import { DEFAULT_PUBLIC_API_BASE_URL } from "@/lib/public-api-base-url"
+import { NextResponse } from "next/server";
+import { backendErrorResponse, callBackend } from "@/lib/auth/proxy-backend";
+import { normalizeAuthBody } from "@/lib/auth/normalize-auth-response";
+import { writeSessionCookies } from "@/lib/auth/server-session";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_PUBLIC_API_BASE_URL
+type LoginBody = {
+  email?: string;
+  password?: string;
+};
 
-function parseJsonBody(text: string): { ok: true; data: unknown } | { ok: false } {
-  const trimmed = text.trim()
-  if (!trimmed) return { ok: true, data: {} }
-  try {
-    return { ok: true, data: JSON.parse(trimmed) as unknown }
-  } catch {
-    return { ok: false }
-  }
-}
-
+/**
+ * Proxies sign-in: forwards `{ email, password }` to the upstream API,
+ * sets httpOnly auth cookies on success, and never returns the raw token
+ * to the browser.
+ *
+ * The backend DTO is strict (`whitelist + forbidNonWhitelisted`), so this
+ * route deliberately sends *only* the fields the backend accepts.
+ */
 export async function POST(request: Request) {
+  let body: LoginBody;
   try {
-    const body = await request.json()
-    const res = await fetch(`${BACKEND_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    })
-    const text = await res.text()
-    const parsed = parseJsonBody(text)
-    if (!parsed.ok) {
-      return NextResponse.json(
-        {
-          message:
-            "Authentication server returned a non-JSON response. Check NEXT_PUBLIC_API_BASE_URL and backend logs.",
-        },
-        { status: res.status >= 400 ? res.status : 502 },
-      )
-    }
-    return NextResponse.json(parsed.data, { status: res.status })
-  } catch (err) {
-    console.error("Login proxy error:", err)
-    return NextResponse.json({ message: "Unable to reach the server." }, { status: 502 })
+    body = (await request.json()) as LoginBody;
+  } catch {
+    return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
   }
+
+  const email = (body.email ?? "").trim();
+  const password = body.password ?? "";
+
+  if (!email || !password) {
+    return NextResponse.json(
+      { message: "Email and password are required." },
+      { status: 400 },
+    );
+  }
+
+  const result = await callBackend({
+    path: "/auth/login",
+    method: "POST",
+    body: { email, password },
+  });
+
+  if (!result.ok) {
+    return backendErrorResponse(result);
+  }
+
+  if (result.status >= 400) {
+    return NextResponse.json(result.json, { status: result.status });
+  }
+
+  const { tokens, user } = normalizeAuthBody(result.json);
+  if (!tokens || !user) {
+    return NextResponse.json(
+      { message: "Authentication response was missing the session." },
+      { status: 502 },
+    );
+  }
+
+  const response = NextResponse.json({ user }, { status: 200 });
+  writeSessionCookies(response, tokens, user);
+  return response;
 }

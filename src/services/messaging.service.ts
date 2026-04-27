@@ -1,5 +1,4 @@
 import { api } from "./api";
-import { getStoredUser } from "./auth.service";
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -111,8 +110,10 @@ export function mapConversation(conv: BackendConversation): FrontendThread {
   };
 }
 
-export function mapMessages(msgs: BackendMessage[]): FrontendMessage[] {
-  const currentUserId = getStoredUser()?.id;
+export function mapMessages(
+  msgs: BackendMessage[],
+  currentUserId?: string | null,
+): FrontendMessage[] {
   return msgs.map((m) => {
     const sender = m.sender;
     const name = sender?.full_name || sender?.username || "User";
@@ -147,11 +148,14 @@ export async function listConversations(status?: "inbox" | "archived", limit = 3
   return rows.map(mapConversation);
 }
 
-export async function loadConversationMessages(id: string): Promise<FrontendMessage[]> {
+export async function loadConversationMessages(
+  id: string,
+  currentUserId?: string | null,
+): Promise<FrontendMessage[]> {
   const res = await api.get(`/messaging/conversations/${id}`);
   const conv = unwrap<BackendConversationDetail>(res.data);
   const msgs = conv.Messages ?? conv.messages ?? [];
-  return mapMessages(msgs);
+  return mapMessages(msgs, currentUserId);
 }
 
 export async function sendReply(

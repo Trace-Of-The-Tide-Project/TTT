@@ -3,7 +3,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { HtmlLangFromLocale } from "@/components/i18n/HtmlLangFromLocale";
-import { SessionProvider } from "@/components/providers/SessionProvider";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { routing } from "@/i18n/routing";
 
@@ -42,9 +42,9 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <HtmlLangFromLocale locale={locale} />
-      <SessionProvider>
+      <AuthProvider>
         <ThemeProvider>{children}</ThemeProvider>
-      </SessionProvider>
+      </AuthProvider>
     </NextIntlClientProvider>
   );
 }

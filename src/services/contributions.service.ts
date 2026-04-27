@@ -1,6 +1,5 @@
 import { getArticleApiBaseUrl, resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { api } from "@/services/api";
-import { getStoredToken } from "@/services/auth.service";
 
 export type ContributionType = {
   id: string;
@@ -127,18 +126,10 @@ export async function fetchContributionTypes(): Promise<ContributionType[]> {
 /**
  * Create contribution with multipart/form-data (each part field name MUST be `files`).
  * Do not set Content-Type manually — Axios must add the multipart boundary.
- * Backend requires Authorization Bearer token.
+ * Authentication is supplied by the cookie-backed `/api/proxy` route, no token needed here.
  */
 export async function createContribution(formData: FormData): Promise<CreatedContribution> {
-  const token = getStoredToken();
-  if (!token) {
-    throw new Error("Missing access token");
-  }
-
   const { data } = await api.post<ApiEnvelope<CreatedContribution>>("/contributions", formData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
     transformRequest: [
       (body, headers) => {
         if (body instanceof FormData) {
@@ -192,6 +183,19 @@ export function contributionFileApiUrl(path: string | null | undefined): string 
   const rel = raw.replace(/^\/+/, "");
   const base = getArticleApiBaseUrl();
   return `${base}/${rel.split("/").map(encodeURIComponent).join("/")}`;
+}
+
+/**
+ * URL on the local Next.js host that proxies authenticated reads of a relative storage key.
+ * Use this with `fetch(..., { credentials: 'include' })` to load private contribution media
+ * without exposing the JWT to JavaScript.
+ */
+export function contributionFileProxyUrl(path: string | null | undefined): string {
+  const raw = (path ?? "").trim();
+  if (!raw) return "";
+  if (/^https?:\/\//i.test(raw)) return raw;
+  const rel = raw.replace(/^\/+/, "");
+  return `/api/proxy/${rel.split("/").map(encodeURIComponent).join("/")}`;
 }
 
 const IMAGE_EXT = /\.(jpe?g|png|gif|webp|avif|bmp|svg)(\?.*)?$/i;

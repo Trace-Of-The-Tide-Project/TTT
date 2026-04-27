@@ -16,6 +16,7 @@ import {
 } from "@/components/dashboard/modals/CreateMessageTemplateModal";
 import type { MessageTemplateCategory } from "@/components/dashboard/modals/CreateMessageTemplateModal";
 import { EditMessageTemplateModal } from "@/components/dashboard/modals/EditMessageTemplateModal";
+import { useAuthUser } from "@/components/providers/AuthProvider";
 import {
   listConversations,
   loadConversationMessages,
@@ -218,6 +219,7 @@ export function MessagingContent() {
   const tb = useTranslations("Dashboard.messagingPage.broadcast");
   const tt = useTranslations("Dashboard.messagingPage.templates");
   const ti = useTranslations("Dashboard.messagingPage.inbox");
+  const currentUser = useAuthUser();
 
   const [activeTab, setActiveTab] = useState<MessageTabId>("inbox");
   const [query, setQuery] = useState("");
@@ -292,14 +294,14 @@ export function MessagingContent() {
     if (!threadId || messagesCache[threadId]) return;
     setLoadingMessages(true);
     try {
-      const msgs = await loadConversationMessages(threadId);
+      const msgs = await loadConversationMessages(threadId, currentUser?.id ?? null);
       setMessagesCache((prev) => ({ ...prev, [threadId]: msgs }));
     } catch {
       // show empty
     } finally {
       setLoadingMessages(false);
     }
-  }, [messagesCache]);
+  }, [messagesCache, currentUser?.id]);
 
   const handleSelectThread = useCallback((id: string) => {
     setSelectedThreadId(id);

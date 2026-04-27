@@ -24,7 +24,7 @@ export function stripLocalePrefixesFromPath(input: string): string {
     // keep s as-is
   }
 
-  if (s.startsWith("//")) return "/admin";
+  if (s.startsWith("//")) return "/";
   if (!s.startsWith("/")) s = `/${s}`;
 
   let prev = "";

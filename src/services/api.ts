@@ -1,53 +1,74 @@
 import axios, { isAxiosError } from "axios";
-import {
-  AUTH_TOKEN_KEY,
-  clearAuthStorageSync,
-} from "@/lib/auth/storage-keys";
-import { DEFAULT_PUBLIC_API_BASE_URL } from "@/lib/public-api-base-url";
 import { routing } from "@/i18n/routing";
 import {
   getLeadingLocaleFromPath,
   stripLocalePrefixesFromPath,
 } from "@/lib/i18n/strip-locale-from-path";
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_PUBLIC_API_BASE_URL;
-
+/**
+ * All API traffic is funnelled through Next.js's `/api/proxy/...` catch-all so the
+ * httpOnly access cookie can be read server-side and forwarded as `Authorization: Bearer`.
+ * The browser never sees the JWT, removing the XSS-exfil surface that localStorage had.
+ */
 export const api = axios.create({
-  baseURL,
+  baseURL: "/api/proxy",
+  withCredentials: true,
+  timeout: 20_000,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-api.interceptors.request.use((config) => {
-  if (typeof window !== "undefined") {
-    const token =
-      localStorage.getItem("access_token") ?? sessionStorage.getItem("access_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+let refreshInFlight: Promise<boolean> | null = null;
+
+async function attemptRefresh(): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+  if (!refreshInFlight) {
+    refreshInFlight = fetch("/api/auth/refresh", {
+      method: "POST",
+      credentials: "include",
+    })
+      .then((res) => res.ok)
+      .catch(() => false)
+      .finally(() => {
+        refreshInFlight = null;
+      });
   }
-  return config;
-});
+  return refreshInFlight;
+}
+
+let redirectingToLogin = false;
+
+function redirectToLogin(): void {
+  if (redirectingToLogin || typeof window === "undefined") return;
+  redirectingToLogin = true;
+  const pathname = window.location.pathname;
+  const locale = getLeadingLocaleFromPath(pathname) ?? routing.defaultLocale;
+  const path = stripLocalePrefixesFromPath(`${pathname}${window.location.search}`);
+  const next = encodeURIComponent(path);
+  window.location.assign(`/${locale}/auth/login?callbackUrl=${next}`);
+}
 
 api.interceptors.response.use(
   (res) => res,
-  (error) => {
+  async (error) => {
     if (typeof window === "undefined" || !isAxiosError(error)) {
       return Promise.reject(error);
     }
+    const original = error.config as
+      | (typeof error.config & { _authRetry?: boolean })
+      | undefined;
     const status = error.response?.status;
-    const hadToken = Boolean(
-      localStorage.getItem(AUTH_TOKEN_KEY) ?? sessionStorage.getItem(AUTH_TOKEN_KEY),
-    );
-    if (status === 401 && hadToken) {
-      clearAuthStorageSync();
-      const pathname = window.location.pathname;
-      const locale = getLeadingLocaleFromPath(pathname) ?? routing.defaultLocale;
-      const path = stripLocalePrefixesFromPath(`${pathname}${window.location.search}`);
-      const next = encodeURIComponent(path);
-      window.location.assign(`/${locale}/auth/login?callbackUrl=${next}`);
+
+    if (status === 401 && original && !original._authRetry) {
+      original._authRetry = true;
+      const refreshed = await attemptRefresh();
+      if (refreshed) {
+        return api.request(original);
+      }
+      redirectToLogin();
     }
+
     return Promise.reject(error);
   },
 );

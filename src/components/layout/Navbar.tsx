@@ -19,8 +19,7 @@ import {
   ChevronDownSmallIcon,
 } from "@/components/ui/icons";
 import { useTheme } from "@/components/providers/ThemeProvider";
-import { useStoredAuthUser } from "@/hooks/useStoredAuthUser";
-import { clearStoredAuth } from "@/services/auth.service";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { getNavAccountHref } from "@/lib/auth/nav-account-href";
 import { theme } from "@/lib/theme";
 
@@ -45,18 +44,18 @@ export function Navbar() {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { isDark, toggleScheme } = useTheme();
-  const user = useStoredAuthUser();
+  const { user, logout } = useAuth();
   const displayName = user?.full_name || user?.username || user?.email || "Username";
   const accountHref = user ? getNavAccountHref(user) : "/profile";
 
   const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
-  const handleLogout = useCallback(() => {
-    clearStoredAuth();
+  const handleLogout = useCallback(async () => {
     closeMobileMenu();
     setIsUserDropdownOpen(false);
+    await logout();
     router.push("/auth/login");
     router.refresh();
-  }, [closeMobileMenu, router]);
+  }, [closeMobileMenu, logout, router]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

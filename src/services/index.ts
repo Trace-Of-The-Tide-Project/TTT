@@ -1,11 +1,13 @@
-export { api } from "./api"
+export { api } from "./api";
 export {
-  signup,
+  AUTH_STATE_CHANGED_EVENT,
+  changePassword,
+  fetchCurrentUser,
   login,
-  getStoredToken,
-  setStoredToken,
-  clearStoredToken,
-  getStoredUser,
-  setStoredUser,
-  clearStoredAuth,
-} from "./auth.service"
+  logout,
+  requestPasswordReset,
+  resendVerificationEmail,
+  resetPassword,
+  signup,
+  verifyEmail,
+} from "./auth.service";

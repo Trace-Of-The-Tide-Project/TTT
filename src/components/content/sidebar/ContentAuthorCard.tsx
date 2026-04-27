@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { LinkIcon, MoreDotsIcon } from "@/components/ui/icons";
 import { checkIsFollowing, toggleFollow } from "@/services/follows.service";
-import { getStoredToken } from "@/services/auth.service";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 type ContentAuthorCardProps = {
   authorId?: string;
@@ -22,11 +22,12 @@ export function ContentAuthorCard({
 }: ContentAuthorCardProps) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [toggling, setToggling] = useState(false);
+  const { status } = useAuth();
 
   useEffect(() => {
-    if (!authorId || !getStoredToken()) return;
+    if (!authorId || status !== "authenticated") return;
     checkIsFollowing(authorId).then(setIsFollowing).catch(() => {});
-  }, [authorId]);
+  }, [authorId, status]);
 
   const handleFollow = async () => {
     if (!authorId || toggling) return;

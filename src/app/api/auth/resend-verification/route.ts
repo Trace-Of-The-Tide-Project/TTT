@@ -1,27 +1,24 @@
 import { NextResponse } from "next/server";
-import { DEFAULT_PUBLIC_API_BASE_URL } from "@/lib/public-api-base-url";
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_PUBLIC_API_BASE_URL;
+import { backendErrorResponse, callBackend } from "@/lib/auth/proxy-backend";
 
 export async function POST(request: Request) {
+  let body: { email?: string };
   try {
-    const body = await request.json();
-    const email = body?.email;
-    if (!email || typeof email !== "string" || !email.trim()) {
-      return NextResponse.json({ message: "Email is required." }, { status: 400 });
-    }
-    const res = await fetch(`${BACKEND_URL}/auth/resend-verification`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.trim() }),
-    });
-    const data = await res.json().catch(() => ({}));
-    return NextResponse.json(data, { status: res.status });
-  } catch (err) {
-    console.error("Resend verification proxy error:", err);
-    return NextResponse.json(
-      { message: "Unable to reach the server." },
-      { status: 502 }
-    );
+    body = (await request.json()) as { email?: string };
+  } catch {
+    return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
   }
+  const email = (body.email ?? "").trim();
+  if (!email) {
+    return NextResponse.json({ message: "Email is required." }, { status: 400 });
+  }
+
+  const result = await callBackend({
+    path: "/auth/resend-verification",
+    method: "POST",
+    body: { email },
+  });
+
+  if (!result.ok) return backendErrorResponse(result);
+  return NextResponse.json(result.json, { status: result.status });
 }

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { api } from "@/services/api";
+import { requestPasswordReset } from "@/services/auth.service";
+import { parseAuthErrorMessage } from "@/lib/auth/parse-auth-error";
 
 type ForgotPasswordSubmitEvent = React.FormEvent<HTMLFormElement>;
 
@@ -26,15 +27,14 @@ export function useForgotPasswordForm() {
 
     setLoading(true);
     try {
-      await api.post("/auth/forgot-password", { email });
+      await requestPasswordReset(email);
       if (typeof window !== "undefined") {
         sessionStorage.setItem("forgot-password-email", email);
       }
       router.push("/auth/forgot-password/email-sent");
       router.refresh();
-    } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      setError(msg || t("errorGeneric"));
+    } catch (err) {
+      setError(parseAuthErrorMessage(err, t("errorGeneric")));
     } finally {
       setLoading(false);
     }

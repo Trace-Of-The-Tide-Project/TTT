@@ -1,50 +1,28 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { AUTH_STATE_CHANGED_EVENT, getStoredToken } from "@/services/auth.service";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 /**
- * Blocks all `(withNav)` routes until a session token exists. Auth lives under `/auth/*` (separate layout).
+ * Blocks all `(withNav)` routes until the cookie-backed session resolves to a logged-in
+ * user. Auth lives under `/auth/*` (separate layout). The redirect carries the original
+ * path as a `callbackUrl` so post-login lands the user back where they were.
  */
 export function WithNavAuthGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-
-  const [checked, setChecked] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-
-  const syncToken = useCallback(() => {
-    setToken(getStoredToken());
-  }, []);
+  const { status } = useAuth();
 
   useEffect(() => {
-    syncToken();
-    setChecked(true);
-    const onChange = () => syncToken();
-    window.addEventListener("storage", onChange);
-    window.addEventListener(AUTH_STATE_CHANGED_EVENT, onChange);
-    return () => {
-      window.removeEventListener("storage", onChange);
-      window.removeEventListener(AUTH_STATE_CHANGED_EVENT, onChange);
-    };
-  }, [syncToken]);
-
-  const redirectToLogin = useCallback(() => {
-    // `pathname` from next-intl is locale-stripped (e.g. `/admin`). Do not use
-    // `window.location.pathname` here — it includes `/en/...` and would double-prefix on login.
+    if (status !== "unauthenticated") return;
     const search = typeof window !== "undefined" ? window.location.search : "";
     const path = `${pathname ?? "/"}${search}`;
     const cb = encodeURIComponent(path || "/");
     router.replace(`/auth/login?callbackUrl=${cb}`);
-  }, [pathname, router]);
+  }, [status, pathname, router]);
 
-  useEffect(() => {
-    if (!checked) return;
-    if (!token) redirectToLogin();
-  }, [checked, token, redirectToLogin]);
-
-  if (!checked) {
+  if (status === "loading") {
     return (
       <div
         className="flex min-h-screen items-center justify-center"
@@ -55,7 +33,7 @@ export function WithNavAuthGate({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!token) {
+  if (status === "unauthenticated") {
     return null;
   }
 

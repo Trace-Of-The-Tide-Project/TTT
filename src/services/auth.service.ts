@@ -1,232 +1,180 @@
-import { api } from "./api"
 import type {
-  SignupRequest,
-  LoginRequest,
-  ChangePasswordRequest,
-  AuthResponse,
+  AuthSession,
   AuthUser,
+  ChangePasswordRequest,
+  LoginRequest,
+  SignupRequest,
   SignupResult,
-} from "@/types/auth.types"
-import {
-  AUTH_TOKEN_KEY,
-  AUTH_USER_KEY,
-  AUTH_STATE_CHANGED_EVENT,
-  clearAuthStorageSync,
-} from "@/lib/auth/storage-keys"
+} from "@/types/auth.types";
+import { api } from "./api";
 
-export { AUTH_STATE_CHANGED_EVENT } from "@/lib/auth/storage-keys"
-type AuthStorageMode = "local" | "session"
+/**
+ * Browser-side event emitted when the local session changes (login / logout).
+ * Components can listen to refresh user-dependent UI without re-mounting.
+ */
+export const AUTH_STATE_CHANGED_EVENT = "tot:auth-state-changed";
 
 function emitAuthStateChanged(): void {
-  if (typeof window === "undefined") return
-  window.dispatchEvent(new Event(AUTH_STATE_CHANGED_EVENT))
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(AUTH_STATE_CHANGED_EVENT));
 }
 
-function getStorage(mode: AuthStorageMode): Storage | null {
-  if (typeof window === "undefined") return null
-  return mode === "local" ? window.localStorage : window.sessionStorage
-}
-
-function readStoredValue(key: string): string | null {
-  if (typeof window === "undefined") return null
-  return window.localStorage.getItem(key) ?? window.sessionStorage.getItem(key)
-}
-
-function writeStoredValue(key: string, value: string, mode: AuthStorageMode): void {
-  const target = getStorage(mode)
-  const other = getStorage(mode === "local" ? "session" : "local")
-  target?.setItem(key, value)
-  other?.removeItem(key)
-}
-
-export function getStoredToken(): string | null {
-  return readStoredValue(AUTH_TOKEN_KEY)
-}
-
-export function setStoredToken(token: string, mode: AuthStorageMode = "local"): void {
-  if (typeof window === "undefined") return
-  writeStoredValue(AUTH_TOKEN_KEY, token, mode)
-  emitAuthStateChanged()
-}
-
-export function clearStoredToken(): void {
-  if (typeof window === "undefined") return
-  localStorage.removeItem(AUTH_TOKEN_KEY)
-  sessionStorage.removeItem(AUTH_TOKEN_KEY)
-  emitAuthStateChanged()
-}
-
-export function getStoredUser(): AuthUser | null {
-  const raw = readStoredValue(AUTH_USER_KEY)
-  if (!raw) return null
-  try {
-    return JSON.parse(raw) as AuthUser
-  } catch {
-    return null
+async function postJson<T>(url: string, body?: unknown): Promise<T> {
+  const res = await fetch(url, {
+    method: "POST",
+    credentials: "include",
+    headers: body !== undefined ? { "Content-Type": "application/json" } : undefined,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+  const text = await res.text();
+  let parsed: unknown = null;
+  if (text) {
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = null;
+    }
   }
+  if (!res.ok) {
+    throw makeHttpError(res.status, parsed);
+  }
+  return (parsed ?? {}) as T;
 }
 
-export function setStoredUser(user: AuthUser, mode: AuthStorageMode = "local"): void {
-  if (typeof window === "undefined") return
-  writeStoredValue(AUTH_USER_KEY, JSON.stringify(user), mode)
-  emitAuthStateChanged()
+function makeHttpError(status: number, body: unknown): Error & {
+  response?: { status: number; data: unknown };
+} {
+  const message =
+    extractMessage(body) ?? (status >= 500 ? "Server error. Please try again." : "Request failed.");
+  const err = new Error(message) as Error & { response?: { status: number; data: unknown } };
+  err.response = { status, data: body };
+  return err;
 }
 
-export function clearStoredAuth(): void {
-  clearAuthStorageSync()
-}
-
-/** Raw API response may wrap in data and use camelCase or snake_case */
-interface SignupApiResponse {
-  data?: {
-    accessToken?: string
-    access_token?: string
-    user?: AuthUser
-    message?: string
-  }
-  accessToken?: string
-  access_token?: string
-  user?: AuthUser
-  message?: string
-  error?: string
-}
-
-async function createHttpError(res: Response): Promise<Error & {
-  response?: { status: number; data: unknown }
-}> {
-  const errorData = await res.json().catch(() => ({}))
-  const backendMessage =
-    (errorData as { data?: { message?: string }; message?: string; error?: string }).data
-      ?.message ??
-    (errorData as { message?: string }).message ??
-    (errorData as { error?: string }).error
-
-  const err = new Error(backendMessage ?? res.statusText) as Error & {
-    response?: { status: number; data: unknown }
-  }
-  err.response = { status: res.status, data: errorData }
-  return err
-}
-
-function normalizeAuthResponse(
-  raw: SignupApiResponse,
-  storageMode: AuthStorageMode = "local"
-): AuthResponse {
-  const inner = raw?.data ?? raw
-  const token =
-    inner?.access_token ?? inner?.accessToken ?? raw?.access_token ?? raw?.accessToken
-  const user = inner?.user ?? raw?.user
-
-  if (token) {
-    setStoredToken(token, storageMode)
-  }
-
-  if (!user) {
-    throw new Error("Invalid auth response: missing user")
-  }
-
-  setStoredUser(user, storageMode)
-
-  return {
-    access_token: token ?? "",
-    user: {
-      id: user.id,
-      username: user.username,
-      full_name: user.full_name,
-      email: user.email,
-      roles: user.roles,
-    },
-  }
+function extractMessage(body: unknown): string | null {
+  if (!body || typeof body !== "object") return null;
+  const obj = body as Record<string, unknown>;
+  const inner = obj.data && typeof obj.data === "object" ? (obj.data as Record<string, unknown>) : obj;
+  const m = inner.message ?? obj.message;
+  if (typeof m === "string" && m.trim()) return m.trim();
+  if (Array.isArray(m) && typeof m[0] === "string") return m[0];
+  if (typeof obj.error === "string") return obj.error;
+  return null;
 }
 
 /**
- * POST /auth/signup - Register a new user
- * When the API returns an access token, it is stored and AuthResponse is returned.
- * When no token is returned (email verification required), nothing is stored and
- * `{ pendingEmailVerification, email }` is returned instead.
+ * POST /api/auth/signup — when the API issues a session immediately the cookie is
+ * already set by the proxy and we resolve to `AuthSession`. Otherwise we resolve to
+ * `pendingEmailVerification` so the caller can route to the check-email screen.
  */
 export async function signup(data: SignupRequest): Promise<SignupResult> {
-  const payload = {
-    username: data.username,
-    email: data.email,
+  const body: Record<string, string> = {
+    username: data.username.trim(),
+    email: data.email.trim(),
     password: data.password,
-    full_name: data.full_name,
+    full_name: data.full_name.trim(),
+  };
+  if (data.phone_number?.trim()) body.phone_number = data.phone_number.trim();
+
+  const result = await postJson<{ user?: AuthUser; email?: string; message?: string }>(
+    "/api/auth/signup",
+    body,
+  );
+
+  if (result.user) {
+    emitAuthStateChanged();
+    return { user: result.user };
   }
 
-  const response = await api.post<SignupApiResponse>("/auth/signup", payload)
-  const raw = response.data
-
-  const inner = raw?.data ?? raw
-  const token =
-    inner?.access_token ?? inner?.accessToken ?? raw?.access_token ?? raw?.accessToken
-  if (!token) {
-    return { pendingEmailVerification: true, email: data.email }
-  }
-  return normalizeAuthResponse(raw, "local")
+  return {
+    pendingEmailVerification: true,
+    email: result.email ?? data.email.trim(),
+    message: result.message,
+  };
 }
 
-export type VerifyEmailResult = { loggedIn: true } | { loggedIn: false }
-
 /**
- * POST /auth/verify-email — completes signup verification using the emailed token.
- * If the API returns a session, it is stored like login; otherwise the caller should send the user to log in.
+ * POST /api/auth/login — sets httpOnly cookies on success. The browser never sees
+ * the access token. The backend's login DTO is strict and only accepts `email`.
  */
+export async function login(data: LoginRequest): Promise<AuthSession> {
+  const result = await postJson<{ user?: AuthUser }>("/api/auth/login", {
+    email: data.email.trim(),
+    password: data.password,
+  });
+  if (!result.user) {
+    throw new Error("Login response missing user.");
+  }
+  emitAuthStateChanged();
+  return { user: result.user };
+}
+
+/** POST /api/auth/logout — clears cookies and notifies listeners. */
+export async function logout(): Promise<void> {
+  try {
+    await postJson("/api/auth/logout");
+  } finally {
+    emitAuthStateChanged();
+  }
+}
+
+/** GET /api/auth/me — `null` when unauthenticated. */
+export async function fetchCurrentUser(): Promise<AuthUser | null> {
+  const res = await fetch("/api/auth/me", { credentials: "include", cache: "no-store" });
+  if (!res.ok) return null;
+  const body = (await res.json().catch(() => ({}))) as { user?: AuthUser | null };
+  return body.user ?? null;
+}
+
+/** POST /auth/verify-email — proxy handles the upstream call; cookies set if API returns a session. */
+export type VerifyEmailResult = { loggedIn: boolean };
+
 export async function verifyEmail(token: string): Promise<VerifyEmailResult> {
-  const response = await api.post<SignupApiResponse>("/auth/verify-email", { token })
-  const raw = response.data
-  const inner = raw?.data ?? raw
-  const access =
-    inner?.access_token ?? inner?.accessToken ?? raw?.access_token ?? raw?.accessToken
-  if (access) {
-    normalizeAuthResponse(raw, "local")
-    return { loggedIn: true }
-  }
-  return { loggedIn: false }
+  const result = await postJson<{ user?: AuthUser }>("/api/auth/verify-email", {
+    token: token.trim(),
+  });
+  const loggedIn = Boolean(result.user);
+  if (loggedIn) emitAuthStateChanged();
+  return { loggedIn };
 }
 
-/**
- * POST /auth/resend-verification — asks the backend to send another verification email.
- */
+/** POST /auth/resend-verification */
 export async function resendVerificationEmail(email: string): Promise<void> {
   const trimmed = email.trim();
-  if (!trimmed) {
-    throw new Error("Enter your email address.");
-  }
-  await api.post("/auth/resend-verification", { email: trimmed });
+  if (!trimmed) throw new Error("Enter your email address.");
+  await postJson("/api/auth/resend-verification", { email: trimmed });
 }
 
-/**
- * POST /auth/login - Authenticate user
- */
-export async function login(data: LoginRequest): Promise<AuthResponse> {
-  const response = await api.post<SignupApiResponse>("/auth/login", data)
-  return normalizeAuthResponse(response.data, "local")
+/** POST /auth/forgot-password — sends the reset link. Throws on validation/network errors. */
+export async function requestPasswordReset(email: string): Promise<void> {
+  const trimmed = email.trim();
+  if (!trimmed) throw new Error("Enter your email address.");
+  await postJson("/api/auth/forgot-password", { email: trimmed });
 }
 
-export type ChangePasswordResult = { message: string }
+/** POST /auth/reset-password — completes the reset using the emailed token. */
+export async function resetPassword(args: {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}): Promise<void> {
+  await postJson("/api/auth/reset-password", {
+    token: args.token,
+    newPassword: args.newPassword,
+    confirmPassword: args.confirmPassword,
+  });
+}
 
-/**
- * POST /auth/change-password — updates password for the authenticated user (Bearer token).
- */
-export async function changePassword(
-  body: ChangePasswordRequest,
-): Promise<ChangePasswordResult> {
-  const { data } = await api.post<unknown>("/auth/change-password", body)
-  const raw = data as Record<string, unknown> | null | undefined
-  const inner = (raw?.data as Record<string, unknown> | undefined) ?? raw
+/** POST /auth/change-password (requires session). */
+export type ChangePasswordResult = { message: string };
+
+export async function changePassword(body: ChangePasswordRequest): Promise<ChangePasswordResult> {
+  const { data } = await api.post<unknown>("/auth/change-password", body);
+  const raw = data as Record<string, unknown> | null | undefined;
+  const inner = (raw?.data as Record<string, unknown> | undefined) ?? raw;
   const message =
     typeof inner?.message === "string" && inner.message.trim()
       ? inner.message.trim()
-      : "Password changed successfully"
-  return { message }
+      : "Password changed successfully";
+  return { message };
 }
-
-/**
- * POST /auth/logout - Invalidate session (placeholder for future implementation)
- */
-// export async function logout(): Promise<void> { clearStoredToken(); ... }
-
-/**
- * POST /auth/refresh - Refresh access token (placeholder for future implementation)
- */
-// export async function refreshToken(): Promise<AuthResponse> { ... }

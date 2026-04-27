@@ -8,6 +8,7 @@ import { EmailIcon } from "@/components/ui/icons";
 import { AuthInput } from "@/components/ui/AuthInput";
 import { theme } from "@/lib/theme";
 import { resendVerificationEmail, verifyEmail } from "@/services/auth.service";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 type Status = "loading" | "success" | "error" | "missing";
 
@@ -15,6 +16,7 @@ export function VerifyEmailClient() {
   const t = useTranslations("Auth.forms.verifyEmail");
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refresh } = useAuth();
   const ran = useRef(false);
   const [status, setStatus] = useState<Status>("loading");
   const [message, setMessage] = useState("");
@@ -43,6 +45,7 @@ export function VerifyEmailClient() {
     (async () => {
       try {
         const result = await verifyEmail(token);
+        if (result.loggedIn) await refresh();
         setStatus("success");
         setMessage(result.loggedIn ? t("successLoggedIn") : t("successSignIn"));
         const dest = result.loggedIn ? "/profile" : "/auth/login";
@@ -53,7 +56,7 @@ export function VerifyEmailClient() {
         setMessage(err instanceof Error ? err.message : t("verifyError"));
       }
     })();
-  }, [router, searchParams, t]);
+  }, [refresh, router, searchParams, t]);
 
   async function handleResendVerification() {
     setResendFeedback(null);

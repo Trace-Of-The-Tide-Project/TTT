@@ -1,6 +1,7 @@
 export type {
-  SignupRequest,
-  LoginRequest,
-  AuthResponse,
+  AuthSession,
   AuthUser,
-} from "./auth.types"
+  LoginRequest,
+  SignupRequest,
+  SignupResult,
+} from "./auth.types";

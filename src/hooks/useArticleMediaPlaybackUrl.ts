@@ -2,7 +2,6 @@
 /* eslint-disable react-hooks/set-state-in-effect -- effect owns sync URL + async blob + cleanup */
 
 import { useEffect, useState, useRef } from "react";
-import { getStoredToken } from "@/services/auth.service";
 import { getArticleApiBaseUrl } from "@/lib/content/article-media-url";
 import { isLikelyAudioUrl, isLikelyVideoUrl } from "@/lib/content/media-url";
 
@@ -20,8 +19,9 @@ function apiMediaOrigin(): string | null {
 }
 
 /**
- * For files on the API host, `<video src>` / `<img src>` cannot send `Authorization`.
- * When a token exists, loads the file with `fetch` + Bearer and returns a `blob:` URL.
+ * `<video src>` / `<audio src>` / `<img src>` cannot send credentials cross-origin without
+ * CORS-permissible cookies. When the file lives on the API host we fetch through Next.js's
+ * cookie-backed `/api/proxy/...` and hand the resulting blob URL to the element.
  */
 export function useArticleMediaPlaybackUrl(src: string): {
   playbackUrl: string;
@@ -45,12 +45,9 @@ export function useArticleMediaPlaybackUrl(src: string): {
 
     const apiOrigin = apiMediaOrigin();
     const mediaOrigin = safeOrigin(trimmed);
-    const token = getStoredToken();
-    const needsAuthBlob = Boolean(
-      apiOrigin && mediaOrigin && mediaOrigin === apiOrigin && token,
-    );
+    const isApiHosted = Boolean(apiOrigin && mediaOrigin && mediaOrigin === apiOrigin);
 
-    if (!needsAuthBlob) {
+    if (!isApiHosted) {
       if (blobRef.current) {
         URL.revokeObjectURL(blobRef.current);
         blobRef.current = null;
@@ -60,6 +57,9 @@ export function useArticleMediaPlaybackUrl(src: string): {
       return;
     }
 
+    const proxyPath = trimmed.replace(apiOrigin ?? "", "");
+    const proxyUrl = `/api/proxy${proxyPath.startsWith("/") ? proxyPath : `/${proxyPath}`}`;
+
     setPlaybackUrl("");
     setStatus("loading");
     const ac = new AbortController();
@@ -67,9 +67,9 @@ export function useArticleMediaPlaybackUrl(src: string): {
 
     (async () => {
       try {
-        const res = await fetch(trimmed, {
+        const res = await fetch(proxyUrl, {
           signal: ac.signal,
-          headers: { Authorization: `Bearer ${token}` },
+          credentials: "include",
         });
         if (cancelled || ac.signal.aborted) return;
         if (!res.ok) {

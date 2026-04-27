@@ -4,16 +4,22 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { LockIcon } from "@/components/ui/icons";
 import { AuthInput } from "@/components/ui/AuthInput";
-import { theme } from "@/lib/theme";
-import { api } from "@/services/api";
+import {
+  AuthFormBanner,
+  AuthSubmitButton,
+  PasswordVisibilityToggle,
+} from "@/components/auth/shared";
+import { LockIcon } from "@/components/ui/icons";
+import { resetPassword } from "@/services/auth.service";
+import { parseAuthErrorMessage } from "@/lib/auth/parse-auth-error";
 
 export function ResetPasswordForm() {
   const t = useTranslations("Auth.forms.resetPassword");
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -22,9 +28,11 @@ export function ResetPasswordForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
+
     const form = e.currentTarget;
     const password = (form.elements.namedItem("password") as HTMLInputElement).value;
-    const confirmPassword = (form.elements.namedItem("confirmPassword") as HTMLInputElement).value;
+    const confirmPassword = (form.elements.namedItem("confirmPassword") as HTMLInputElement)
+      .value;
 
     if (!token) {
       setError(t("errorInvalidToken"));
@@ -41,24 +49,19 @@ export function ResetPasswordForm() {
 
     setLoading(true);
     try {
-      await api.post("/auth/reset-password", { token, newPassword: password, confirmPassword });
+      await resetPassword({ token, newPassword: password, confirmPassword });
       router.push("/auth/success");
       router.refresh();
-    } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      setError(msg || t("errorGeneric"));
+    } catch (err) {
+      setError(parseAuthErrorMessage(err, t("errorGeneric")));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="relative w-full max-w-md space-y-6">
-      {error && (
-        <p className="rounded-lg border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-400">
-          {error}
-        </p>
-      )}
+    <form onSubmit={handleSubmit} className="mx-auto w-full max-w-md space-y-5">
+      {error ? <AuthFormBanner>{error}</AuthFormBanner> : null}
       <AuthInput
         id="password"
         name="password"
@@ -70,15 +73,12 @@ export function ResetPasswordForm() {
         autoComplete="new-password"
         icon={<LockIcon />}
         rightSlot={
-          <button
-            type="button"
-            onClick={() => setShowPassword((p) => !p)}
-            className="text-neutral-500 hover:text-foreground"
-            aria-label={showPassword ? t("hidePassword") : t("showPassword")}
-            suppressHydrationWarning
-          >
-            👁
-          </button>
+          <PasswordVisibilityToggle
+            visible={showPassword}
+            onToggle={() => setShowPassword((v) => !v)}
+            showLabel={t("showPassword")}
+            hideLabel={t("hidePassword")}
+          />
         }
       />
       <AuthInput
@@ -92,26 +92,17 @@ export function ResetPasswordForm() {
         autoComplete="new-password"
         icon={<LockIcon />}
         rightSlot={
-          <button
-            type="button"
-            onClick={() => setShowConfirm((p) => !p)}
-            className="text-neutral-500 hover:text-foreground"
-            aria-label={showConfirm ? t("hidePassword") : t("showPassword")}
-            suppressHydrationWarning
-          >
-            👁
-          </button>
+          <PasswordVisibilityToggle
+            visible={showConfirm}
+            onToggle={() => setShowConfirm((v) => !v)}
+            showLabel={t("showPassword")}
+            hideLabel={t("hidePassword")}
+          />
         }
       />
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full cursor-pointer select-none rounded-lg py-3 font-medium text-black transition-colors disabled:cursor-not-allowed disabled:opacity-60"
-        style={{ backgroundColor: theme.accentGold }}
-        suppressHydrationWarning
-      >
-        {loading ? t("submitting") : t("submit")}
-      </button>
+      <AuthSubmitButton loading={loading} loadingLabel={t("submitting")}>
+        {t("submit")}
+      </AuthSubmitButton>
     </form>
   );
 }

@@ -1,30 +1,41 @@
 import { NextResponse } from "next/server";
-import { DEFAULT_PUBLIC_API_BASE_URL } from "@/lib/public-api-base-url";
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_PUBLIC_API_BASE_URL;
+import { backendErrorResponse, callBackend } from "@/lib/auth/proxy-backend";
+import { normalizeAuthBody } from "@/lib/auth/normalize-auth-response";
+import { writeSessionCookies } from "@/lib/auth/server-session";
 
 export async function POST(request: Request) {
+  let body: { token?: string };
   try {
-    const body = await request.json();
-    const { token } = body;
-    if (!token || typeof token !== "string") {
-      return NextResponse.json(
-        { message: "Invalid or missing verification link." },
-        { status: 400 }
-      );
-    }
-    const res = await fetch(`${BACKEND_URL}/auth/verify-email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: token.trim() }),
-    });
-    const data = await res.json().catch(() => ({}));
-    return NextResponse.json(data, { status: res.status });
-  } catch (err) {
-    console.error("Verify email proxy error:", err);
+    body = (await request.json()) as { token?: string };
+  } catch {
+    return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
+  }
+
+  const token = (body.token ?? "").trim();
+  if (!token) {
     return NextResponse.json(
-      { message: "Unable to reach the server." },
-      { status: 502 }
+      { message: "Invalid or missing verification link." },
+      { status: 400 },
     );
   }
+
+  const result = await callBackend({
+    path: "/auth/verify-email",
+    method: "POST",
+    body: { token },
+  });
+
+  if (!result.ok) return backendErrorResponse(result);
+  if (result.status >= 400) {
+    return NextResponse.json(result.json, { status: result.status });
+  }
+
+  const { tokens, user } = normalizeAuthBody(result.json);
+  if (tokens && user) {
+    const response = NextResponse.json({ user }, { status: result.status });
+    writeSessionCookies(response, tokens, user);
+    return response;
+  }
+
+  return NextResponse.json(result.json, { status: result.status });
 }

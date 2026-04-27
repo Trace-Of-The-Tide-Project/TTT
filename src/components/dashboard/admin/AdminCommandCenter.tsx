@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { StatCard } from "../shared/StatCard";
-import { useStoredAuthUser } from "@/hooks/useStoredAuthUser";
+import { useAuthUser } from "@/components/providers/AuthProvider";
 import { getDashboardStats, type DashboardStats } from "@/services/dashboard.service";
 import {
   UsersIcon,
@@ -45,7 +45,7 @@ const STAT_CONFIG = [
 
 export function AdminCommandCenter() {
   const t = useTranslations("Dashboard.commandCenter");
-  const user = useStoredAuthUser();
+  const user = useAuthUser();
   const name = user?.full_name || user?.username || "Super Admin";
 
   const [stats, setStats] = useState<DashboardStats | null>(null);

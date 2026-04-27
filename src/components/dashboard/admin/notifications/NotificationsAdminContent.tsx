@@ -7,7 +7,7 @@ import { SearchIcon } from "@/components/ui/icons";
 import { FilterDropdown } from "@/components/dashboard/admin/users/FilterDropdown";
 import { theme } from "@/lib/theme";
 import { formatUserLastActiveRelative } from "@/lib/dashboard/user-table-formatters";
-import { useStoredAuthUser } from "@/hooks/useStoredAuthUser";
+import { useAuthUser } from "@/components/providers/AuthProvider";
 import {
   filterNotificationsForUser,
   getNotifications,
@@ -52,7 +52,7 @@ const emptyMeta: NotificationsListMeta = { total: 0, page: 1, limit: PAGE_LIMIT,
 
 export function NotificationsAdminContent() {
   const nt = useTranslations("Dashboard.notificationsPage");
-  const user = useStoredAuthUser();
+  const user = useAuthUser();
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");

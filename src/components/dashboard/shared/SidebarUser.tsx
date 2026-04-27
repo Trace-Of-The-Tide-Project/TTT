@@ -5,8 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { theme } from "@/lib/theme";
 import { LogOutIcon } from "@/components/ui/icons";
-import { clearStoredAuth } from "@/services/auth.service";
-import { useStoredAuthUser } from "@/hooks/useStoredAuthUser";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 function getInitial(name?: string | null, email?: string | null): string {
   if (name?.trim()) return name.trim()[0].toUpperCase();
@@ -18,10 +17,16 @@ export function SidebarUser() {
   const router = useRouter();
   const t = useTranslations("Dashboard.sidebarUser");
   const { isDark } = useTheme();
-  const user = useStoredAuthUser();
+  const { user, logout } = useAuth();
   const name = user?.full_name || user?.username;
   const email = user?.email;
   const displayName = name || email || t("fallbackName");
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/auth/login");
+    router.refresh();
+  };
 
   return (
     <div className="flex items-center gap-3 px-3 py-4">
@@ -38,11 +43,7 @@ export function SidebarUser() {
       </span>
       <button
         type="button"
-        onClick={() => {
-          clearStoredAuth();
-          router.push("/auth/login");
-          router.refresh();
-        }}
+        onClick={handleLogout}
         className={
           isDark
             ? "shrink-0 text-gray-500 transition-colors hover:text-foreground"
