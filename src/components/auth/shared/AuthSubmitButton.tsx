@@ -30,10 +30,11 @@ export function AuthSubmitButton({
       disabled={inactive}
       onClick={onClick}
       className={[
-        "w-full select-none rounded-md py-3 text-sm font-semibold transition-colors",
+        "tott-auth-submit w-full select-none rounded-md py-2.5 text-sm font-semibold",
+        "transition-[color,background-color,opacity,transform,box-shadow] duration-200 ease-out",
         inactive
-          ? "cursor-not-allowed bg-[#2A2A2A] text-neutral-500"
-          : "cursor-pointer bg-[#CBA158] text-black hover:opacity-90",
+          ? "cursor-not-allowed bg-[color:var(--tott-auth-btn-disabled-bg)] text-[color:var(--tott-auth-btn-disabled-text)]"
+          : "cursor-pointer bg-[#CBA158] text-black hover:brightness-[1.03] active:translate-y-px active:brightness-[0.98]",
       ].join(" ")}
     >
       {loading && loadingLabel ? loadingLabel : children}

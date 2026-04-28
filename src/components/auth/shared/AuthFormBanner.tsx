@@ -19,6 +19,7 @@ export function AuthFormBanner({ tone = "error", children }: AuthFormBannerProps
   return (
     <p
       role={tone === "error" ? "alert" : "status"}
+      data-auth-banner={tone}
       className={`rounded-md border px-3 py-2 text-sm ${TONES[tone]}`}
     >
       {children}

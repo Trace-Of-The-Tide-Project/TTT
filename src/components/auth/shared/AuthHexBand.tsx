@@ -17,6 +17,7 @@ type AuthHexBandProps = {
 export function AuthHexBand({ heightPx = 220, className }: AuthHexBandProps) {
   return (
     <div
+      data-tott-auth-hex-band
       aria-hidden
       className={`pointer-events-none absolute inset-x-0 top-0 z-0 overflow-hidden ${className ?? ""}`}
       style={{ height: heightPx }}

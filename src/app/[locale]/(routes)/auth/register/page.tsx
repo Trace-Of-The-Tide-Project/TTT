@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import {
-  AuthCardFrame,
   AuthFooterLinks,
+  AuthHexFrame,
   AuthInlineLink,
   AuthPageShell,
 } from "@/components/auth/shared";
@@ -13,10 +13,10 @@ export default async function RegisterPage() {
 
   return (
     <AuthPageShell title={t("pages.register.title")} footer={<AuthFooterLinks />}>
-      <AuthCardFrame>
+      <AuthHexFrame>
         <Suspense
           fallback={
-            <div className="h-64 w-full max-w-md animate-pulse rounded-md bg-white/5" />
+            <div className="h-40 w-full animate-pulse rounded-md bg-white/5" />
           }
         >
           <RegisterForm />
@@ -25,9 +25,9 @@ export default async function RegisterPage() {
           text={t("pages.register.hasAccount")}
           href="/auth/login"
           label={t("pages.register.loginLink")}
-          className="mt-6"
+          className="mt-2"
         />
-      </AuthCardFrame>
+      </AuthHexFrame>
     </AuthPageShell>
   );
 }

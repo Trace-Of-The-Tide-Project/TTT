@@ -42,16 +42,19 @@ export function AuthInput({
 }: AuthInputProps) {
   const paddingRight = rightSlot ? "pr-11" : "pr-3";
   const baseClass = [
-    "w-full rounded-md bg-[#2A2A2A] py-2.5 pl-10 text-sm text-foreground",
-    "border border-transparent placeholder:text-neutral-500",
-    "transition-colors duration-150",
-    "hover:bg-[#2F2F2F]",
-    "focus:bg-[#2F2F2F] focus:border-[#CBA158]/50 focus:outline-none focus:ring-0",
+    "w-full rounded-md py-2 pl-10 text-sm text-foreground",
+    "border bg-[color:var(--tott-auth-input-bg)]",
+    "border-[color:var(--tott-auth-input-border)]",
+    "placeholder:text-[color:var(--tott-auth-input-placeholder)]",
+    "transition-[background-color,border-color,box-shadow] duration-200 ease-out",
+    "hover:bg-[color:var(--tott-auth-input-hover)]",
+    "focus:bg-[color:var(--tott-auth-input-hover)] focus:outline-none focus:ring-0",
+    "focus:border-[#CBA158]/55 focus:shadow-[inset_0_0_0_1px_rgba(203,161,88,0.12)]",
     paddingRight,
   ].join(" ");
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1">
       {(label || labelRight) && (
         <div className="flex items-center justify-between">
           {label ? (
@@ -65,7 +68,7 @@ export function AuthInput({
         </div>
       )}
       <div className="relative">
-        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--tott-auth-input-icon)]">
           {icon}
         </span>
         <input

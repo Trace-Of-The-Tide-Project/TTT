@@ -28,7 +28,7 @@ export function LoginForm() {
   } = useLoginForm();
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto w-full max-w-md space-y-5">
+    <form onSubmit={handleSubmit} className="mx-auto w-full space-y-4">
       {registered === "1" ? (
         <AuthFormBanner tone="success">{t("registeredBanner")}</AuthFormBanner>
       ) : null}

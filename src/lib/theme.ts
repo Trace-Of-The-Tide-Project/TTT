@@ -10,6 +10,13 @@ export const theme = {
   accentGoldFocus: '#C9A96E',
 
   /**
+   * Secondary “tide” accent — muted teal; use for hovers, rules, subtle UI.
+   * Prefer CSS `var(--tott-accent-tide)` when possible so light/dark tokens apply.
+   */
+  accentTide: "var(--tott-accent-tide)",
+  accentTideMuted: "var(--tott-accent-tide-muted)",
+
+  /**
    * Pure black — text on gold chips and other fixed “ink on gold” UI.
    * Do not use for full-page backgrounds; use {@link pageBackground}.
    */

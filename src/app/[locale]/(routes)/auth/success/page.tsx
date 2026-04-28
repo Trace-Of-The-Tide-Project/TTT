@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { theme } from "@/lib/theme";
 import { HeadsetIcon } from "@/components/ui/icons";
 import {
-  AuthCardFrame,
+  AuthHexFrame,
   AuthPageShell,
   AuthSubmitButton,
 } from "@/components/auth/shared";
@@ -13,7 +13,7 @@ export default async function SuccessPage() {
 
   return (
     <AuthPageShell title={t("pages.success.title")} subtitle={t("pages.success.subtitle")}>
-      <AuthCardFrame>
+      <AuthHexFrame>
         <div className="mx-auto flex w-full max-w-md flex-col items-center text-center">
           <div
             className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-500"
@@ -35,7 +35,7 @@ export default async function SuccessPage() {
           <Link href="/auth/login" className="block w-full">
             <AuthSubmitButton type="button">{t("pages.success.cta")}</AuthSubmitButton>
           </Link>
-          <p className="mt-8 flex flex-wrap items-center justify-center gap-1.5 text-sm text-neutral-400">
+          <p className="mt-8 flex flex-wrap items-center justify-center gap-1.5 text-sm text-[color:var(--tott-auth-footer-muted)]">
             {t("pages.success.supportLead")}
             <span style={{ color: theme.accentGold }} aria-hidden>
               <HeadsetIcon />
@@ -49,7 +49,7 @@ export default async function SuccessPage() {
             </Link>
           </p>
         </div>
-      </AuthCardFrame>
+      </AuthHexFrame>
     </AuthPageShell>
   );
 }

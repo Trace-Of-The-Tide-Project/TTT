@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { theme } from "@/lib/theme";
 import {
   AuthFooterLinks,
-  AuthCardFrame,
+  AuthHexFrame,
   AuthInlineLink,
   AuthPageShell,
 } from "@/components/auth/shared";
@@ -24,7 +24,7 @@ export default async function CheckEmailPage({
       subtitle={t("pages.checkEmail.intro")}
       footer={<AuthFooterLinks />}
     >
-      <AuthCardFrame>
+      <AuthHexFrame>
         <div className="mx-auto flex w-full max-w-md flex-col items-center text-center">
           <div
             className="mb-6 flex h-16 w-16 items-center justify-center rounded-full"
@@ -48,15 +48,15 @@ export default async function CheckEmailPage({
           <h2 className="mb-3 text-lg font-semibold text-foreground">
             {t("pages.checkEmail.cardTitle")}
           </h2>
-          <p className="mb-3 max-w-sm text-sm leading-relaxed text-neutral-400">
+          <p className="mb-3 max-w-sm text-sm leading-relaxed text-[color:var(--tott-auth-subtitle)]">
             {t("pages.checkEmail.cardBody")}
           </p>
           {safeEmail ? (
-            <p className="mb-2 max-w-sm break-all text-xs text-neutral-500">
+            <p className="mb-2 max-w-sm break-all text-xs text-[color:var(--tott-auth-input-placeholder)]">
               {t("pages.checkEmail.sentTo", { email: safeEmail })}
             </p>
           ) : null}
-          <p className="max-w-sm text-xs text-neutral-500">
+          <p className="max-w-sm text-xs text-[color:var(--tott-auth-input-placeholder)]">
             {t("pages.checkEmail.spamHint")}
           </p>
         </div>
@@ -64,9 +64,9 @@ export default async function CheckEmailPage({
           text={t("pages.checkEmail.wrongAddress")}
           href="/auth/register"
           label={t("pages.checkEmail.signUpAgain")}
-          className="mt-6"
+          className="mt-4"
         />
-      </AuthCardFrame>
+      </AuthHexFrame>
     </AuthPageShell>
   );
 }

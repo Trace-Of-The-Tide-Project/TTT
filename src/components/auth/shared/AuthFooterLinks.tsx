@@ -28,8 +28,8 @@ export function AuthFooterLinks({
   const home = backLabel ?? t("homePage");
 
   return (
-    <div className={`mt-6 text-center ${className ?? ""}`}>
-      <p className="text-sm text-neutral-400">
+    <div className={`text-center ${className ?? ""}`}>
+      <p className="text-sm text-[color:var(--tott-auth-footer-muted)]">
         {t("backToPrefix")}
         <Link href={backHref} className="cursor-pointer text-[#CBA158] hover:underline">
           {home}

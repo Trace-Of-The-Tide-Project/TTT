@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import {
-  AuthCardFrame,
   AuthFooterLinks,
+  AuthHexFrame,
   AuthInlineLink,
   AuthPageShell,
 } from "@/components/auth/shared";
@@ -17,7 +17,7 @@ export default async function VerifyEmailPage() {
       subtitle={t("pages.verifyEmail.subtitle")}
       footer={<AuthFooterLinks />}
     >
-      <AuthCardFrame>
+      <AuthHexFrame>
         <Suspense
           fallback={
             <div className="h-40 w-full max-w-md animate-pulse rounded-md bg-white/5" />
@@ -29,9 +29,9 @@ export default async function VerifyEmailPage() {
           text={t("pages.verifyEmail.wrongAccount")}
           href="/auth/register"
           label={t("pages.verifyEmail.createAccount")}
-          className="mt-6"
+          className="mt-4"
         />
-      </AuthCardFrame>
+      </AuthHexFrame>
     </AuthPageShell>
   );
 }

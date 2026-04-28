@@ -18,11 +18,11 @@ export function RegisterForm() {
   const { loading, error, agreedToTerms, setAgreedToTerms, handleSubmit } = useRegisterForm();
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto w-full max-w-md space-y-6">
+    <form onSubmit={handleSubmit} className="mx-auto w-full space-y-2.5">
       {error ? <AuthFormBanner>{error}</AuthFormBanner> : null}
 
-      {/* Identity row */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {/* Username + Email */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <AuthInput
           id="username"
           name="username"
@@ -33,6 +33,20 @@ export function RegisterForm() {
           icon={<PersonIcon />}
         />
         <AuthInput
+          id="email"
+          name="email"
+          type="email"
+          label={t("emailLabel")}
+          placeholder={t("emailPlaceholder")}
+          required
+          autoComplete="email"
+          icon={<EmailIcon />}
+        />
+      </div>
+
+      {/* Full name + Phone number */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <AuthInput
           id="full_name"
           name="full_name"
           label={t("fullNameLabel")}
@@ -41,33 +55,21 @@ export function RegisterForm() {
           autoComplete="name"
           icon={<PersonIcon />}
         />
+        <AuthInput
+          id="phone_number"
+          name="phone_number"
+          type="tel"
+          label={t("phoneLabel")}
+          labelRight={
+            <span className="text-xs font-normal text-[color:var(--tott-auth-input-placeholder)]">
+              {t("phoneOptional")}
+            </span>
+          }
+          placeholder={t("phonePlaceholder")}
+          autoComplete="tel"
+          icon={<PhoneIcon />}
+        />
       </div>
-
-      <AuthInput
-        id="email"
-        name="email"
-        type="email"
-        label={t("emailLabel")}
-        placeholder={t("emailPlaceholder")}
-        required
-        autoComplete="email"
-        icon={<EmailIcon />}
-      />
-
-      <AuthInput
-        id="phone_number"
-        name="phone_number"
-        type="tel"
-        label={t("phoneLabel")}
-        labelRight={
-          <span className="text-xs font-normal text-neutral-500">
-            {t("phoneOptional")}
-          </span>
-        }
-        placeholder={t("phonePlaceholder")}
-        autoComplete="tel"
-        icon={<PhoneIcon />}
-      />
 
       <AuthInput
         id="password"

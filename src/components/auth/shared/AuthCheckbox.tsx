@@ -33,7 +33,7 @@ export function AuthCheckbox({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="mt-1 h-4 w-4 cursor-pointer rounded border-neutral-600 bg-transparent text-[#CBA158] focus:ring-[#CBA158]/50"
+        className="mt-1 h-4 w-4 cursor-pointer rounded border-[color:var(--tott-auth-checkbox-border)] bg-transparent text-[#CBA158] focus:ring-[#CBA158]/50"
       />
       <label
         htmlFor={id}

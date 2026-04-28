@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
-  AuthCardFrame,
   AuthFooterLinks,
+  AuthHexFrame,
   AuthPageShell,
   AuthSubmitButton,
 } from "@/components/auth/shared";
@@ -14,12 +14,12 @@ const RESEND_COOLDOWN_SEC = 48;
 function MailIcon() {
   return (
     <svg
-      width="32"
-      height="32"
+      width="56"
+      height="56"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.5}
+      strokeWidth={1.25}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden
@@ -83,21 +83,11 @@ export default function EmailSentPage() {
       subtitle={t("pages.emailSent.subtitle")}
       footer={<AuthFooterLinks backHref="/auth/login" backLabel={t("login")} />}
     >
-      <AuthCardFrame
-        maxWidthClass="max-w-md"
-        minHeightPx={0}
-        bodyClassName="px-6 py-8 sm:px-8"
-      >
-        <div className="flex flex-col items-center text-center">
-          <div className="mb-4 text-neutral-400">
+      <AuthHexFrame minHeightPx={520}>
+        <div className="mx-auto flex w-full max-w-md flex-col items-center text-center">
+          <div className="mb-8 text-[color:var(--tott-auth-input-icon)]">
             <MailIcon />
           </div>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
-            {t("pages.emailSent.cardTitle")}
-          </h2>
-          <p className="mb-6 max-w-xs text-sm leading-relaxed text-neutral-400">
-            {t("pages.emailSent.cardBody")}
-          </p>
           <AuthSubmitButton
             type="button"
             onClick={handleResend}
@@ -107,7 +97,7 @@ export default function EmailSentPage() {
             {buttonLabel}
           </AuthSubmitButton>
         </div>
-      </AuthCardFrame>
+      </AuthHexFrame>
     </AuthPageShell>
   );
 }

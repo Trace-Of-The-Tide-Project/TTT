@@ -23,7 +23,7 @@ export function PasswordVisibilityToggle({
     <button
       type="button"
       onClick={onToggle}
-      className="text-neutral-500 transition-colors hover:text-foreground"
+      className="text-[color:var(--tott-auth-input-icon)] transition-colors hover:text-foreground"
       aria-label={visible ? hideLabel : showLabel}
       aria-pressed={visible}
     >

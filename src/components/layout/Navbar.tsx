@@ -83,14 +83,14 @@ export function Navbar() {
     };
   }, [isMobileMenuOpen]);
 
-  const navMuted = isDark ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900";
-  const navRowHover = isDark ? "hover:bg-white/5 hover:text-white" : "hover:bg-gray-100 hover:text-gray-900";
+  const navMuted = isDark ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-[color:var(--tott-accent-tide)]";
+  const navRowHover = isDark ? "hover:bg-white/5 hover:text-white" : "hover:bg-[color:var(--tott-accent-tide-subtle)] hover:text-[color:var(--tott-accent-tide)]";
   const chipBg = isDark ? theme.cardBorder : "#e5e7eb";
   const borderColor = isDark ? "#333333" : "#d1d5db";
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full py-2 ${isDark ? "bg-[#171717]" : "bg-white"}`}
+      className={`sticky top-0 z-50 w-full py-2 ${isDark ? "bg-[#171717]" : "bg-[var(--background)]"}`}
     >
       <nav className="flex h-14 w-full items-center justify-between gap-8 px-6">
 
@@ -256,7 +256,7 @@ export function Navbar() {
         <div
           className={`absolute right-0 top-0 flex h-full w-full max-w-[280px] flex-col border-l transition-transform duration-300 ease-out ${
             isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-          } ${isDark ? "border-[#333333] bg-[#171717]" : "border-gray-200 bg-white"}`}
+          } ${isDark ? "border-[#333333] bg-[#171717]" : "border-[var(--tott-card-border)] bg-[var(--background)]"}`}
         >
           <div
             className={`flex flex-col gap-1 border-b p-4 ${isDark ? "border-[#333333]" : "border-gray-200"}`}

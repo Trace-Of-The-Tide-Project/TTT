@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import {
-  AuthCardFrame,
   AuthFooterLinks,
+  AuthHexFrame,
   AuthInlineLink,
   AuthPageShell,
 } from "@/components/auth/shared";
@@ -17,7 +17,7 @@ export default async function ResetPasswordPage() {
       subtitle={t("pages.resetPassword.subtitle")}
       footer={<AuthFooterLinks />}
     >
-      <AuthCardFrame>
+      <AuthHexFrame>
         <Suspense
           fallback={
             <div className="h-64 w-full max-w-md animate-pulse rounded-md bg-white/5" />
@@ -29,9 +29,9 @@ export default async function ResetPasswordPage() {
           text={t("shared.linkToLoginLead")}
           href="/auth/login"
           label={t("login")}
-          className="mt-6"
+          className="mt-4"
         />
-      </AuthCardFrame>
+      </AuthHexFrame>
     </AuthPageShell>
   );
 }
