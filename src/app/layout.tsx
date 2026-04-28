@@ -40,7 +40,7 @@ export default async function RootLayout({
     requested = undefined;
   }
   const locale = resolveRootLocale(requested);
-  const dir = locale === "ar" ? "rtl" : "ltr";
+  const dir = locale === "ar" ? "rtl" : "ltr"; // extend this list if Hebrew/Farsi added
 
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>

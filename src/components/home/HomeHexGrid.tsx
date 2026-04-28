@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import type { HexCard } from "@/app/[locale]/(withNav)/(public)/page";
 
@@ -64,6 +65,7 @@ function calcHexSize(vw: number): number {
 type Props = { cards: HexCard[] };
 
 export function HomeHexGrid({ cards }: Props) {
+  const t = useTranslations("Home");
   const { isDark } = useTheme();
   const [hexSize, setHexSize] = useState(() =>
     typeof window !== "undefined" ? calcHexSize(window.innerWidth) : 350,
@@ -151,8 +153,8 @@ export function HomeHexGrid({ cards }: Props) {
                 style={{ background: heroTitleBg, paddingLeft: heroPadX, paddingRight: heroPadX }}
               >
                 <h1 className="font-semibold leading-tight text-center" style={{ fontSize: heroTitle }}>
-                  <span style={{ color: heroGoldColor }}>Trace </span>
-                  <span style={{ color: heroTitleColor }}>The Living Archive</span>
+                  <span style={{ color: heroGoldColor }}>{t("heroGold")} </span>
+                  <span style={{ color: heroTitleColor }}>{t("heroTitle")}</span>
                 </h1>
               </div>
             ) : isHeroBody ? (
@@ -161,17 +163,14 @@ export function HomeHexGrid({ cards }: Props) {
                 style={{ background: heroBodyBg, paddingLeft: heroPadX, paddingRight: heroPadX }}
               >
                 <p style={{ color: heroParagraphColor, fontSize: heroBody, marginBottom: "1em" }} className="leading-snug">
-                  We practice knowledge like tending the land: digging, planting, waiting. Culture
-                  lives and breathes with us, passed down like stories. Art is an architecture of
-                  the senses, built on feeling and instinct. From this rhythm, Trace of the Tide
-                  emerges
+                  {t("heroBody")}
                 </p>
                 <Link
                   href="/fields"
                   className="self-start rounded-md font-medium transition-opacity hover:opacity-90"
                   style={{ backgroundColor: "#C9A96E", color: "#1a1a1a", fontSize: heroBtn, padding: "0.4em 1em" }}
                 >
-                  Call to Action
+                  {t("heroCta")}
                 </Link>
               </div>
             ) : (

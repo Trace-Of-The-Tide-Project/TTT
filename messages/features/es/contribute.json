@@ -1,0 +1,60 @@
+{
+  "Contribute": {
+    "page": {
+      "title": "Contribuye a Trace of the Tides",
+      "subtitle": "¿Qué te gustaría contribuir?",
+      "typesLoadError": "No se pudieron cargar los tipos de contribución"
+    },
+    "types": {
+      "personal_story": "Historia personal",
+      "testimony": "Testimonio",
+      "biography": "Biografía",
+      "artwork": "Obra de arte",
+      "music": "Música",
+      "literature": "Literatura",
+      "photography": "Fotografía",
+      "history_document": "Documento histórico",
+      "other": "Otro"
+    },
+    "form": {
+      "titleLabel": "Título de la contribución",
+      "titlePlaceholder": "Introduce un título para tu contribución",
+      "collectionLabel": "Elegir colección",
+      "optional": "(Opcional)",
+      "collectionPlaceholder": "Introduce o selecciona una colección",
+      "collectionStories": "Historias",
+      "collectionDocuments": "Documentos",
+      "collectionMedia": "Medios",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Introduce una descripción para la contribución",
+      "uploadLabel": "Subir archivos",
+      "uploadHint": "Arrastra y suelta archivos aquí, o haz clic para buscar",
+      "uploadFormats": "Formatos admitidos: JPG, PNG, PDF, MP3, MP4, DOC (máx. 20 MB)",
+      "removeFileAria": "Eliminar archivo",
+      "nameLabel": "Tu nombre",
+      "namePlaceholder": "Introduce tu nombre completo",
+      "emailLabel": "Tu correo electrónico",
+      "emailPlaceholder": "Introduce tu correo electrónico",
+      "mobileLabel": "Tu número de móvil",
+      "mobilePlaceholder": "01 2345 6789",
+      "consent": "Al enviar, aceptas que tu contribución pueda ser usada y atribuida de acuerdo con nuestros términos. Podemos contactarte sobre tu envío.",
+      "technicalNote": "Cada archivo se envía primero a POST /upload, luego junto con el formulario de contribución.",
+      "submit": "Enviar contribución",
+      "submitting": "Subiendo y enviando…",
+      "submitErrorDefault": "El envío falló. Por favor, inténtalo de nuevo."
+    },
+    "success": {
+      "title": "¡Gracias por tu contribución!",
+      "backHome": "Volver al inicio"
+    },
+    "error": {
+      "title": "Algo salió mal",
+      "description": "No pudimos completar tu envío. Por favor, inténtalo de nuevo o contáctanos si el problema persiste.",
+      "tryAgain": "Intentar de nuevo"
+    },
+    "contact": {
+      "lead": "Si tienes alguna pregunta",
+      "link": "Contáctanos"
+    }
+  }
+}

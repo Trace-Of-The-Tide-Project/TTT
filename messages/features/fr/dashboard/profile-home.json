@@ -1,0 +1,72 @@
+{
+  "Dashboard": {
+    "profileHome": {
+      "title": "My Dashboard",
+      "editProfile": "Edit profile",
+      "createArticle": "Create article",
+      "recentArticles": "Recent articles",
+      "recentContributors": "Recent contributors"
+    },
+    "adminProfile": {
+      "pageTitle": "Profile Information",
+      "changePhoto": "Change photo",
+      "photoHint": "JPG, PNG or GIF. Max size 2MB.",
+      "errors": {
+        "fileType": "Use JPG, PNG, or GIF.",
+        "maxSize": "Max size 2MB."
+      },
+      "fullName": "Full Name",
+      "email": "Email address",
+      "role": "Role",
+      "company": "Company",
+      "location": "Location",
+      "externalLink": "External Link",
+      "externalLinkPlaceholder": "https://…",
+      "biography": "Biography",
+      "socialLinks": "Social Links",
+      "presets": {
+        "facebook": "Facebook",
+        "twitter": "X / Twitter",
+        "instagram": "Instagram",
+        "linkedin": "LinkedIn"
+      },
+      "removePresetAria": "Remove {label}",
+      "otherLinkPlaceholder": "Add any other links",
+      "additionalLinkPlaceholder": "https://…",
+      "additionalLinkAria": "Additional link",
+      "removeLinkAria": "Remove link",
+      "addNewLink": "Add new link",
+      "saved": "Saved",
+      "saveChanges": "Save Changes"
+    },
+    "adminPrivacy": {
+      "pageTitle": "Privacy Settings",
+      "profileVisibility": "Profile Visibility",
+      "profileVisibilityDescription": "Control who can see your profile",
+      "profileVisibilityAria": "Profile visibility",
+      "visibility": {
+        "public": "Public",
+        "followers": "Followers only",
+        "private": "Private"
+      },
+      "showEmail": "Show Email",
+      "showEmailDescription": "Display your email on your profile",
+      "showEmailAria": "Show email on profile",
+      "showActivity": "Show Activity",
+      "showActivityDescription": "Show your recent activity on your profile",
+      "showActivityAria": "Show activity",
+      "allowFollows": "Allow Follows",
+      "allowFollowsDescription": "Allow other users to follow you",
+      "allowFollowsAria": "Allow follows",
+      "saved": "Saved",
+      "saveChanges": "Save changes"
+    },
+    "adminAccount": {
+      "pageTitle": "Account Security",
+      "deactivateTitle": "Deactivate Account",
+      "deactivateDescription": "Once you deactivate your account, your profile and articles will be hidden. You can reactivate your account at any time by signing in.",
+      "deactivateButton": "Deactivate account",
+      "deactivateConfirm": "Deactivate your account? Your profile and articles will be hidden until you sign in again."
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "Dashboard": {
+    "reportsPage": {
+      "tabs": {
+        "content": "Reported Content ({count})",
+        "users": "Reported Users ({count})",
+        "audit": "Audit Log"
+      },
+      "filters": {
+        "all": "All",
+        "pending": "Pending",
+        "underReview": "Under review"
+      },
+      "searchPlaceholder": "Search reports…",
+      "emptyFiltered": "No reports match your filters.",
+      "selectPrompt": "Select a report to review",
+      "reportedBy": "Reported by:",
+      "statusLabels": {
+        "pending": "Pending",
+        "underReview": "Under review"
+      },
+      "typeLabels": {
+        "comment": "Comment",
+        "content": "Content"
+      },
+      "users": {
+        "reportsCount": "{count, plural, one {# report} other {# reports}}",
+        "viewProfile": "View profile",
+        "warn": "Warn",
+        "suspend": "Suspend"
+      },
+      "audit": {
+        "title": "Audit Log",
+        "subtitle": "Track all moderation actions"
+      }
+    }
+  }
+}

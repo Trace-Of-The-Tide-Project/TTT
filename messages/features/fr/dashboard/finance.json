@@ -1,0 +1,54 @@
+{
+  "Dashboard": {
+    "financePage": {
+      "tabs": {
+        "donations": "Donations",
+        "payouts": "Payouts ({count})",
+        "suspicious": "Suspicious Activity ({count})",
+        "invoices": "Invoices"
+      },
+      "donations": {
+        "title": "Recent Donations",
+        "subtitle": "Latest donation transactions on the platform",
+        "colDonor": "Donor",
+        "colRecipient": "Recipient",
+        "colAmount": "Amount",
+        "colDate": "Date",
+        "colStatus": "Status",
+        "status": {
+          "completed": "Completed",
+          "pending": "Pending"
+        }
+      },
+      "payouts": {
+        "title": "Pending Payouts",
+        "subtitle": "Creator payout requests awaiting approval",
+        "colCreator": "Creator",
+        "colAmount": "Amount",
+        "colRequested": "Requested",
+        "colStatus": "Status",
+        "colActions": "Actions",
+        "approve": "Approve",
+        "reject": "Reject",
+        "status": {
+          "pending": "Pending",
+          "underReview": "Under Review"
+        }
+      },
+      "suspicious": {
+        "title": "Suspicious Activity",
+        "subtitle": "Flagged transactions requiring review",
+        "investigate": "Investigate",
+        "block": "Block"
+      },
+      "invoices": {
+        "comingSoon": "Invoices are coming soon."
+      },
+      "actions": {
+        "rowAria": "Row actions",
+        "viewDetails": "View details",
+        "refund": "Refund"
+      }
+    }
+  }
+}

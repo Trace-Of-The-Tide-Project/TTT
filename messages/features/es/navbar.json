@@ -1,0 +1,51 @@
+{
+  "Footer": {
+    "logoAlt": "Trace of The Tide",
+    "taglineLead": "Trace of the Tide",
+    "taglineBody": "Preservando nuestra memoria colectiva a través de historias, testimonios y artefactos culturales.",
+    "social": {
+      "facebook": "Facebook",
+      "twitter": "X (Twitter)",
+      "youtube": "YouTube",
+      "instagram": "Instagram"
+    },
+    "palestineHeading": "Palestina (Arquitectura de historias)",
+    "palestine": {
+      "stone": { "title": "Piedra", "description": "Testigo de vida" },
+      "salt": { "title": "Sal", "description": "Huella del tiempo" },
+      "compass": { "title": "Brújula", "description": "Huella del lugar" }
+    },
+    "fieldsHeading": "Campos (Mosaico de senderos de Bali)",
+    "fields": {
+      "harbour": { "title": "Senderos del puerto", "description": "Mujaawarah con la Cultura" },
+      "courtyard": { "title": "Senderos del patio", "description": "Mujaawarah con el Conocimiento" },
+      "hill": { "title": "Senderos del cerro", "description": "Mujaawarah con las Artes" }
+    },
+    "contactHeading": "Contacto",
+    "contactLocation": "En todas partes",
+    "copyright": "© {year} Trace of the Tides. Todos los derechos reservados.",
+    "privacy": "Política de privacidad",
+    "terms": "Términos de servicio",
+    "gdpr": "RGPD"
+  },
+  "Navbar": {
+    "home": "Inicio",
+    "language": "Idioma",
+    "brand": "Trace of The Tide",
+    "fields": "Campos",
+    "beANeighbor": "Sé un vecino",
+    "giftATrace": "Regala una huella",
+    "traceAStory": "Traza una historia",
+    "menu": "Menú",
+    "logout": "Cerrar sesión",
+    "login": "Iniciar sesión",
+    "signUp": "Registrarse",
+    "lightMode": "Modo claro",
+    "darkMode": "Modo oscuro",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "switchToLight": "Cambiar a tema claro",
+    "switchToDark": "Cambiar a tema oscuro",
+    "profile": "Perfil"
+  }
+}

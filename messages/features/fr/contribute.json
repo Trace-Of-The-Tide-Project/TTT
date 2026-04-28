@@ -1,0 +1,60 @@
+{
+  "Contribute": {
+    "page": {
+      "title": "Contribuer à Trace of the Tides",
+      "subtitle": "Que souhaitez-vous contribuer ?",
+      "typesLoadError": "Impossible de charger les types de contribution"
+    },
+    "types": {
+      "personal_story": "Histoire personnelle",
+      "testimony": "Témoignage",
+      "biography": "Biographie",
+      "artwork": "Œuvre d'art",
+      "music": "Musique",
+      "literature": "Littérature",
+      "photography": "Photographie",
+      "history_document": "Document historique",
+      "other": "Autre"
+    },
+    "form": {
+      "titleLabel": "Titre de la contribution",
+      "titlePlaceholder": "Entrez un titre pour votre contribution",
+      "collectionLabel": "Choisir une collection",
+      "optional": "(Optionnel)",
+      "collectionPlaceholder": "Entrez ou sélectionnez une collection",
+      "collectionStories": "Histoires",
+      "collectionDocuments": "Documents",
+      "collectionMedia": "Médias",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Entrez une description pour la contribution",
+      "uploadLabel": "Télécharger des fichiers",
+      "uploadHint": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
+      "uploadFormats": "Formats pris en charge : JPG, PNG, PDF, MP3, MP4, DOC (max 20 Mo)",
+      "removeFileAria": "Supprimer le fichier",
+      "nameLabel": "Votre nom",
+      "namePlaceholder": "Entrez votre nom complet",
+      "emailLabel": "Votre adresse e-mail",
+      "emailPlaceholder": "Entrez votre adresse e-mail",
+      "mobileLabel": "Votre numéro de mobile",
+      "mobilePlaceholder": "01 2345 6789",
+      "consent": "En soumettant, vous acceptez que votre contribution puisse être utilisée et attribuée conformément à nos conditions. Nous pouvons vous contacter concernant votre soumission.",
+      "technicalNote": "Chaque fichier est d'abord envoyé à POST /upload, puis à nouveau dans le formulaire de contribution.",
+      "submit": "Soumettre la contribution",
+      "submitting": "Téléchargement et soumission en cours…",
+      "submitErrorDefault": "La soumission a échoué. Veuillez réessayer."
+    },
+    "success": {
+      "title": "Merci pour votre contribution !",
+      "backHome": "Retour à l'accueil"
+    },
+    "error": {
+      "title": "Quelque chose s'est mal passé",
+      "description": "Nous n'avons pas pu compléter votre soumission. Veuillez réessayer ou nous contacter si le problème persiste.",
+      "tryAgain": "Réessayer"
+    },
+    "contact": {
+      "lead": "Si vous avez des questions",
+      "link": "Contactez-nous"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "Footer": {
+    "logoAlt": "Trace of The Tide",
+    "taglineLead": "Trace of the Tide",
+    "taglineBody": "Préserver notre mémoire collective à travers des histoires, des témoignages et des artefacts culturels.",
+    "social": {
+      "facebook": "Facebook",
+      "twitter": "X (Twitter)",
+      "youtube": "YouTube",
+      "instagram": "Instagram"
+    },
+    "palestineHeading": "Palestine (Architecture des histoires)",
+    "palestine": {
+      "stone": { "title": "Pierre", "description": "Témoin de vie" },
+      "salt": { "title": "Sel", "description": "Trace du temps" },
+      "compass": { "title": "Boussole", "description": "Trace du lieu" }
+    },
+    "fieldsHeading": "Champs (Mosaïque des sentiers de Bali)",
+    "fields": {
+      "harbour": { "title": "Sentiers du port", "description": "Mujaawarah avec la Culture" },
+      "courtyard": { "title": "Sentiers de la cour", "description": "Mujaawarah avec la Connaissance" },
+      "hill": { "title": "Sentiers de la colline", "description": "Mujaawarah avec les Arts" }
+    },
+    "contactHeading": "Contact",
+    "contactLocation": "Partout",
+    "copyright": "© {year} Trace of the Tides. Tous droits réservés.",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "gdpr": "RGPD"
+  },
+  "Navbar": {
+    "home": "Accueil",
+    "language": "Langue",
+    "brand": "Trace of The Tide",
+    "fields": "Champs",
+    "beANeighbor": "Être un voisin",
+    "giftATrace": "Offrir une trace",
+    "traceAStory": "Tracer une histoire",
+    "menu": "Menu",
+    "logout": "Se déconnecter",
+    "login": "Se connecter",
+    "signUp": "S'inscrire",
+    "lightMode": "Mode clair",
+    "darkMode": "Mode sombre",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "switchToLight": "Passer au thème clair",
+    "switchToDark": "Passer au thème sombre",
+    "profile": "Profil"
+  }
+}

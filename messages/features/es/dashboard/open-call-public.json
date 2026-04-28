@@ -1,0 +1,15 @@
+{
+  "Dashboard": {
+    "openCallPublic": {
+      "supportTitle": "Support this trace",
+      "supportDescription": "Contribute to this content: your support helps sustain independent storytelling and keep this work accessible.",
+      "supportCta": "Support this",
+      "loading": "Loading open call…",
+      "errorNotFoundTitle": "Open call not found",
+      "errorLoadTitle": "Could not load open call",
+      "errorMissingBody": "No open call exists for this link.",
+      "errorLoadBody": "Check your connection or try again later.",
+      "backToContent": "Back to content"
+    }
+  }
+}

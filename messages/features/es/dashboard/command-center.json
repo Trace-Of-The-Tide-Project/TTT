@@ -1,0 +1,17 @@
+{
+  "Dashboard": {
+    "commandCenter": {
+      "title": "Command Center",
+      "subtitle": "Welcome back. Here's what's happening on your platform.",
+      "lastUpdated": "Last updated: Just now",
+      "stats": {
+        "totalUsers": "Total users",
+        "contentPublished": "Content published",
+        "monthlyDonations": "Monthly donations",
+        "activeToday": "Active today"
+      },
+      "vsLastMonth": "vs last month",
+      "vsYesterday": "vs yesterday"
+    }
+  }
+}

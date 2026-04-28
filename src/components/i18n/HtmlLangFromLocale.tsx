@@ -6,7 +6,7 @@ import { useEffect } from "react";
 export function HtmlLangFromLocale({ locale }: { locale: string }) {
   useEffect(() => {
     document.documentElement.lang = locale;
-    document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = locale === "ar" ? "rtl" : "ltr"; // extend if Hebrew/Farsi added
   }, [locale]);
   return null;
 }

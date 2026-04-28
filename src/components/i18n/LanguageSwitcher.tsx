@@ -5,6 +5,13 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { stripLocalePrefixesFromPath } from "@/lib/i18n/strip-locale-from-path";
 
+const LOCALE_LABELS: Record<string, string> = {
+  en: "EN",
+  ar: "ع",
+  es: "ES",
+  fr: "FR",
+};
+
 export function LanguageSwitcher({ className }: { className?: string }) {
   const locale = useLocale();
   const pathname = usePathname();
@@ -25,14 +32,15 @@ export function LanguageSwitcher({ className }: { className?: string }) {
           key={code}
           type="button"
           onClick={() => switchTo(code)}
-          className={`rounded px-2 py-1 text-xs font-semibold uppercase transition-colors ${
+          className={`rounded px-2 py-1 text-xs font-semibold transition-colors ${
             code === locale
               ? "bg-[#C9A96E]/20 text-[#C9A96E]"
-              : "text-gray-500 hover:bg-white/5 hover:text-gray-300"
+              : "text-[var(--tott-muted)] hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
           }`}
           aria-pressed={code === locale}
+          aria-label={code}
         >
-          {code}
+          {LOCALE_LABELS[code] ?? code.toUpperCase()}
         </button>
       ))}
     </div>

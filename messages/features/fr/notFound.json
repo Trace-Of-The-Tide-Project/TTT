@@ -1,0 +1,11 @@
+{
+  "NotFound": {
+    "title": "Page introuvable",
+    "heading": "Oups ! Cette page semble perdue dans l'histoire.",
+    "body": "Nous n'avons pas trouvé la page que vous cherchiez. Elle a peut-être été déplacée, renommée ou n'a jamais existé.",
+    "cta": "Retourner à la page d'accueil",
+    "contactPrompt": "Si vous pensez que c'est une erreur,",
+    "contact": "Contactez-nous",
+    "contactSuffix": "et nous vous aiderons à trouver votre chemin."
+  }
+}

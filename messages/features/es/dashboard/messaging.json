@@ -1,0 +1,138 @@
+{
+  "Dashboard": {
+    "messagingPage": {
+      "tabs": {
+        "inbox": "Inbox ({count})",
+        "broadcast": "Broadcast",
+        "templates": "Templates",
+        "archived": "Archived"
+      },
+      "categories": {
+        "all": "All categories",
+        "support": "Support",
+        "payment": "Payment",
+        "moderation": "Moderation",
+        "feedback": "Feedback"
+      },
+      "priorities": {
+        "all": "All priority",
+        "high": "High",
+        "med": "Medium",
+        "low": "Low"
+      },
+      "prioritiesShort": {
+        "high": "HIGH",
+        "med": "MED",
+        "low": "LOW"
+      },
+      "templatePicker": {
+        "none": "No template"
+      },
+      "templateNames": {
+        "tpl1": "Welcome Message",
+        "tpl2": "Payment Confirmation",
+        "tpl3": "Content Approved",
+        "tpl4": "Account Warning",
+        "tpl5": "Feature Announcement"
+      },
+      "broadcast": {
+        "title": "New broadcast message",
+        "subtitle": "Send a message to all users or specific groups",
+        "targetAudience": "Target audience",
+        "priority": "Priority",
+        "useTemplate": "Use template",
+        "subject": "Subject",
+        "subjectPlaceholder": "Enter message subject…",
+        "message": "Message",
+        "messagePlaceholder": "Write your broadcast message…",
+        "cancel": "Cancel",
+        "saveDraft": "Save as draft",
+        "send": "Send broadcast",
+        "audiences": {
+          "allUsers": "All users",
+          "authors": "Authors only",
+          "editors": "Editors only",
+          "contributors": "Contributors only"
+        },
+        "broadcastPriority": {
+          "low": "Low",
+          "normal": "Normal",
+          "high": "High"
+        }
+      },
+      "templates": {
+        "title": "Message templates",
+        "subtitle": "Create, edit, and reuse saved message templates.",
+        "createButton": "Create template",
+        "categoryLabels": {
+          "onboarding": "Onboarding",
+          "payment": "Payment",
+          "moderation": "Moderation",
+          "broadcast": "Broadcast",
+          "support": "Support"
+        }
+      },
+      "inbox": {
+        "searchPlaceholder": "Search messages…",
+        "emptyFiltered": "No messages match your filters.",
+        "selectConversation": "Select a conversation to view messages.",
+        "threadMenuAria": "More actions",
+        "viewProfile": "View profile",
+        "archive": "Archive",
+        "delete": "Delete",
+        "attachAria": "Attach",
+        "sendAria": "Send",
+        "composerPlaceholder": "Type your message",
+        "useTemplate": "Use template"
+      }
+    },
+    "messagingCreateTemplateModal": {
+      "closeModalAria": "Close modal",
+      "closeAria": "Close",
+      "title": "Create message template",
+      "subtitle": "Build a reusable template for common messages",
+      "nameLabel": "Template name",
+      "namePlaceholder": "e.g. Welcome message",
+      "categoryLabel": "Category",
+      "subjectLabel": "Subject line",
+      "subjectPlaceholder": "Enter email subject…",
+      "bodyLabel": "Message body",
+      "bodyPlaceholder": "Write your template message… Use {{name}} for dynamic fields.",
+      "variablesHint": "Available variables:",
+      "variablesList": "{{name}}, {{email}}, {{role}}, {{date}}",
+      "categories": {
+        "onboarding": "Onboarding",
+        "payment": "Payment",
+        "moderation": "Moderation",
+        "broadcast": "Broadcast",
+        "support": "Support"
+      },
+      "cancel": "Cancel",
+      "submit": "Create template"
+    },
+    "messagingEditTemplateModal": {
+      "closeModalAria": "Close modal",
+      "closeAria": "Close",
+      "title": "Edit message template",
+      "subtitle": "Update this reusable template",
+      "nameLabel": "Template name",
+      "namePlaceholder": "e.g. Welcome message",
+      "categoryLabel": "Category",
+      "subjectLabel": "Subject line",
+      "subjectPlaceholder": "Enter email subject…",
+      "bodyLabel": "Message body",
+      "bodyPlaceholder": "Write your template message… Use {{name}} for dynamic fields.",
+      "variablesHint": "Available variables:",
+      "variablesList": "{{name}}, {{email}}, {{role}}, {{date}}",
+      "categories": {
+        "onboarding": "Onboarding",
+        "payment": "Payment",
+        "moderation": "Moderation",
+        "broadcast": "Broadcast",
+        "support": "Support"
+      },
+      "cancel": "Cancel",
+      "submit": "Save changes"
+    }
+  }
+}
