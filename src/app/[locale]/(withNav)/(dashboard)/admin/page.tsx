@@ -222,10 +222,10 @@ export default function AdminDashboardPage() {
   });
 
   return (
-    <div className="space-y-8 p-4">
+    <div className="space-y-6 p-3 sm:p-5 sm:space-y-8">
       <DashboardNotifications />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
         <QuickActions items={quickActionsWithModals} />
         <EditorApplications
           items={editorApps}
@@ -247,7 +247,7 @@ export default function AdminDashboardPage() {
         viewAllHref="/admin/users"
       />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
         <FinanceSnapshot cards={financeCards} detailsHref="/admin/analytics" />
         <RecentActivity items={mappedActivity} />
       </div>

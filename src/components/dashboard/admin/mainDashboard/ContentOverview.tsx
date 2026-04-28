@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { ComponentType } from "react";
+
 type ContentRow = {
   id: string;
   icon: ComponentType;
@@ -27,7 +28,7 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
         {manageHref && (
           <Link
             href={manageHref}
-            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-xs font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-foreground"
+            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-dash-control-hover)]"
           >
             {t("manageAll")}
           </Link>
@@ -38,27 +39,27 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
         <table className="w-full text-start text-sm">
           <thead>
             <tr className="border-b border-[var(--tott-card-border)]">
-              <th className="px-5 py-3 text-xs font-medium" style={{ color: "#CBA158" }}>
+              <th className="px-5 py-3 text-xs font-medium text-[var(--tott-dash-gold-label)]">
                 {t("headers.category")}
               </th>
-              <th className="px-4 py-3 text-xs font-medium" style={{ color: "#CBA158" }}>
+              <th className="px-4 py-3 text-xs font-medium text-[var(--tott-dash-gold-label)]">
                 {t("headers.published")}
               </th>
-              <th className="px-4 py-3 text-xs font-medium" style={{ color: "#CBA158" }}>
+              <th className="px-4 py-3 text-xs font-medium text-[var(--tott-dash-gold-label)]">
                 {t("headers.drafts")}
               </th>
-              <th className="px-4 py-3 text-xs font-medium" style={{ color: "#CBA158" }}>
+              <th className="px-4 py-3 text-xs font-medium text-[var(--tott-dash-gold-label)]">
                 {t("headers.flagged")}
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#333]/40">
+          <tbody className="divide-y divide-[var(--tott-dash-divider)]">
             {rows.map((row) => {
               const Icon = row.icon;
               return (
-                <tr key={row.id} className="text-gray-300">
+                <tr key={row.id} className="text-[var(--tott-muted)]">
                   <td className="flex items-center gap-2.5 px-5 py-3.5">
-                    <span className="text-gray-500">
+                    <span className="text-[var(--tott-muted)] opacity-60">
                       <Icon />
                     </span>
                     <span className="font-medium text-foreground capitalize">
@@ -69,9 +70,9 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
                   <td className="px-4 py-3.5">{row.drafts}</td>
                   <td className="px-4 py-3.5">
                     {row.flagged === "—" || row.flagged === 0 ? (
-                      <span className="text-gray-600">—</span>
+                      <span className="opacity-40">—</span>
                     ) : (
-                      <span className="font-medium text-red-400">{row.flagged}</span>
+                      <span className="font-medium text-[var(--tott-dash-negative)]">{row.flagged}</span>
                     )}
                   </td>
                 </tr>
@@ -82,7 +83,7 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
       </div>
 
       {totalValue && (
-        <div className="mt-4 flex items-center justify-between px-1 text-sm text-gray-500">
+        <div className="mt-4 flex items-center justify-between px-1 text-sm text-[var(--tott-muted)]">
           <span>{t("totalLabel")}</span>
           <span className="font-medium text-foreground">{totalValue}</span>
         </div>

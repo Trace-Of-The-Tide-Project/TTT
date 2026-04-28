@@ -45,8 +45,8 @@ export function Footer() {
       className="w-full select-none"
       style={{ backgroundColor: theme.pageBackground, color: "var(--foreground)" }}
     >
-      <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8 lg:px-10">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-8 sm:py-12 lg:px-10">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
           <div className="flex flex-col items-start gap-4">
             <Image
               src="/images/footer-Logo.png"
@@ -147,7 +147,7 @@ export function Footer() {
       </div>
 
       <div className="border-t py-6" style={{ borderColor: theme.cardBorder }}>
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 sm:flex-row sm:px-8 lg:px-10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 sm:flex-row sm:gap-4 sm:px-8 lg:px-10">
           <p className="text-center text-sm sm:text-left" style={{ color: mutedColor }}>{t("copyright", { year })}</p>
           <div className="flex flex-wrap items-center justify-center gap-2 text-sm" style={{ color: mutedColor }}>
             <Link href="/privacy" className="transition-colors hover:text-foreground">

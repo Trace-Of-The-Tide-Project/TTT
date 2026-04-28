@@ -44,6 +44,13 @@ html {
   --tott-contribute-hex-outer-hover: #333333;
   --tott-contribute-hex-label-inactive: #ffffff;
   --tott-muted: #9ca3af;
+  --tott-dash-gold-text: #dbc99e;
+  --tott-dash-gold-label: #c9a96e;
+  --tott-dash-positive: #3ee089;
+  --tott-dash-negative: #ff6875;
+  --tott-dash-divider: rgba(255, 255, 255, 0.07);
+  --tott-dash-progress-track: #222222;
+  --tott-dash-hex-opacity: 1;
 
   /* Auth routes only — sign-in / sign-up surfaces (see .tott-auth-page) */
   --tott-auth-shell-bg: var(--background);
@@ -96,6 +103,13 @@ html[data-theme="light"] {
   --tott-contribute-hex-outer-hover: var(--tott-dash-control-hover);
   --tott-contribute-hex-label-inactive: #1f2937;
   --tott-muted: #6b5b47;
+  --tott-dash-gold-text: #7d5a28;
+  --tott-dash-gold-label: #cba158;
+  --tott-dash-positive: #16a34a;
+  --tott-dash-negative: #dc2626;
+  --tott-dash-divider: rgba(0, 0, 0, 0.07);
+  --tott-dash-progress-track: #e5dfd3;
+  --tott-dash-hex-opacity: 0.35;
 
   /* Auth: warm ivory fields + bronze neutrals + readable hierarchy */
   --tott-auth-shell-bg: #ebe4d4;

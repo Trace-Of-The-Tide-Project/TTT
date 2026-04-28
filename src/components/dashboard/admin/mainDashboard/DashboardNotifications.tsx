@@ -33,7 +33,7 @@ function HexIcon({ children }: { children: React.ReactNode }) {
           strokeWidth="1"
         />
       </svg>
-      <span className="relative text-gray-400">{children}</span>
+      <span className="relative text-[var(--tott-muted)]">{children}</span>
     </div>
   );
 }
@@ -41,25 +41,25 @@ function HexIcon({ children }: { children: React.ReactNode }) {
 function AlertCard({ item, onDismiss }: { item: AlertDisplay; onDismiss: (type: string) => void }) {
   const Icon = item.icon;
   return (
-    <div className="flex items-center gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-4 sm:px-5">
+    <div className="flex items-center gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-4 sm:px-5">
       <HexIcon>
         <Icon />
       </HexIcon>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-foreground">{item.title}</p>
-        <p className="mt-0.5 text-xs text-gray-500">{item.description}</p>
+        <p className="mt-0.5 text-xs text-[var(--tott-muted)]">{item.description}</p>
       </div>
       <div className="flex shrink-0 items-center gap-3">
         <Link
           href={item.href}
-          className="text-xs font-medium text-[#C9A96E] transition-colors hover:text-[#DBC99E] whitespace-nowrap"
+          className="whitespace-nowrap text-xs font-medium text-[var(--tott-dash-gold-label)] transition-colors hover:text-[var(--tott-dash-gold-text)]"
         >
           {item.label} →
         </Link>
         <button
           type="button"
           onClick={() => onDismiss(item.type)}
-          className="text-xs text-gray-600 transition-colors hover:text-gray-400"
+          className="text-xs text-[var(--tott-muted)] opacity-50 transition-opacity hover:opacity-100"
           aria-label="Dismiss"
         >
           ✕
@@ -110,14 +110,14 @@ export function DashboardNotifications() {
             <button
               type="button"
               onClick={dismissAll}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-1.5 text-xs font-medium text-gray-400 transition-colors hover:text-foreground"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-dash-control-hover)]"
             >
               Dismiss all
             </button>
           )}
           <Link
             href="/admin/notifications"
-            className="text-xs font-medium text-[#C9A96E] transition-colors hover:text-[#DBC99E]"
+            className="text-xs font-medium text-[var(--tott-dash-gold-label)] transition-colors hover:text-[var(--tott-dash-gold-text)]"
           >
             {t("viewAll")} →
           </Link>
@@ -125,7 +125,7 @@ export function DashboardNotifications() {
       </div>
 
       {visible.length === 0 ? (
-        <p className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-8 text-center text-sm text-gray-500">
+        <p className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-5 py-8 text-center text-sm text-[var(--tott-muted)]">
           No new alerts
         </p>
       ) : (

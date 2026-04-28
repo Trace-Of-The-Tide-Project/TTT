@@ -129,6 +129,21 @@ export function Navbar() {
             <LanguageSwitcher />
           </div>
 
+          {/* Desktop theme toggle */}
+          <button
+            type="button"
+            onClick={toggleScheme}
+            className={`hidden lg:flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${
+              isDark
+                ? "border-[#333333] text-gray-400 hover:text-white"
+                : "border-gray-200 text-gray-500 hover:text-gray-900"
+            }`}
+            style={{ backgroundColor: chipBg }}
+            aria-label={isDark ? t("switchToLight") : t("switchToDark")}
+          >
+            {isDark ? <SunIcon /> : <MoonIcon />}
+          </button>
+
           {user ? (
             <>
               {/* Mobile: avatar link */}
@@ -254,7 +269,7 @@ export function Navbar() {
 
         {/* Panel */}
         <div
-          className={`absolute right-0 top-0 flex h-full w-full max-w-[280px] flex-col border-l transition-transform duration-300 ease-out ${
+          className={`absolute right-0 top-0 flex h-full w-[min(280px,85vw)] flex-col border-l transition-transform duration-300 ease-out ${
             isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
           } ${isDark ? "border-[#333333] bg-[#171717]" : "border-[var(--tott-card-border)] bg-[var(--background)]"}`}
         >

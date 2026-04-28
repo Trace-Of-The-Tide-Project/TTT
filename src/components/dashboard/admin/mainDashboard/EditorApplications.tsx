@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { theme } from "@/lib/theme";
 
 export type EditorApplication = {
   id: string;
@@ -33,43 +32,40 @@ export function EditorApplications({ items, viewAllHref, onApprove, onReject }: 
   const t = useTranslations("Dashboard.adminHome.editorApplications");
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5">
-      <div className="mb-4 flex items-center justify-between ">
+      <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground">{t("title")}</h3>
         {viewAllHref && (
           <Link
             href={viewAllHref}
-            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-gray-500 hover:text-foreground"
+            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-dash-control-hover)]"
           >
             {t("viewAll")}
           </Link>
         )}
       </div>
 
-      <div className="flex flex-col gap-4 mx-6">
+      <div className="flex flex-col gap-3">
         {items.map((app) => (
           <div
             key={app.id}
-            className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-7 py-5 "
+            className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-5 py-4"
           >
             <div className="flex items-center gap-3">
               <span
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-medium"
-                style={{
-                  backgroundColor: "#DBC99E",
-                  color: theme.bgDark,
-                }}
+                style={{ backgroundColor: "var(--tott-dash-gold-text)", color: "#000" }}
               >
                 {app.initials}
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-foreground">{app.name}</span>
-                  <span className="rounded bg-[#222] px-1.5 py-0.5 text-[10px] font-semibold uppercase text-gray-400">
+                  <span className="rounded bg-[var(--tott-dash-control-bg)] px-1.5 py-0.5 text-[10px] font-semibold uppercase text-[var(--tott-muted)]">
                     {app.badge}
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">{app.experience}</p>
-                <p className="mt-1 flex items-center gap-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-[var(--tott-muted)]">{app.experience}</p>
+                <p className="mt-1 flex items-center gap-1 text-xs text-[var(--tott-muted)] opacity-70">
                   <ClockSmallIcon /> {app.timeAgo}
                 </p>
               </div>
@@ -78,7 +74,7 @@ export function EditorApplications({ items, viewAllHref, onApprove, onReject }: 
             <div className="mt-3 flex items-center gap-2 pl-[52px]">
               <button
                 type="button"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] text-foreground transition-colors hover:border-gray-500"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-dash-control-hover)] hover:text-foreground"
                 aria-label={t("viewApplication")}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -89,7 +85,7 @@ export function EditorApplications({ items, viewAllHref, onApprove, onReject }: 
               <button
                 type="button"
                 onClick={() => onReject?.(app.id)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] text-foreground transition-colors hover:border-red-800 hover:text-red-400"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-dash-negative)] hover:text-[var(--tott-dash-negative)]"
                 aria-label={t("reject")}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -99,7 +95,7 @@ export function EditorApplications({ items, viewAllHref, onApprove, onReject }: 
               <button
                 type="button"
                 onClick={() => onApprove?.(app.id)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] text-foreground transition-colors hover:border-emerald-800 hover:text-emerald-400"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-dash-positive)] hover:text-[var(--tott-dash-positive)]"
                 aria-label={t("approve")}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

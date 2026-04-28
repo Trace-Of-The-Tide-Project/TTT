@@ -99,13 +99,32 @@ export default function ContributePage() {
       </section>
 
       <section>
-        <div className="flex flex-col items-center gap-0">
-          {typesError && (
-            <div className="mb-6 w-full max-w-3xl rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
+        {typesError && (
+          <div className="mx-auto mb-6 max-w-3xl px-4">
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
               {typesError}
             </div>
-          )}
+          </div>
+        )}
 
+        {/* Mobile: simple wrap grid */}
+        <div className="flex flex-wrap justify-center px-4 md:hidden">
+          {(isLoadingTypes ? [] : orderedTypes).map((ty) => {
+            const Icon = getContributionTypeIcon(ty.name);
+            return (
+              <ContributionHexCard
+                key={ty.id}
+                icon={<Icon />}
+                label={typeLabel(ty.name)}
+                selected={selectedTypeId === ty.id}
+                onClick={() => setSelectedTypeId(ty.id)}
+              />
+            );
+          })}
+        </div>
+
+        {/* Desktop: honeycomb rows */}
+        <div className="hidden flex-col items-center gap-0 md:flex">
           <div className="flex justify-center gap-0">
             {(isLoadingTypes ? [] : orderedTypes).slice(0, 3).map((ty) => {
               const Icon = getContributionTypeIcon(ty.name);
@@ -164,7 +183,7 @@ export default function ContributePage() {
           </div>
         </div>
 
-        <section className="pt-12 pb-20">
+        <section className="px-4 pt-12 pb-20">
           <ContributionForm selectedTypeId={selectedTypeId} />
         </section>
       </section>

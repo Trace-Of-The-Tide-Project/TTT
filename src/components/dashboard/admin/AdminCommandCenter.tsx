@@ -27,11 +27,11 @@ function formatChange(change: number): { value: string; direction: "up" | "down"
 
 function SkeletonCard() {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-panel-bg)] px-4 py-5 animate-pulse">
-      <div className="h-10 w-10 rounded-full bg-white/5" />
-      <div className="h-3 w-20 rounded bg-white/5" />
-      <div className="h-7 w-24 rounded bg-white/5" />
-      <div className="h-3 w-28 rounded bg-white/5" />
+    <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5 animate-pulse">
+      <div className="h-10 w-10 rounded-full bg-[var(--tott-dash-control-bg)]" />
+      <div className="h-3 w-20 rounded bg-[var(--tott-dash-control-bg)]" />
+      <div className="h-7 w-24 rounded bg-[var(--tott-dash-control-bg)]" />
+      <div className="h-3 w-28 rounded bg-[var(--tott-dash-control-bg)]" />
     </div>
   );
 }
@@ -63,12 +63,12 @@ export function AdminCommandCenter() {
       <div className="flex flex-col gap-2 py-6 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-xl font-bold text-foreground sm:text-2xl">{t("title")}</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-[var(--tott-muted)]">
             Welcome back, <span className="font-medium text-foreground">{name}</span>. Here&apos;s what&apos;s happening on your platform.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "#E8DDC0" }}>
+        <div className="flex items-center gap-2 text-xs text-[var(--tott-muted)]">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--tott-dash-gold-text)" }}>
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
             <polyline points="22 4 12 14.01 9 11.01" />
           </svg>
@@ -76,7 +76,7 @@ export function AdminCommandCenter() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 pb-6 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 pb-6 sm:gap-4 md:grid-cols-4">
         {loading
           ? STAT_CONFIG.map((s) => <SkeletonCard key={s.key} />)
           : STAT_CONFIG.map((s) => {
