@@ -1,6 +1,7 @@
 "use client";
 
-// Sparse hex positions extracted from the Figma 404 design (1440×1024 canvas)
+import { motion } from "motion/react";
+
 const HEX_POSITIONS: [number, number][] = [
   [48, 44], [48, 668], [96, 148], [96, 980],
   [144, 460], [144, 668], [144, 876], [192, 356],
@@ -26,7 +27,6 @@ const R = 42;
 const ROUNDING = R * 0.12;
 
 function hexPath(cx: number, cy: number): string {
-  // Pointy-top hexagon with rounded corners
   const angles = [
     -Math.PI / 6, Math.PI / 6, Math.PI / 2,
     (5 * Math.PI) / 6, (7 * Math.PI) / 6, (3 * Math.PI) / 2,
@@ -54,7 +54,19 @@ function hexPath(cx: number, cy: number): string {
   return d + "Z";
 }
 
-const allPaths = HEX_POSITIONS.map(([cx, cy]) => hexPath(cx, cy)).join(" ");
+// Deterministic pseudo-random to avoid hydration mismatch
+function seeded(seed: number): number {
+  const x = Math.sin(seed + 1) * 10000;
+  return x - Math.floor(x);
+}
+
+const hexData = HEX_POSITIONS.map(([cx, cy], i) => ({
+  d: hexPath(cx, cy),
+  minOp: 0.06 + seeded(i * 7) * 0.08,
+  maxOp: 0.28 + seeded(i * 7 + 1) * 0.38,
+  duration: 2.2 + seeded(i * 7 + 2) * 4.5,
+  delay: seeded(i * 7 + 3) * -7,
+}));
 
 export default function HexBackground404() {
   return (
@@ -66,13 +78,22 @@ export default function HexBackground404() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
     >
-      <path
-        d={allPaths}
-        fill="none"
-        stroke="var(--tott-auth-hex-stroke)"
-        strokeWidth="1"
-        strokeOpacity="var(--tott-auth-hex-stroke-opacity)"
-      />
+      {hexData.map((hex, i) => (
+        <motion.path
+          key={i}
+          d={hex.d}
+          fill="none"
+          stroke="var(--tott-auth-hex-stroke)"
+          strokeWidth="1"
+          animate={{ opacity: [hex.minOp, hex.maxOp, hex.minOp] }}
+          transition={{
+            duration: hex.duration,
+            delay: hex.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
     </svg>
   );
 }
