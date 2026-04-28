@@ -10,7 +10,19 @@
         "loading": "Cargando notificaciones…",
         "empty": "Aún no hay notificaciones.",
         "unread": "No leídas",
-        "open": "Abrir ›"
+        "open": "Abrir ›",
+        "reviewNow": "Revisar ahora",
+        "process": "Procesar",
+        "review": "Revisar",
+        "dismissAll": "Ignorar todo",
+        "noAlerts": "No hay nuevas alertas",
+        "viewAllAlerts": "Ver todo",
+        "flaggedTitle": "{count} contenidos marcados",
+        "flaggedDesc": "Requiere revisión inmediata por infracciones de política",
+        "editorTitle": "{count} solicitudes de editor pendientes",
+        "editorDesc": "Revisar y aprobar solicitudes de editor",
+        "pendingTitle": "{count} contribuciones en espera de revisión",
+        "pendingDesc": "Contenido pendiente de aprobación de moderación"
       },
       "quickActions": {
         "title": "Acciones rápidas",
@@ -46,7 +58,14 @@
           "music": "Música",
           "photography": "Fotografía",
           "essays": "Ensayos",
-          "podcasts": "Podcasts"
+          "podcasts": "Podcasts",
+          "artwork": "Obra de arte",
+          "personalStory": "Historia personal",
+          "literature": "Literatura",
+          "testimony": "Testimonio",
+          "historyDocument": "Documento histórico",
+          "other": "Otro",
+          "biography": "Biografía"
         },
         "totalLabel": "Total de contenidos"
       },
@@ -59,7 +78,15 @@
           "contributors": "Colaboradores",
           "authors": "Autores",
           "editors": "Editores",
-          "admins": "Administradores"
+          "admins": "Administradores",
+          "user": "Usuario",
+          "contributor": "Colaborador",
+          "author": "Autor",
+          "editor": "Editor",
+          "admin": "Administrador",
+          "moderator": "Moderador",
+          "manager": "Gestor",
+          "artist": "Artista"
         }
       },
       "finance": {
@@ -86,6 +113,17 @@
       },
       "recentActivity": {
         "title": "Actividad reciente",
+        "publishedBy": "Publicado por {name}",
+        "updatedBy": "Actualizado por {name}",
+        "newUser": "Nuevo usuario: {name}",
+        "moderation": "Moderación: {action}",
+        "activityOn": "{action} en {entity}",
+        "unknown": "Desconocido",
+        "minutesAgo": "hace {count}min",
+        "hoursAgo": "hace {count}h",
+        "daysAgo": "hace {count}d",
+        "contribution": "Contribución",
+        "article": "Artículo",
         "items": {
           "1": {
             "title": "Nuevo autor registrado",

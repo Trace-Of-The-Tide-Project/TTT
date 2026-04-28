@@ -10,7 +10,19 @@
         "loading": "جاري تحميل الإشعارات…",
         "empty": "لا إشعارات بعد.",
         "unread": "غير مقروء",
-        "open": "فتح ›"
+        "open": "فتح ›",
+        "reviewNow": "مراجعة الآن",
+        "process": "معالجة",
+        "review": "مراجعة",
+        "dismissAll": "إغلاق الكل",
+        "noAlerts": "لا تنبيهات جديدة",
+        "viewAllAlerts": "عرض الكل",
+        "flaggedTitle": "{count} محتوى تم الإبلاغ عنه",
+        "flaggedDesc": "يتطلب مراجعة فورية لانتهاكات السياسة",
+        "editorTitle": "{count} طلب محرر معلّق",
+        "editorDesc": "مراجعة وقبول طلبات المحررين",
+        "pendingTitle": "{count} مساهمة بانتظار المراجعة",
+        "pendingDesc": "محتوى في انتظار موافقة الإشراف"
       },
       "quickActions": {
         "title": "إجراءات سريعة",
@@ -46,7 +58,14 @@
           "music": "موسيقى",
           "photography": "تصوير",
           "essays": "مقالات رأي",
-          "podcasts": "بودكاست"
+          "podcasts": "بودكاست",
+          "artwork": "أعمال فنية",
+          "personalStory": "قصة شخصية",
+          "literature": "أدب",
+          "testimony": "شهادة",
+          "historyDocument": "وثيقة تاريخية",
+          "other": "أخرى",
+          "biography": "سيرة ذاتية"
         },
         "totalLabel": "إجمالي عناصر المحتوى"
       },
@@ -59,7 +78,15 @@
           "contributors": "مساهمون",
           "authors": "مؤلفون",
           "editors": "محررون",
-          "admins": "مشرفون"
+          "admins": "مشرفون",
+          "user": "مستخدم",
+          "contributor": "مساهم",
+          "author": "مؤلف",
+          "editor": "محرر",
+          "admin": "مشرف",
+          "moderator": "مراقب",
+          "manager": "مدير",
+          "artist": "فنان"
         }
       },
       "finance": {
@@ -86,6 +113,17 @@
       },
       "recentActivity": {
         "title": "النشاط الأخير",
+        "publishedBy": "نشر بواسطة {name}",
+        "updatedBy": "تحديث بواسطة {name}",
+        "newUser": "مستخدم جديد: {name}",
+        "moderation": "إشراف: {action}",
+        "activityOn": "{action} على {entity}",
+        "unknown": "مجهول",
+        "minutesAgo": "منذ {count} د",
+        "hoursAgo": "منذ {count} س",
+        "daysAgo": "منذ {count} ي",
+        "contribution": "مساهمة",
+        "article": "مقال",
         "items": {
           "1": {
             "title": "انضم مؤلف جديد",

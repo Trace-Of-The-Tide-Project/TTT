@@ -64,7 +64,7 @@ export function AdminCommandCenter() {
         <div>
           <h1 className="text-xl font-bold text-foreground sm:text-2xl">{t("title")}</h1>
           <p className="mt-1 text-sm text-[var(--tott-muted)]">
-            Welcome back, <span className="font-medium text-foreground">{name}</span>. Here&apos;s what&apos;s happening on your platform.
+            {t("welcomeBack")} <span className="font-medium text-foreground">{name}</span>. {t("subtitle")}
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-[var(--tott-muted)]">

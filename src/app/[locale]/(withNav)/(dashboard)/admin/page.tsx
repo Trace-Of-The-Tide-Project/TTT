@@ -83,30 +83,36 @@ function getActivityIcon(type: string): ComponentType {
   }
 }
 
-function formatActivityTitle(a: ActivityEntry): string {
+type ActivityT = (key: string, values?: Record<string, string | number>) => string;
+
+function formatActivityTitle(a: ActivityEntry, t: ActivityT): string {
+  const name = a.user?.name ?? t("unknown");
   switch (a.type) {
-    case "new_user": return `New user: ${a.user?.name ?? "Unknown"}`;
-    case "content_published": return `Published by ${a.user?.name ?? "Unknown"}`;
-    case "content_updated": return `Updated by ${a.user?.name ?? "Unknown"}`;
-    case "moderation": return `Moderation: ${a.action}`;
-    default: return `${a.action || "Activity"} on ${a.entityType || "item"}`;
+    case "new_user": return t("newUser", { name });
+    case "content_published": return t("publishedBy", { name });
+    case "content_updated": return t("updatedBy", { name });
+    case "moderation": return t("moderation", { action: a.action });
+    default: return t("activityOn", { action: a.action || "", entity: a.entityType || "" });
   }
 }
 
-function formatActivityDescription(a: ActivityEntry): string {
+function formatActivityDescription(a: ActivityEntry, t: ActivityT): string {
   const d = a.details ?? {};
   if (typeof d.contributionTitle === "string") return d.contributionTitle;
   if (typeof d.reason === "string") return d.reason;
+  const entity = (a.entityType ?? "").toLowerCase();
+  if (entity === "contribution") return t("contribution");
+  if (entity === "article") return t("article");
   return a.entityType ?? "";
 }
 
-function relativeTime(dateStr: string): string {
+function relativeTime(dateStr: string, t: ActivityT): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 60) return t("minutesAgo", { count: mins });
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return `${Math.floor(hours / 24)}d ago`;
+  if (hours < 24) return t("hoursAgo", { count: hours });
+  return t("daysAgo", { count: Math.floor(hours / 24) });
 }
 
 // ── Finance card shape ──────────────────────────────────────────
@@ -147,6 +153,7 @@ function buildFinanceCards(data: FinanceSnapshotData) {
 
 export default function AdminDashboardPage() {
   const tModals = useTranslations("Dashboard.adminHome.modals");
+  const tActivity = useTranslations("Dashboard.adminHome.recentActivity");
   const [broadcastOpen, setBroadcastOpen] = useState(false);
   const [editorApplicationsOpen, setEditorApplicationsOpen] = useState(false);
   const [featureContentOpen, setFeatureContentOpen] = useState(false);
@@ -206,9 +213,9 @@ export default function AdminDashboardPage() {
   const mappedActivity = activityItems.map((a) => ({
     id: a.id,
     icon: getActivityIcon(a.type),
-    title: formatActivityTitle(a),
-    description: formatActivityDescription(a),
-    time: relativeTime(a.timestamp),
+    title: formatActivityTitle(a, tActivity),
+    description: formatActivityDescription(a, tActivity),
+    time: relativeTime(a.timestamp, tActivity),
   }));
 
   const financeCards = financeData ? buildFinanceCards(financeData) : [];

@@ -7,19 +7,20 @@ import { getDashboardAlerts } from "@/services/dashboard.service";
 import { AlertTriangleIcon, PersonIcon, ShieldIcon } from "@/components/ui/icons";
 import type { ComponentType } from "react";
 
-const ALERT_CONFIG: Record<string, { icon: ComponentType; href: string; label: string }> = {
-  flagged:            { icon: AlertTriangleIcon, href: "/admin/reports",  label: "Review now" },
-  editor_application: { icon: PersonIcon,         href: "/admin/users",    label: "Process" },
-  pending_review:     { icon: ShieldIcon,          href: "/admin/content",  label: "Review" },
+const ALERT_CONFIG: Record<string, { icon: ComponentType; href: string; labelKey: string; titleKey: string; descKey: string }> = {
+  flagged:            { icon: AlertTriangleIcon, href: "/admin/reports",  labelKey: "reviewNow", titleKey: "flaggedTitle", descKey: "flaggedDesc" },
+  editor_application: { icon: PersonIcon,         href: "/admin/users",    labelKey: "process",   titleKey: "editorTitle",  descKey: "editorDesc"  },
+  pending_review:     { icon: ShieldIcon,          href: "/admin/content",  labelKey: "review",    titleKey: "pendingTitle", descKey: "pendingDesc" },
 };
 
 type AlertDisplay = {
   type: string;
-  title: string;
-  description: string;
+  count: number;
+  titleKey: string;
+  descKey: string;
   icon: ComponentType;
   href: string;
-  label: string;
+  labelKey: string;
 };
 
 function HexIcon({ children }: { children: React.ReactNode }) {
@@ -39,22 +40,26 @@ function HexIcon({ children }: { children: React.ReactNode }) {
 }
 
 function AlertCard({ item, onDismiss }: { item: AlertDisplay; onDismiss: (type: string) => void }) {
+  const t = useTranslations("Dashboard.adminHome.notifications");
   const Icon = item.icon;
+  const title = item.titleKey ? t(item.titleKey, { count: item.count }) : item.type;
+  const desc = item.descKey ? t(item.descKey) : "";
+  const label = item.labelKey ? t(item.labelKey) : "→";
   return (
     <div className="flex items-center gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-4 sm:px-5">
       <HexIcon>
         <Icon />
       </HexIcon>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-foreground">{item.title}</p>
-        <p className="mt-0.5 text-xs text-[var(--tott-muted)]">{item.description}</p>
+        <p className="text-sm font-semibold text-foreground">{title}</p>
+        <p className="mt-0.5 text-xs text-[var(--tott-muted)]">{desc}</p>
       </div>
       <div className="flex shrink-0 items-center gap-3">
         <Link
           href={item.href}
           className="whitespace-nowrap text-xs font-medium text-[var(--tott-dash-gold-label)] transition-colors hover:text-[var(--tott-dash-gold-text)]"
         >
-          {item.label} →
+          {label} →
         </Link>
         <button
           type="button"
@@ -81,15 +86,19 @@ export function DashboardNotifications() {
           const cfg = ALERT_CONFIG[item.type] ?? {
             icon: AlertTriangleIcon,
             href: "/admin",
-            label: "View",
+            labelKey: "review",
+            titleKey: "pendingTitle",
+            descKey: "pendingDesc",
           };
+          const count = parseInt(item.message.match(/\d+/)?.[0] ?? "1", 10);
           return {
             type: item.type,
-            title: item.message,
-            description: item.description,
+            count,
+            titleKey: cfg.titleKey,
+            descKey: cfg.descKey,
             icon: cfg.icon,
             href: cfg.href,
-            label: cfg.label,
+            labelKey: cfg.labelKey,
           };
         });
         setItems(mapped);
@@ -112,7 +121,7 @@ export function DashboardNotifications() {
               onClick={dismissAll}
               className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-dash-control-hover)]"
             >
-              Dismiss all
+              {t("dismissAll")}
             </button>
           )}
           <Link
@@ -126,7 +135,7 @@ export function DashboardNotifications() {
 
       {visible.length === 0 ? (
         <p className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-5 py-8 text-center text-sm text-[var(--tott-muted)]">
-          No new alerts
+          {t("noAlerts")}
         </p>
       ) : (
         <div className="flex flex-col gap-3">

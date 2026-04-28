@@ -2,7 +2,8 @@
   "Dashboard": {
     "commandCenter": {
       "title": "مركز القيادة",
-      "subtitle": "مرحباً بعودتك. إليك ما يحدث على المنصة.",
+      "welcomeBack": "مرحباً بعودتك،",
+      "subtitle": "إليك ما يحدث على المنصة.",
       "lastUpdated": "آخر تحديث: الآن",
       "stats": {
         "totalUsers": "إجمالي المستخدمين",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { ComponentType } from "react";
 import { DetailModal } from "@/components/dashboard/modals/DetailModal";
 
@@ -54,20 +55,21 @@ function HexIcon({ children }: { children: React.ReactNode }) {
 }
 
 export function AlertsList({ items, onDismissAll }: AlertsListProps) {
+  const t = useTranslations("Dashboard.adminHome.notifications");
   const [activeAlert, setActiveAlert] = useState<AlertItem | null>(null);
 
   return (
     <>
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-foreground">Alerts & Notifications</h3>
+          <h3 className="text-lg font-bold text-foreground">{t("title")}</h3>
           {onDismissAll && (
             <button
               type="button"
               onClick={onDismissAll}
               className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-gray-500 hover:text-foreground"
             >
-              Dismiss all
+              {t("dismissAll")}
             </button>
           )}
         </div>
@@ -109,7 +111,7 @@ export function AlertsList({ items, onDismissAll }: AlertsListProps) {
           badge={activeAlert.modal?.badge}
           items={activeAlert.modal?.items ?? []}
           viewAllHref={activeAlert.modal?.viewAllHref ?? activeAlert.actionHref}
-          viewAllLabel="View All"
+          viewAllLabel={t("viewAllAlerts")}
         />
       )}
     </>

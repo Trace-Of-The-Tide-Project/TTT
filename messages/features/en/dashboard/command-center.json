@@ -2,7 +2,8 @@
   "Dashboard": {
     "commandCenter": {
       "title": "Command Center",
-      "subtitle": "Welcome back. Here's what's happening on your platform.",
+      "welcomeBack": "Welcome back,",
+      "subtitle": "Here's what's happening on your platform.",
       "lastUpdated": "Last updated: Just now",
       "stats": {
         "totalUsers": "Total users",

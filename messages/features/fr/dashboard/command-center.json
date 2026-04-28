@@ -2,7 +2,8 @@
   "Dashboard": {
     "commandCenter": {
       "title": "Centre de commande",
-      "subtitle": "Bon retour. Voici ce qui se passe sur votre plateforme.",
+      "welcomeBack": "Bon retour,",
+      "subtitle": "Voici ce qui se passe sur votre plateforme.",
       "lastUpdated": "Dernière mise à jour : À l'instant",
       "stats": {
         "totalUsers": "Total des utilisateurs",

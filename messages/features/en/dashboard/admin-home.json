@@ -10,7 +10,19 @@
         "loading": "Loading notifications…",
         "empty": "No notifications yet.",
         "unread": "Unread",
-        "open": "Open ›"
+        "open": "Open ›",
+        "reviewNow": "Review now",
+        "process": "Process",
+        "review": "Review",
+        "dismissAll": "Dismiss all",
+        "noAlerts": "No new alerts",
+        "viewAllAlerts": "View All",
+        "flaggedTitle": "{count} content items flagged",
+        "flaggedDesc": "Requires immediate review for policy violations",
+        "editorTitle": "{count} editor applications pending",
+        "editorDesc": "Review and approve editor applications",
+        "pendingTitle": "{count} contributions awaiting review",
+        "pendingDesc": "Content pending moderation approval"
       },
       "quickActions": {
         "title": "Quick Actions",
@@ -46,7 +58,14 @@
           "music": "Music",
           "photography": "Photography",
           "essays": "Essays",
-          "podcasts": "Podcasts"
+          "podcasts": "Podcasts",
+          "artwork": "Artwork",
+          "personalStory": "Personal Story",
+          "literature": "Literature",
+          "testimony": "Testimony",
+          "historyDocument": "History Document",
+          "other": "Other",
+          "biography": "Biography"
         },
         "totalLabel": "Total content pieces"
       },
@@ -59,7 +78,15 @@
           "contributors": "Contributors",
           "authors": "Authors",
           "editors": "Editors",
-          "admins": "Admins"
+          "admins": "Admins",
+          "user": "User",
+          "contributor": "Contributor",
+          "author": "Author",
+          "editor": "Editor",
+          "admin": "Admin",
+          "moderator": "Moderator",
+          "manager": "Manager",
+          "artist": "Artist"
         }
       },
       "finance": {
@@ -86,6 +113,17 @@
       },
       "recentActivity": {
         "title": "Recent Activity",
+        "publishedBy": "Published by {name}",
+        "updatedBy": "Updated by {name}",
+        "newUser": "New user: {name}",
+        "moderation": "Moderation: {action}",
+        "activityOn": "{action} on {entity}",
+        "unknown": "Unknown",
+        "minutesAgo": "{count}m ago",
+        "hoursAgo": "{count}h ago",
+        "daysAgo": "{count}d ago",
+        "contribution": "Contribution",
+        "article": "Article",
         "items": {
           "1": {
             "title": "New author joined",

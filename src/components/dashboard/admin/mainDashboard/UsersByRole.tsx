@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useMessages } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { ComponentType } from "react";
 
@@ -19,8 +19,22 @@ type UsersByRoleProps = {
   viewAllHref?: string;
 };
 
+function translateLabel(messages: unknown, label: string): string {
+  try {
+    const rolesMap = ((messages as Record<string, unknown>)?.Dashboard as Record<string, unknown>)
+      ?.adminHome as Record<string, unknown>;
+    const roles = rolesMap?.usersByRole as Record<string, unknown>;
+    const roleLabels = roles?.roles as Record<string, string> | undefined;
+    const key = label.toLowerCase();
+    return roleLabels?.[key] ?? label;
+  } catch {
+    return label;
+  }
+}
+
 export function UsersByRole({ roles, totalValue, viewAllHref }: UsersByRoleProps) {
   const t = useTranslations("Dashboard.adminHome.usersByRole");
+  const messages = useMessages();
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-7">
       <div className="mb-5 flex items-center justify-between">
@@ -45,7 +59,7 @@ export function UsersByRole({ roles, totalValue, viewAllHref }: UsersByRoleProps
                   <span className="text-[var(--tott-muted)] opacity-70">
                     <Icon />
                   </span>
-                  <span className="text-sm font-medium text-foreground capitalize">{role.label}</span>
+                  <span className="text-sm font-medium text-foreground capitalize">{translateLabel(messages, role.label)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-[var(--tott-muted)]">{role.count}</span>
