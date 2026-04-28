@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 type Contributor = {
   name: string;
   role: string;
@@ -12,11 +16,13 @@ type ContentContributorsProps = {
 export function ContentContributors({
   contributors,
 }: ContentContributorsProps) {
+  const t = useTranslations("Content");
+
   return (
     <div>
-      <h3 className="text-lg font-bold text-foreground">Contributors</h3>
+      <h3 className="text-lg font-bold text-foreground">{t("contributors")}</h3>
       <p className="mt-0.5 text-sm text-[var(--tott-muted)]">
-        {contributors.length} contributed to this content
+        {t("contributedCount", { count: contributors.length })}
       </p>
 
       <ul className="mt-4 space-y-1">

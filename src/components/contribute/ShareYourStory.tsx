@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { theme } from "@/lib/theme";
 
@@ -101,6 +104,7 @@ function ScatteredHexBackground() {
 }
 
 export function ShareYourStory() {
+  const t = useTranslations("Content");
   return (
     <section className="relative w-full overflow-hidden py-16 sm:py-20">
       <div className="absolute inset-0" style={{ backgroundColor: theme.pageBackground }} />
@@ -110,12 +114,11 @@ export function ShareYourStory() {
 
       <div className="relative z-10 flex flex-col items-center px-6 pt-24">
         <h2 className="text-center text-xl font-semibold text-foreground sm:text-2xl">
-          Share your story
+          {t("shareTitle")}
         </h2>
 
         <p className="mt-3 max-w-xl text-center text-sm leading-relaxed text-[var(--tott-muted)] sm:text-base">
-          Every story matters. Help us preserve the collective memory by contributing your personal
-          experiences, testimonies, or knowledge of historical events.
+          {t("shareBody")}
         </p>
 
         <Link
@@ -123,7 +126,7 @@ export function ShareYourStory() {
           className="mt-8 inline-block select-none rounded-lg px-8 py-3.5 text-base font-medium text-[#1a1a1a] transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
           style={{ backgroundColor: theme.accentGold }}
         >
-          Contribute Now!
+          {t("shareCta")}
         </Link>
       </div>
     </section>

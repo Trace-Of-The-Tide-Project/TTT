@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { ContentBreadcrumb } from "./related/ContentBreadcrumb";
@@ -70,6 +71,7 @@ export function ThreadsPageLayout({
   collection,
   relatedContent,
 }: ThreadsPageLayoutProps) {
+  const t = useTranslations("Content");
   const [visibleCount, setVisibleCount] = useState(initialVisibleCount);
   const [expandedEntries, setExpandedEntries] = useState<Set<number>>(new Set());
 
@@ -113,7 +115,7 @@ export function ThreadsPageLayout({
               <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[var(--tott-muted)]">
                 {mainPublishedDate && (
                   <>
-                    <span>Published: {mainPublishedDate}</span>
+                    <span>{t("published")}: {mainPublishedDate}</span>
                     <span className="text-gray-600">·</span>
                   </>
                 )}
@@ -181,7 +183,7 @@ export function ThreadsPageLayout({
                         onClick={() => toggleEntry(index)}
                         className="flex items-center gap-1.5 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
                       >
-                        {expandedEntries.has(index) ? "Show less" : "Read more"}
+                        {expandedEntries.has(index) ? t("showLess") : t("readMore")}
                         <svg
                           width="14"
                           height="14"
@@ -211,8 +213,8 @@ export function ThreadsPageLayout({
                       className="rounded-lg px-6 py-3 text-sm font-semibold text-[#1a1a1a] transition-opacity hover:opacity-90"
                       style={{ backgroundColor: theme.accentGold }}
                     >
-                      Show more
-                      {remaining > 0 && ` (${remaining} left)`}
+                      {t("showMore")}
+                      {remaining > 0 && ` ${t("remaining", { remaining })}`}
                     </button>
                   )}
                   {canCollapse && (
@@ -221,7 +223,7 @@ export function ThreadsPageLayout({
                       onClick={showLess}
                       className="rounded-lg border border-[var(--tott-card-border)] px-6 py-3 text-sm font-semibold text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-dash-control-hover)] hover:text-foreground"
                     >
-                      Show less
+                      {t("showLess")}
                     </button>
                   )}
                 </div>

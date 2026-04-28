@@ -1,0 +1,22 @@
+{
+  "Content": {
+    "follow": "متابعة",
+    "following": "تتابع",
+    "contributors": "المساهمون",
+    "contributedCount": "{count} ساهم في هذا المحتوى",
+    "collectionTitle": "محتوى المجموعة",
+    "articlesCount": "{count} مقالة",
+    "ofContent": "من المحتوى",
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل",
+    "readMore": "اقرأ المزيد",
+    "remaining": "({remaining} متبقية)",
+    "relatedContent": "محتوى ذو صلة",
+    "relatedDescription": "استكشف المزيد من أرشيفنا.",
+    "viewMore": "عرض المزيد",
+    "published": "النشر",
+    "shareTitle": "شاركنا قصتك",
+    "shareBody": "كل قصة تهمّ. ساعدنا على حفظ الذاكرة الجمعية من خلال مشاركة تجاربك الشخصية وشهاداتك أو معرفتك بالأحداث التاريخية.",
+    "shareCta": "ساهم الآن"
+  }
+}

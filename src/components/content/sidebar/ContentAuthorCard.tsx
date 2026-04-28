@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { LinkIcon, MoreDotsIcon } from "@/components/ui/icons";
 import { checkIsFollowing, toggleFollow } from "@/services/follows.service";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -20,6 +21,7 @@ export function ContentAuthorCard({
   link,
   color = "black",
 }: ContentAuthorCardProps) {
+  const t = useTranslations("Content");
   const [isFollowing, setIsFollowing] = useState(false);
   const [toggling, setToggling] = useState(false);
   const { status } = useAuth();
@@ -72,7 +74,7 @@ export function ContentAuthorCard({
               border: isFollowing ? "1px solid #C9A96E" : "none",
             }}
           >
-            {isFollowing ? "Following" : "Follow"}
+            {isFollowing ? t("following") : t("follow")}
           </button>
         </div>
         {link && (

@@ -1,0 +1,22 @@
+{
+  "Content": {
+    "follow": "Suivre",
+    "following": "Abonné",
+    "contributors": "Contributeurs",
+    "contributedCount": "{count} ont contribué à ce contenu",
+    "collectionTitle": "Contenu de la collection",
+    "articlesCount": "{count} articles",
+    "ofContent": "de contenu",
+    "showMore": "Voir plus",
+    "showLess": "Voir moins",
+    "readMore": "Lire la suite",
+    "remaining": "({remaining} restants)",
+    "relatedContent": "Contenu associé",
+    "relatedDescription": "Explorez davantage notre archive.",
+    "viewMore": "Voir plus",
+    "published": "Publié",
+    "shareTitle": "Partagez votre histoire",
+    "shareBody": "Chaque histoire compte. Aidez-nous à préserver la mémoire collective en partageant vos expériences personnelles, témoignages ou connaissances des événements historiques.",
+    "shareCta": "Contribuer maintenant"
+  }
+}

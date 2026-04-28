@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { theme } from "@/lib/theme";
 import { RelatedContentCard, type RelatedContentCardData } from "./RelatedContentCard";
@@ -46,6 +49,8 @@ function RelatedContentHexBackground() {
 }
 
 export function RelatedContent({ items, viewMoreHref = "#" }: RelatedContentProps) {
+  const t = useTranslations("Content");
+
   return (
     <section className="relative py-10 sm:py-14" style={{ backgroundColor: theme.pageBackground }}>
       <RelatedContentHexBackground />
@@ -53,10 +58,10 @@ export function RelatedContent({ items, viewMoreHref = "#" }: RelatedContentProp
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-lg font-bold" style={{ color: theme.accentGold }}>
-              Related content
+              {t("relatedContent")}
             </h2>
             <p className="mt-1 text-sm text-[var(--tott-muted)]">
-              Lorem ipsum dolor sit amet adipiscing elit.
+              {t("relatedDescription")}
             </p>
           </div>
           <Link
@@ -64,7 +69,7 @@ export function RelatedContent({ items, viewMoreHref = "#" }: RelatedContentProp
             className="flex shrink-0 items-center gap-1 text-sm font-medium hover:underline"
             style={{ color: theme.accentGold }}
           >
-            View more <span>→</span>
+            {t("viewMore")} <span>→</span>
           </Link>
         </div>
 

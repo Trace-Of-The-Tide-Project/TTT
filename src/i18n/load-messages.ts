@@ -48,13 +48,15 @@ async function loadDashboardMessages(locale: AppLocale): Promise<Record<string, 
  * Dashboard strings are split under `messages/features/{locale}/dashboard/*.json` and deep-merged.
  */
 export async function loadMessages(locale: AppLocale) {
-  const [core, navbar, home, auth, notFound, contribute, dashboardMerged] = await Promise.all([
+
+  const [core, navbar, home, auth, notFound, contribute, content, dashboardMerged] = await Promise.all([
     import(`../../messages/${locale}.json`),
     import(`../../messages/features/${locale}/navbar.json`),
     import(`../../messages/features/${locale}/home.json`),
     import(`../../messages/features/${locale}/auth.json`),
     import(`../../messages/features/${locale}/notFound.json`),
     import(`../../messages/features/${locale}/contribute.json`),
+    import(`../../messages/features/${locale}/content.json`),
     loadDashboardMessages(locale),
   ]);
 
@@ -65,6 +67,7 @@ export async function loadMessages(locale: AppLocale) {
     ...auth.default,
     ...notFound.default,
     ...contribute.default,
+    ...content.default,
     Dashboard: dashboardMerged,
   } as Record<string, unknown>;
 }

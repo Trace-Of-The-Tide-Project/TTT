@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Grid2x2Icon, CalendarIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
 
@@ -26,6 +27,7 @@ export function ContentCollection({
   items,
   visibleCount = 5,
 }: ContentCollectionProps) {
+  const t = useTranslations("Content");
   const [showAll, setShowAll] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
   const visible = showAll ? items : items.slice(0, visibleCount);
@@ -35,9 +37,9 @@ export function ContentCollection({
       className="rounded-xl border p-4"
       style={{ backgroundColor: theme.pageBackground, borderColor: theme.cardBorder }}
     >
-      <h3 className="text-lg font-bold text-foreground">Collection content</h3>
+      <h3 className="text-lg font-bold text-foreground">{t("collectionTitle")}</h3>
       <p className="mt-0.5 text-sm text-[var(--tott-muted)]">
-        {articleCount} Articles • {duration} of content
+        {t("articlesCount", { count: articleCount })} • {duration} {t("ofContent")}
       </p>
 
       <ul className="-ml-4 mt-4 space-y-3">
@@ -117,7 +119,7 @@ export function ContentCollection({
             className="font-medium hover:underline"
             style={{ color: theme.accentGold }}
           >
-            {showAll ? "Show less" : "Show more"}
+            {showAll ? t("showLess") : t("showMore")}
           </button>
         )}
       </div>
