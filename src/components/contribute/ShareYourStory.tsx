@@ -82,8 +82,8 @@ function ScatteredHexBackground() {
       {/* Icon badge at center of row 1 */}
       <path
         d={hexPath(750, 78, R)}
-        fill="#1a1a1a"
-        stroke="#3a3a3a"
+        fill="var(--tott-well-bg)"
+        stroke="var(--tott-card-border)"
         strokeWidth="1.2"
       />
       <g
@@ -113,7 +113,7 @@ export function ShareYourStory() {
           Share your story
         </h2>
 
-        <p className="mt-3 max-w-xl text-center text-sm leading-relaxed text-[#999999] sm:text-base">
+        <p className="mt-3 max-w-xl text-center text-sm leading-relaxed text-[var(--tott-muted)] sm:text-base">
           Every story matters. Help us preserve the collective memory by contributing your personal
           experiences, testimonies, or knowledge of historical events.
         </p>

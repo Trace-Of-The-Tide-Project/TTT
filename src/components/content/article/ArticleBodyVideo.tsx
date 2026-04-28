@@ -16,7 +16,7 @@ export function ArticleBodyVideo({ src }: ArticleBodyVideoProps) {
   if (loading) {
     return (
       <div
-        className="max-h-[min(70vh,720px)] min-h-48 w-full max-w-3xl animate-pulse rounded-lg border border-[var(--tott-card-border)] bg-[#1a1a1a]"
+        className="max-h-[min(70vh,720px)] min-h-48 w-full max-w-3xl animate-pulse rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)]"
         aria-busy="true"
         aria-label="Loading video"
       />

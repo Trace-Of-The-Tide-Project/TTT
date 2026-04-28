@@ -146,11 +146,11 @@ export function ContentPageLayout({
           {/* Right — sidebar */}
           <aside className="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-6 lg:w-[24rem] lg:self-start">
             <div
-              className="rounded-2xl border border-gray-800 p-5"
+              className="rounded-2xl border border-[var(--tott-card-border)] p-5"
               style={{ backgroundColor: theme.pageBackground }}
             >
               <ContentAuthorCard {...author} authorId={author.id} />
-              <div className="my-5 h-px bg-gray-800" />
+              <div className="my-5 h-px bg-[var(--tott-card-border)]" />
               <ContentContributors contributors={contributors} />
             </div>
             <ContentCollection {...collection} />

@@ -159,7 +159,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
       <div>
         <label className="mb-1 block cursor-pointer select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
           {t("collectionLabel")}{" "}
-          <span className="text-gray-500 dark:text-gray-400">{t("optional")}</span>
+          <span className="text-[var(--tott-muted)]">{t("optional")}</span>
         </label>
         <div className="relative select-none">
           <select
@@ -172,7 +172,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
             <option value="documents">{t("collectionDocuments")}</option>
             <option value="media">{t("collectionMedia")}</option>
           </select>
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none text-gray-500 dark:text-gray-400">
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none text-[var(--tott-muted)]">
             <ChevronDownIcon />
           </span>
         </div>
@@ -214,13 +214,13 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
           />
           <label
             htmlFor="file-upload"
-            className="flex cursor-pointer select-none flex-col items-center gap-2 text-gray-600 dark:text-gray-400"
+            className="flex cursor-pointer select-none flex-col items-center gap-2 text-[var(--tott-muted)]"
           >
             <span style={{ color: theme.accentGoldFocus }}>
               <CloudUploadIcon />
             </span>
             <span className="text-center text-xs sm:text-sm">{t("uploadHint")}</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">{t("uploadFormats")}</span>
+            <span className="text-xs text-[var(--tott-muted)]">{t("uploadFormats")}</span>
           </label>
         </div>
 
@@ -231,15 +231,15 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
                 key={id}
                 className="flex select-none items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] px-3 py-2 sm:gap-3 sm:px-4 sm:py-3"
               >
-                <span className="text-gray-500 dark:text-gray-400">
+                <span className="text-[var(--tott-muted)]">
                   <FileTextIcon />
                 </span>
                 <span className="min-w-0 flex-1 truncate text-sm text-foreground">{file.name}</span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">{sizeLabel}</span>
+                <span className="text-xs text-[var(--tott-muted)]">{sizeLabel}</span>
                 <button
                   type="button"
                   onClick={() => removeFile(id)}
-                  className="select-none rounded p-1 text-gray-600 hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A96E] dark:text-gray-400"
+                  className="select-none rounded p-1 text-[var(--tott-muted)] hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A96E]"
                   aria-label={t("removeFileAria")}
                 >
                   <TrashIcon />
@@ -279,7 +279,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
       <div>
         <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
           {t("mobileLabel")}{" "}
-          <span className="text-gray-500 dark:text-gray-400">{t("optional")}</span>
+          <span className="text-[var(--tott-muted)]">{t("optional")}</span>
         </label>
         <div
           className="flex select-none items-stretch overflow-hidden rounded-lg border border-[var(--tott-card-border)]"
@@ -300,11 +300,11 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
                 </option>
               ))}
             </select>
-            <span className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 [&>svg]:h-4 [&>svg]:w-4">
+            <span className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-[var(--tott-muted)] [&>svg]:h-4 [&>svg]:w-4">
               <Grid2x2Icon />
             </span>
             <span
-              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 [&>svg]:h-4 [&>svg]:w-4"
+              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--tott-muted)] [&>svg]:h-4 [&>svg]:w-4"
               aria-hidden
             >
               <ChevronDownIcon />
@@ -320,11 +320,11 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
         </div>
       </div>
 
-      <p className="select-none text-xs text-gray-600 dark:text-gray-400">{t("consent")}</p>
-      <p className="select-none text-xs text-gray-500 dark:text-gray-500">{t("technicalNote")}</p>
+      <p className="select-none text-xs text-[var(--tott-muted)]">{t("consent")}</p>
+      <p className="select-none text-xs text-[var(--tott-muted)]">{t("technicalNote")}</p>
 
       {submitError ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-200">
+        <p className="rounded-lg border px-3 py-2 text-sm" style={{ borderColor: "rgba(220,38,38,0.35)", backgroundColor: "rgba(220,38,38,0.08)", color: "var(--tott-dash-negative)" }}>
           {submitError}
         </p>
       ) : null}

@@ -14,8 +14,8 @@ export function ContentContributors({
 }: ContentContributorsProps) {
   return (
     <div>
-      <h3 className="text-lg font-bold text-white ">Contributors</h3>
-      <p className="mt-0.5 text-sm" style={{ color: "#A3A3A3" }}>
+      <h3 className="text-lg font-bold text-foreground">Contributors</h3>
+      <p className="mt-0.5 text-sm text-[var(--tott-muted)]">
         {contributors.length} contributed to this content
       </p>
 
@@ -23,7 +23,7 @@ export function ContentContributors({
         {contributors.map((c, i) => (
           <li
             key={i}
-            className="flex cursor-pointer items-center gap-4 rounded-xl px-2 py-1 transition-colors hover:bg-white/5"
+            className="flex cursor-pointer items-center gap-4 rounded-xl px-2 py-1 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
           >
             <div
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold"
@@ -32,12 +32,12 @@ export function ContentContributors({
               {c.initials}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold" style={{ color: "#C9A96E" }}>
+              <p className="truncate text-sm font-semibold text-[var(--tott-dash-gold-label)]">
                 {c.name}
               </p>
-              <p className="truncate text-xs" style={{ color: "#A3A3A3" }}>{c.role}</p>
+              <p className="truncate text-xs text-[var(--tott-muted)]">{c.role}</p>
             </div>
-            <span className="shrink-0 text-lg text-gray-600">›</span>
+            <span className="shrink-0 text-lg text-[var(--tott-muted)]">›</span>
           </li>
         ))}
       </ul>

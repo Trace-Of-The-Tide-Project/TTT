@@ -199,11 +199,11 @@ function ArticleByIdLoader({ id }: { id: string }) {
   if (phase === "missing") {
     return (
       <div
-        className="mx-auto flex min-h-[50vh] max-w-lg flex-col items-center justify-center gap-4 px-6 py-16 text-center text-white"
-        style={{ backgroundColor: "#191919" }}
+        className="mx-auto flex min-h-[50vh] max-w-lg flex-col items-center justify-center gap-4 px-6 py-16 text-center text-foreground"
+        style={{ backgroundColor: "var(--tott-well-bg)" }}
       >
         <h1 className="text-xl font-semibold">Article not found</h1>
-        <p className="text-sm text-gray-500">No article exists for this link.</p>
+        <p className="text-sm text-[var(--tott-muted)]">No article exists for this link.</p>
         <Link href="/content" className="text-sm font-medium text-[#C9A96E] hover:underline">
           Back to content
         </Link>
@@ -214,11 +214,11 @@ function ArticleByIdLoader({ id }: { id: string }) {
   if (phase === "error") {
     return (
       <div
-        className="mx-auto flex min-h-[50vh] max-w-lg flex-col items-center justify-center gap-4 px-6 py-16 text-center text-white"
-        style={{ backgroundColor: "#191919" }}
+        className="mx-auto flex min-h-[50vh] max-w-lg flex-col items-center justify-center gap-4 px-6 py-16 text-center text-foreground"
+        style={{ backgroundColor: "var(--tott-well-bg)" }}
       >
         <h1 className="text-xl font-semibold">Could not load article</h1>
-        <p className="text-sm text-gray-500">Check your connection or try again later.</p>
+        <p className="text-sm text-[var(--tott-muted)]">Check your connection or try again later.</p>
         <Link href="/content" className="text-sm font-medium text-[#C9A96E] hover:underline">
           Back to content
         </Link>

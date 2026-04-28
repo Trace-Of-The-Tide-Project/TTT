@@ -150,7 +150,7 @@ export function ContentVideoPlayer({ src, thumbnail }: ContentVideoPlayerProps) 
     <div ref={containerRef} className="relative aspect-[21/9] overflow-hidden rounded-xl bg-[#111]">
       {showLoading ? (
         <div
-          className="absolute inset-0 z-[1] animate-pulse bg-[#1a1a1a]"
+          className="absolute inset-0 z-[1] animate-pulse bg-[var(--tott-well-bg)]"
           aria-busy="true"
           aria-label="Loading video"
         />

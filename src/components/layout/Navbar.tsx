@@ -83,10 +83,10 @@ export function Navbar() {
     };
   }, [isMobileMenuOpen]);
 
-  const navMuted = isDark ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-[color:var(--tott-accent-tide)]";
+  const navMuted = isDark ? "text-gray-400 hover:text-white" : "text-[color:var(--tott-muted)] hover:text-[color:var(--tott-accent-tide)]";
   const navRowHover = isDark ? "hover:bg-white/5 hover:text-white" : "hover:bg-[color:var(--tott-accent-tide-subtle)] hover:text-[color:var(--tott-accent-tide)]";
-  const chipBg = isDark ? theme.cardBorder : "#e5e7eb";
-  const borderColor = isDark ? "#333333" : "#d1d5db";
+  const chipBg = isDark ? theme.cardBorder : "var(--tott-well-bg)";
+  const borderColor = isDark ? "#333333" : "var(--tott-card-border)";
 
   return (
     <header

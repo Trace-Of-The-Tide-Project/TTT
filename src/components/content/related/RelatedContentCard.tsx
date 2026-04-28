@@ -49,7 +49,7 @@ export function RelatedContentCard({
           height: HEX_H,
           clipPath: HEX_CLIP,
           boxShadow: hovered
-            ? "0 0 0 1px rgba(255,255,255,0.5), 0 0 16px rgba(255,255,255,0.15)"
+            ? "0 0 0 2px rgba(203,161,88,0.6), 0 0 20px rgba(203,161,88,0.15)"
             : "none",
         }}
       >

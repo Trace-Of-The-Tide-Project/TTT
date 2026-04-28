@@ -54,10 +54,10 @@ export function ContentAuthorCard({
 
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-2">
-          <p className="min-w-0 flex-1 text-lg font-bold text-white wrap-break-word">{name}</p>
+          <p className="min-w-0 flex-1 text-lg font-bold text-foreground wrap-break-word">{name}</p>
           <button
             type="button"
-            className="shrink-0 rounded-lg border border-gray-600 p-1.5 text-white hover:text-white/80"
+            className="shrink-0 rounded-lg border border-[var(--tott-card-border)] p-1.5 text-[var(--tott-muted)] hover:text-foreground"
           >
             <MoreDotsIcon />
           </button>

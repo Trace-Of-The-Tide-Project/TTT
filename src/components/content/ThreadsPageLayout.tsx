@@ -107,10 +107,10 @@ export function ThreadsPageLayout({
           <div className="flex min-w-0 flex-1 flex-col">
             {/* Main timeline title + meta */}
             <div className="mb-10 ml-5">
-              <h1 className="text-2xl font-bold leading-snug text-white sm:text-3xl">
+              <h1 className="text-2xl font-bold leading-snug text-foreground sm:text-3xl">
                 {mainTitle}
               </h1>
-              <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-400">
+              <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[var(--tott-muted)]">
                 {mainPublishedDate && (
                   <>
                     <span>Published: {mainPublishedDate}</span>
@@ -131,7 +131,7 @@ export function ThreadsPageLayout({
                     {index > 0 && (
                       <>
                         <div
-                          className="w-px border-l-2 border-dashed border-gray-600"
+                          className="w-px border-l-2 border-dashed border-[var(--tott-card-border)]"
                           style={{ height: "3rem" }}
                           aria-hidden
                         />
@@ -139,14 +139,14 @@ export function ThreadsPageLayout({
                       </>
                     )}
                     {/* Number badge */}
-                    <div className="z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-600 bg-[#232323] text-sm font-medium text-white">
+                    <div className="z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] text-sm font-medium text-foreground">
                       {index + 1}
                     </div>
                     {/* Gap */}
                     <div className="h-3" aria-hidden />
                     {/* Line below — stretches to fill remaining height */}
                     <div
-                      className="w-px flex-1 border-l-2 border-dashed border-gray-600"
+                      className="w-px flex-1 border-l-2 border-dashed border-[var(--tott-card-border)]"
                       aria-hidden
                     />
                   </div>
@@ -157,7 +157,7 @@ export function ThreadsPageLayout({
                     style={{ paddingTop: index === 0 ? "0" : "3rem" }}
                   >
                     <div className="space-y-4 pt-10">
-                      <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-[#1a1a1a]">
+                      <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-[var(--tott-well-bg)]">
                         <Image
                           src={entry.image}
                           alt=""
@@ -179,7 +179,7 @@ export function ThreadsPageLayout({
                       <button
                         type="button"
                         onClick={() => toggleEntry(index)}
-                        className="flex items-center gap-1.5 text-sm font-medium text-gray-400 transition-colors hover:text-white"
+                        className="flex items-center gap-1.5 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
                       >
                         {expandedEntries.has(index) ? "Show less" : "Read more"}
                         <svg
@@ -219,7 +219,7 @@ export function ThreadsPageLayout({
                     <button
                       type="button"
                       onClick={showLess}
-                      className="rounded-lg border border-gray-700 px-6 py-3 text-sm font-semibold text-gray-300 transition-colors hover:border-gray-500 hover:text-white"
+                      className="rounded-lg border border-[var(--tott-card-border)] px-6 py-3 text-sm font-semibold text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-dash-control-hover)] hover:text-foreground"
                     >
                       Show less
                     </button>
@@ -232,11 +232,11 @@ export function ThreadsPageLayout({
           {/* Right — sidebar: author only, no contributors */}
           <aside className="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-6 lg:w-[24rem] lg:self-start">
             <div
-              className="rounded-2xl border border-gray-800 p-5"
+              className="rounded-2xl border border-[var(--tott-card-border)] p-5"
               style={{ backgroundColor: theme.pageBackground }}
             >
               <ContentAuthorCard {...author} />
-              <div className="my-5 h-px bg-gray-800" />
+              <div className="my-5 h-px bg-[var(--tott-card-border)]" />
               <ContentContributors contributors={contributors} />
             </div>
             <ContentCollection {...collection} />

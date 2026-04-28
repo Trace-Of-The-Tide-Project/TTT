@@ -9,7 +9,7 @@ export function ContactUsLink() {
   const t = useTranslations("Contribute.contact");
 
   return (
-    <p className="mt-8 flex flex-wrap select-none items-center justify-center gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+    <p className="mt-8 flex flex-wrap select-none items-center justify-center gap-1.5 text-sm text-[var(--tott-muted)]">
       {t("lead")}
       <span
         className="inline-flex shrink-0 align-middle"

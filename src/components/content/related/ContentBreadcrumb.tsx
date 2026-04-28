@@ -14,21 +14,21 @@ export function ContentBreadcrumb({ items }: ContentBreadcrumbProps) {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="flex items-center gap-2 rounded-xl border border-gray-800 bg-[#1a1a1a] px-8 py-4 text-sm text-gray-400"
+      className="flex items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] px-8 py-4 text-sm text-[var(--tott-muted)]"
     >
-      <Link href="/" className="shrink-0 text-gray-500 hover:text-white">
+      <Link href="/" className="shrink-0 text-[var(--tott-muted)] hover:text-foreground">
         <HomeIcon />
       </Link>
 
       {items.map((item, i) => (
         <span key={i} className="flex items-center gap-2">
-          <span className="text-gray-600">›</span>
+          <span className="text-[var(--tott-card-border)]">›</span>
           {item.href ? (
-            <Link href={item.href} className="hover:text-white">
+            <Link href={item.href} className="hover:text-foreground">
               {item.label}
             </Link>
           ) : (
-            <span className="font-medium text-white">{item.label}</span>
+            <span className="font-medium text-foreground">{item.label}</span>
           )}
         </span>
       ))}

@@ -177,7 +177,7 @@ export function ContentGalleryPlayer({ items }: ContentGalleryPlayerProps) {
         <button
           type="button"
           onClick={prev}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-700 bg-white/5 text-white transition-colors hover:border-gray-500 hover:bg-white/10 sm:h-12 sm:w-12"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] text-foreground transition-colors hover:border-[var(--tott-dash-control-hover)] hover:bg-[var(--tott-dash-control-bg)] sm:h-12 sm:w-12"
           aria-label="Previous"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -216,7 +216,7 @@ export function ContentGalleryPlayer({ items }: ContentGalleryPlayerProps) {
         <button
           type="button"
           onClick={next}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-700 bg-white/5 text-white transition-colors hover:border-gray-500 hover:bg-white/10 sm:h-12 sm:w-12"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] text-foreground transition-colors hover:border-[var(--tott-dash-control-hover)] hover:bg-[var(--tott-dash-control-bg)] sm:h-12 sm:w-12"
           aria-label="Next"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

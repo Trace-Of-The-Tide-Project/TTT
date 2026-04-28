@@ -55,7 +55,7 @@ export function RelatedContent({ items, viewMoreHref = "#" }: RelatedContentProp
             <h2 className="text-lg font-bold" style={{ color: theme.accentGold }}>
               Related content
             </h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">
               Lorem ipsum dolor sit amet adipiscing elit.
             </p>
           </div>

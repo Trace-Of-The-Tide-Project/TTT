@@ -35,8 +35,8 @@ export function ContentCollection({
       className="rounded-xl border p-4"
       style={{ backgroundColor: theme.pageBackground, borderColor: theme.cardBorder }}
     >
-      <h3 className="text-lg font-bold text-white">Collection content</h3>
-      <p className="mt-0.5 text-sm text-gray-500">
+      <h3 className="text-lg font-bold text-foreground">Collection content</h3>
+      <p className="mt-0.5 text-sm text-[var(--tott-muted)]">
         {articleCount} Articles • {duration} of content
       </p>
 
@@ -50,7 +50,7 @@ export function ContentCollection({
               tabIndex={0}
               onClick={() => setSelectedIndex(i)}
               onKeyDown={(e) => e.key === "Enter" && setSelectedIndex(i)}
-              className="flex cursor-pointer gap-3 rounded-lg transition-colors hover:bg-white/5"
+              className="flex cursor-pointer gap-3 rounded-lg transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
             >
               <div
                 className="h-full min-h-16 w-0.5 shrink-0 self-stretch rounded-full"
@@ -59,9 +59,9 @@ export function ContentCollection({
                 }}
               />
               <div
-                className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg border-2 bg-[#1a1a1a]"
+                className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg border-2 bg-[var(--tott-well-bg)]"
                 style={{
-                  borderColor: isSelected ? theme.accentGoldFocus : "#374151",
+                  borderColor: isSelected ? theme.accentGoldFocus : "var(--tott-card-border)",
                 }}
               >
                 <Image
@@ -78,11 +78,11 @@ export function ContentCollection({
               <div className="min-w-0 flex-1 overflow-hidden">
                 <p
                   className="truncate text-sm font-medium"
-                  style={{ color: isSelected ? theme.accentGoldFocus : "white" }}
+                  style={{ color: isSelected ? theme.accentGoldFocus : "var(--foreground)" }}
                 >
                   {item.title}
                 </p>
-                <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-white">
+                <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-[var(--tott-muted)]">
                   <span className="flex min-w-0 shrink items-center gap-1.5">
                     <span
                       className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
@@ -92,12 +92,12 @@ export function ContentCollection({
                     </span>
                     <span className="truncate">{item.author}</span>
                   </span>
-                  <span className="flex shrink-0 items-center gap-1 text-white">
+                  <span className="flex shrink-0 items-center gap-1 text-[var(--tott-muted)]">
                     <CalendarIcon />
                     <span className="truncate">{item.date}</span>
                   </span>
                 </div>
-                <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed" style={{ color: "#A3A3A3" }}>
+                <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-[var(--tott-muted)]">
                   {item.description}
                 </p>
               </div>
@@ -106,7 +106,7 @@ export function ContentCollection({
         })}
       </ul>
 
-      <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
+      <div className="mt-4 flex items-center justify-between text-xs text-[var(--tott-muted)]">
         <span>
           {Math.min(visible.length, items.length)}/{items.length}
         </span>

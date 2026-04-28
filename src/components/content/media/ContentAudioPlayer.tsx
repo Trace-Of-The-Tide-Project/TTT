@@ -125,7 +125,7 @@ export function ContentAudioPlayer({
     <div className="relative overflow-hidden rounded-xl p-4 sm:p-6 md:p-8 lg:p-10">
       {showLoading ? (
         <div
-          className="absolute inset-0 z-[1] animate-pulse rounded-xl bg-[#1a1a1a]"
+          className="absolute inset-0 z-[1] animate-pulse rounded-xl bg-[var(--tott-well-bg)]"
           aria-busy="true"
           aria-label="Loading audio"
         />
@@ -142,15 +142,15 @@ export function ContentAudioPlayer({
             <button
               type="button"
               onClick={togglePlay}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-white transition-colors hover:bg-[#252525] sm:h-12 sm:w-12 md:h-14 md:w-14"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--tott-well-bg)] text-foreground transition-colors hover:bg-[var(--tott-dash-control-bg)] sm:h-12 sm:w-12 md:h-14 md:w-14"
             >
               {playing ? <PauseIcon /> : <PlayIcon />}
             </button>
             <div className="min-w-0 flex-1">
               {title && (
-                <p className="text-sm font-semibold text-white sm:text-base md:text-lg">{title}</p>
+                <p className="text-sm font-semibold text-foreground sm:text-base md:text-lg">{title}</p>
               )}
-              <p className="mt-0.5 text-xs text-gray-400 sm:text-sm">
+              <p className="mt-0.5 text-xs text-[var(--tott-muted)] sm:text-sm">
                 Audio time: <span className="tabular-nums">{displayTotalTime}</span>
               </p>
             </div>
@@ -167,7 +167,7 @@ export function ContentAudioPlayer({
             onClick={handleSeek}
           >
             <span
-              className="absolute right-2 top-2 z-10 whitespace-nowrap rounded-full bg-[#1a1a1a] px-3 py-1 tabular-nums text-sm text-white"
+              className="absolute right-2 top-2 z-10 whitespace-nowrap rounded-full bg-[var(--tott-well-bg)] px-3 py-1 tabular-nums text-sm text-foreground"
             >
               {formatTime(currentTime)}
             </span>
