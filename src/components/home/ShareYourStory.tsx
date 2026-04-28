@@ -1,10 +1,12 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
 export function ShareYourStory() {
   const { isDark } = useTheme();
+  const t = useTranslations("Home");
 
   return (
     <section className="flex flex-col items-center px-6 py-20 text-center">
@@ -19,14 +21,13 @@ export function ShareYourStory() {
         </svg>
       </div>
 
-      <h2 className="mb-4 text-2xl font-semibold text-foreground">Share your story</h2>
+      <h2 className="mb-4 text-2xl font-semibold text-foreground">{t("shareTitle")}</h2>
 
       <p
         className="mb-8 max-w-md text-sm leading-relaxed"
         style={{ color: isDark ? "#9ca3af" : "#6b5b47" }}
       >
-        Every story matters. Help us preserve the collective memory by contributing your personal
-        experiences, testimonies, or knowledge of historical events.
+        {t("shareBody")}
       </p>
 
       <Link
@@ -34,7 +35,7 @@ export function ShareYourStory() {
         className="inline-flex items-center rounded-md px-6 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
         style={{ backgroundColor: "#C9A96E", color: "#1a1a1a" }}
       >
-        Contribute Now!
+        {t("shareCta")}
       </Link>
     </section>
   );
