@@ -43,6 +43,7 @@ html {
   --tott-contribute-hex-outer: #2a2a2a;
   --tott-contribute-hex-outer-hover: #333333;
   --tott-contribute-hex-label-inactive: #ffffff;
+  --tott-muted: #9ca3af;
 
   /* Auth routes only — sign-in / sign-up surfaces (see .tott-auth-page) */
   --tott-auth-shell-bg: var(--background);
@@ -94,6 +95,7 @@ html[data-theme="light"] {
   --tott-contribute-hex-outer: var(--tott-well-bg);
   --tott-contribute-hex-outer-hover: var(--tott-dash-control-hover);
   --tott-contribute-hex-label-inactive: #1f2937;
+  --tott-muted: #6b5b47;
 
   /* Auth: warm ivory fields + bronze neutrals + readable hierarchy */
   --tott-auth-shell-bg: #ebe4d4;

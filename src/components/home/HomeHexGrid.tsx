@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import type { HexCard } from "@/app/[locale]/(withNav)/page";
 
 const HEX_CLIP =
@@ -63,6 +64,7 @@ function calcHexSize(vw: number): number {
 type Props = { cards: HexCard[] };
 
 export function HomeHexGrid({ cards }: Props) {
+  const { isDark } = useTheme();
   const [hexSize, setHexSize] = useState(() =>
     typeof window !== "undefined" ? calcHexSize(window.innerWidth) : 350,
   );
@@ -85,6 +87,27 @@ export function HomeHexGrid({ cards }: Props) {
   const cardTitle = `${(hexSize * 0.032).toFixed(0)}px`;
   const cardBadge = `${(hexSize * 0.026).toFixed(0)}px`;
   const heroPadX  = Math.round(hexSize * 0.14);
+
+  // Theme-conditional colors — all values come from the existing design token palette
+  const hexBorderColor = isDark ? "#1a1a1a" : "#d4cec0";
+  const topPeekBg      = isDark ? "#0d0d0d" : "#e8e2d6";
+  const heroTitleBg    = isDark
+    ? "radial-gradient(ellipse 90% 75% at 70% 70%, #5a3500 0%, #321c00 30%, #150c00 65%, #0b0b0b 95%)"
+    : "radial-gradient(ellipse 90% 75% at 65% 60%, rgba(203,161,88,0.55) 0%, rgba(203,161,88,0.28) 35%, rgba(203,161,88,0.08) 65%, #f0ebe1 95%)";
+  const heroBodyBg     = isDark
+    ? "radial-gradient(ellipse 90% 75% at 30% 70%, #5a3500 0%, #321c00 30%, #150c00 65%, #0b0b0b 95%)"
+    : "radial-gradient(ellipse 90% 75% at 35% 60%, rgba(74,143,137,0.45) 0%, rgba(74,143,137,0.22) 35%, rgba(74,143,137,0.06) 65%, #f0ebe1 95%)";
+  const heroTitleColor = isDark ? "#ffffff" : "#1c1812";
+  const heroGoldColor  = isDark ? "#C9A96E" : "#b8762a";
+  const heroParagraphColor = isDark ? "#d1d5db" : "#3a2e22";
+  const cardBg         = isDark ? "#111111" : "#f0ebe1";
+  const cardScrim      = isDark
+    ? "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 30%, transparent 55%)"
+    : "linear-gradient(to top, rgba(28,24,18,0.82) 0%, rgba(28,24,18,0.42) 30%, transparent 55%)";
+  const cardBadgeBg    = isDark ? "rgba(0,0,0,0.65)" : "rgba(28,24,18,0.62)";
+  const bottomDissolveGradient = isDark
+    ? "linear-gradient(to bottom, transparent 0%, rgba(23,23,23,0.55) 35%, rgba(23,23,23,0.9) 70%, #171717 100%)"
+    : "linear-gradient(to bottom, transparent 0%, rgba(246,243,236,0.55) 35%, rgba(246,243,236,0.9) 70%, #f6f3ec 100%)";
 
   let cardIdx = 0;
   const cells = GRID.map(({ row, col, isTopPeek }) => {
@@ -109,10 +132,10 @@ export function HomeHexGrid({ cards }: Props) {
           className="absolute"
           style={{ width: size, height: size, top: pos.top, left: pos.left, zIndex: isHero ? 2 : 1 }}
         >
-          {/* Dark border frame layer */}
+          {/* Border frame layer */}
           <div
             className="absolute inset-0"
-            style={{ clipPath: HEX_CLIP, backgroundColor: "#1a1a1a" }}
+            style={{ clipPath: HEX_CLIP, backgroundColor: hexBorderColor }}
           />
 
           {/* Content layer — inset by borderPx so border shows around it */}
@@ -121,33 +144,23 @@ export function HomeHexGrid({ cards }: Props) {
             style={{ clipPath: HEX_CLIP, inset: borderPx }}
           >
             {isTopPeek ? (
-              <div className="h-full w-full" style={{ backgroundColor: "#0d0d0d" }} />
+              <div className="h-full w-full" style={{ backgroundColor: topPeekBg }} />
             ) : isHeroTitle ? (
               <div
                 className="relative flex h-full w-full flex-col items-center justify-center"
-                style={{
-                  background:
-                    "radial-gradient(ellipse 90% 75% at 70% 70%, #5a3500 0%, #321c00 30%, #150c00 65%, #0b0b0b 95%)",
-                  paddingLeft: heroPadX,
-                  paddingRight: heroPadX,
-                }}
+                style={{ background: heroTitleBg, paddingLeft: heroPadX, paddingRight: heroPadX }}
               >
                 <h1 className="font-semibold leading-tight text-center" style={{ fontSize: heroTitle }}>
-                  <span style={{ color: "#C9A96E" }}>Trace </span>
-                  <span className="text-white">The Living Archive</span>
+                  <span style={{ color: heroGoldColor }}>Trace </span>
+                  <span style={{ color: heroTitleColor }}>The Living Archive</span>
                 </h1>
               </div>
             ) : isHeroBody ? (
               <div
                 className="relative flex h-full w-full flex-col justify-center"
-                style={{
-                  background:
-                    "radial-gradient(ellipse 90% 75% at 30% 70%, #5a3500 0%, #321c00 30%, #150c00 65%, #0b0b0b 95%)",
-                  paddingLeft: heroPadX,
-                  paddingRight: heroPadX,
-                }}
+                style={{ background: heroBodyBg, paddingLeft: heroPadX, paddingRight: heroPadX }}
               >
-                <p className="text-gray-300 leading-snug" style={{ fontSize: heroBody, marginBottom: "1em" }}>
+                <p style={{ color: heroParagraphColor, fontSize: heroBody, marginBottom: "1em" }} className="leading-snug">
                   We practice knowledge like tending the land: digging, planting, waiting. Culture
                   lives and breathes with us, passed down like stories. Art is an architecture of
                   the senses, built on feeling and instinct. From this rhythm, Trace of the Tide
@@ -162,7 +175,7 @@ export function HomeHexGrid({ cards }: Props) {
                 </Link>
               </div>
             ) : (
-              <Link href={card!.href} className="relative block h-full w-full" style={{ backgroundColor: "#111111" }}>
+              <Link href={card!.href} className="relative block h-full w-full" style={{ backgroundColor: cardBg }}>
                 <Image
                   src={isValidImageUrl(card!.image) ? card!.image! : "/images/image.png"}
                   alt={card!.title}
@@ -171,10 +184,7 @@ export function HomeHexGrid({ cards }: Props) {
                   sizes={`${hexSize}px`}
                 />
                 {/* stronger bottom scrim for legibility */}
-                <div
-                  className="absolute inset-0"
-                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 30%, transparent 55%)" }}
-                />
+                <div className="absolute inset-0" style={{ background: cardScrim }} />
                 {/* Bottom title + badge */}
                 <div
                   className="absolute flex flex-col items-center"
@@ -199,7 +209,7 @@ export function HomeHexGrid({ cards }: Props) {
                     style={{
                       display: "inline-block",
                       marginTop: "0.5em",
-                      backgroundColor: "rgba(0,0,0,0.65)",
+                      backgroundColor: cardBadgeBg,
                       borderRadius: 9999,
                       padding: "0.25em 0.75em",
                       fontSize: cardBadge,
@@ -217,11 +227,7 @@ export function HomeHexGrid({ cards }: Props) {
       {/* Bottom dissolve — hexes fade into the page background */}
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0"
-        style={{
-          height: "55%",
-          background:
-            "linear-gradient(to bottom, transparent 0%, rgba(23,23,23,0.55) 35%, rgba(23,23,23,0.9) 70%, #171717 100%)",
-        }}
+        style={{ height: "55%", background: bottomDissolveGradient }}
       />
     </div>
   );

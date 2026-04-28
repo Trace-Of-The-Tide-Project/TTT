@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import {
   FacebookIcon,
   TwitterXIcon,
@@ -34,7 +35,10 @@ const FIELDS = [
 
 export function Footer() {
   const t = useTranslations("Footer");
+  const { isDark } = useTheme();
   const year = new Date().getFullYear();
+  const headingColor = isDark ? "#9ca3af" : "#4b3c2e";
+  const mutedColor = isDark ? "#6b7280" : "#6b5b47";
 
   return (
     <footer
@@ -51,7 +55,7 @@ export function Footer() {
               height={24}
               className="h-6 w-auto object-contain"
             />
-            <p className="max-w-xs text-sm text-gray-500">
+            <p className="max-w-xs text-sm" style={{ color: mutedColor }}>
               <span className="font-bold text-foreground">{t("taglineLead")}</span> {t("taglineBody")}
             </p>
             <div className="flex gap-3">
@@ -61,8 +65,8 @@ export function Footer() {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition-colors hover:text-foreground"
-                  style={{ backgroundColor: theme.cardBorder }}
+                  className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:text-foreground"
+                  style={{ color: mutedColor, backgroundColor: theme.cardBorder }}
                   aria-label={t(`social.${key}`)}
                 >
                   <Icon />
@@ -72,7 +76,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold text-gray-400">{t("palestineHeading")}</h3>
+            <h3 className="mb-4 font-semibold" style={{ color: headingColor }}>{t("palestineHeading")}</h3>
             <ul className="space-y-3">
               {PALESTINE.map(({ href, emoji, key }) => (
                 <li key={key}>
@@ -85,7 +89,7 @@ export function Footer() {
                       <span className="font-semibold text-foreground">
                         {t(`palestine.${key}.title`)}
                       </span>{" "}
-                      <span className="text-gray-400">{t(`palestine.${key}.description`)}</span>
+                      <span style={{ color: mutedColor }}>{t(`palestine.${key}.description`)}</span>
                     </span>
                   </Link>
                 </li>
@@ -94,7 +98,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold text-gray-400">{t("fieldsHeading")}</h3>
+            <h3 className="mb-4 font-semibold" style={{ color: headingColor }}>{t("fieldsHeading")}</h3>
             <ul className="space-y-3">
               {FIELDS.map(({ href, emoji, key }) => (
                 <li key={key}>
@@ -107,7 +111,7 @@ export function Footer() {
                       <span className="font-semibold text-foreground">
                         {t(`fields.${key}.title`)}
                       </span>{" "}
-                      <span className="text-gray-400">{t(`fields.${key}.description`)}</span>
+                      <span style={{ color: mutedColor }}>{t(`fields.${key}.description`)}</span>
                     </span>
                   </Link>
                 </li>
@@ -116,7 +120,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold text-gray-400">{t("contactHeading")}</h3>
+            <h3 className="mb-4 font-semibold" style={{ color: headingColor }}>{t("contactHeading")}</h3>
             <ul className="space-y-3">
               <li>
                 <a
@@ -144,18 +148,18 @@ export function Footer() {
 
       <div className="border-t py-6" style={{ borderColor: theme.cardBorder }}>
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 sm:flex-row sm:px-8 lg:px-10">
-          <p className="text-center text-sm text-gray-500 sm:text-left">{t("copyright", { year })}</p>
-          <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-400">
+          <p className="text-center text-sm sm:text-left" style={{ color: mutedColor }}>{t("copyright", { year })}</p>
+          <div className="flex flex-wrap items-center justify-center gap-2 text-sm" style={{ color: mutedColor }}>
             <Link href="/privacy" className="transition-colors hover:text-foreground">
               {t("privacy")}
             </Link>
-            <span className="text-gray-400" aria-hidden>
+            <span style={{ color: mutedColor }} aria-hidden>
               ·
             </span>
             <Link href="/terms" className="transition-colors hover:text-foreground">
               {t("terms")}
             </Link>
-            <span className="text-gray-400" aria-hidden>
+            <span style={{ color: mutedColor }} aria-hidden>
               ·
             </span>
             <Link href="/gdpr" className="transition-colors hover:text-foreground">
