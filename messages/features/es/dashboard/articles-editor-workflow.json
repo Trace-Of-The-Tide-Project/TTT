@@ -3,226 +3,226 @@
     "articles": {
       "editor": {
         "layout": {
-          "loadingArticle": "Loading article…",
-          "backToArticles": "← Articles",
-          "editArticle": "Edit article",
-          "preview": "Preview",
-          "articleNotFound": "Article not found.",
-          "tryAgain": "Try again",
-          "misconfigured": "Editor misconfigured: pass config for create mode.",
-          "uploadingTitle": "Uploading files…",
-          "uploadingDetail": "Keep this tab open until upload finishes.",
-          "successRedirect": "Redirecting to articles…",
-          "errorRequestFailed": "Request failed",
-          "errorGeneric": "Something went wrong",
-          "validationTitle": "Title is required.",
-          "validationCategory": "Category is required.",
-          "validationBlocksDraft": "Add at least one block with content (empty placeholders are not sent).",
-          "validationBlocksPublish": "Publishing requires at least one block with content.",
-          "validationBlocksSchedule": "Scheduling requires at least one block with content.",
-          "errorCreateNoIdPublish": "Article was created but no id was returned; cannot publish.",
-          "errorCreateNoIdSchedule": "Article was created but no id was returned; cannot schedule.",
-          "successChangesSaved": "Changes saved",
-          "successDraftSaved": "Draft saved",
-          "successArticleSubmitted": "Article submitted",
-          "successArticleScheduled": "Article scheduled",
-          "imageBlockShort": "Image",
-          "validationOpenCallBlocksDraft": "Add at least one content block with content.",
-          "validationOpenCallBlocksPublish": "Publishing requires at least one content block with content.",
-          "validationOpenCallBlocksSchedule": "Scheduling requires at least one content block with content."
+          "loadingArticle": "Cargando artículo…",
+          "backToArticles": "← Artículos",
+          "editArticle": "Editar artículo",
+          "preview": "Vista previa",
+          "articleNotFound": "Artículo no encontrado.",
+          "tryAgain": "Intentar de nuevo",
+          "misconfigured": "Editor mal configurado: pasa la configuración para el modo de creación.",
+          "uploadingTitle": "Subiendo archivos…",
+          "uploadingDetail": "Mantén esta pestaña abierta hasta que termine la subida.",
+          "successRedirect": "Redirigiendo a artículos…",
+          "errorRequestFailed": "La solicitud ha fallado",
+          "errorGeneric": "Algo salió mal",
+          "validationTitle": "El título es obligatorio.",
+          "validationCategory": "La categoría es obligatoria.",
+          "validationBlocksDraft": "Añade al menos un bloque con contenido (los marcadores vacíos no se envían).",
+          "validationBlocksPublish": "Para publicar se necesita al menos un bloque con contenido.",
+          "validationBlocksSchedule": "Para programar se necesita al menos un bloque con contenido.",
+          "errorCreateNoIdPublish": "El artículo fue creado pero no se devolvió ningún ID; no se puede publicar.",
+          "errorCreateNoIdSchedule": "El artículo fue creado pero no se devolvió ningún ID; no se puede programar.",
+          "successChangesSaved": "Cambios guardados",
+          "successDraftSaved": "Borrador guardado",
+          "successArticleSubmitted": "Artículo enviado",
+          "successArticleScheduled": "Artículo programado",
+          "imageBlockShort": "Imagen",
+          "validationOpenCallBlocksDraft": "Añade al menos un bloque de contenido con contenido.",
+          "validationOpenCallBlocksPublish": "Para publicar se necesita al menos un bloque de contenido con contenido.",
+          "validationOpenCallBlocksSchedule": "Para programar se necesita al menos un bloque de contenido con contenido."
         },
         "footer": {
-          "schedule": "Schedule",
+          "schedule": "Programar",
           "defaults": {
-            "publishNow": "Publish Now",
-            "saveDraft": "Save Draft",
-            "saveChanges": "Save changes"
+            "publishNow": "Publicar ahora",
+            "saveDraft": "Guardar borrador",
+            "saveChanges": "Guardar cambios"
           }
         },
         "forms": {
           "article": {
-            "titlePlaceholder": "Enter your article title...",
-            "settingsTitle": "Article Settings",
-            "primaryButton": "Publish Now",
+            "titlePlaceholder": "Introduce el título de tu artículo...",
+            "settingsTitle": "Configuración del artículo",
+            "primaryButton": "Publicar ahora",
             "blockLabels": {
-              "paragraph": "Start writing your article...",
-              "heading": "Section title",
-              "quote": "Quote",
-              "callout": "Callout",
-              "author-note": "Author note"
+              "paragraph": "Empieza a escribir tu artículo...",
+              "heading": "Título de sección",
+              "quote": "Cita",
+              "callout": "Destacado",
+              "author-note": "Nota del autor"
             }
           },
           "video": {
-            "titlePlaceholder": "Enter your Video title...",
-            "settingsTitle": "Video Settings",
-            "primaryButton": "Publish Video",
+            "titlePlaceholder": "Introduce el título de tu vídeo...",
+            "settingsTitle": "Configuración del vídeo",
+            "primaryButton": "Publicar vídeo",
             "blockLabels": {
-              "paragraph": "Describe your video",
-              "heading": "Section title",
-              "quote": "Quote",
-              "callout": "Callout",
-              "author-note": "Author note"
+              "paragraph": "Describe tu vídeo",
+              "heading": "Título de sección",
+              "quote": "Cita",
+              "callout": "Destacado",
+              "author-note": "Nota del autor"
             }
           },
           "audio": {
-            "titlePlaceholder": "Enter your Audio title...",
-            "settingsTitle": "Audio Settings",
-            "primaryButton": "Publish Audio",
+            "titlePlaceholder": "Introduce el título de tu audio...",
+            "settingsTitle": "Configuración del audio",
+            "primaryButton": "Publicar audio",
             "blockLabels": {
-              "paragraph": "Episode notes...",
-              "heading": "Section title",
-              "quote": "Quote",
-              "callout": "Callout",
-              "author-note": "Author note"
+              "paragraph": "Notas del episodio...",
+              "heading": "Título de sección",
+              "quote": "Cita",
+              "callout": "Destacado",
+              "author-note": "Nota del autor"
             }
           },
           "thread": {
-            "titlePlaceholder": "Enter your Thread title...",
-            "settingsTitle": "Thread Settings",
-            "primaryButton": "Publish Thread",
+            "titlePlaceholder": "Introduce el título de tu hilo...",
+            "settingsTitle": "Configuración del hilo",
+            "primaryButton": "Publicar hilo",
             "blockLabels": {
-              "paragraph": "First part of your story...",
-              "heading": "Section title",
-              "quote": "Quote",
-              "callout": "Callout",
-              "author-note": "Author note"
+              "paragraph": "Primera parte de tu historia...",
+              "heading": "Título de sección",
+              "quote": "Cita",
+              "callout": "Destacado",
+              "author-note": "Nota del autor"
             }
           },
           "openCall": {
-            "titlePlaceholder": "Enter your content title here...",
-            "settingsTitle": "Content Settings",
-            "primaryButton": "Publish Now",
+            "titlePlaceholder": "Introduce aquí el título de tu contenido...",
+            "settingsTitle": "Configuración del contenido",
+            "primaryButton": "Publicar ahora",
             "blockLabels": {
-              "paragraph": "Describe your content...",
-              "quote": "Quote",
-              "callout": "Callout",
-              "author-note": "Author note"
+              "paragraph": "Describe tu contenido...",
+              "quote": "Cita",
+              "callout": "Destacado",
+              "author-note": "Nota del autor"
             }
           }
         },
         "mainMedia": {
           "article": {
-            "blockName": "Cover",
-            "uploadTitle": "Upload cover",
-            "uploadDetail": "Image ~1200×630px (or video/audio) — shown first on the public article page.",
-            "pasteUrlHint": "Or paste cover image, video, or audio URL",
-            "addBlockButton": "Add cover block",
-            "missingHeroBlurb": "No cover yet. Add the cover block — it is the hero at the top of the public page."
+            "blockName": "Portada",
+            "uploadTitle": "Subir portada",
+            "uploadDetail": "Imagen ~1200×630 px (o vídeo/audio) — se muestra primero en la página pública del artículo.",
+            "pasteUrlHint": "O pega la URL de la imagen de portada, vídeo o audio",
+            "addBlockButton": "Añadir bloque de portada",
+            "missingHeroBlurb": "Aún no hay portada. Añade el bloque de portada: es el elemento principal en la parte superior de la página pública."
           },
           "video": {
-            "blockName": "Video",
-            "uploadTitle": "Upload video",
-            "uploadDetail": "MP4, WebM, or QuickTime — this is what plays full-width at the top of the public video page.",
-            "pasteUrlHint": "Or paste your video URL",
-            "addBlockButton": "Add video block",
-            "missingHeroBlurb": "No video yet. Add the video block — it is the hero at the top of the public page."
+            "blockName": "Vídeo",
+            "uploadTitle": "Subir vídeo",
+            "uploadDetail": "MP4, WebM o QuickTime — esto es lo que se reproduce a pantalla completa en la parte superior de la página pública del vídeo.",
+            "pasteUrlHint": "O pega la URL de tu vídeo",
+            "addBlockButton": "Añadir bloque de vídeo",
+            "missingHeroBlurb": "Aún no hay vídeo. Añade el bloque de vídeo: es el elemento principal en la parte superior de la página pública."
           },
           "audio": {
             "blockName": "Audio",
-            "uploadTitle": "Upload audio",
-            "uploadDetail": "MP3, WAV, AAC, and other audio — shown as the playable hero on the public audio page.",
-            "pasteUrlHint": "Or paste your audio file URL",
-            "addBlockButton": "Add audio block",
-            "missingHeroBlurb": "No audio yet. Add the audio block — it is the hero at the top of the public page."
+            "uploadTitle": "Subir audio",
+            "uploadDetail": "MP3, WAV, AAC y otros formatos de audio — se muestra como el elemento principal reproducible en la página pública de audio.",
+            "pasteUrlHint": "O pega la URL de tu archivo de audio",
+            "addBlockButton": "Añadir bloque de audio",
+            "missingHeroBlurb": "Aún no hay audio. Añade el bloque de audio: es el elemento principal en la parte superior de la página pública."
           },
           "thread": {
-            "blockName": "Cover",
-            "uploadTitle": "Upload cover",
-            "uploadDetail": "Image ~1200×630px (or video/audio) — shown first on the public thread page.",
-            "pasteUrlHint": "Or paste cover image, video, or audio URL",
-            "addBlockButton": "Add cover block",
-            "missingHeroBlurb": "No cover yet. Add the cover block — it is the hero at the top of the public page."
+            "blockName": "Portada",
+            "uploadTitle": "Subir portada",
+            "uploadDetail": "Imagen ~1200×630 px (o vídeo/audio) — se muestra primero en la página pública del hilo.",
+            "pasteUrlHint": "O pega la URL de la imagen de portada, vídeo o audio",
+            "addBlockButton": "Añadir bloque de portada",
+            "missingHeroBlurb": "Aún no hay portada. Añade el bloque de portada: es el elemento principal en la parte superior de la página pública."
           },
           "openCall": {
-            "blockName": "Main media",
-            "uploadTitle": "Upload main file",
-            "uploadDetail": "Image, video, or audio — the hero visitors see first for this open call.",
-            "pasteUrlHint": "Or paste main file URL (image, video, or audio)",
-            "addBlockButton": "Add main media block",
-            "missingHeroBlurb": "No main media yet. Add the main media block — it is the hero at the top of the public page."
+            "blockName": "Medio principal",
+            "uploadTitle": "Subir archivo principal",
+            "uploadDetail": "Imagen, vídeo o audio — el elemento principal que los visitantes ven primero en esta convocatoria abierta.",
+            "pasteUrlHint": "O pega la URL del archivo principal (imagen, vídeo o audio)",
+            "addBlockButton": "Añadir bloque de medio principal",
+            "missingHeroBlurb": "Aún no hay medio principal. Añade el bloque de medio principal: es el elemento principal en la parte superior de la página pública."
           }
         },
         "availableBlocks": {
-          "title": "Available Blocks",
+          "title": "Bloques disponibles",
           "palette": {
-            "paragraph": "Paragraph",
-            "heading": "Title",
-            "quote": "Quote",
-            "image": "Image",
-            "gallery": "Gallery",
-            "callout": "Callout",
-            "author-note": "Author note",
-            "divider": "Divider"
+            "paragraph": "Párrafo",
+            "heading": "Título",
+            "quote": "Cita",
+            "image": "Imagen",
+            "gallery": "Galería",
+            "callout": "Destacado",
+            "author-note": "Nota del autor",
+            "divider": "Divisor"
           }
         },
         "modals": {
-          "closeDialog": "Close dialog",
-          "close": "Close",
+          "closeDialog": "Cerrar diálogo",
+          "close": "Cerrar",
           "delete": {
-            "title": "Delete article?",
-            "description": "\"{title}\" will be removed permanently. This cannot be undone.",
-            "cancel": "Cancel",
-            "confirm": "Delete",
-            "confirmBusy": "Deleting…"
+            "title": "¿Eliminar artículo?",
+            "description": "\"{title}\" se eliminará de forma permanente. Esta acción no se puede deshacer.",
+            "cancel": "Cancelar",
+            "confirm": "Eliminar",
+            "confirmBusy": "Eliminando…"
           },
           "schedule": {
-            "title": "Schedule publication",
-            "subtitle": "Pick when this article should go live.",
-            "datetimeLabel": "Date and time (your local timezone)",
-            "hintInvalid": "Choose a valid date and time.",
-            "cancel": "Cancel",
-            "confirm": "Schedule",
-            "confirmBusy": "Scheduling…"
+            "title": "Programar publicación",
+            "subtitle": "Elige cuándo debe publicarse este artículo.",
+            "datetimeLabel": "Fecha y hora (tu zona horaria local)",
+            "hintInvalid": "Elige una fecha y hora válidas.",
+            "cancel": "Cancelar",
+            "confirm": "Programar",
+            "confirmBusy": "Programando…"
           }
         },
         "settings": {
-          "defaultPanelTitle": "Article Settings",
-          "collectionsLoadError": "Could not load collections.",
-          "tagsLoadError": "Could not load tags.",
+          "defaultPanelTitle": "Configuración del artículo",
+          "collectionsLoadError": "No se pudieron cargar las colecciones.",
+          "tagsLoadError": "No se pudieron cargar las etiquetas.",
           "status": {
-            "label": "Status",
-            "draft": "Draft",
-            "published": "Published",
-            "scheduled": "Scheduled",
-            "goesLive": "Goes live:",
-            "hint": "When status is Published or Scheduled, use Publish now or Schedule."
+            "label": "Estado",
+            "draft": "Borrador",
+            "published": "Publicado",
+            "scheduled": "Programado",
+            "goesLive": "Se publica el:",
+            "hint": "Cuando el estado es Publicado o Programado, usa Publicar ahora o Programar."
           },
           "category": {
-            "label": "Category",
-            "placeholder": "e.g., Documentary, Art"
+            "label": "Categoría",
+            "placeholder": "p. ej., Documental, Arte"
           },
           "collection": {
-            "label": "Collection (optional)",
-            "none": "No collection",
-            "currentPrefix": "Current:"
+            "label": "Colección (opcional)",
+            "none": "Sin colección",
+            "currentPrefix": "Actual:"
           },
-          "collectionLoading": "Loading collections…",
+          "collectionLoading": "Cargando colecciones…",
           "tags": {
-            "label": "Tags",
-            "loading": "Loading tags…",
-            "addPlaceholder": "Add a tag…",
-            "allSelected": "All available tags are selected.",
-            "unknownName": "Tag ({prefix})",
-            "fallbackName": "tag",
-            "removeAria": "Remove {name}"
+            "label": "Etiquetas",
+            "loading": "Cargando etiquetas…",
+            "addPlaceholder": "Añadir una etiqueta…",
+            "allSelected": "Todas las etiquetas disponibles están seleccionadas.",
+            "unknownName": "Etiqueta ({prefix})",
+            "fallbackName": "etiqueta",
+            "removeAria": "Eliminar {name}"
           },
           "language": {
-            "label": "Language",
-            "en": "English",
-            "ar": "Arabic",
-            "he": "Hebrew"
+            "label": "Idioma",
+            "en": "Inglés",
+            "ar": "Árabe",
+            "he": "Hebreo"
           },
           "visibility": {
-            "label": "Visibility",
-            "private": "Private",
-            "public": "Public"
+            "label": "Visibilidad",
+            "private": "Privado",
+            "public": "Público"
           },
           "seo": {
             "label": "SEO",
-            "previewPlaceholder": "Add a meta description to improve search visibility.",
-            "seoTitlePlaceholder": "SEO Title",
-            "metaDescriptionPlaceholder": "Meta description",
-            "previewUrlStub": "yoursite.com/articles/…"
+            "previewPlaceholder": "Añade una meta descripción para mejorar la visibilidad en los motores de búsqueda.",
+            "seoTitlePlaceholder": "Título SEO",
+            "metaDescriptionPlaceholder": "Meta descripción",
+            "previewUrlStub": "tusitioweb.com/articulos/…"
           }
         }
       }

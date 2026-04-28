@@ -2,82 +2,82 @@
   "Dashboard": {
     "engagementsPage": {
       "tabs": {
-        "comments": "Comments",
-        "trending": "Trending discussions",
-        "badges": "Badges & Recognition"
+        "comments": "Commentaires",
+        "trending": "Discussions tendance",
+        "badges": "Badges et reconnaissance"
       },
       "filter": {
-        "all": "All",
-        "flagged": "Flagged ({count})"
+        "all": "Tous",
+        "flagged": "Signalés ({count})"
       },
       "comments": {
-        "searchPlaceholder": "Search comments…",
-        "emptyFiltered": "No comments match your filters.",
-        "on": "On",
-        "flaggedBadge": "Flagged",
-        "replies": "{count, plural, one {# reply} other {# replies}}",
-        "menuAria": "More actions",
-        "view": "View",
-        "edit": "Edit",
-        "delete": "Delete"
+        "searchPlaceholder": "Rechercher des commentaires…",
+        "emptyFiltered": "Aucun commentaire ne correspond à vos filtres.",
+        "on": "Sur",
+        "flaggedBadge": "Signalé",
+        "replies": "{count, plural, one {# réponse} other {# réponses}}",
+        "menuAria": "Plus d'actions",
+        "view": "Voir",
+        "edit": "Modifier",
+        "delete": "Supprimer"
       },
       "trending": {
-        "commentsCount": "{count, plural, one {# comment} other {# comments}}",
+        "commentsCount": "{count, plural, one {# commentaire} other {# commentaires}}",
         "participantsCount": "{count, plural, one {# participant} other {# participants}}",
-        "view": "View",
-        "unlock": "Unlock",
-        "lock": "Lock",
-        "lockDiscussionAria": "Lock discussion",
-        "unlockDiscussionAria": "Unlock discussion",
-        "empty": "No trending discussions found."
+        "view": "Voir",
+        "unlock": "Déverrouiller",
+        "lock": "Verrouiller",
+        "lockDiscussionAria": "Verrouiller la discussion",
+        "unlockDiscussionAria": "Déverrouiller la discussion",
+        "empty": "Aucune discussion tendance trouvée."
       },
       "badges": {
-        "searchPlaceholder": "Search badges…",
-        "createBadge": "Create Badge",
-        "recipients": "{count, plural, one {# recipient} other {# recipients}}",
-        "awardBadge": "Award Badge",
-        "emptySearch": "No badges match your search."
+        "searchPlaceholder": "Rechercher des badges…",
+        "createBadge": "Créer un badge",
+        "recipients": "{count, plural, one {# destinataire} other {# destinataires}}",
+        "awardBadge": "Décerner un badge",
+        "emptySearch": "Aucun badge ne correspond à votre recherche."
       },
       "createBadgeModal": {
-        "closeModalAria": "Close modal",
-        "closeAria": "Close",
-        "title": "Create New Badge",
-        "icon": "Icon",
+        "closeModalAria": "Fermer la fenêtre",
+        "closeAria": "Fermer",
+        "title": "Créer un nouveau badge",
+        "icon": "Icône",
         "iconAria": {
-          "award": "Award",
-          "star": "Star",
-          "heart": "Heart",
-          "check": "Check",
-          "spark": "Spark"
+          "award": "Récompense",
+          "star": "Étoile",
+          "heart": "Cœur",
+          "check": "Coche",
+          "spark": "Étincelle"
         },
-        "badgeName": "Badge name",
-        "namePlaceholder": "e.g. Top Contributor",
-        "roleLabel": "Or select a role",
-        "rolePlaceholder": "Award to role…",
+        "badgeName": "Nom du badge",
+        "namePlaceholder": "Ex. : Meilleur contributeur",
+        "roleLabel": "Ou sélectionnez un rôle",
+        "rolePlaceholder": "Décerner à un rôle…",
         "roles": {
-          "allUsers": "All Users",
-          "allAuthors": "All Authors",
-          "allEditors": "All Editors",
-          "allContributors": "All Contributors"
+          "allUsers": "Tous les utilisateurs",
+          "allAuthors": "Tous les auteurs",
+          "allEditors": "Tous les éditeurs",
+          "allContributors": "Tous les contributeurs"
         },
-        "reasonLabel": "Reason",
-        "optional": "(optional)",
-        "reasonPlaceholder": "Why is this badge being awarded?",
-        "cancel": "Cancel",
-        "submit": "Create Badge"
+        "reasonLabel": "Raison",
+        "optional": "(facultatif)",
+        "reasonPlaceholder": "Pourquoi ce badge est-il décerné ?",
+        "cancel": "Annuler",
+        "submit": "Créer le badge"
       },
       "awardBadgeModal": {
-        "closeModalAria": "Close modal",
-        "closeAria": "Close",
-        "title": "Award “{name}”",
-        "searchUser": "Search user",
-        "userPlaceholder": "Type a username or email…",
+        "closeModalAria": "Fermer la fenêtre",
+        "closeAria": "Fermer",
+        "title": "Décerner « {name} »",
+        "searchUser": "Rechercher un utilisateur",
+        "userPlaceholder": "Tapez un nom d'utilisateur ou un e-mail…",
         "description": "Description",
-        "descriptionPlaceholder": "What does this badge represent?",
-        "criteria": "Award criteria",
-        "criteriaPlaceholder": "When should this badge be awarded?",
-        "cancel": "Cancel",
-        "submit": "Award Badge"
+        "descriptionPlaceholder": "Que représente ce badge ?",
+        "criteria": "Critères d'attribution",
+        "criteriaPlaceholder": "Quand ce badge doit-il être décerné ?",
+        "cancel": "Annuler",
+        "submit": "Décerner le badge"
       }
     }
   }

@@ -2,165 +2,165 @@
   "Dashboard": {
     "securityPage": {
       "toolbar": {
-        "exportLogs": "Export Logs"
+        "exportLogs": "Exportar registros"
       },
       "tabs": {
-        "roles": "Roles & Permissions",
-        "sessions": "Active Sessions",
-        "settings": "Security Settings",
-        "logs": "Security Logs"
+        "roles": "Roles y permisos",
+        "sessions": "Sesiones activas",
+        "settings": "Configuración de seguridad",
+        "logs": "Registros de seguridad"
       },
       "stats": {
-        "status": "System Status",
-        "admins": "Admin Users",
-        "sessions": "Active Sessions",
-        "alerts": "Security Alerts"
+        "status": "Estado del sistema",
+        "admins": "Usuarios administradores",
+        "sessions": "Sesiones activas",
+        "alerts": "Alertas de seguridad"
       },
       "statValues": {
-        "status": "Secure",
+        "status": "Seguro",
         "admins": "14",
         "sessions": "4",
         "alerts": "1"
       },
       "roles": {
-        "intro": "Manage access levels for different admin roles.",
-        "configure": "Configure",
+        "intro": "Gestiona los niveles de acceso para los diferentes roles de administrador.",
+        "configure": "Configurar",
         "super": {
-          "title": "Super Admin",
-          "description": "Full access.",
-          "userBadge": "2 users"
+          "title": "Superadministrador",
+          "description": "Acceso completo.",
+          "userBadge": "2 usuarios"
         },
         "finance": {
-          "title": "Finance Admin",
-          "description": "Financial operations.",
-          "userBadge": "2 users"
+          "title": "Administrador financiero",
+          "description": "Operaciones financieras.",
+          "userBadge": "2 usuarios"
         },
         "content": {
-          "title": "Content Admin",
-          "description": "Content management.",
-          "userBadge": "2 users"
+          "title": "Administrador de contenido",
+          "description": "Gestión de contenido.",
+          "userBadge": "2 usuarios"
         },
         "support": {
-          "title": "Support Admin",
-          "description": "User support & moderation.",
-          "userBadge": "2 users"
+          "title": "Administrador de soporte",
+          "description": "Soporte de usuarios y moderación.",
+          "userBadge": "2 usuarios"
         }
       },
       "sessions": {
-        "intro": "Monitor and manage active admin sessions.",
+        "intro": "Supervisa y gestiona las sesiones activas de administrador.",
         "columns": {
-          "user": "User",
-          "ip": "IP Address",
-          "location": "Location",
-          "device": "Device",
-          "lastActive": "Last Active",
-          "status": "Status"
+          "user": "Usuario",
+          "ip": "Dirección IP",
+          "location": "Ubicación",
+          "device": "Dispositivo",
+          "lastActive": "Última actividad",
+          "status": "Estado"
         },
         "status": {
-          "current": "Current",
-          "active": "Active",
-          "idle": "Idle"
+          "current": "Actual",
+          "active": "Activa",
+          "idle": "Inactiva"
         },
-        "end": "End",
-        "endAllOther": "End all other sessions",
+        "end": "Finalizar",
+        "endAllOther": "Finalizar todas las demás sesiones",
         "sampleRows": {
           "t1": {
-            "user": "Super Admin",
+            "user": "Superadministrador",
             "location": "Gaza, PS",
             "device": "Chrome / Windows",
-            "lastActive": "Just now"
+            "lastActive": "Ahora mismo"
           },
           "t2": {
-            "user": "Content Admin",
-            "location": "Amman, JO",
+            "user": "Administrador de contenido",
+            "location": "Amán, JO",
             "device": "Safari / macOS",
-            "lastActive": "8 min ago"
+            "lastActive": "Hace 8 min"
           },
           "t3": {
-            "user": "Finance Admin",
-            "location": "London, UK",
+            "user": "Administrador financiero",
+            "location": "Londres, UK",
             "device": "Edge / Windows",
-            "lastActive": "42 min ago"
+            "lastActive": "Hace 42 min"
           },
           "t4": {
-            "user": "Support Admin",
-            "location": "Berlin, DE",
+            "user": "Administrador de soporte",
+            "location": "Berlín, DE",
             "device": "Firefox / Linux",
-            "lastActive": "2 hours ago"
+            "lastActive": "Hace 2 horas"
           }
         }
       },
       "settings": {
-        "intro": "Configure global security policies and enforcement.",
+        "intro": "Configura las políticas de seguridad globales y su aplicación.",
         "twoFactor": {
-          "title": "Two-Factor Authentication (2FA)",
-          "description": "Require 2FA for all admin accounts."
+          "title": "Autenticación de dos factores (2FA)",
+          "description": "Requerir 2FA para todas las cuentas de administrador."
         },
         "ipAllowlist": {
-          "title": "IP Allowlist",
-          "description": "Restrict admin access to known IP ranges."
+          "title": "Lista de IPs permitidas",
+          "description": "Restringir el acceso de administrador a rangos de IP conocidos."
         },
         "sessionTimeout": {
-          "title": "Session Timeout",
-          "description": "Automatically sign out inactive admins."
+          "title": "Tiempo de espera de sesión",
+          "description": "Cerrar sesión automáticamente a los administradores inactivos."
         },
         "timeoutOptions": {
-          "m15": "15 minutes",
-          "m30": "30 minutes",
-          "m60": "60 minutes"
+          "m15": "15 minutos",
+          "m30": "30 minutos",
+          "m60": "60 minutos"
         },
         "auditLogs": {
-          "title": "Audit Logs",
-          "description": "Retain detailed security audit trails."
+          "title": "Registros de auditoría",
+          "description": "Conservar registros detallados de auditoría de seguridad."
         },
-        "backup": "Backup & Export Data"
+        "backup": "Copia de seguridad y exportación de datos"
       },
       "logs": {
-        "intro": "Recent security-related events across the platform.",
+        "intro": "Eventos recientes relacionados con la seguridad en toda la plataforma.",
         "entries": {
           "l1": {
-            "title": "Login successful",
-            "meta": "Super Admin • 192.168.1.1",
-            "timeAgo": "2 min ago"
+            "title": "Inicio de sesión exitoso",
+            "meta": "Superadministrador • 192.168.1.1",
+            "timeAgo": "Hace 2 min"
           },
           "l2": {
-            "title": "Password changed",
-            "meta": "Content Admin • 192.168.1.45",
-            "timeAgo": "1 hour ago"
+            "title": "Contraseña cambiada",
+            "meta": "Administrador de contenido • 192.168.1.45",
+            "timeAgo": "Hace 1 hora"
           },
           "l3": {
-            "title": "Failed login attempt",
-            "meta": "Unknown • 203.0.113.88",
-            "timeAgo": "3 hours ago"
+            "title": "Intento de inicio de sesión fallido",
+            "meta": "Desconocido • 203.0.113.88",
+            "timeAgo": "Hace 3 horas"
           },
           "l4": {
-            "title": "API key rotated",
-            "meta": "Super Admin • 192.168.1.1",
-            "timeAgo": "Yesterday"
+            "title": "Clave de API rotada",
+            "meta": "Superadministrador • 192.168.1.1",
+            "timeAgo": "Ayer"
           },
           "l5": {
-            "title": "Role updated",
-            "meta": "Super Admin • Sarah Adam → Editor",
-            "timeAgo": "2 days ago"
+            "title": "Rol actualizado",
+            "meta": "Superadministrador • Sarah Adam → Editora",
+            "timeAgo": "Hace 2 días"
           }
         }
       },
       "controlPanel": {
-        "settingsTabSubtitle": "Authentication and platform-wide security controls.",
-        "authenticationCardTitle": "Authentication",
-        "authenticationCardSubtitle": "Configure login and access settings",
-        "require2faTitle": "Require 2FA for Admins",
-        "require2faDescription": "All admin accounts must use two-factor authentication",
-        "sessionTimeoutShortLabel": "Session Timeout",
-        "sessionTimeoutShortDescription": "Auto-logout after inactivity",
-        "lockoutTitle": "Failed Login Lockout",
-        "lockoutDescription": "Lock account after failed attempts",
-        "systemControlsTitle": "System Controls",
-        "systemControlsSubtitle": "Platform-wide security controls",
-        "maintenanceTitle": "Maintenance Mode",
-        "maintenanceDescription": "Restrict access to admins only",
-        "ipWhitelistTitle": "IP Whitelist",
-        "ipWhitelistDescription": "Restrict admin access by IP"
+        "settingsTabSubtitle": "Autenticación y controles de seguridad de toda la plataforma.",
+        "authenticationCardTitle": "Autenticación",
+        "authenticationCardSubtitle": "Configurar ajustes de inicio de sesión y acceso",
+        "require2faTitle": "Requerir 2FA para administradores",
+        "require2faDescription": "Todas las cuentas de administrador deben usar autenticación de dos factores",
+        "sessionTimeoutShortLabel": "Tiempo de espera de sesión",
+        "sessionTimeoutShortDescription": "Cierre de sesión automático por inactividad",
+        "lockoutTitle": "Bloqueo por fallos de inicio de sesión",
+        "lockoutDescription": "Bloquear cuenta tras intentos fallidos",
+        "systemControlsTitle": "Controles del sistema",
+        "systemControlsSubtitle": "Controles de seguridad de toda la plataforma",
+        "maintenanceTitle": "Modo de mantenimiento",
+        "maintenanceDescription": "Restringir el acceso solo a administradores",
+        "ipWhitelistTitle": "Lista blanca de IPs",
+        "ipWhitelistDescription": "Restringir el acceso de administrador por IP"
       }
     }
   }

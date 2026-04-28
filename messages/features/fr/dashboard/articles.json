@@ -3,60 +3,60 @@
     "articles": {
       "page": {
         "title": "Articles",
-        "subtitle": "Manage or share articles on your platform.",
-        "lastUpdated": "Last updated: Just now"
+        "subtitle": "Gérez ou partagez des articles sur votre plateforme.",
+        "lastUpdated": "Dernière mise à jour : À l'instant"
       },
       "stats": {
-        "published": "Articles published",
+        "published": "Articles publiés",
         "contributions": "Contributions",
-        "totalReads": "Total reads",
-        "daysActive": "Days active"
+        "totalReads": "Lectures totales",
+        "daysActive": "Jours actifs"
       },
       "list": {
-        "loading": "Loading articles…",
-        "tryAgain": "Try again",
+        "loading": "Chargement des articles…",
+        "tryAgain": "Réessayer",
         "errors": {
-          "loadFailed": "Failed to load articles",
-          "deleteFailed": "Delete failed"
+          "loadFailed": "Échec du chargement des articles",
+          "deleteFailed": "Échec de la suppression"
         },
         "tabs": {
-          "all": "All",
-          "drafts": "Drafts",
-          "published": "Published",
-          "scheduled": "Scheduled"
+          "all": "Tous",
+          "drafts": "Brouillons",
+          "published": "Publiés",
+          "scheduled": "Programmés"
         },
         "sections": {
-          "draftedArticles": "Drafted Articles",
-          "scheduledArticles": "Scheduled Articles"
+          "draftedArticles": "Articles en brouillon",
+          "scheduledArticles": "Articles programmés"
         },
         "cards": {
-          "draftStatus": "Drafted Article",
-          "scheduledStatus": "Scheduled Article",
-          "continueWriting": "Continue Writing",
-          "editArticle": "Edit article",
-          "deleteScheduledArticle": "Delete scheduled article",
-          "share": "Share",
-          "view": "View"
+          "draftStatus": "Article en brouillon",
+          "scheduledStatus": "Article programmé",
+          "continueWriting": "Continuer la rédaction",
+          "editArticle": "Modifier l'article",
+          "deleteScheduledArticle": "Supprimer l'article programmé",
+          "share": "Partager",
+          "view": "Voir"
         },
         "table": {
-          "addNew": "Add new",
-          "title": "Title",
-          "status": "Status",
+          "addNew": "Ajouter",
+          "title": "Titre",
+          "status": "Statut",
           "statusValues": {
-            "draft": "Draft",
-            "published": "Published",
-            "scheduled": "Scheduled"
+            "draft": "Brouillon",
+            "published": "Publié",
+            "scheduled": "Programmé"
           },
-          "justNow": "Just now",
-          "lastUpdated": "Last Updated",
-          "views": "Views",
-          "supporters": "Supporters",
-          "emptyView": "No articles in this view.",
-          "menuAria": "Article actions",
-          "menuAriaFor": "Actions for {title}",
-          "preview": "Preview",
-          "edit": "Edit",
-          "delete": "Delete"
+          "justNow": "À l'instant",
+          "lastUpdated": "Dernière mise à jour",
+          "views": "Vues",
+          "supporters": "Soutiens",
+          "emptyView": "Aucun article dans cette vue.",
+          "menuAria": "Actions de l'article",
+          "menuAriaFor": "Actions pour {title}",
+          "preview": "Aperçu",
+          "edit": "Modifier",
+          "delete": "Supprimer"
         }
       }
     }

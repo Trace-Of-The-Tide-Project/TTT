@@ -2,136 +2,136 @@
   "Dashboard": {
     "adminHome": {
       "notifications": {
-        "title": "Alerts & Notifications",
-        "viewAll": "View all ›",
-        "signInPrompt": "Sign in to see your notifications.",
-        "tryAgain": "Try again",
-        "loadFailed": "Failed to load notifications",
-        "loading": "Loading notifications…",
-        "empty": "No notifications yet.",
-        "unread": "Unread",
-        "open": "Open ›"
+        "title": "Alertes et notifications",
+        "viewAll": "Tout voir ›",
+        "signInPrompt": "Connectez-vous pour voir vos notifications.",
+        "tryAgain": "Réessayer",
+        "loadFailed": "Échec du chargement des notifications",
+        "loading": "Chargement des notifications…",
+        "empty": "Aucune notification pour l'instant.",
+        "unread": "Non lu",
+        "open": "Ouvrir ›"
       },
       "quickActions": {
-        "title": "Quick Actions",
+        "title": "Actions rapides",
         "sendBroadcast": {
-          "label": "Send Broadcast",
-          "description": "Message all users or specific roles"
+          "label": "Envoyer une diffusion",
+          "description": "Envoyer un message à tous les utilisateurs ou à des rôles spécifiques"
         },
         "approveEditor": {
-          "label": "Approve editor",
-          "description": "5 pending applications"
+          "label": "Approuver un éditeur",
+          "description": "5 candidatures en attente"
         },
         "featureContent": {
-          "label": "Feature content",
-          "description": "Highlight on homepage"
+          "label": "Mettre en avant du contenu",
+          "description": "Mettre en valeur sur la page d'accueil"
         },
         "maintenanceMode": {
-          "label": "Maintenance mode",
-          "description": "Enable platform maintenance"
+          "label": "Mode maintenance",
+          "description": "Activer la maintenance de la plateforme"
         }
       },
       "contentOverview": {
-        "title": "Content Overview",
-        "manageAll": "Manage all",
+        "title": "Aperçu du contenu",
+        "manageAll": "Tout gérer",
         "headers": {
-          "category": "Category",
-          "published": "Published",
-          "drafts": "Drafts",
-          "flagged": "Flagged"
+          "category": "Catégorie",
+          "published": "Publié",
+          "drafts": "Brouillons",
+          "flagged": "Signalé"
         },
         "categories": {
           "articles": "Articles",
           "films": "Films",
-          "music": "Music",
-          "photography": "Photography",
-          "essays": "Essays",
+          "music": "Musique",
+          "photography": "Photographie",
+          "essays": "Essais",
           "podcasts": "Podcasts"
         },
-        "totalLabel": "Total content pieces"
+        "totalLabel": "Total des contenus"
       },
       "usersByRole": {
-        "title": "Users by Role",
-        "viewAll": "View all",
-        "totalLabel": "Total users",
+        "title": "Utilisateurs par rôle",
+        "viewAll": "Tout voir",
+        "totalLabel": "Total des utilisateurs",
         "roles": {
-          "users": "Users",
-          "contributors": "Contributors",
-          "authors": "Authors",
-          "editors": "Editors",
-          "admins": "Admins"
+          "users": "Utilisateurs",
+          "contributors": "Contributeurs",
+          "authors": "Auteurs",
+          "editors": "Éditeurs",
+          "admins": "Administrateurs"
         }
       },
       "finance": {
-        "title": "Finance Snapshot",
-        "viewDetails": "View details",
+        "title": "Aperçu financier",
+        "viewDetails": "Voir les détails",
         "cards": {
           "1": {
-            "label": "Today's Donations...",
-            "sublabel": "23 transactions..."
+            "label": "Dons du jour…",
+            "sublabel": "23 transactions…"
           },
           "2": {
-            "label": "This Month...",
-            "sublabel": "vs $28,450 last month..."
+            "label": "Ce mois-ci…",
+            "sublabel": "vs 28 450 $ le mois dernier…"
           },
           "3": {
-            "label": "Pending Payouts...",
-            "sublabel": "47 creators..."
+            "label": "Paiements en attente…",
+            "sublabel": "47 créateurs…"
           },
           "4": {
-            "label": "Platform Fees...",
-            "sublabel": "10% of transactions..."
+            "label": "Frais de plateforme…",
+            "sublabel": "10 % des transactions…"
           }
         }
       },
       "recentActivity": {
-        "title": "Recent Activity",
+        "title": "Activité récente",
         "items": {
           "1": {
-            "title": "New author joined",
-            "description": "Sara Marzouq signed ...",
-            "time": "2 minutes ago"
+            "title": "Nouvel auteur inscrit",
+            "description": "Sara Marzouq a signé…",
+            "time": "Il y a 2 minutes"
           },
           "2": {
-            "title": "Article published",
-            "description": "The Future of Cinema ...",
-            "time": "2 minutes ago"
+            "title": "Article publié",
+            "description": "L'avenir du cinéma…",
+            "time": "Il y a 2 minutes"
           },
           "3": {
-            "title": "Donation received",
-            "description": "$50 donation to Elena ...",
-            "time": "2 minutes ago"
+            "title": "Don reçu",
+            "description": "Don de 50 $ à Elena…",
+            "time": "Il y a 2 minutes"
           },
           "4": {
-            "title": "Content flagged",
-            "description": "Review required: Communi ...",
-            "time": "2 minutes ago"
+            "title": "Contenu signalé",
+            "description": "Révision requise : Communi…",
+            "time": "Il y a 2 minutes"
           },
           "5": {
-            "title": "Content featured",
-            "description": "\"Digital Art Revolution\" a ...",
-            "time": "2 minutes ago"
+            "title": "Contenu mis en avant",
+            "description": "\"Révolution de l'art numérique\" a…",
+            "time": "Il y a 2 minutes"
           },
           "6": {
-            "title": "Login from new device",
-            "description": "Editor account accessed ...",
-            "time": "2 minutes ago"
+            "title": "Connexion depuis un nouvel appareil",
+            "description": "Compte éditeur accédé…",
+            "time": "Il y a 2 minutes"
           }
         }
       },
       "editorApplications": {
-        "title": "Editor Applications",
-        "viewAll": "View all",
-        "viewApplication": "View application",
-        "reject": "Reject",
-        "approve": "Approve"
+        "title": "Candidatures d'éditeurs",
+        "viewAll": "Tout voir",
+        "viewApplication": "Voir la candidature",
+        "reject": "Rejeter",
+        "approve": "Approuver"
       },
       "modals": {
         "pendingEditors": {
-          "title": "Pending Editor Applications",
-          "description": "Review and approve editor applications."
+          "title": "Candidatures d'éditeurs en attente",
+          "description": "Examiner et approuver les candidatures d'éditeurs."
         },
-        "viewAll": "View All"
+        "viewAll": "Tout voir"
       }
     }
   }

@@ -1,72 +1,72 @@
 {
   "Dashboard": {
     "profileHome": {
-      "title": "My Dashboard",
-      "editProfile": "Edit profile",
-      "createArticle": "Create article",
-      "recentArticles": "Recent articles",
-      "recentContributors": "Recent contributors"
+      "title": "Mi panel",
+      "editProfile": "Editar perfil",
+      "createArticle": "Crear artículo",
+      "recentArticles": "Artículos recientes",
+      "recentContributors": "Colaboradores recientes"
     },
     "adminProfile": {
-      "pageTitle": "Profile Information",
-      "changePhoto": "Change photo",
-      "photoHint": "JPG, PNG or GIF. Max size 2MB.",
+      "pageTitle": "Información del perfil",
+      "changePhoto": "Cambiar foto",
+      "photoHint": "JPG, PNG o GIF. Tamaño máximo 2 MB.",
       "errors": {
-        "fileType": "Use JPG, PNG, or GIF.",
-        "maxSize": "Max size 2MB."
+        "fileType": "Usa JPG, PNG o GIF.",
+        "maxSize": "Tamaño máximo 2 MB."
       },
-      "fullName": "Full Name",
-      "email": "Email address",
-      "role": "Role",
-      "company": "Company",
-      "location": "Location",
-      "externalLink": "External Link",
+      "fullName": "Nombre completo",
+      "email": "Correo electrónico",
+      "role": "Rol",
+      "company": "Empresa",
+      "location": "Ubicación",
+      "externalLink": "Enlace externo",
       "externalLinkPlaceholder": "https://…",
-      "biography": "Biography",
-      "socialLinks": "Social Links",
+      "biography": "Biografía",
+      "socialLinks": "Redes sociales",
       "presets": {
         "facebook": "Facebook",
         "twitter": "X / Twitter",
         "instagram": "Instagram",
         "linkedin": "LinkedIn"
       },
-      "removePresetAria": "Remove {label}",
-      "otherLinkPlaceholder": "Add any other links",
+      "removePresetAria": "Eliminar {label}",
+      "otherLinkPlaceholder": "Añadir otros enlaces",
       "additionalLinkPlaceholder": "https://…",
-      "additionalLinkAria": "Additional link",
-      "removeLinkAria": "Remove link",
-      "addNewLink": "Add new link",
-      "saved": "Saved",
-      "saveChanges": "Save Changes"
+      "additionalLinkAria": "Enlace adicional",
+      "removeLinkAria": "Eliminar enlace",
+      "addNewLink": "Añadir nuevo enlace",
+      "saved": "Guardado",
+      "saveChanges": "Guardar cambios"
     },
     "adminPrivacy": {
-      "pageTitle": "Privacy Settings",
-      "profileVisibility": "Profile Visibility",
-      "profileVisibilityDescription": "Control who can see your profile",
-      "profileVisibilityAria": "Profile visibility",
+      "pageTitle": "Configuración de privacidad",
+      "profileVisibility": "Visibilidad del perfil",
+      "profileVisibilityDescription": "Controla quién puede ver tu perfil",
+      "profileVisibilityAria": "Visibilidad del perfil",
       "visibility": {
-        "public": "Public",
-        "followers": "Followers only",
-        "private": "Private"
+        "public": "Público",
+        "followers": "Solo seguidores",
+        "private": "Privado"
       },
-      "showEmail": "Show Email",
-      "showEmailDescription": "Display your email on your profile",
-      "showEmailAria": "Show email on profile",
-      "showActivity": "Show Activity",
-      "showActivityDescription": "Show your recent activity on your profile",
-      "showActivityAria": "Show activity",
-      "allowFollows": "Allow Follows",
-      "allowFollowsDescription": "Allow other users to follow you",
-      "allowFollowsAria": "Allow follows",
-      "saved": "Saved",
-      "saveChanges": "Save changes"
+      "showEmail": "Mostrar correo electrónico",
+      "showEmailDescription": "Mostrar tu correo electrónico en tu perfil",
+      "showEmailAria": "Mostrar correo electrónico en el perfil",
+      "showActivity": "Mostrar actividad",
+      "showActivityDescription": "Mostrar tu actividad reciente en tu perfil",
+      "showActivityAria": "Mostrar actividad",
+      "allowFollows": "Permitir seguidores",
+      "allowFollowsDescription": "Permite que otros usuarios te sigan",
+      "allowFollowsAria": "Permitir seguidores",
+      "saved": "Guardado",
+      "saveChanges": "Guardar cambios"
     },
     "adminAccount": {
-      "pageTitle": "Account Security",
-      "deactivateTitle": "Deactivate Account",
-      "deactivateDescription": "Once you deactivate your account, your profile and articles will be hidden. You can reactivate your account at any time by signing in.",
-      "deactivateButton": "Deactivate account",
-      "deactivateConfirm": "Deactivate your account? Your profile and articles will be hidden until you sign in again."
+      "pageTitle": "Seguridad de la cuenta",
+      "deactivateTitle": "Desactivar cuenta",
+      "deactivateDescription": "Una vez que desactives tu cuenta, tu perfil y artículos quedarán ocultos. Puedes reactivar tu cuenta en cualquier momento iniciando sesión.",
+      "deactivateButton": "Desactivar cuenta",
+      "deactivateConfirm": "¿Desactivar tu cuenta? Tu perfil y artículos quedarán ocultos hasta que vuelvas a iniciar sesión."
     }
   }
 }

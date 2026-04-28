@@ -1,84 +1,84 @@
 {
   "Dashboard": {
     "notificationsPage": {
-      "signInRequired": "Sign in to view notifications.",
-      "accountHint": "Only notifications for your account are shown (matched by user id).",
-      "searchPlaceholder": "Search message or type…",
-      "tryAgain": "Try again",
+      "signInRequired": "Connectez-vous pour voir les notifications.",
+      "accountHint": "Seules les notifications de votre compte sont affichées (correspondance par identifiant utilisateur).",
+      "searchPlaceholder": "Rechercher un message ou un type…",
+      "tryAgain": "Réessayer",
       "adminTabs": {
-        "settings": "Notification settings",
-        "inbox": "Your notifications"
+        "settings": "Paramètres de notifications",
+        "inbox": "Vos notifications"
       },
       "preferences": {
-        "pageTitle": "Notifications Settings",
-        "emailSection": "Email Notifications",
-        "pushSection": "Push Notifications",
-        "articleUpdates": "Article Updates",
-        "articleUpdatesDescription": "Get notified when articles you follow are updated",
-        "articleUpdatesAria": "Article updates",
-        "newFollowers": "New Followers",
-        "newFollowersDescription": "Get notified when someone follows you",
-        "newFollowersAria": "New followers",
-        "newContributor": "New Contributor",
-        "newContributorDescription": "Real-time notification for new supporters",
-        "newContributorAria": "New contributor",
-        "comments": "Comments",
-        "commentsDescription": "Get notified when someone comments on your articles",
-        "commentsAria": "Comments",
-        "weeklyDigest": "Weekly Digest",
-        "weeklyDigestDescription": "Get a weekly summary of popular articles",
-        "weeklyDigestAria": "Weekly digest",
-        "browserNotifications": "Browser Notifications",
-        "browserNotificationsDescription": "Receive notifications in your browser",
-        "browserNotificationsAria": "Browser notifications",
-        "saved": "Saved",
-        "saveChanges": "Save changes"
+        "pageTitle": "Paramètres de notifications",
+        "emailSection": "Notifications par e-mail",
+        "pushSection": "Notifications push",
+        "articleUpdates": "Mises à jour des articles",
+        "articleUpdatesDescription": "Soyez notifié lorsque les articles que vous suivez sont mis à jour",
+        "articleUpdatesAria": "Mises à jour des articles",
+        "newFollowers": "Nouveaux abonnés",
+        "newFollowersDescription": "Soyez notifié lorsque quelqu'un vous suit",
+        "newFollowersAria": "Nouveaux abonnés",
+        "newContributor": "Nouveau contributeur",
+        "newContributorDescription": "Notification en temps réel pour les nouveaux soutiens",
+        "newContributorAria": "Nouveau contributeur",
+        "comments": "Commentaires",
+        "commentsDescription": "Soyez notifié lorsque quelqu'un commente vos articles",
+        "commentsAria": "Commentaires",
+        "weeklyDigest": "Résumé hebdomadaire",
+        "weeklyDigestDescription": "Recevez un résumé hebdomadaire des articles populaires",
+        "weeklyDigestAria": "Résumé hebdomadaire",
+        "browserNotifications": "Notifications du navigateur",
+        "browserNotificationsDescription": "Recevez des notifications dans votre navigateur",
+        "browserNotificationsAria": "Notifications du navigateur",
+        "saved": "Enregistré",
+        "saveChanges": "Enregistrer les modifications"
       },
       "errors": {
-        "requestFailed": "Failed to load notifications",
-        "generic": "Failed to load notifications"
+        "requestFailed": "Échec du chargement des notifications",
+        "generic": "Échec du chargement des notifications"
       },
       "filters": {
         "types": {
-          "all": "All types",
-          "system": "System",
-          "review": "Review",
-          "update": "Update"
+          "all": "Tous les types",
+          "system": "Système",
+          "review": "Révision",
+          "update": "Mise à jour"
         },
         "status": {
-          "all": "All status",
-          "unread": "Unread",
-          "read": "Read"
+          "all": "Tous les statuts",
+          "unread": "Non lu",
+          "read": "Lu"
         },
         "order": {
-          "DESC": "Newest first",
-          "ASC": "Oldest first"
+          "DESC": "Les plus récents d'abord",
+          "ASC": "Les plus anciens d'abord"
         }
       },
       "table": {
         "message": "Message",
         "type": "Type",
-        "status": "Status",
-        "user": "User",
-        "when": "When"
+        "status": "Statut",
+        "user": "Utilisateur",
+        "when": "Quand"
       },
       "rowType": {
-        "system": "System",
-        "review": "Review",
-        "update": "Update"
+        "system": "Système",
+        "review": "Révision",
+        "update": "Mise à jour"
       },
       "rowStatus": {
-        "unread": "Unread",
-        "read": "Read",
-        "sent": "Sent"
+        "unread": "Non lu",
+        "read": "Lu",
+        "sent": "Envoyé"
       },
-      "loading": "Loading…",
-      "empty": "No notifications match your filters.",
+      "loading": "Chargement…",
+      "empty": "Aucune notification ne correspond à vos filtres.",
       "pagination": {
-        "summary": "Showing {start} to {end} of {total} (your account)",
-        "pageOf": "Page {page} of {totalPages}",
-        "previous": "Previous",
-        "next": "Next"
+        "summary": "Affichage de {start} à {end} sur {total} (votre compte)",
+        "pageOf": "Page {page} sur {totalPages}",
+        "previous": "Précédent",
+        "next": "Suivant"
       }
     }
   }

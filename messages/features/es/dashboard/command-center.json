@@ -1,17 +1,17 @@
 {
   "Dashboard": {
     "commandCenter": {
-      "title": "Command Center",
-      "subtitle": "Welcome back. Here's what's happening on your platform.",
-      "lastUpdated": "Last updated: Just now",
+      "title": "Centro de control",
+      "subtitle": "Bienvenido de nuevo. Esto es lo que está ocurriendo en tu plataforma.",
+      "lastUpdated": "Última actualización: Ahora mismo",
       "stats": {
-        "totalUsers": "Total users",
-        "contentPublished": "Content published",
-        "monthlyDonations": "Monthly donations",
-        "activeToday": "Active today"
+        "totalUsers": "Total de usuarios",
+        "contentPublished": "Contenido publicado",
+        "monthlyDonations": "Donaciones mensuales",
+        "activeToday": "Activos hoy"
       },
-      "vsLastMonth": "vs last month",
-      "vsYesterday": "vs yesterday"
+      "vsLastMonth": "vs el mes pasado",
+      "vsYesterday": "vs ayer"
     }
   }
 }

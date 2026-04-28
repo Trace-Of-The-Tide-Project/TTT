@@ -2,61 +2,61 @@
   "Dashboard": {
     "articles": {
       "page": {
-        "title": "Articles",
-        "subtitle": "Manage or share articles on your platform.",
-        "lastUpdated": "Last updated: Just now"
+        "title": "Artículos",
+        "subtitle": "Gestiona o comparte artículos en tu plataforma.",
+        "lastUpdated": "Última actualización: Ahora mismo"
       },
       "stats": {
-        "published": "Articles published",
-        "contributions": "Contributions",
-        "totalReads": "Total reads",
-        "daysActive": "Days active"
+        "published": "Artículos publicados",
+        "contributions": "Contribuciones",
+        "totalReads": "Total de lecturas",
+        "daysActive": "Días activo"
       },
       "list": {
-        "loading": "Loading articles…",
-        "tryAgain": "Try again",
+        "loading": "Cargando artículos…",
+        "tryAgain": "Intentar de nuevo",
         "errors": {
-          "loadFailed": "Failed to load articles",
-          "deleteFailed": "Delete failed"
+          "loadFailed": "Error al cargar los artículos",
+          "deleteFailed": "Error al eliminar"
         },
         "tabs": {
-          "all": "All",
-          "drafts": "Drafts",
-          "published": "Published",
-          "scheduled": "Scheduled"
+          "all": "Todos",
+          "drafts": "Borradores",
+          "published": "Publicados",
+          "scheduled": "Programados"
         },
         "sections": {
-          "draftedArticles": "Drafted Articles",
-          "scheduledArticles": "Scheduled Articles"
+          "draftedArticles": "Artículos en borrador",
+          "scheduledArticles": "Artículos programados"
         },
         "cards": {
-          "draftStatus": "Drafted Article",
-          "scheduledStatus": "Scheduled Article",
-          "continueWriting": "Continue Writing",
-          "editArticle": "Edit article",
-          "deleteScheduledArticle": "Delete scheduled article",
-          "share": "Share",
-          "view": "View"
+          "draftStatus": "Artículo en borrador",
+          "scheduledStatus": "Artículo programado",
+          "continueWriting": "Continuar escribiendo",
+          "editArticle": "Editar artículo",
+          "deleteScheduledArticle": "Eliminar artículo programado",
+          "share": "Compartir",
+          "view": "Ver"
         },
         "table": {
-          "addNew": "Add new",
-          "title": "Title",
-          "status": "Status",
+          "addNew": "Añadir nuevo",
+          "title": "Título",
+          "status": "Estado",
           "statusValues": {
-            "draft": "Draft",
-            "published": "Published",
-            "scheduled": "Scheduled"
+            "draft": "Borrador",
+            "published": "Publicado",
+            "scheduled": "Programado"
           },
-          "justNow": "Just now",
-          "lastUpdated": "Last Updated",
-          "views": "Views",
-          "supporters": "Supporters",
-          "emptyView": "No articles in this view.",
-          "menuAria": "Article actions",
-          "menuAriaFor": "Actions for {title}",
-          "preview": "Preview",
-          "edit": "Edit",
-          "delete": "Delete"
+          "justNow": "Ahora mismo",
+          "lastUpdated": "Última actualización",
+          "views": "Vistas",
+          "supporters": "Seguidores",
+          "emptyView": "No hay artículos en esta vista.",
+          "menuAria": "Acciones del artículo",
+          "menuAriaFor": "Acciones para {title}",
+          "preview": "Vista previa",
+          "edit": "Editar",
+          "delete": "Eliminar"
         }
       }
     }

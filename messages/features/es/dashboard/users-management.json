@@ -1,57 +1,57 @@
 {
   "Dashboard": {
     "usersManagement": {
-      "searchPlaceholder": "Search username, full name, email…",
+      "searchPlaceholder": "Buscar nombre de usuario, nombre completo, correo electrónico…",
       "status": {
-        "all": "All status",
-        "active": "Active",
-        "pending": "Pending",
-        "suspended": "Suspended",
-        "inactive": "Inactive"
+        "all": "Todos los estados",
+        "active": "Activo",
+        "pending": "Pendiente",
+        "suspended": "Suspendido",
+        "inactive": "Inactivo"
       },
       "sort": {
-        "username": "Username",
-        "email": "Email",
-        "full_name": "Full name"
+        "username": "Nombre de usuario",
+        "email": "Correo electrónico",
+        "full_name": "Nombre completo"
       },
       "order": {
-        "ASC": "Ascending",
-        "DESC": "Descending"
+        "ASC": "Ascendente",
+        "DESC": "Descendente"
       },
       "table": {
-        "contributor": "Contributor",
-        "role": "Role",
-        "status": "Status",
-        "joined": "Joined",
-        "lastActive": "Last active",
-        "contributions": "Contributions"
+        "contributor": "Colaborador",
+        "role": "Rol",
+        "status": "Estado",
+        "joined": "Registro",
+        "lastActive": "Última actividad",
+        "contributions": "Contribuciones"
       },
       "statusLabels": {
-        "active": "Active",
-        "pending": "Pending",
-        "suspended": "Suspended",
-        "inactive": "Inactive"
+        "active": "Activo",
+        "pending": "Pendiente",
+        "suspended": "Suspendido",
+        "inactive": "Inactivo"
       },
-      "loading": "Loading users…",
-      "empty": "No users match your filters.",
+      "loading": "Cargando usuarios…",
+      "empty": "Ningún usuario coincide con tus filtros.",
       "pagination": {
-        "showing": "Showing {start} to {end} of {total} users",
-        "previous": "Previous",
-        "next": "Next",
-        "pageOf": "Page {page} of {totalPages}"
+        "showing": "Mostrando {start} a {end} de {total} usuarios",
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "pageOf": "Página {page} de {totalPages}"
       },
-      "tryAgain": "Try again",
-      "tryExportAgain": "Try export again",
+      "tryAgain": "Intentar de nuevo",
+      "tryExportAgain": "Intentar exportar de nuevo",
       "errors": {
-        "loadFailed": "Failed to load users"
+        "loadFailed": "Error al cargar los usuarios"
       },
       "rowActions": {
-        "menuAria": "More actions",
-        "viewProfile": "View Profile",
-        "editUser": "Edit User",
-        "changeRole": "Change Role",
-        "verifyUser": "Verify User",
-        "suspendUser": "Suspend User"
+        "menuAria": "Más acciones",
+        "viewProfile": "Ver perfil",
+        "editUser": "Editar usuario",
+        "changeRole": "Cambiar rol",
+        "verifyUser": "Verificar usuario",
+        "suspendUser": "Suspender usuario"
       }
     }
   }

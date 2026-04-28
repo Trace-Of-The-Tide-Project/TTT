@@ -2,82 +2,82 @@
   "Dashboard": {
     "engagementsPage": {
       "tabs": {
-        "comments": "Comments",
-        "trending": "Trending discussions",
-        "badges": "Badges & Recognition"
+        "comments": "Comentarios",
+        "trending": "Debates en tendencia",
+        "badges": "Insignias y reconocimientos"
       },
       "filter": {
-        "all": "All",
-        "flagged": "Flagged ({count})"
+        "all": "Todos",
+        "flagged": "Marcados ({count})"
       },
       "comments": {
-        "searchPlaceholder": "Search comments…",
-        "emptyFiltered": "No comments match your filters.",
-        "on": "On",
-        "flaggedBadge": "Flagged",
-        "replies": "{count, plural, one {# reply} other {# replies}}",
-        "menuAria": "More actions",
-        "view": "View",
-        "edit": "Edit",
-        "delete": "Delete"
+        "searchPlaceholder": "Buscar comentarios…",
+        "emptyFiltered": "Ningún comentario coincide con tus filtros.",
+        "on": "En",
+        "flaggedBadge": "Marcado",
+        "replies": "{count, plural, one {# respuesta} other {# respuestas}}",
+        "menuAria": "Más acciones",
+        "view": "Ver",
+        "edit": "Editar",
+        "delete": "Eliminar"
       },
       "trending": {
-        "commentsCount": "{count, plural, one {# comment} other {# comments}}",
-        "participantsCount": "{count, plural, one {# participant} other {# participants}}",
-        "view": "View",
-        "unlock": "Unlock",
-        "lock": "Lock",
-        "lockDiscussionAria": "Lock discussion",
-        "unlockDiscussionAria": "Unlock discussion",
-        "empty": "No trending discussions found."
+        "commentsCount": "{count, plural, one {# comentario} other {# comentarios}}",
+        "participantsCount": "{count, plural, one {# participante} other {# participantes}}",
+        "view": "Ver",
+        "unlock": "Desbloquear",
+        "lock": "Bloquear",
+        "lockDiscussionAria": "Bloquear debate",
+        "unlockDiscussionAria": "Desbloquear debate",
+        "empty": "No se encontraron debates en tendencia."
       },
       "badges": {
-        "searchPlaceholder": "Search badges…",
-        "createBadge": "Create Badge",
-        "recipients": "{count, plural, one {# recipient} other {# recipients}}",
-        "awardBadge": "Award Badge",
-        "emptySearch": "No badges match your search."
+        "searchPlaceholder": "Buscar insignias…",
+        "createBadge": "Crear insignia",
+        "recipients": "{count, plural, one {# destinatario} other {# destinatarios}}",
+        "awardBadge": "Otorgar insignia",
+        "emptySearch": "Ninguna insignia coincide con tu búsqueda."
       },
       "createBadgeModal": {
-        "closeModalAria": "Close modal",
-        "closeAria": "Close",
-        "title": "Create New Badge",
-        "icon": "Icon",
+        "closeModalAria": "Cerrar modal",
+        "closeAria": "Cerrar",
+        "title": "Crear nueva insignia",
+        "icon": "Icono",
         "iconAria": {
-          "award": "Award",
-          "star": "Star",
-          "heart": "Heart",
-          "check": "Check",
-          "spark": "Spark"
+          "award": "Premio",
+          "star": "Estrella",
+          "heart": "Corazón",
+          "check": "Verificado",
+          "spark": "Destello"
         },
-        "badgeName": "Badge name",
-        "namePlaceholder": "e.g. Top Contributor",
-        "roleLabel": "Or select a role",
-        "rolePlaceholder": "Award to role…",
+        "badgeName": "Nombre de la insignia",
+        "namePlaceholder": "p. ej., Mejor colaborador",
+        "roleLabel": "O selecciona un rol",
+        "rolePlaceholder": "Otorgar a rol…",
         "roles": {
-          "allUsers": "All Users",
-          "allAuthors": "All Authors",
-          "allEditors": "All Editors",
-          "allContributors": "All Contributors"
+          "allUsers": "Todos los usuarios",
+          "allAuthors": "Todos los autores",
+          "allEditors": "Todos los editores",
+          "allContributors": "Todos los colaboradores"
         },
-        "reasonLabel": "Reason",
-        "optional": "(optional)",
-        "reasonPlaceholder": "Why is this badge being awarded?",
-        "cancel": "Cancel",
-        "submit": "Create Badge"
+        "reasonLabel": "Motivo",
+        "optional": "(opcional)",
+        "reasonPlaceholder": "¿Por qué se otorga esta insignia?",
+        "cancel": "Cancelar",
+        "submit": "Crear insignia"
       },
       "awardBadgeModal": {
-        "closeModalAria": "Close modal",
-        "closeAria": "Close",
-        "title": "Award “{name}”",
-        "searchUser": "Search user",
-        "userPlaceholder": "Type a username or email…",
-        "description": "Description",
-        "descriptionPlaceholder": "What does this badge represent?",
-        "criteria": "Award criteria",
-        "criteriaPlaceholder": "When should this badge be awarded?",
-        "cancel": "Cancel",
-        "submit": "Award Badge"
+        "closeModalAria": "Cerrar modal",
+        "closeAria": "Cerrar",
+        "title": "Otorgar \"{name}\"",
+        "searchUser": "Buscar usuario",
+        "userPlaceholder": "Escribe un nombre de usuario o correo electrónico…",
+        "description": "Descripción",
+        "descriptionPlaceholder": "¿Qué representa esta insignia?",
+        "criteria": "Criterios de concesión",
+        "criteriaPlaceholder": "¿Cuándo debe otorgarse esta insignia?",
+        "cancel": "Cancelar",
+        "submit": "Otorgar insignia"
       }
     }
   }

@@ -1,57 +1,57 @@
 {
   "Dashboard": {
     "usersManagement": {
-      "searchPlaceholder": "Search username, full name, email…",
+      "searchPlaceholder": "Rechercher par nom d'utilisateur, nom complet, e-mail…",
       "status": {
-        "all": "All status",
-        "active": "Active",
-        "pending": "Pending",
-        "suspended": "Suspended",
-        "inactive": "Inactive"
+        "all": "Tous les statuts",
+        "active": "Actif",
+        "pending": "En attente",
+        "suspended": "Suspendu",
+        "inactive": "Inactif"
       },
       "sort": {
-        "username": "Username",
-        "email": "Email",
-        "full_name": "Full name"
+        "username": "Nom d'utilisateur",
+        "email": "E-mail",
+        "full_name": "Nom complet"
       },
       "order": {
-        "ASC": "Ascending",
-        "DESC": "Descending"
+        "ASC": "Croissant",
+        "DESC": "Décroissant"
       },
       "table": {
-        "contributor": "Contributor",
-        "role": "Role",
-        "status": "Status",
-        "joined": "Joined",
-        "lastActive": "Last active",
+        "contributor": "Contributeur",
+        "role": "Rôle",
+        "status": "Statut",
+        "joined": "Inscrit",
+        "lastActive": "Dernière activité",
         "contributions": "Contributions"
       },
       "statusLabels": {
-        "active": "Active",
-        "pending": "Pending",
-        "suspended": "Suspended",
-        "inactive": "Inactive"
+        "active": "Actif",
+        "pending": "En attente",
+        "suspended": "Suspendu",
+        "inactive": "Inactif"
       },
-      "loading": "Loading users…",
-      "empty": "No users match your filters.",
+      "loading": "Chargement des utilisateurs…",
+      "empty": "Aucun utilisateur ne correspond à vos filtres.",
       "pagination": {
-        "showing": "Showing {start} to {end} of {total} users",
-        "previous": "Previous",
-        "next": "Next",
-        "pageOf": "Page {page} of {totalPages}"
+        "showing": "Affichage de {start} à {end} sur {total} utilisateurs",
+        "previous": "Précédent",
+        "next": "Suivant",
+        "pageOf": "Page {page} sur {totalPages}"
       },
-      "tryAgain": "Try again",
-      "tryExportAgain": "Try export again",
+      "tryAgain": "Réessayer",
+      "tryExportAgain": "Réessayer l'export",
       "errors": {
-        "loadFailed": "Failed to load users"
+        "loadFailed": "Échec du chargement des utilisateurs"
       },
       "rowActions": {
-        "menuAria": "More actions",
-        "viewProfile": "View Profile",
-        "editUser": "Edit User",
-        "changeRole": "Change Role",
-        "verifyUser": "Verify User",
-        "suspendUser": "Suspend User"
+        "menuAria": "Plus d'actions",
+        "viewProfile": "Voir le profil",
+        "editUser": "Modifier l'utilisateur",
+        "changeRole": "Changer le rôle",
+        "verifyUser": "Vérifier l'utilisateur",
+        "suspendUser": "Suspendre l'utilisateur"
       }
     }
   }

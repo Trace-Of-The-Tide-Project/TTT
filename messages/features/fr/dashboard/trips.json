@@ -2,141 +2,141 @@
   "Dashboard": {
     "trips": {
       "management": {
-        "tryAgain": "Try again",
-        "searchPlaceholder": "Search archive…",
-        "loading": "Loading trips…",
+        "tryAgain": "Réessayer",
+        "searchPlaceholder": "Rechercher dans les archives…",
+        "loading": "Chargement des voyages…",
         "headers": {
-          "title": "Title",
-          "route": "Route",
-          "startDate": "Start date",
-          "endDate": "End date",
-          "duration": "Duration",
-          "status": "Status"
+          "title": "Titre",
+          "route": "Itinéraire",
+          "startDate": "Date de départ",
+          "endDate": "Date de fin",
+          "duration": "Durée",
+          "status": "Statut"
         },
         "empty": {
-          "noMatch": "No trips match your search.",
-          "none": "No trips yet."
+          "noMatch": "Aucun voyage ne correspond à votre recherche.",
+          "none": "Aucun voyage pour l'instant."
         },
         "pagination": {
-          "showing": "Showing {from} to {to} of {total} trips",
-          "previous": "Previous",
-          "next": "Next"
+          "showing": "Affichage de {from} à {to} sur {total} voyages",
+          "previous": "Précédent",
+          "next": "Suivant"
         },
         "tabs": {
-          "create": "Create trip",
-          "archive": "Archive"
+          "create": "Créer un voyage",
+          "archive": "Archives"
         },
         "duration": {
-          "hours": "{count, plural, one {# hour} other {# hours}}",
-          "days": "{count, plural, one {# day} other {# days}}"
+          "hours": "{count, plural, one {# heure} other {# heures}}",
+          "days": "{count, plural, one {# jour} other {# jours}}"
         },
         "status": {
-          "completed": "Completed",
-          "archived": "Archived",
-          "draft": "Draft",
-          "past": "Past"
+          "completed": "Terminé",
+          "archived": "Archivé",
+          "draft": "Brouillon",
+          "past": "Passé"
         },
-        "previewAria": "Preview {title}",
-        "deleteAria": "Delete {title}"
+        "previewAria": "Aperçu de {title}",
+        "deleteAria": "Supprimer {title}"
       },
       "editor": {
         "validation": {
-          "titleRequired": "Title is required.",
-          "categoryRequired": "Category is required."
+          "titleRequired": "Le titre est requis.",
+          "categoryRequired": "La catégorie est requise."
         },
         "errors": {
-          "requestFailed": "Request failed",
-          "generic": "Something went wrong"
+          "requestFailed": "Échec de la requête",
+          "generic": "Une erreur s'est produite"
         },
         "joinForm": {
-          "title": "Join trip form",
-          "hint": "Travelers see this on the public trip page. Same field types as open-call applications; reset restores the default join-trip template (name, email, optional message)."
+          "title": "Formulaire pour rejoindre le voyage",
+          "hint": "Les voyageurs voient ceci sur la page publique du voyage. Mêmes types de champs que les candidatures aux appels ouverts ; la réinitialisation restaure le modèle par défaut (nom, e-mail, message facultatif)."
         },
         "sidebar": {
-          "previewTrip": "Preview trip",
-          "duplicateTrip": "Duplicate trip",
-          "archive": "Archive"
+          "previewTrip": "Aperçu du voyage",
+          "duplicateTrip": "Dupliquer le voyage",
+          "archive": "Archiver"
         },
         "footer": {
-          "publishNow": "Publish now"
+          "publishNow": "Publier maintenant"
         },
         "summary": {
-          "heading": "Trip summary",
-          "untitled": "Untitled trip",
-          "title": "Title",
-          "route": "Route",
-          "startDate": "Start date",
-          "duration": "Duration",
+          "heading": "Résumé du voyage",
+          "untitled": "Voyage sans titre",
+          "title": "Titre",
+          "route": "Itinéraire",
+          "startDate": "Date de départ",
+          "duration": "Durée",
           "durationHours": "{hours} h",
-          "lastStop": "Last stop",
-          "price": "Price",
+          "lastStop": "Dernier arrêt",
+          "price": "Prix",
           "placeholder": "—"
         },
         "basicInfo": {
-          "heading": "Basic information",
-          "tripTitle": "Trip title",
-          "tripTitlePlaceholder": "e.g., Heritage walk: Old Jerusalem",
-          "moderatorName": "Moderator name",
-          "moderatorPlaceholder": "e.g., John Doe",
+          "heading": "Informations de base",
+          "tripTitle": "Titre du voyage",
+          "tripTitlePlaceholder": "Ex. : Promenade patrimoniale : Vieille Jérusalem",
+          "moderatorName": "Nom du modérateur",
+          "moderatorPlaceholder": "Ex. : Jean Dupont",
           "description": "Description",
-          "descriptionPlaceholder": "Describe the trip experience…",
-          "highlights": "Highlights",
-          "highlightPlaceholder": "Highlight {number}",
-          "removeHighlightAria": "Remove highlight {number}",
-          "addHighlight": "+ Add highlight"
+          "descriptionPlaceholder": "Décrivez l'expérience du voyage…",
+          "highlights": "Points forts",
+          "highlightPlaceholder": "Point fort {number}",
+          "removeHighlightAria": "Supprimer le point fort {number}",
+          "addHighlight": "+ Ajouter un point fort"
         },
         "details": {
-          "heading": "Trip details",
-          "category": "Category",
+          "heading": "Détails du voyage",
+          "category": "Catégorie",
           "categoryRequired": "*",
-          "categoryPlaceholder": "e.g., cultural, adventure",
-          "difficulty": "Difficulty",
-          "startDate": "Start date",
-          "endDate": "End date",
-          "durationHours": "Duration (hours)",
-          "maxParticipants": "Max participants",
-          "minParticipants": "Min participants",
+          "categoryPlaceholder": "Ex. : culturel, aventure",
+          "difficulty": "Difficulté",
+          "startDate": "Date de départ",
+          "endDate": "Date de fin",
+          "durationHours": "Durée (heures)",
+          "maxParticipants": "Nombre max de participants",
+          "minParticipants": "Nombre min de participants",
           "difficulties": {
-            "easy": "Easy",
-            "moderate": "Moderate",
-            "hard": "Hard",
-            "extreme": "Extreme"
+            "easy": "Facile",
+            "moderate": "Modéré",
+            "hard": "Difficile",
+            "extreme": "Extrême"
           }
         },
         "pricing": {
-          "heading": "Pricing",
-          "hint": "Minimum contribution only. On the public trip page, travelers use a scale starting at this amount; they can slide higher (no fixed cap in the editor).",
-          "minimumPrice": "Minimum price",
-          "currency": "Currency"
+          "heading": "Tarification",
+          "hint": "Contribution minimale uniquement. Sur la page publique du voyage, les voyageurs utilisent une échelle démarrant à ce montant ; ils peuvent aller plus haut (pas de plafond fixe dans l'éditeur).",
+          "minimumPrice": "Prix minimum",
+          "currency": "Devise"
         },
         "languages": {
-          "heading": "Languages",
-          "selectLabel": "Select language",
-          "selectPlaceholder": "Select…",
-          "removeAria": "Remove {label}",
+          "heading": "Langues",
+          "selectLabel": "Sélectionner une langue",
+          "selectPlaceholder": "Sélectionner…",
+          "removeAria": "Supprimer {label}",
           "labels": {
-            "AR": "Arabic",
-            "EN": "English",
-            "HE": "Hebrew",
-            "FR": "French",
-            "ES": "Spanish",
-            "DE": "German",
-            "TR": "Turkish"
+            "AR": "Arabe",
+            "EN": "Anglais",
+            "HE": "Hébreu",
+            "FR": "Français",
+            "ES": "Espagnol",
+            "DE": "Allemand",
+            "TR": "Turc"
           }
         },
         "itinerary": {
-          "heading": "Stops",
-          "addStop": "+ Add stop",
-          "stopNumber": "Stop {number}",
-          "stopTitle": "Stop title",
-          "stopTitlePlaceholder": "e.g., Jaffa Gate gathering point",
+          "heading": "Arrêts",
+          "addStop": "+ Ajouter un arrêt",
+          "stopNumber": "Arrêt {number}",
+          "stopTitle": "Titre de l'arrêt",
+          "stopTitlePlaceholder": "Ex. : Point de rassemblement à la Porte de Jaffa",
           "description": "Description",
-          "descriptionPlaceholder": "What happens at this stop…",
-          "arrivalTime": "Arrival time",
-          "durationMinutes": "Duration (min)",
-          "removeStopAria": "Remove stop {number}",
-          "searchPlaceholder": "Search for a place…",
-          "searching": "Searching…"
+          "descriptionPlaceholder": "Ce qui se passe à cet arrêt…",
+          "arrivalTime": "Heure d'arrivée",
+          "durationMinutes": "Durée (min)",
+          "removeStopAria": "Supprimer l'arrêt {number}",
+          "searchPlaceholder": "Rechercher un lieu…",
+          "searching": "Recherche en cours…"
         }
       }
     }

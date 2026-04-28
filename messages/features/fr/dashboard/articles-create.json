@@ -2,48 +2,48 @@
   "Dashboard": {
     "articles": {
       "create": {
-        "pageTitle": "Create New",
-        "pageSubtitle": "Choose a template to start building your content. Each template is optimized for specific storytelling formats.",
+        "pageTitle": "Créer",
+        "pageSubtitle": "Choisissez un modèle pour commencer à créer votre contenu. Chaque modèle est optimisé pour des formats narratifs spécifiques.",
         "filters": {
-          "all": "Show all",
+          "all": "Tout afficher",
           "articles": "Articles",
           "films": "Films",
           "audio": "Audio",
-          "thread": "Thread",
-          "artwork": "Art work"
+          "thread": "Fil",
+          "artwork": "Œuvre d'art"
         },
         "templates": {
           "article": {
             "title": "Article",
-            "description": "Long-form written content with rich formatting"
+            "description": "Contenu écrit long format avec mise en forme enrichie"
           },
           "video": {
-            "title": "Video",
-            "description": "Video content with description & context"
+            "title": "Vidéo",
+            "description": "Contenu vidéo avec description et contexte"
           },
           "audio": {
             "title": "Audio",
-            "description": "Podcast, music, or audio storytelling"
+            "description": "Podcast, musique ou narration audio"
           },
           "thread": {
-            "title": "Thread",
-            "description": "Sequential story or text series"
+            "title": "Fil",
+            "description": "Histoire séquentielle ou série de textes"
           },
           "artwork": {
-            "title": "Artwork",
-            "description": "Showcase photography, illustration, or design"
+            "title": "Œuvre d'art",
+            "description": "Mettre en valeur la photographie, l'illustration ou le design"
           },
           "figma": {
             "title": "Figma",
-            "description": "Embed or link Figma frames for design collaboration and handoff."
+            "description": "Intégrez ou liez des maquettes Figma pour la collaboration de design et la transmission."
           },
           "trip": {
-            "title": "Trip",
-            "description": "Plan and publish guided travel experiences"
+            "title": "Voyage",
+            "description": "Planifiez et publiez des expériences de voyage guidées"
           },
           "openCall": {
-            "title": "Open Call",
-            "description": "Invite collaborators to apply and contribute to your content through a public brief and form."
+            "title": "Appel ouvert",
+            "description": "Invitez des collaborateurs à postuler et à contribuer à votre contenu via un brief public et un formulaire."
           }
         }
       }

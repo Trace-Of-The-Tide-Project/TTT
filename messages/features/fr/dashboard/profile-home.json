@@ -1,72 +1,72 @@
 {
   "Dashboard": {
     "profileHome": {
-      "title": "My Dashboard",
-      "editProfile": "Edit profile",
-      "createArticle": "Create article",
-      "recentArticles": "Recent articles",
-      "recentContributors": "Recent contributors"
+      "title": "Mon tableau de bord",
+      "editProfile": "Modifier le profil",
+      "createArticle": "Créer un article",
+      "recentArticles": "Articles récents",
+      "recentContributors": "Contributeurs récents"
     },
     "adminProfile": {
-      "pageTitle": "Profile Information",
-      "changePhoto": "Change photo",
-      "photoHint": "JPG, PNG or GIF. Max size 2MB.",
+      "pageTitle": "Informations du profil",
+      "changePhoto": "Changer la photo",
+      "photoHint": "JPG, PNG ou GIF. Taille max 2 Mo.",
       "errors": {
-        "fileType": "Use JPG, PNG, or GIF.",
-        "maxSize": "Max size 2MB."
+        "fileType": "Utilisez JPG, PNG ou GIF.",
+        "maxSize": "Taille max 2 Mo."
       },
-      "fullName": "Full Name",
-      "email": "Email address",
-      "role": "Role",
-      "company": "Company",
-      "location": "Location",
-      "externalLink": "External Link",
+      "fullName": "Nom complet",
+      "email": "Adresse e-mail",
+      "role": "Rôle",
+      "company": "Entreprise",
+      "location": "Lieu",
+      "externalLink": "Lien externe",
       "externalLinkPlaceholder": "https://…",
-      "biography": "Biography",
-      "socialLinks": "Social Links",
+      "biography": "Biographie",
+      "socialLinks": "Liens sociaux",
       "presets": {
         "facebook": "Facebook",
         "twitter": "X / Twitter",
         "instagram": "Instagram",
         "linkedin": "LinkedIn"
       },
-      "removePresetAria": "Remove {label}",
-      "otherLinkPlaceholder": "Add any other links",
+      "removePresetAria": "Supprimer {label}",
+      "otherLinkPlaceholder": "Ajoutez d'autres liens",
       "additionalLinkPlaceholder": "https://…",
-      "additionalLinkAria": "Additional link",
-      "removeLinkAria": "Remove link",
-      "addNewLink": "Add new link",
-      "saved": "Saved",
-      "saveChanges": "Save Changes"
+      "additionalLinkAria": "Lien supplémentaire",
+      "removeLinkAria": "Supprimer le lien",
+      "addNewLink": "Ajouter un nouveau lien",
+      "saved": "Enregistré",
+      "saveChanges": "Enregistrer les modifications"
     },
     "adminPrivacy": {
-      "pageTitle": "Privacy Settings",
-      "profileVisibility": "Profile Visibility",
-      "profileVisibilityDescription": "Control who can see your profile",
-      "profileVisibilityAria": "Profile visibility",
+      "pageTitle": "Paramètres de confidentialité",
+      "profileVisibility": "Visibilité du profil",
+      "profileVisibilityDescription": "Contrôlez qui peut voir votre profil",
+      "profileVisibilityAria": "Visibilité du profil",
       "visibility": {
         "public": "Public",
-        "followers": "Followers only",
-        "private": "Private"
+        "followers": "Abonnés uniquement",
+        "private": "Privé"
       },
-      "showEmail": "Show Email",
-      "showEmailDescription": "Display your email on your profile",
-      "showEmailAria": "Show email on profile",
-      "showActivity": "Show Activity",
-      "showActivityDescription": "Show your recent activity on your profile",
-      "showActivityAria": "Show activity",
-      "allowFollows": "Allow Follows",
-      "allowFollowsDescription": "Allow other users to follow you",
-      "allowFollowsAria": "Allow follows",
-      "saved": "Saved",
-      "saveChanges": "Save changes"
+      "showEmail": "Afficher l'e-mail",
+      "showEmailDescription": "Afficher votre e-mail sur votre profil",
+      "showEmailAria": "Afficher l'e-mail sur le profil",
+      "showActivity": "Afficher l'activité",
+      "showActivityDescription": "Afficher votre activité récente sur votre profil",
+      "showActivityAria": "Afficher l'activité",
+      "allowFollows": "Autoriser les abonnements",
+      "allowFollowsDescription": "Autoriser d'autres utilisateurs à vous suivre",
+      "allowFollowsAria": "Autoriser les abonnements",
+      "saved": "Enregistré",
+      "saveChanges": "Enregistrer les modifications"
     },
     "adminAccount": {
-      "pageTitle": "Account Security",
-      "deactivateTitle": "Deactivate Account",
-      "deactivateDescription": "Once you deactivate your account, your profile and articles will be hidden. You can reactivate your account at any time by signing in.",
-      "deactivateButton": "Deactivate account",
-      "deactivateConfirm": "Deactivate your account? Your profile and articles will be hidden until you sign in again."
+      "pageTitle": "Sécurité du compte",
+      "deactivateTitle": "Désactiver le compte",
+      "deactivateDescription": "Une fois votre compte désactivé, votre profil et vos articles seront masqués. Vous pouvez réactiver votre compte à tout moment en vous reconnectant.",
+      "deactivateButton": "Désactiver le compte",
+      "deactivateConfirm": "Désactiver votre compte ? Votre profil et vos articles seront masqués jusqu'à votre prochaine connexion."
     }
   }
 }

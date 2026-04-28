@@ -2,137 +2,137 @@
   "Dashboard": {
     "messagingPage": {
       "tabs": {
-        "inbox": "Inbox ({count})",
-        "broadcast": "Broadcast",
-        "templates": "Templates",
-        "archived": "Archived"
+        "inbox": "Bandeja de entrada ({count})",
+        "broadcast": "Comunicado",
+        "templates": "Plantillas",
+        "archived": "Archivados"
       },
       "categories": {
-        "all": "All categories",
-        "support": "Support",
-        "payment": "Payment",
-        "moderation": "Moderation",
-        "feedback": "Feedback"
+        "all": "Todas las categorías",
+        "support": "Soporte",
+        "payment": "Pago",
+        "moderation": "Moderación",
+        "feedback": "Comentarios"
       },
       "priorities": {
-        "all": "All priority",
-        "high": "High",
-        "med": "Medium",
-        "low": "Low"
+        "all": "Todas las prioridades",
+        "high": "Alta",
+        "med": "Media",
+        "low": "Baja"
       },
       "prioritiesShort": {
-        "high": "HIGH",
+        "high": "ALTA",
         "med": "MED",
-        "low": "LOW"
+        "low": "BAJA"
       },
       "templatePicker": {
-        "none": "No template"
+        "none": "Sin plantilla"
       },
       "templateNames": {
-        "tpl1": "Welcome Message",
-        "tpl2": "Payment Confirmation",
-        "tpl3": "Content Approved",
-        "tpl4": "Account Warning",
-        "tpl5": "Feature Announcement"
+        "tpl1": "Mensaje de bienvenida",
+        "tpl2": "Confirmación de pago",
+        "tpl3": "Contenido aprobado",
+        "tpl4": "Advertencia de cuenta",
+        "tpl5": "Anuncio de funcionalidad"
       },
       "broadcast": {
-        "title": "New broadcast message",
-        "subtitle": "Send a message to all users or specific groups",
-        "targetAudience": "Target audience",
-        "priority": "Priority",
-        "useTemplate": "Use template",
-        "subject": "Subject",
-        "subjectPlaceholder": "Enter message subject…",
-        "message": "Message",
-        "messagePlaceholder": "Write your broadcast message…",
-        "cancel": "Cancel",
-        "saveDraft": "Save as draft",
-        "send": "Send broadcast",
+        "title": "Nuevo mensaje de comunicado",
+        "subtitle": "Envía un mensaje a todos los usuarios o grupos específicos",
+        "targetAudience": "Audiencia objetivo",
+        "priority": "Prioridad",
+        "useTemplate": "Usar plantilla",
+        "subject": "Asunto",
+        "subjectPlaceholder": "Introduce el asunto del mensaje…",
+        "message": "Mensaje",
+        "messagePlaceholder": "Escribe tu mensaje de comunicado…",
+        "cancel": "Cancelar",
+        "saveDraft": "Guardar como borrador",
+        "send": "Enviar comunicado",
         "audiences": {
-          "allUsers": "All users",
-          "authors": "Authors only",
-          "editors": "Editors only",
-          "contributors": "Contributors only"
+          "allUsers": "Todos los usuarios",
+          "authors": "Solo autores",
+          "editors": "Solo editores",
+          "contributors": "Solo colaboradores"
         },
         "broadcastPriority": {
-          "low": "Low",
+          "low": "Baja",
           "normal": "Normal",
-          "high": "High"
+          "high": "Alta"
         }
       },
       "templates": {
-        "title": "Message templates",
-        "subtitle": "Create, edit, and reuse saved message templates.",
-        "createButton": "Create template",
+        "title": "Plantillas de mensajes",
+        "subtitle": "Crea, edita y reutiliza plantillas de mensajes guardadas.",
+        "createButton": "Crear plantilla",
         "categoryLabels": {
-          "onboarding": "Onboarding",
-          "payment": "Payment",
-          "moderation": "Moderation",
-          "broadcast": "Broadcast",
-          "support": "Support"
+          "onboarding": "Incorporación",
+          "payment": "Pago",
+          "moderation": "Moderación",
+          "broadcast": "Comunicado",
+          "support": "Soporte"
         }
       },
       "inbox": {
-        "searchPlaceholder": "Search messages…",
-        "emptyFiltered": "No messages match your filters.",
-        "selectConversation": "Select a conversation to view messages.",
-        "threadMenuAria": "More actions",
-        "viewProfile": "View profile",
-        "archive": "Archive",
-        "delete": "Delete",
-        "attachAria": "Attach",
-        "sendAria": "Send",
-        "composerPlaceholder": "Type your message",
-        "useTemplate": "Use template"
+        "searchPlaceholder": "Buscar mensajes…",
+        "emptyFiltered": "Ningún mensaje coincide con tus filtros.",
+        "selectConversation": "Selecciona una conversación para ver los mensajes.",
+        "threadMenuAria": "Más acciones",
+        "viewProfile": "Ver perfil",
+        "archive": "Archivar",
+        "delete": "Eliminar",
+        "attachAria": "Adjuntar",
+        "sendAria": "Enviar",
+        "composerPlaceholder": "Escribe tu mensaje",
+        "useTemplate": "Usar plantilla"
       }
     },
     "messagingCreateTemplateModal": {
-      "closeModalAria": "Close modal",
-      "closeAria": "Close",
-      "title": "Create message template",
-      "subtitle": "Build a reusable template for common messages",
-      "nameLabel": "Template name",
-      "namePlaceholder": "e.g. Welcome message",
-      "categoryLabel": "Category",
-      "subjectLabel": "Subject line",
-      "subjectPlaceholder": "Enter email subject…",
-      "bodyLabel": "Message body",
-      "bodyPlaceholder": "Write your template message… Use {{name}} for dynamic fields.",
-      "variablesHint": "Available variables:",
+      "closeModalAria": "Cerrar modal",
+      "closeAria": "Cerrar",
+      "title": "Crear plantilla de mensaje",
+      "subtitle": "Crea una plantilla reutilizable para mensajes habituales",
+      "nameLabel": "Nombre de la plantilla",
+      "namePlaceholder": "p. ej., Mensaje de bienvenida",
+      "categoryLabel": "Categoría",
+      "subjectLabel": "Línea de asunto",
+      "subjectPlaceholder": "Introduce el asunto del correo electrónico…",
+      "bodyLabel": "Cuerpo del mensaje",
+      "bodyPlaceholder": "Escribe el mensaje de tu plantilla… Usa {{name}} para campos dinámicos.",
+      "variablesHint": "Variables disponibles:",
       "variablesList": "{{name}}, {{email}}, {{role}}, {{date}}",
       "categories": {
-        "onboarding": "Onboarding",
-        "payment": "Payment",
-        "moderation": "Moderation",
-        "broadcast": "Broadcast",
-        "support": "Support"
+        "onboarding": "Incorporación",
+        "payment": "Pago",
+        "moderation": "Moderación",
+        "broadcast": "Comunicado",
+        "support": "Soporte"
       },
-      "cancel": "Cancel",
-      "submit": "Create template"
+      "cancel": "Cancelar",
+      "submit": "Crear plantilla"
     },
     "messagingEditTemplateModal": {
-      "closeModalAria": "Close modal",
-      "closeAria": "Close",
-      "title": "Edit message template",
-      "subtitle": "Update this reusable template",
-      "nameLabel": "Template name",
-      "namePlaceholder": "e.g. Welcome message",
-      "categoryLabel": "Category",
-      "subjectLabel": "Subject line",
-      "subjectPlaceholder": "Enter email subject…",
-      "bodyLabel": "Message body",
-      "bodyPlaceholder": "Write your template message… Use {{name}} for dynamic fields.",
-      "variablesHint": "Available variables:",
+      "closeModalAria": "Cerrar modal",
+      "closeAria": "Cerrar",
+      "title": "Editar plantilla de mensaje",
+      "subtitle": "Actualiza esta plantilla reutilizable",
+      "nameLabel": "Nombre de la plantilla",
+      "namePlaceholder": "p. ej., Mensaje de bienvenida",
+      "categoryLabel": "Categoría",
+      "subjectLabel": "Línea de asunto",
+      "subjectPlaceholder": "Introduce el asunto del correo electrónico…",
+      "bodyLabel": "Cuerpo del mensaje",
+      "bodyPlaceholder": "Escribe el mensaje de tu plantilla… Usa {{name}} para campos dinámicos.",
+      "variablesHint": "Variables disponibles:",
       "variablesList": "{{name}}, {{email}}, {{role}}, {{date}}",
       "categories": {
-        "onboarding": "Onboarding",
-        "payment": "Payment",
-        "moderation": "Moderation",
-        "broadcast": "Broadcast",
-        "support": "Support"
+        "onboarding": "Incorporación",
+        "payment": "Pago",
+        "moderation": "Moderación",
+        "broadcast": "Comunicado",
+        "support": "Soporte"
       },
-      "cancel": "Cancel",
-      "submit": "Save changes"
+      "cancel": "Cancelar",
+      "submit": "Guardar cambios"
     }
   }
 }

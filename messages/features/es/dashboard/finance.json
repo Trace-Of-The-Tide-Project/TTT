@@ -2,52 +2,52 @@
   "Dashboard": {
     "financePage": {
       "tabs": {
-        "donations": "Donations",
-        "payouts": "Payouts ({count})",
-        "suspicious": "Suspicious Activity ({count})",
-        "invoices": "Invoices"
+        "donations": "Donaciones",
+        "payouts": "Pagos ({count})",
+        "suspicious": "Actividad sospechosa ({count})",
+        "invoices": "Facturas"
       },
       "donations": {
-        "title": "Recent Donations",
-        "subtitle": "Latest donation transactions on the platform",
-        "colDonor": "Donor",
-        "colRecipient": "Recipient",
-        "colAmount": "Amount",
-        "colDate": "Date",
-        "colStatus": "Status",
+        "title": "Donaciones recientes",
+        "subtitle": "Últimas transacciones de donaciones en la plataforma",
+        "colDonor": "Donante",
+        "colRecipient": "Destinatario",
+        "colAmount": "Importe",
+        "colDate": "Fecha",
+        "colStatus": "Estado",
         "status": {
-          "completed": "Completed",
-          "pending": "Pending"
+          "completed": "Completada",
+          "pending": "Pendiente"
         }
       },
       "payouts": {
-        "title": "Pending Payouts",
-        "subtitle": "Creator payout requests awaiting approval",
-        "colCreator": "Creator",
-        "colAmount": "Amount",
-        "colRequested": "Requested",
-        "colStatus": "Status",
-        "colActions": "Actions",
-        "approve": "Approve",
-        "reject": "Reject",
+        "title": "Pagos pendientes",
+        "subtitle": "Solicitudes de pago de creadores pendientes de aprobación",
+        "colCreator": "Creador",
+        "colAmount": "Importe",
+        "colRequested": "Solicitado",
+        "colStatus": "Estado",
+        "colActions": "Acciones",
+        "approve": "Aprobar",
+        "reject": "Rechazar",
         "status": {
-          "pending": "Pending",
-          "underReview": "Under Review"
+          "pending": "Pendiente",
+          "underReview": "En revisión"
         }
       },
       "suspicious": {
-        "title": "Suspicious Activity",
-        "subtitle": "Flagged transactions requiring review",
-        "investigate": "Investigate",
-        "block": "Block"
+        "title": "Actividad sospechosa",
+        "subtitle": "Transacciones marcadas que requieren revisión",
+        "investigate": "Investigar",
+        "block": "Bloquear"
       },
       "invoices": {
-        "comingSoon": "Invoices are coming soon."
+        "comingSoon": "Las facturas estarán disponibles próximamente."
       },
       "actions": {
-        "rowAria": "Row actions",
-        "viewDetails": "View details",
-        "refund": "Refund"
+        "rowAria": "Acciones de la fila",
+        "viewDetails": "Ver detalles",
+        "refund": "Reembolsar"
       }
     }
   }

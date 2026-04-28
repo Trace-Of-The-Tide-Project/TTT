@@ -2,36 +2,36 @@
   "Dashboard": {
     "reportsPage": {
       "tabs": {
-        "content": "Reported Content ({count})",
-        "users": "Reported Users ({count})",
-        "audit": "Audit Log"
+        "content": "Contenu signalé ({count})",
+        "users": "Utilisateurs signalés ({count})",
+        "audit": "Journal d'audit"
       },
       "filters": {
-        "all": "All",
-        "pending": "Pending",
-        "underReview": "Under review"
+        "all": "Tous",
+        "pending": "En attente",
+        "underReview": "En cours d'examen"
       },
-      "searchPlaceholder": "Search reports…",
-      "emptyFiltered": "No reports match your filters.",
-      "selectPrompt": "Select a report to review",
-      "reportedBy": "Reported by:",
+      "searchPlaceholder": "Rechercher des rapports…",
+      "emptyFiltered": "Aucun rapport ne correspond à vos filtres.",
+      "selectPrompt": "Sélectionnez un rapport à examiner",
+      "reportedBy": "Signalé par :",
       "statusLabels": {
-        "pending": "Pending",
-        "underReview": "Under review"
+        "pending": "En attente",
+        "underReview": "En cours d'examen"
       },
       "typeLabels": {
-        "comment": "Comment",
-        "content": "Content"
+        "comment": "Commentaire",
+        "content": "Contenu"
       },
       "users": {
-        "reportsCount": "{count, plural, one {# report} other {# reports}}",
-        "viewProfile": "View profile",
-        "warn": "Warn",
-        "suspend": "Suspend"
+        "reportsCount": "{count, plural, one {# signalement} other {# signalements}}",
+        "viewProfile": "Voir le profil",
+        "warn": "Avertir",
+        "suspend": "Suspendre"
       },
       "audit": {
-        "title": "Audit Log",
-        "subtitle": "Track all moderation actions"
+        "title": "Journal d'audit",
+        "subtitle": "Suivre toutes les actions de modération"
       }
     }
   }

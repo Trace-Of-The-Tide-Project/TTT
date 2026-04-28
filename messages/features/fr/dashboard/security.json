@@ -2,107 +2,107 @@
   "Dashboard": {
     "securityPage": {
       "toolbar": {
-        "exportLogs": "Export Logs"
+        "exportLogs": "Exporter les journaux"
       },
       "tabs": {
-        "roles": "Roles & Permissions",
-        "sessions": "Active Sessions",
-        "settings": "Security Settings",
-        "logs": "Security Logs"
+        "roles": "Rôles et permissions",
+        "sessions": "Sessions actives",
+        "settings": "Paramètres de sécurité",
+        "logs": "Journaux de sécurité"
       },
       "stats": {
-        "status": "System Status",
-        "admins": "Admin Users",
-        "sessions": "Active Sessions",
-        "alerts": "Security Alerts"
+        "status": "État du système",
+        "admins": "Utilisateurs administrateurs",
+        "sessions": "Sessions actives",
+        "alerts": "Alertes de sécurité"
       },
       "statValues": {
-        "status": "Secure",
+        "status": "Sécurisé",
         "admins": "14",
         "sessions": "4",
         "alerts": "1"
       },
       "roles": {
-        "intro": "Manage access levels for different admin roles.",
-        "configure": "Configure",
+        "intro": "Gérez les niveaux d'accès pour les différents rôles administrateurs.",
+        "configure": "Configurer",
         "super": {
           "title": "Super Admin",
-          "description": "Full access.",
-          "userBadge": "2 users"
+          "description": "Accès complet.",
+          "userBadge": "2 utilisateurs"
         },
         "finance": {
-          "title": "Finance Admin",
-          "description": "Financial operations.",
-          "userBadge": "2 users"
+          "title": "Admin finance",
+          "description": "Opérations financières.",
+          "userBadge": "2 utilisateurs"
         },
         "content": {
-          "title": "Content Admin",
-          "description": "Content management.",
-          "userBadge": "2 users"
+          "title": "Admin contenu",
+          "description": "Gestion du contenu.",
+          "userBadge": "2 utilisateurs"
         },
         "support": {
-          "title": "Support Admin",
-          "description": "User support & moderation.",
-          "userBadge": "2 users"
+          "title": "Admin assistance",
+          "description": "Assistance aux utilisateurs et modération.",
+          "userBadge": "2 utilisateurs"
         }
       },
       "sessions": {
-        "intro": "Monitor and manage active admin sessions.",
+        "intro": "Surveillez et gérez les sessions administrateurs actives.",
         "columns": {
-          "user": "User",
-          "ip": "IP Address",
-          "location": "Location",
-          "device": "Device",
-          "lastActive": "Last Active",
-          "status": "Status"
+          "user": "Utilisateur",
+          "ip": "Adresse IP",
+          "location": "Lieu",
+          "device": "Appareil",
+          "lastActive": "Dernière activité",
+          "status": "Statut"
         },
         "status": {
-          "current": "Current",
+          "current": "Actuelle",
           "active": "Active",
-          "idle": "Idle"
+          "idle": "Inactive"
         },
-        "end": "End",
-        "endAllOther": "End all other sessions",
+        "end": "Terminer",
+        "endAllOther": "Terminer toutes les autres sessions",
         "sampleRows": {
           "t1": {
             "user": "Super Admin",
             "location": "Gaza, PS",
             "device": "Chrome / Windows",
-            "lastActive": "Just now"
+            "lastActive": "À l'instant"
           },
           "t2": {
-            "user": "Content Admin",
+            "user": "Admin contenu",
             "location": "Amman, JO",
             "device": "Safari / macOS",
-            "lastActive": "8 min ago"
+            "lastActive": "Il y a 8 min"
           },
           "t3": {
-            "user": "Finance Admin",
-            "location": "London, UK",
+            "user": "Admin finance",
+            "location": "Londres, UK",
             "device": "Edge / Windows",
-            "lastActive": "42 min ago"
+            "lastActive": "Il y a 42 min"
           },
           "t4": {
-            "user": "Support Admin",
+            "user": "Admin assistance",
             "location": "Berlin, DE",
             "device": "Firefox / Linux",
-            "lastActive": "2 hours ago"
+            "lastActive": "Il y a 2 heures"
           }
         }
       },
       "settings": {
-        "intro": "Configure global security policies and enforcement.",
+        "intro": "Configurez les politiques de sécurité globales et leur application.",
         "twoFactor": {
-          "title": "Two-Factor Authentication (2FA)",
-          "description": "Require 2FA for all admin accounts."
+          "title": "Authentification à deux facteurs (2FA)",
+          "description": "Exiger la 2FA pour tous les comptes administrateurs."
         },
         "ipAllowlist": {
-          "title": "IP Allowlist",
-          "description": "Restrict admin access to known IP ranges."
+          "title": "Liste blanche d'adresses IP",
+          "description": "Restreindre l'accès administrateur aux plages d'IP connues."
         },
         "sessionTimeout": {
-          "title": "Session Timeout",
-          "description": "Automatically sign out inactive admins."
+          "title": "Délai d'expiration de session",
+          "description": "Déconnecter automatiquement les administrateurs inactifs."
         },
         "timeoutOptions": {
           "m15": "15 minutes",
@@ -110,57 +110,57 @@
           "m60": "60 minutes"
         },
         "auditLogs": {
-          "title": "Audit Logs",
-          "description": "Retain detailed security audit trails."
+          "title": "Journaux d'audit",
+          "description": "Conserver des pistes d'audit de sécurité détaillées."
         },
-        "backup": "Backup & Export Data"
+        "backup": "Sauvegarder et exporter les données"
       },
       "logs": {
-        "intro": "Recent security-related events across the platform.",
+        "intro": "Événements récents liés à la sécurité sur la plateforme.",
         "entries": {
           "l1": {
-            "title": "Login successful",
+            "title": "Connexion réussie",
             "meta": "Super Admin • 192.168.1.1",
-            "timeAgo": "2 min ago"
+            "timeAgo": "Il y a 2 min"
           },
           "l2": {
-            "title": "Password changed",
-            "meta": "Content Admin • 192.168.1.45",
-            "timeAgo": "1 hour ago"
+            "title": "Mot de passe modifié",
+            "meta": "Admin contenu • 192.168.1.45",
+            "timeAgo": "Il y a 1 heure"
           },
           "l3": {
-            "title": "Failed login attempt",
-            "meta": "Unknown • 203.0.113.88",
-            "timeAgo": "3 hours ago"
+            "title": "Tentative de connexion échouée",
+            "meta": "Inconnu • 203.0.113.88",
+            "timeAgo": "Il y a 3 heures"
           },
           "l4": {
-            "title": "API key rotated",
+            "title": "Clé API renouvelée",
             "meta": "Super Admin • 192.168.1.1",
-            "timeAgo": "Yesterday"
+            "timeAgo": "Hier"
           },
           "l5": {
-            "title": "Role updated",
-            "meta": "Super Admin • Sarah Adam → Editor",
-            "timeAgo": "2 days ago"
+            "title": "Rôle mis à jour",
+            "meta": "Super Admin • Sarah Adam → Éditeur",
+            "timeAgo": "Il y a 2 jours"
           }
         }
       },
       "controlPanel": {
-        "settingsTabSubtitle": "Authentication and platform-wide security controls.",
-        "authenticationCardTitle": "Authentication",
-        "authenticationCardSubtitle": "Configure login and access settings",
-        "require2faTitle": "Require 2FA for Admins",
-        "require2faDescription": "All admin accounts must use two-factor authentication",
-        "sessionTimeoutShortLabel": "Session Timeout",
-        "sessionTimeoutShortDescription": "Auto-logout after inactivity",
-        "lockoutTitle": "Failed Login Lockout",
-        "lockoutDescription": "Lock account after failed attempts",
-        "systemControlsTitle": "System Controls",
-        "systemControlsSubtitle": "Platform-wide security controls",
-        "maintenanceTitle": "Maintenance Mode",
-        "maintenanceDescription": "Restrict access to admins only",
-        "ipWhitelistTitle": "IP Whitelist",
-        "ipWhitelistDescription": "Restrict admin access by IP"
+        "settingsTabSubtitle": "Authentification et contrôles de sécurité à l'échelle de la plateforme.",
+        "authenticationCardTitle": "Authentification",
+        "authenticationCardSubtitle": "Configurer les paramètres de connexion et d'accès",
+        "require2faTitle": "Exiger la 2FA pour les administrateurs",
+        "require2faDescription": "Tous les comptes administrateurs doivent utiliser l'authentification à deux facteurs",
+        "sessionTimeoutShortLabel": "Délai d'expiration de session",
+        "sessionTimeoutShortDescription": "Déconnexion automatique après inactivité",
+        "lockoutTitle": "Verrouillage après échecs de connexion",
+        "lockoutDescription": "Verrouiller le compte après des tentatives échouées",
+        "systemControlsTitle": "Contrôles système",
+        "systemControlsSubtitle": "Contrôles de sécurité à l'échelle de la plateforme",
+        "maintenanceTitle": "Mode maintenance",
+        "maintenanceDescription": "Restreindre l'accès aux administrateurs uniquement",
+        "ipWhitelistTitle": "Liste blanche d'adresses IP",
+        "ipWhitelistDescription": "Restreindre l'accès administrateur par IP"
       }
     }
   }

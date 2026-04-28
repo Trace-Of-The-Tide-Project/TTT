@@ -1,172 +1,172 @@
 {
   "Dashboard": {
     "profileSupporters": {
-      "title": "Supporters",
-      "subtitle": "View your supporters and their contributions.",
-      "filterAll": "All",
-      "filterOneTime": "One-Time",
-      "filterRecurring": "Recurring",
-      "typeOneTime": "One-time",
-      "typeRecurring": "Recurring",
-      "thankContributor": "Thank the contributor"
+      "title": "Soutiens",
+      "subtitle": "Consultez vos soutiens et leurs contributions.",
+      "filterAll": "Tous",
+      "filterOneTime": "Ponctuel",
+      "filterRecurring": "Récurrent",
+      "typeOneTime": "Ponctuel",
+      "typeRecurring": "Récurrent",
+      "thankContributor": "Remercier le contributeur"
     },
     "analyticsPage": {
       "tabs": {
-        "overview": "Overview",
-        "contentPerformance": "Content Performance",
-        "topCreators": "Top Creators",
-        "conversionFunnel": "Conversion Funnel"
+        "overview": "Vue d'ensemble",
+        "contentPerformance": "Performance du contenu",
+        "topCreators": "Meilleurs créateurs",
+        "conversionFunnel": "Entonnoir de conversion"
       },
       "overview": {
-        "platformGrowth": "Platform Growth",
-        "platformGrowthHint": "User registrations over time",
-        "engagementTrends": "Engagement Trends",
-        "engagementTrendsHint": "Daily active users and interactions",
-        "chartPlaceholder": "Chart"
+        "platformGrowth": "Croissance de la plateforme",
+        "platformGrowthHint": "Inscriptions d'utilisateurs dans le temps",
+        "engagementTrends": "Tendances d'engagement",
+        "engagementTrendsHint": "Utilisateurs actifs quotidiens et interactions",
+        "chartPlaceholder": "Graphique"
       },
       "contentPerformance": {
-        "title": "Top Categories",
-        "subtitle": "Most viewed content categories",
-        "views": "views"
+        "title": "Meilleures catégories",
+        "subtitle": "Catégories de contenu les plus consultées",
+        "views": "vues"
       },
       "topCategories": {
-        "c1": "Documentary",
-        "c2": "Music",
-        "c3": "Photography",
-        "c4": "Essay",
-        "c5": "Experimental"
+        "c1": "Documentaire",
+        "c2": "Musique",
+        "c3": "Photographie",
+        "c4": "Essai",
+        "c5": "Expérimental"
       },
       "topCreators": {
-        "title": "Top Creators",
-        "subtitle": "Highest performing creators on the platform",
-        "colCreator": "Creator",
-        "colFollowers": "Followers",
-        "colContent": "Content",
-        "colEarnings": "Earnings"
+        "title": "Meilleurs créateurs",
+        "subtitle": "Créateurs les plus performants sur la plateforme",
+        "colCreator": "Créateur",
+        "colFollowers": "Abonnés",
+        "colContent": "Contenu",
+        "colEarnings": "Revenus"
       },
       "funnel": {
-        "title": "Conversion Funnel",
-        "subtitle": "User journey from visitor to editor",
-        "conversion": "{pct}% conversion",
-        "visitors": "Visitors",
-        "registeredUsers": "Registered Users",
-        "contributors": "Contributors",
-        "authors": "Authors",
-        "editors": "Editors"
+        "title": "Entonnoir de conversion",
+        "subtitle": "Parcours de l'utilisateur du visiteur à l'éditeur",
+        "conversion": "{pct}% de conversion",
+        "visitors": "Visiteurs",
+        "registeredUsers": "Utilisateurs inscrits",
+        "contributors": "Contributeurs",
+        "authors": "Auteurs",
+        "editors": "Éditeurs"
       }
     },
     "rolesPermissions": {
       "tabs": {
-        "overview": "Overview",
-        "permissions": "Permissions Matrix",
-        "editor-apps": "Editor Applications"
+        "overview": "Vue d'ensemble",
+        "permissions": "Matrice des permissions",
+        "editor-apps": "Candidatures d'éditeurs"
       },
       "matrix": {
-        "title": "Permission Matrix",
-        "subtitle": "Configure granular permissions for each role",
+        "title": "Matrice des permissions",
+        "subtitle": "Configurer les permissions granulaires pour chaque rôle",
         "colPermission": "Permission",
         "permissionNames": {
-          "view_content": "View Content",
-          "create_content": "Create Content",
-          "edit_own_content": "Edit Own Content",
-          "edit_all_content": "Edit All Content",
-          "delete_content": "Delete Content",
-          "manage_users": "Manage Users",
-          "manage_donations": "Manage Donations",
-          "access_analytics": "Access Analytics",
-          "moderate_content": "Moderate Content",
-          "system_settings": "System Settings"
+          "view_content": "Consulter le contenu",
+          "create_content": "Créer du contenu",
+          "edit_own_content": "Modifier son propre contenu",
+          "edit_all_content": "Modifier tout le contenu",
+          "delete_content": "Supprimer du contenu",
+          "manage_users": "Gérer les utilisateurs",
+          "manage_donations": "Gérer les dons",
+          "access_analytics": "Accéder aux analyses",
+          "moderate_content": "Modérer le contenu",
+          "system_settings": "Paramètres système"
         },
         "columns": {
-          "user": "User",
-          "contributor": "Contributor",
-          "author": "Author",
-          "editor": "Editor",
-          "admin": "Admin"
+          "user": "Utilisateur",
+          "contributor": "Contributeur",
+          "author": "Auteur",
+          "editor": "Éditeur",
+          "admin": "Administrateur"
         }
       },
       "stats": {
-        "users": "Users",
-        "contributors": "Contributors",
-        "authors": "Authors",
-        "editors": "Editors",
-        "admins": "Admins"
+        "users": "Utilisateurs",
+        "contributors": "Contributeurs",
+        "authors": "Auteurs",
+        "editors": "Éditeurs",
+        "admins": "Administrateurs"
       },
       "hierarchy": {
-        "title": "Role Hierarchy",
-        "subtitle": "Understanding the permission inheritance between roles. Click Super Admin to edit permissions.",
-        "configureSuperAdminAria": "Configure Super Admin permissions",
+        "title": "Hiérarchie des rôles",
+        "subtitle": "Comprendre l'héritage des permissions entre les rôles. Cliquer sur Super Admin pour modifier les permissions.",
+        "configureSuperAdminAria": "Configurer les permissions du Super Admin",
         "labels": {
-          "user": "User",
-          "contributor": "Contributor",
-          "author": "Author",
-          "editor": "Editor",
+          "user": "Utilisateur",
+          "contributor": "Contributeur",
+          "author": "Auteur",
+          "editor": "Éditeur",
           "admin": "Super Admin"
         }
       },
       "editorApps": {
-        "searchPlaceholder": "Search applications...",
-        "filterAll": "All",
-        "filterPending": "Pending",
-        "filterApproved": "Approved",
-        "filterRejected": "Rejected",
-        "review": "Review",
-        "approve": "Approve",
-        "reject": "Reject",
-        "appliedLine": "Applied {date} · {years} years in publishing · {articles} published articles",
-        "loading": "Loading applications…",
-        "empty": "No applications match your filters.",
+        "searchPlaceholder": "Rechercher des candidatures…",
+        "filterAll": "Toutes",
+        "filterPending": "En attente",
+        "filterApproved": "Approuvées",
+        "filterRejected": "Rejetées",
+        "review": "Examiner",
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "appliedLine": "Candidature {date} · {years} ans dans l'édition · {articles} articles publiés",
+        "loading": "Chargement des candidatures…",
+        "empty": "Aucune candidature ne correspond à vos filtres.",
         "status": {
-          "pending": "Pending",
-          "approved": "Approved",
-          "rejected": "Rejected"
+          "pending": "En attente",
+          "approved": "Approuvée",
+          "rejected": "Rejetée"
         },
         "actions": {
-          "menuAria": "More actions",
-          "viewApplication": "View Application",
-          "revokeApproval": "Revoke Approval",
-          "reconsider": "Reconsider"
+          "menuAria": "Plus d'actions",
+          "viewApplication": "Voir la candidature",
+          "revokeApproval": "Révoquer l'approbation",
+          "reconsider": "Reconsidérer"
         }
       },
       "configureModal": {
-        "title": "Configure {role}",
-        "subtitle": "Manage permissions and access levels for this role",
-        "closeModalAria": "Close modal",
-        "closeAria": "Close",
-        "cancel": "Cancel",
-        "save": "Save Changes",
+        "title": "Configurer {role}",
+        "subtitle": "Gérer les permissions et les niveaux d'accès pour ce rôle",
+        "closeModalAria": "Fermer la fenêtre",
+        "closeAria": "Fermer",
+        "cancel": "Annuler",
+        "save": "Enregistrer les modifications",
         "rows": {
           "manage_users": {
-            "title": "Manage Users",
-            "description": "Create, edit, and delete users"
+            "title": "Gérer les utilisateurs",
+            "description": "Créer, modifier et supprimer des utilisateurs"
           },
           "manage_content": {
-            "title": "Manage Content",
-            "description": "Create, edit, and publish content"
+            "title": "Gérer le contenu",
+            "description": "Créer, modifier et publier du contenu"
           },
           "financial": {
-            "title": "Financial Operations",
-            "description": "View and manage payments & payouts"
+            "title": "Opérations financières",
+            "description": "Consulter et gérer les paiements et les versements"
           },
           "moderation": {
-            "title": "Content Moderation",
-            "description": "Review and moderate user content"
+            "title": "Modération du contenu",
+            "description": "Examiner et modérer le contenu des utilisateurs"
           },
           "analytics": {
-            "title": "View Analytics",
-            "description": "Access analytics and reports"
+            "title": "Consulter les analyses",
+            "description": "Accéder aux analyses et aux rapports"
           },
           "settings": {
-            "title": "System Settings",
-            "description": "Modify platform settings"
+            "title": "Paramètres système",
+            "description": "Modifier les paramètres de la plateforme"
           },
           "security": {
-            "title": "Security Controls",
-            "description": "Manage security and access"
+            "title": "Contrôles de sécurité",
+            "description": "Gérer la sécurité et les accès"
           },
           "messaging": {
-            "title": "Messaging & Broadcasts",
-            "description": "Send messages and broadcasts"
+            "title": "Messagerie et diffusions",
+            "description": "Envoyer des messages et des diffusions"
           }
         }
       },
@@ -174,75 +174,75 @@
     },
     "contentLibrary": {
       "tabs": {
-        "all": "All Content",
-        "published": "Published",
-        "pending": "Pending",
-        "archived": "Archived",
-        "rejected": "Rejected"
+        "all": "Tout le contenu",
+        "published": "Publié",
+        "pending": "En attente",
+        "archived": "Archivé",
+        "rejected": "Rejeté"
       },
-      "allTypes": "All Types",
-      "searchPlaceholder": "Search contributions...",
-      "filterAria": "Filter",
-      "tryAgain": "Try again",
-      "loading": "Loading contributions…",
-      "emptyFiltered": "No contributions match your filters.",
-      "emptyNone": "No contributions yet.",
+      "allTypes": "Tous les types",
+      "searchPlaceholder": "Rechercher des contributions…",
+      "filterAria": "Filtrer",
+      "tryAgain": "Réessayer",
+      "loading": "Chargement des contributions…",
+      "emptyFiltered": "Aucune contribution ne correspond à vos filtres.",
+      "emptyNone": "Aucune contribution pour l'instant.",
       "table": {
-        "title": "Title",
+        "title": "Titre",
         "type": "Type",
-        "contributor": "Contributor",
-        "status": "Status",
-        "files": "Files",
+        "contributor": "Contributeur",
+        "status": "Statut",
+        "files": "Fichiers",
         "collection": "Collection",
-        "submitted": "Submitted",
-        "fileCount": "{count, plural, one {# file} other {# files}}",
-        "viewItemAria": "View {title}"
+        "submitted": "Soumis",
+        "fileCount": "{count, plural, one {# fichier} other {# fichiers}}",
+        "viewItemAria": "Voir {title}"
       },
       "statusLabels": {
-        "published": "Published",
-        "pending": "Pending",
-        "archived": "Archived",
-        "rejected": "Rejected",
-        "draft": "Draft"
+        "published": "Publié",
+        "pending": "En attente",
+        "archived": "Archivé",
+        "rejected": "Rejeté",
+        "draft": "Brouillon"
       },
       "pagination": {
-        "summary": "Page {page} of {totalPages} · {total, plural, one {# contribution} other {# contributions}}",
-        "previous": "Previous",
-        "next": "Next"
+        "summary": "Page {page} sur {totalPages} · {total, plural, one {# contribution} other {# contributions}}",
+        "previous": "Précédent",
+        "next": "Suivant"
       },
       "errors": {
-        "requestFailed": "Request failed",
-        "generic": "Something went wrong"
+        "requestFailed": "Échec de la requête",
+        "generic": "Une erreur s'est produite"
       },
       "actions": {
-        "menuAria": "More actions",
-        "view": "View",
-        "archive": "Archive",
-        "delete": "Delete"
+        "menuAria": "Plus d'actions",
+        "view": "Voir",
+        "archive": "Archiver",
+        "delete": "Supprimer"
       },
       "detail": {
-        "closeModalAria": "Close modal",
-        "closeAria": "Close",
+        "closeModalAria": "Fermer la fenêtre",
+        "closeAria": "Fermer",
         "description": "Description",
-        "labelContributor": "Contributor",
-        "labelEmail": "Email",
-        "labelPhone": "Phone",
-        "labelSubmitted": "Submitted",
-        "labelConsent": "Consent",
-        "labelOpenCall": "Open Call",
-        "consentYes": "Yes",
-        "consentNo": "No",
-        "filesHeading": "Files ({count})",
+        "labelContributor": "Contributeur",
+        "labelEmail": "E-mail",
+        "labelPhone": "Téléphone",
+        "labelSubmitted": "Soumis",
+        "labelConsent": "Consentement",
+        "labelOpenCall": "Appel ouvert",
+        "consentYes": "Oui",
+        "consentNo": "Non",
+        "filesHeading": "Fichiers ({count})",
         "collectionsHeading": "Collections ({count})",
-        "close": "Close"
+        "close": "Fermer"
       }
     },
     "cmsEditor": {
       "tabs": {
-        "home": "Home Page",
-        "static": "Static Pages",
-        "nav": "Navigations & Footer",
-        "branding": "Branding"
+        "home": "Page d'accueil",
+        "static": "Pages statiques",
+        "nav": "Navigation et pied de page",
+        "branding": "Identité visuelle"
       }
     }
   }

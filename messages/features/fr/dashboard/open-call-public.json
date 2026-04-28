@@ -1,15 +1,15 @@
 {
   "Dashboard": {
     "openCallPublic": {
-      "supportTitle": "Support this trace",
-      "supportDescription": "Contribute to this content: your support helps sustain independent storytelling and keep this work accessible.",
-      "supportCta": "Support this",
-      "loading": "Loading open call…",
-      "errorNotFoundTitle": "Open call not found",
-      "errorLoadTitle": "Could not load open call",
-      "errorMissingBody": "No open call exists for this link.",
-      "errorLoadBody": "Check your connection or try again later.",
-      "backToContent": "Back to content"
+      "supportTitle": "Soutenez cette trace",
+      "supportDescription": "Contribuez à ce contenu : votre soutien aide à maintenir une narration indépendante et à rendre ce travail accessible.",
+      "supportCta": "Soutenir",
+      "loading": "Chargement de l'appel ouvert…",
+      "errorNotFoundTitle": "Appel ouvert introuvable",
+      "errorLoadTitle": "Impossible de charger l'appel ouvert",
+      "errorMissingBody": "Aucun appel ouvert n'existe pour ce lien.",
+      "errorLoadBody": "Vérifiez votre connexion ou réessayez ultérieurement.",
+      "backToContent": "Retour au contenu"
     }
   }
 }

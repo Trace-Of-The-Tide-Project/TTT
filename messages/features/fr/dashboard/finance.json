@@ -2,52 +2,52 @@
   "Dashboard": {
     "financePage": {
       "tabs": {
-        "donations": "Donations",
-        "payouts": "Payouts ({count})",
-        "suspicious": "Suspicious Activity ({count})",
-        "invoices": "Invoices"
+        "donations": "Dons",
+        "payouts": "Versements ({count})",
+        "suspicious": "Activité suspecte ({count})",
+        "invoices": "Factures"
       },
       "donations": {
-        "title": "Recent Donations",
-        "subtitle": "Latest donation transactions on the platform",
-        "colDonor": "Donor",
-        "colRecipient": "Recipient",
-        "colAmount": "Amount",
+        "title": "Dons récents",
+        "subtitle": "Dernières transactions de dons sur la plateforme",
+        "colDonor": "Donateur",
+        "colRecipient": "Destinataire",
+        "colAmount": "Montant",
         "colDate": "Date",
-        "colStatus": "Status",
+        "colStatus": "Statut",
         "status": {
-          "completed": "Completed",
-          "pending": "Pending"
+          "completed": "Complété",
+          "pending": "En attente"
         }
       },
       "payouts": {
-        "title": "Pending Payouts",
-        "subtitle": "Creator payout requests awaiting approval",
-        "colCreator": "Creator",
-        "colAmount": "Amount",
-        "colRequested": "Requested",
-        "colStatus": "Status",
+        "title": "Versements en attente",
+        "subtitle": "Demandes de versement des créateurs en attente d'approbation",
+        "colCreator": "Créateur",
+        "colAmount": "Montant",
+        "colRequested": "Demandé",
+        "colStatus": "Statut",
         "colActions": "Actions",
-        "approve": "Approve",
-        "reject": "Reject",
+        "approve": "Approuver",
+        "reject": "Rejeter",
         "status": {
-          "pending": "Pending",
-          "underReview": "Under Review"
+          "pending": "En attente",
+          "underReview": "En cours d'examen"
         }
       },
       "suspicious": {
-        "title": "Suspicious Activity",
-        "subtitle": "Flagged transactions requiring review",
-        "investigate": "Investigate",
-        "block": "Block"
+        "title": "Activité suspecte",
+        "subtitle": "Transactions signalées nécessitant un examen",
+        "investigate": "Enquêter",
+        "block": "Bloquer"
       },
       "invoices": {
-        "comingSoon": "Invoices are coming soon."
+        "comingSoon": "Les factures seront bientôt disponibles."
       },
       "actions": {
-        "rowAria": "Row actions",
-        "viewDetails": "View details",
-        "refund": "Refund"
+        "rowAria": "Actions de la ligne",
+        "viewDetails": "Voir les détails",
+        "refund": "Rembourser"
       }
     }
   }

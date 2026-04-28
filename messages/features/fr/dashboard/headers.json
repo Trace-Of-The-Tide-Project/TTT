@@ -2,83 +2,83 @@
   "Dashboard": {
     "headers": {
       "adminSettings": {
-        "title": "Admin Settings",
-        "subtitle": "Manage or edit your personal settings."
+        "title": "Paramètres administrateur",
+        "subtitle": "Gérez ou modifiez vos paramètres personnels."
       },
       "users": {
-        "title": "Users management",
-        "subtitle": "Manage all platform users, roles, and permissions.",
-        "exportCsv": "Export CSV",
-        "addUser": "Add user"
+        "title": "Gestion des utilisateurs",
+        "subtitle": "Gérez tous les utilisateurs, rôles et permissions de la plateforme.",
+        "exportCsv": "Exporter en CSV",
+        "addUser": "Ajouter un utilisateur"
       },
       "roles": {
-        "title": "Roles & Permissions",
-        "subtitle": "Manage user roles, permissions, and editor applications."
+        "title": "Rôles & Permissions",
+        "subtitle": "Gérez les rôles, permissions et candidatures d'éditeurs."
       },
       "contentLibrary": {
-        "title": "Content Library",
-        "subtitle": "Browse, search, and manage all published content."
+        "title": "Bibliothèque de contenus",
+        "subtitle": "Parcourez, recherchez et gérez tous les contenus publiés."
       },
       "visualEditor": {
-        "title": "CMS / Visual Editor",
-        "subtitle": "Edit platform UI, homepage sections, and static pages.",
-        "preview": "Preview",
-        "publishChanges": "Publish changes"
+        "title": "Éditeur CMS / Visuel",
+        "subtitle": "Modifiez l'interface, les sections de la page d'accueil et les pages statiques.",
+        "preview": "Aperçu",
+        "publishChanges": "Publier les modifications"
       },
       "engagements": {
         "title": "Engagement",
-        "subtitle": "Manage community interactions, comments, and recognition",
+        "subtitle": "Gérez les interactions communautaires, commentaires et récompenses",
         "stats": {
-          "totalComments": "Total comments",
-          "totalLikes": "Total likes",
-          "activeDiscussions": "Active discussions",
-          "badgesAwarded": "Badges awarded"
+          "totalComments": "Total des commentaires",
+          "totalLikes": "Total des mentions J'aime",
+          "activeDiscussions": "Discussions actives",
+          "badgesAwarded": "Badges attribués"
         }
       },
       "analytics": {
-        "title": "Analytics",
-        "subtitle": "Platform performance and growth metrics",
-        "last30Days": "Last 30 days",
-        "exportReports": "Export reports",
+        "title": "Analytiques",
+        "subtitle": "Performances et métriques de croissance de la plateforme",
+        "last30Days": "30 derniers jours",
+        "exportReports": "Exporter les rapports",
         "cards": {
-          "pageViews": "Total page views",
-          "userRetention": "User retention",
-          "avgSession": "Avg. session",
-          "bounceRate": "Bounce rate"
+          "pageViews": "Vues de pages totales",
+          "userRetention": "Rétention des utilisateurs",
+          "avgSession": "Durée moy. de session",
+          "bounceRate": "Taux de rebond"
         }
       },
       "reports": {
-        "title": "Reports & Moderation",
-        "subtitle": "Review reported content, manage user violations, and audit logs",
+        "title": "Rapports & Modération",
+        "subtitle": "Examinez les contenus signalés, gérez les violations et les journaux d'audit",
         "cards": {
-          "pendingReports": "Pending reports",
-          "contentFlagged": "Content flagged",
-          "usersReported": "Users reported",
-          "resolvedToday": "Resolved today"
+          "pendingReports": "Rapports en attente",
+          "contentFlagged": "Contenus signalés",
+          "usersReported": "Utilisateurs signalés",
+          "resolvedToday": "Résolus aujourd'hui"
         }
       },
       "finance": {
-        "title": "Finance management",
-        "subtitle": "Monitor donations, payouts, and financial activity",
-        "exportReports": "Export reports",
+        "title": "Gestion financière",
+        "subtitle": "Suivez les dons, paiements et activités financières",
+        "exportReports": "Exporter les rapports",
         "cards": {
-          "todaysDonations": "Today's donations",
-          "monthlyRevenue": "Monthly revenue",
-          "pendingPayouts": "Pending payouts",
-          "pendingCount": "3 pending",
-          "platformFees": "Platform fees",
-          "feeRate": "10% rate"
+          "todaysDonations": "Dons du jour",
+          "monthlyRevenue": "Revenus mensuels",
+          "pendingPayouts": "Paiements en attente",
+          "pendingCount": "3 en attente",
+          "platformFees": "Frais de plateforme",
+          "feeRate": "Taux de 10 %"
         }
       },
       "messaging": {
-        "title": "Messaging Center",
-        "subtitle": "Manage communications with users and send broadcasts",
-        "newBroadcast": "New broadcast",
+        "title": "Centre de messagerie",
+        "subtitle": "Gérez les communications avec les utilisateurs et envoyez des diffusions",
+        "newBroadcast": "Nouvelle diffusion",
         "cards": {
-          "unreadMessages": "Unread messages",
-          "highPriority": "High priority",
-          "pendingResponse": "Pending response",
-          "resolvedThisWeek": "Resolved this week"
+          "unreadMessages": "Messages non lus",
+          "highPriority": "Haute priorité",
+          "pendingResponse": "Réponse en attente",
+          "resolvedThisWeek": "Résolus cette semaine"
         }
       }
     }
