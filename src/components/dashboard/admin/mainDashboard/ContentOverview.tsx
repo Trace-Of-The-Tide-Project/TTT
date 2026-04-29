@@ -165,6 +165,39 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
           <span className="font-medium text-foreground">{totalValue}</span>
         </div>
       )}
+
+      {/* Subtle wave decoration to anchor the bottom of the table — beach-inspired motif */}
+      <svg
+        aria-hidden="true"
+        className="pointer-events-none mx-auto mt-6 block h-12 w-full max-w-md opacity-40"
+        viewBox="0 0 400 48"
+        fill="none"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <path
+          d="M0 24 C 40 8, 80 8, 120 24 S 200 40, 240 24 320 8, 360 24 400 40, 440 24"
+          stroke="var(--tott-sea-deep)"
+          strokeWidth="1.25"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path
+          d="M0 34 C 40 22, 80 22, 120 34 S 200 46, 240 34 320 22, 360 34 400 46, 440 34"
+          stroke="var(--tott-seafoam)"
+          strokeWidth="1"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.7"
+        />
+        <path
+          d="M0 14 C 40 4, 80 4, 120 14 S 200 26, 240 14 320 4, 360 14 400 26, 440 14"
+          stroke="var(--tott-sea-mid)"
+          strokeWidth="0.9"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.55"
+        />
+      </svg>
     </div>
   );
 }

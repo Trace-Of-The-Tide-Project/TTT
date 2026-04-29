@@ -6,7 +6,8 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import type { SidebarItemConfig } from "@/lib/dashboard/types";
 import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
 
-const ACTIVE_COLOR = "#C9A96E";
+const ACTIVE_COLOR_DARK = "#C9A96E";
+const ACTIVE_COLOR_LIGHT = "#3b6ea3";
 
 type SidebarItemProps = SidebarItemConfig & {
   onClick?: () => void;
@@ -22,6 +23,7 @@ export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick, badgeO
     path === href ||
     ((href !== "/admin" && href !== "/profile") && path.startsWith(`${href}/`));
   const { isDark } = useTheme();
+  const activeColor = isDark ? ACTIVE_COLOR_DARK : ACTIVE_COLOR_LIGHT;
   const inactive =
     "border border-transparent " +
     (isDark
@@ -37,7 +39,7 @@ export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick, badgeO
       }`}
       style={
         isActive
-          ? { borderColor: ACTIVE_COLOR, color: ACTIVE_COLOR }
+          ? { borderColor: activeColor, color: activeColor }
           : undefined
       }
     >
@@ -50,7 +52,7 @@ export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick, badgeO
           className="shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
           style={
             isActive
-              ? { color: ACTIVE_COLOR, backgroundColor: "rgba(232, 221, 192, 0.1)" }
+              ? { color: activeColor, backgroundColor: "rgba(232, 221, 192, 0.1)" }
               : { color: "#9ca3af", backgroundColor: "rgba(255,255,255,0.1)" }
           }
         >

@@ -36,7 +36,7 @@ function renderStatIcon(icon: StatCardProps["icon"]): ReactNode {
 export function StatCard({ icon, value, label, tone = "sea", trend }: StatCardProps) {
   const accent = TONE_ACCENT[tone];
   return (
-    <SpringCard className="relative flex flex-col items-center gap-2 overflow-hidden rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-6 shadow-[0_1px_2px_rgba(22,36,58,0.04),0_4px_16px_rgba(22,36,58,0.04)]">
+    <SpringCard className="relative flex flex-col items-center gap-2 overflow-hidden rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-5 py-6 shadow-[0_1px_2px_rgba(22,36,58,0.04),0_4px_16px_rgba(22,36,58,0.04)]">
       {/* warm sand wash at bottom for the gradient feel from the mockup */}
       <span
         aria-hidden="true"
