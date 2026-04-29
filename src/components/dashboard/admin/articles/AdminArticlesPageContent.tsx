@@ -22,7 +22,9 @@ import {
   peekValidAdminArticlesList,
   removeArticleFromAdminArticlesListCache,
 } from "@/lib/dashboard/admin-articles-list-cache";
-import { deleteArticle, getArticles, type ArticleListItem } from "@/services/articles.service";
+import type { ArticleListItem } from "@/services/articles.service";
+import { useArticles } from "@/hooks/queries/articles";
+import { useDeleteArticle } from "@/hooks/mutations/articles";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import { isAxiosError } from "axios";
 import type { ArticleCardItem } from "@/components/dashboard/admin/articles/articles-main/ArticleCardsSection";
@@ -159,43 +161,32 @@ export function AdminArticlesPageContent() {
   const t = useTranslations("Dashboard.articles.list");
   const locale = useLocale();
 
-  const [articleList, setArticleList] = useState<ArticleListItem[]>(
-    () => peekValidAdminArticlesList() ?? [],
-  );
-  const [loading, setLoading] = useState(() => peekValidAdminArticlesList() === undefined);
-  const [error, setError] = useState<string | null>(null);
+  const articlesQuery = useArticles();
+  const articleList: ArticleListItem[] = useMemo(() => {
+    const fromQuery = articlesQuery.data?.data;
+    if (Array.isArray(fromQuery)) return fromQuery;
+    return peekValidAdminArticlesList() ?? [];
+  }, [articlesQuery.data]);
+  const loading = articlesQuery.isPending && !peekValidAdminArticlesList();
+  const error = articlesQuery.error
+    ? listErrMessage(articlesQuery.error, t("errors.loadFailed"))
+    : null;
+
+  // Sync the query result into the snapshot cache (used by other code paths).
+  useEffect(() => {
+    const fromQuery = articlesQuery.data?.data;
+    if (Array.isArray(fromQuery)) commitAdminArticlesList(fromQuery);
+    if (articlesQuery.error) invalidateAdminArticlesListCache();
+  }, [articlesQuery.data, articlesQuery.error]);
 
   const [scheduledDeleteTarget, setScheduledDeleteTarget] = useState<ArticleListItem | null>(null);
-  const [scheduledDeleteBusy, setScheduledDeleteBusy] = useState(false);
   const [scheduledDeleteError, setScheduledDeleteError] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    const warmSnapshot = peekValidAdminArticlesList() !== undefined;
-    if (!warmSnapshot) setLoading(true);
-    setError(null);
-    try {
-      const res = await getArticles();
-      const list = Array.isArray(res.data) ? res.data : [];
-      setArticleList(list);
-      commitAdminArticlesList(list);
-    } catch (e) {
-      setError(listErrMessage(e, t("errors.loadFailed")));
-      setArticleList([]);
-      invalidateAdminArticlesListCache();
-    } finally {
-      setLoading(false);
-    }
-  }, [t]);
-
-  useEffect(() => {
-    const snap = peekValidAdminArticlesList();
-    if (snap !== undefined) setArticleList(snap);
-    void load();
-  }, [load]);
+  const deleteMutation = useDeleteArticle();
+  const scheduledDeleteBusy = deleteMutation.isPending;
 
   const onArticleRemoved = useCallback((id: string) => {
     removeArticleFromAdminArticlesListCache(id);
-    setArticleList((prev) => prev.filter((a) => a.id !== id));
   }, []);
 
   const openScheduledDelete = useCallback((item: ArticleListItem) => {
@@ -209,21 +200,20 @@ export function AdminArticlesPageContent() {
     setScheduledDeleteError(null);
   }, [scheduledDeleteBusy]);
 
-  const confirmScheduledDelete = useCallback(async () => {
+  const confirmScheduledDelete = useCallback(() => {
     if (!scheduledDeleteTarget) return;
-    setScheduledDeleteBusy(true);
     setScheduledDeleteError(null);
-    try {
-      const id = scheduledDeleteTarget.id;
-      await deleteArticle(id);
-      setScheduledDeleteTarget(null);
-      onArticleRemoved(id);
-    } catch (e) {
-      setScheduledDeleteError(deleteErrMessage(e, t("errors.deleteFailed")));
-    } finally {
-      setScheduledDeleteBusy(false);
-    }
-  }, [scheduledDeleteTarget, onArticleRemoved, t]);
+    const id = scheduledDeleteTarget.id;
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        setScheduledDeleteTarget(null);
+        onArticleRemoved(id);
+      },
+      onError: (e) => {
+        setScheduledDeleteError(deleteErrMessage(e, t("errors.deleteFailed")));
+      },
+    });
+  }, [scheduledDeleteTarget, onArticleRemoved, t, deleteMutation]);
 
   const rows: ArticleRow[] = useMemo(
     () => articleList.map(mapArticleListItemToTableRow),
@@ -275,7 +265,7 @@ export function AdminArticlesPageContent() {
           <p>{error}</p>
           <button
             type="button"
-            onClick={() => void load()}
+            onClick={() => void articlesQuery.refetch()}
             className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
           >
             {t("tryAgain")}

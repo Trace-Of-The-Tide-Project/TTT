@@ -1,32 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { TrendingUpIcon } from "@/components/ui/icons";
 import { ArticlesStatCards } from "./ArticlesStatCards";
-import { getAnalyticsOverview } from "@/services/analytics.service";
-
-const BASE_STATS = [
-  { id: "1", value: "—", labelKey: "articles.stats.published", iconKey: "book" },
-  { id: "2", value: "—", labelKey: "articles.stats.contributions", iconKey: "pen" },
-  { id: "3", value: "—", labelKey: "articles.stats.totalReads", iconKey: "barChart" },
-  { id: "4", value: "—", labelKey: "articles.stats.daysActive", iconKey: "calendar" },
-];
+import { useAnalyticsOverview } from "@/hooks/queries/analytics";
 
 export function ArticlesPageHeader() {
   const t = useTranslations("Dashboard.articles.page");
-  const [stats, setStats] = useState(BASE_STATS);
-
-  useEffect(() => {
-    getAnalyticsOverview().then((data) => {
-      setStats([
-        { id: "1", value: data.published_articles.toLocaleString(), labelKey: "articles.stats.published", iconKey: "book" },
-        { id: "2", value: data.total_contributions.toLocaleString(), labelKey: "articles.stats.contributions", iconKey: "pen" },
-        { id: "3", value: data.total_page_views.toLocaleString(), labelKey: "articles.stats.totalReads", iconKey: "barChart" },
-        { id: "4", value: data.days_active.toLocaleString(), labelKey: "articles.stats.daysActive", iconKey: "calendar" },
-      ]);
-    }).catch(() => {});
-  }, []);
+  const { data } = useAnalyticsOverview();
+  const fmt = (n: number | undefined) => (n != null ? n.toLocaleString() : "—");
+  const stats = [
+    { id: "1", value: fmt(data?.published_articles), labelKey: "articles.stats.published", iconKey: "book" },
+    { id: "2", value: fmt(data?.total_contributions), labelKey: "articles.stats.contributions", iconKey: "pen" },
+    { id: "3", value: fmt(data?.total_page_views), labelKey: "articles.stats.totalReads", iconKey: "barChart" },
+    { id: "4", value: fmt(data?.days_active), labelKey: "articles.stats.daysActive", iconKey: "calendar" },
+  ];
 
   return (
     <div className="pb-6">

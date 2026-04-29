@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
 import { theme } from "@/lib/theme";
@@ -11,7 +10,7 @@ import {
   SquareCheckIcon,
   TrendingUpIcon,
 } from "@/components/ui/icons";
-import { getMessagingSummary, type MessagingSummary } from "@/services/messaging.service";
+import { useMessagingSummary } from "@/hooks/queries/messaging";
 
 function StatCard({ icon, value, label }: { icon: React.ReactNode; value: number | null; label: string }) {
   return (
@@ -27,11 +26,7 @@ function StatCard({ icon, value, label }: { icon: React.ReactNode; value: number
 
 export function MessagingPageHeader() {
   const t = useTranslations("Dashboard.headers.messaging");
-  const [summary, setSummary] = useState<MessagingSummary | null>(null);
-
-  useEffect(() => {
-    getMessagingSummary().then(setSummary).catch(() => setSummary(null));
-  }, []);
+  const { data: summary } = useMessagingSummary();
 
   return (
     <div className="px-6 py-6 sm:px-8 sm:py-8">

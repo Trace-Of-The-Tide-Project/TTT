@@ -78,15 +78,6 @@ export const alerts = [
   },
 ];
 
-export const pendingEditorApplicationsModal = {
-  items: [
-    { id: "p1", title: "Mariam Ali", subtitle: "Applied for Editor role", processButtons: true },
-    { id: "p2", title: "Fatima Zahra", subtitle: "Applied for Editor role", processButtons: true },
-    { id: "p3", title: "Omar Farouq", subtitle: "Applied for Editor role", processButtons: true },
-  ],
-  viewAllHref: "/admin/users",
-};
-
 export type QuickActionId = "sendBroadcast" | "approveEditor" | "featureContent" | "maintenanceMode";
 
 export const quickActions = [

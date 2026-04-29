@@ -17,19 +17,19 @@ import {
 import type { MessageTemplateCategory } from "@/components/dashboard/modals/CreateMessageTemplateModal";
 import { EditMessageTemplateModal } from "@/components/dashboard/modals/EditMessageTemplateModal";
 import { useAuthUser } from "@/components/providers/AuthProvider";
-import {
-  listConversations,
-  loadConversationMessages,
-  sendReply,
-  archiveConversation,
-  fetchTemplates,
-  createApiTemplate,
-  updateApiTemplate,
-  sendBroadcastMessage,
-  type FrontendThread,
-  type FrontendMessage,
-  type ApiTemplate,
+import type {
+  FrontendThread,
+  FrontendMessage,
+  ApiTemplate,
 } from "@/services/messaging.service";
+import { useConversations, useMessageTemplates, useConversationMessages } from "@/hooks/queries/messaging";
+import {
+  useArchiveConversation,
+  useCreateMessageTemplate,
+  useSendBroadcast,
+  useSendReply,
+  useUpdateMessageTemplate,
+} from "@/hooks/mutations/messaging";
 
 const MESSAGE_TAB_IDS = ["inbox", "broadcast", "templates", "archived"] as const;
 type MessageTabId = (typeof MESSAGE_TAB_IDS)[number];
@@ -234,12 +234,8 @@ export function MessagingContent() {
   const threadMenuRef = useRef<HTMLDivElement>(null);
 
   // Real data state
-  const [allThreads, setAllThreads] = useState<FrontendThread[]>([]);
-  const [messagesCache, setMessagesCache] = useState<Record<string, FrontendMessage[]>>({});
-  const [loadingMessages, setLoadingMessages] = useState(false);
   const [selectedThreadId, setSelectedThreadId] = useState<string>("");
   const [composer, setComposer] = useState("");
-  const [sendingReply, setSendingReply] = useState(false);
 
   const [broadcastAudience, setBroadcastAudience] = useState<BroadcastAudienceKey>("allUsers");
   const [broadcastPriority, setBroadcastPriority] = useState<BroadcastPriorityKey>("normal");
@@ -249,68 +245,58 @@ export function MessagingContent() {
   const [broadcastAudienceOpen, setBroadcastAudienceOpen] = useState(false);
   const [broadcastPriorityOpen, setBroadcastPriorityOpen] = useState(false);
   const [broadcastTemplateOpen, setBroadcastTemplateOpen] = useState(false);
-  const [sendingBroadcast, setSendingBroadcast] = useState(false);
 
   const [createTemplateOpen, setCreateTemplateOpen] = useState(false);
-  const [templates, setTemplates] = useState<MessageTemplate[]>([]);
   const [editTemplateOpen, setEditTemplateOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<MessageTemplate | null>(null);
 
-  // ── Load conversations when tab changes ────────────────────────
+  // ── Data fetching via React Query ──────────────────────────────
+  const { data: inboxThreads = [] } = useConversations("inbox");
+  const { data: archivedThreads = [] } = useConversations("archived");
+  const allThreads: FrontendThread[] = useMemo(
+    () => [...inboxThreads, ...archivedThreads],
+    [inboxThreads, archivedThreads],
+  );
+
   useEffect(() => {
     if (activeTab !== "inbox" && activeTab !== "archived") return;
-    const status = activeTab === "archived" ? "archived" : "inbox";
-    listConversations(status).then((threads) => {
-      setAllThreads((prev) => {
-        // Merge: keep other-status threads, replace loaded-status ones
-        const keep = prev.filter((t) =>
-          status === "archived" ? t.status === "Inbox" : t.status === "Archived",
-        );
-        return [...keep, ...threads];
-      });
-      if (threads.length > 0 && !selectedThreadId) {
-        setSelectedThreadId(threads[0].id);
-      }
-    }).catch(() => {});
-  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+    const list = activeTab === "inbox" ? inboxThreads : archivedThreads;
+    if (list.length > 0 && !selectedThreadId) setSelectedThreadId(list[0].id);
+  }, [activeTab, inboxThreads, archivedThreads, selectedThreadId]);
 
-  // ── Load templates on mount ────────────────────────────────────
-  useEffect(() => {
-    fetchTemplates().then((tpls) => {
-      setTemplates(
-        tpls.map((t) => ({
-          id: t.id,
-          name: t.name,
-          category: (t.category as MessageTemplateCategory) || "support",
-          subject: t.subject || "",
-          body: t.body,
-        })),
-      );
-    }).catch(() => {});
-  }, []);
+  const { data: rawTemplates = [] } = useMessageTemplates();
+  const templates: MessageTemplate[] = useMemo(
+    () =>
+      rawTemplates.map((t) => ({
+        id: t.id,
+        name: t.name,
+        category: (t.category as MessageTemplateCategory) || "support",
+        subject: t.subject || "",
+        body: t.body,
+      })),
+    [rawTemplates],
+  );
 
-  // ── Load messages when thread selected ─────────────────────────
-  const loadMessages = useCallback(async (threadId: string) => {
-    if (!threadId || messagesCache[threadId]) return;
-    setLoadingMessages(true);
-    try {
-      const msgs = await loadConversationMessages(threadId, currentUser?.id ?? null);
-      setMessagesCache((prev) => ({ ...prev, [threadId]: msgs }));
-    } catch {
-      // show empty
-    } finally {
-      setLoadingMessages(false);
-    }
-  }, [messagesCache, currentUser?.id]);
+  const { data: messages = [], isFetching: loadingMessages } = useConversationMessages(
+    selectedThreadId || null,
+    currentUser?.id ?? null,
+  );
+  const messagesCache = useMemo<Record<string, FrontendMessage[]>>(
+    () => (selectedThreadId ? { [selectedThreadId]: messages } : {}),
+    [messages, selectedThreadId],
+  );
 
   const handleSelectThread = useCallback((id: string) => {
     setSelectedThreadId(id);
-    loadMessages(id);
-  }, [loadMessages]);
+  }, []);
 
-  useEffect(() => {
-    if (selectedThreadId) loadMessages(selectedThreadId);
-  }, [selectedThreadId]); // eslint-disable-line react-hooks/exhaustive-deps
+  // ── Mutations ──────────────────────────────────────────────────
+  const sendReplyMutation = useSendReply();
+  const archiveMutation = useArchiveConversation();
+  const createTemplateMutation = useCreateMessageTemplate();
+  const updateTemplateMutation = useUpdateMessageTemplate();
+  const sendBroadcastMutation = useSendBroadcast();
+  const sendingReply = sendReplyMutation.isPending;
 
   // ── Thread menu dismiss ────────────────────────────────────────
   useEffect(() => {
@@ -393,96 +379,66 @@ export function MessagingContent() {
   }, [t, templates]);
 
   // ── Handlers ───────────────────────────────────────────────────
-  const handleSendReply = async () => {
+  const sendingBroadcast = sendBroadcastMutation.isPending;
+
+  const handleSendReply = () => {
     if (!selectedThread || !composer.trim()) return;
-    setSendingReply(true);
-    try {
-      const msg = await sendReply(
-        selectedThread.id,
-        composer.trim(),
-        composerTemplateId !== "none" ? composerTemplateId : undefined,
-      );
-      const newMsg: FrontendMessage = {
-        id: msg.id,
-        senderInitials: "AD",
-        body: msg.content,
-        timestamp: new Date().toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }),
-        align: "right",
-      };
-      setMessagesCache((prev) => ({
-        ...prev,
-        [selectedThread.id]: [...(prev[selectedThread.id] ?? []), newMsg],
-      }));
-      setComposer("");
-      setComposerTemplateId("none");
-    } catch {
-      // keep composer
-    } finally {
-      setSendingReply(false);
-    }
+    const threadId = selectedThread.id;
+    const content = composer.trim();
+    const templateId = composerTemplateId !== "none" ? composerTemplateId : undefined;
+    sendReplyMutation.mutate(
+      { conversationId: threadId, content, templateId },
+      {
+        onSuccess: () => {
+          setComposer("");
+          setComposerTemplateId("none");
+        },
+      },
+    );
   };
 
-  const handleArchiveThread = async () => {
+  const handleArchiveThread = () => {
     if (!selectedThread) return;
     setThreadMenuOpen(false);
-    try {
-      await archiveConversation(selectedThread.id);
-      setAllThreads((prev) =>
-        prev.map((t) => t.id === selectedThread.id ? { ...t, status: "Archived" as const } : t),
-      );
-      setSelectedThreadId("");
-    } catch {}
+    archiveMutation.mutate(selectedThread.id, {
+      onSuccess: () => setSelectedThreadId(""),
+    });
   };
 
-  const handleCreateTemplate = async (tpl: Omit<MessageTemplate, "id">) => {
-    try {
-      const created = await createApiTemplate(tpl);
-      setTemplates((prev) => [
-        {
-          id: created.id,
-          name: created.name,
-          category: (created.category as MessageTemplateCategory) || "support",
-          subject: created.subject || "",
-          body: created.body,
-        },
-        ...prev,
-      ]);
-    } catch {
-      // keep optimistic if API fails? For now just swallow.
-    }
+  const handleCreateTemplate = (tpl: Omit<MessageTemplate, "id">) => {
+    createTemplateMutation.mutate(tpl as Omit<ApiTemplate, "id">);
   };
 
-  const handleSaveTemplate = async (updated: MessageTemplate) => {
-    try {
-      await updateApiTemplate(updated.id, {
+  const handleSaveTemplate = (updated: MessageTemplate) => {
+    updateTemplateMutation.mutate({
+      id: updated.id,
+      data: {
         name: updated.name,
         category: updated.category,
         subject: updated.subject,
         body: updated.body,
-      });
-      setTemplates((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
-    } catch {}
+      },
+    });
   };
 
-  const handleSendBroadcast = async (sendNow: boolean) => {
+  const handleSendBroadcast = (sendNow: boolean) => {
     if (!broadcastSubject.trim() || !broadcastMessage.trim()) return;
-    setSendingBroadcast(true);
-    try {
-      await sendBroadcastMessage({
+    sendBroadcastMutation.mutate(
+      {
         subject: broadcastSubject.trim(),
         message: broadcastMessage.trim(),
         target_audience: broadcastAudience,
         priority: broadcastPriority,
         template_id: broadcastTemplateId !== "none" ? broadcastTemplateId : undefined,
         send: sendNow,
-      });
-      setBroadcastSubject("");
-      setBroadcastMessage("");
-    } catch {
-      // keep form
-    } finally {
-      setSendingBroadcast(false);
-    }
+      },
+      {
+        onSuccess: () => {
+          setBroadcastSubject("");
+          setBroadcastMessage("");
+        },
+      },
+    );
   };
 
   // ── Render ─────────────────────────────────────────────────────

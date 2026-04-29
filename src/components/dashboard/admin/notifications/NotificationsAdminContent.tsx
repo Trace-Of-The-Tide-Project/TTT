@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { isAxiosError } from "axios";
 import { useTranslations } from "next-intl";
 import { SearchIcon } from "@/components/ui/icons";
@@ -8,10 +8,9 @@ import { FilterDropdown } from "@/components/dashboard/admin/users/FilterDropdow
 import { theme } from "@/lib/theme";
 import { formatUserLastActiveRelative } from "@/lib/dashboard/user-table-formatters";
 import { useAuthUser } from "@/components/providers/AuthProvider";
+import { useNotifications } from "@/hooks/queries/notifications";
 import {
   filterNotificationsForUser,
-  getNotifications,
-  type NotificationListItem,
   type NotificationsListMeta,
 } from "@/services/notifications.service";
 
@@ -61,10 +60,6 @@ export function NotificationsAdminContent() {
   const [order, setOrder] = useState<"ASC" | "DESC">("DESC");
   const [page, setPage] = useState(1);
 
-  const [rows, setRows] = useState<NotificationListItem[]>([]);
-  const [meta, setMeta] = useState<NotificationsListMeta>(emptyMeta);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [nowMs, setNowMs] = useState(() => Date.now());
 
   const typeOptions = useMemo(
@@ -113,41 +108,35 @@ export function NotificationsAdminContent() {
     }
   }, [debouncedSearch]);
 
-  const load = useCallback(async () => {
-    if (!user?.id) {
-      setRows([]);
-      setMeta(emptyMeta);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await getNotifications({
-        page,
-        limit: PAGE_LIMIT,
-        search: debouncedSearch || undefined,
-        type: typeFilter === "all" ? undefined : typeFilter,
-        status: statusFilter === "all" ? undefined : statusFilter,
-        sortBy,
-        order,
-      });
-      const mine = filterNotificationsForUser(res.notifications, user.id);
-      setRows(mine);
-      setMeta(res.meta);
-    } catch (e) {
-      setError(listErrMessage(e, nt("errors.generic")));
-      setRows([]);
-      setMeta(emptyMeta);
-    } finally {
-      setLoading(false);
-    }
-  }, [user?.id, page, debouncedSearch, typeFilter, statusFilter, sortBy, order, nt]);
+  const queryParams = useMemo(
+    () => ({
+      page,
+      limit: PAGE_LIMIT,
+      search: debouncedSearch || undefined,
+      type: typeFilter === "all" ? undefined : typeFilter,
+      status: statusFilter === "all" ? undefined : statusFilter,
+      sortBy,
+      order,
+    }),
+    [page, debouncedSearch, typeFilter, statusFilter, sortBy, order],
+  );
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  const {
+    data: queryData,
+    isLoading: loading,
+    error: queryError,
+    refetch,
+  } = useNotifications(queryParams, { enabled: Boolean(user?.id) });
+
+  const rows = useMemo(
+    () =>
+      user?.id && queryData?.notifications
+        ? filterNotificationsForUser(queryData.notifications, user.id)
+        : [],
+    [queryData, user?.id],
+  );
+  const meta: NotificationsListMeta = queryData?.meta ?? emptyMeta;
+  const error = queryError ? listErrMessage(queryError, nt("errors.generic")) : null;
 
   const totalPages = Math.max(1, meta.totalPages);
   useEffect(() => {
@@ -210,7 +199,7 @@ export function NotificationsAdminContent() {
           <p className="wrap-break-word">{error}</p>
           <button
             type="button"
-            onClick={() => void load()}
+            onClick={() => void refetch()}
             className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
           >
             {nt("tryAgain")}

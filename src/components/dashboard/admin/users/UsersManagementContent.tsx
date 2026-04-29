@@ -18,10 +18,10 @@ import { USERS_CSV_EXPORT_EVENT } from "@/lib/dashboard/users-export-events";
 import { downloadUsersCsv } from "@/lib/export/users-csv";
 import {
   getAllUsersForExport,
-  getUsers,
   type AdminUserListItem,
   type UsersListMeta,
 } from "@/services/users.service";
+import { useUsers } from "@/hooks/queries/users";
 
 const PAGE_LIMIT = 10;
 
@@ -116,10 +116,6 @@ export function UsersManagementContent() {
   const [order, setOrder] = useState<"ASC" | "DESC">("ASC");
   const [page, setPage] = useState(1);
 
-  const [users, setUsers] = useState<AdminUserListItem[]>([]);
-  const [meta, setMeta] = useState<UsersListMeta>(emptyMeta);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
   const exportBusyRef = useRef(false);
   const [nowMs, setNowMs] = useState(() => Date.now());
@@ -142,35 +138,26 @@ export function UsersManagementContent() {
     }
   }, [debouncedSearch]);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await getUsers({
-        page,
-        limit: PAGE_LIMIT,
-        search: debouncedSearch || undefined,
-        status:
-          statusFilter === "all"
-            ? undefined
-            : (statusFilter as "active" | "suspended" | "inactive" | "pending"),
-        sortBy,
-        order,
-      });
-      setUsers(res.users);
-      setMeta(res.meta);
-    } catch (e) {
-      setError(listErrMessage(e, loadFailedMessage));
-      setUsers([]);
-      setMeta(emptyMeta);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, debouncedSearch, statusFilter, sortBy, order, loadFailedMessage]);
+  const queryParams = useMemo(
+    () => ({
+      page,
+      limit: PAGE_LIMIT,
+      search: debouncedSearch || undefined,
+      status:
+        statusFilter === "all"
+          ? undefined
+          : (statusFilter as "active" | "suspended" | "inactive" | "pending"),
+      sortBy,
+      order,
+    }),
+    [page, debouncedSearch, statusFilter, sortBy, order],
+  );
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  const usersQuery = useUsers(queryParams);
+  const users: AdminUserListItem[] = usersQuery.data?.users ?? [];
+  const meta: UsersListMeta = usersQuery.data?.meta ?? emptyMeta;
+  const loading = usersQuery.isPending;
+  const error = usersQuery.error ? listErrMessage(usersQuery.error, loadFailedMessage) : null;
 
   const totalPages = Math.max(1, meta.totalPages);
   useEffect(() => {
@@ -270,7 +257,7 @@ export function UsersManagementContent() {
           <p className="wrap-break-word">{error}</p>
           <button
             type="button"
-            onClick={() => void load()}
+            onClick={() => void usersQuery.refetch()}
             className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
           >
             {t("tryAgain")}

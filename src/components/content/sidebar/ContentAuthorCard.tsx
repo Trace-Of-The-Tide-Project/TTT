@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { LinkIcon, MoreDotsIcon } from "@/components/ui/icons";
-import { checkIsFollowing, toggleFollow } from "@/services/follows.service";
+import { useIsFollowing } from "@/hooks/queries/follows";
+import { useToggleFollow } from "@/hooks/mutations/follows";
 import { useAuth } from "@/components/providers/AuthProvider";
 
 type ContentAuthorCardProps = {
@@ -22,27 +22,15 @@ export function ContentAuthorCard({
   color = "black",
 }: ContentAuthorCardProps) {
   const t = useTranslations("Content");
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [toggling, setToggling] = useState(false);
   const { status } = useAuth();
+  const enabled = Boolean(authorId) && status === "authenticated";
+  const { data: isFollowing = false } = useIsFollowing(enabled ? authorId : null);
+  const toggleMutation = useToggleFollow();
+  const toggling = toggleMutation.isPending;
 
-  useEffect(() => {
-    if (!authorId || status !== "authenticated") return;
-    checkIsFollowing(authorId).then(setIsFollowing).catch(() => {});
-  }, [authorId, status]);
-
-  const handleFollow = async () => {
+  const handleFollow = () => {
     if (!authorId || toggling) return;
-    setToggling(true);
-    setIsFollowing((prev) => !prev);
-    try {
-      const followed = await toggleFollow(authorId);
-      setIsFollowing(followed);
-    } catch {
-      setIsFollowing((prev) => !prev);
-    } finally {
-      setToggling(false);
-    }
+    toggleMutation.mutate(authorId);
   };
 
   return (

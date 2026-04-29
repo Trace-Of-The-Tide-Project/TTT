@@ -6,7 +6,9 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { isAxiosError } from "axios";
 import { PlusIcon, EyeIcon, TrashIcon } from "@/components/ui/icons";
-import { getTrips, deleteTrip, type TripListItem } from "@/services/trips.service";
+import type { TripListItem } from "@/services/trips.service";
+import { useTrips } from "@/hooks/queries/trips";
+import { useDeleteTrip } from "@/hooks/mutations/trips";
 import { TripEditorLayout } from "@/components/dashboard/admin/articles/articles-editor/trip/TripEditorLayout";
 import { TripPreviewModal } from "@/components/dashboard/admin/articles/articles-editor/trip/TripPreviewModal";
 
@@ -256,44 +258,23 @@ export function TripsManagementContent() {
     [router],
   );
 
-  const [trips, setTrips] = useState<TripListItem[]>([]);
-  const [tripsLoading, setTripsLoading] = useState(false);
-  const [tripsError, setTripsError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [previewTrip, setPreviewTrip] = useState<TripListItem | null>(null);
 
-  const loadTrips = useCallback(async () => {
-    setTripsLoading(true);
-    setTripsError(null);
-    try {
-      const data = await getTrips();
-      setTrips(data);
-    } catch (e) {
-      setTripsError(errMessage(e, t("editor.errors.requestFailed"), t("editor.errors.generic")));
-    } finally {
-      setTripsLoading(false);
-    }
-  }, [t]);
+  const tripsQuery = useTrips();
+  const trips = tripsQuery.data ?? [];
+  const tripsLoading = tripsQuery.isFetching;
+  const tripsError = tripsQuery.error
+    ? errMessage(tripsQuery.error, t("editor.errors.requestFailed"), t("editor.errors.generic"))
+    : null;
 
-  useEffect(() => {
-    if (activeTab === "archive") {
-      void loadTrips();
-    }
-  }, [activeTab, loadTrips]);
+  const deleteMutation = useDeleteTrip();
+  const deletingId = deleteMutation.isPending ? deleteMutation.variables : null;
 
   const handleDelete = useCallback(
-    async (id: string) => {
-      setDeletingId(id);
-      try {
-        await deleteTrip(id);
-        setTrips((prev) => prev.filter((tr) => tr.id !== id));
-      } catch (e) {
-        setTripsError(errMessage(e, t("editor.errors.requestFailed"), t("editor.errors.generic")));
-      } finally {
-        setDeletingId(null);
-      }
+    (id: string) => {
+      deleteMutation.mutate(id);
     },
-    [t],
+    [deleteMutation],
   );
 
   return (
@@ -338,7 +319,7 @@ export function TripsManagementContent() {
           trips={trips}
           loading={tripsLoading}
           error={tripsError}
-          onRetry={loadTrips}
+          onRetry={() => void tripsQuery.refetch()}
           onDelete={(id) => void handleDelete(id)}
           deletingId={deletingId}
           onPreview={setPreviewTrip}

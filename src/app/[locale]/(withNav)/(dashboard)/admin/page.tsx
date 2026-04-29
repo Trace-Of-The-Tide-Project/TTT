@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { DashboardNotifications } from "@/components/dashboard/admin/mainDashboard/DashboardNotifications";
 import { QuickActions } from "@/components/dashboard/admin/mainDashboard/QuickActions";
 import { EditorApplications } from "@/components/dashboard/admin/mainDashboard/EditorApplications";
-import type { EditorApplication } from "@/components/dashboard/admin/mainDashboard/EditorApplications";
 import { ContentOverview } from "@/components/dashboard/admin/mainDashboard/ContentOverview";
 import { UsersByRole } from "@/components/dashboard/admin/mainDashboard/UsersByRole";
 import { FinanceSnapshot } from "@/components/dashboard/admin/mainDashboard/FinanceSnapshot";
 import { RecentActivity } from "@/components/dashboard/admin/mainDashboard/RecentActivity";
-import { quickActions, pendingEditorApplicationsModal } from "@/lib/dashboard/admin-dashboard-constants";
+import { quickActions } from "@/lib/dashboard/admin-dashboard-constants";
 import { BroadcastModal } from "@/components/dashboard/modals/BroadcastModal";
 import { DetailModal } from "@/components/dashboard/modals/DetailModal";
 import { FeatureContentModal } from "@/components/dashboard/modals/FeatureContentModal";
@@ -35,21 +34,21 @@ import {
   EyeIcon,
 } from "@/components/ui/icons";
 import type { ComponentType } from "react";
-import {
-  getDashboardEditorApplications,
-  getDashboardContentOverview,
-  getDashboardUsersByRole,
-  getDashboardFinanceSnapshot,
-  getDashboardRecentActivity,
-  approveEditorApplication,
-  rejectEditorApplication,
-} from "@/services/dashboard.service";
 import type {
-  ContentCategory,
-  RoleRow,
   FinanceSnapshot as FinanceSnapshotData,
   ActivityEntry,
 } from "@/services/dashboard.service";
+import {
+  useDashboardContentOverview,
+  useDashboardEditorApplications,
+  useDashboardFinanceSnapshot,
+  useDashboardRecentActivity,
+  useDashboardUsersByRole,
+} from "@/hooks/queries/dashboard";
+import {
+  useApproveEditorApplication,
+  useRejectEditorApplication,
+} from "@/hooks/mutations/dashboard";
 
 // ── Icon mapping helpers ────────────────────────────────────────
 
@@ -159,37 +158,16 @@ export default function AdminDashboardPage() {
   const [featureContentOpen, setFeatureContentOpen] = useState(false);
   const [maintenanceOpen, setMaintenanceOpen] = useState(false);
 
-  // Real data state
-  const [editorApps, setEditorApps] = useState<EditorApplication[]>([]);
-  const [contentRows, setContentRows] = useState<ContentCategory[]>([]);
-  const [userRoles, setUserRoles] = useState<{ roles: RoleRow[]; totalUsers: number } | null>(null);
-  const [financeData, setFinanceData] = useState<FinanceSnapshotData | null>(null);
-  const [activityItems, setActivityItems] = useState<ActivityEntry[]>([]);
+  const { data: editorApps = [] } = useDashboardEditorApplications(5);
+  const { data: contentOverview } = useDashboardContentOverview();
+  const { data: userRoles } = useDashboardUsersByRole();
+  const { data: financeData } = useDashboardFinanceSnapshot();
+  const { data: activityItems = [] } = useDashboardRecentActivity(8);
 
-  const loadEditorApps = useCallback(async () => {
-    const rows = await getDashboardEditorApplications(5);
-    setEditorApps(rows);
-  }, []);
+  const approveMutation = useApproveEditorApplication();
+  const rejectMutation = useRejectEditorApplication();
 
-  useEffect(() => {
-    Promise.allSettled([
-      getDashboardEditorApplications(5).then(setEditorApps),
-      getDashboardContentOverview().then((d) => setContentRows(d.categories)),
-      getDashboardUsersByRole().then(setUserRoles),
-      getDashboardFinanceSnapshot().then(setFinanceData),
-      getDashboardRecentActivity(8).then(setActivityItems),
-    ]);
-  }, []);
-
-  const handleApprove = async (id: string) => {
-    await approveEditorApplication(id);
-    await loadEditorApps();
-  };
-
-  const handleReject = async (id: string) => {
-    await rejectEditorApplication(id);
-    await loadEditorApps();
-  };
+  const contentRows = contentOverview?.categories ?? [];
 
   // Map data to component props
   const mappedContentRows = contentRows.map((c) => ({
@@ -237,8 +215,8 @@ export default function AdminDashboardPage() {
         <EditorApplications
           items={editorApps}
           viewAllHref="/admin/users"
-          onApprove={handleApprove}
-          onReject={handleReject}
+          onApprove={(id) => approveMutation.mutate(id)}
+          onReject={(id) => rejectMutation.mutate(id)}
         />
       </div>
 
@@ -265,8 +243,13 @@ export default function AdminDashboardPage() {
         onClose={() => setEditorApplicationsOpen(false)}
         title={tModals("pendingEditors.title")}
         description={tModals("pendingEditors.description")}
-        items={pendingEditorApplicationsModal.items}
-        viewAllHref={pendingEditorApplicationsModal.viewAllHref}
+        items={editorApps.map((a) => ({
+          id: a.id,
+          title: a.name,
+          subtitle: [a.experience, a.timeAgo].filter(Boolean).join(" · "),
+          processButtons: true,
+        }))}
+        viewAllHref="/admin/users"
         viewAllLabel={tModals("viewAll")}
       />
       <FeatureContentModal open={featureContentOpen} onClose={() => setFeatureContentOpen(false)} />

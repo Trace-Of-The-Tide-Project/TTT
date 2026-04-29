@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { getCollections, type CollectionItem } from "@/services/collections.service";
-import { getAdminTags, type AdminTagItem } from "@/services/admin-tags.service";
+import type { CollectionItem } from "@/services/collections.service";
+import type { AdminTagItem } from "@/services/admin-tags.service";
+import { useCollections } from "@/hooks/queries/collections";
+import { useAdminTags } from "@/hooks/queries/admin-tags";
 import {
   FileTextIcon,
   GridIcon,
@@ -77,63 +79,16 @@ export function ContentSettings({
   onTagIdsChange,
 }: ContentSettingsProps) {
   const t = useTranslations("Dashboard.articles.editor.settings");
-  const [collections, setCollections] = useState<CollectionItem[]>([]);
-  const [collectionsLoading, setCollectionsLoading] = useState(true);
-  const [collectionsError, setCollectionsError] = useState<string | null>(null);
+  const collectionsQuery = useCollections({ limit: 200, page: 1, sortBy: "name", order: "ASC" });
+  const collections: CollectionItem[] = collectionsQuery.data ?? [];
+  const collectionsLoading = collectionsQuery.isPending;
+  const collectionsError = collectionsQuery.error ? t("collectionsLoadError") : null;
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      setCollectionsLoading(true);
-      setCollectionsError(null);
-      try {
-        const list = await getCollections({
-          limit: 200,
-          page: 1,
-          sortBy: "name",
-          order: "ASC",
-        });
-        if (!cancelled) setCollections(list);
-      } catch {
-        if (!cancelled) {
-          setCollections([]);
-          setCollectionsError(t("collectionsLoadError"));
-        }
-      } finally {
-        if (!cancelled) setCollectionsLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const [adminTags, setAdminTags] = useState<AdminTagItem[]>([]);
-  const [tagsLoading, setTagsLoading] = useState(true);
-  const [tagsError, setTagsError] = useState<string | null>(null);
+  const tagsQuery = useAdminTags();
+  const adminTags: AdminTagItem[] = tagsQuery.data ?? [];
+  const tagsLoading = tagsQuery.isPending;
+  const tagsError = tagsQuery.error ? t("tagsLoadError") : null;
   const [tagPicker, setTagPicker] = useState("");
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      setTagsLoading(true);
-      setTagsError(null);
-      try {
-        const list = await getAdminTags();
-        if (!cancelled) setAdminTags(list);
-      } catch {
-        if (!cancelled) {
-          setAdminTags([]);
-          setTagsError(t("tagsLoadError"));
-        }
-      } finally {
-        if (!cancelled) setTagsLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const tagNameById = useMemo(() => {
     const m = new Map<string, string>();

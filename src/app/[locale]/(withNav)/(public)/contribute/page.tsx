@@ -15,44 +15,29 @@ import {
   CONTRIBUTION_TYPE_ORDER,
   getContributionTypeIcon,
 } from "@/lib/contributions/contribution-type-icons";
-import {
-  fetchContributionTypes,
-  type ContributionType,
-} from "@/services/contributions.service";
+import type { ContributionType } from "@/services/contributions.service";
+import { useContributionTypes } from "@/hooks/queries/contributions";
 
 export default function ContributePage() {
   const t = useTranslations("Contribute");
   const tPage = useTranslations("Contribute.page");
-  const [types, setTypes] = useState<ContributionType[]>([]);
+  const typesQuery = useContributionTypes();
+  const types: ContributionType[] = typesQuery.data ?? [];
+  const isLoadingTypes = typesQuery.isPending;
+  const typesError = typesQuery.error
+    ? typesQuery.error instanceof Error
+      ? typesQuery.error.message
+      : tPage("typesLoadError")
+    : null;
   const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
-  const [isLoadingTypes, setIsLoadingTypes] = useState(true);
-  const [typesError, setTypesError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      setIsLoadingTypes(true);
-      setTypesError(null);
-      try {
-        const list = await fetchContributionTypes();
-        if (cancelled) return;
-        setTypes(list);
-        const preferred =
-          list.find((ty) => ty.name === "Personal Story")?.id ?? list[0]?.id ?? null;
-        setSelectedTypeId(preferred);
-      } catch (err) {
-        if (cancelled) return;
-        setTypesError(err instanceof Error ? err.message : tPage("typesLoadError"));
-        setTypes([]);
-        setSelectedTypeId(null);
-      } finally {
-        if (!cancelled) setIsLoadingTypes(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [tPage]);
+    if (!types.length) return;
+    setSelectedTypeId((prev) => {
+      if (prev) return prev;
+      return types.find((ty) => ty.name === "Personal Story")?.id ?? types[0]?.id ?? null;
+    });
+  }, [types]);
 
   const orderedTypes = useMemo(() => {
     if (!types.length) return [];

@@ -6,12 +6,12 @@ import { useSearchParams } from "next/navigation";
 import { ContentPageLayout } from "@/components/content/ContentPageLayout";
 import { buildArticleContentPageProps } from "@/lib/content/build-article-content-page";
 import {
-  getArticleById,
-  recordArticleView,
   getRelatedArticles,
   getCollectionArticles,
   type ArticleDetail,
 } from "@/services/articles.service";
+import { useArticle } from "@/hooks/queries/articles";
+import { useRecordArticleView } from "@/hooks/mutations/articles";
 import { theme } from "@/lib/theme";
 import type { ContentPageLayoutProps } from "@/components/content/ContentPageLayout";
 import type { RelatedContentCardData } from "@/components/content/related/RelatedContentCard";
@@ -97,77 +97,60 @@ function mapCollection(
 
 function ArticleByIdLoader({ id }: { id: string }) {
   const setArticleHeaderMeta = useOptionalArticleReadingHeader()?.setArticleHeaderMeta;
-  const [phase, setPhase] = useState<"loading" | "ok" | "missing" | "error">("loading");
-  const [article, setArticle] = useState<ArticleDetail | null>(null);
+  const articleQuery = useArticle(id);
+  const article: ArticleDetail | null = articleQuery.data ?? null;
+  const phase: "loading" | "ok" | "missing" | "error" = articleQuery.isPending
+    ? "loading"
+    : articleQuery.error
+      ? "error"
+      : article
+        ? "ok"
+        : "missing";
+
   const [displayViewCount, setDisplayViewCount] = useState<number | undefined>(undefined);
   const [liveCollection, setLiveCollection] = useState<ContentPageLayoutProps["collection"] | null>(null);
   const [liveRelated, setLiveRelated] = useState<RelatedContentCardData[]>([]);
   const recordedIdRef = useRef<string | null>(null);
+  const recordViewMutation = useRecordArticleView();
 
   useEffect(() => {
-    let cancelled = false;
-    setPhase("loading");
-    setArticle(null);
-    setDisplayViewCount(undefined);
-    setLiveCollection(null);
     setLiveRelated([]);
+    setLiveCollection(null);
+    setDisplayViewCount(undefined);
     recordedIdRef.current = null;
-    (async () => {
-      try {
-        const a = await getArticleById(id);
-        if (cancelled) return;
-        if (!a) {
-          setPhase("missing");
-          return;
-        }
-        setArticle(a);
-        setDisplayViewCount(
-          typeof a.view_count === "number" && Number.isFinite(a.view_count)
-            ? a.view_count
-            : undefined
-        );
-        setPhase("ok");
+  }, [id]);
 
-        // Fetch related and collection in parallel, non-blocking
-        const sideTasks: Promise<void>[] = [
-          getRelatedArticles(id).then((items) => {
-            if (!cancelled) setLiveRelated(mapRelated(items));
-          }),
-        ];
-        if (a.collection_id) {
-          sideTasks.push(
-            getCollectionArticles(a.collection_id).then((col) => {
-              if (!cancelled) setLiveCollection(mapCollection(col));
-            }),
-          );
-        }
-        await Promise.allSettled(sideTasks);
-      } catch {
-        if (!cancelled) setPhase("error");
-      }
-    })();
+  useEffect(() => {
+    if (!article) return;
+    setDisplayViewCount(
+      typeof article.view_count === "number" && Number.isFinite(article.view_count)
+        ? article.view_count
+        : undefined,
+    );
+    let cancelled = false;
+    getRelatedArticles(id).then((items) => {
+      if (!cancelled) setLiveRelated(mapRelated(items));
+    }).catch(() => {});
+    if (article.collection_id) {
+      getCollectionArticles(article.collection_id).then((col) => {
+        if (!cancelled) setLiveCollection(mapCollection(col));
+      }).catch(() => {});
+    }
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [article, id]);
 
   useEffect(() => {
     if (phase !== "ok" || !article) return;
     if (recordedIdRef.current === id) return;
     recordedIdRef.current = id;
-    let cancelled = false;
-    (async () => {
-      try {
-        const n = await recordArticleView(id);
-        if (!cancelled && n != null) setDisplayViewCount(n);
-      } catch {
-        /* keep count from GET if any */
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [id, phase, article]);
+    recordViewMutation.mutate(id, {
+      onSuccess: (n) => {
+        if (n != null) setDisplayViewCount(n);
+      },
+    });
+  }, [id, phase, article, recordViewMutation]);
 
   useEffect(() => {
     if (!setArticleHeaderMeta) return;

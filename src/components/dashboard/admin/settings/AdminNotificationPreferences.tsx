@@ -4,11 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import { SettingsRow, settingsCardClass, SettingsToggle } from "./SettingsPrimitives";
-import {
-  getNotificationPreferences,
-  updateNotificationPreferences,
-  type NotificationPreferences,
-} from "@/services/notifications.service";
+import { useNotificationPreferences } from "@/hooks/queries/notifications";
+import { useUpdateNotificationPreferences } from "@/hooks/mutations/notifications";
+import type { NotificationPreferences } from "@/services/notifications.service";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -23,33 +21,33 @@ const DEFAULTS: NotificationPreferences = {
 
 export function AdminNotificationPreferences() {
   const t = useTranslations("Dashboard.notificationsPage.preferences");
+  const { data: serverPrefs, isPending: loading } = useNotificationPreferences();
+  const updateMutation = useUpdateNotificationPreferences();
   const [prefs, setPrefs] = useState<NotificationPreferences>(DEFAULTS);
-  const [loading, setLoading] = useState(true);
   const [saveState, setSaveState] = useState<SaveState>("idle");
 
   useEffect(() => {
-    getNotificationPreferences()
-      .then(setPrefs)
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+    if (serverPrefs) setPrefs(serverPrefs);
+  }, [serverPrefs]);
 
   const toggle = useCallback((key: keyof NotificationPreferences) => {
     setPrefs((p) => ({ ...p, [key]: !p[key] }));
   }, []);
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(() => {
     setSaveState("saving");
-    try {
-      const updated = await updateNotificationPreferences(prefs);
-      setPrefs(updated);
-      setSaveState("saved");
-      window.setTimeout(() => setSaveState("idle"), 2000);
-    } catch {
-      setSaveState("error");
-      window.setTimeout(() => setSaveState("idle"), 3000);
-    }
-  }, [prefs]);
+    updateMutation.mutate(prefs, {
+      onSuccess: (updated) => {
+        if (updated) setPrefs(updated);
+        setSaveState("saved");
+        window.setTimeout(() => setSaveState("idle"), 2000);
+      },
+      onError: () => {
+        setSaveState("error");
+        window.setTimeout(() => setSaveState("idle"), 3000);
+      },
+    });
+  }, [prefs, updateMutation]);
 
   const saveLabel =
     saveState === "saving"

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { StatCard } from "../shared/StatCard";
 import { useAuthUser } from "@/components/providers/AuthProvider";
-import { getDashboardStats, type DashboardStats } from "@/services/dashboard.service";
+import { useDashboardStats } from "@/hooks/queries/dashboard";
+import type { DashboardStats } from "@/services/dashboard.service";
 import {
   UsersIcon,
   FileTextIcon,
@@ -48,15 +48,7 @@ export function AdminCommandCenter() {
   const user = useAuthUser();
   const name = user?.full_name || user?.username || "Super Admin";
 
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getDashboardStats()
-      .then(setStats)
-      .catch(() => setStats(null))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: stats, isPending: loading } = useDashboardStats();
 
   return (
     <div>

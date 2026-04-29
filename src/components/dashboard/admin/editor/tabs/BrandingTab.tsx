@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { CloudUploadIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
-import { getCmsSettings, updateCmsSetting } from "@/services/cms.service";
+import { useCmsSettings } from "@/hooks/queries/cms";
+import { useUpdateCmsSetting } from "@/hooks/mutations/cms";
 import { uploadFileToUrl } from "@/services/uploads.service";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
@@ -22,28 +23,27 @@ export function BrandingTab() {
   const [savedLogoUrl, setSavedLogoUrl] = useState<string | null>(null);
   const [savedFaviconUrl, setSavedFaviconUrl] = useState<string | null>(null);
 
+  const { data: settings } = useCmsSettings();
+  const updateMutation = useUpdateCmsSetting();
+
   useEffect(() => {
-    getCmsSettings()
-      .then((settings) => {
-        const branding = settings.branding as {
-          primary_color?: string;
-          logo?: string;
-          favicon?: string;
-        } | undefined;
-        if (branding) {
-          if (branding.primary_color) setPrimaryColor(branding.primary_color);
-          if (branding.logo) {
-            setSavedLogoUrl(branding.logo);
-            setLogoPreview(branding.logo);
-          }
-          if (branding.favicon) {
-            setSavedFaviconUrl(branding.favicon);
-            setFaviconPreview(branding.favicon);
-          }
-        }
-      })
-      .catch(() => {});
-  }, []);
+    if (!settings) return;
+    const branding = settings.branding as {
+      primary_color?: string;
+      logo?: string;
+      favicon?: string;
+    } | undefined;
+    if (!branding) return;
+    if (branding.primary_color) setPrimaryColor(branding.primary_color);
+    if (branding.logo) {
+      setSavedLogoUrl(branding.logo);
+      setLogoPreview(branding.logo);
+    }
+    if (branding.favicon) {
+      setSavedFaviconUrl(branding.favicon);
+      setFaviconPreview(branding.favicon);
+    }
+  }, [settings]);
 
   const handleLogoSelect = (file: File | null) => {
     if (logoPreview && logoPreview !== savedLogoUrl) URL.revokeObjectURL(logoPreview);
@@ -66,18 +66,30 @@ export function BrandingTab() {
       if (logoFile) logoUrl = await uploadFileToUrl(logoFile);
       if (faviconFile) faviconUrl = await uploadFileToUrl(faviconFile);
 
-      await updateCmsSetting("branding", {
-        primary_color: primaryColor,
-        logo: logoUrl ?? "",
-        favicon: faviconUrl ?? "",
-      });
-
-      setSavedLogoUrl(logoUrl);
-      setSavedFaviconUrl(faviconUrl);
-      setLogoFile(null);
-      setFaviconFile(null);
-      setSaveState("saved");
-      setTimeout(() => setSaveState("idle"), 2500);
+      updateMutation.mutate(
+        {
+          key: "branding",
+          value: {
+            primary_color: primaryColor,
+            logo: logoUrl ?? "",
+            favicon: faviconUrl ?? "",
+          },
+        },
+        {
+          onSuccess: () => {
+            setSavedLogoUrl(logoUrl);
+            setSavedFaviconUrl(faviconUrl);
+            setLogoFile(null);
+            setFaviconFile(null);
+            setSaveState("saved");
+            setTimeout(() => setSaveState("idle"), 2500);
+          },
+          onError: () => {
+            setSaveState("error");
+            setTimeout(() => setSaveState("idle"), 3000);
+          },
+        },
+      );
     } catch {
       setSaveState("error");
       setTimeout(() => setSaveState("idle"), 3000);

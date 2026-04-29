@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { GripVerticalIcon, PlusIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
-import { getCmsSettings, updateCmsSetting } from "@/services/cms.service";
+import { useCmsSettings } from "@/hooks/queries/cms";
+import { useUpdateCmsSetting } from "@/hooks/mutations/cms";
 
 type NavLink = { id: string; text: string; path: string; enabled: boolean };
 
@@ -54,35 +55,35 @@ export function NavigationsFooterTab() {
   const [navSave, setNavSave] = useState<SaveState>("idle");
   const [footerSave, setFooterSave] = useState<SaveState>("idle");
 
-  useEffect(() => {
-    getCmsSettings()
-      .then((settings) => {
-        const nav = settings.navigation as { links?: Array<{ label?: string; url?: string; order?: number; is_visible?: boolean }> } | undefined;
-        if (nav?.links && nav.links.length > 0) {
-          setNavLinks(
-            nav.links.map((l, i) => ({
-              id: String(i),
-              text: l.label ?? "",
-              path: l.url ?? "",
-              enabled: l.is_visible ?? true,
-            }))
-          );
-        } else {
-          setNavLinks(
-            Array.from({ length: 6 }, (_, i) => ({ id: String(i), text: "", path: "", enabled: true }))
-          );
-        }
+  const { data: settings } = useCmsSettings();
+  const updateMutation = useUpdateCmsSetting();
 
-        const footer = settings.footer as { text?: string; social_links?: { twitter?: string; instagram?: string; linkedin?: string } } | undefined;
-        if (footer) {
-          setFooterText(footer.text ?? "");
-          setTwitter(footer.social_links?.twitter ?? "");
-          setInstagram(footer.social_links?.instagram ?? "");
-          setLinkedin(footer.social_links?.linkedin ?? "");
-        }
-      })
-      .catch(() => {});
-  }, []);
+  useEffect(() => {
+    if (!settings) return;
+    const nav = settings.navigation as { links?: Array<{ label?: string; url?: string; order?: number; is_visible?: boolean }> } | undefined;
+    if (nav?.links && nav.links.length > 0) {
+      setNavLinks(
+        nav.links.map((l, i) => ({
+          id: String(i),
+          text: l.label ?? "",
+          path: l.url ?? "",
+          enabled: l.is_visible ?? true,
+        }))
+      );
+    } else {
+      setNavLinks(
+        Array.from({ length: 6 }, (_, i) => ({ id: String(i), text: "", path: "", enabled: true }))
+      );
+    }
+
+    const footer = settings.footer as { text?: string; social_links?: { twitter?: string; instagram?: string; linkedin?: string } } | undefined;
+    if (footer) {
+      setFooterText(footer.text ?? "");
+      setTwitter(footer.social_links?.twitter ?? "");
+      setInstagram(footer.social_links?.instagram ?? "");
+      setLinkedin(footer.social_links?.linkedin ?? "");
+    }
+  }, [settings]);
 
   const updateNavLink = (id: string, field: keyof NavLink, value: string | boolean) => {
     setNavLinks((prev) => prev.map((l) => (l.id === id ? { ...l, [field]: value } : l)));
@@ -92,38 +93,54 @@ export function NavigationsFooterTab() {
     setNavLinks((prev) => [...prev, { id: String(Date.now()), text: "", path: "", enabled: true }]);
   };
 
-  const handleSaveNav = async () => {
+  const handleSaveNav = () => {
     setNavSave("saving");
-    try {
-      await updateCmsSetting("navigation", {
-        links: navLinks.map((l, i) => ({
-          label: l.text,
-          url: l.path,
-          order: i + 1,
-          is_visible: l.enabled,
-        })),
-      });
-      setNavSave("saved");
-      setTimeout(() => setNavSave("idle"), 2500);
-    } catch {
-      setNavSave("error");
-      setTimeout(() => setNavSave("idle"), 3000);
-    }
+    updateMutation.mutate(
+      {
+        key: "navigation",
+        value: {
+          links: navLinks.map((l, i) => ({
+            label: l.text,
+            url: l.path,
+            order: i + 1,
+            is_visible: l.enabled,
+          })),
+        },
+      },
+      {
+        onSuccess: () => {
+          setNavSave("saved");
+          setTimeout(() => setNavSave("idle"), 2500);
+        },
+        onError: () => {
+          setNavSave("error");
+          setTimeout(() => setNavSave("idle"), 3000);
+        },
+      },
+    );
   };
 
-  const handleSaveFooter = async () => {
+  const handleSaveFooter = () => {
     setFooterSave("saving");
-    try {
-      await updateCmsSetting("footer", {
-        text: footerText,
-        social_links: { twitter, instagram, linkedin },
-      });
-      setFooterSave("saved");
-      setTimeout(() => setFooterSave("idle"), 2500);
-    } catch {
-      setFooterSave("error");
-      setTimeout(() => setFooterSave("idle"), 3000);
-    }
+    updateMutation.mutate(
+      {
+        key: "footer",
+        value: {
+          text: footerText,
+          social_links: { twitter, instagram, linkedin },
+        },
+      },
+      {
+        onSuccess: () => {
+          setFooterSave("saved");
+          setTimeout(() => setFooterSave("idle"), 2500);
+        },
+        onError: () => {
+          setFooterSave("error");
+          setTimeout(() => setFooterSave("idle"), 3000);
+        },
+      },
+    );
   };
 
   return (

@@ -1,24 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { EyeIcon, FileTextIcon, PenLineIcon } from "@/components/ui/icons";
 import { HexIconOutlined } from "@/components/dashboard/admin/articles/articles-create/HexIconOutlined";
-import { getCmsPages, type CmsPage } from "@/services/cms.service";
+import { useCmsPages } from "@/hooks/queries/cms";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
 export function StaticPagesTab() {
-  const [pages, setPages] = useState<CmsPage[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getCmsPages()
-      .then((all) => setPages(all.filter((p) => p.page_type !== "homepage")))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: allPages, isPending: loading } = useCmsPages();
+  const pages = (allPages ?? []).filter((p) => p.page_type !== "homepage");
 
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] p-6">

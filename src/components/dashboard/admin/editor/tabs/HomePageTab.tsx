@@ -8,12 +8,12 @@ import {
   PlusIcon,
   RefreshCwIcon,
 } from "@/components/ui/icons";
+import { useCmsHomepage } from "@/hooks/queries/cms";
 import {
-  getCmsHomepage,
-  updateCmsSection,
-  toggleCmsSection,
-  type CmsSection,
-} from "@/services/cms.service";
+  useToggleCmsSection,
+  useUpdateCmsSection,
+} from "@/hooks/mutations/cms";
+import type { CmsSection } from "@/services/cms.service";
 
 type HeroConfig = {
   headline: string;
@@ -33,8 +33,16 @@ function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
 }
 
 export function HomePageTab() {
-  const [pageId, setPageId] = useState<string | null>(null);
-  const [sections, setSections] = useState<CmsSection[]>([]);
+  const { data: homepage } = useCmsHomepage();
+  const toggleSectionMutation = useToggleCmsSection();
+  const updateSectionMutation = useUpdateCmsSection();
+  const saving = updateSectionMutation.isPending;
+
+  const pageId = homepage?.id ?? null;
+  const sections: CmsSection[] = homepage
+    ? [...homepage.sections].sort((a, b) => a.section_order - b.section_order)
+    : [];
+
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [backgroundFile, setBackgroundFile] = useState<File | null>(null);
@@ -52,33 +60,24 @@ export function HomePageTab() {
     primary_cta: "",
     secondary_cta: "",
   });
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    getCmsHomepage()
-      .then((page) => {
-        setPageId(page.id);
-        const sorted = [...page.sections].sort((a, b) => a.section_order - b.section_order);
-        setSections(sorted);
-        const heroSection = sorted.find((s) => s.section_type === "hero");
-        if (heroSection) {
-          setSelectedSectionId(heroSection.id);
-          const cfg = parseHeroConfig(heroSection);
-          setHeroConfig(cfg);
-          setSavedHeroConfig(cfg);
-        } else if (sorted.length > 0) {
-          setSelectedSectionId(sorted[0].id);
-        }
-      })
-      .catch(() => {});
-  }, []);
+    if (!homepage) return;
+    const sorted = [...homepage.sections].sort((a, b) => a.section_order - b.section_order);
+    const heroSection = sorted.find((s) => s.section_type === "hero");
+    if (heroSection) {
+      setSelectedSectionId((id) => id ?? heroSection.id);
+      const cfg = parseHeroConfig(heroSection);
+      setHeroConfig(cfg);
+      setSavedHeroConfig(cfg);
+    } else if (sorted.length > 0) {
+      setSelectedSectionId((id) => id ?? sorted[0].id);
+    }
+  }, [homepage]);
 
   const handleToggleVisibility = (section: CmsSection) => {
     if (!pageId) return;
-    toggleCmsSection(pageId, section.id).catch(() => {});
-    setSections((prev) =>
-      prev.map((s) => (s.id === section.id ? { ...s, is_visible: !s.is_visible } : s))
-    );
+    toggleSectionMutation.mutate({ pageId, sectionId: section.id });
   };
 
   const handleFileSelect = (file: File | null) => {
@@ -101,18 +100,16 @@ export function HomePageTab() {
   const selectedSection = sections.find((s) => s.id === selectedSectionId);
   const showHeroForm = selectedSection?.section_type === "hero";
 
-  const handleSaveHero = async () => {
+  const handleSaveHero = () => {
     if (!pageId || !heroSection) return;
-    setSaving(true);
-    try {
-      await updateCmsSection(pageId, heroSection.id, {
-        config: JSON.stringify(heroConfig),
-      });
-      setSavedHeroConfig(heroConfig);
-    } catch {}
-    finally {
-      setSaving(false);
-    }
+    updateSectionMutation.mutate(
+      {
+        pageId,
+        sectionId: heroSection.id,
+        data: { config: JSON.stringify(heroConfig) },
+      },
+      { onSuccess: () => setSavedHeroConfig(heroConfig) },
+    );
   };
 
   const handleReset = () => setHeroConfig(savedHeroConfig);

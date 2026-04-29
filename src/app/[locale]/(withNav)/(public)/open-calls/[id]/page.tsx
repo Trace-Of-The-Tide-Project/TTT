@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -9,10 +8,10 @@ import { HexImageGrid } from "@/components/ui/HexImageGrid";
 import { DynamicOpenCallForm } from "@/components/open-call/DynamicOpenCallForm";
 import { ContributeIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
-import {
-  getOpenCallById,
-  type OpenCallDetail,
-  type ApplicationFormField,
+import { useOpenCall } from "@/hooks/queries/open-calls";
+import type {
+  OpenCallDetail,
+  ApplicationFormField,
 } from "@/services/open-calls.service";
 
 function formatDate(iso: string | null | undefined, locale: string): string {
@@ -37,30 +36,15 @@ export default function OpenCallByIdPage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
 
-  const [phase, setPhase] = useState<"loading" | "ok" | "missing" | "error">("loading");
-  const [openCall, setOpenCall] = useState<OpenCallDetail | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    setPhase("loading");
-    (async () => {
-      try {
-        const oc = await getOpenCallById(id);
-        if (cancelled) return;
-        if (!oc) {
-          setPhase("missing");
-          return;
-        }
-        setOpenCall(oc);
-        setPhase("ok");
-      } catch {
-        if (!cancelled) setPhase("error");
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
+  const openCallQuery = useOpenCall(id);
+  const openCall: OpenCallDetail | null = openCallQuery.data ?? null;
+  const phase: "loading" | "ok" | "missing" | "error" = openCallQuery.isPending
+    ? "loading"
+    : openCallQuery.error
+      ? "error"
+      : openCall
+        ? "ok"
+        : "missing";
 
   if (phase === "loading") {
     return (

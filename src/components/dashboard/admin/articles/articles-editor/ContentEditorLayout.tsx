@@ -33,7 +33,6 @@ import {
 import { invalidateAdminArticlesListCache } from "@/lib/dashboard/admin-articles-list-cache";
 import {
   createArticle,
-  getArticleById,
   getArticleIdFromCreateResponse,
   publishArticle,
   scheduleArticle,
@@ -41,6 +40,7 @@ import {
   type ArticleLifecycleStatus,
   type CreateArticlePayload,
 } from "@/services/articles.service";
+import { useArticle } from "@/hooks/queries/articles";
 import { isAxiosError } from "axios";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 
@@ -129,8 +129,6 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [articleLoading, setArticleLoading] = useState(isEditMode);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [loadKey, setLoadKey] = useState(0);
   const [portalReady, setPortalReady] = useState(false);
 
@@ -145,59 +143,49 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     }
   }, [configFromProps, articleId]);
 
+  const articleQuery = useArticle(articleId);
+  const articleLoading = isEditMode && articleQuery.isPending;
+  const articleNotFound = articleQuery.isSuccess && articleQuery.data === null;
+  const loadError = articleNotFound
+    ? tLayout("articleNotFound")
+    : articleQuery.error
+      ? translateErr(articleQuery.error)
+      : null;
+
   useEffect(() => {
-    if (!articleId) return;
-    let cancelled = false;
-    (async () => {
-      setArticleLoading(true);
-      setLoadError(null);
-      try {
-        const a = await getArticleById(articleId);
-        if (cancelled) return;
-        if (!a) {
-          setLoadError(tLayout("articleNotFound"));
-          return;
-        }
-        setConfig(contentFormConfigForType(a.content_type));
-        setTitle(a.title ?? "");
-        setCategory(a.category ?? "");
-        const st = (a.status || "draft").trim().toLowerCase();
-        initialWasDraftRef.current = st === "draft";
-        const isScheduled =
-          st === "scheduled" ||
-          st === "schedule_pending" ||
-          st === "scheduled_for_publish";
-        setWorkflowStatus(
-          isScheduled ? "scheduled" : st === "published" ? "published" : "draft",
-        );
-        const sat = a.scheduled_at?.trim();
-        setScheduledAt(sat && sat.length ? sat : null);
-        setLanguage((a.language || "en").trim() || "en");
-        setVisibility((a.visibility || "public").toLowerCase() === "private" ? "private" : "public");
-        setSeoTitle(a.seo_title?.trim() ?? "");
-        setMetaDescription(a.meta_description?.trim() ?? "");
-        setCollectionId(a.collection_id?.trim() ?? "");
-        setTagIds(
-          Array.isArray(a.tags)
-            ? a.tags.map((tagItem) => tagItem.id).filter((id): id is string => typeof id === "string")
-            : [],
-        );
-        const mapped = articleDetailBlocksToContentBlocks(a.blocks);
-        setBlocks(
-          mapped.length
-            ? mapped
-            : [{ id: crypto.randomUUID(), type: "paragraph", content: "" }],
-        );
-      } catch (e) {
-        if (!cancelled) setLoadError(translateErr(e));
-      } finally {
-        if (!cancelled) setArticleLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [articleId, loadKey, tLayout, translateErr]);
+    const a = articleQuery.data;
+    if (!a) return;
+    setConfig(contentFormConfigForType(a.content_type));
+    setTitle(a.title ?? "");
+    setCategory(a.category ?? "");
+    const st = (a.status || "draft").trim().toLowerCase();
+    initialWasDraftRef.current = st === "draft";
+    const isScheduled =
+      st === "scheduled" ||
+      st === "schedule_pending" ||
+      st === "scheduled_for_publish";
+    setWorkflowStatus(
+      isScheduled ? "scheduled" : st === "published" ? "published" : "draft",
+    );
+    const sat = a.scheduled_at?.trim();
+    setScheduledAt(sat && sat.length ? sat : null);
+    setLanguage((a.language || "en").trim() || "en");
+    setVisibility((a.visibility || "public").toLowerCase() === "private" ? "private" : "public");
+    setSeoTitle(a.seo_title?.trim() ?? "");
+    setMetaDescription(a.meta_description?.trim() ?? "");
+    setCollectionId(a.collection_id?.trim() ?? "");
+    setTagIds(
+      Array.isArray(a.tags)
+        ? a.tags.map((tagItem) => tagItem.id).filter((id): id is string => typeof id === "string")
+        : [],
+    );
+    const mapped = articleDetailBlocksToContentBlocks(a.blocks);
+    setBlocks(
+      mapped.length
+        ? mapped
+        : [{ id: crypto.randomUUID(), type: "paragraph", content: "" }],
+    );
+  }, [articleQuery.data, loadKey]);
 
   useEffect(() => {
     if (!successToast) {

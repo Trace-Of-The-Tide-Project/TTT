@@ -12,7 +12,6 @@ import { TripTimeline } from "@/components/trip/TripTimeline";
 import { resolveTripCoverImage } from "@/lib/trip-cover-image";
 import { theme } from "@/lib/theme";
 import {
-  getTripById,
   parseTripHighlights,
   parseTripLanguages,
   tripBookingFormFields,
@@ -21,6 +20,7 @@ import {
   type TripListItem,
   type TripStop,
 } from "@/services/trips.service";
+import { useTrip } from "@/hooks/queries/trips";
 
 const TripPreviewRouteMap = dynamic(
   () => import("@/components/dashboard/admin/articles/articles-editor/trip/TripPreviewRouteMap"),
@@ -126,17 +126,8 @@ type TripDetailContentProps = {
 };
 
 export function TripDetailContent({ tripId }: TripDetailContentProps) {
-  const [trip, setTrip] = useState<TripListItem | null | undefined>(undefined);
-
-  useEffect(() => {
-    let cancelled = false;
-    getTripById(tripId).then((t) => {
-      if (!cancelled) setTrip(t);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [tripId]);
+  const tripQuery = useTrip(tripId);
+  const trip = tripQuery.isPending ? undefined : tripQuery.data ?? null;
 
   const highlights = useMemo(() => {
     if (!trip) return [];

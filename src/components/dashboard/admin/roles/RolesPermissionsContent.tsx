@@ -13,12 +13,13 @@ import {
   type EditorAppStatus,
 } from "@/lib/dashboard/roles-constants";
 import {
-  getDashboardUsersByRole,
-  getEditorApplicationsFull,
-  approveEditorApplication,
-  rejectEditorApplication,
-  type FullEditorApplication,
-} from "@/services/dashboard.service";
+  useDashboardUsersByRole,
+  useEditorApplicationsFull,
+} from "@/hooks/queries/dashboard";
+import {
+  useApproveEditorApplication,
+  useRejectEditorApplication,
+} from "@/hooks/mutations/dashboard";
 import { theme } from "@/lib/theme";
 import {
   SearchIcon,
@@ -177,15 +178,9 @@ function EditorApplications() {
   const te = useTranslations("Dashboard.rolesPermissions.editorApps");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<EditorAppStatus | "all">("all");
-  const [applications, setApplications] = useState<FullEditorApplication[]>([]);
-  const [loadingApps, setLoadingApps] = useState(true);
-
-  useEffect(() => {
-    getEditorApplicationsFull(50)
-      .then((apps) => setApplications(apps))
-      .catch(() => {})
-      .finally(() => setLoadingApps(false));
-  }, []);
+  const { data: applications = [], isPending: loadingApps } = useEditorApplicationsFull(50);
+  const approveMutation = useApproveEditorApplication();
+  const rejectMutation = useRejectEditorApplication();
 
   const statusFilters = useMemo(
     () =>
@@ -222,19 +217,8 @@ function EditorApplications() {
     setStatusFilter(status);
   };
 
-  const handleApprove = (id: string) => {
-    approveEditorApplication(id).catch(() => {});
-    setApplications((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: "approved" as const } : a))
-    );
-  };
-
-  const handleReject = (id: string) => {
-    rejectEditorApplication(id).catch(() => {});
-    setApplications((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: "rejected" as const } : a))
-    );
-  };
+  const handleApprove = (id: string) => approveMutation.mutate(id);
+  const handleReject = (id: string) => rejectMutation.mutate(id);
 
   const statusBadgeStyle = (s: EditorAppStatus) => {
     if (s === "pending") return "rounded-md bg-[#444] px-3 py-1 text-sm font-medium text-foreground";
@@ -432,21 +416,18 @@ export function RolesPermissionsContent() {
   const tr = useTranslations("Dashboard.rolesPermissions");
   const [activeTab, setActiveTab] = useState<RolesTabId>("overview");
   const [configureRoleOpen, setConfigureRoleOpen] = useState(false);
-  const [liveRoleCounts, setLiveRoleCounts] = useState<Record<string, number> | null>(null);
 
-  useEffect(() => {
-    getDashboardUsersByRole()
-      .then(({ roles, totalUsers }) => {
-        const map: Record<string, number> = { users: totalUsers };
-        for (const row of roles) {
-          const normalized = row.label.toLowerCase();
-          if (normalized === "user") continue;
-          map[normalized + "s"] = row.count;
-        }
-        setLiveRoleCounts(map);
-      })
-      .catch(() => {});
-  }, []);
+  const { data: usersByRole } = useDashboardUsersByRole();
+  const liveRoleCounts: Record<string, number> | null = useMemo(() => {
+    if (!usersByRole) return null;
+    const map: Record<string, number> = { users: usersByRole.totalUsers };
+    for (const row of usersByRole.roles) {
+      const normalized = row.label.toLowerCase();
+      if (normalized === "user") continue;
+      map[normalized + "s"] = row.count;
+    }
+    return map;
+  }, [usersByRole]);
 
   const displayStats = roleStats.map((stat) => ({
     ...stat,

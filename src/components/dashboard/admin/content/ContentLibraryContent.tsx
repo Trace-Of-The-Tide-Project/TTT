@@ -21,11 +21,11 @@ import { HexIconOutlined } from "@/components/dashboard/admin/articles/articles-
 import { AuthedContributionImage } from "@/components/dashboard/admin/content/AuthedContributionImage";
 import {
   contributionFilePublicUrl,
-  getContributions,
   type ContributionFile,
   type ContributionListItem,
   type ContributionListMeta,
 } from "@/services/contributions.service";
+import { useContributions } from "@/hooks/queries/contributions";
 
 const ROWS_PER_PAGE = 10;
 
@@ -385,36 +385,16 @@ export function ContentLibraryContent() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState(TYPE_FILTER_ALL);
 
-  const [items, setItems] = useState<ContributionListItem[]>([]);
-  const [meta, setMeta] = useState<ContributionListMeta | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [previewItem, setPreviewItem] = useState<ContributionListItem | null>(null);
-  const loadedPagesRef = useRef<Set<number>>(new Set());
 
-  const fetchData = useCallback(
-    async (p: number, force = false) => {
-      if (!force && loadedPagesRef.current.has(p)) return;
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await getContributions(p, ROWS_PER_PAGE);
-        setItems(res.items);
-        setMeta(res.meta);
-        loadedPagesRef.current.add(p);
-      } catch (e) {
-        setError(errMessage(e, t("errors.requestFailed"), t("errors.generic")));
-      } finally {
-        setLoading(false);
-      }
-    },
-    [t],
-  );
-
-  useEffect(() => {
-    void fetchData(page);
-  }, [page, fetchData]);
+  const contributionsQuery = useContributions(page, ROWS_PER_PAGE);
+  const items: ContributionListItem[] = contributionsQuery.data?.items ?? [];
+  const meta: ContributionListMeta | null = contributionsQuery.data?.meta ?? null;
+  const loading = contributionsQuery.isFetching;
+  const error = contributionsQuery.error
+    ? errMessage(contributionsQuery.error, t("errors.requestFailed"), t("errors.generic"))
+    : null;
 
   const typeOptions = useMemo(() => {
     const types = new Set<string>();
@@ -525,7 +505,7 @@ export function ContentLibraryContent() {
           <p>{error}</p>
           <button
             type="button"
-            onClick={() => void fetchData(page, true)}
+            onClick={() => void contributionsQuery.refetch()}
             className="mt-2 text-xs font-medium text-amber-400 underline hover:text-amber-300"
           >
             {t("tryAgain")}

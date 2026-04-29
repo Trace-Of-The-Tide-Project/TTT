@@ -1,8 +1,9 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
+import { useUsers } from "@/hooks/queries/users";
 import { DashboardLayout } from "@/components/dashboard/shared/DashboardLayout";
 import { AdminTopbar } from "@/components/dashboard/admin/AdminTopbar";
 import { AdminCommandCenter } from "@/components/dashboard/admin/AdminCommandCenter";
@@ -21,7 +22,6 @@ import { AdminSettingsPageHeader } from "@/components/dashboard/admin/settings/A
 import { adminConfig } from "@/lib/dashboard/admin-config";
 import { shouldShowAdminSettingsHeader } from "@/lib/dashboard/admin-settings-header-paths";
 import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
-import { getUsers } from "@/services/users.service";
 
 function formatCompact(n: number): string {
   if (n >= 1_000_000) return `${+(n / 1_000_000).toFixed(1)}m`;
@@ -69,14 +69,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const tLayout = useTranslations("Dashboard.layout");
   const commandCenter = getCommandCenter(pathname);
   const [mounted, setMounted] = useState(false);
-  const [badgeOverrides, setBadgeOverrides] = useState<Record<string, string>>({});
+  const { data: usersResult } = useUsers({ limit: 1 });
 
   useEffect(() => {
     setMounted(true);
-    getUsers({ limit: 1 }).then((result) => {
-      setBadgeOverrides({ "/admin/users": formatCompact(result.meta.total) });
-    }).catch(() => {});
   }, []);
+
+  const badgeOverrides = useMemo<Record<string, string>>(() => {
+    const out: Record<string, string> = {};
+    if (usersResult) out["/admin/users"] = formatCompact(usersResult.meta.total);
+    return out;
+  }, [usersResult]);
 
   if (!mounted) {
     return (

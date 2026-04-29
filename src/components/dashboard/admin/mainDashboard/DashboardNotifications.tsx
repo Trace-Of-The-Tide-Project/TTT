@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { getDashboardAlerts } from "@/services/dashboard.service";
+import { useDashboardAlerts } from "@/hooks/queries/dashboard";
 import { AlertTriangleIcon, PersonIcon, ShieldIcon } from "@/components/ui/icons";
 import type { ComponentType } from "react";
 
@@ -76,35 +76,30 @@ function AlertCard({ item, onDismiss }: { item: AlertDisplay; onDismiss: (type: 
 
 export function DashboardNotifications() {
   const t = useTranslations("Dashboard.adminHome.notifications");
-  const [items, setItems] = useState<AlertDisplay[]>([]);
+  const { data } = useDashboardAlerts();
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    getDashboardAlerts()
-      .then((data) => {
-        const mapped: AlertDisplay[] = (data.items ?? []).map((item) => {
-          const cfg = ALERT_CONFIG[item.type] ?? {
-            icon: AlertTriangleIcon,
-            href: "/admin",
-            labelKey: "review",
-            titleKey: "pendingTitle",
-            descKey: "pendingDesc",
-          };
-          const count = parseInt(item.message.match(/\d+/)?.[0] ?? "1", 10);
-          return {
-            type: item.type,
-            count,
-            titleKey: cfg.titleKey,
-            descKey: cfg.descKey,
-            icon: cfg.icon,
-            href: cfg.href,
-            labelKey: cfg.labelKey,
-          };
-        });
-        setItems(mapped);
-      })
-      .catch(() => setItems([]));
-  }, []);
+  const items: AlertDisplay[] = useMemo(() => {
+    return (data?.items ?? []).map((item) => {
+      const cfg = ALERT_CONFIG[item.type] ?? {
+        icon: AlertTriangleIcon,
+        href: "/admin",
+        labelKey: "review",
+        titleKey: "pendingTitle",
+        descKey: "pendingDesc",
+      };
+      const count = parseInt(item.message.match(/\d+/)?.[0] ?? "1", 10);
+      return {
+        type: item.type,
+        count,
+        titleKey: cfg.titleKey,
+        descKey: cfg.descKey,
+        icon: cfg.icon,
+        href: cfg.href,
+        labelKey: cfg.labelKey,
+      };
+    });
+  }, [data]);
 
   const visible = items.filter((a) => !dismissed.has(a.type));
   const dismiss = (type: string) => setDismissed((prev) => new Set([...prev, type]));

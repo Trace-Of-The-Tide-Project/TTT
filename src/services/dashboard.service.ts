@@ -88,10 +88,19 @@ function mapEditorApplicationRow(row: unknown): EditorApplicationRow {
   };
 }
 
+function asArray(body: unknown): unknown[] {
+  if (Array.isArray(body)) return body;
+  if (body && typeof body === "object") {
+    const b = body as { data?: unknown; items?: unknown };
+    if (Array.isArray(b.data)) return b.data;
+    if (Array.isArray(b.items)) return b.items;
+  }
+  return [];
+}
+
 export async function getDashboardEditorApplications(limit = 5): Promise<EditorApplicationRow[]> {
   const res = await api.get("/dashboard/editor-applications", { params: { limit } });
-  const body = unwrap<{ data: unknown[] }>(res.data);
-  return (body.data ?? []).map(mapEditorApplicationRow);
+  return asArray(unwrap<unknown>(res.data)).map(mapEditorApplicationRow);
 }
 
 export async function approveEditorApplication(id: string): Promise<void> {
@@ -145,8 +154,7 @@ function mapFullEditorApplication(row: unknown): FullEditorApplication {
 
 export async function getEditorApplicationsFull(limit = 50): Promise<FullEditorApplication[]> {
   const res = await api.get("/dashboard/editor-applications", { params: { limit } });
-  const body = unwrap<{ data: unknown[] }>(res.data);
-  return (body.data ?? []).map(mapFullEditorApplication);
+  return asArray(unwrap<unknown>(res.data)).map(mapFullEditorApplication);
 }
 
 // ──────────────────────────────────────────────────────────────

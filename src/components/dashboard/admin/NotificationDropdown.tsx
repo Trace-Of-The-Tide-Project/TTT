@@ -4,12 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "@/i18n/navigation";
 import { BellIcon } from "@/components/ui/icons";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { useNotifications } from "@/hooks/queries/notifications";
 import {
-  getNotifications,
-  markNotificationRead,
-  markAllNotificationsRead,
-  type NotificationListItem,
-} from "@/services/notifications.service";
+  useMarkAllNotificationsRead,
+  useMarkNotificationRead,
+} from "@/hooks/mutations/notifications";
+import type { NotificationListItem } from "@/services/notifications.service";
 import { theme } from "@/lib/theme";
 
 const ACCENT_MUTED = "#E8DDC0";
@@ -100,9 +100,6 @@ function Skeleton() {
 export function NotificationDropdown() {
   const { isDark } = useTheme();
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<NotificationListItem[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const iconColor = isDark ? ACCENT_MUTED : "#78716c";
@@ -110,12 +107,17 @@ export function NotificationDropdown() {
     ? "hover:bg-[var(--tott-dash-ghost-hover)]"
     : "border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] hover:bg-[var(--tott-dash-ghost-hover)]";
 
-  // Fetch unread count on mount (badge needs to show before dropdown opens).
-  useEffect(() => {
-    getNotifications({ limit: 1, status: "unread" })
-      .then(({ meta }) => setUnreadCount(meta.total))
-      .catch(() => {});
-  }, []);
+  const { data: unreadData } = useNotifications({ limit: 1, status: "unread" });
+  const { data: listData, isFetching: loading } = useNotifications(
+    { limit: 8, sortBy: "created_at", order: "DESC" },
+    { enabled: open },
+  );
+
+  const items: NotificationListItem[] = listData?.notifications ?? [];
+  const unreadCount = unreadData?.meta.total ?? 0;
+
+  const markReadMutation = useMarkNotificationRead();
+  const markAllMutation = useMarkAllNotificationsRead();
 
   // Close on outside click.
   useEffect(() => {
@@ -127,38 +129,8 @@ export function NotificationDropdown() {
     return () => document.removeEventListener("mousedown", handler);
   }, [open]);
 
-  // Fetch recent notifications when dropdown opens.
-  useEffect(() => {
-    if (!open) return;
-    setLoading(true);
-    getNotifications({ limit: 8, sortBy: "created_at", order: "DESC" })
-      .then(({ notifications }) => {
-        setItems(notifications);
-        setUnreadCount(notifications.filter((n) => n.status === "unread").length);
-      })
-      .catch(() => setItems([]))
-      .finally(() => setLoading(false));
-  }, [open]);
-
-  const handleRead = async (id: string) => {
-    setItems((prev) => prev.map((n) => (n.id === id ? { ...n, status: "read" } : n)));
-    setUnreadCount((c) => Math.max(0, c - 1));
-    try {
-      await markNotificationRead(id);
-    } catch {
-      // optimistic update stays
-    }
-  };
-
-  const handleMarkAll = async () => {
-    setItems((prev) => prev.map((n) => ({ ...n, status: "read" })));
-    setUnreadCount(0);
-    try {
-      await markAllNotificationsRead();
-    } catch {
-      // optimistic update stays
-    }
-  };
+  const handleRead = (id: string) => markReadMutation.mutate(id);
+  const handleMarkAll = () => markAllMutation.mutate();
 
   return (
     <div ref={ref} className="relative">

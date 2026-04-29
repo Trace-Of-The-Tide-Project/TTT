@@ -9,7 +9,7 @@ import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
 import { PlusIcon, MoreDotsIcon } from "@/components/ui/icons";
 import { ConfirmDeleteArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ConfirmDeleteArticleModal";
-import { deleteArticle } from "@/services/articles.service";
+import { useDeleteArticle } from "@/hooks/mutations/articles";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import { isAxiosError } from "axios";
 
@@ -91,8 +91,9 @@ export function ArticlesTable({
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ArticleRow | null>(null);
-  const [deleteBusy, setDeleteBusy] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const deleteMutation = useDeleteArticle();
+  const deleteBusy = deleteMutation.isPending;
 
   useEffect(() => {
     const fromUrl = searchParams.get("tab");
@@ -208,21 +209,20 @@ export function ArticlesTable({
     setDeleteError(null);
   }, [deleteBusy]);
 
-  const confirmDelete = useCallback(async () => {
+  const confirmDelete = useCallback(() => {
     if (!deleteTarget) return;
-    setDeleteBusy(true);
     setDeleteError(null);
-    try {
-      const id = deleteTarget.id;
-      await deleteArticle(id);
-      setDeleteTarget(null);
-      await onArticleDeleted?.(id);
-    } catch (e) {
-      setDeleteError(deleteErrMessage(e, t("errors.deleteFailed")));
-    } finally {
-      setDeleteBusy(false);
-    }
-  }, [deleteTarget, onArticleDeleted, t]);
+    const id = deleteTarget.id;
+    deleteMutation.mutate(id, {
+      onSuccess: async () => {
+        setDeleteTarget(null);
+        await onArticleDeleted?.(id);
+      },
+      onError: (e) => {
+        setDeleteError(deleteErrMessage(e, t("errors.deleteFailed")));
+      },
+    });
+  }, [deleteTarget, onArticleDeleted, t, deleteMutation]);
 
   return (
     <div>

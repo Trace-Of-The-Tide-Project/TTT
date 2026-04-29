@@ -21,7 +21,7 @@ import {
 } from "@/lib/dashboard/localize-article-editor-config";
 import { ApplicationFormBuilder } from "./open-call/ApplicationFormBuilder";
 import { invalidateAdminArticlesListCache } from "@/lib/dashboard/admin-articles-list-cache";
-import { getAdminTags } from "@/services/admin-tags.service";
+import { useAdminTags } from "@/hooks/queries/admin-tags";
 import { createArticle } from "@/services/articles.service";
 import {
   createOpenCall,
@@ -156,6 +156,8 @@ export function OpenCallEditorLayout() {
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)));
   }, []);
 
+  const { data: adminTagsData = [] } = useAdminTags();
+
   const buildPayloads = useCallback(
     async (opts: {
       action: "publish" | "draft" | "schedule";
@@ -167,11 +169,11 @@ export function OpenCallEditorLayout() {
       coverImage?: string;
       excerpt?: string;
     }> => {
-      const [{ content_blocks, main_media }, articleBlocks, adminTags] = await Promise.all([
+      const [{ content_blocks, main_media }, articleBlocks] = await Promise.all([
         buildOpenCallContentBlocksAndMainMedia(blocks),
         buildArticleBlocksFromEditor(blocks),
-        getAdminTags(),
       ]);
+      const adminTags = adminTagsData;
       const tags = tagIds
         .map((id) => adminTags.find((t) => t.id === id)?.name)
         .filter((n): n is string => Boolean(n?.trim()));
@@ -237,7 +239,7 @@ export function OpenCallEditorLayout() {
         scheduled_at: extra.scheduledAt,
       });
     },
-    [title, category, language, visibility, seoTitle, metaDescription, collectionId, tagIds],
+    [title, category, language, visibility, seoTitle, metaDescription, collectionId, tagIds, adminTagsData, applicationFields, blocks],
   );
 
   const validateBeforeSubmit = useCallback(() => {
