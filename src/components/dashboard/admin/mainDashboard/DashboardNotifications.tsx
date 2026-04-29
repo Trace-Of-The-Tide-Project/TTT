@@ -129,7 +129,7 @@ export function DashboardNotifications() {
   const dismissAll = () => setDismissed(new Set(items.map((a) => a.type)));
 
   return (
-    <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 shadow-[0_1px_2px_rgba(22,36,58,0.04),0_4px_16px_rgba(22,36,58,0.04)]">
+    <div>
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground">{t("title")}</h3>
         <div className="flex items-center gap-3">
