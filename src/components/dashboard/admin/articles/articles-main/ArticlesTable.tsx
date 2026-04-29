@@ -11,7 +11,7 @@ import { PlusIcon, MoreDotsIcon } from "@/components/ui/icons";
 import { ConfirmDeleteArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ConfirmDeleteArticleModal";
 import { useDeleteArticle } from "@/hooks/mutations/articles";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
-import { isAxiosError } from "axios";
+import { formatApiError } from "@/lib/api/error-message";
 
 type Tab = { id: string; labelKey: string };
 
@@ -36,20 +36,6 @@ type ArticlesTableProps = {
   /** Update list after a row is deleted (e.g. remove locally; no refetch). */
   onArticleDeleted?: (articleId: string) => void | Promise<void>;
 };
-
-function deleteErrMessage(e: unknown, fallback: string): string {
-  if (isAxiosError(e)) {
-    const d = e.response?.data;
-    if (typeof d === "string" && d.trim()) return d;
-    if (d && typeof d === "object") {
-      const o = d as Record<string, unknown>;
-      if (typeof o.message === "string") return o.message;
-    }
-    return e.message || fallback;
-  }
-  if (e instanceof Error) return e.message;
-  return fallback;
-}
 
 const statusColorMap: Record<string, string> = {
   emerald: "#2ECC71",
@@ -92,7 +78,7 @@ export function ArticlesTable({
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ArticleRow | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-  const deleteMutation = useDeleteArticle();
+  const deleteMutation = useDeleteArticle({ silent: true });
   const deleteBusy = deleteMutation.isPending;
 
   useEffect(() => {
@@ -219,7 +205,7 @@ export function ArticlesTable({
         await onArticleDeleted?.(id);
       },
       onError: (e) => {
-        setDeleteError(deleteErrMessage(e, t("errors.deleteFailed")));
+        setDeleteError(formatApiError(e, t("errors.deleteFailed")));
       },
     });
   }, [deleteTarget, onArticleDeleted, t, deleteMutation]);

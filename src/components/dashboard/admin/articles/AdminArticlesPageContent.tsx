@@ -26,7 +26,7 @@ import type { ArticleListItem } from "@/services/articles.service";
 import { useArticles } from "@/hooks/queries/articles";
 import { useDeleteArticle } from "@/hooks/mutations/articles";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
-import { isAxiosError } from "axios";
+import { formatApiError } from "@/lib/api/error-message";
 import type { ArticleCardItem } from "@/components/dashboard/admin/articles/articles-main/ArticleCardsSection";
 import {
   FileTextIcon,
@@ -43,35 +43,6 @@ const CREATE_HREF = "/admin/articles/create";
 
 function editArticleHref(id: string): string {
   return `/admin/articles/edit/${encodeURIComponent(id)}`;
-}
-
-function listErrMessage(e: unknown, loadFailed: string): string {
-  if (isAxiosError(e)) {
-    const d = e.response?.data;
-    if (typeof d === "string" && d.trim()) return d;
-    if (d && typeof d === "object") {
-      const o = d as Record<string, unknown>;
-      if (typeof o.message === "string") return o.message;
-      if (Array.isArray(o.message)) return o.message.map(String).join("; ");
-    }
-    return e.message || loadFailed;
-  }
-  if (e instanceof Error) return e.message;
-  return loadFailed;
-}
-
-function deleteErrMessage(e: unknown, deleteFailed: string): string {
-  if (isAxiosError(e)) {
-    const d = e.response?.data;
-    if (typeof d === "string" && d.trim()) return d;
-    if (d && typeof d === "object") {
-      const o = d as Record<string, unknown>;
-      if (typeof o.message === "string") return o.message;
-    }
-    return e.message || deleteFailed;
-  }
-  if (e instanceof Error) return e.message;
-  return deleteFailed;
 }
 
 function toDraftCards(
@@ -161,7 +132,7 @@ export function AdminArticlesPageContent() {
   const t = useTranslations("Dashboard.articles.list");
   const locale = useLocale();
 
-  const articlesQuery = useArticles();
+  const articlesQuery = useArticles(undefined, { silent: true });
   const articleList: ArticleListItem[] = useMemo(() => {
     const fromQuery = articlesQuery.data?.data;
     if (Array.isArray(fromQuery)) return fromQuery;
@@ -169,7 +140,7 @@ export function AdminArticlesPageContent() {
   }, [articlesQuery.data]);
   const loading = articlesQuery.isPending && !peekValidAdminArticlesList();
   const error = articlesQuery.error
-    ? listErrMessage(articlesQuery.error, t("errors.loadFailed"))
+    ? formatApiError(articlesQuery.error, t("errors.loadFailed"))
     : null;
 
   // Sync the query result into the snapshot cache (used by other code paths).
@@ -182,7 +153,7 @@ export function AdminArticlesPageContent() {
   const [scheduledDeleteTarget, setScheduledDeleteTarget] = useState<ArticleListItem | null>(null);
   const [scheduledDeleteError, setScheduledDeleteError] = useState<string | null>(null);
 
-  const deleteMutation = useDeleteArticle();
+  const deleteMutation = useDeleteArticle({ silent: true });
   const scheduledDeleteBusy = deleteMutation.isPending;
 
   const onArticleRemoved = useCallback((id: string) => {
@@ -210,7 +181,7 @@ export function AdminArticlesPageContent() {
         onArticleRemoved(id);
       },
       onError: (e) => {
-        setScheduledDeleteError(deleteErrMessage(e, t("errors.deleteFailed")));
+        setScheduledDeleteError(formatApiError(e, t("errors.deleteFailed")));
       },
     });
   }, [scheduledDeleteTarget, onArticleRemoved, t, deleteMutation]);

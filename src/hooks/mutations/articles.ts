@@ -54,11 +54,12 @@ export function useUpdateArticle() {
   });
 }
 
-export function useDeleteArticle() {
+export function useDeleteArticle(options?: { silent?: boolean }) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (articleId: string) => deleteArticle(articleId),
     onSuccess: () => qc.invalidateQueries({ queryKey: articlesKeys.all }),
+    meta: options?.silent ? { silent: true } : undefined,
   });
 }
 

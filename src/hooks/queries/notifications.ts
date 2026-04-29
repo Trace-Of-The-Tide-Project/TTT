@@ -14,12 +14,13 @@ export const notificationsKeys = {
 
 export function useNotifications(
   params?: GetNotificationsParams,
-  options?: { enabled?: boolean },
+  options?: { enabled?: boolean; silent?: boolean },
 ) {
   return useQuery({
     queryKey: notificationsKeys.list(params),
     queryFn: () => getNotifications(params),
     enabled: options?.enabled ?? true,
+    meta: options?.silent ? { silent: true } : undefined,
   });
 }
 

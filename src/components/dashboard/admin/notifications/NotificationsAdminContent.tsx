@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { isAxiosError } from "axios";
 import { useTranslations } from "next-intl";
 import { SearchIcon } from "@/components/ui/icons";
 import { FilterDropdown } from "@/components/dashboard/admin/users/FilterDropdown";
@@ -9,6 +8,7 @@ import { theme } from "@/lib/theme";
 import { formatUserLastActiveRelative } from "@/lib/dashboard/user-table-formatters";
 import { useAuthUser } from "@/components/providers/AuthProvider";
 import { useNotifications } from "@/hooks/queries/notifications";
+import { formatApiError } from "@/lib/api/error-message";
 import {
   filterNotificationsForUser,
   type NotificationsListMeta,
@@ -18,20 +18,6 @@ const PAGE_LIMIT = 20;
 
 const ROW_TYPES = ["system", "review", "update"] as const;
 const ROW_STATUSES = ["unread", "read", "sent"] as const;
-
-function listErrMessage(e: unknown, fallback: string): string {
-  if (isAxiosError(e)) {
-    const d = e.response?.data;
-    if (typeof d === "string" && d.trim()) return d;
-    if (d && typeof d === "object") {
-      const o = d as Record<string, unknown>;
-      if (typeof o.message === "string") return o.message;
-    }
-    return e.message || fallback;
-  }
-  if (e instanceof Error) return e.message;
-  return fallback;
-}
 
 function notifyTypeLabel(nt: (key: string) => string, type: string): string {
   if ((ROW_TYPES as readonly string[]).includes(type)) {
@@ -126,7 +112,7 @@ export function NotificationsAdminContent() {
     isLoading: loading,
     error: queryError,
     refetch,
-  } = useNotifications(queryParams, { enabled: Boolean(user?.id) });
+  } = useNotifications(queryParams, { enabled: Boolean(user?.id), silent: true });
 
   const rows = useMemo(
     () =>
@@ -136,7 +122,7 @@ export function NotificationsAdminContent() {
     [queryData, user?.id],
   );
   const meta: NotificationsListMeta = queryData?.meta ?? emptyMeta;
-  const error = queryError ? listErrMessage(queryError, nt("errors.generic")) : null;
+  const error = queryError ? formatApiError(queryError, nt("errors.generic")) : null;
 
   const totalPages = Math.max(1, meta.totalPages);
   useEffect(() => {

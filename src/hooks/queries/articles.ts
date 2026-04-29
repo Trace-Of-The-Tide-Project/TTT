@@ -18,10 +18,12 @@ export const articlesKeys = {
 
 export function useArticles(
   params?: Record<string, string | number | boolean | undefined>,
+  options?: { silent?: boolean },
 ) {
   return useQuery({
     queryKey: articlesKeys.list(params),
     queryFn: () => getArticles(params),
+    meta: options?.silent ? { silent: true } : undefined,
   });
 }
 

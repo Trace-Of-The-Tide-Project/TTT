@@ -9,10 +9,11 @@ export const usersKeys = {
   list: (params?: GetUsersParams) => ["users", "list", params ?? {}] as const,
 };
 
-export function useUsers(params?: GetUsersParams) {
+export function useUsers(params?: GetUsersParams, options?: { silent?: boolean }) {
   return useQuery({
     queryKey: usersKeys.list(params),
     queryFn: () => getUsers(params),
     placeholderData: (prev) => prev,
+    meta: options?.silent ? { silent: true } : undefined,
   });
 }

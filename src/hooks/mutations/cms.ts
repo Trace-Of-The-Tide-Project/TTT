@@ -44,11 +44,12 @@ export function usePublishCmsPage() {
   });
 }
 
-export function useUpdateCmsSetting() {
+export function useUpdateCmsSetting(options?: { silent?: boolean }) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (args: { key: string; value: unknown }) =>
       updateCmsSetting(args.key, args.value),
     onSuccess: () => qc.invalidateQueries({ queryKey: cmsKeys.settings() }),
+    meta: options?.silent ? { silent: true } : undefined,
   });
 }

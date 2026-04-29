@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { isAxiosError } from "axios";
 import { useLocale, useTranslations } from "next-intl";
 import { SearchIcon } from "@/components/ui/icons";
 import { FilterDropdown } from "./FilterDropdown";
@@ -22,6 +21,7 @@ import {
   type UsersListMeta,
 } from "@/services/users.service";
 import { useUsers } from "@/hooks/queries/users";
+import { formatApiError } from "@/lib/api/error-message";
 
 const PAGE_LIMIT = 10;
 
@@ -43,20 +43,6 @@ function initialsFromUser(u: AdminUserListItem): string {
 function statusColor(status: string): string {
   const key = status.trim().toLowerCase();
   return USER_STATUS_COLORS[key] ?? "#9CA3AF";
-}
-
-function listErrMessage(e: unknown, fallback: string): string {
-  if (isAxiosError(e)) {
-    const d = e.response?.data;
-    if (typeof d === "string" && d.trim()) return d;
-    if (d && typeof d === "object") {
-      const o = d as Record<string, unknown>;
-      if (typeof o.message === "string") return o.message;
-    }
-    return e.message || fallback;
-  }
-  if (e instanceof Error) return e.message;
-  return fallback;
 }
 
 const emptyMeta: UsersListMeta = { total: 0, page: 1, limit: PAGE_LIMIT, totalPages: 1 };
@@ -153,11 +139,11 @@ export function UsersManagementContent() {
     [page, debouncedSearch, statusFilter, sortBy, order],
   );
 
-  const usersQuery = useUsers(queryParams);
+  const usersQuery = useUsers(queryParams, { silent: true });
   const users: AdminUserListItem[] = usersQuery.data?.users ?? [];
   const meta: UsersListMeta = usersQuery.data?.meta ?? emptyMeta;
   const loading = usersQuery.isPending;
-  const error = usersQuery.error ? listErrMessage(usersQuery.error, loadFailedMessage) : null;
+  const error = usersQuery.error ? formatApiError(usersQuery.error, loadFailedMessage) : null;
 
   const totalPages = Math.max(1, meta.totalPages);
   useEffect(() => {
@@ -195,7 +181,7 @@ export function UsersManagementContent() {
       });
       downloadUsersCsv(list, "trace-users");
     } catch (e) {
-      setExportError(listErrMessage(e, loadFailedMessage));
+      setExportError(formatApiError(e, loadFailedMessage));
     } finally {
       exportBusyRef.current = false;
     }

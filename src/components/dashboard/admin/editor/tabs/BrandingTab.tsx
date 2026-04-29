@@ -24,7 +24,7 @@ export function BrandingTab() {
   const [savedFaviconUrl, setSavedFaviconUrl] = useState<string | null>(null);
 
   const { data: settings } = useCmsSettings();
-  const updateMutation = useUpdateCmsSetting();
+  const updateMutation = useUpdateCmsSetting({ silent: true });
 
   useEffect(() => {
     if (!settings) return;
