@@ -106,7 +106,7 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
                 {t("headers.category")}
               </th>
               <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-[var(--tott-sea-deep)]">
-                <HeaderTotal label={t("headers.published")} total={totals.published} bg="var(--tott-sea-mid)" fg="#ffffff" />
+                <HeaderTotal label={t("headers.published")} total={totals.published} bg="var(--tott-seafoam)" fg="#ffffff" />
               </th>
               <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-[var(--tott-sea-deep)]">
                 <HeaderTotal label={t("headers.drafts")} total={totals.drafts} bg="var(--tott-amber-warm)" fg="#ffffff" />
@@ -134,7 +134,7 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
                     </span>
                   </td>
                   <td className="px-4 py-3.5">
-                    <Pill bg="var(--tott-sea-tint-bg)" fg="var(--tott-sea-deep)">
+                    <Pill bg="var(--tott-seafoam-tint-bg)" fg="var(--tott-seafoam)">
                       {row.published.toLocaleString()}
                     </Pill>
                   </td>

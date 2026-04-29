@@ -19,9 +19,9 @@ type QuickActionsProps = {
 
 const ACTION_TONES: Record<QuickActionId, { bg: string; iconBg: string }> = {
   sendBroadcast: { bg: "#1e3a5f", iconBg: "rgba(255,255,255,0.18)" },
-  approveEditor: { bg: "#3b6ea3", iconBg: "rgba(255,255,255,0.18)" },
-  featureContent: { bg: "#3a7d6f", iconBg: "rgba(255,255,255,0.18)" },
-  maintenanceMode: { bg: "#2c5d52", iconBg: "rgba(255,255,255,0.20)" },
+  approveEditor: { bg: "#5a9a8c", iconBg: "rgba(255,255,255,0.20)" },
+  featureContent: { bg: "#3a7d6f", iconBg: "rgba(255,255,255,0.20)" },
+  maintenanceMode: { bg: "#d99c4f", iconBg: "rgba(255,255,255,0.22)" },
 };
 
 export function QuickActions({ items }: QuickActionsProps) {

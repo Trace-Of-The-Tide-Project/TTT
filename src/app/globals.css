@@ -117,8 +117,8 @@ html {
     --tott-auth-hex-stroke-opacity: 0.35;
     --tott-auth-hex-mask-from: #ffffff;
     --tott-auth-hex-mask-to: #ffffff;
-    --tott-dash-surface: #ffffff;
-    --tott-dash-surface-2: #fbf5e9;
+    --tott-dash-surface: #fdfaf3;
+    --tott-dash-surface-2: #fff;
     --tott-dash-surface-inset: #fbf5e9;
     --tott-dash-input-bg: #ffffff;
     --tott-dash-control-bg: #f0e8d8;

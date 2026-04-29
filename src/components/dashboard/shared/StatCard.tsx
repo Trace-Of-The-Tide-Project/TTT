@@ -17,11 +17,14 @@ type StatCardProps = {
   };
 };
 
+// All four metric icons share a soft sea-blue per the spec — tone is kept as
+// a prop for future flexibility but currently routes everything through one
+// cohesive accent.
 const TONE_ACCENT: Record<StatTone, string> = {
-  sea: "var(--tott-sea-deep)",
-  seafoam: "var(--tott-seafoam)",
-  amber: "var(--tott-amber-warm)",
-  coral: "var(--tott-coral)",
+  sea: "var(--tott-sea-mid)",
+  seafoam: "var(--tott-sea-mid)",
+  amber: "var(--tott-sea-mid)",
+  coral: "var(--tott-sea-mid)",
 };
 
 function renderStatIcon(icon: StatCardProps["icon"]): ReactNode {
