@@ -18,16 +18,16 @@ type QuickActionsProps = {
 };
 
 const ACTION_TONES: Record<QuickActionId, { bg: string; iconBg: string }> = {
-  sendBroadcast: { bg: "#1e3a5f", iconBg: "rgba(255,255,255,0.18)" },
-  approveEditor: { bg: "#5a9a8c", iconBg: "rgba(255,255,255,0.20)" },
-  featureContent: { bg: "#3a7d6f", iconBg: "rgba(255,255,255,0.20)" },
-  maintenanceMode: { bg: "#d99c4f", iconBg: "rgba(255,255,255,0.22)" },
+  sendBroadcast: { bg: "var(--tott-dash-surface-inset)", iconBg: "var(--tott-dash-icon-bg)" },
+  approveEditor: { bg: "var(--tott-dash-surface-inset)", iconBg: "var(--tott-dash-icon-bg)" },
+  featureContent: { bg: "var(--tott-dash-surface-inset)", iconBg: "var(--tott-dash-icon-bg)" },
+  maintenanceMode: { bg: "var(--tott-dash-surface-inset)", iconBg: "var(--tott-dash-icon-bg)" },
 };
 
 export function QuickActions({ items }: QuickActionsProps) {
   const t = useTranslations("Dashboard.adminHome.quickActions");
   return (
-    <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 shadow-[0_1px_2px_rgba(22,36,58,0.04),0_4px_16px_rgba(22,36,58,0.04)]">
+    <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5">
       <h3 className="mb-4 text-lg font-bold text-foreground">{t("title")}</h3>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -37,21 +37,21 @@ export function QuickActions({ items }: QuickActionsProps) {
           const description = t(`${item.actionId}.description`);
           const tone = ACTION_TONES[item.actionId];
           const className =
-            "group flex items-center gap-3 rounded-xl px-4 py-4 text-start text-white transition-all hover:brightness-105 hover:shadow-lg active:translate-y-px";
+            "group flex items-center gap-4 rounded-xl border border-[var(--tott-card-border)] px-4 py-4 text-start transition-colors hover:bg-[var(--tott-dash-ghost-hover)]";
           const style = { backgroundColor: tone.bg };
           const iconStyle = { backgroundColor: tone.iconBg };
 
           const inner = (
             <>
               <span
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[var(--tott-card-border)] text-[var(--tott-muted)]"
                 style={iconStyle}
               >
                 <Icon />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold leading-tight">{label}</p>
-                <p className="mt-0.5 text-xs leading-snug text-white/80">{description}</p>
+                <p className="text-sm font-medium leading-tight text-foreground">{label}</p>
+                <p className="mt-0.5 text-xs leading-snug text-[var(--tott-muted)]">{description}</p>
               </div>
             </>
           );

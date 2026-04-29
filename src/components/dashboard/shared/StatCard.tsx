@@ -17,14 +17,12 @@ type StatCardProps = {
   };
 };
 
-// All four metric icons share a soft sea-blue per the spec — tone is kept as
-// a prop for future flexibility but currently routes everything through one
-// cohesive accent.
+// All metric icons use the original gold accent (tone prop kept for compat).
 const TONE_ACCENT: Record<StatTone, string> = {
-  sea: "var(--tott-sea-mid)",
-  seafoam: "var(--tott-sea-mid)",
-  amber: "var(--tott-sea-mid)",
-  coral: "var(--tott-sea-mid)",
+  sea: "var(--tott-dash-gold-text)",
+  seafoam: "var(--tott-dash-gold-text)",
+  amber: "var(--tott-dash-gold-text)",
+  coral: "var(--tott-dash-gold-text)",
 };
 
 function renderStatIcon(icon: StatCardProps["icon"]): ReactNode {
@@ -36,17 +34,7 @@ function renderStatIcon(icon: StatCardProps["icon"]): ReactNode {
 export function StatCard({ icon, value, label, tone = "sea", trend }: StatCardProps) {
   const accent = TONE_ACCENT[tone];
   return (
-    <SpringCard className="relative flex flex-col items-center gap-2 overflow-hidden rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-5 py-6 shadow-[0_1px_2px_rgba(22,36,58,0.04),0_4px_16px_rgba(22,36,58,0.04)]">
-      {/* warm sand wash at bottom for the gradient feel from the mockup */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-12"
-        style={{
-          background:
-            "linear-gradient(to bottom, transparent, color-mix(in srgb, var(--tott-amber-soft) 40%, transparent))",
-        }}
-      />
-
+    <SpringCard className="relative flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
       <span className="relative flex h-11 w-11 items-center justify-center" style={{ color: accent }}>
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 44 44" fill="none">
           <path

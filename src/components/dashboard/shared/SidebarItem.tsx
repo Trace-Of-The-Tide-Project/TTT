@@ -6,9 +6,6 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import type { SidebarItemConfig } from "@/lib/dashboard/types";
 import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
 
-const ACTIVE_COLOR_DARK = "#C9A96E";
-const ACTIVE_COLOR_LIGHT = "#3b6ea3";
-
 type SidebarItemProps = SidebarItemConfig & {
   onClick?: () => void;
   badgeOverrides?: Record<string, string>;
@@ -23,12 +20,11 @@ export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick, badgeO
     path === href ||
     ((href !== "/admin" && href !== "/profile") && path.startsWith(`${href}/`));
   const { isDark } = useTheme();
-  const activeColor = isDark ? ACTIVE_COLOR_DARK : ACTIVE_COLOR_LIGHT;
   const inactive =
-    "border border-transparent " +
+    "border border-transparent text-[var(--tott-muted)] " +
     (isDark
-      ? "text-gray-400 hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
-      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900");
+      ? "hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+      : "hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground");
 
   return (
     <Link
@@ -39,7 +35,10 @@ export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick, badgeO
       }`}
       style={
         isActive
-          ? { borderColor: activeColor, color: activeColor }
+          ? {
+              borderColor: "var(--tott-dash-gold-label)",
+              color: "var(--tott-dash-gold-label)",
+            }
           : undefined
       }
     >
@@ -52,8 +51,15 @@ export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick, badgeO
           className="shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
           style={
             isActive
-              ? { color: activeColor, backgroundColor: "rgba(232, 221, 192, 0.1)" }
-              : { color: "#9ca3af", backgroundColor: "rgba(255,255,255,0.1)" }
+              ? {
+                  color: "var(--tott-dash-gold-label)",
+                  backgroundColor:
+                    "color-mix(in srgb, var(--tott-dash-gold-label) 12%, transparent)",
+                }
+              : {
+                  color: "var(--tott-muted)",
+                  backgroundColor: "var(--tott-dash-ghost-hover)",
+                }
           }
         >
           {badgeOverrides?.[href] ?? badge}

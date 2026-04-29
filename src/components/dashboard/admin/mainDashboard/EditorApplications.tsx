@@ -19,23 +19,15 @@ type EditorApplicationsProps = {
   onReject?: (id: string) => void;
 };
 
-const AVATAR_PALETTE = [
-  { bg: "var(--tott-sand-mid)", fg: "var(--tott-sea-deep)" },
-  { bg: "var(--tott-sea-soft)", fg: "var(--tott-sea-deep)" },
-  { bg: "var(--tott-seafoam-soft)", fg: "#1f5145" },
-  { bg: "var(--tott-amber-soft)", fg: "#7a4f1c" },
-];
-
-function avatarTone(seed: string) {
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
-  return AVATAR_PALETTE[h % AVATAR_PALETTE.length]!;
+const AVATAR_TONE = { bg: "var(--tott-dash-gold-text)", fg: "var(--background)" };
+function avatarTone(_seed: string) {
+  return AVATAR_TONE;
 }
 
 export function EditorApplications({ items, viewAllHref, onApprove, onReject }: EditorApplicationsProps) {
   const t = useTranslations("Dashboard.adminHome.editorApplications");
   return (
-    <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 shadow-[0_1px_2px_rgba(22,36,58,0.04),0_4px_16px_rgba(22,36,58,0.04)]">
+    <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground">{t("title")}</h3>
         {viewAllHref && (
@@ -61,7 +53,7 @@ export function EditorApplications({ items, viewAllHref, onApprove, onReject }: 
           return (
             <div
               key={app.id}
-              className="col-span-2 grid grid-cols-[1fr_auto] items-center gap-x-4 border-b border-[var(--tott-dash-divider)] py-3 last:border-b-0"
+              className="col-span-2 grid grid-cols-[1fr_auto] items-center gap-x-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-3"
             >
               <div className="flex min-w-0 items-center gap-3">
                 <span
@@ -77,17 +69,13 @@ export function EditorApplications({ items, viewAllHref, onApprove, onReject }: 
               </div>
 
               <div className="flex shrink-0 items-center gap-2">
-                <span
-                  className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold"
-                  style={{ backgroundColor: "var(--tott-coral-tint-bg)", color: "var(--tott-coral)" }}
-                >
+                <span className="rounded bg-[var(--tott-dash-control-bg)] px-1.5 py-0.5 text-[10px] font-semibold uppercase text-[var(--tott-muted)]">
                   {app.badge}
                 </span>
                 <button
                   type="button"
                   onClick={() => onApprove?.(app.id)}
-                  className="rounded-full px-3 py-1 text-[11px] font-semibold text-white transition-all hover:brightness-105"
-                  style={{ backgroundColor: "var(--tott-seafoam)" }}
+                  className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1 text-[11px] font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-dash-control-hover)]"
                 >
                   {t("review")}
                 </button>

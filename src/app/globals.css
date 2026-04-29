@@ -74,41 +74,22 @@ html {
   --tott-auth-hex-band-opacity: 1;
   --tott-auth-checkbox-border: #525252;
   --tott-auth-input-shadow: none;
-
-  /* Sea palette accents (admin home cards, alerts, quick actions) */
-  --tott-sea-deep: #2c5f7c;
-  --tott-sea-mid: #4a8aa3;
-  --tott-sea-soft: #7eb5cc;
-  --tott-sea-tint-bg: #1f3744;
-  --tott-seafoam: #5fa896;
-  --tott-seafoam-soft: #8cc4b3;
-  --tott-seafoam-tint-bg: #1f3a35;
-  --tott-coral: #d97757;
-  --tott-coral-soft: #e89c83;
-  --tott-coral-tint-bg: #3a2520;
-  --tott-amber-warm: #d99c4f;
-  --tott-amber-soft: #e8b87a;
-  --tott-amber-tint-bg: #3a2d1c;
-  --tott-sand: #1e1e1e;
-  --tott-sand-mid: #262626;
-  --tott-ink: #ededed;
-  --tott-ink-muted: #a3a3a3;
 }
 
 /* Light defaults — applied automatically when the OS prefers light */
 @media (prefers-color-scheme: light) {
   :root {
     color-scheme: light;
-    --background: #f8f1e5;
-    --foreground: #16243a;
+    --background: #fff;
+    --foreground: #171717;
     --tott-accent-gold: #cba158;
     --tott-accent-tide: #4a8f89;
     --tott-accent-tide-muted: rgba(74, 143, 137, 0.35);
     --tott-accent-tide-subtle: rgba(74, 143, 137, 0.16);
-    --tott-card-border: #e6dccb;
-    --tott-panel-bg: #fbf5e9;
-    --tott-panel-text: #16243a;
-    --tott-well-bg: #f0e8d8;
+    --tott-card-border: #d1d5db;
+    --tott-panel-bg: #f3f4f6;
+    --tott-panel-text: #111827;
+    --tott-well-bg: #e5e7eb;
     --tott-auth-band-gradient: #ffffff;
     --tott-auth-hex-outer: #d8d2c6;
     --tott-auth-hex-inner: #faf9f7;
@@ -117,25 +98,25 @@ html {
     --tott-auth-hex-stroke-opacity: 0.35;
     --tott-auth-hex-mask-from: #ffffff;
     --tott-auth-hex-mask-to: #ffffff;
-    --tott-dash-surface: #fdfaf3;
-    --tott-dash-surface-2: #fff;
-    --tott-dash-surface-inset: #fbf5e9;
+    --tott-dash-surface: #ffffff;
+    --tott-dash-surface-2: #f9fafb;
+    --tott-dash-surface-inset: #f3f4f6;
     --tott-dash-input-bg: #ffffff;
-    --tott-dash-control-bg: #f0e8d8;
-    --tott-dash-control-fg: #16243a;
-    --tott-dash-control-hover: #e6dccb;
-    --tott-dash-ghost-hover: #f4ecdb;
+    --tott-dash-control-bg: #e5e7eb;
+    --tott-dash-control-fg: #1f2937;
+    --tott-dash-control-hover: #d1d5db;
+    --tott-dash-ghost-hover: #e5e7eb;
     --tott-dash-icon-bg: #ffffff;
     --tott-contribute-hex-outer: var(--tott-well-bg);
     --tott-contribute-hex-outer-hover: var(--tott-dash-control-hover);
     --tott-contribute-hex-label-inactive: #1f2937;
-    --tott-muted: #5d6a7d;
+    --tott-muted: #6b7280;
     --tott-dash-gold-text: #7d5a28;
     --tott-dash-gold-label: #cba158;
     --tott-dash-positive: #16a34a;
     --tott-dash-negative: #dc2626;
-    --tott-dash-divider: rgba(22, 36, 58, 0.08);
-    --tott-dash-progress-track: #e6dccb;
+    --tott-dash-divider: rgba(0, 0, 0, 0.07);
+    --tott-dash-progress-track: #e5e7eb;
     --tott-dash-hex-opacity: 0.35;
 
     --tott-auth-shell-bg: #ebe4d4;
@@ -152,41 +133,22 @@ html {
     --tott-auth-footer-muted: #6b5b47;
     --tott-auth-hex-band-opacity: 0.34;
     --tott-auth-checkbox-border: #c9a575;
-
-    /* Sea palette — light mode tints for admin cards/alerts/badges */
-    --tott-sea-deep: #2c5f7c;
-    --tott-sea-mid: #4a8aa3;
-    --tott-sea-soft: #d6e9f1;
-    --tott-sea-tint-bg: #eaf3f8;
-    --tott-seafoam: #5fa896;
-    --tott-seafoam-soft: #d6ebe3;
-    --tott-seafoam-tint-bg: #ebf5f1;
-    --tott-coral: #d97757;
-    --tott-coral-soft: #fbe2d6;
-    --tott-coral-tint-bg: #fbeae0;
-    --tott-amber-warm: #d99c4f;
-    --tott-amber-soft: #fbecd2;
-    --tott-amber-tint-bg: #fbf1de;
-    --tott-sand: #f8f1e5;
-    --tott-sand-mid: #f0e8d8;
-    --tott-ink: #16243a;
-    --tott-ink-muted: #5d6a7d;
   }
 }
 
 /* Manual override — wins over both default and prefers-color-scheme */
 html[data-theme="light"] {
   color-scheme: light;
-  --background: #f8f1e5;
-  --foreground: #16243a;
+  --background: #ffffff;
+  --foreground: #171717;
   --tott-accent-gold: #cba158;
   --tott-accent-tide: #4a8f89;
   --tott-accent-tide-muted: rgba(74, 143, 137, 0.35);
   --tott-accent-tide-subtle: rgba(74, 143, 137, 0.16);
-  --tott-card-border: #e6dccb;
-  --tott-panel-bg: #fbf5e9;
-  --tott-panel-text: #16243a;
-  --tott-well-bg: #f0e8d8;
+  --tott-card-border: #d1d5db;
+  --tott-panel-bg: #f3f4f6;
+  --tott-panel-text: #111827;
+  --tott-well-bg: #e5e7eb;
   --tott-auth-band-gradient: #ffffff;
   --tott-auth-hex-outer: #d8d2c6;
   --tott-auth-hex-inner: #faf9f7;
@@ -196,24 +158,24 @@ html[data-theme="light"] {
   --tott-auth-hex-mask-from: #ffffff;
   --tott-auth-hex-mask-to: #ffffff;
   --tott-dash-surface: #ffffff;
-  --tott-dash-surface-2: #fbf5e9;
-  --tott-dash-surface-inset: #fbf5e9;
+  --tott-dash-surface-2: #f9fafb;
+  --tott-dash-surface-inset: #f3f4f6;
   --tott-dash-input-bg: #ffffff;
-  --tott-dash-control-bg: #f0e8d8;
-  --tott-dash-control-fg: #16243a;
-  --tott-dash-control-hover: #e6dccb;
-  --tott-dash-ghost-hover: #f4ecdb;
+  --tott-dash-control-bg: #e5e7eb;
+  --tott-dash-control-fg: #1f2937;
+  --tott-dash-control-hover: #d1d5db;
+  --tott-dash-ghost-hover: #e5e7eb;
   --tott-dash-icon-bg: #ffffff;
   --tott-contribute-hex-outer: var(--tott-well-bg);
   --tott-contribute-hex-outer-hover: var(--tott-dash-control-hover);
   --tott-contribute-hex-label-inactive: #1f2937;
-  --tott-muted: #5d6a7d;
+  --tott-muted: #6b7280;
   --tott-dash-gold-text: #7d5a28;
   --tott-dash-gold-label: #cba158;
   --tott-dash-positive: #16a34a;
   --tott-dash-negative: #dc2626;
-  --tott-dash-divider: rgba(22, 36, 58, 0.08);
-  --tott-dash-progress-track: #e6dccb;
+  --tott-dash-divider: rgba(0, 0, 0, 0.07);
+  --tott-dash-progress-track: #e5e7eb;
   --tott-dash-hex-opacity: 0.35;
 
   --tott-auth-shell-bg: #ebe4d4;
@@ -230,24 +192,6 @@ html[data-theme="light"] {
   --tott-auth-footer-muted: #6b5b47;
   --tott-auth-hex-band-opacity: 0.34;
   --tott-auth-checkbox-border: #c9a575;
-
-  --tott-sea-deep: #2c5f7c;
-  --tott-sea-mid: #4a8aa3;
-  --tott-sea-soft: #d6e9f1;
-  --tott-sea-tint-bg: #eaf3f8;
-  --tott-seafoam: #5fa896;
-  --tott-seafoam-soft: #d6ebe3;
-  --tott-seafoam-tint-bg: #ebf5f1;
-  --tott-coral: #d97757;
-  --tott-coral-soft: #fbe2d6;
-  --tott-coral-tint-bg: #fbeae0;
-  --tott-amber-warm: #d99c4f;
-  --tott-amber-soft: #fbecd2;
-  --tott-amber-tint-bg: #fbf1de;
-  --tott-sand: #f8f1e5;
-  --tott-sand-mid: #f0e8d8;
-  --tott-ink: #16243a;
-  --tott-ink-muted: #5d6a7d;
 }
 
 @theme inline {

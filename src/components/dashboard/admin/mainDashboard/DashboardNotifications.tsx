@@ -26,25 +26,25 @@ const ALERT_CONFIG: Record<string, AlertCfg> = {
 
 const TONE_STYLES: Record<AlertTone, { bg: string; border: string; iconBg: string; iconFg: string; button: string }> = {
   coral: {
-    bg: "#e8a48d",
-    border: "#d98b71",
-    iconBg: "#ffffff",
-    iconFg: "#c25b3a",
-    button: "#c66948",
+    bg: "var(--tott-dash-surface-inset)",
+    border: "var(--tott-card-border)",
+    iconBg: "var(--tott-dash-icon-bg)",
+    iconFg: "var(--tott-muted)",
+    button: "var(--tott-dash-control-bg)",
   },
   amber: {
-    bg: "#e8b471",
-    border: "#d99a4d",
-    iconBg: "#ffffff",
-    iconFg: "#a76a1f",
-    button: "#c98a3e",
+    bg: "var(--tott-dash-surface-inset)",
+    border: "var(--tott-card-border)",
+    iconBg: "var(--tott-dash-icon-bg)",
+    iconFg: "var(--tott-muted)",
+    button: "var(--tott-dash-control-bg)",
   },
   sea: {
-    bg: "var(--tott-sea-mid)",
-    border: "var(--tott-sea-deep)",
-    iconBg: "#ffffff",
-    iconFg: "var(--tott-sea-deep)",
-    button: "var(--tott-sea-deep)",
+    bg: "var(--tott-dash-surface-inset)",
+    border: "var(--tott-card-border)",
+    iconBg: "var(--tott-dash-icon-bg)",
+    iconFg: "var(--tott-muted)",
+    button: "var(--tott-dash-control-bg)",
   },
 };
 
@@ -78,21 +78,20 @@ function AlertCard({ item, onDismiss }: { item: AlertDisplay; onDismiss: (type: 
         <Icon />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-white">{title}</p>
-        <p className="mt-0.5 text-xs text-white/85">{desc}</p>
+        <p className="text-sm font-semibold text-foreground">{title}</p>
+        <p className="mt-0.5 text-xs text-[var(--tott-muted)]">{desc}</p>
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-3">
         <Link
           href={item.href}
-          className="whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition-all hover:brightness-105"
-          style={{ backgroundColor: styles.button }}
+          className="whitespace-nowrap text-xs font-medium text-[var(--tott-dash-gold-label)] transition-colors hover:text-[var(--tott-dash-gold-text)]"
         >
           {label} →
         </Link>
         <button
           type="button"
           onClick={() => onDismiss(item.type)}
-          className="text-base text-white/70 transition-opacity hover:text-white"
+          className="text-xs text-[var(--tott-muted)] opacity-50 transition-opacity hover:opacity-100"
           aria-label="Dismiss"
         >
           ✕
@@ -151,7 +150,7 @@ export function DashboardNotifications() {
           )}
           <Link
             href="/admin/notifications"
-            className="text-xs font-medium text-[var(--tott-sea-deep)] transition-colors hover:underline"
+            className="text-xs font-medium text-[var(--tott-dash-gold-label)] transition-colors hover:text-[var(--tott-dash-gold-text)]"
           >
             {t("viewAll")} →
           </Link>
