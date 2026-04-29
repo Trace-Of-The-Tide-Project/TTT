@@ -24,24 +24,27 @@ const ALERT_CONFIG: Record<string, AlertCfg> = {
   pending_review:     { icon: ShieldIcon,          href: "/admin/content",  labelKey: "review",    titleKey: "pendingTitle", descKey: "pendingDesc",  tone: "amber" },
 };
 
-const TONE_STYLES: Record<AlertTone, { wrapper: string; iconBg: string; iconFg: string; button: string }> = {
+const TONE_STYLES: Record<AlertTone, { bg: string; border: string; iconBg: string; iconFg: string; button: string }> = {
   coral: {
-    wrapper: "bg-[var(--tott-coral-tint-bg)] border-[color:var(--tott-coral-soft)]",
-    iconBg: "var(--tott-coral)",
-    iconFg: "#ffffff",
-    button: "bg-[var(--tott-coral)] hover:brightness-105",
+    bg: "#e8a48d",
+    border: "#d98b71",
+    iconBg: "#ffffff",
+    iconFg: "#c25b3a",
+    button: "#c66948",
   },
   amber: {
-    wrapper: "bg-[var(--tott-amber-tint-bg)] border-[color:var(--tott-amber-soft)]",
-    iconBg: "var(--tott-amber-warm)",
-    iconFg: "#ffffff",
-    button: "bg-[var(--tott-amber-warm)] hover:brightness-105",
+    bg: "#e8b471",
+    border: "#d99a4d",
+    iconBg: "#ffffff",
+    iconFg: "#a76a1f",
+    button: "#c98a3e",
   },
   sea: {
-    wrapper: "bg-[var(--tott-sea-tint-bg)] border-[color:var(--tott-sea-soft)]",
-    iconBg: "var(--tott-sea-mid)",
-    iconFg: "#ffffff",
-    button: "bg-[var(--tott-sea-mid)] hover:brightness-105",
+    bg: "var(--tott-sea-mid)",
+    border: "var(--tott-sea-deep)",
+    iconBg: "#ffffff",
+    iconFg: "var(--tott-sea-deep)",
+    button: "var(--tott-sea-deep)",
   },
 };
 
@@ -64,7 +67,10 @@ function AlertCard({ item, onDismiss }: { item: AlertDisplay; onDismiss: (type: 
   const desc = item.descKey ? t(item.descKey) : "";
   const label = item.labelKey ? t(item.labelKey) : "→";
   return (
-    <div className={`flex items-center gap-4 rounded-xl border px-4 py-4 sm:px-5 ${styles.wrapper}`}>
+    <div
+      className="flex items-center gap-4 rounded-xl border px-4 py-4 sm:px-5"
+      style={{ backgroundColor: styles.bg, borderColor: styles.border }}
+    >
       <span
         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
         style={{ backgroundColor: styles.iconBg, color: styles.iconFg }}
@@ -72,20 +78,21 @@ function AlertCard({ item, onDismiss }: { item: AlertDisplay; onDismiss: (type: 
         <Icon />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-foreground">{title}</p>
-        <p className="mt-0.5 text-xs text-[var(--tott-muted)]">{desc}</p>
+        <p className="text-sm font-semibold text-white">{title}</p>
+        <p className="mt-0.5 text-xs text-white/85">{desc}</p>
       </div>
       <div className="flex shrink-0 items-center gap-2">
         <Link
           href={item.href}
-          className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition-all ${styles.button}`}
+          className="whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition-all hover:brightness-105"
+          style={{ backgroundColor: styles.button }}
         >
           {label} →
         </Link>
         <button
           type="button"
           onClick={() => onDismiss(item.type)}
-          className="text-base text-[var(--tott-muted)] opacity-50 transition-opacity hover:opacity-100"
+          className="text-base text-white/70 transition-opacity hover:text-white"
           aria-label="Dismiss"
         >
           ✕
