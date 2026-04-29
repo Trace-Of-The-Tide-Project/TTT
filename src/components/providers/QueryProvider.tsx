@@ -56,10 +56,11 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       {children}
       <Toaster
         dir={dir}
-        position="top-right"
+        position="bottom-right"
         richColors
         closeButton
         theme="system"
+        toastOptions={{ style: { zIndex: 100 } }}
       />
       {process.env.NODE_ENV === "development" && (
         <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
