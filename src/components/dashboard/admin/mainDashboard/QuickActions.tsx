@@ -18,10 +18,10 @@ type QuickActionsProps = {
 };
 
 const ACTION_TONES: Record<QuickActionId, { bg: string; iconBg: string }> = {
-  sendBroadcast: { bg: "var(--tott-sea-deep)", iconBg: "rgba(255,255,255,0.18)" },
-  approveEditor: { bg: "var(--tott-sea-mid)", iconBg: "rgba(255,255,255,0.18)" },
-  featureContent: { bg: "var(--tott-seafoam)", iconBg: "rgba(255,255,255,0.20)" },
-  maintenanceMode: { bg: "var(--tott-amber-warm)", iconBg: "rgba(255,255,255,0.22)" },
+  sendBroadcast: { bg: "#1e3a5f", iconBg: "rgba(255,255,255,0.18)" },
+  approveEditor: { bg: "#3b6ea3", iconBg: "rgba(255,255,255,0.18)" },
+  featureContent: { bg: "#3a7d6f", iconBg: "rgba(255,255,255,0.18)" },
+  maintenanceMode: { bg: "#2c5d52", iconBg: "rgba(255,255,255,0.20)" },
 };
 
 export function QuickActions({ items }: QuickActionsProps) {

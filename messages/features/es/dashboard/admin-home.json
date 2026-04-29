@@ -162,7 +162,11 @@
         "viewAll": "Ver todas",
         "viewApplication": "Ver solicitud",
         "reject": "Rechazar",
-        "approve": "Aprobar"
+        "approve": "Aprobar",
+        "applicantHeader": "Solicitante",
+        "statusHeader": "Estado",
+        "review": "Revisar",
+        "more": "Más"
       },
       "modals": {
         "pendingEditors": {

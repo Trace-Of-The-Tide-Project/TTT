@@ -162,7 +162,11 @@
         "viewAll": "عرض الكل",
         "viewApplication": "عرض الطلب",
         "reject": "رفض",
-        "approve": "قبول"
+        "approve": "قبول",
+        "applicantHeader": "المتقدم",
+        "statusHeader": "الحالة",
+        "review": "مراجعة",
+        "more": "المزيد"
       },
       "modals": {
         "pendingEditors": {

@@ -162,7 +162,11 @@
         "viewAll": "Tout voir",
         "viewApplication": "Voir la candidature",
         "reject": "Rejeter",
-        "approve": "Approuver"
+        "approve": "Approuver",
+        "applicantHeader": "Candidat",
+        "statusHeader": "Statut",
+        "review": "Examiner",
+        "more": "Plus"
       },
       "modals": {
         "pendingEditors": {

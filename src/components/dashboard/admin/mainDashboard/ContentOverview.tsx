@@ -59,9 +59,31 @@ function Pill({
   );
 }
 
+function HeaderTotal({ label, total, bg, fg }: { label: string; total: number; bg: string; fg: string }) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span>{label}</span>
+      <span
+        className="inline-flex h-5 min-w-[1.5rem] items-center justify-center rounded-full px-1.5 text-[10px] font-bold tabular-nums"
+        style={{ backgroundColor: bg, color: fg }}
+      >
+        {total}
+      </span>
+    </span>
+  );
+}
+
 export function ContentOverview({ rows, totalValue, manageHref }: ContentOverviewProps) {
   const t = useTranslations("Dashboard.adminHome.contentOverview");
   const messages = useMessages();
+  const totals = rows.reduce(
+    (acc, r) => ({
+      published: acc.published + r.published,
+      drafts: acc.drafts + r.drafts,
+      flagged: acc.flagged + (typeof r.flagged === "number" ? r.flagged : 0),
+    }),
+    { published: 0, drafts: 0, flagged: 0 },
+  );
   return (
     <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 shadow-[0_1px_2px_rgba(22,36,58,0.04),0_4px_16px_rgba(22,36,58,0.04)]">
       <div className="mb-4 flex items-center justify-between">
@@ -84,13 +106,13 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
                 {t("headers.category")}
               </th>
               <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-[var(--tott-sea-deep)]">
-                {t("headers.published")}
+                <HeaderTotal label={t("headers.published")} total={totals.published} bg="var(--tott-sea-mid)" fg="#ffffff" />
               </th>
               <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-[var(--tott-sea-deep)]">
-                {t("headers.drafts")}
+                <HeaderTotal label={t("headers.drafts")} total={totals.drafts} bg="var(--tott-amber-warm)" fg="#ffffff" />
               </th>
               <th className="rounded-r-lg px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-[var(--tott-sea-deep)]">
-                {t("headers.flagged")}
+                <HeaderTotal label={t("headers.flagged")} total={totals.flagged} bg="var(--tott-coral)" fg="#ffffff" />
               </th>
             </tr>
           </thead>

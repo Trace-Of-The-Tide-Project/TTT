@@ -20,25 +20,16 @@ type EditorApplicationsProps = {
 };
 
 const AVATAR_PALETTE = [
-  { bg: "var(--tott-sea-mid)", fg: "#ffffff" },
-  { bg: "var(--tott-seafoam)", fg: "#ffffff" },
-  { bg: "var(--tott-coral)", fg: "#ffffff" },
-  { bg: "var(--tott-amber-warm)", fg: "#ffffff" },
+  { bg: "var(--tott-sand-mid)", fg: "var(--tott-sea-deep)" },
+  { bg: "var(--tott-sea-soft)", fg: "var(--tott-sea-deep)" },
+  { bg: "var(--tott-seafoam-soft)", fg: "#1f5145" },
+  { bg: "var(--tott-amber-soft)", fg: "#7a4f1c" },
 ];
 
 function avatarTone(seed: string) {
   let h = 0;
   for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
   return AVATAR_PALETTE[h % AVATAR_PALETTE.length]!;
-}
-
-function ClockSmallIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
-    </svg>
-  );
 }
 
 export function EditorApplications({ items, viewAllHref, onApprove, onReject }: EditorApplicationsProps) {
@@ -57,59 +48,61 @@ export function EditorApplications({ items, viewAllHref, onApprove, onReject }: 
         )}
       </div>
 
-      <div className="flex flex-col gap-2.5">
+      <div className="grid grid-cols-[1fr_auto] gap-x-4 text-xs">
+        <div className="border-b border-[var(--tott-dash-divider)] pb-2 text-[11px] font-semibold uppercase tracking-wide text-[var(--tott-muted)]">
+          {t("applicantHeader")}
+        </div>
+        <div className="border-b border-[var(--tott-dash-divider)] pb-2 text-end text-[11px] font-semibold uppercase tracking-wide text-[var(--tott-muted)]">
+          {t("statusHeader")}
+        </div>
+
         {items.map((app) => {
           const tone = avatarTone(app.id || app.name);
           return (
             <div
               key={app.id}
-              className="rounded-xl border border-[color:var(--tott-sea-soft)] bg-[var(--tott-sea-tint-bg)] px-4 py-3"
+              className="col-span-2 grid grid-cols-[1fr_auto] items-center gap-x-4 border-b border-[var(--tott-dash-divider)] py-3 last:border-b-0"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                 <span
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold"
                   style={{ backgroundColor: tone.bg, color: tone.fg }}
                 >
                   {app.initials}
                 </span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="truncate text-sm font-semibold text-foreground">{app.name}</span>
-                    <span
-                      className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
-                      style={{ backgroundColor: "var(--tott-coral)", color: "#ffffff" }}
-                    >
-                      {app.badge}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]">{app.experience}</p>
-                  <p className="mt-0.5 flex items-center gap-1 text-[11px] text-[var(--tott-muted)] opacity-75">
-                    <ClockSmallIcon /> {app.timeAgo}
-                  </p>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-foreground">{app.name}</p>
+                  <p className="truncate text-xs text-[var(--tott-muted)]">{app.experience}</p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => onReject?.(app.id)}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/70 text-[var(--tott-muted)] transition-colors hover:bg-white hover:text-[var(--tott-dash-negative)]"
-                    aria-label={t("reject")}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 6L6 18M6 6l12 12" />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onApprove?.(app.id)}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-white transition-all hover:brightness-105"
-                    style={{ backgroundColor: "var(--tott-seafoam)" }}
-                    aria-label={t("approve")}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  </button>
-                </div>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-2">
+                <span
+                  className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold"
+                  style={{ backgroundColor: "var(--tott-coral-tint-bg)", color: "var(--tott-coral)" }}
+                >
+                  {app.badge}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onApprove?.(app.id)}
+                  className="rounded-full px-3 py-1 text-[11px] font-semibold text-white transition-all hover:brightness-105"
+                  style={{ backgroundColor: "var(--tott-seafoam)" }}
+                >
+                  {t("review")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onReject?.(app.id)}
+                  className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+                  aria-label={t("more")}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="5" cy="12" r="1.5" />
+                    <circle cx="12" cy="12" r="1.5" />
+                    <circle cx="19" cy="12" r="1.5" />
+                  </svg>
+                </button>
               </div>
             </div>
           );
