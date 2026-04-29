@@ -7,10 +7,42 @@ import { useDashboardAlerts } from "@/hooks/queries/dashboard";
 import { AlertTriangleIcon, PersonIcon, ShieldIcon } from "@/components/ui/icons";
 import type { ComponentType } from "react";
 
-const ALERT_CONFIG: Record<string, { icon: ComponentType; href: string; labelKey: string; titleKey: string; descKey: string }> = {
-  flagged:            { icon: AlertTriangleIcon, href: "/admin/reports",  labelKey: "reviewNow", titleKey: "flaggedTitle", descKey: "flaggedDesc" },
-  editor_application: { icon: PersonIcon,         href: "/admin/users",    labelKey: "process",   titleKey: "editorTitle",  descKey: "editorDesc"  },
-  pending_review:     { icon: ShieldIcon,          href: "/admin/content",  labelKey: "review",    titleKey: "pendingTitle", descKey: "pendingDesc" },
+type AlertTone = "coral" | "amber" | "sea";
+
+type AlertCfg = {
+  icon: ComponentType;
+  href: string;
+  labelKey: string;
+  titleKey: string;
+  descKey: string;
+  tone: AlertTone;
+};
+
+const ALERT_CONFIG: Record<string, AlertCfg> = {
+  flagged:            { icon: AlertTriangleIcon, href: "/admin/reports",  labelKey: "reviewNow", titleKey: "flaggedTitle", descKey: "flaggedDesc",  tone: "coral" },
+  editor_application: { icon: PersonIcon,         href: "/admin/users",    labelKey: "process",   titleKey: "editorTitle",  descKey: "editorDesc",   tone: "amber" },
+  pending_review:     { icon: ShieldIcon,          href: "/admin/content",  labelKey: "review",    titleKey: "pendingTitle", descKey: "pendingDesc",  tone: "amber" },
+};
+
+const TONE_STYLES: Record<AlertTone, { wrapper: string; iconBg: string; iconFg: string; button: string }> = {
+  coral: {
+    wrapper: "bg-[var(--tott-coral-tint-bg)] border-[color:var(--tott-coral-soft)]",
+    iconBg: "var(--tott-coral)",
+    iconFg: "#ffffff",
+    button: "bg-[var(--tott-coral)] hover:brightness-105",
+  },
+  amber: {
+    wrapper: "bg-[var(--tott-amber-tint-bg)] border-[color:var(--tott-amber-soft)]",
+    iconBg: "var(--tott-amber-warm)",
+    iconFg: "#ffffff",
+    button: "bg-[var(--tott-amber-warm)] hover:brightness-105",
+  },
+  sea: {
+    wrapper: "bg-[var(--tott-sea-tint-bg)] border-[color:var(--tott-sea-soft)]",
+    iconBg: "var(--tott-sea-mid)",
+    iconFg: "#ffffff",
+    button: "bg-[var(--tott-sea-mid)] hover:brightness-105",
+  },
 };
 
 type AlertDisplay = {
@@ -21,50 +53,39 @@ type AlertDisplay = {
   icon: ComponentType;
   href: string;
   labelKey: string;
+  tone: AlertTone;
 };
-
-function HexIcon({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 40 40" fill="none">
-        <path
-          d="M20 2L37 11.5V28.5L20 38L3 28.5V11.5Z"
-          fill="var(--tott-dash-icon-bg)"
-          stroke="var(--tott-card-border)"
-          strokeWidth="1"
-        />
-      </svg>
-      <span className="relative text-[var(--tott-muted)]">{children}</span>
-    </div>
-  );
-}
 
 function AlertCard({ item, onDismiss }: { item: AlertDisplay; onDismiss: (type: string) => void }) {
   const t = useTranslations("Dashboard.adminHome.notifications");
   const Icon = item.icon;
+  const styles = TONE_STYLES[item.tone];
   const title = item.titleKey ? t(item.titleKey, { count: item.count }) : item.type;
   const desc = item.descKey ? t(item.descKey) : "";
   const label = item.labelKey ? t(item.labelKey) : "→";
   return (
-    <div className="flex items-center gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-4 sm:px-5">
-      <HexIcon>
+    <div className={`flex items-center gap-4 rounded-xl border px-4 py-4 sm:px-5 ${styles.wrapper}`}>
+      <span
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+        style={{ backgroundColor: styles.iconBg, color: styles.iconFg }}
+      >
         <Icon />
-      </HexIcon>
+      </span>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-foreground">{title}</p>
         <p className="mt-0.5 text-xs text-[var(--tott-muted)]">{desc}</p>
       </div>
-      <div className="flex shrink-0 items-center gap-3">
+      <div className="flex shrink-0 items-center gap-2">
         <Link
           href={item.href}
-          className="whitespace-nowrap text-xs font-medium text-[var(--tott-dash-gold-label)] transition-colors hover:text-[var(--tott-dash-gold-text)]"
+          className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition-all ${styles.button}`}
         >
           {label} →
         </Link>
         <button
           type="button"
           onClick={() => onDismiss(item.type)}
-          className="text-xs text-[var(--tott-muted)] opacity-50 transition-opacity hover:opacity-100"
+          className="text-base text-[var(--tott-muted)] opacity-50 transition-opacity hover:opacity-100"
           aria-label="Dismiss"
         >
           ✕
@@ -87,6 +108,7 @@ export function DashboardNotifications() {
         labelKey: "review",
         titleKey: "pendingTitle",
         descKey: "pendingDesc",
+        tone: "sea" as AlertTone,
       };
       const count = parseInt(item.message.match(/\d+/)?.[0] ?? "1", 10);
       return {
@@ -97,6 +119,7 @@ export function DashboardNotifications() {
         icon: cfg.icon,
         href: cfg.href,
         labelKey: cfg.labelKey,
+        tone: cfg.tone,
       };
     });
   }, [data]);
@@ -106,10 +129,10 @@ export function DashboardNotifications() {
   const dismissAll = () => setDismissed(new Set(items.map((a) => a.type)));
 
   return (
-    <div>
+    <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 shadow-[0_1px_2px_rgba(22,36,58,0.04),0_4px_16px_rgba(22,36,58,0.04)]">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground">{t("title")}</h3>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {visible.length > 0 && (
             <button
               type="button"
@@ -121,7 +144,7 @@ export function DashboardNotifications() {
           )}
           <Link
             href="/admin/notifications"
-            className="text-xs font-medium text-[var(--tott-dash-gold-label)] transition-colors hover:text-[var(--tott-dash-gold-text)]"
+            className="text-xs font-medium text-[var(--tott-sea-deep)] transition-colors hover:underline"
           >
             {t("viewAll")} →
           </Link>

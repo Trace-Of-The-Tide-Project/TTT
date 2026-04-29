@@ -17,62 +17,55 @@ type QuickActionsProps = {
   items: QuickActionItem[];
 };
 
-function HexIcon({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative flex h-12 w-12 shrink-0 items-center justify-center">
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 48 48" fill="none">
-        <path
-          d="M24 2L44 14V34L24 46L4 34V14Z"
-          fill="var(--tott-dash-icon-bg)"
-          stroke="var(--tott-card-border)"
-          strokeWidth="1"
-        />
-      </svg>
-      <span className="relative text-[var(--tott-muted)]">{children}</span>
-    </div>
-  );
-}
+const ACTION_TONES: Record<QuickActionId, { bg: string; iconBg: string }> = {
+  sendBroadcast: { bg: "var(--tott-sea-deep)", iconBg: "rgba(255,255,255,0.18)" },
+  approveEditor: { bg: "var(--tott-sea-mid)", iconBg: "rgba(255,255,255,0.18)" },
+  featureContent: { bg: "var(--tott-seafoam)", iconBg: "rgba(255,255,255,0.20)" },
+  maintenanceMode: { bg: "var(--tott-amber-warm)", iconBg: "rgba(255,255,255,0.22)" },
+};
 
 export function QuickActions({ items }: QuickActionsProps) {
   const t = useTranslations("Dashboard.adminHome.quickActions");
   return (
-    <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5">
+    <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 shadow-[0_1px_2px_rgba(22,36,58,0.04),0_4px_16px_rgba(22,36,58,0.04)]">
       <h3 className="mb-4 text-lg font-bold text-foreground">{t("title")}</h3>
 
-      <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {items.map((item) => {
           const Icon = item.icon;
           const label = t(`${item.actionId}.label`);
           const description = t(`${item.actionId}.description`);
+          const tone = ACTION_TONES[item.actionId];
           const className =
-            "flex items-center gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-4 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]";
+            "group flex items-center gap-3 rounded-xl px-4 py-4 text-start text-white transition-all hover:brightness-105 hover:shadow-lg active:translate-y-px";
+          const style = { backgroundColor: tone.bg };
+          const iconStyle = { backgroundColor: tone.iconBg };
+
+          const inner = (
+            <>
+              <span
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white"
+                style={iconStyle}
+              >
+                <Icon />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold leading-tight">{label}</p>
+                <p className="mt-0.5 text-xs leading-snug text-white/80">{description}</p>
+              </div>
+            </>
+          );
+
           if (item.onClick) {
             return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={item.onClick}
-                className={`w-full text-start ${className}`}
-              >
-                <HexIcon>
-                  <Icon />
-                </HexIcon>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-foreground">{label}</p>
-                  <p className="mt-0.5 text-xs text-[var(--tott-muted)]">{description}</p>
-                </div>
+              <button key={item.id} type="button" onClick={item.onClick} className={`w-full ${className}`} style={style}>
+                {inner}
               </button>
             );
           }
           return (
-            <Link key={item.id} href={item.href ?? "#"} className={className}>
-              <HexIcon>
-                <Icon />
-              </HexIcon>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-foreground">{label}</p>
-                <p className="mt-0.5 text-xs text-[var(--tott-muted)]">{description}</p>
-              </div>
+            <Link key={item.id} href={item.href ?? "#"} className={className} style={style}>
+              {inner}
             </Link>
           );
         })}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { StatCard } from "../shared/StatCard";
+import { StatCard, type StatTone } from "../shared/StatCard";
 import { useAuthUser } from "@/components/providers/AuthProvider";
 import { useDashboardStats } from "@/hooks/queries/dashboard";
 import type { DashboardStats } from "@/services/dashboard.service";
@@ -36,11 +36,17 @@ function SkeletonCard() {
   );
 }
 
-const STAT_CONFIG = [
-  { key: "totalUsers" as const, icon: UsersIcon, labelKey: "stats.totalUsers", comparisonKey: "vsLastMonth" },
-  { key: "contentPublished" as const, icon: FileTextIcon, labelKey: "stats.contentPublished", comparisonKey: "vsLastMonth" },
-  { key: "monthlyDonations" as const, icon: DollarSignIcon, labelKey: "stats.monthlyDonations", comparisonKey: "vsLastMonth" },
-  { key: "activeToday" as const, icon: EyeIcon, labelKey: "stats.activeToday", comparisonKey: "vsYesterday" },
+const STAT_CONFIG: Array<{
+  key: keyof DashboardStats;
+  icon: typeof UsersIcon;
+  labelKey: string;
+  comparisonKey: string;
+  tone: StatTone;
+}> = [
+  { key: "totalUsers", icon: UsersIcon, labelKey: "stats.totalUsers", comparisonKey: "vsLastMonth", tone: "sea" },
+  { key: "contentPublished", icon: FileTextIcon, labelKey: "stats.contentPublished", comparisonKey: "vsLastMonth", tone: "seafoam" },
+  { key: "monthlyDonations", icon: DollarSignIcon, labelKey: "stats.monthlyDonations", comparisonKey: "vsLastMonth", tone: "amber" },
+  { key: "activeToday", icon: EyeIcon, labelKey: "stats.activeToday", comparisonKey: "vsYesterday", tone: "coral" },
 ];
 
 export function AdminCommandCenter() {
@@ -86,6 +92,7 @@ export function AdminCommandCenter() {
                   icon={s.icon}
                   value={value}
                   label={(t as (k: string) => string)(s.labelKey)}
+                  tone={s.tone}
                   trend={trend}
                 />
               );
