@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { SearchIcon } from "@/components/ui/icons";
 import { FilterDropdown } from "@/components/dashboard/admin/users/FilterDropdown";
 import { theme } from "@/lib/theme";
-import { formatUserLastActiveRelative } from "@/lib/dashboard/user-table-formatters";
+import { formatUserLastActiveRelativeLocalized } from "@/lib/dashboard/user-table-formatters";
 import { useAuthUser } from "@/components/providers/AuthProvider";
 import { useNotifications } from "@/hooks/queries/notifications";
 import { formatApiError } from "@/lib/api/error-message";
@@ -37,6 +37,7 @@ const emptyMeta: NotificationsListMeta = { total: 0, page: 1, limit: PAGE_LIMIT,
 
 export function NotificationsAdminContent() {
   const nt = useTranslations("Dashboard.notificationsPage");
+  const locale = useLocale();
   const user = useAuthUser();
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -257,7 +258,7 @@ export function NotificationsAdminContent() {
                     {n.user?.full_name?.trim() || n.user?.username || "—"}
                   </td>
                   <td className="whitespace-nowrap px-2 py-2.5 text-xs text-gray-500 sm:px-4 sm:py-3 sm:text-sm">
-                    {formatUserLastActiveRelative(n.created_at, nowMs)}
+                    {formatUserLastActiveRelativeLocalized(n.created_at, nowMs, locale)}
                   </td>
                 </tr>
               ))

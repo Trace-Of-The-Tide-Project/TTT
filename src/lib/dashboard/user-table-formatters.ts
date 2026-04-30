@@ -45,6 +45,30 @@ export function formatUserLastActiveRelative(iso: string | null | undefined, now
   return `${Math.max(1, year)} year${year === 1 ? "" : "s"} ago`;
 }
 
+/** Locale-aware "last active" using `Intl.RelativeTimeFormat` so RTL renders correctly. */
+export function formatUserLastActiveRelativeLocalized(
+  iso: string | null | undefined,
+  nowMs: number,
+  locale: string,
+): string {
+  if (!iso?.trim()) return "—";
+  const t = Date.parse(iso.trim());
+  if (!Number.isFinite(t)) return "—";
+  const diff = Math.max(0, nowMs - t);
+  const sec = Math.floor(diff / 1000);
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  if (sec < 60) return rtf.format(0, "second");
+  const min = Math.floor(sec / 60);
+  if (min < 60) return rtf.format(-min, "minute");
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return rtf.format(-hr, "hour");
+  const day = Math.floor(hr / 24);
+  if (day < 7) return rtf.format(-day, "day");
+  if (day < 30) return rtf.format(-Math.floor(day / 7), "week");
+  if (day < 365) return rtf.format(-Math.floor(day / 30), "month");
+  return rtf.format(-Math.max(1, Math.floor(day / 365)), "year");
+}
+
 export function formatContributionsCount(n: number): string {
   if (!Number.isFinite(n) || n <= 0) return "0";
   return String(Math.trunc(n));

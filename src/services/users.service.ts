@@ -176,6 +176,17 @@ export async function getUsers(params?: GetUsersParams): Promise<UsersListResult
   return normalizeUsersListPayload(data);
 }
 
+export type UpdateUserPayload = Partial<{
+  status: AdminUserStatus;
+  full_name: string;
+  username: string;
+  email: string;
+}>;
+
+export async function updateUser(id: string, payload: UpdateUserPayload): Promise<void> {
+  await api.patch(`/users/${id}`, payload);
+}
+
 const EXPORT_PAGE_LIMIT = 100;
 const EXPORT_MAX_PAGES = 500;
 

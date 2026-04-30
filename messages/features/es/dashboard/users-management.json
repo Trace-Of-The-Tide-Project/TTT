@@ -52,6 +52,10 @@
         "changeRole": "Cambiar rol",
         "verifyUser": "Verificar usuario",
         "suspendUser": "Suspender usuario"
+      },
+      "toasts": {
+        "verified": "Usuario verificado",
+        "suspended": "Usuario suspendido"
       }
     }
   }

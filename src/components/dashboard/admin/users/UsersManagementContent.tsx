@@ -8,7 +8,7 @@ import { UserActionsDropdown } from "./UserActionsDropdown";
 import { theme } from "@/lib/theme";
 import {
   formatContributionsCount,
-  formatUserLastActiveRelative,
+  formatUserLastActiveRelativeLocalized,
   formatUserRoleLabel,
   formatUserStatusLabel,
 } from "@/lib/dashboard/user-table-formatters";
@@ -21,7 +21,10 @@ import {
   type UsersListMeta,
 } from "@/services/users.service";
 import { useUsers } from "@/hooks/queries/users";
+import { useUpdateUser } from "@/hooks/mutations/users";
+import { useRouter } from "@/i18n/navigation";
 import { formatApiError } from "@/lib/api/error-message";
+import { toast } from "sonner";
 
 const PAGE_LIMIT = 10;
 
@@ -66,8 +69,32 @@ function displayUserStatus(status: string, t: (key: string) => string): string {
   return formatUserStatusLabel(status);
 }
 
+const KNOWN_ROLE_SLUGS = new Set([
+  "user",
+  "contributor",
+  "author",
+  "editor",
+  "admin",
+  "moderator",
+  "manager",
+  "artist",
+]);
+
+function displayRoleLabel(role: string, tRoles: (key: string) => string): string {
+  const slug = role.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  if (!slug) return formatUserRoleLabel(role);
+  if (KNOWN_ROLE_SLUGS.has(slug)) {
+    return tRoles(slug);
+  }
+  return formatUserRoleLabel(role);
+}
+
 export function UsersManagementContent() {
   const t = useTranslations("Dashboard.usersManagement");
+  const tRoles = useTranslations("Dashboard.adminHome.usersByRole.roles");
+  const router = useRouter();
+  const updateUserMutation = useUpdateUser();
+  const [actionError, setActionError] = useState<string | null>(null);
   const loadFailedMessage = t("errors.loadFailed");
 
   const statusOptions = useMemo(
@@ -195,6 +222,42 @@ export function UsersManagementContent() {
     return () => window.removeEventListener(USERS_CSV_EXPORT_EVENT, onExportRequest);
   }, [runExport]);
 
+  const handleRowAction = useCallback(
+    (actionId: string, userId: string) => {
+      setActionError(null);
+      switch (actionId) {
+        case "view":
+          router.push(`/admin/users/${userId}`);
+          return;
+        case "edit":
+          router.push(`/admin/users/${userId}/edit`);
+          return;
+        case "role":
+          router.push(`/admin/users/${userId}/role`);
+          return;
+        case "verify":
+          updateUserMutation.mutate(
+            { id: userId, payload: { status: "active" } },
+            {
+              onSuccess: () => toast.success(t("toasts.verified")),
+              onError: (e) => setActionError(formatApiError(e, loadFailedMessage)),
+            },
+          );
+          return;
+        case "suspend":
+          updateUserMutation.mutate(
+            { id: userId, payload: { status: "suspended" } },
+            {
+              onSuccess: () => toast.success(t("toasts.suspended")),
+              onError: (e) => setActionError(formatApiError(e, loadFailedMessage)),
+            },
+          );
+          return;
+      }
+    },
+    [router, updateUserMutation, loadFailedMessage, t],
+  );
+
   const effectivePage = Math.min(page, totalPages);
   const startItem = users.length === 0 ? 0 : (meta.page - 1) * meta.limit + 1;
   const endItem = users.length === 0 ? 0 : (meta.page - 1) * meta.limit + users.length;
@@ -248,6 +311,12 @@ export function UsersManagementContent() {
           >
             {t("tryAgain")}
           </button>
+        </div>
+      ) : null}
+
+      {actionError ? (
+        <div className="rounded-lg border border-red-900/50 bg-red-950/30 px-3 py-3 text-sm text-red-200 sm:px-4">
+          <p className="wrap-break-word">{actionError}</p>
         </div>
       ) : null}
 
@@ -308,7 +377,16 @@ export function UsersManagementContent() {
                 </td>
               </tr>
             ) : (
-              users.map((user) => <UserRow key={user.id} user={user} nowMs={nowMs} t={t} />)
+              users.map((user) => (
+                <UserRow
+                  key={user.id}
+                  user={user}
+                  nowMs={nowMs}
+                  t={t}
+                  tRoles={tRoles}
+                  onAction={handleRowAction}
+                />
+              ))
             )}
           </tbody>
         </table>
@@ -352,10 +430,14 @@ function UserRow({
   user,
   nowMs,
   t,
+  tRoles,
+  onAction,
 }: {
   user: AdminUserListItem;
   nowMs: number;
   t: ReturnType<typeof useTranslations>;
+  tRoles: ReturnType<typeof useTranslations>;
+  onAction: (actionId: string, userId: string) => void;
 }) {
   const locale = useLocale();
   const color = statusColor(user.status);
@@ -384,7 +466,7 @@ function UserRow({
       </td>
       <td className="px-2 py-2.5 sm:px-4 sm:py-3">
         <span className="inline-flex max-w-full rounded-full bg-[#3a3a3a] px-2 py-0.5 text-[10px] font-medium text-foreground sm:px-2.5 sm:py-1 sm:text-xs">
-          <span className="truncate">{formatUserRoleLabel(user.role)}</span>
+          <span className="truncate">{displayRoleLabel(user.role, tRoles)}</span>
         </span>
       </td>
       <td className="px-2 py-2.5 sm:px-4 sm:py-3">
@@ -399,13 +481,13 @@ function UserRow({
         {formatJoinedDateLocal(user.joined_at, locale)}
       </td>
       <td className="whitespace-nowrap px-2 py-2.5 text-xs text-gray-400 sm:px-4 sm:py-3 sm:text-sm">
-        {formatUserLastActiveRelative(user.last_active_at, nowMs)}
+        {formatUserLastActiveRelativeLocalized(user.last_active_at, nowMs, locale)}
       </td>
       <td className="px-2 py-2.5 text-center text-xs tabular-nums text-gray-300 sm:px-4 sm:py-3 sm:text-sm">
         {formatContributionsCount(user.contributions_count)}
       </td>
       <td className="px-1 py-2.5 sm:px-4 sm:py-3">
-        <UserActionsDropdown userId={user.id} />
+        <UserActionsDropdown userId={user.id} onAction={onAction} />
       </td>
     </tr>
   );

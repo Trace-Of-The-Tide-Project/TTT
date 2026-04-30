@@ -52,6 +52,10 @@
         "changeRole": "تغيير الدور",
         "verifyUser": "توثيق المستخدم",
         "suspendUser": "إيقاف المستخدم"
+      },
+      "toasts": {
+        "verified": "تم توثيق المستخدم",
+        "suspended": "تم إيقاف المستخدم"
       }
     }
   }

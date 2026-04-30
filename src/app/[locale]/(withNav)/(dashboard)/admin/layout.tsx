@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useUsers } from "@/hooks/queries/users";
 import { DashboardLayout } from "@/components/dashboard/shared/DashboardLayout";
+import { AdminAuthGate } from "@/components/layout/AdminAuthGate";
 import { AdminTopbar } from "@/components/dashboard/admin/AdminTopbar";
 import { AdminCommandCenter } from "@/components/dashboard/admin/AdminCommandCenter";
 import { ArticlesPageHeader } from "@/components/dashboard/admin/articles/articles-main";
@@ -96,14 +97,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     : tLayout("dashboard");
 
   return (
-    <DashboardLayout
-      config={adminConfig}
-      header={<AdminTopbar />}
-      commandCenter={commandCenter}
-      mobileBarTitle={mobileBarTitle}
-      badgeOverrides={badgeOverrides}
-    >
-      {children}
-    </DashboardLayout>
+    <AdminAuthGate>
+      <DashboardLayout
+        config={adminConfig}
+        header={<AdminTopbar />}
+        commandCenter={commandCenter}
+        mobileBarTitle={mobileBarTitle}
+        badgeOverrides={badgeOverrides}
+      >
+        {children}
+      </DashboardLayout>
+    </AdminAuthGate>
   );
 }
