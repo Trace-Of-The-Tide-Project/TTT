@@ -83,7 +83,7 @@ export default function EmailSentPage() {
       subtitle={t("pages.emailSent.subtitle")}
       footer={<AuthFooterLinks backHref="/auth/login" backLabel={t("login")} />}
     >
-      <AuthHexFrame minHeightPx={520}>
+      <AuthHexFrame>
         <div className="mx-auto flex w-full max-w-md flex-col items-center text-center">
           <div className="mb-8 text-[color:var(--tott-auth-input-icon)]">
             <MailIcon />
