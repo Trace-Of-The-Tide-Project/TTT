@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { TrendingUpIcon } from "@/components/ui/icons";
+import { ActivityIcon } from "@/components/ui/icons";
 import { ArticlesStatCards } from "./ArticlesStatCards";
 import { useAnalyticsOverview } from "@/hooks/queries/analytics";
 
@@ -23,8 +23,10 @@ export function ArticlesPageHeader() {
           <h1 className="text-xl font-bold text-foreground sm:text-2xl">{t("title")}</h1>
           <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
         </div>
-        <span className="flex items-center gap-2 text-sm font-medium text-emerald-400">
-          <TrendingUpIcon />
+        <span className="flex items-center gap-2 text-sm font-medium text-[var(--tott-muted)]">
+          <span className="text-[var(--tott-dash-positive)]">
+            <ActivityIcon />
+          </span>
           {t("lastUpdated")}
         </span>
       </div>
