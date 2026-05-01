@@ -30,7 +30,7 @@ export function AuthSubmitButton({
       disabled={inactive}
       onClick={onClick}
       className={[
-        "tott-auth-submit w-full select-none rounded-md py-2.5 text-sm font-semibold",
+        "tott-auth-submit w-full select-none rounded-md py-2 text-[13px] font-semibold min-[500px]:py-2 min-[500px]:text-sm",
         "transition-[color,background-color,opacity,transform,box-shadow] duration-200 ease-out",
         inactive
           ? "cursor-not-allowed bg-[color:var(--tott-auth-btn-disabled-bg)] text-[color:var(--tott-auth-btn-disabled-text)]"

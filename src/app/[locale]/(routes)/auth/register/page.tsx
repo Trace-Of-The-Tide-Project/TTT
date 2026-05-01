@@ -12,7 +12,10 @@ export default async function RegisterPage() {
   const t = await getTranslations("Auth");
 
   return (
-    <AuthPageShell title={t("pages.register.title")} footer={<AuthFooterLinks />}>
+    <AuthPageShell
+      subtitle={t("pages.register.subtitle")}
+      footer={<AuthFooterLinks />}
+    >
       <AuthHexFrame>
         <Suspense
           fallback={

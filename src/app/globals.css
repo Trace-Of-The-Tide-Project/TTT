@@ -252,11 +252,62 @@ html[data-theme="light"] {
   animation: tott-auth-shell-enter 0.42s var(--tott-motion-ease) both;
 }
 
+/* Auth form: stagger field reveal so the inputs land in sequence after the shell.
+   Use class-based delays so a conditionally-rendered error banner doesn't shift
+   the cascade. */
+@keyframes tott-auth-field-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tott-auth-step {
+  animation: tott-auth-field-in 380ms var(--tott-motion-ease) both;
+}
+.tott-auth-step-1 { animation-delay: 60ms; }
+.tott-auth-step-2 { animation-delay: 110ms; }
+.tott-auth-step-3 { animation-delay: 160ms; }
+.tott-auth-step-4 { animation-delay: 210ms; }
+.tott-auth-step-5 { animation-delay: 260ms; }
+.tott-auth-step-6 { animation-delay: 310ms; }
+.tott-auth-step-7 { animation-delay: 360ms; }
+
+/* Multi-step register form: each pane displays inline at >=480px (single page),
+   and on phones (<480px) only the active pane is visible — the user fills the
+   form in installments instead of a giant scrolling stack. */
+.tott-step-pane { display: block; }
+
+@media (max-width: 499px) {
+  .tott-step-pane:not(.tott-step-active) {
+    display: none;
+  }
+  .tott-step-only-mobile { display: flex; }
+  .tott-step-only-desktop { display: none; }
+}
+@media (min-width: 500px) {
+  .tott-step-only-mobile { display: none; }
+  .tott-step-only-desktop { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tott-auth-step {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Auth hex card: `cqw` in AuthHexFrame min-height refers to this width */
 .tott-auth-card-shell {
   container-type: inline-size;
   container-name: tott-auth-card;
 }
+
 
 /* Sign-in / sign-up layout: warm background + inherited foreground for Tailwind tokens */
 .tott-auth-page {
@@ -350,6 +401,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
 
 button,
