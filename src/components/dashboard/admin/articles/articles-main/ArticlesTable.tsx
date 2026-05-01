@@ -12,6 +12,7 @@ import { ConfirmDeleteArticleModal } from "@/components/dashboard/admin/articles
 import { useDeleteArticle } from "@/hooks/mutations/articles";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import { formatApiError } from "@/lib/api/error-message";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 type Tab = { id: string; labelKey: string };
 
@@ -38,9 +39,9 @@ type ArticlesTableProps = {
 };
 
 const statusColorMap: Record<string, string> = {
-  emerald: "#2ECC71",
-  blue: "#3498DB",
-  orange: "#E67E22",
+  emerald: "var(--tott-status-emerald)",
+  blue: "var(--tott-status-blue)",
+  coral: "var(--tott-status-coral)",
 };
 
 const TAB_TO_STATUS: Record<string, ArticleRow["status"] | null> = {
@@ -214,46 +215,51 @@ export function ArticlesTable({
     <div>
       {openMenuRow && menuPosition != null && typeof document !== "undefined"
         ? createPortal(
-            <ul
-              id={`article-actions-${openMenuRow.id}`}
+            <div
               data-article-actions-menu
-              className="fixed z-300 min-w-[148px] rounded-lg border border-[var(--tott-card-border)] bg-[#252525] py-1 shadow-lg"
+              className="fixed z-300 min-w-[160px] bg-[var(--tott-dash-surface)] shadow-lg"
               style={{ top: menuPosition.top, left: menuPosition.left }}
-              role="menu"
-              aria-label={t("table.menuAriaFor", { title: openMenuRow.title })}
             >
-              <li role="none">
-                <Link
-                  role="menuitem"
-                  href={previewHrefForContentType(openMenuRow.content_type, openMenuRow.id)}
-                  className="block px-3 py-2 text-sm text-gray-200 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
-                  onClick={closeArticleMenu}
-                >
-                  {t("table.preview")}
-                </Link>
-              </li>
-              <li role="none">
-                <Link
-                  role="menuitem"
-                  href={`/admin/articles/edit/${encodeURIComponent(openMenuRow.id)}`}
-                  className="block px-3 py-2 text-sm text-gray-200 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
-                  onClick={closeArticleMenu}
-                >
-                  {t("table.edit")}
-                </Link>
-              </li>
-              <li role="none">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="w-full px-3 py-2 text-start text-sm text-red-300 transition-colors hover:bg-red-950/40 hover:text-red-200"
-                  disabled={deleteBusy && deleteTarget?.id === openMenuRow.id}
-                  onClick={() => openDeleteModal(openMenuRow)}
-                >
-                  {t("table.delete")}
-                </button>
-              </li>
-            </ul>,
+              <ChamferedFrame />
+              <ul
+                id={`article-actions-${openMenuRow.id}`}
+                className="relative py-2"
+                role="menu"
+                aria-label={t("table.menuAriaFor", { title: openMenuRow.title })}
+              >
+                <li role="none">
+                  <Link
+                    role="menuitem"
+                    href={previewHrefForContentType(openMenuRow.content_type, openMenuRow.id)}
+                    className="block px-4 py-2 text-sm text-gray-200 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+                    onClick={closeArticleMenu}
+                  >
+                    {t("table.preview")}
+                  </Link>
+                </li>
+                <li role="none">
+                  <Link
+                    role="menuitem"
+                    href={`/admin/articles/edit/${encodeURIComponent(openMenuRow.id)}`}
+                    className="block px-4 py-2 text-sm text-gray-200 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+                    onClick={closeArticleMenu}
+                  >
+                    {t("table.edit")}
+                  </Link>
+                </li>
+                <li role="none">
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className="w-full px-4 py-2 text-start text-sm text-red-300 transition-colors hover:bg-red-950/40 hover:text-red-200"
+                    disabled={deleteBusy && deleteTarget?.id === openMenuRow.id}
+                    onClick={() => openDeleteModal(openMenuRow)}
+                  >
+                    {t("table.delete")}
+                  </button>
+                </li>
+              </ul>
+            </div>,
             document.body,
           )
         : null}
@@ -266,20 +272,22 @@ export function ArticlesTable({
         onClose={closeDeleteModal}
         onConfirm={() => void confirmDelete()}
       />
-      {/* Tabs - segment control with gray effect on selected */}
-      <div className="mb-4 flex w-full gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
+      {/* Tabs - segment control */}
+      <div className="relative mb-4 flex w-full gap-1 p-2">
+        <ChamferedFrame />
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => selectTab(tab.id)}
-            className={`flex-1 rounded-md py-3 text-sm font-medium transition-all ${
+            className={`relative flex-1 py-3 text-sm font-medium transition-colors ${
               activeTab === tab.id
-                ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
+                ? "text-foreground"
+                : "text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
             }`}
           >
-            {t(`tabs.${tab.labelKey}`)}
+            {activeTab === tab.id ? <ChamferedFrame size={14} /> : null}
+            <span className="relative">{t(`tabs.${tab.labelKey}`)}</span>
           </button>
         ))}
       </div>
@@ -287,46 +295,48 @@ export function ArticlesTable({
       <div className="mt-4 flex w-full">
         <Link
           href={addNewHref}
-          className="ms-auto flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
-          style={{ color: "#C9A96E" }}
+          className="ms-auto flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors"
+          style={{ color: "var(--tott-dash-gold-label)" }}
         >
           <PlusIcon />
           {t("table.addNew")}
         </Link>
       </div>
 
-      {/* Table - borders #444444 at top and bottom */}
-      <div className="overflow-x-auto rounded-lg border border-[var(--tott-card-border)]">
+      {/* Table */}
+      <div className="relative">
+        <ChamferedFrame />
+        <div className="overflow-x-auto px-1 py-1">
         <table className="w-full border-collapse text-start text-sm">
           <thead>
             <tr className="border-b border-[var(--tott-card-border)]">
               <th
                 className="bg-transparent px-5 py-2 text-start align-middle text-xs font-semibold"
-                style={{ color: "#C9A96E" }}
+                style={{ color: "var(--tott-dash-gold-label)" }}
               >
                 {t("table.title")}
               </th>
               <th
                 className="bg-transparent px-4 py-2 text-start align-middle text-xs font-semibold"
-                style={{ color: "#C9A96E" }}
+                style={{ color: "var(--tott-dash-gold-label)" }}
               >
                 {t("table.status")}
               </th>
               <th
                 className="bg-transparent whitespace-nowrap px-4 py-2 text-start align-middle text-xs font-semibold"
-                style={{ color: "#C9A96E" }}
+                style={{ color: "var(--tott-dash-gold-label)" }}
               >
                 {t("table.lastUpdated")}
               </th>
               <th
                 className="bg-transparent px-4 py-2 text-start align-middle text-xs font-semibold"
-                style={{ color: "#C9A96E" }}
+                style={{ color: "var(--tott-dash-gold-label)" }}
               >
                 {t("table.views")}
               </th>
               <th
                 className="bg-transparent px-4 py-2 text-start align-middle text-xs font-semibold"
-                style={{ color: "#C9A96E" }}
+                style={{ color: "var(--tott-dash-gold-label)" }}
               >
                 {t("table.supporters")}
               </th>
@@ -351,7 +361,7 @@ export function ArticlesTable({
                 >
                   <td
                     className="px-5 py-3 text-start align-middle font-medium"
-                    style={{ color: "#DBC99E" }}
+                    style={{ color: "var(--tott-dash-gold-text)" }}
                   >
                     {row.title}
                   </td>
@@ -363,19 +373,19 @@ export function ArticlesTable({
                   </td>
                   <td
                     className="whitespace-nowrap px-4 py-3 text-start align-middle font-medium"
-                    style={{ color: "#A3A3A3" }}
+                    style={{ color: "var(--tott-muted)" }}
                   >
                     {row.relativeUpdated}
                   </td>
                   <td
                     className="px-4 py-3 text-start align-middle font-medium tabular-nums"
-                    style={{ color: "#A3A3A3" }}
+                    style={{ color: "var(--tott-muted)" }}
                   >
                     {row.views}
                   </td>
                   <td
                     className="px-4 py-3 text-start align-middle font-medium tabular-nums"
-                    style={{ color: "#A3A3A3" }}
+                    style={{ color: "var(--tott-muted)" }}
                   >
                     {row.supporters}
                   </td>
@@ -384,8 +394,8 @@ export function ArticlesTable({
                       <button
                         type="button"
                         data-article-menu-trigger={row.id}
-                        className="rounded p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] disabled:opacity-40"
-                        style={{ color: "#A3A3A3" }}
+                        className="p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] disabled:opacity-40"
+                        style={{ color: "var(--tott-muted)" }}
                         aria-label={t("table.menuAria")}
                         aria-expanded={openMenuId === row.id}
                         aria-haspopup="menu"
@@ -405,6 +415,7 @@ export function ArticlesTable({
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

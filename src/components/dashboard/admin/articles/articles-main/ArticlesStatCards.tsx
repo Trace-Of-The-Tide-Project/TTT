@@ -5,6 +5,7 @@ import { BookIcon, PenLineIcon, BarChartIcon, CalendarIcon } from "@/components/
 import type { ComponentType } from "react";
 import { StaggerContainer } from "@/components/motion/StaggerContainer";
 import { StaggerItem } from "@/components/motion/StaggerItem";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 type StatItem = {
   id: string;
@@ -33,12 +34,13 @@ export function ArticlesStatCards({ stats }: ArticlesStatCardsProps) {
         if (!Icon) return null;
         return (
           <StaggerItem key={stat.id}>
-            <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-              <span style={{ color: "#E8DDC0" }}>
+            <div className="relative flex flex-col items-center gap-2 px-4 py-7">
+              <ChamferedFrame />
+              <span className="relative" style={{ color: "var(--tott-stat-icon)" }}>
                 <Icon />
               </span>
-              <span className="text-2xl font-bold text-foreground">{stat.value}</span>
-              <span className="text-xs text-gray-500">{(t as (key: string) => string)(stat.labelKey)}</span>
+              <span className="relative text-2xl font-bold text-foreground">{stat.value}</span>
+              <span className="relative text-xs text-gray-500">{(t as (key: string) => string)(stat.labelKey)}</span>
             </div>
           </StaggerItem>
         );

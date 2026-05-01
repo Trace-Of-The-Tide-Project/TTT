@@ -3,6 +3,7 @@
 import { HexIconOutlined } from "@/components/dashboard/admin/articles/articles-create/HexIconOutlined";
 import { MapPinIcon } from "@/components/ui/icons";
 import { TrendingUpIcon, TrendingDownIcon } from "@/components/ui/icons";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 export type TopArticleEntry = {
   id: string;
@@ -24,8 +25,9 @@ export function TopPerformingArticles({ items }: TopPerformingArticlesProps) {
         {items.map((entry) => (
           <div
             key={entry.id}
-            className="flex items-center gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[#2f2f2f] px-4 py-3"
+            className="relative flex items-center gap-4 px-5 py-4"
           >
+            <ChamferedFrame />
             <HexIconOutlined size="md">
               <MapPinIcon />
             </HexIconOutlined>

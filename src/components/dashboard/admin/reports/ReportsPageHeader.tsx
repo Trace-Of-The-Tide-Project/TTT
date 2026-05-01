@@ -7,6 +7,7 @@ import {
   SquareCheckIcon,
   UsersIcon,
 } from "@/components/ui/icons";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 export function ReportsPageHeader() {
   const t = useTranslations("Dashboard.headers.reports");
@@ -18,32 +19,32 @@ export function ReportsPageHeader() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span className="text-[#E8DDC0]">
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span className="text-[var(--tott-stat-icon)]">
             <FlagIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">8</span>
           <span className="text-xs text-gray-500">{t("cards.pendingReports")}</span>
         </div>
 
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span className="text-[#E8DDC0]">
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span className="text-[var(--tott-stat-icon)]">
             <AlertTriangleIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">3</span>
           <span className="text-xs text-gray-500">{t("cards.contentFlagged")}</span>
         </div>
 
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span className="text-[#E8DDC0]">
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span className="text-[var(--tott-stat-icon)]">
             <UsersIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">2</span>
           <span className="text-xs text-gray-500">{t("cards.usersReported")}</span>
         </div>
 
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span className="text-[#E8DDC0]">
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span className="text-[var(--tott-stat-icon)]">
             <SquareCheckIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">24</span>

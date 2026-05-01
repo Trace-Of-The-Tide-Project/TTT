@@ -31,12 +31,13 @@ export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick, badgeO
       href={href}
       onClick={onClick}
       className={`flex items-center gap-3 mt-2 rounded-lg px-3 py-2.5 text-sm transition-colors ${
-        isActive ? "border font-medium" : inactive
+        isActive ? "border-2 font-medium" : inactive
       }`}
       style={
         isActive
           ? {
               borderColor: "var(--tott-dash-gold-label)",
+              backgroundColor: "var(--tott-elevated)",
               color: "var(--tott-dash-gold-label)",
             }
           : undefined

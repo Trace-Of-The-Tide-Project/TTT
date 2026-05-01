@@ -13,6 +13,7 @@ export type ArticleCardItem = {
   statusLabel: string;
   title: string;
   subtitle: string;
+  subtitleIcon?: ReactNode;
   views?: string;
   actions: ArticleCardAction[];
   useHexIcon?: boolean;
@@ -63,6 +64,7 @@ export function ArticleCardsSection({
               statusLabel={item.statusLabel}
               title={item.title}
               subtitle={item.subtitle}
+              subtitleIcon={item.subtitleIcon}
               views={item.views}
               actions={item.actions}
               useHexIcon={item.useHexIcon}

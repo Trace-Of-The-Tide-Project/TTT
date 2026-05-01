@@ -5,6 +5,7 @@ import { MenuIcon } from "@/components/ui/icons";
 import type { DashboardConfig } from "@/lib/dashboard/types";
 import { DashboardSidebar } from "./DashboardSidebar";
 import HexBackground from "@/components/ui/HexBackground";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 type DashboardLayoutProps = {
   config: DashboardConfig;
@@ -71,13 +72,17 @@ export function DashboardLayout({
           <div className="flex items-stretch gap-6">
             {/* Desktop sidebar */}
             <aside className="hidden w-52 shrink-0 lg:block xl:w-56">
-              <div className={`flex h-full flex-col ${panelClass}`}>
+              <div className="relative flex h-full flex-col">
+                <ChamferedFrame />
                 <DashboardSidebar config={config} badgeOverrides={badgeOverrides} />
               </div>
             </aside>
 
             {/* Main content */}
-            <main className={`min-w-0 flex-1 overflow-x-hidden p-3 sm:p-5 lg:p-6 ${panelClass}`}>{children}</main>
+            <main className="relative min-w-0 flex-1 overflow-x-hidden p-3 sm:p-5 lg:p-6">
+              <ChamferedFrame />
+              <div className="relative">{children}</div>
+            </main>
           </div>
         </div>
       </div>

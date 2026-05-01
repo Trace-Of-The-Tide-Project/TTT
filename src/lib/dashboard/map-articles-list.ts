@@ -118,10 +118,10 @@ export function mapArticleListItemToTableRow(a: ArticleListItem): ArticleRow {
     statusColor = "emerald";
   } else if (s === "scheduled") {
     status = "scheduled";
-    statusColor = "blue";
+    statusColor = "coral";
   } else {
     status = "draft";
-    statusColor = "orange";
+    statusColor = "blue";
   }
 
   const contributors = Array.isArray(a.contributors) ? a.contributors.length : 0;

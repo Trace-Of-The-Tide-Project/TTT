@@ -12,7 +12,6 @@ import {
 import type { NotificationListItem } from "@/services/notifications.service";
 import { theme } from "@/lib/theme";
 
-const ACCENT_MUTED = "#E8DDC0";
 
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -102,10 +101,10 @@ export function NotificationDropdown() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const iconColor = isDark ? ACCENT_MUTED : "#78716c";
+  const iconColor = "var(--tott-stat-icon)";
   const iconBtn = isDark
-    ? "hover:bg-[var(--tott-dash-ghost-hover)]"
-    : "border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] hover:bg-[var(--tott-dash-ghost-hover)]";
+    ? "hover:opacity-80"
+    : "hover:opacity-80";
 
   const { data: unreadData } = useNotifications({ limit: 1, status: "unread" });
   const { data: listData, isFetching: loading } = useNotifications(
@@ -138,7 +137,7 @@ export function NotificationDropdown() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className={`relative rounded-lg p-2 transition-colors ${iconBtn}`}
+        className={`relative p-2 transition-colors ${iconBtn}`}
         style={{ color: iconColor }}
         aria-label="Notifications"
         aria-expanded={open}

@@ -3,8 +3,9 @@
 import { useTranslations } from "next-intl";
 import { DownloadIcon } from "@/components/ui/icons";
 import { securityStats } from "@/lib/dashboard/security-constants";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
-const ACCENT = "#E8DDC0";
+const ACCENT = "var(--tott-stat-icon)";
 
 /**
  * Security-only command row: export action + stat cards. Used below {@link AdminSettingsPageHeader} on `/admin/security`.
@@ -33,9 +34,10 @@ export function SecurityPageToolbar() {
           return (
             <div
               key={stat.id}
-              className="flex min-h-[132px] flex-col items-center justify-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5"
+              className="relative flex min-h-[132px] flex-col items-center justify-center gap-2 px-4 py-5"
             >
-              <span className="text-[#E8DDC0]">
+              <ChamferedFrame />
+              <span className="text-[var(--tott-stat-icon)]">
                 <Icon />
               </span>
               <span className="text-center text-xs text-gray-500">{t(`stats.${stat.id}`)}</span>

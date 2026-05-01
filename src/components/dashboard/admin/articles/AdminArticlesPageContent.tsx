@@ -36,8 +36,11 @@ import {
   XIcon,
   ShareIcon,
   EyeIcon,
+  ClockIcon,
+  CalendarIcon,
 } from "@/components/ui/icons";
 import { ConfirmDeleteArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ConfirmDeleteArticleModal";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 const CREATE_HREF = "/admin/articles/create";
 
@@ -56,6 +59,7 @@ function toDraftCards(
     statusLabel: t("cards.draftStatus"),
     title: articleListItemDisplayTitle(a),
     subtitle: formatArticleListDate(a.updatedAt, locale, t("table.justNow")),
+    subtitleIcon: <ClockIcon />,
     useHexIcon: true,
     compact: true,
     actions: [
@@ -80,6 +84,7 @@ function toScheduledIconCards(
     statusLabel: t("cards.scheduledStatus"),
     title: a.title,
     subtitle: formatScheduledSubtitle(a.scheduled_at, locale),
+    subtitleIcon: <CalendarIcon />,
     useHexIcon: true,
     compact: true,
     actions: [
@@ -109,6 +114,7 @@ function toScheduledShareCards(
     statusLabel: t("cards.scheduledStatus"),
     title: a.title,
     subtitle: formatScheduledSubtitle(a.scheduled_at, locale),
+    subtitleIcon: <CalendarIcon />,
     views: fmtViews(a.view_count ?? 0),
     useHexIcon: true,
     compact: true,
@@ -207,7 +213,8 @@ export function AdminArticlesPageContent() {
 
   const fallback = useMemo(
     () => (
-      <div className="rounded-lg border border-[var(--tott-card-border)] px-5 py-12 text-center text-sm text-gray-500">
+      <div className="relative px-5 py-12 text-center text-sm text-gray-500">
+        <ChamferedFrame />
         {t("loading")}
       </div>
     ),
@@ -232,7 +239,8 @@ export function AdminArticlesPageContent() {
       />
 
       {error ? (
-        <div className="rounded-lg border border-red-900/50 bg-red-950/30 px-4 py-3 text-sm text-red-200">
+        <div className="relative px-4 py-4 text-sm text-red-200">
+          <ChamferedFrame borderColor="rgb(127 29 29 / 0.7)" />
           <p>{error}</p>
           <button
             type="button"

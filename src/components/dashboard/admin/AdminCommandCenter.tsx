@@ -11,6 +11,7 @@ import {
   DollarSignIcon,
   EyeIcon,
 } from "@/components/ui/icons";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 function formatStatValue(key: keyof DashboardStats, value: number): string {
   if (key === "monthlyDonations") return `$${value.toLocaleString()}`;
@@ -27,11 +28,12 @@ function formatChange(change: number): { value: string; direction: "up" | "down"
 
 function SkeletonCard() {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5 animate-pulse">
-      <div className="h-10 w-10 rounded-full bg-[var(--tott-dash-control-bg)]" />
-      <div className="h-3 w-20 rounded bg-[var(--tott-dash-control-bg)]" />
-      <div className="h-7 w-24 rounded bg-[var(--tott-dash-control-bg)]" />
-      <div className="h-3 w-28 rounded bg-[var(--tott-dash-control-bg)]" />
+    <div className="relative flex flex-col items-center gap-2 px-4 py-7 animate-pulse">
+      <ChamferedFrame />
+      <div className="relative h-10 w-10 rounded-full bg-[var(--tott-dash-control-bg)]" />
+      <div className="relative h-3 w-20 rounded bg-[var(--tott-dash-control-bg)]" />
+      <div className="relative h-7 w-24 rounded bg-[var(--tott-dash-control-bg)]" />
+      <div className="relative h-3 w-28 rounded bg-[var(--tott-dash-control-bg)]" />
     </div>
   );
 }

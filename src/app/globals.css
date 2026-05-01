@@ -58,6 +58,18 @@ html {
   --tott-dash-divider: rgba(255, 255, 255, 0.07);
   --tott-dash-progress-track: #222222;
   --tott-dash-hex-opacity: 1;
+  /** Slightly elevated soft fill — sidebar active item, ghost buttons, search input. */
+  --tott-elevated: #262626;
+  --tott-elevated-hover: #2f2f2f;
+  /** Cream/gold accent for stat icons + topbar utility icons. */
+  --tott-stat-icon: #e8ddc0;
+  /** Inactive tab text + hover state in segmented controls. */
+  --tott-tab-inactive: #aaaaaa;
+  --tott-tab-inactive-hover: #e0e0e0;
+  /** Article status text colors. */
+  --tott-status-emerald: #3ee089;
+  --tott-status-blue: #6895ff;
+  --tott-status-coral: #e93544;
 
   /* Auth routes only — sign-in / sign-up surfaces (see .tott-auth-page) */
   --tott-auth-shell-bg: var(--background);
@@ -118,6 +130,14 @@ html {
     --tott-dash-divider: rgba(0, 0, 0, 0.07);
     --tott-dash-progress-track: #e5e7eb;
     --tott-dash-hex-opacity: 0.35;
+    --tott-elevated: #f3f4f6;
+    --tott-elevated-hover: #e5e7eb;
+    --tott-stat-icon: #7d5a28;
+    --tott-tab-inactive: #6b7280;
+    --tott-tab-inactive-hover: #1f2937;
+    --tott-status-emerald: #16a34a;
+    --tott-status-blue: #2563eb;
+    --tott-status-coral: #dc2626;
 
     --tott-auth-shell-bg: #ebe4d4;
     --tott-auth-foreground: #1a1510;
@@ -177,6 +197,14 @@ html[data-theme="light"] {
   --tott-dash-divider: rgba(0, 0, 0, 0.07);
   --tott-dash-progress-track: #e5e7eb;
   --tott-dash-hex-opacity: 0.35;
+  --tott-elevated: #f3f4f6;
+  --tott-elevated-hover: #e5e7eb;
+  --tott-stat-icon: #7d5a28;
+  --tott-tab-inactive: #6b7280;
+  --tott-tab-inactive-hover: #1f2937;
+  --tott-status-emerald: #16a34a;
+  --tott-status-blue: #2563eb;
+  --tott-status-coral: #dc2626;
 
   --tott-auth-shell-bg: #ebe4d4;
   --tott-auth-foreground: #1a1510;
@@ -333,3 +361,4 @@ a,
     scroll-behavior: auto !important;
   }
 }
+

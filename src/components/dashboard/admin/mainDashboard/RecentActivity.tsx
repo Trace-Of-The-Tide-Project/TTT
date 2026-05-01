@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type { ComponentType } from "react";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 type ActivityItem = {
   id: string;
@@ -18,10 +19,11 @@ type RecentActivityProps = {
 export function RecentActivity({ items }: RecentActivityProps) {
   const t = useTranslations("Dashboard.adminHome.recentActivity");
   return (
-    <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5">
-      <h3 className="mb-4 text-lg font-bold text-foreground">{t("title")}</h3>
+    <div className="relative p-6">
+      <ChamferedFrame />
+      <h3 className="relative mb-4 text-lg font-bold text-foreground">{t("title")}</h3>
 
-      <div className="divide-y divide-[var(--tott-dash-divider)]">
+      <div className="relative divide-y divide-[var(--tott-dash-divider)]">
         {items.map((item) => {
           const Icon = item.icon;
           return (

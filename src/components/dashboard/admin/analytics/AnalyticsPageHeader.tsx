@@ -11,6 +11,7 @@ import {
   ClockIcon,
   UserCheckIcon,
 } from "@/components/ui/icons";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 export function AnalyticsPageHeader() {
   const t = useTranslations("Dashboard.headers.analytics");
@@ -48,8 +49,8 @@ export function AnalyticsPageHeader() {
       />
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span style={{ color: "#E8DDC0" }}>
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span style={{ color: "var(--tott-stat-icon)" }}>
             <EyeIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">2.4M</span>
@@ -57,8 +58,8 @@ export function AnalyticsPageHeader() {
           <span className="text-xs text-emerald-400">↗ 18%</span>
         </div>
 
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span style={{ color: "#E8DDC0" }}>
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span style={{ color: "var(--tott-stat-icon)" }}>
             <UserCheckIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">68%</span>
@@ -66,8 +67,8 @@ export function AnalyticsPageHeader() {
           <span className="text-xs text-emerald-400">↗ 5%</span>
         </div>
 
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span style={{ color: "#E8DDC0" }}>
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span style={{ color: "var(--tott-stat-icon)" }}>
             <ClockIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">8m 42s</span>
@@ -75,8 +76,8 @@ export function AnalyticsPageHeader() {
           <span className="text-xs text-emerald-400">↗ 12%</span>
         </div>
 
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span style={{ color: "#E8DDC0" }}>
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span style={{ color: "var(--tott-stat-icon)" }}>
             <TrendingUpIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">32%</span>

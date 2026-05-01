@@ -3,6 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import type { ReactNode } from "react";
 import { SpringCard } from "@/components/motion/SpringCard";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 export type ArticleCardAction = {
   label?: string;
@@ -17,6 +18,7 @@ type ArticleCardProps = {
   statusLabel: string;
   title: string;
   subtitle: string;
+  subtitleIcon?: ReactNode;
   views?: string;
   actions: ArticleCardAction[];
   useHexIcon?: boolean;
@@ -42,47 +44,55 @@ function HexIcon({ children, size = "md" }: { children: React.ReactNode; size?: 
 }
 
 const buttonClass =
-  "flex items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-all hover:bg-[var(--tott-dash-surface-inset)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]";
+  "relative flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-foreground transition-opacity hover:opacity-80";
 
 const buttonClassCompact =
-  "flex items-center justify-center gap-1.5 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-[var(--tott-dash-surface-inset)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]";
+  "relative flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium text-foreground transition-opacity hover:opacity-80";
 
 const iconOnlyButtonClass =
-  "flex h-12 w-12 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] p-3 text-foreground transition-all hover:bg-[var(--tott-dash-surface-inset)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]";
+  "relative flex h-12 w-12 items-center justify-center p-3 text-foreground transition-opacity hover:opacity-80";
 
 const iconOnlyButtonClassCompact =
-  "flex h-9 w-9 items-center justify-center rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] p-2 text-foreground transition-all hover:bg-[var(--tott-dash-surface-inset)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]";
+  "relative flex h-9 w-9 items-center justify-center p-2 text-foreground transition-opacity hover:opacity-80";
 
 export function ArticleCard({
   icon,
   statusLabel,
   title,
   subtitle,
+  subtitleIcon,
   views,
   actions,
   useHexIcon = false,
   compact = false,
 }: ArticleCardProps) {
   const cardClass = compact
-    ? "flex flex-col gap-2 rounded-lg border border-[var(--tott-card-border)] px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between"
-    : "flex flex-col gap-4 rounded-xl border border-[var(--tott-card-border)] px-5 py-4 sm:flex-row sm:items-center sm:justify-between";
-  const contentGap = compact ? "gap-2" : "gap-3";
-  const labelClass = "text-xs text-foreground";
-  const titleClass = compact ? "mt-0.5 truncate text-sm font-medium" : "mt-1 truncate text-sm font-medium";
-  const detailClass = compact ? "mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-gray-500" : "mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-gray-500";
+    ? "relative flex flex-col gap-2 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+    : "relative flex flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between";
+  const contentGap = compact ? "gap-3" : "gap-4";
+  const headlineClass = "flex flex-wrap items-baseline gap-x-2 gap-y-0.5";
+  const labelClass = "text-xs font-medium text-foreground";
+  const titleClass = "truncate text-sm font-medium";
+  const detailClass = compact ? "mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-gray-500" : "mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-gray-500";
 
   return (
     <SpringCard className={cardClass}>
-      <div className={`flex min-w-0 flex-1 items-center ${contentGap}`}>
+      <ChamferedFrame />
+      <div className={`relative flex min-w-0 flex-1 items-center ${contentGap}`}>
         <div className="shrink-0 self-center">
           {useHexIcon ? <HexIcon size={compact ? "sm" : "md"}>{icon}</HexIcon> : <span className={compact ? "text-gray-400" : "text-foreground"}>{icon}</span>}
         </div>
         <div className="min-w-0 flex-1">
-          <p className={labelClass}>{statusLabel}</p>
-          <p className={titleClass} style={{ color: "#DBC99E" }}>
-            {title}
-          </p>
+          <div className={headlineClass}>
+            <span className={labelClass}>{statusLabel}</span>
+            <span className={titleClass} style={{ color: "var(--tott-dash-gold-text)" }}>
+              {title}
+            </span>
+          </div>
           <div className={detailClass}>
+            {subtitleIcon ? (
+              <span className="inline-flex items-center text-gray-500">{subtitleIcon}</span>
+            ) : null}
             <span>{subtitle}</span>
             {views && (
               <>
@@ -94,18 +104,22 @@ export function ArticleCard({
         </div>
       </div>
 
-      <div className="flex shrink-0 flex-wrap gap-2">
+      <div className="relative flex shrink-0 flex-wrap gap-2">
         {actions.map((action, i) => {
           const isIconOnly = !action.label;
           const btnClass = isIconOnly
             ? (compact ? iconOnlyButtonClassCompact : iconOnlyButtonClass)
             : (compact ? buttonClassCompact : buttonClass);
           const ariaLabel = action.ariaLabel ?? action.label ?? "Action";
+          const chamferSize = compact ? 10 : 14;
           if (action.href) {
             return (
               <Link key={i} href={action.href} className={btnClass} aria-label={ariaLabel}>
-                {action.icon}
-                {action.label}
+                <ChamferedFrame size={chamferSize} />
+                <span className="relative inline-flex items-center gap-2">
+                  {action.icon}
+                  {action.label}
+                </span>
               </Link>
             );
           }
@@ -117,8 +131,11 @@ export function ArticleCard({
               className={btnClass}
               aria-label={ariaLabel}
             >
-              {action.icon}
-              {action.label}
+              <ChamferedFrame size={chamferSize} />
+              <span className="relative inline-flex items-center gap-2">
+                {action.icon}
+                {action.label}
+              </span>
             </button>
           );
         })}

@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { useDashboardAlerts } from "@/hooks/queries/dashboard";
 import { AlertTriangleIcon, PersonIcon, ShieldIcon } from "@/components/ui/icons";
 import type { ComponentType } from "react";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 type AlertTone = "coral" | "amber" | "sea";
 
@@ -67,21 +68,19 @@ function AlertCard({ item, onDismiss }: { item: AlertDisplay; onDismiss: (type: 
   const desc = item.descKey ? t(item.descKey) : "";
   const label = item.labelKey ? t(item.labelKey) : "→";
   return (
-    <div
-      className="flex items-center gap-4 rounded-xl border px-4 py-4 sm:px-5"
-      style={{ backgroundColor: styles.bg, borderColor: styles.border }}
-    >
+    <div className="relative flex items-center gap-4 px-5 py-4 sm:px-6">
+      <ChamferedFrame />
       <span
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+        className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
         style={{ backgroundColor: styles.iconBg, color: styles.iconFg }}
       >
         <Icon />
       </span>
-      <div className="min-w-0 flex-1">
+      <div className="relative min-w-0 flex-1">
         <p className="text-sm font-semibold text-foreground">{title}</p>
         <p className="mt-0.5 text-xs text-[var(--tott-muted)]">{desc}</p>
       </div>
-      <div className="flex shrink-0 items-center gap-3">
+      <div className="relative flex shrink-0 items-center gap-3">
         <Link
           href={item.href}
           className="whitespace-nowrap text-xs font-medium text-[var(--tott-dash-gold-label)] transition-colors hover:text-[var(--tott-dash-gold-text)]"
@@ -143,7 +142,7 @@ export function DashboardNotifications() {
             <button
               type="button"
               onClick={dismissAll}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-dash-control-hover)]"
+              className="rounded-lg bg-[var(--tott-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:bg-[var(--tott-elevated-hover)]"
             >
               {t("dismissAll")}
             </button>
@@ -158,9 +157,10 @@ export function DashboardNotifications() {
       </div>
 
       {visible.length === 0 ? (
-        <p className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-5 py-8 text-center text-sm text-[var(--tott-muted)]">
+        <div className="relative px-5 py-8 text-center text-sm text-[var(--tott-muted)]">
+          <ChamferedFrame />
           {t("noAlerts")}
-        </p>
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
           {visible.map((item) => (

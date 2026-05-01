@@ -11,13 +11,13 @@ export function AdminTopbar() {
     <div className="hidden items-center gap-6 border-b border-[var(--tott-card-border)] py-3 pb-4 lg:flex">
       {/* Search */}
       <div className="relative min-w-0 flex-1">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-dash-gold-text)]">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
           <SearchIcon />
         </span>
         <input
           type="text"
           placeholder={t("searchPlaceholder")}
-          className="w-full max-w-md rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-dash-control-hover)]"
+          className="w-full max-w-md rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-dash-control-hover)]"
         />
       </div>
 
@@ -25,14 +25,14 @@ export function AdminTopbar() {
       <div className="flex items-center gap-3">
         <button
           type="button"
-          className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] p-2 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+          className="p-2 text-[var(--tott-stat-icon)] transition-colors hover:opacity-80"
           aria-label="Help"
         >
           <HelpCircleIcon />
         </button>
         <button
           type="button"
-          className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] p-2 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+          className="p-2 text-[var(--tott-stat-icon)] transition-colors hover:opacity-80"
           aria-label={t("settings")}
         >
           <SettingsIcon />
@@ -40,8 +40,7 @@ export function AdminTopbar() {
         <NotificationDropdown />
 
         <span
-          className="ml-1 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide"
-          style={{ backgroundColor: "rgba(52, 211, 153, 0.15)", color: "var(--tott-dash-positive)" }}
+          className="ml-1 rounded-full bg-[var(--tott-dash-control-bg)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--tott-dash-positive)]"
         >
           {t("systemHealthy")}
         </span>

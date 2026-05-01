@@ -3,6 +3,7 @@
 import { useTranslations, useMessages } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { ComponentType } from "react";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 const CATEGORY_KEY_MAP: Record<string, string> = {
   photography: "photography", artwork: "artwork", "personal story": "personalStory",
@@ -40,60 +41,40 @@ type ContentOverviewProps = {
   manageHref?: string;
 };
 
-function HeaderTotal({ label, total, bg, fg }: { label: string; total: number; bg: string; fg: string }) {
-  return (
-    <span className="inline-flex items-center gap-2">
-      <span>{label}</span>
-      <span
-        className="inline-flex h-5 min-w-[1.5rem] items-center justify-center rounded-full px-1.5 text-[10px] font-bold tabular-nums"
-        style={{ backgroundColor: bg, color: fg }}
-      >
-        {total}
-      </span>
-    </span>
-  );
-}
-
 export function ContentOverview({ rows, totalValue, manageHref }: ContentOverviewProps) {
   const t = useTranslations("Dashboard.adminHome.contentOverview");
   const messages = useMessages();
-  const totals = rows.reduce(
-    (acc, r) => ({
-      published: acc.published + r.published,
-      drafts: acc.drafts + r.drafts,
-      flagged: acc.flagged + (typeof r.flagged === "number" ? r.flagged : 0),
-    }),
-    { published: 0, drafts: 0, flagged: 0 },
-  );
   return (
-    <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="relative px-6 pb-6 pt-6">
+      <ChamferedFrame />
+      <div className="relative mb-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground">{t("title")}</h3>
         {manageHref && (
           <Link
             href={manageHref}
-            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-dash-control-hover)]"
+            className="rounded-lg bg-[var(--tott-elevated)] px-4 py-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:bg-[var(--tott-elevated-hover)]"
           >
             {t("manageAll")}
           </Link>
         )}
       </div>
 
-      <div className="overflow-x-auto rounded-xl">
+      <div className="relative overflow-x-auto">
+        <ChamferedFrame size={20} />
         <table className="w-full text-start text-sm">
           <thead>
             <tr className="border-b border-[var(--tott-card-border)]">
-              <th className="px-5 py-3 text-start text-xs font-medium text-[var(--tott-dash-gold-label)]">
+              <th className="px-6 py-4 text-start text-xs font-medium text-[var(--tott-dash-gold-label)]">
                 {t("headers.category")}
               </th>
-              <th className="px-4 py-3 text-start text-xs font-medium text-[var(--tott-dash-gold-label)]">
-                <HeaderTotal label={t("headers.published")} total={totals.published} bg="var(--tott-dash-control-bg)" fg="var(--tott-muted)" />
+              <th className="px-4 py-4 text-start text-xs font-medium text-[var(--tott-dash-gold-label)]">
+                {t("headers.published")}
               </th>
-              <th className="px-4 py-3 text-start text-xs font-medium text-[var(--tott-dash-gold-label)]">
-                <HeaderTotal label={t("headers.drafts")} total={totals.drafts} bg="var(--tott-dash-control-bg)" fg="var(--tott-muted)" />
+              <th className="px-4 py-4 text-start text-xs font-medium text-[var(--tott-dash-gold-label)]">
+                {t("headers.drafts")}
               </th>
-              <th className="px-4 py-3 text-start text-xs font-medium text-[var(--tott-dash-gold-label)]">
-                <HeaderTotal label={t("headers.flagged")} total={totals.flagged} bg="var(--tott-dash-control-bg)" fg="var(--tott-muted)" />
+              <th className="px-4 py-4 text-start text-xs font-medium text-[var(--tott-dash-gold-label)]">
+                {t("headers.flagged")}
               </th>
             </tr>
           </thead>
@@ -102,20 +83,20 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
               const Icon = row.icon;
               const isFlaggedActive = row.flagged !== "—" && row.flagged !== 0;
               return (
-                <tr key={row.id}>
-                  <td className="flex items-center gap-2.5 px-5 py-3.5">
-                    <span className="text-[var(--tott-muted)] opacity-60">
-                      <Icon />
-                    </span>
-                    <span className="font-medium capitalize text-foreground">
-                      {translateCategory(messages, row.label)}
+                <tr key={row.id} className="border-b border-[var(--tott-dash-divider)]">
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center gap-2.5">
+                      <span className="text-[var(--tott-muted)] opacity-60">
+                        <Icon />
+                      </span>
+                      <span className="sr-only capitalize">{translateCategory(messages, row.label)}</span>
                     </span>
                   </td>
-                  <td className="px-4 py-3.5 text-[var(--tott-muted)]">{row.published.toLocaleString()}</td>
-                  <td className="px-4 py-3.5 text-[var(--tott-muted)]">{row.drafts}</td>
-                  <td className="px-4 py-3.5">
+                  <td className="px-4 py-4 text-[var(--tott-muted)]">{row.published.toLocaleString()}</td>
+                  <td className="px-4 py-4 text-[var(--tott-muted)]">{row.drafts}</td>
+                  <td className="px-4 py-4">
                     {isFlaggedActive ? (
-                      <span className="font-medium text-[var(--tott-dash-negative)]">{row.flagged}</span>
+                      <span className="font-medium text-[var(--tott-status-coral)]">{row.flagged}</span>
                     ) : (
                       <span className="text-[var(--tott-muted)] opacity-50">—</span>
                     )}
@@ -123,17 +104,19 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
                 </tr>
               );
             })}
+            <tr>
+              <td colSpan={4} className="px-6 py-4 text-sm text-[var(--tott-muted)]">
+                <span className="flex items-center justify-between">
+                  <span>{t("totalLabel")}</span>
+                  {totalValue && (
+                    <span className="font-medium text-foreground">{totalValue}</span>
+                  )}
+                </span>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
-
-      {totalValue && (
-        <div className="mt-4 flex items-center justify-between px-1 text-sm text-[var(--tott-muted)]">
-          <span>{t("totalLabel")}</span>
-          <span className="font-medium text-foreground">{totalValue}</span>
-        </div>
-      )}
-
     </div>
   );
 }

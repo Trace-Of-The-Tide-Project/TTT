@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 export type EditorApplication = {
   id: string;
@@ -27,20 +28,21 @@ function avatarTone(_seed: string) {
 export function EditorApplications({ items, viewAllHref, onApprove, onReject }: EditorApplicationsProps) {
   const t = useTranslations("Dashboard.adminHome.editorApplications");
   return (
-    <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="relative p-6">
+      <ChamferedFrame />
+      <div className="relative mb-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground">{t("title")}</h3>
         {viewAllHref && (
           <Link
             href={viewAllHref}
-            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-dash-control-hover)]"
+            className="rounded-lg bg-[var(--tott-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:bg-[var(--tott-elevated-hover)]"
           >
             {t("viewAll")}
           </Link>
         )}
       </div>
 
-      <div className="grid grid-cols-[1fr_auto] gap-x-4 text-xs">
+      <div className="relative grid grid-cols-[1fr_auto] gap-x-4 text-xs">
         <div className="border-b border-[var(--tott-dash-divider)] pb-2 text-[11px] font-semibold uppercase tracking-wide text-[var(--tott-muted)]">
           {t("applicantHeader")}
         </div>
@@ -53,9 +55,10 @@ export function EditorApplications({ items, viewAllHref, onApprove, onReject }: 
           return (
             <div
               key={app.id}
-              className="col-span-2 grid grid-cols-[1fr_auto] items-center gap-x-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-3"
+              className="relative col-span-2 grid grid-cols-[1fr_auto] items-center gap-x-4 px-5 py-4"
             >
-              <div className="flex min-w-0 items-center gap-3">
+              <ChamferedFrame size={14} />
+              <div className="relative flex min-w-0 items-center gap-3">
                 <span
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold"
                   style={{ backgroundColor: tone.bg, color: tone.fg }}
@@ -68,14 +71,14 @@ export function EditorApplications({ items, viewAllHref, onApprove, onReject }: 
                 </div>
               </div>
 
-              <div className="flex shrink-0 items-center gap-2">
-                <span className="rounded bg-[var(--tott-dash-control-bg)] px-1.5 py-0.5 text-[10px] font-semibold uppercase text-[var(--tott-muted)]">
+              <div className="relative flex shrink-0 items-center gap-2">
+                <span className="rounded bg-[var(--tott-elevated)] px-1.5 py-0.5 text-[10px] font-semibold uppercase text-[var(--tott-muted)]">
                   {app.badge}
                 </span>
                 <button
                   type="button"
                   onClick={() => onApprove?.(app.id)}
-                  className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1 text-[11px] font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-dash-control-hover)]"
+                  className="rounded-lg bg-[var(--tott-elevated)] px-3 py-1 text-[11px] font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:bg-[var(--tott-elevated-hover)]"
                 >
                   {t("review")}
                 </button>

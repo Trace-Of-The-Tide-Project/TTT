@@ -11,11 +11,13 @@ import {
   TrendingUpIcon,
 } from "@/components/ui/icons";
 import { useMessagingSummary } from "@/hooks/queries/messaging";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 function StatCard({ icon, value, label }: { icon: React.ReactNode; value: number | null; label: string }) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-      <span style={{ color: "#E8DDC0" }}>{icon}</span>
+    <div className="relative flex flex-col items-center gap-2 px-4 py-7">
+      <ChamferedFrame />
+      <span style={{ color: "var(--tott-stat-icon)" }}>{icon}</span>
       <span className="text-2xl font-bold text-foreground">
         {value === null ? "—" : value.toLocaleString()}
       </span>

@@ -2,6 +2,7 @@
 
 import { createElement, isValidElement, type ComponentType, type ReactNode } from "react";
 import { SpringCard } from "@/components/motion/SpringCard";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 export type StatTone = "sea" | "seafoam" | "amber" | "coral";
 
@@ -34,7 +35,8 @@ function renderStatIcon(icon: StatCardProps["icon"]): ReactNode {
 export function StatCard({ icon, value, label, tone = "sea", trend }: StatCardProps) {
   const accent = TONE_ACCENT[tone];
   return (
-    <SpringCard className="relative flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
+    <SpringCard className="relative flex flex-col items-center gap-2 px-4 py-7">
+      <ChamferedFrame />
       <span className="relative flex h-11 w-11 items-center justify-center" style={{ color: accent }}>
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 44 44" fill="none">
           <path

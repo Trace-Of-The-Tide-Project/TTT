@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { ComponentType } from "react";
 import { DetailModal } from "@/components/dashboard/modals/DetailModal";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 type ModalItem = {
   id: string;
@@ -44,7 +45,7 @@ function HexIcon({ children }: { children: React.ReactNode }) {
       >
         <path
           d="M24 2L44 14V34L24 46L4 34V14Z"
-          fill="var(--tott-dash-icon-bg)"
+          fill="var(--tott-dash-surface)"
           stroke="var(--tott-card-border)"
           strokeWidth="1"
         />
@@ -61,13 +62,12 @@ export function AlertsList({ items, onDismissAll }: AlertsListProps) {
   return (
     <>
       <div>
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-foreground">{t("title")}</h3>
+        <div className="mb-4 flex items-center justify-end">
           {onDismissAll && (
             <button
               type="button"
               onClick={onDismissAll}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-gray-500 hover:text-foreground"
+              className="rounded-lg bg-[var(--tott-elevated)] px-4 py-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:bg-[var(--tott-elevated-hover)] hover:text-foreground"
             >
               {t("dismissAll")}
             </button>
@@ -80,19 +80,20 @@ export function AlertsList({ items, onDismissAll }: AlertsListProps) {
             return (
               <div
                 key={item.id}
-                className="flex items-center gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-4"
+                className="relative flex items-center gap-4 px-6 py-4"
               >
+                <ChamferedFrame />
                 <HexIcon>
                   <Icon />
                 </HexIcon>
-                <div className="min-w-0 flex-1">
+                <div className="relative min-w-0 flex-1">
                   <p className="text-sm font-medium text-foreground">{item.title}</p>
                   <p className="mt-0.5 text-xs text-gray-500">{item.description}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setActiveAlert(item)}
-                  className="shrink-0 text-xs font-medium text-gray-400 transition-colors hover:text-foreground"
+                  className="relative shrink-0 text-xs font-medium text-gray-400 transition-colors hover:text-foreground"
                 >
                   {item.actionLabel} &rsaquo;
                 </button>

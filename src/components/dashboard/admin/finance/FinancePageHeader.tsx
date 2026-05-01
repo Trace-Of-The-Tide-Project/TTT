@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
 import { theme } from "@/lib/theme";
 import { DollarSignIcon, DownloadIcon, TrendingUpIcon, CreditCardIcon } from "@/components/ui/icons";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 export function FinancePageHeader() {
   const t = useTranslations("Dashboard.headers.finance");
@@ -28,8 +29,8 @@ export function FinancePageHeader() {
       />
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span style={{ color: "#E8DDC0" }}>
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span style={{ color: "var(--tott-stat-icon)" }}>
             <DollarSignIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$2,847</span>
@@ -37,8 +38,8 @@ export function FinancePageHeader() {
           <span className="text-xs text-emerald-400">↗ 12%</span>
         </div>
 
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span style={{ color: "#E8DDC0" }}>
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span style={{ color: "var(--tott-stat-icon)" }}>
             <TrendingUpIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$34,892</span>
@@ -46,8 +47,8 @@ export function FinancePageHeader() {
           <span className="text-xs text-emerald-400">↗ 22%</span>
         </div>
 
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span style={{ color: "#E8DDC0" }}>
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span style={{ color: "var(--tott-stat-icon)" }}>
             <CreditCardIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$2,596</span>
@@ -55,8 +56,8 @@ export function FinancePageHeader() {
           <span className="text-xs text-[#CBA158]">{t("cards.pendingCount")}</span>
         </div>
 
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-5">
-          <span style={{ color: "#E8DDC0" }}>
+        <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
+          <span style={{ color: "var(--tott-stat-icon)" }}>
             <DollarSignIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$3,489</span>
