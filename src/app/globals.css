@@ -70,6 +70,9 @@ html {
   --tott-status-emerald: #3ee089;
   --tott-status-blue: #6895ff;
   --tott-status-coral: #e93544;
+  /** Dark filled action pill (e.g. "Manage all", "Dismiss all") — visible in both themes. */
+  --tott-dark-pill: #262626;
+  --tott-dark-pill-fg: #ededed;
 
   /* Auth routes only — sign-in / sign-up surfaces (see .tott-auth-page) */
   --tott-auth-shell-bg: var(--background);
@@ -138,6 +141,8 @@ html {
     --tott-status-emerald: #16a34a;
     --tott-status-blue: #2563eb;
     --tott-status-coral: #dc2626;
+    --tott-dark-pill: #1f2937;
+    --tott-dark-pill-fg: #ffffff;
 
     --tott-auth-shell-bg: #ebe4d4;
     --tott-auth-foreground: #1a1510;
@@ -205,6 +210,8 @@ html[data-theme="light"] {
   --tott-status-emerald: #16a34a;
   --tott-status-blue: #2563eb;
   --tott-status-coral: #dc2626;
+  --tott-dark-pill: #1f2937;
+  --tott-dark-pill-fg: #ffffff;
 
   --tott-auth-shell-bg: #ebe4d4;
   --tott-auth-foreground: #1a1510;
