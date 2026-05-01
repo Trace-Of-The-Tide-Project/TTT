@@ -13,6 +13,7 @@ export default async function RegisterPage() {
 
   return (
     <AuthPageShell
+      title={t("pages.register.title")}
       subtitle={t("pages.register.subtitle")}
       footer={<AuthFooterLinks />}
     >
