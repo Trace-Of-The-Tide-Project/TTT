@@ -15,7 +15,7 @@ export default async function ForgotPasswordPage() {
       subtitle={t("pages.forgotPassword.subtitle")}
       footer={<AuthFooterLinks backHref="/auth/login" backLabel={t("login")} />}
     >
-      <AuthHexFrame minHeightPx={520}>
+      <AuthHexFrame>
         <ForgotPasswordForm />
       </AuthHexFrame>
     </AuthPageShell>
