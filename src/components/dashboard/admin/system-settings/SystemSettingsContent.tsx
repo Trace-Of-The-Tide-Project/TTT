@@ -163,7 +163,7 @@ export function SystemSettingsContent() {
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
       <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 lg:p-8">
         <div className="flex flex-col gap-3">
-          <div className="flex w-full flex-wrap items-center gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
+          <div className="flex w-full flex-wrap items-center gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
             {SYSTEM_SETTINGS_TAB_IDS.map((tabId) => (
               <button
                 key={tabId}
@@ -171,8 +171,8 @@ export function SystemSettingsContent() {
                 onClick={() => setActiveTab(tabId)}
                 className={`rounded-md px-4 py-2.5 text-sm font-medium transition-all sm:px-5 ${
                   activeTab === tabId
-                    ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                    : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
+                    ? "bg-[var(--tott-dash-control-bg)] text-foreground"
+                    : "bg-transparent text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
                 }`}
               >
                 {tSettings(`tabs.${tabId}`)}

@@ -14,6 +14,7 @@ import { previewHrefForContentType } from "@/lib/content/public-article-preview-
 import { formatApiError } from "@/lib/api/error-message";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { ChamferedCap } from "@/components/ui/ChamferedCap";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 
 type Tab = { id: string; labelKey: string };
 
@@ -273,25 +274,12 @@ export function ArticlesTable({
         onClose={closeDeleteModal}
         onConfirm={() => void confirmDelete()}
       />
-      {/* Tabs - segment control */}
-      <div className="relative mb-4 flex w-full gap-1 p-2">
-        <ChamferedFrame />
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => selectTab(tab.id)}
-            className={`relative flex-1 py-3 text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? "text-foreground"
-                : "text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
-            }`}
-          >
-            {activeTab === tab.id ? <ChamferedFrame size={14} /> : null}
-            <span className="relative">{t(`tabs.${tab.labelKey}`)}</span>
-          </button>
-        ))}
-      </div>
+      <SegmentedControl
+        className="mb-4"
+        options={tabs.map((tab) => ({ id: tab.id, label: t(`tabs.${tab.labelKey}`) }))}
+        value={activeTab}
+        onChange={selectTab}
+      />
 
       <div className="mt-4 flex w-full">
         <Link

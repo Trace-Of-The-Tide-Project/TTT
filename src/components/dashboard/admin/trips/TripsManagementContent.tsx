@@ -285,14 +285,14 @@ export function TripsManagementContent() {
         trip={previewTrip ?? undefined}
       />
 
-      <div className="flex w-full gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
+      <div className="flex w-full gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
         <button
           type="button"
           onClick={() => setTab("create")}
           className={`flex flex-1 items-center justify-center gap-2 rounded-md py-3 text-sm font-medium transition-all ${
             activeTab === "create"
-              ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-              : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
+              ? "bg-[var(--tott-dash-control-bg)] text-foreground"
+              : "bg-transparent text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
           }`}
         >
           <PlusIcon />
@@ -303,8 +303,8 @@ export function TripsManagementContent() {
           onClick={() => setTab("archive")}
           className={`flex-1 rounded-md py-3 text-sm font-medium transition-all ${
             activeTab === "archive"
-              ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-              : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
+              ? "bg-[var(--tott-dash-control-bg)] text-foreground"
+              : "bg-transparent text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
           }`}
         >
           {t("management.tabs.archive")}

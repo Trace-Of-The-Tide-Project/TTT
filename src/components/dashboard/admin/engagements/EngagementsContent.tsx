@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import { CreateBadgeModal } from "@/components/dashboard/modals/CreateBadgeModal";
 import { AwardBadgeModal } from "@/components/dashboard/modals/AwardBadgeModal";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import {
   EyeIcon,
   GiftIcon,
@@ -214,7 +215,8 @@ function BadgeCard({
     );
 
   return (
-    <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5">
+    <div className="relative p-5">
+      <ChamferedFrame />
       <div className="flex items-start gap-4">
         <div
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]"
@@ -297,7 +299,7 @@ export function EngagementsContent() {
         }}
       />
       {/* Tabs */}
-      <div className="flex w-fit gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
+      <div className="flex w-fit gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
         {ENGAGEMENT_TAB_IDS.map((tabId) => (
           <button
             key={tabId}
@@ -305,8 +307,8 @@ export function EngagementsContent() {
             onClick={() => setActiveTab(tabId)}
             className={`rounded-md px-6 py-3 text-sm font-medium transition-all ${
               activeTab === tabId
-                ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
+                ? "bg-[var(--tott-dash-control-bg)] text-foreground"
+                : "bg-transparent text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
             }`}
           >
             {t(`tabs.${tabId}`)}

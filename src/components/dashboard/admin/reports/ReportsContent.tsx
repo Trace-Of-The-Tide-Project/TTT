@@ -19,6 +19,7 @@ import {
   type ReportItem,
   type ReportedUserItem,
 } from "@/lib/dashboard/reports-constants";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 const AVATAR_GOLD = "#E8DDC0";
 
@@ -63,7 +64,7 @@ export function ReportsContent() {
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
       <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 lg:p-8">
-        <div className="flex w-fit gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
+        <div className="flex w-fit gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
           {REPORT_TAB_IDS.map((tabId) => {
             const label =
               tabId === "content"
@@ -78,8 +79,8 @@ export function ReportsContent() {
                 onClick={() => setActiveTab(tabId)}
                 className={`rounded-md px-5 py-2.5 text-sm font-medium transition-all ${
                   activeTab === tabId
-                    ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                    : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
+                    ? "bg-[var(--tott-dash-control-bg)] text-foreground"
+                    : "bg-transparent text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
                 }`}
               >
                 {label}
@@ -234,7 +235,8 @@ function ReportedUserCard({ user }: { user: ReportedUserItem }) {
   const t = useTranslations("Dashboard.reportsPage");
   const tu = useTranslations("Dashboard.reportsPage.users");
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
+    <div className="relative flex flex-col gap-4 p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
+      <ChamferedFrame />
       <div className="flex min-w-0 gap-4">
         <div
           className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-bold text-[#111]"

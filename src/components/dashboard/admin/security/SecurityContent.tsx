@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/icons";
 import { ConfigureRoleModal } from "@/components/dashboard/modals/ConfigureRoleModal";
 import { PermissionToggle } from "@/components/dashboard/admin/roles/PermissionToggle";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import {
   securityAdminRoles,
   adminSessionTableRows,
@@ -84,7 +85,7 @@ export function SecurityContent() {
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
       <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 lg:p-8">
-        <div className="flex w-fit flex-wrap items-center gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
+        <div className="flex w-fit flex-wrap items-center gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
           {SECURITY_TABS.map((tab) => {
             const Icon = tab.icon;
             return (
@@ -94,8 +95,8 @@ export function SecurityContent() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-all sm:px-5 ${
                   activeTab === tab.id
-                    ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                    : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
+                    ? "bg-[var(--tott-dash-control-bg)] text-foreground"
+                    : "bg-transparent text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
                 }`}
               >
                 <span className={tabIconClass}>
@@ -115,8 +116,9 @@ export function SecurityContent() {
               {securityAdminRoles.map((role) => (
                 <div
                   key={role.id}
-                  className="flex flex-col gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"
+                  className="relative flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"
                 >
+                  <ChamferedFrame />
                   <div className="flex min-w-0 flex-1 items-start gap-4">
                     <div
                       className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-[#E8DDC0]"
@@ -226,7 +228,8 @@ export function SecurityContent() {
             <p className="mt-1 text-sm text-gray-500">{t("controlPanel.settingsTabSubtitle")}</p>
 
             <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-              <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 sm:p-6">
+              <div className="relative p-5 sm:p-6">
+                <ChamferedFrame />
                 <h3 className="text-base font-bold text-foreground">{t("controlPanel.authenticationCardTitle")}</h3>
                 <p className="mt-1 text-sm text-gray-500">{t("controlPanel.authenticationCardSubtitle")}</p>
 
@@ -278,7 +281,8 @@ export function SecurityContent() {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 sm:p-6">
+              <div className="relative p-5 sm:p-6">
+                <ChamferedFrame />
                 <h3 className="text-base font-bold text-foreground">{t("controlPanel.systemControlsTitle")}</h3>
                 <p className="mt-1 text-sm text-gray-500">{t("controlPanel.systemControlsSubtitle")}</p>
 

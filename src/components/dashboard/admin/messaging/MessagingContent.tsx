@@ -17,6 +17,7 @@ import {
 import type { MessageTemplateCategory } from "@/components/dashboard/modals/CreateMessageTemplateModal";
 import { EditMessageTemplateModal } from "@/components/dashboard/modals/EditMessageTemplateModal";
 import { useAuthUser } from "@/components/providers/AuthProvider";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import type {
   FrontendThread,
   FrontendMessage,
@@ -455,7 +456,7 @@ export function MessagingContent() {
         onClose={() => setEditTemplateOpen(false)}
         onSave={handleSaveTemplate}
       />
-      <div className="flex w-fit gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
+      <div className="flex w-fit gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
         {MESSAGE_TAB_IDS.map((tabId) => (
           <button
             key={tabId}
@@ -463,8 +464,8 @@ export function MessagingContent() {
             onClick={() => setActiveTab(tabId)}
             className={`rounded-md px-5 py-2.5 text-sm font-medium transition-all ${
               activeTab === tabId
-                ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
+                ? "bg-[var(--tott-dash-control-bg)] text-foreground"
+                : "bg-transparent text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
             }`}
           >
             {tabId === "inbox" ? t("tabs.inbox", { count: inboxCount }) : t(`tabs.${tabId}`)}
@@ -597,8 +598,9 @@ export function MessagingContent() {
                 key={tpl.id}
                 type="button"
                 onClick={() => { setSelectedTemplate(tpl); setEditTemplateOpen(true); }}
-                className="flex items-center justify-between gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-6 py-5 text-start transition-colors hover:bg-[#151515]"
+                className="relative flex items-center justify-between gap-4 px-6 py-5 text-start transition-colors hover:bg-[var(--tott-elevated)]"
               >
+                <ChamferedFrame />
                 <div className="min-w-0">
                   <p className="truncate text-base font-semibold text-foreground">{tpl.name}</p>
                   <p className="mt-1 truncate text-sm text-gray-500 capitalize">
@@ -662,13 +664,15 @@ export function MessagingContent() {
               ))}
 
               {filteredThreads.length === 0 && (
-                <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-10 text-center text-gray-500">
+                <div className="relative p-10 text-center text-gray-500">
+                  <ChamferedFrame />
                   {ti("emptyFiltered")}
                 </div>
               )}
             </div>
 
-            <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)]">
+            <div className="relative">
+              <ChamferedFrame />
               {selectedThread ? (
                 <div className="flex h-[640px] flex-col">
                   <div className="flex items-start justify-between gap-4 border-b border-[var(--tott-card-border)] px-5 py-4">

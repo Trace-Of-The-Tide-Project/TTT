@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { MessageSquareIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 
 export type ContributionEntry = {
   id: string;
@@ -46,25 +47,11 @@ export function SupportersContent() {
 
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
-      <div className="flex w-full gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
-        {filters.map((opt) => {
-          const isSelected = opt.id === selectedFilter;
-          return (
-            <button
-              key={opt.id}
-              type="button"
-              onClick={() => setSelectedFilter(opt.id)}
-              className={`flex-1 cursor-pointer rounded-md py-2 text-sm font-medium transition-all ${
-                isSelected
-                  ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                  : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
-              }`}
-            >
-              {opt.label}
-            </button>
-          );
-        })}
-      </div>
+      <SegmentedControl
+        options={filters.map((opt) => ({ id: opt.id, label: opt.label }))}
+        value={selectedFilter}
+        onChange={setSelectedFilter}
+      />
 
       <div className="flex flex-col gap-3">
         {filteredContributions.map((entry) => (

@@ -25,7 +25,7 @@ export function VisualEditorContent() {
 
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
-      <div className="flex w-fit gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-1">
+      <div className="flex w-fit gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
         {CMS_TABS.map((tab) => {
           const Icon = tab.icon ?? null;
           return (
@@ -35,8 +35,8 @@ export function VisualEditorContent() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-all ${
                 activeTab === tab.id
-                  ? "border border-[#4A4A4A] bg-[var(--tott-dash-control-bg)] text-foreground shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                  : "border border-transparent bg-transparent text-[#AAAAAA] hover:text-[#E0E0E0]"
+                  ? "bg-[var(--tott-dash-control-bg)] text-foreground"
+                  : "bg-transparent text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
               }`}
             >
               {Icon && (
