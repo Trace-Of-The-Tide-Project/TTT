@@ -10,6 +10,7 @@ export function UsersPageHeader() {
   const t = useTranslations("Dashboard.headers.users");
   return (
     <DashboardHeader
+        lastUpdated
       title={t("title")}
       subtitle={t("subtitle")}
       actions={

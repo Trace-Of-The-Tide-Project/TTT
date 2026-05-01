@@ -5,5 +5,5 @@ import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
 
 export function ContentLibraryPageHeader() {
   const t = useTranslations("Dashboard.headers.contentLibrary");
-  return <DashboardHeader title={t("title")} subtitle={t("subtitle")} />;
+  return <DashboardHeader lastUpdated title={t("title")} subtitle={t("subtitle")} />;
 }

@@ -33,6 +33,7 @@ export function MessagingPageHeader() {
   return (
     <div className="px-6 py-6 sm:px-8 sm:py-8">
       <DashboardHeader
+        lastUpdated
         title={t("title")}
         subtitle={t("subtitle")}
         compactPadding

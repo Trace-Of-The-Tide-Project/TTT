@@ -10,7 +10,7 @@ export function EngagementsPageHeader() {
   const iconColor = "var(--tott-stat-icon)";
   return (
     <div className="px-6 py-6 sm:px-8 sm:py-8">
-      <DashboardHeader title={t("title")} subtitle={t("subtitle")} compactPadding />
+      <DashboardHeader lastUpdated title={t("title")} subtitle={t("subtitle")} compactPadding />
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />

@@ -28,6 +28,7 @@ export function VisualEditorPageHeader() {
 
   return (
     <DashboardHeader
+        lastUpdated
       title={t("title")}
       subtitle={t("subtitle")}
       actions={

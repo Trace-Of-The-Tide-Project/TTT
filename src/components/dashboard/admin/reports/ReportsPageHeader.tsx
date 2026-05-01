@@ -8,14 +8,18 @@ import {
   UsersIcon,
 } from "@/components/ui/icons";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { LastUpdatedIndicator } from "@/components/ui/LastUpdatedIndicator";
 
 export function ReportsPageHeader() {
   const t = useTranslations("Dashboard.headers.reports");
   return (
     <div className="px-6 py-6 sm:px-8 sm:py-8">
-      <div className="pb-6">
-        <h1 className="text-xl font-bold text-foreground sm:text-2xl">{t("title")}</h1>
-        <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
+      <div className="flex flex-col gap-2 pb-6 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-foreground sm:text-2xl">{t("title")}</h1>
+          <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
+        </div>
+        <LastUpdatedIndicator />
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

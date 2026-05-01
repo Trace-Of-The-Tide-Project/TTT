@@ -1,4 +1,5 @@
 import { theme } from "@/lib/theme";
+import { LastUpdatedIndicator } from "@/components/ui/LastUpdatedIndicator";
 
 type DashboardHeaderProps = {
   title: string;
@@ -6,6 +7,8 @@ type DashboardHeaderProps = {
   actions?: React.ReactNode;
   /** When true, removes horizontal and top padding, keeps bottom padding only */
   compactPadding?: boolean;
+  /** Show the green-pulse "Last updated: Just now" indicator at the right edge. */
+  lastUpdated?: boolean;
   profile?: {
     initials: string;
     name: string;
@@ -19,6 +22,7 @@ export function DashboardHeader({
   actions,
   profile,
   compactPadding = false,
+  lastUpdated = false,
 }: DashboardHeaderProps) {
   const paddingClass = compactPadding
     ? "pb-6"
@@ -48,9 +52,10 @@ export function DashboardHeader({
           {!profile && subtitle && <p className="mt-1 text-sm text-gray-500">{subtitle}</p>}
         </div>
       </div>
-      {actions && (
-        <div className="flex shrink-0 flex-wrap items-center gap-2 lg:justify-end">
+      {(actions || lastUpdated) && (
+        <div className="flex shrink-0 flex-wrap items-center gap-4 lg:justify-end">
           {actions}
+          {lastUpdated && <LastUpdatedIndicator />}
         </div>
       )}
     </div>
