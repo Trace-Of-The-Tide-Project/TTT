@@ -9,6 +9,7 @@ type DashboardSidebarProps = {
   config: DashboardConfig;
   onItemClick?: () => void;
   badgeOverrides?: Record<string, string>;
+  collapsed?: boolean;
 };
 
 function getDefaultOpenGroups(config: DashboardConfig): Set<string> {
@@ -21,7 +22,7 @@ function getDefaultOpenGroups(config: DashboardConfig): Set<string> {
   return open;
 }
 
-export function DashboardSidebar({ config, onItemClick, badgeOverrides }: DashboardSidebarProps) {
+export function DashboardSidebar({ config, onItemClick, badgeOverrides, collapsed = false }: DashboardSidebarProps) {
   const [openGroups, setOpenGroups] = useState<Set<string>>(
     () => getDefaultOpenGroups(config)
   );
@@ -38,7 +39,7 @@ export function DashboardSidebar({ config, onItemClick, badgeOverrides }: Dashbo
   return (
     <div className="flex h-full flex-col">
       <nav
-        className="dash-sidebar-nav flex-1 overflow-y-auto px-3 py-4"
+        className={`dash-sidebar-nav flex-1 overflow-y-auto py-4 ${collapsed ? "px-2" : "px-3"}`}
         style={{ scrollbarWidth: "none" }}
       >
         <style>{`.dash-sidebar-nav::-webkit-scrollbar { display: none; }`}</style>
@@ -51,13 +52,14 @@ export function DashboardSidebar({ config, onItemClick, badgeOverrides }: Dashbo
               onToggleGroup={handleToggleGroup}
               onItemClick={onItemClick}
               badgeOverrides={badgeOverrides}
+              collapsed={collapsed}
             />
           ))}
         </div>
       </nav>
 
       <div className="shrink-0 border-t border-[var(--tott-card-border)]">
-        <SidebarUser />
+        <SidebarUser collapsed={collapsed} />
       </div>
 
     </div>

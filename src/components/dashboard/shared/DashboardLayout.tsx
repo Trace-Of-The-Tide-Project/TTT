@@ -1,7 +1,7 @@
 "use client";
 import { useState, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { MenuIcon } from "@/components/ui/icons";
+import { MenuIcon, ChevronRightIcon } from "@/components/ui/icons";
 import type { DashboardConfig } from "@/lib/dashboard/types";
 import { DashboardSidebar } from "./DashboardSidebar";
 import HexBackground from "@/components/ui/HexBackground";
@@ -28,6 +28,7 @@ export function DashboardLayout({
   const t = useTranslations("Dashboard.layout");
   const resolvedMobileTitle = mobileBarTitle ?? t("dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopSidebarCollapsed, setDesktopSidebarCollapsed] = useState(false);
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
@@ -43,7 +44,10 @@ export function DashboardLayout({
   return (
     <div className="relative min-h-[calc(100dvh-72px)] bg-[var(--tott-dash-surface)]">
       {/* Hex background — decorative accent at the top */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-35 overflow-hidden" style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}>
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-35 overflow-hidden"
+        style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
+      >
         <HexBackground />
       </div>
 
@@ -70,11 +74,33 @@ export function DashboardLayout({
 
           {/* Sidebar + content row */}
           <div className="flex items-stretch gap-6">
-            {/* Desktop sidebar */}
-            <aside className="hidden w-52 shrink-0 lg:block xl:w-56">
+            {/* Desktop sidebar (collapsible — always visible on lg+, just narrower when collapsed) */}
+            <aside
+              className={`hidden shrink-0 transition-[width] duration-200 lg:block ${
+                desktopSidebarCollapsed ? "w-16" : "w-52 xl:w-56"
+              }`}
+            >
               <div className="relative flex h-full flex-col">
                 <ChamferedFrame />
-                <DashboardSidebar config={config} badgeOverrides={badgeOverrides} />
+                <button
+                  type="button"
+                  onClick={() => setDesktopSidebarCollapsed((v) => !v)}
+                  className="absolute end-4 top-0 z-10 hidden p-1.5 text-[var(--tott-muted)] transition-colors hover:text-foreground lg:inline-flex"
+                  aria-label={desktopSidebarCollapsed ? t("openSidebar") : t("closeSidebar")}
+                >
+                  <span
+                    className={`inline-flex transition-transform duration-200 ${
+                      desktopSidebarCollapsed ? "" : "rotate-180"
+                    }`}
+                  >
+                    <ChevronRightIcon />
+                  </span>
+                </button>
+                <DashboardSidebar
+                  config={config}
+                  badgeOverrides={badgeOverrides}
+                  collapsed={desktopSidebarCollapsed}
+                />
               </div>
             </aside>
 
@@ -105,7 +131,11 @@ export function DashboardLayout({
             mobileOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <DashboardSidebar config={config} onItemClick={closeMobile} badgeOverrides={badgeOverrides} />
+          <DashboardSidebar
+            config={config}
+            onItemClick={closeMobile}
+            badgeOverrides={badgeOverrides}
+          />
         </div>
       </div>
     </div>

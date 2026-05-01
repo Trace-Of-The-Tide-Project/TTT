@@ -13,7 +13,11 @@ function getInitial(name?: string | null, email?: string | null): string {
   return "A";
 }
 
-export function SidebarUser() {
+type SidebarUserProps = {
+  collapsed?: boolean;
+};
+
+export function SidebarUser({ collapsed = false }: SidebarUserProps) {
   const router = useRouter();
   const t = useTranslations("Dashboard.sidebarUser");
   const { isDark } = useTheme();
@@ -27,6 +31,33 @@ export function SidebarUser() {
     router.push("/auth/login");
     router.refresh();
   };
+
+  if (collapsed) {
+    return (
+      <div className="flex flex-col items-center gap-3 px-2 py-4">
+        <span
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+          style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
+          title={displayName}
+        >
+          {getInitial(name, email)}
+        </span>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className={
+            isDark
+              ? "text-gray-500 transition-colors hover:text-foreground"
+              : "text-gray-500 transition-colors hover:text-gray-900"
+          }
+          aria-label={t("signOut")}
+          title={t("signOut")}
+        >
+          <LogOutIcon />
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-3 px-3 py-4">
