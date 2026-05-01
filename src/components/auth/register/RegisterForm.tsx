@@ -173,7 +173,7 @@ export function RegisterForm() {
             <button
               type="button"
               onClick={goNext}
-              className="flex-1 select-none rounded-md bg-[#CBA158] py-2 text-[13px] font-semibold text-black transition-[background-color,transform] duration-200 ease-out hover:brightness-[1.03] active:translate-y-px"
+              className="flex-1 select-none rounded-md bg-[#CBA158] py-2 text-[13px] font-semibold text-[color:var(--tott-auth-btn-text)] transition-[background-color,transform] duration-200 ease-out hover:brightness-[1.03] active:translate-y-px"
             >
               {t("stepNext")}
             </button>

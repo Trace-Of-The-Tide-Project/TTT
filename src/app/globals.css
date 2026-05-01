@@ -83,6 +83,7 @@ html {
   --tott-auth-input-placeholder: #737373;
   --tott-auth-input-icon: #737373;
   --tott-auth-input-border: transparent;
+  --tott-auth-btn-text: #332217;
   --tott-auth-btn-disabled-bg: #2a2a2a;
   --tott-auth-btn-disabled-text: #737373;
   --tott-auth-footer-muted: #a3a3a3;
@@ -153,6 +154,7 @@ html {
     --tott-auth-input-icon: #9a7a4a;
     --tott-auth-input-border: #d2b896;
     --tott-auth-input-shadow: 0 1px 0 rgba(255, 255, 255, 0.75), 0 2px 10px rgba(74, 54, 28, 0.07);
+    --tott-auth-btn-text: #332217;
     --tott-auth-btn-disabled-bg: #e5d9c8;
     --tott-auth-btn-disabled-text: #7d6a58;
     --tott-auth-footer-muted: #6b5b47;
@@ -222,6 +224,7 @@ html[data-theme="light"] {
   --tott-auth-input-icon: #9a7a4a;
   --tott-auth-input-border: #d2b896;
   --tott-auth-input-shadow: 0 1px 0 rgba(255, 255, 255, 0.75), 0 2px 10px rgba(74, 54, 28, 0.07);
+  --tott-auth-btn-text: #332217;
   --tott-auth-btn-disabled-bg: #e5d9c8;
   --tott-auth-btn-disabled-text: #7d6a58;
   --tott-auth-footer-muted: #6b5b47;

@@ -125,7 +125,7 @@ export function VerifyEmailClient() {
               type="button"
               onClick={() => void handleResendVerification()}
               disabled={resendBusy}
-              className="w-full cursor-pointer select-none rounded-lg py-3 font-medium text-black transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full cursor-pointer select-none rounded-lg py-3 font-medium text-[color:var(--tott-auth-btn-text)] transition-colors disabled:cursor-not-allowed disabled:opacity-60"
               style={{ backgroundColor: theme.accentGold }}
             >
               {resendBusy ? t("resendSubmitting") : t("resendSubmit")}
