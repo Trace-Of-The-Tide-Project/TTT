@@ -13,6 +13,7 @@ import { useDeleteArticle } from "@/hooks/mutations/articles";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import { formatApiError } from "@/lib/api/error-message";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { ChamferedCap } from "@/components/ui/ChamferedCap";
 
 type Tab = { id: string; labelKey: string };
 
@@ -220,7 +221,7 @@ export function ArticlesTable({
               className="fixed z-300 min-w-[160px] bg-[var(--tott-dash-surface)] shadow-lg"
               style={{ top: menuPosition.top, left: menuPosition.left }}
             >
-              <ChamferedFrame />
+              <ChamferedFrame size={12} />
               <ul
                 id={`article-actions-${openMenuRow.id}`}
                 className="relative py-2"
@@ -303,120 +304,100 @@ export function ArticlesTable({
         </Link>
       </div>
 
-      {/* Table */}
-      <div className="relative">
-        <ChamferedFrame />
-        <div className="overflow-x-auto px-1 py-1">
-        <table className="w-full border-collapse text-start text-sm">
-          <thead>
-            <tr className="border-b border-[var(--tott-card-border)]">
-              <th
-                className="bg-transparent px-5 py-2 text-start align-middle text-xs font-semibold"
-                style={{ color: "var(--tott-dash-gold-label)" }}
-              >
-                {t("table.title")}
-              </th>
-              <th
-                className="bg-transparent px-4 py-2 text-start align-middle text-xs font-semibold"
-                style={{ color: "var(--tott-dash-gold-label)" }}
-              >
-                {t("table.status")}
-              </th>
-              <th
-                className="bg-transparent whitespace-nowrap px-4 py-2 text-start align-middle text-xs font-semibold"
-                style={{ color: "var(--tott-dash-gold-label)" }}
-              >
+      {/* Table — chamfered caps + rectangular rows pattern */}
+      {(() => {
+        const gridCols = "grid-cols-[32%_14%_20%_12%_12%_10%]";
+        const headerCellClass =
+          "px-5 py-3 text-start align-middle text-xs font-semibold";
+        const bodyCellClass =
+          "px-5 py-3 text-start align-middle text-sm font-medium";
+        return (
+          <>
+            <ChamferedCap direction="top" />
+
+            {/* Header rectangle */}
+            <div
+              className={`grid ${gridCols} border-x border-y border-[var(--tott-card-border)]`}
+              style={{ color: "var(--tott-dash-gold-label)" }}
+            >
+              <div className={headerCellClass}>{t("table.title")}</div>
+              <div className={headerCellClass}>{t("table.status")}</div>
+              <div className={`${headerCellClass} whitespace-nowrap`}>
                 {t("table.lastUpdated")}
-              </th>
-              <th
-                className="bg-transparent px-4 py-2 text-start align-middle text-xs font-semibold"
-                style={{ color: "var(--tott-dash-gold-label)" }}
-              >
-                {t("table.views")}
-              </th>
-              <th
-                className="bg-transparent px-4 py-2 text-start align-middle text-xs font-semibold"
-                style={{ color: "var(--tott-dash-gold-label)" }}
-              >
-                {t("table.supporters")}
-              </th>
-              <th className="w-10 px-4 py-2 align-middle" aria-hidden />
-            </tr>
-          </thead>
-          <tbody>
+              </div>
+              <div className={headerCellClass}>{t("table.views")}</div>
+              <div className={headerCellClass}>{t("table.supporters")}</div>
+              <div className={headerCellClass} aria-hidden />
+            </div>
+
+            {/* Data rows or empty state */}
             {rowsWithRelativeTime.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={6}
-                  className="px-5 py-10 text-center text-sm text-gray-500"
-                >
-                  {t("table.emptyView")}
-                </td>
-              </tr>
+              <div className="border-x border-b border-[var(--tott-card-border)] px-5 py-10 text-center text-sm text-gray-500">
+                {t("table.emptyView")}
+              </div>
             ) : (
               rowsWithRelativeTime.map((row) => (
-                <tr
+                <div
                   key={row.id}
-                  className="border-b border-[var(--tott-card-border)] last:border-b-0 transition-colors"
+                  className={`grid ${gridCols} border-x border-b border-[var(--tott-card-border)] transition-colors hover:bg-[var(--tott-elevated)]`}
                 >
-                  <td
-                    className="px-5 py-3 text-start align-middle font-medium"
+                  <div
+                    className={bodyCellClass}
                     style={{ color: "var(--tott-dash-gold-text)" }}
                   >
                     {row.title}
-                  </td>
-                  <td
-                    className="px-4 py-3 text-start align-middle"
-                    style={{ color: statusColorMap[row.statusColor] ?? "#9ca3af" }}
+                  </div>
+                  <div
+                    className={bodyCellClass}
+                    style={{ color: statusColorMap[row.statusColor] ?? "var(--tott-muted)" }}
                   >
                     {t(`table.statusValues.${row.status}`)}
-                  </td>
-                  <td
-                    className="whitespace-nowrap px-4 py-3 text-start align-middle font-medium"
+                  </div>
+                  <div
+                    className={`${bodyCellClass} whitespace-nowrap`}
                     style={{ color: "var(--tott-muted)" }}
                   >
                     {row.relativeUpdated}
-                  </td>
-                  <td
-                    className="px-4 py-3 text-start align-middle font-medium tabular-nums"
+                  </div>
+                  <div
+                    className={`${bodyCellClass} tabular-nums`}
                     style={{ color: "var(--tott-muted)" }}
                   >
                     {row.views}
-                  </td>
-                  <td
-                    className="px-4 py-3 text-start align-middle font-medium tabular-nums"
+                  </div>
+                  <div
+                    className={`${bodyCellClass} tabular-nums`}
                     style={{ color: "var(--tott-muted)" }}
                   >
                     {row.supporters}
-                  </td>
-                  <td className="px-4 py-3 align-middle">
-                    <div className="flex justify-end" data-article-actions={row.id}>
-                      <button
-                        type="button"
-                        data-article-menu-trigger={row.id}
-                        className="p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] disabled:opacity-40"
-                        style={{ color: "var(--tott-muted)" }}
-                        aria-label={t("table.menuAria")}
-                        aria-expanded={openMenuId === row.id}
-                        aria-haspopup="menu"
-                        aria-controls={
-                          openMenuId === row.id ? `article-actions-${row.id}` : undefined
-                        }
-                        id={`article-actions-trigger-${row.id}`}
-                        disabled={deleteBusy && deleteTarget?.id === row.id}
-                        onClick={(e) => toggleArticleMenu(row, e.currentTarget)}
-                      >
-                        <MoreDotsIcon />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                  </div>
+                  <div className="flex items-center justify-end px-4 py-3" data-article-actions={row.id}>
+                    <button
+                      type="button"
+                      data-article-menu-trigger={row.id}
+                      className="p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] disabled:opacity-40"
+                      style={{ color: "var(--tott-muted)" }}
+                      aria-label={t("table.menuAria")}
+                      aria-expanded={openMenuId === row.id}
+                      aria-haspopup="menu"
+                      aria-controls={
+                        openMenuId === row.id ? `article-actions-${row.id}` : undefined
+                      }
+                      id={`article-actions-trigger-${row.id}`}
+                      disabled={deleteBusy && deleteTarget?.id === row.id}
+                      onClick={(e) => toggleArticleMenu(row, e.currentTarget)}
+                    >
+                      <MoreDotsIcon />
+                    </button>
+                  </div>
+                </div>
               ))
             )}
-          </tbody>
-        </table>
-        </div>
-      </div>
+
+            <ChamferedCap direction="bottom" />
+          </>
+        );
+      })()}
     </div>
   );
 }
