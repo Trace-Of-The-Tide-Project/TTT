@@ -20,7 +20,25 @@ export type ContentFormConfig = {
   iconBlockType: "paragraph" | "image";
   settingsTitle: string;
   primaryButtonLabel: string;
+  /** When true, renders the rich-text toolbar above the editor body. */
+  showToolbar?: boolean;
+  /** When set, restricts the AvailableBlocks palette to these types. */
+  allowedBlockTypes?: BlockType[];
+  /** Skip the "first image is the cover/hero" detection — treat every image
+   *  block as a regular file upload. Articles use this; media types don't. */
+  disableHero?: boolean;
 };
+
+/** Article block set — the seven blocks the design calls for (no heading). */
+export const articleAllowedBlockTypes: BlockType[] = [
+  "paragraph",
+  "quote",
+  "image",
+  "gallery",
+  "callout",
+  "author-note",
+  "divider",
+];
 
 /** Open Call: same block set as article but no heading (API enum). */
 export const openCallConfig: ContentFormConfig = {
@@ -48,15 +66,14 @@ export const articleConfig: ContentFormConfig = {
   contentType: "article",
   titlePlaceholder: "Enter your article title...",
   defaultBlocks: [
-    { id: "1", type: "image" },
-    { id: "2", type: "paragraph", content: "" },
-    { id: "3", type: "quote", content: "", quoteAttribution: "" },
-    { id: "4", type: "callout", content: "", calloutTitle: "" },
+    { id: "1", type: "paragraph", content: "" },
+    { id: "2", type: "quote", content: "" },
+    { id: "3", type: "image" },
+    { id: "4", type: "callout", content: "" },
     { id: "5", type: "author-note", content: "" },
   ],
   blockLabels: {
     paragraph: "Start writing your article...",
-    heading: "Section title",
     quote: "Quote",
     callout: "Callout",
     "author-note": "Author note",
@@ -64,6 +81,9 @@ export const articleConfig: ContentFormConfig = {
   iconBlockType: "paragraph",
   settingsTitle: "Article Settings",
   primaryButtonLabel: "Publish Now",
+  showToolbar: true,
+  allowedBlockTypes: articleAllowedBlockTypes,
+  disableHero: true,
 };
 
 export const videoConfig: ContentFormConfig = {

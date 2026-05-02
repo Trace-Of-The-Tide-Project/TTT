@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import type { CollectionItem } from "@/services/collections.service";
 import type { AdminTagItem } from "@/services/admin-tags.service";
 import { useCollections } from "@/hooks/queries/collections";
@@ -118,7 +119,7 @@ export function ContentSettings({
   );
 
   return (
-    <div className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] p-4">
+    <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-4">
       <h3 className="mb-4 text-base font-bold text-foreground">{title ?? t("defaultPanelTitle")}</h3>
 
       <div className="flex flex-col gap-4">
@@ -329,7 +330,7 @@ export function ContentSettings({
           </div>
         </div>
       </div>
-    </div>
+    </ChamferedPanel>
   );
 }
 

@@ -131,27 +131,6 @@ export function OpenCallEditorLayout() {
     });
   }, []);
 
-  const removeBlock = useCallback((id: string) => {
-    setBlocks((prev) => prev.filter((b) => b.id !== id));
-  }, []);
-
-  const duplicateBlock = useCallback((id: string) => {
-    setBlocks((prev) => {
-      const i = prev.findIndex((b) => b.id === id);
-      if (i < 0) return prev;
-      const b = prev[i]!;
-      const copy: ContentBlock = {
-        ...b,
-        id: crypto.randomUUID(),
-        file: undefined,
-        files: b.files ? [...b.files] : undefined,
-      };
-      const next = [...prev];
-      next.splice(i + 1, 0, copy);
-      return next;
-    });
-  }, []);
-
   const updateBlock = useCallback((id: string, patch: Partial<ContentBlock>) => {
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)));
   }, []);
@@ -398,8 +377,6 @@ export function OpenCallEditorLayout() {
           />
           <ContentBlocks
             blocks={blocks}
-            onRemoveBlock={removeBlock}
-            onDuplicateBlock={duplicateBlock}
             onUpdateBlock={updateBlock}
             onAddCoverBlock={addCoverBlock}
             onReorderBlock={reorderBlocks}

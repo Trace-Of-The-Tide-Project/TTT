@@ -9,6 +9,8 @@ import {
   AvailableBlocks,
   type BlockType,
 } from "@/components/dashboard/admin/articles/articles-editor/AvailableBlocks";
+import { EditorToolbar } from "@/components/dashboard/admin/articles/articles-editor/EditorToolbar";
+import { EditorRegistryProvider } from "@/components/dashboard/admin/articles/articles-editor/lib/editor-registry";
 import {
   ContentBlocks,
   type ContentBlock,
@@ -241,27 +243,6 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
       const [item] = next.splice(from, 1);
       // Insert at original target index (same rule as splice(from,1); splice(to,0) on a copy).
       next.splice(to, 0, item);
-      return next;
-    });
-  }, []);
-
-  const removeBlock = useCallback((id: string) => {
-    setBlocks((prev) => prev.filter((b) => b.id !== id));
-  }, []);
-
-  const duplicateBlock = useCallback((id: string) => {
-    setBlocks((prev) => {
-      const i = prev.findIndex((b) => b.id === id);
-      if (i < 0) return prev;
-      const b = prev[i]!;
-      const copy: ContentBlock = {
-        ...b,
-        id: crypto.randomUUID(),
-        file: undefined,
-        files: b.files ? [...b.files] : undefined,
-      };
-      const next = [...prev];
-      next.splice(i + 1, 0, copy);
       return next;
     });
   }, []);
@@ -540,6 +521,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
       : null;
 
   return (
+    <EditorRegistryProvider>
     <div className="flex min-h-0 flex-col">
       {uploadOverlay}
       {successToastPortal}
@@ -549,6 +531,12 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
         onClose={() => !busy && setScheduleModalOpen(false)}
         onConfirm={handleScheduleConfirm}
       />
+
+      {config.showToolbar ? (
+        <div className="mb-4 shrink-0">
+          <EditorToolbar />
+        </div>
+      ) : null}
 
       <div className="flex flex-1 gap-6 overflow-hidden">
         <div className="min-w-0 flex-1 space-y-6 overflow-y-auto">
@@ -579,8 +567,6 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
           />
           <ContentBlocks
             blocks={blocks}
-            onRemoveBlock={removeBlock}
-            onDuplicateBlock={duplicateBlock}
             onUpdateBlock={updateBlock}
             onAddCoverBlock={addCoverBlock}
             onReorderBlock={reorderBlocks}
@@ -592,10 +578,15 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
         <aside className="flex w-64 shrink-0 flex-col gap-4 overflow-y-auto">
           <AvailableBlocks
             onAddBlock={addBlock}
+            allowedBlockTypes={config.allowedBlockTypes}
             imageBlockLabel={
-              config.contentType === "video" || config.contentType === "audio"
-                ? tLayout("imageBlockShort")
-                : localizedMainMedia.blockName
+              // No cover concept for article-style editors — fall back to the
+              // default "Image" label from translations.
+              config.disableHero
+                ? undefined
+                : config.contentType === "video" || config.contentType === "audio"
+                  ? tLayout("imageBlockShort")
+                  : localizedMainMedia.blockName
             }
           />
           <ContentSettings
@@ -632,5 +623,6 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
         onOpenSchedule={() => setScheduleModalOpen(true)}
       />
     </div>
+    </EditorRegistryProvider>
   );
 }
