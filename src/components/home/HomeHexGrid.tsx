@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -71,36 +71,38 @@ type Cell = {
   isHeroSlot?: boolean; // covered by the hero rectangle
 };
 
-function buildGrid(): Cell[] {
+function buildGrid(narrow: boolean): Cell[] {
+  const flushCols = narrow ? 3 : 5;
+  const offsetCols = narrow ? 2 : 4;
   const cells: Cell[] = [];
 
   // Top peek row — partial hexes bleeding in from above.
   // Same column pattern as a flush row so the points line up with row 1.
-  for (let col = 0; col < 5; col++) {
+  for (let col = 0; col < flushCols; col++) {
     cells.push({ row: -1, col, isOffset: false, isTopPeek: true });
   }
 
   for (let row = 0; row < ROWS; row++) {
     const isOffset = row % 2 === 0;
-    const cellsInRow = isOffset ? 4 : 5;
+    const cellsInRow = isOffset ? offsetCols : flushCols;
     for (let col = 0; col < cellsInRow; col++) {
       // Row 0 (offset): the hero's two top hex tabs occupy cols 0 and 1
-      // (the leftmost slots). Per Homepage.svg, those slots are EMPTY in
-      // the underlying grid — only cols 2 and 3 (centers x=900, x=1260)
-      // render as hex cards. Skip the hero-covered slots entirely so they
-      // don't peek through behind the hero.
-      if (row === 0 && (col === 0 || col === 1)) continue;
+      // on desktop. On narrow (2 offset cols) the hero — scaled to mobile —
+      // covers BOTH cols, so skip the whole row to avoid a hex peeking from
+      // under it.
+      if (narrow && row === 0) continue;
+      if (!narrow && row === 0 && (col === 0 || col === 1)) continue;
       cells.push({ row, col, isOffset });
     }
   }
   return cells;
 }
-const GRID = buildGrid();
 
 function calcHexSize(viewportWidth: number): number {
-  // Hex math is calibrated to vw / 4 on desktop (5 columns with edges peeking).
-  // No upper cap — the grid scales with viewport so it fills any screen width.
-  if (viewportWidth < 480) return Math.round(viewportWidth / 1.6);
+  // Hex math is calibrated to vw / N on desktop (5 columns with edges peeking).
+  // Under 480px we switch to a 3-flush / 2-offset grid (hex = vw/2) to keep
+  // the natural edge-peek without right-side overflow.
+  if (viewportWidth < 480) return Math.round(viewportWidth / 2);
   if (viewportWidth < 768) return Math.round(viewportWidth / 2.5);
   if (viewportWidth < 1100) return Math.round(viewportWidth / 3);
   return Math.round(viewportWidth / 4);
@@ -156,6 +158,8 @@ export function HomeHexGrid({ cards }: Props) {
 
   const hexSize = layout.hex;
   const vw = layout.vw;
+  const narrow = vw < 480;
+  const grid = useMemo(() => buildGrid(narrow), [narrow]);
 
   // FALLBACK_CARDS only show when the articles endpoint returns nothing (typical for signed-out requests).
   const sessionPresent = hasBrowserAuthSession(status);
@@ -194,7 +198,7 @@ export function HomeHexGrid({ cards }: Props) {
   const heroBodyLine = Math.round(24 * sz);
 
   let cardIdx = 0;
-  const positionedCells = GRID.map((cell) => {
+  const positionedCells = grid.map((cell) => {
     const card = cell.isTopPeek ? null : gridCards[cardIdx++ % gridCards.length];
     // Pixel position of the hex's bounding-box top-left corner.
     const center_x = cell.isOffset
