@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { useTheme } from "@/components/providers/ThemeProvider";
 import {
   FacebookIcon,
   TwitterXIcon,
@@ -35,38 +34,41 @@ const FIELDS = [
 
 export function Footer() {
   const t = useTranslations("Footer");
-  const { isDark } = useTheme();
   const year = new Date().getFullYear();
-  const headingColor = isDark ? "#9ca3af" : "#4b3c2e";
-  const mutedColor = isDark ? "#6b7280" : "#6b5b47";
+  const headingColor = "var(--tott-home-text-heading)";
+  const mutedColor = "var(--tott-home-text-muted)";
 
   return (
     <footer
       className="w-full select-none"
-      style={{ backgroundColor: theme.pageBackground, color: "var(--foreground)" }}
+      style={{
+        backgroundColor: "var(--tott-home-surface)",
+        color: "var(--foreground)",
+      }}
     >
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-8 sm:py-12 lg:px-10">
+      {/* Figma frame: 1440×301, padding 40px, gap 24px. No max-width cap so wide screens fill. */}
+      <div className="flex w-full flex-col items-stretch gap-6 p-6 sm:p-8 lg:p-10">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
           <div className="flex flex-col items-start gap-4">
             <Image
               src="/images/footer-Logo.png"
               alt={t("logoAlt")}
-              width={100}
-              height={24}
-              className="h-6 w-auto object-contain"
+              width={56}
+              height={16}
+              className="h-4 w-auto object-contain"
             />
-            <p className="max-w-xs text-sm" style={{ color: mutedColor }}>
+            <p className="max-w-xs text-sm leading-relaxed" style={{ color: mutedColor }}>
               <span className="font-bold text-foreground">{t("taglineLead")}</span> {t("taglineBody")}
             </p>
-            <div className="flex gap-3">
+            <div className="mt-1 flex items-center gap-4">
               {SOCIAL.map(({ key, href, icon: Icon }) => (
                 <a
                   key={key}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:text-foreground"
-                  style={{ color: mutedColor, backgroundColor: theme.cardBorder }}
+                  className="transition-colors hover:text-foreground"
+                  style={{ color: mutedColor }}
                   aria-label={t(`social.${key}`)}
                 >
                   <Icon />
@@ -144,12 +146,18 @@ export function Footer() {
             </ul>
           </div>
         </div>
-      </div>
 
-      <div className="border-t py-6" style={{ borderColor: theme.cardBorder }}>
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 sm:flex-row sm:gap-4 sm:px-8 lg:px-10">
-          <p className="text-center text-sm sm:text-left" style={{ color: mutedColor }}>{t("copyright", { year })}</p>
-          <div className="flex flex-wrap items-center justify-center gap-2 text-sm" style={{ color: mutedColor }}>
+        <div
+          className="flex flex-col items-center justify-between gap-3 border-t pt-6 sm:flex-row sm:gap-4"
+          style={{ borderColor: theme.cardBorder }}
+        >
+          <p className="text-center text-sm sm:text-left" style={{ color: mutedColor }}>
+            {t("copyright", { year })}
+          </p>
+          <div
+            className="flex flex-wrap items-center justify-center gap-2 text-sm"
+            style={{ color: mutedColor }}
+          >
             <Link href="/privacy" className="transition-colors hover:text-foreground">
               {t("privacy")}
             </Link>

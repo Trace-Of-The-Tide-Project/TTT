@@ -45,3 +45,11 @@ export type SignupPendingVerification = {
 };
 
 export type SignupResult = AuthSession | SignupPendingVerification;
+
+/**
+ * Client-side view of whether a session exists. Populated by `AuthProvider` after
+ * `fetchCurrentUser()` → `GET /api/auth/me` with `credentials: "include"`. That route
+ * reads httpOnly auth cookies (`lib/auth/server-session.ts`). Not stored in
+ * `localStorage`.
+ */
+export type BrowserAuthStatus = "loading" | "authenticated" | "unauthenticated";

@@ -61,6 +61,19 @@ html {
   /** Slightly elevated soft fill — sidebar active item, ghost buttons, search input. */
   --tott-elevated: #262626;
   --tott-elevated-hover: #2f2f2f;
+  /** Home page surface + hex grid tokens — Figma uses #171717 page bg, #333333 hex stroke. */
+  --tott-home-surface: #171717;
+  --tott-home-surface-rgb: 23, 23, 23;
+  --tott-home-hex-stroke: #333333;
+  --tott-home-hex-peek: #262626;
+  --tott-home-hex-sheen: rgba(255, 255, 255, 0.16);
+  --tott-home-badge-bg: rgba(23, 23, 23, 0.8);
+  --tott-home-text-strong: #ffffff;
+  --tott-home-text-heading: #9ca3af;
+  --tott-home-text-muted: #6b7280;
+  --tott-home-hero-grad-top: #171717;
+  --tott-home-hero-grad-mid: #1e1e1e;
+  --tott-home-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.24);
   /** Cream/gold accent for stat icons + topbar utility icons. */
   --tott-stat-icon: #e8ddc0;
   /** Inactive tab text + hover state in segmented controls. */
@@ -206,6 +219,19 @@ html[data-theme="light"] {
   --tott-dash-hex-opacity: 0.35;
   --tott-elevated: #f3f4f6;
   --tott-elevated-hover: #e5e7eb;
+  /** Home page light-theme palette — warm-neutral cream with sepia hex strokes. */
+  --tott-home-surface: #faf9f5;
+  --tott-home-surface-rgb: 250, 249, 245;
+  --tott-home-hex-stroke: #d8d2c6;
+  --tott-home-hex-peek: #ece8de;
+  --tott-home-hex-sheen: rgba(0, 0, 0, 0.08);
+  --tott-home-badge-bg: rgba(255, 255, 255, 0.85);
+  --tott-home-text-strong: #1c1812;
+  --tott-home-text-heading: #4b3c2e;
+  --tott-home-text-muted: #6b5b47;
+  --tott-home-hero-grad-top: #f5f1e8;
+  --tott-home-hero-grad-mid: #ece8dc;
+  --tott-home-text-shadow: none;
   --tott-stat-icon: #7d5a28;
   --tott-tab-inactive: #6b7280;
   --tott-tab-inactive-hover: #1f2937;
@@ -235,8 +261,8 @@ html[data-theme="light"] {
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-plex-arabic), var(--font-plex-sans), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
 /* Auth card shell: subtle fade-up on first paint (see AuthHexFrame). */
@@ -403,8 +429,24 @@ html[data-theme="light"] .tott-auth-page [data-auth-banner="success"] {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* IBM Plex Sans (Latin) + IBM Plex Sans Arabic — both subsets load from next/font/google.
+     The Arabic variable is listed first so Arabic glyphs render with Plex Arabic; Latin chars
+     fall through to Plex Sans. */
+  font-family:
+    var(--font-plex-arabic),
+    var(--font-plex-sans),
+    "IBM Plex Sans Arabic",
+    "IBM Plex Sans",
+    system-ui,
+    sans-serif;
   overflow-x: hidden;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
 }
 
 button,

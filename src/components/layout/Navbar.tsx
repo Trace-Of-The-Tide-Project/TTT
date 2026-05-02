@@ -89,11 +89,23 @@ export function Navbar() {
   const borderColor = isDark ? "#333333" : "var(--tott-card-border)";
 
   return (
-    <header
-      className={`absolute inset-x-0 top-0 z-50 w-full py-2 ${
-        isDark ? "bg-[#171717]/80" : "bg-[var(--background)]/80"
-      }`}
-    >
+    <header className="absolute inset-x-0 top-0 z-50 w-full py-2">
+      {/* Translucent background layer: denser at top-center, fades to transparent at edges + bottom.
+          Uses --tott-home-surface-rgb so it tracks light/dark themes automatically. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(ellipse 75% 130% at 50% 0%, rgba(var(--tott-home-surface-rgb), 0.88) 0%, rgba(var(--tott-home-surface-rgb), 0.45) 38%, rgba(var(--tott-home-surface-rgb), 0) 82%)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          maskImage:
+            "radial-gradient(ellipse 75% 130% at 50% 0%, #000 0%, #000 38%, transparent 82%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 75% 130% at 50% 0%, #000 0%, #000 38%, transparent 82%)",
+        }}
+      />
       <nav className="flex h-14 w-full items-center justify-between gap-8 px-6">
 
         {/* Brand — left */}

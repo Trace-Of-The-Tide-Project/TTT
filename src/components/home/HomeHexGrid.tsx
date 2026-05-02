@@ -1,15 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { useEffect, useId, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useTheme } from "@/components/providers/ThemeProvider";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { hasBrowserAuthSession } from "@/lib/auth/browser-session";
 import type { HexCard } from "@/app/[locale]/(withNav)/(public)/page";
 
-const HEX_CLIP =
-  "polygon(47.5% 5.67%, 48.29% 5.3%, 49.13% 5.08%, 50% 5%, 50.87% 5.08%, 51.71% 5.3%, 52.5% 5.67%, 87.14% 25.67%, 87.85% 26.17%, 88.47% 26.79%, 88.97% 27.5%, 89.34% 28.29%, 89.57% 29.13%, 89.64% 30%, 89.64% 70%, 89.57% 70.87%, 89.34% 71.71%, 88.97% 72.5%, 88.47% 73.21%, 87.85% 73.83%, 87.14% 74.33%, 52.5% 94.33%, 51.71% 94.7%, 50.87% 94.92%, 50% 95%, 49.13% 94.92%, 48.29% 94.7%, 47.5% 94.33%, 12.86% 74.33%, 12.15% 73.83%, 11.53% 73.21%, 11.03% 72.5%, 10.66% 71.71%, 10.43% 70.87%, 10.36% 70%, 10.36% 30%, 10.43% 29.13%, 10.66% 28.29%, 11.03% 27.5%, 11.53% 26.79%, 12.15% 26.17%, 12.86% 25.67%)";
+/** Figma `Homepage.svg` artboard width — used only for fade-height ratio scaling. */
+const FIGMA_HOMEPAGE_WIDTH = 1440;
 
+/* ─────────────────────────────── geometry ───────────────────────────────
+   BG.svg + Image.svg (sharp pointy-top hex frames).
+*/
+const HEX_W = 360;
+const HEX_H = 435;
+const HEX_TOP_Y = 87.8; // y-coord of top-left/right corner in 360×435 frame
+const HEX_TOP_PCT = (HEX_TOP_Y / HEX_H) * 100; // 20.18%
+const ROW_RATIO = 1 - HEX_TOP_PCT / 100; // 0.7982 — pointy-top vertical step
+
+// SVG path data — lifted directly from the user's asset files
+const BG_PATH = "M180.5 0.555649L360.5 87.8065V348.305L180.5 435.556L0.5 348.305V87.8065L180.5 0.555649Z";
+// Image.svg inner hex (328×396, but expressed in 360×435 coords below for
+// uniform scaling — we offset by (16, 19.5) so it sits centred inside BG)
+const IMAGE_PATH_LOCAL = "M164 -1.76941L328 77.4623V317.999L164 397.231L0 317.999V77.4623L164 -1.76941Z";
+// Header.svg union shape (688×399) — rounded rectangle with two hexagonal
+// tabs on top and two on the bottom that interlock with the hex grid.
+const HEADER_PATH = "M157.04 3.3626C161.437 1.23833 166.563 1.23832 170.96 3.3626L324.702 77.6382C326.873 78.6868 329.252 79.2314 331.662 79.2314H356.338C358.748 79.2314 361.127 78.6868 363.298 77.6382L517.04 3.3626C521.437 1.23833 526.563 1.23832 530.96 3.3626L678.96 74.8642C684.488 77.5346 688 83.1321 688 89.2709V309.729C688 315.868 684.488 321.465 678.96 324.136L530.96 395.637C526.563 397.762 521.437 397.762 517.04 395.637L363.298 321.362C361.127 320.313 358.748 319.769 356.338 319.769H331.662C329.252 319.769 326.873 320.313 324.702 321.362L170.96 395.637C166.563 397.762 161.437 397.762 157.04 395.637L9.03981 324.136C3.51228 321.465 0 315.868 0 309.729V89.2709C0 83.1321 3.51229 77.5346 9.03981 74.8641L157.04 3.3626Z";
+
+// CSS clip-path for the outer (sharp) hex — derived from BG.svg coords.
+const SHARP_HEX_CLIP =
+  `polygon(50% 0%, 100% ${HEX_TOP_PCT}%, 100% ${100 - HEX_TOP_PCT}%, 50% 100%, 0% ${100 - HEX_TOP_PCT}%, 0% ${HEX_TOP_PCT}%)`;
+
+// Image.svg inner hex sits inside the 361×437 BG frame at offset (16.5, 20.5).
+
+/* ─────────────────────────────── data ─────────────────────────────── */
 function isValidImageUrl(url: string | null | undefined): url is string {
   if (!url) return false;
   try {
@@ -28,206 +53,526 @@ const FALLBACK_CARDS: HexCard[] = Array.from({ length: 30 }, (_, i) => ({
   href: "/fields",
 }));
 
-const ROWS = 4;
-const COL_RATIO = 0.80;
-const TOP_PEEK = -0.5; // row offset for the half-hex row peeking in from the top
+/* ─────────────────────────────── grid layout ───────────────────────────────
+   Matches Homepage.svg: 6 visible content rows + 1 top-peek row.
+   Pointy-top hex tessellation:
+     - "flush" rows (1, 3, 5): 5 hexes, centers at x = 0, w, 2w, 3w, 4w
+     - "offset" rows (0, 2, 4): 4 hexes, centers at x = 0.5w, 1.5w, 2.5w, 3.5w
+   With viewport width = 4w (i.e. hex width = vw / 4), the leftmost flush hex
+   peeks off the left edge and the rightmost peeks off the right — matching
+   Homepage.svg exactly. */
+const ROWS = 6;
 
-function buildGrid(): { row: number; col: number; isTopPeek?: boolean }[] {
-  const cells: { row: number; col: number; isTopPeek?: boolean }[] = [];
-  // Top peek row — partial hexes bleeding in from above the viewport
-  for (let col = -1; col <= 7; col++) {
-    cells.push({ row: 0, col, isTopPeek: true });
+type Cell = {
+  row: number;
+  col: number;
+  isOffset: boolean;
+  isTopPeek?: boolean;
+  isHeroSlot?: boolean; // covered by the hero rectangle
+};
+
+function buildGrid(): Cell[] {
+  const cells: Cell[] = [];
+
+  // Top peek row — partial hexes bleeding in from above.
+  // Same column pattern as a flush row so the points line up with row 1.
+  for (let col = 0; col < 5; col++) {
+    cells.push({ row: -1, col, isOffset: false, isTopPeek: true });
   }
+
   for (let row = 0; row < ROWS; row++) {
-    const startCol = row === 0 ? 0 : -1;
-    for (let col = startCol; col <= 7; col++) {
-      cells.push({ row, col });
+    const isOffset = row % 2 === 0;
+    const cellsInRow = isOffset ? 4 : 5;
+    for (let col = 0; col < cellsInRow; col++) {
+      // Row 0 (offset): the hero's two top hex tabs occupy cols 0 and 1
+      // (the leftmost slots). Per Homepage.svg, those slots are EMPTY in
+      // the underlying grid — only cols 2 and 3 (centers x=900, x=1260)
+      // render as hex cards. Skip the hero-covered slots entirely so they
+      // don't peek through behind the hero.
+      if (row === 0 && (col === 0 || col === 1)) continue;
+      cells.push({ row, col, isOffset });
     }
   }
   return cells;
 }
-
 const GRID = buildGrid();
 
-function hexPos(row: number, col: number, colWidth: number, rowHeight: number) {
-  const isOffset = row % 2 === 0;
-  return {
-    top: row * rowHeight,
-    left: col * colWidth + (isOffset ? colWidth / 2 : 0),
-  };
+function calcHexSize(viewportWidth: number): number {
+  // Hex math is calibrated to vw / 4 on desktop (5 columns with edges peeking).
+  // No upper cap — the grid scales with viewport so it fills any screen width.
+  if (viewportWidth < 480) return Math.round(viewportWidth / 1.6);
+  if (viewportWidth < 768) return Math.round(viewportWidth / 2.5);
+  if (viewportWidth < 1100) return Math.round(viewportWidth / 3);
+  return Math.round(viewportWidth / 4);
 }
 
-function calcHexSize(vw: number): number {
-  const targetCols = vw < 380 ? 1.8 : vw < 640 ? 2.5 : vw < 900 ? 3.5 : 5;
-  return Math.round(vw / (targetCols * COL_RATIO));
-}
+/* ─────────────────────────────── tokens (Figma) ─────────────────────────────── */
+const GOLD      = "#C9A96E";
+const GOLD_DARK = "#BD9352";
+const GOLD_TEXT = "#332217";
+
+/** Home page surface tokens — values live in globals.css (`--tott-home-*`) and switch with theme. */
+const TK = {
+  hexFill:    "var(--tott-home-surface)",
+  hexStroke:  "var(--tott-home-hex-stroke)",
+  peekInner:  "var(--tott-home-hex-peek)",
+  sheenColor: "var(--tott-home-hex-sheen)",
+  badgeBg:    "var(--tott-home-badge-bg)",
+  textStrong: "var(--tott-home-text-strong)",
+  textShadow: "var(--tott-home-text-shadow)",
+  heroGradTop: "var(--tott-home-hero-grad-top)",
+  heroGradMid: "var(--tott-home-hero-grad-mid)",
+} as const;
+
+/** Inner hex image bounds — `IMAGE_PATH_LOCAL` ymin … ymax after `translate(16.5 20.5)`. */
+const INNER_HEX_SCRIM_RECT = {
+  x: 16.5,
+  y: 20.5 - 1.76941,
+  w: 328,
+  h: 397.231 + 1.76941,
+} as const;
 
 type Props = { cards: HexCard[] };
 
 export function HomeHexGrid({ cards }: Props) {
   const t = useTranslations("Home");
-  const { isDark } = useTheme();
-  const [hexSize, setHexSize] = useState(() =>
-    typeof window !== "undefined" ? calcHexSize(window.innerWidth) : 350,
+  const { status } = useAuth();
+  const heroGradId = useId().replace(/:/g, "");
+
+  /** Layout width + hex size (for title scale + grid offset). */
+  const [layout, setLayout] = useState<{ hex: number; vw: number }>(() =>
+    typeof window !== "undefined"
+      ? { hex: calcHexSize(window.innerWidth), vw: window.innerWidth }
+      : { hex: 360, vw: 1440 },
   );
 
   useEffect(() => {
-    const update = () => setHexSize(calcHexSize(window.innerWidth));
+    const update = () =>
+      setLayout({ hex: calcHexSize(window.innerWidth), vw: window.innerWidth });
+    update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  const source = cards.length > 0 ? cards : FALLBACK_CARDS;
-  const borderPx = Math.round(hexSize * 0.014);
-  const colWidth = Math.round(hexSize * COL_RATIO);
-  const rowHeight = Math.round(hexSize * 0.71);
-  const gridHeight = (ROWS - 1) * rowHeight + hexSize;
+  const hexSize = layout.hex;
+  const vw = layout.vw;
 
-  const heroTitle = `${(hexSize * 0.075).toFixed(0)}px`;
-  const heroBody  = `${(hexSize * 0.030).toFixed(0)}px`;
-  const heroBtn   = `${(hexSize * 0.032).toFixed(0)}px`;
-  const cardTitle = `${(hexSize * 0.032).toFixed(0)}px`;
-  const cardBadge = `${(hexSize * 0.026).toFixed(0)}px`;
-  const heroPadX  = Math.round(hexSize * 0.14);
+  // FALLBACK_CARDS only show when the articles endpoint returns nothing (typical for signed-out requests).
+  const sessionPresent = hasBrowserAuthSession(status);
+  const gridCards = cards.length > 0 ? cards : FALLBACK_CARDS;
+  const heroHref = sessionPresent ? "/fields" : "/auth/login";
+  const hexHeight = Math.round(hexSize * (HEX_H / HEX_W));
+  const colWidth = hexSize; // pointy-top: column step = full hex width
+  const rowHeight = Math.round(hexHeight * ROW_RATIO);
+  const gridHeight = (ROWS - 1) * rowHeight + hexHeight;
 
-  // Theme-conditional colors — all values come from the existing design token palette
-  const hexBorderColor = isDark ? "#1a1a1a" : "#d4cec0";
-  const topPeekBg      = isDark ? "#0d0d0d" : "#e8e2d6";
-  const heroTitleBg    = isDark
-    ? "radial-gradient(ellipse 90% 75% at 70% 70%, #5a3500 0%, #321c00 30%, #150c00 65%, #0b0b0b 95%)"
-    : "radial-gradient(ellipse 90% 75% at 65% 60%, rgba(203,161,88,0.55) 0%, rgba(203,161,88,0.28) 35%, rgba(203,161,88,0.08) 65%, #f0ebe1 95%)";
-  const heroBodyBg     = isDark
-    ? "radial-gradient(ellipse 90% 75% at 30% 70%, #5a3500 0%, #321c00 30%, #150c00 65%, #0b0b0b 95%)"
-    : "radial-gradient(ellipse 90% 75% at 35% 60%, rgba(74,143,137,0.45) 0%, rgba(74,143,137,0.22) 35%, rgba(74,143,137,0.06) 65%, #f0ebe1 95%)";
-  const heroTitleColor = isDark ? "#ffffff" : "#1c1812";
-  const heroGoldColor  = isDark ? "#C9A96E" : "#b8762a";
-  const heroParagraphColor = isDark ? "#d1d5db" : "#3a2e22";
-  const cardBg         = isDark ? "#111111" : "#f0ebe1";
-  const cardScrim      = isDark
-    ? "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 30%, transparent 55%)"
-    : "linear-gradient(to top, rgba(28,24,18,0.82) 0%, rgba(28,24,18,0.42) 30%, transparent 55%)";
-  const cardBadgeBg    = isDark ? "rgba(0,0,0,0.65)" : "rgba(28,24,18,0.62)";
-  const bottomDissolveGradient = isDark
-    ? "linear-gradient(to bottom, transparent 0%, rgba(23,23,23,0.55) 35%, rgba(23,23,23,0.9) 70%, #171717 100%)"
-    : "linear-gradient(to bottom, transparent 0%, rgba(246,243,236,0.55) 35%, rgba(246,243,236,0.9) 70%, #f6f3ec 100%)";
+  // Card typography scales with hex size, anchored to Figma's 20px / 12px
+  // values at hexSize=360.
+  const sz = hexSize / 360;
+  const titleSize = Math.max(11, Math.round(20 * sz));
+  const titleLine = Math.max(15, Math.round(28 * sz));
+  const badgeSize = Math.max(9, Math.round(12 * sz));
+  const badgeLine = Math.max(12, Math.round(16 * sz));
+
+  // Hero (Figma: 688×399 at left:11 top:162 in the source frame, where
+  // row 0's top vertex is at y=144). Translated to our grid coords (row 0
+  // top vertex at y=0): heroTop = 162 − 144 = 18. This makes the hero's
+  // top tabs apex (y=3 in the SVG) sit at y≈21, just below row 0's top.
+  const heroWidth = Math.round(688 * sz);
+  const heroHeight = Math.round(399 * sz);
+  const heroLeft = Math.max(8, Math.round(11 * sz));
+
+  /** Nudge the hex lattice + hero down together (Figma tuning). */
+  const gridDropPx = Math.round(96 * sz);
+  const heroTop = Math.round(18 * sz) + gridDropPx;
+
+  // Slightly smaller headline on narrow widths so "Trace …" stays one line with nowrap.
+  const heroTitleScale = vw < 520 ? 0.68 : vw < 640 ? 0.76 : vw < 820 ? 0.85 : vw < 1024 ? 0.92 : 1;
+  const heroTitleSize = Math.max(16, Math.round(48 * sz * heroTitleScale));
+  const heroTitleLine = Math.round(56 * sz * heroTitleScale);
+  const heroBodySize = Math.round(18 * sz);
+  const heroBodyLine = Math.round(24 * sz);
 
   let cardIdx = 0;
-  const cells = GRID.map(({ row, col, isTopPeek }) => {
-    // Hero is composed of TWO adjacent cells in row 0: (0,0) holds title, (0,1) holds body + CTA
-    const isHeroTitle = !isTopPeek && row === 0 && col === 0;
-    const isHeroBody = !isTopPeek && row === 0 && col === 1;
-    const isHero = isHeroTitle || isHeroBody;
-    const card = isHero || isTopPeek ? null : source[cardIdx++ % source.length];
-    const pos = hexPos(row, col, colWidth, rowHeight);
-    if (isTopPeek) {
-      pos.top = Math.round(rowHeight * TOP_PEEK);
-      pos.left = col * colWidth;
-    }
-    return { isHero, isHeroTitle, isHeroBody, isTopPeek: !!isTopPeek, card, pos, size: hexSize };
+  const positionedCells = GRID.map((cell) => {
+    const card = cell.isTopPeek ? null : gridCards[cardIdx++ % gridCards.length];
+    // Pixel position of the hex's bounding-box top-left corner.
+    const center_x = cell.isOffset
+      ? cell.col * colWidth + colWidth / 2
+      : cell.col * colWidth;
+    const left = center_x - hexSize / 2;
+    const top = cell.row * rowHeight + gridDropPx;
+    return { ...cell, card, top, left };
   });
 
-  return (
-    <div className="relative w-full overflow-hidden" style={{ height: gridHeight }}>
-      {cells.map(({ isHero, isHeroTitle, isHeroBody, isTopPeek, card, pos, size }, i) => (
-        <div
-          key={i}
-          className="absolute"
-          style={{ width: size, height: size, top: pos.top, left: pos.left, zIndex: isHero ? 2 : 1 }}
-        >
-          {/* Border frame layer */}
-          <div
-            className="absolute inset-0"
-            style={{ clipPath: HEX_CLIP, backgroundColor: hexBorderColor }}
-          />
+  /** Top fade (formerly Slider Content.svg): #171717 → transparent over the lattice. */
+  const topFadeH = Math.min(
+    240,
+    Math.round((Math.min(vw, FIGMA_HOMEPAGE_WIDTH) / FIGMA_HOMEPAGE_WIDTH) * 240),
+  );
+  /** Bottom lattice fade — solid footer color below, washes out ~half+ of bottom row into #171717 section. */
+  const bottomFadeH = Math.min(
+    380,
+    Math.max(
+      200,
+      Math.round(hexHeight * 0.58 + rowHeight * 0.48),
+    ),
+  );
 
-          {/* Content layer — inset by borderPx so border shows around it */}
-          <div
-            className="absolute overflow-hidden"
-            style={{ clipPath: HEX_CLIP, inset: borderPx }}
-          >
-            {isTopPeek ? (
-              <div className="h-full w-full" style={{ backgroundColor: topPeekBg }} />
-            ) : isHeroTitle ? (
-              <div
-                className="relative flex h-full w-full flex-col items-center justify-center"
-                style={{ background: heroTitleBg, paddingLeft: heroPadX, paddingRight: heroPadX }}
-              >
-                <h1 className="font-semibold leading-tight text-center" style={{ fontSize: heroTitle }}>
-                  <span style={{ color: heroGoldColor }}>{t("heroGold")} </span>
-                  <span style={{ color: heroTitleColor }}>{t("heroTitle")}</span>
-                </h1>
-              </div>
-            ) : isHeroBody ? (
-              <div
-                className="relative flex h-full w-full flex-col justify-center"
-                style={{ background: heroBodyBg, paddingLeft: heroPadX, paddingRight: heroPadX }}
-              >
-                <p style={{ color: heroParagraphColor, fontSize: heroBody, marginBottom: "1em" }} className="leading-snug">
-                  {t("heroBody")}
-                </p>
-                <Link
-                  href="/fields"
-                  className="self-start rounded-md font-medium transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: "#C9A96E", color: "#1a1a1a", fontSize: heroBtn, padding: "0.4em 1em" }}
-                >
-                  {t("heroCta")}
-                </Link>
-              </div>
-            ) : (
-              <Link href={card!.href} className="relative block h-full w-full" style={{ backgroundColor: cardBg }}>
-                <Image
-                  src={isValidImageUrl(card!.image) ? card!.image! : "/images/image.png"}
-                  alt={card!.title}
-                  fill
-                  className="object-cover grayscale"
-                  sizes={`${hexSize}px`}
-                />
-                {/* stronger bottom scrim for legibility */}
-                <div className="absolute inset-0" style={{ background: cardScrim }} />
-                {/* Bottom title + badge */}
-                <div
-                  className="absolute flex flex-col items-center"
-                  style={{ bottom: "14%", left: "14%", right: "14%", textAlign: "center" }}
-                >
-                  <p
-                    className="font-medium leading-tight text-white"
-                    style={{
-                      fontSize: cardTitle,
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    {card!.title}
-                  </p>
-                  <span
-                    className="text-gray-300"
-                    style={{
-                      display: "inline-block",
-                      marginTop: "0.5em",
-                      backgroundColor: cardBadgeBg,
-                      borderRadius: 9999,
-                      padding: "0.25em 0.75em",
-                      fontSize: cardBadge,
-                    }}
-                  >
-                    {card!.badge}
-                  </span>
-                </div>
-              </Link>
-            )}
-          </div>
-        </div>
+  return (
+    <div className="relative w-full overflow-hidden" style={{ backgroundColor: TK.hexFill }}>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-[5]"
+        style={{
+          height: topFadeH,
+          background: `linear-gradient(180deg, var(--tott-home-surface) 0%, rgba(var(--tott-home-surface-rgb), 0) 100%)`,
+        }}
+      />
+      <div
+        className="relative w-full overflow-hidden"
+        style={{ height: gridHeight + gridDropPx }}
+      >
+      {positionedCells.map((c, i) => (
+        <CellView
+          key={i}
+          cellId={String(i)}
+          isTopPeek={!!c.isTopPeek}
+          card={c.card}
+          width={hexSize}
+          height={hexHeight}
+          top={c.top}
+          left={c.left}
+          titleSize={titleSize}
+          titleLine={titleLine}
+          badgeSize={badgeSize}
+          badgeLine={badgeLine}
+        />
       ))}
 
-      {/* Bottom dissolve — hexes fade into the page background */}
+      {(() => {
+        // Rectangle 4.svg curve — used both as the visible fill AND as the mask
+        // so the backdrop blur tapers in with the gradient (no hard top edge).
+        // The rgba colors reference --tott-home-surface-rgb so they swap with theme.
+        const c = "var(--tott-home-surface-rgb)";
+        const fadeStops =
+          `transparent 0%, rgba(${c},0.02) 5%, rgba(${c},0.05) 10%, rgba(${c},0.1) 16%, rgba(${c},0.18) 22%, rgba(${c},0.28) 30%, rgba(${c},0.4) 38%, rgba(${c},0.52) 46%, rgba(${c},0.64) 54%, rgba(${c},0.75) 62%, rgba(${c},0.84) 70%, rgba(${c},0.92) 80%, var(--tott-home-surface) 100%`;
+        const maskStops =
+          "transparent 0%, rgba(0,0,0,0.08) 12%, rgba(0,0,0,0.25) 28%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.85) 75%, #000 100%";
+        return (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-[5]"
+            style={{
+              height: bottomFadeH,
+              background: `linear-gradient(to bottom, ${fadeStops})`,
+              backdropFilter: "blur(40px)",
+              WebkitBackdropFilter: "blur(40px)",
+              maskImage: `linear-gradient(to bottom, ${maskStops})`,
+              WebkitMaskImage: `linear-gradient(to bottom, ${maskStops})`,
+            }}
+          />
+        );
+      })()}
+
+      {/* Hero — Header.svg union shape (rounded rectangle with two hex tabs
+          top + bottom) so it interlocks with the hex grid. The shape is
+          rendered as inline SVG and the title/body/button sit as an HTML
+          overlay positioned in its central body area. */}
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0"
-        style={{ height: "55%", background: bottomDissolveGradient }}
-      />
+        className="absolute box-border"
+        style={{
+          left: heroLeft,
+          top: heroTop,
+          width: heroWidth,
+          height: heroHeight,
+          zIndex: 20,
+          maxWidth: `calc(100% - ${heroLeft * 2}px)`,
+        }}
+      >
+        <svg
+          className="absolute left-0 top-0 h-full w-full"
+          viewBox="0 0 688 399"
+          preserveAspectRatio="xMidYMid meet"
+          fill="none"
+        >
+          <defs>
+            <linearGradient
+              id={heroGradId}
+              x1="344"
+              y1="0"
+              x2="344"
+              y2="399"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor={TK.heroGradTop} />
+              <stop offset="0.5" stopColor={TK.heroGradMid} />
+              <stop offset="1" stopColor={TK.heroGradMid} stopOpacity="0.5" />
+            </linearGradient>
+          </defs>
+          <path d={HEADER_PATH} fill={GOLD} />
+          <path d={HEADER_PATH} fill={`url(#${heroGradId})`} />
+        </svg>
+
+        {/* Content overlay — sits in the main body area (between the hex
+            tabs). Figma: 512×248 centred inside 688×399 → padding ≈ 88×75. */}
+        <div
+          className="absolute flex flex-col justify-center"
+          style={{
+            left: `${(88 / 688) * 100}%`,
+            right: `${(88 / 688) * 100}%`,
+            top: `${(75 / 399) * 100}%`,
+            bottom: `${(75 / 399) * 100}%`,
+            gap: Math.round(24 * sz),
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <h1
+              className="max-w-full"
+              style={{
+                fontWeight: 500,
+                fontSize: heroTitleSize,
+                lineHeight: `${heroTitleLine}px`,
+                margin: 0,
+                whiteSpace: "nowrap",
+              }}
+            >
+              <span style={{ color: GOLD }}>{t("heroGold")}</span>{" "}
+              <span style={{ color: GOLD_DARK }}>{t("heroTitle")}</span>
+            </h1>
+            <p
+              style={{
+                fontWeight: 400,
+                fontSize: heroBodySize,
+                lineHeight: `${heroBodyLine}px`,
+                letterSpacing: "-0.015em",
+                color: TK.textStrong,
+                textShadow: TK.textShadow,
+                margin: 0,
+              }}
+            >
+              {t("heroBody")}
+            </p>
+          </div>
+          <Link
+            href={heroHref}
+            className="relative self-start inline-flex items-center justify-center overflow-hidden"
+            style={{
+              boxSizing: "border-box",
+              width: Math.round(121 * sz),
+              height: Math.round(40 * sz),
+              borderRadius: Math.max(6, Math.round(8 * sz)),
+              color: GOLD_TEXT,
+              fontWeight: 500,
+              fontSize: Math.max(12, Math.round(14 * sz)),
+              lineHeight: `${Math.max(18, Math.round(20 * sz))}px`,
+              letterSpacing: "-0.005em",
+              textDecoration: "none",
+            }}
+          >
+            {/* Button.svg gold slab + Figma inner highlight (text path removed for i18n). */}
+            {/* eslint-disable-next-line @next/next/no-img-element -- local decorative SVG scales with layout */}
+            <img
+              src="/images/home/hero-cta-button-bg.svg"
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full select-none object-fill"
+              draggable={false}
+            />
+            <span className="relative z-[1] px-2">{t("heroCta")}</span>
+          </Link>
+        </div>
+      </div>
+      </div>
     </div>
+  );
+}
+
+/* ─────────────────────────────── Cell ─────────────────────────────── */
+function CellView({
+  isTopPeek,
+  card,
+  width,
+  height,
+  top,
+  left,
+  titleSize,
+  titleLine,
+  badgeSize,
+  badgeLine,
+  cellId,
+}: {
+  isTopPeek: boolean;
+  card: HexCard | null;
+  width: number;
+  height: number;
+  top: number;
+  left: number;
+  titleSize: number;
+  titleLine: number;
+  badgeSize: number;
+  badgeLine: number;
+  cellId: string;
+}) {
+  return (
+    <div className="absolute" style={{ width, height, top, left, zIndex: 1 }}>
+      <svg
+        className="absolute inset-0 h-full w-full"
+        viewBox="0 0 361 437"
+        preserveAspectRatio="none"
+        fill="none"
+      >
+        <defs>
+          {/* Image clipped to the inner sharp hex from Image.svg
+              (328×396, offset by (16.5, 20.5) inside the 361×437 frame). */}
+          <clipPath id={`hex-img-${cellId}`}>
+            <path
+              transform="translate(16.5 20.5)"
+              d={IMAGE_PATH_LOCAL}
+            />
+          </clipPath>
+          {/* Per-card vignette — dark at bottom, clear by ~upper 60% (reference typography). */}
+          <linearGradient
+            id={`scrim-${cellId}`}
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="1"
+            gradientUnits="objectBoundingBox"
+          >
+            <stop offset="0%" stopColor="#000000" stopOpacity="0" />
+            <stop offset="58%" stopColor="#000000" stopOpacity="0" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.82" />
+          </linearGradient>
+        </defs>
+
+        {/* BG.svg — outer card frame */}
+        <path d={BG_PATH} fill={TK.hexFill} stroke={TK.hexStroke} />
+
+        {/* Image (clipped to inner hex) — only for cards, not the top peek */}
+        {!isTopPeek && (
+          <g clipPath={`url(#hex-img-${cellId})`}>
+            <image
+              href={isValidImageUrl(card!.image) ? card!.image! : "/images/image.png"}
+              x="0"
+              y="0"
+              width="361"
+              height="437"
+              preserveAspectRatio="xMidYMid slice"
+              style={{ filter: "grayscale(1)" }}
+            />
+            <rect
+              x={INNER_HEX_SCRIM_RECT.x}
+              y={INNER_HEX_SCRIM_RECT.y}
+              width={INNER_HEX_SCRIM_RECT.w}
+              height={INNER_HEX_SCRIM_RECT.h}
+              fill={`url(#scrim-${cellId})`}
+            />
+          </g>
+        )}
+
+        {/* Top peek inner fill (#262626 @ 0.48) */}
+        {isTopPeek && (
+          <g clipPath={`url(#hex-img-${cellId})`}>
+            <rect x="0" y="0" width="361" height="437" fill={TK.peekInner} opacity="0.48" />
+          </g>
+        )}
+
+        {/* Inner sheen border — exact path of the inner hex stroked at 1px
+            (Card.svg's "Stroke" element). */}
+        {!isTopPeek && (
+          <path
+            transform="translate(16.5 20.5)"
+            d={IMAGE_PATH_LOCAL}
+            fill="none"
+            stroke={TK.sheenColor}
+            strokeWidth={1}
+            vectorEffect="non-scaling-stroke"
+          />
+        )}
+      </svg>
+
+      {/* HTML overlay: title + badge + click target. Sits above the SVG. */}
+      {!isTopPeek && (
+        <Link
+          href={card!.href}
+          className="absolute"
+          style={{
+            inset: 0,
+            clipPath: SHARP_HEX_CLIP,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            padding: `0 ${(24 / 360) * 100}% ${(48 / 435) * 100}%`,
+            gap: 8,
+            zIndex: 2,
+          }}
+        >
+          <p
+            className="m-0 w-full text-center"
+            style={{
+              fontFamily: "'IBM Plex Sans', sans-serif",
+              fontWeight: 500,
+              fontSize: titleSize,
+              lineHeight: `${titleLine}px`,
+              color: TK.textStrong,
+              textShadow: TK.textShadow,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {card!.title}
+          </p>
+
+          <div className="flex items-stretch" style={{ height: badgeLine + 8 }}>
+            <ChevronCap direction="left" size={badgeLine + 8} />
+            <div
+              className="flex items-center justify-center"
+              style={{
+                backgroundColor: TK.badgeBg,
+                backdropFilter: "blur(4px)",
+                WebkitBackdropFilter: "blur(4px)",
+                paddingLeft: 8,
+                paddingRight: 8,
+              }}
+            >
+              <span
+                style={{
+                  color: TK.textStrong,
+                    fontWeight: 500,
+                  fontSize: badgeSize,
+                  lineHeight: `${badgeLine}px`,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {card!.badge}
+              </span>
+            </div>
+            <ChevronCap direction="right" size={badgeLine + 8} />
+          </div>
+        </Link>
+      )}
+    </div>
+  );
+}
+
+/* Bracket cap — 8×24 in Figma. Triangle pointing inward, theme-tinted backdrop. */
+function ChevronCap({ direction, size }: { direction: "left" | "right"; size: number }) {
+  const w = Math.round(size * (8 / 24));
+  return (
+    <div
+      style={{
+        width: w,
+        height: size,
+        backgroundColor: TK.badgeBg,
+        backdropFilter: "blur(4px)",
+        WebkitBackdropFilter: "blur(4px)",
+        clipPath:
+          direction === "left"
+            ? "polygon(100% 0%, 100% 100%, 0% 50%)"
+            : "polygon(0% 0%, 0% 100%, 100% 50%)",
+      }}
+    />
   );
 }

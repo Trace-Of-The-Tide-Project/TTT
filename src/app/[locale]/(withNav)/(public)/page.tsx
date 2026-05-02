@@ -30,7 +30,9 @@ async function fetchHexCards(): Promise<HexCard[]> {
 export default async function Home() {
   const cards = await fetchHexCards();
   return (
-    <main>
+    <main className="min-h-0">
+      {/* Full-width: HomeHexGrid + ShareYourStory scale with viewport so wide screens don't show empty side strips.
+          Sections paint their own theme-aware backgrounds (light/dark) — no parent bg here. */}
       <HomeHexGrid cards={cards} />
       <ShareYourStory />
     </main>

@@ -14,13 +14,11 @@ import {
   fetchCurrentUser,
   logout as logoutService,
 } from "@/services/auth.service";
-import type { AuthUser } from "@/types/auth.types";
-
-type AuthStatus = "loading" | "authenticated" | "unauthenticated";
+import type { AuthUser, BrowserAuthStatus } from "@/types/auth.types";
 
 type AuthContextValue = {
   user: AuthUser | null;
-  status: AuthStatus;
+  status: BrowserAuthStatus;
   refresh: () => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -28,13 +26,13 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 /**
- * Reads the current session via `/api/auth/me` (cookie-backed). Component re-render
- * is driven by `AUTH_STATE_CHANGED_EVENT` so login/logout in one tab updates UI in
- * other tabs (the listener fires on `storage` too — see emit in auth.service).
+ * Resolves browser auth by calling `/api/auth/me` (httpOnly cookies — see
+ * `lib/auth/server-session.ts`). Re-renders react to `AUTH_STATE_CHANGED_EVENT` so
+ * login/logout in one tab updates other tabs where applicable.
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [status, setStatus] = useState<AuthStatus>("loading");
+  const [status, setStatus] = useState<BrowserAuthStatus>("loading");
   const inflight = useRef<Promise<void> | null>(null);
 
   const refresh = useCallback(async () => {

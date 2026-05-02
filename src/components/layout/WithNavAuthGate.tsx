@@ -3,24 +3,27 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { guestMayAccessWithNavRoute } from "@/lib/auth/with-nav-public-routes";
 
 /**
- * Blocks all `(withNav)` routes until the cookie-backed session resolves to a logged-in
- * user. Auth lives under `/auth/*` (separate layout). The redirect carries the original
- * path as a `callbackUrl` so post-login lands the user back where they were.
+ * Most `(withNav)` routes require a cookie session (`AuthProvider` status). Guests are
+ * sent to `/auth/login` with `callbackUrl` unless the path is listed in
+ * `with-nav-public-routes.ts`.
  */
 export function WithNavAuthGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { status } = useAuth();
+  const guestOkHere = guestMayAccessWithNavRoute(pathname);
 
   useEffect(() => {
     if (status !== "unauthenticated") return;
+    if (guestOkHere) return;
     const search = typeof window !== "undefined" ? window.location.search : "";
     const path = `${pathname ?? "/"}${search}`;
     const cb = encodeURIComponent(path || "/");
     router.replace(`/auth/login?callbackUrl=${cb}`);
-  }, [status, pathname, router]);
+  }, [status, pathname, router, guestOkHere]);
 
   if (status === "loading") {
     return (
@@ -33,7 +36,7 @@ export function WithNavAuthGate({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (status === "unauthenticated") {
+  if (status === "unauthenticated" && !guestOkHere) {
     return null;
   }
 
