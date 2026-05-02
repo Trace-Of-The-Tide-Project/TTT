@@ -79,11 +79,20 @@ export default function EmailSentPage() {
 
   return (
     <AuthPageShell
-      title={t("pages.emailSent.title")}
-      subtitle={t("pages.emailSent.subtitle")}
       footer={<AuthFooterLinks backHref="/auth/login" backLabel={t("login")} />}
     >
-      <AuthHexFrame>
+      <AuthHexFrame
+        header={
+          <>
+            <h1 className="text-sm font-semibold leading-tight text-foreground min-[380px]:text-base sm:text-lg md:text-xl">
+              {t("pages.emailSent.title")}
+            </h1>
+            <p className="max-w-md text-[11px] leading-relaxed text-[color:var(--tott-auth-subtitle)] min-[380px]:text-xs sm:text-sm">
+              {t("pages.emailSent.subtitle")}
+            </p>
+          </>
+        }
+      >
         <div className="mx-auto flex w-full max-w-md flex-col items-center text-center">
           <div className="mb-8 text-[color:var(--tott-auth-input-icon)]">
             <MailIcon />

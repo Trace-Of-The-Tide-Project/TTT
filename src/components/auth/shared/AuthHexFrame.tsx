@@ -1,5 +1,7 @@
 type AuthHexFrameProps = {
   children: React.ReactNode;
+  /** Optional content pinned to the top of the hex (above the centered body). */
+  header?: React.ReactNode;
   className?: string;
   maxWidthClass?: string;
   bodyClassName?: string;
@@ -24,6 +26,7 @@ const DEFAULT_BODY_PADDING = "px-2 min-[500px]:px-4 md:px-6";
  */
 export function AuthHexFrame({
   children,
+  header,
   className,
   maxWidthClass = "max-w-[520px]",
   bodyClassName,
@@ -32,6 +35,14 @@ export function AuthHexFrame({
     <div
       className={`tott-auth-card-shell relative mx-auto w-full ${maxWidthClass} ${className ?? ""}`}
     >
+      {/* Mobile header — outside the hex (only when a header is provided). */}
+      {header ? (
+        <div
+          className="mb-4 flex flex-col items-center gap-1 px-2 text-center min-[380px]:gap-1.5 sm:hidden"
+        >
+          {header}
+        </div>
+      ) : null}
       <div className="tott-auth-shell-enter relative mx-auto w-full [aspect-ratio:5/6] min-[500px]:[aspect-ratio:6/7] md:[aspect-ratio:640/715]">
         <svg
           aria-hidden
@@ -50,9 +61,22 @@ export function AuthHexFrame({
         <div
           className={`absolute inset-x-[6%] top-[10%] bottom-[7%] overflow-y-auto min-[500px]:inset-x-[7%] min-[500px]:top-[18%] min-[500px]:bottom-[10%] md:inset-x-[7%] md:top-[20%] md:bottom-[11%] ${bodyClassName ?? DEFAULT_BODY_PADDING}`}
         >
-          <div className="flex min-h-full flex-col justify-center gap-2 min-[500px]:gap-3 md:gap-3.5">
-            {children}
-          </div>
+          {header ? (
+            // With header: header pinned top (sm+), form fills remaining space.
+            <div className="flex min-h-full flex-col">
+              <div className="hidden flex-col items-center gap-1.5 pb-3 text-center sm:flex md:gap-2 md:pb-4">
+                {header}
+              </div>
+              <div className="flex flex-1 flex-col gap-2 pt-2 min-[500px]:gap-3 sm:pt-5 md:gap-3.5 md:pt-7">
+                {children}
+              </div>
+            </div>
+          ) : (
+            // No header: original layout — vertically centered with single gap stack.
+            <div className="flex min-h-full flex-col justify-center gap-2 min-[500px]:gap-3 md:gap-3.5">
+              {children}
+            </div>
+          )}
         </div>
       </div>
     </div>
