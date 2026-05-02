@@ -62,12 +62,14 @@ export function AuthHexFrame({
           className={`absolute inset-x-[6%] top-[10%] bottom-[7%] overflow-y-auto min-[500px]:inset-x-[7%] min-[500px]:top-[18%] min-[500px]:bottom-[10%] md:inset-x-[7%] md:top-[20%] md:bottom-[11%] ${bodyClassName ?? DEFAULT_BODY_PADDING}`}
         >
           {header ? (
-            // With header: header pinned top (sm+), form fills remaining space.
-            <div className="flex min-h-full flex-col">
+            // With header: on <sm the header renders outside the hex, so the
+            // body centers vertically. From sm+ the header pins to the top of
+            // the hex and the form fills the remaining space below it.
+            <div className="flex min-h-full flex-col justify-center sm:justify-start">
               <div className="hidden flex-col items-center gap-1.5 pb-3 text-center sm:flex md:gap-2 md:pb-4">
                 {header}
               </div>
-              <div className="flex flex-1 flex-col gap-2 pt-2 min-[500px]:gap-3 sm:pt-5 md:gap-3.5 md:pt-7">
+              <div className="flex flex-col gap-2 min-[500px]:gap-3 sm:flex-1 sm:pt-5 md:gap-3.5 md:pt-7">
                 {children}
               </div>
             </div>
