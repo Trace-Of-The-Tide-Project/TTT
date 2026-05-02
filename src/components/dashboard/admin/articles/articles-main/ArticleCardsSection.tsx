@@ -6,6 +6,7 @@ import type { ArticleCardAction } from "./ArticleCard";
 import type { ReactNode } from "react";
 import { StaggerContainer } from "@/components/motion/StaggerContainer";
 import { StaggerItem } from "@/components/motion/StaggerItem";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 export type ArticleCardItem = {
   id: string;
@@ -36,6 +37,9 @@ export function ArticleCardsSection({
   hideTitle = false,
   compactGap = false,
 }: ArticleCardsSectionProps) {
+  // Hide the entire section (incl. ChamferedFrame) when there's nothing to show.
+  if (items.length === 0) return null;
+
   return (
     <div>
       {(title || viewAllHref) && (
@@ -56,23 +60,27 @@ export function ArticleCardsSection({
         </div>
       )}
 
-      <StaggerContainer className={`flex flex-col ${compactGap ? "gap-3" : "gap-6"}`}>
-        {items.map((item) => (
-          <StaggerItem key={item.id}>
-            <ArticleCard
-              icon={item.icon}
-              statusLabel={item.statusLabel}
-              title={item.title}
-              subtitle={item.subtitle}
-              subtitleIcon={item.subtitleIcon}
-              views={item.views}
-              actions={item.actions}
-              useHexIcon={item.useHexIcon}
-              compact={item.compact}
-            />
-          </StaggerItem>
-        ))}
-      </StaggerContainer>
+      {/* Outer ChamferedFrame groups every card of this type into one classified container. */}
+      <div className="relative p-3 sm:p-4">
+        <ChamferedFrame />
+        <StaggerContainer className={`relative flex flex-col ${compactGap ? "gap-3" : "gap-6"}`}>
+          {items.map((item) => (
+            <StaggerItem key={item.id}>
+              <ArticleCard
+                icon={item.icon}
+                statusLabel={item.statusLabel}
+                title={item.title}
+                subtitle={item.subtitle}
+                subtitleIcon={item.subtitleIcon}
+                views={item.views}
+                actions={item.actions}
+                useHexIcon={item.useHexIcon}
+                compact={item.compact}
+              />
+            </StaggerItem>
+          ))}
+        </StaggerContainer>
+      </div>
     </div>
   );
 }

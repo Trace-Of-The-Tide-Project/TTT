@@ -11,6 +11,8 @@ export type ArticleCardAction = {
   href?: string;
   onClick?: () => void;
   ariaLabel?: string;
+  /** "primary" renders the rounded filled button from Figma Button-2.svg (uses theme tokens). */
+  variant?: "primary";
 };
 
 type ArticleCardProps = {
@@ -54,6 +56,15 @@ const iconOnlyButtonClass =
 
 const iconOnlyButtonClassCompact =
   "relative flex h-9 w-9 items-center justify-center p-2 text-foreground transition-opacity hover:opacity-80";
+
+// Figma Button-2.svg replicated in CSS — colors come from theme tokens (--tott-dash-control-*).
+const primaryButtonClass =
+  "inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-opacity hover:opacity-90";
+const primaryButtonStyle = {
+  backgroundColor: "var(--tott-dash-control-bg)",
+  color: "var(--tott-dash-control-fg)",
+  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
+} as const;
 
 export function ArticleCard({
   icon,
@@ -107,11 +118,37 @@ export function ArticleCard({
       <div className="relative flex shrink-0 flex-wrap gap-2">
         {actions.map((action, i) => {
           const isIconOnly = !action.label;
+          const isPrimary = action.variant === "primary";
+          const ariaLabel = action.ariaLabel ?? action.label ?? "Action";
+          const chamferSize = compact ? 10 : 14;
+
+          if (isPrimary) {
+            // Figma Button-2.svg: arrow sits AFTER the label (right of the text).
+            const inner = (
+              <span className="inline-flex items-center gap-2">
+                {action.label}
+                {action.icon}
+              </span>
+            );
+            const sharedProps = {
+              className: primaryButtonClass,
+              style: primaryButtonStyle,
+              "aria-label": ariaLabel,
+            };
+            return action.href ? (
+              <Link key={i} href={action.href} {...sharedProps}>
+                {inner}
+              </Link>
+            ) : (
+              <button key={i} type="button" onClick={action.onClick} {...sharedProps}>
+                {inner}
+              </button>
+            );
+          }
+
           const btnClass = isIconOnly
             ? (compact ? iconOnlyButtonClassCompact : iconOnlyButtonClass)
             : (compact ? buttonClassCompact : buttonClass);
-          const ariaLabel = action.ariaLabel ?? action.label ?? "Action";
-          const chamferSize = compact ? 10 : 14;
           if (action.href) {
             return (
               <Link key={i} href={action.href} className={btnClass} aria-label={ariaLabel}>
