@@ -9,43 +9,36 @@ type CreatePageFiltersProps = {
   options: FilterOption[];
   selectedId: string;
   onSelect: (id: string) => void;
-  /** "filled" = gold fill (admin default). "outlined" = gold border + text (profile). */
+  /** Kept for prop-stability — both variants now share the gold-outline chip design. */
   variant?: "filled" | "outlined";
 };
 
+/**
+ * Filter chips per the Figma create-page header: rounded-lg pills.
+ * Selected → gold border + gold text + transparent bg.
+ * Unselected → muted border + dash-control bg + muted text.
+ * All colors come from theme tokens.
+ */
 export function CreatePageFilters({
   options,
   selectedId,
   onSelect,
-  variant = "filled",
 }: CreatePageFiltersProps) {
   return (
-    <div className="flex flex-wrap items-center gap-1.5">
+    <div className="flex flex-wrap items-center gap-2">
       {options.map((opt) => {
         const isSelected = opt.id === selectedId;
-
-        let selectedClass: string;
-        let selectedStyle: React.CSSProperties | undefined;
-
-        if (variant === "outlined") {
-          selectedClass = isSelected
-            ? "border border-[#CBA158] text-[#CBA158] bg-transparent"
-            : "border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] text-gray-400 hover:border-gray-500 hover:text-foreground";
-          selectedStyle = undefined;
-        } else {
-          selectedClass = isSelected
-            ? "border-transparent text-[#1a1a1a]"
-            : "border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] text-gray-300 hover:border-gray-500 hover:text-foreground";
-          selectedStyle = isSelected ? { backgroundColor: "#C9A96E" } : undefined;
-        }
-
         return (
           <button
             key={opt.id}
             type="button"
             onClick={() => onSelect(opt.id)}
-            className={`whitespace-nowrap rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${selectedClass}`}
-            style={selectedStyle}
+            aria-pressed={isSelected}
+            className={`whitespace-nowrap rounded-lg border px-4 py-1.5 text-sm font-medium transition-colors ${
+              isSelected
+                ? "border-[color:var(--tott-accent-gold)] bg-transparent text-[color:var(--tott-accent-gold)]"
+                : "border-[color:var(--tott-card-border)] bg-[color:var(--tott-dash-control-bg)] text-[color:var(--tott-muted)] hover:text-foreground"
+            }`}
           >
             {opt.label}
           </button>
