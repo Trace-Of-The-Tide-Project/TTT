@@ -51,7 +51,7 @@ export function DashboardLayout({
         <HexBackground />
       </div>
 
-      <div className="relative">
+      <div className="relative pt-[72px]">
         {/* Mobile topbar */}
         <div className="flex h-14 shrink-0 items-center gap-4 px-4 sm:px-6 lg:hidden">
           <button

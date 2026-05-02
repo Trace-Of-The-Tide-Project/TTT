@@ -90,7 +90,9 @@ export function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full py-2 ${isDark ? "bg-[#171717]" : "bg-[var(--background)]"}`}
+      className={`absolute inset-x-0 top-0 z-50 w-full py-2 ${
+        isDark ? "bg-[#171717]/80" : "bg-[var(--background)]/80"
+      }`}
     >
       <nav className="flex h-14 w-full items-center justify-between gap-8 px-6">
 
