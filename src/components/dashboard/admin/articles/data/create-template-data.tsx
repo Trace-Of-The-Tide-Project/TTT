@@ -1,14 +1,13 @@
 "use client";
 
 import {
-  PenLineIcon,
-  FilmIcon,
-  MusicIcon,
-  ThreadIcon,
-  PaletteIcon,
-  MapPinIcon,
-  MegaphoneIcon,
-} from "@/components/ui/icons";
+  ArticleGlyph,
+  ArtworkGlyph,
+  AudioGlyph,
+  ThreadGlyph,
+  TripGlyph,
+  VideoGlyph,
+} from "@/components/dashboard/admin/articles/articles-create/template-glyphs";
 import type { ReactNode } from "react";
 
 export type CreateTemplateKey =
@@ -50,54 +49,54 @@ export const createTemplates: CreateTemplateDef[] = [
   {
     number: "01",
     templateKey: "article",
-    icon: <PenLineIcon />,
+    icon: <ArticleGlyph />,
     href: "/admin/articles/create/article",
     category: "articles",
   },
   {
     number: "02",
     templateKey: "video",
-    icon: <FilmIcon />,
+    icon: <VideoGlyph />,
     href: "/admin/articles/create/video",
     category: "films",
   },
   {
     number: "03",
     templateKey: "audio",
-    icon: <MusicIcon />,
+    icon: <AudioGlyph />,
     href: "/admin/articles/create/audio",
     category: "audio",
   },
   {
     number: "04",
     templateKey: "thread",
-    icon: <ThreadIcon />,
+    icon: <ThreadGlyph />,
     href: "/admin/articles/create/thread",
     category: "thread",
   },
   {
     number: "05",
     templateKey: "artwork",
-    icon: <PaletteIcon />,
+    icon: <ArtworkGlyph />,
     category: "artwork",
   },
   {
     number: "06",
     templateKey: "figma",
-    icon: <PaletteIcon />,
+    icon: <ArtworkGlyph />,
     category: "artwork",
   },
   {
     number: "07",
     templateKey: "trip",
-    icon: <MapPinIcon />,
+    icon: <TripGlyph />,
     href: "/admin/trips",
     category: "articles",
   },
   {
     number: "08",
     templateKey: "openCall",
-    icon: <MegaphoneIcon />,
+    icon: <ArticleGlyph />,
     href: "/admin/articles/create/open-call",
     category: "articles",
   },
