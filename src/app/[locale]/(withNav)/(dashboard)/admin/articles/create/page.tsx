@@ -34,18 +34,17 @@ export default function CreateArticlePage() {
         compactPadding
         title={t("create.pageTitle")}
         subtitle={t("create.pageSubtitle")}
-      />
-
-      <div className="px-6 pb-6 sm:px-8">
-        <div className="mb-6">
+        actions={
           <CreatePageFilters
             options={filterOptions}
             selectedId={selectedFilter}
             onSelect={setSelectedFilter}
             variant="outlined"
           />
-        </div>
+        }
+      />
 
+      <div className="px-6 pb-6 sm:px-8">
         <div className="grid grid-cols-2 gap-4">
           {filteredTemplates.map((template) => (
             <TemplateCard
