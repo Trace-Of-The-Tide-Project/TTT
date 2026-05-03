@@ -61,7 +61,7 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
     editorProps: {
       attributes: {
         class:
-          "tiptap-paragraph w-full bg-transparent border-0 outline-none px-4 py-4 text-sm text-foreground",
+          "tiptap-paragraph w-full bg-transparent border-0 outline-none px-4 py-1.5 text-sm text-foreground",
         ...(placeholder ? { "data-placeholder": placeholder } : {}),
       },
     },

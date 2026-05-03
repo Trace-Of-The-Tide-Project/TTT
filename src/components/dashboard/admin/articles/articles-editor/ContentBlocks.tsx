@@ -22,6 +22,8 @@ export type ContentBlock = {
   /** Caption under image on the public article. */
   imageCaption?: string;
   galleryUrls?: string[];
+  /** Per-block placeholder override — wins over the type-level `blockLabels` when set. */
+  placeholder?: string;
 };
 
 /** Shared field shell — rounded card surface used by paragraph/author-note/quote/callout. */
@@ -30,7 +32,7 @@ const fieldShell =
 
 /** Bare input chrome (padding + typography) used inside `fieldShell`. */
 const fieldInput =
-  "w-full bg-transparent border-0 outline-none px-4 py-4 text-sm text-foreground placeholder:text-foreground/60";
+  "w-full bg-transparent border-0 outline-none px-4 py-2.5 text-sm text-foreground placeholder:text-foreground/60";
 
 const inputClass = `${fieldShell} px-4 py-3 text-sm text-foreground placeholder:text-foreground outline-none focus-within:border-gray-500`;
 
@@ -260,8 +262,10 @@ const DEFAULT_LABELS: Partial<Record<BlockType, string>> = {
   paragraph: "Start writing your article...",
   heading: "Section title",
   quote: "Quote",
-    callout: "Callout",
+  callout: "Callout",
   "author-note": "Author note",
+  "caption-text": "Caption Text…",
+  "meta-data": "Camera | Medium | Date",
 };
 
 type BlockRendererProps = {
@@ -283,7 +287,7 @@ function BlockRenderer({ block, labels, isCoverImageBlock, heroCopy, onChange }:
           <RichTextEditor
             value={block.content ?? ""}
             onChange={(html) => onChange({ content: html })}
-            placeholder={l.paragraph ?? "Paragraph"}
+            placeholder={block.placeholder ?? l.paragraph ?? "Paragraph"}
           />
         </div>
       );
@@ -316,6 +320,8 @@ function BlockRenderer({ block, labels, isCoverImageBlock, heroCopy, onChange }:
       );
 
     case "image":
+    case "video":
+    case "audio":
       return (
         <div className="space-y-3">
           {isCoverImageBlock ? (
@@ -348,7 +354,15 @@ function BlockRenderer({ block, labels, isCoverImageBlock, heroCopy, onChange }:
             )}
             <input
               type="file"
-              accept={isCoverImageBlock ? "image/*,video/mp4,video/webm,video/quicktime,audio/*,.pdf" : SUPPORTED_FILE_ACCEPT}
+              accept={
+                block.type === "video"
+                  ? "video/*"
+                  : block.type === "audio"
+                    ? "audio/*"
+                    : isCoverImageBlock
+                      ? "image/*,video/mp4,video/webm,video/quicktime,audio/*,.pdf"
+                      : SUPPORTED_FILE_ACCEPT
+              }
               className="hidden"
               onChange={(e) => {
                 const f = e.target.files?.[0];
@@ -470,8 +484,34 @@ function BlockRenderer({ block, labels, isCoverImageBlock, heroCopy, onChange }:
             value={block.content ?? ""}
             onChange={(e) => onChange({ content: e.target.value })}
             placeholder={l["author-note"] ?? "Author note"}
-            rows={4}
+            rows={1}
             className={`${fieldInput} resize-y`}
+          />
+        </div>
+      );
+
+    case "caption-text":
+      return (
+        <div className={fieldShell}>
+          <input
+            type="text"
+            value={block.content ?? ""}
+            onChange={(e) => onChange({ content: e.target.value })}
+            placeholder={l["caption-text"] ?? "Caption Text…"}
+            className={fieldInput}
+          />
+        </div>
+      );
+
+    case "meta-data":
+      return (
+        <div className={fieldShell}>
+          <input
+            type="text"
+            value={block.content ?? ""}
+            onChange={(e) => onChange({ content: e.target.value })}
+            placeholder={l["meta-data"] ?? "Camera | Medium | Date"}
+            className={fieldInput}
           />
         </div>
       );
@@ -550,7 +590,7 @@ export function ContentBlocks({
   );
 
   return (
-    <div className="space-y-3 border-b border-[var(--tott-card-border)] pb-4">
+    <div className="space-y-1.5 border-b border-[var(--tott-card-border)] pb-4">
       {!hasImageBlock ? (
         <div className="rounded-lg border border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]/40 px-4 py-4 sm:px-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -585,11 +625,14 @@ export function ContentBlocks({
               onChange={(patch) => onUpdateBlock(block.id, patch)}
             />
           </div>
-          {block.type === "divider" ? null : (
-            <div
-              aria-hidden={block.type !== "paragraph"}
-              className={block.type === "paragraph" ? "" : "invisible"}
-            >
+          {block.type === "divider" ? (
+            <div className="w-10 shrink-0" aria-hidden />
+          ) : block.type !== "paragraph" ? (
+            // Non-paragraph blocks reserve only the column width so right edges
+            // align — no 120px tall action panel inflating the row height.
+            <div className="w-10 shrink-0" aria-hidden />
+          ) : (
+            <div>
               <BlockActions
                 blockId={block.id}
                 isDragging={draggingId === block.id}

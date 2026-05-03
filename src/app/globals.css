@@ -466,11 +466,18 @@ a,
   }
 }
 
+
 .tiptap-paragraph p.is-editor-empty::before {
   content: attr(data-placeholder);
   float: left;
   height: 0;
   pointer-events: none;
   color: var(--color-foreground);
+}
+
+/* Tighten the rendered paragraph height — the default `<p>` margin (~16px
+   each side) makes single-line blocks visually tall. */
+.tiptap-paragraph p {
+  margin: 0;
 }
 

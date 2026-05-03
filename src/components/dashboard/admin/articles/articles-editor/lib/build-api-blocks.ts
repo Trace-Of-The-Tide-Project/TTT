@@ -10,7 +10,7 @@ export type BuildArticleBlocksFromEditorOptions = {
 
 function editorHasPendingAssetUploads(blocks: ContentBlock[]): boolean {
   for (const b of blocks) {
-    if (b.type === "image" && b.file) return true;
+    if ((b.type === "image" || b.type === "video" || b.type === "audio") && b.file) return true;
     if (b.type === "gallery" && (b.files?.length ?? 0) > 0) return true;
   }
   return false;
@@ -33,12 +33,18 @@ export async function buildArticleBlocksFromEditor(
         continue;
       }
 
-      if (b.type === "image") {
+      if (b.type === "image" || b.type === "video" || b.type === "audio") {
         const caption = (b.imageCaption ?? "").trim();
+        // For explicitly-typed video/audio blocks the editor type is the source
+        // of truth; otherwise we infer from the uploaded file's MIME / URL.
+        const explicitType: "video" | "audio" | null =
+          b.type === "video" ? "video" : b.type === "audio" ? "audio" : null;
         if (b.file) {
           const url = await uploadArticleAsset(b.file);
-          const isVideo = b.file.type.startsWith("video/") || isLikelyVideoUrl(url);
-          const isAudio = b.file.type.startsWith("audio/") || isLikelyAudioUrl(url);
+          const isVideo =
+            explicitType === "video" || b.file.type.startsWith("video/") || isLikelyVideoUrl(url);
+          const isAudio =
+            explicitType === "audio" || b.file.type.startsWith("audio/") || isLikelyAudioUrl(url);
           const mimeType = b.file.type?.trim() || undefined;
           const meta = {
             url,
@@ -61,8 +67,8 @@ export async function buildArticleBlocksFromEditor(
         }
         const url = (b.imageUrl ?? "").trim();
         if (!url) continue;
-        const isVideo = isLikelyVideoUrl(url);
-        const isAudio = isLikelyAudioUrl(url);
+        const isVideo = explicitType === "video" || isLikelyVideoUrl(url);
+        const isAudio = explicitType === "audio" || isLikelyAudioUrl(url);
         const meta = { url, alt: "", caption };
         const block_type: CreateArticleBlock["block_type"] = isVideo
           ? "video"
@@ -139,6 +145,17 @@ export async function buildArticleBlocksFromEditor(
         const t = (b.content ?? "").trim();
         if (!t) continue;
         out.push({ block_order: order++, block_type: "heading", content: t });
+        continue;
+      }
+
+      if (b.type === "caption-text" || b.type === "meta-data") {
+        const t = (b.content ?? "").trim();
+        if (!t) continue;
+        out.push({
+          block_order: order++,
+          block_type: b.type === "caption-text" ? "caption_text" : "meta_data",
+          content: t,
+        });
         continue;
       }
 

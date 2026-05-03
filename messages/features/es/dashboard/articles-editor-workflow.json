@@ -89,14 +89,26 @@
             }
           },
           "openCall": {
-            "titlePlaceholder": "Introduce aquí el título de tu contenido...",
+            "titlePlaceholder": "Introduce el título de tu artículo…",
             "settingsTitle": "Configuración del contenido",
             "primaryButton": "Publicar ahora",
             "blockLabels": {
-              "paragraph": "Describe tu contenido...",
+              "paragraph": "Empieza a escribir tu artículo…",
               "quote": "Cita",
               "callout": "Destacado",
               "author-note": "Nota del autor"
+            }
+          },
+          "artwork": {
+            "titlePlaceholder": "Introduce el título de tu obra…",
+            "settingsTitle": "Configuración de la obra",
+            "primaryButton": "Publicar obra",
+            "blockLabels": {
+              "paragraph": "Declaración de la artista…",
+              "quote": "Cita",
+              "author-note": "Nota del autor",
+              "caption-text": "Texto de pie…",
+              "meta-data": "Metadatos: Cámara | Medio | Fecha"
             }
           }
         },
@@ -140,6 +152,14 @@
             "pasteUrlHint": "O pega la URL del archivo principal (imagen, vídeo o audio)",
             "addBlockButton": "Añadir bloque de medio principal",
             "missingHeroBlurb": "Aún no hay medio principal. Añade el bloque de medio principal: es el elemento principal en la parte superior de la página pública."
+          },
+          "artwork": {
+            "blockName": "Obra",
+            "uploadTitle": "Subir obra",
+            "uploadDetail": "Imagen de la obra — se muestra como elemento principal en la página pública.",
+            "pasteUrlHint": "O pega la URL de una imagen",
+            "addBlockButton": "Añadir bloque de obra",
+            "missingHeroBlurb": "Aún no hay obra. Añade el bloque de obra: es el elemento principal en la parte superior de la página pública."
           }
         },
         "availableBlocks": {
@@ -149,9 +169,13 @@
             "heading": "Título",
             "quote": "Cita",
             "image": "Imagen",
+            "video": "Vídeo",
+            "audio": "Audio",
             "gallery": "Galería",
             "callout": "Destacado",
             "author-note": "Nota del autor",
+            "caption-text": "Texto de pie",
+            "meta-data": "Metadatos",
             "divider": "Divisor"
           }
         },

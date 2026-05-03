@@ -11,6 +11,8 @@ import {
   type ArticleWorkflowStatus,
 } from "./ArticleSettings";
 import { ContentEditorFooter } from "./ContentEditorFooter";
+import { EditorToolbar } from "./EditorToolbar";
+import { EditorRegistryProvider } from "./lib/editor-registry";
 import { ScheduleArticleModal } from "./modals/ScheduleArticleModal";
 import { buildOpenCallContentBlocksAndMainMedia } from "./lib/build-open-call-payload";
 import { buildArticleBlocksFromEditor } from "./lib/build-api-blocks";
@@ -20,6 +22,7 @@ import {
   localizeMainMediaEditorCopy,
 } from "@/lib/dashboard/localize-article-editor-config";
 import { ApplicationFormBuilder } from "./open-call/ApplicationFormBuilder";
+import { ApplicationFormPreview } from "./open-call/ApplicationFormPreview";
 import { invalidateAdminArticlesListCache } from "@/lib/dashboard/admin-articles-list-cache";
 import { useAdminTags } from "@/hooks/queries/admin-tags";
 import { createArticle } from "@/services/articles.service";
@@ -97,6 +100,7 @@ export function OpenCallEditorLayout() {
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingFormBlock, setEditingFormBlock] = useState(false);
 
   const addBlock = useCallback((type: BlockType) => {
     setBlocks((prev) => [
@@ -358,6 +362,7 @@ export function OpenCallEditorLayout() {
   }, [workflowStatus]);
 
   return (
+    <EditorRegistryProvider>
     <div className="flex min-h-0 flex-col">
       <ScheduleArticleModal
         open={scheduleModalOpen}
@@ -366,8 +371,14 @@ export function OpenCallEditorLayout() {
         onConfirm={handleScheduleConfirm}
       />
 
-      <div className="flex flex-1 gap-6 overflow-hidden">
-        <div className="min-w-0 flex-1 space-y-6 overflow-y-auto">
+      {config.showToolbar ? (
+        <div className="mb-4 shrink-0">
+          <EditorToolbar />
+        </div>
+      ) : null}
+
+      <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
+        <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
           <input
             type="text"
             value={title}
@@ -384,10 +395,40 @@ export function OpenCallEditorLayout() {
             mainMediaCopy={localizedMainMedia}
           />
 
-          <ApplicationFormBuilder fields={applicationFields} onChange={setApplicationFields} />
+          {/* Public form preview (matches the SVG). The pencil header toggles
+              into the field-configuration builder so admins can still edit. */}
+          <div>
+            <hr className="mb-4 border-[var(--tott-card-border)]" />
+            <button
+              type="button"
+              onClick={() => setEditingFormBlock((v) => !v)}
+              className="mb-3 inline-flex items-center gap-2 text-sm text-gray-300 transition-colors hover:text-foreground"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+              {editingFormBlock ? tAppForm("editorOpenCall.donePreview") : tAppForm("editorOpenCall.editFormBlock")}
+            </button>
+            {editingFormBlock ? (
+              <ApplicationFormBuilder fields={applicationFields} onChange={setApplicationFields} />
+            ) : (
+              <ApplicationFormPreview fields={applicationFields} />
+            )}
+          </div>
         </div>
 
-        <aside className="flex w-64 shrink-0 flex-col gap-4 overflow-y-auto">
+        <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-64 lg:overflow-y-auto">
           <AvailableBlocks
             onAddBlock={addBlock}
             allowedBlockTypes={openCallAllowedBlockTypes}
@@ -426,5 +467,6 @@ export function OpenCallEditorLayout() {
         onOpenSchedule={() => setScheduleModalOpen(true)}
       />
     </div>
+    </EditorRegistryProvider>
   );
 }

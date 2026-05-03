@@ -89,14 +89,26 @@
             }
           },
           "openCall": {
-            "titlePlaceholder": "أدخل عنوان المحتوى هنا…",
+            "titlePlaceholder": "أدخل عنوان المقالة…",
             "settingsTitle": "إعدادات المحتوى",
             "primaryButton": "نشر الآن",
             "blockLabels": {
-              "paragraph": "صف المحتوى…",
+              "paragraph": "ابدأ كتابة مقالتك…",
               "quote": "اقتباس",
               "callout": "مربع بارز",
               "author-note": "ملاحظة المؤلف"
+            }
+          },
+          "artwork": {
+            "titlePlaceholder": "أدخل عنوان العمل الفني…",
+            "settingsTitle": "إعدادات العمل الفني",
+            "primaryButton": "نشر العمل الفني",
+            "blockLabels": {
+              "paragraph": "بيان الفنان…",
+              "quote": "اقتباس",
+              "author-note": "ملاحظة المؤلف",
+              "caption-text": "نص التسمية التوضيحية…",
+              "meta-data": "البيانات الوصفية: الكاميرا | الوسيط | التاريخ"
             }
           }
         },
@@ -140,6 +152,14 @@
             "pasteUrlHint": "أو الصق رابط الملف الرئيسي (صورة أو فيديو أو صوت)",
             "addBlockButton": "إضافة كتلة الوسائط الرئيسية",
             "missingHeroBlurb": "لا توجد وسائط رئيسية بعد. أضف كتلة الوسائط الرئيسية — إنها العنصر البارز أعلى الصفحة العامة."
+          },
+          "artwork": {
+            "blockName": "العمل الفني",
+            "uploadTitle": "رفع العمل الفني",
+            "uploadDetail": "صورة العمل الفني — تُعرض كعنصر بارز في صفحة العمل الفني العامة.",
+            "pasteUrlHint": "أو الصق رابط الصورة",
+            "addBlockButton": "إضافة كتلة العمل الفني",
+            "missingHeroBlurb": "لا يوجد عمل فني بعد. أضف كتلة العمل الفني — إنها العنصر البارز أعلى الصفحة العامة."
           }
         },
         "availableBlocks": {
@@ -149,9 +169,13 @@
             "heading": "عنوان",
             "quote": "اقتباس",
             "image": "صورة",
+            "video": "فيديو",
+            "audio": "صوت",
             "gallery": "معرض",
             "callout": "مربع بارز",
             "author-note": "ملاحظة المؤلف",
+            "caption-text": "نص التسمية التوضيحية",
+            "meta-data": "بيانات وصفية",
             "divider": "فاصل"
           }
         },

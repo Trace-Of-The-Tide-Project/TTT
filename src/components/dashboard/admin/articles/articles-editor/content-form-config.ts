@@ -40,6 +40,51 @@ export const articleAllowedBlockTypes: BlockType[] = [
   "divider",
 ];
 
+/** Artwork block set — paragraph, quote, image, gallery, caption text, author note, meta data, divider. */
+export const artworkAllowedBlockTypes: BlockType[] = [
+  "paragraph",
+  "quote",
+  "image",
+  "gallery",
+  "caption-text",
+  "author-note",
+  "meta-data",
+  "divider",
+];
+
+/** Video block set — Video, Image, Paragraph, Quote, Callout, Author note, Divider. */
+export const videoAllowedBlockTypes: BlockType[] = [
+  "video",
+  "image",
+  "paragraph",
+  "quote",
+  "callout",
+  "author-note",
+  "divider",
+];
+
+/** Audio block set — Audio, Image, Paragraph, Quote, Callout, Author note, Divider. */
+export const audioAllowedBlockTypes: BlockType[] = [
+  "audio",
+  "image",
+  "paragraph",
+  "quote",
+  "callout",
+  "author-note",
+  "divider",
+];
+
+/** Thread block set — Paragraph, Quote, Image, Gallery, Callout, Author note, Divider. */
+export const threadAllowedBlockTypes: BlockType[] = [
+  "paragraph",
+  "quote",
+  "image",
+  "gallery",
+  "callout",
+  "author-note",
+  "divider",
+];
+
 /** Open Call: same block set as article but no heading (API enum). */
 export const openCallConfig: ContentFormConfig = {
   contentType: "open-call",
@@ -60,6 +105,9 @@ export const openCallConfig: ContentFormConfig = {
   iconBlockType: "paragraph",
   settingsTitle: "Content Settings",
   primaryButtonLabel: "Publish Now",
+  showToolbar: true,
+  allowedBlockTypes: openCallAllowedBlockTypes,
+  disableHero: true,
 };
 
 export const articleConfig: ContentFormConfig = {
@@ -90,7 +138,7 @@ export const videoConfig: ContentFormConfig = {
   contentType: "video",
   titlePlaceholder: "Enter your Video title...",
   defaultBlocks: [
-    { id: "1", type: "image" },
+    { id: "1", type: "video" },
     { id: "2", type: "paragraph", content: "" },
     { id: "3", type: "quote", content: "", quoteAttribution: "" },
     { id: "4", type: "callout", content: "", calloutTitle: "" },
@@ -106,6 +154,8 @@ export const videoConfig: ContentFormConfig = {
   iconBlockType: "image",
   settingsTitle: "Video Settings",
   primaryButtonLabel: "Publish Video",
+  allowedBlockTypes: videoAllowedBlockTypes,
+  disableHero: true,
 };
 
 export const threadConfig: ContentFormConfig = {
@@ -113,10 +163,10 @@ export const threadConfig: ContentFormConfig = {
   titlePlaceholder: "Enter your Thread title...",
   defaultBlocks: [
     { id: "1", type: "paragraph", content: "" },
-    { id: "2", type: "paragraph", content: "" },
+    { id: "2", type: "paragraph", content: "", placeholder: "Continue your narrative..." },
     { id: "3", type: "image" },
     { id: "4", type: "quote", content: "", quoteAttribution: "" },
-    { id: "5", type: "paragraph", content: "" },
+    { id: "5", type: "paragraph", content: "", placeholder: "Write your content here..." },
     { id: "6", type: "callout", content: "", calloutTitle: "" },
     { id: "7", type: "author-note", content: "" },
   ],
@@ -130,17 +180,21 @@ export const threadConfig: ContentFormConfig = {
   iconBlockType: "paragraph",
   settingsTitle: "Thread Settings",
   primaryButtonLabel: "Publish Thread",
+  allowedBlockTypes: threadAllowedBlockTypes,
+  disableHero: true,
 };
 
 export const audioConfig: ContentFormConfig = {
   contentType: "audio",
   titlePlaceholder: "Enter your Audio title...",
   defaultBlocks: [
-    { id: "1", type: "image" },
-    { id: "2", type: "paragraph", content: "" },
-    { id: "3", type: "quote", content: "", quoteAttribution: "" },
-    { id: "4", type: "callout", content: "", calloutTitle: "" },
-    { id: "5", type: "author-note", content: "" },
+    { id: "1", type: "audio" },
+    { id: "2", type: "image" },
+    { id: "3", type: "paragraph", content: "" },
+    { id: "4", type: "paragraph", content: "", placeholder: "Write your content here..." },
+    { id: "5", type: "quote", content: "", quoteAttribution: "" },
+    { id: "6", type: "callout", content: "", calloutTitle: "" },
+    { id: "7", type: "author-note", content: "" },
   ],
   blockLabels: {
     paragraph: "Episode notes...",
@@ -152,6 +206,34 @@ export const audioConfig: ContentFormConfig = {
   iconBlockType: "image",
   settingsTitle: "Audio Settings",
   primaryButtonLabel: "Publish Audio",
+  allowedBlockTypes: audioAllowedBlockTypes,
+  disableHero: true,
+};
+
+export const artworkConfig: ContentFormConfig = {
+  contentType: "artwork",
+  titlePlaceholder: "Enter your Artwork title...",
+  defaultBlocks: [
+    { id: "1", type: "image" },
+    { id: "2", type: "paragraph", content: "" },
+    { id: "3", type: "quote", content: "", quoteAttribution: "" },
+    { id: "4", type: "paragraph", content: "", placeholder: "Write your content here..." },
+    { id: "5", type: "author-note", content: "" },
+    { id: "6", type: "meta-data", content: "" },
+    { id: "7", type: "caption-text", content: "" },
+  ],
+  blockLabels: {
+    paragraph: "Artist statement…",
+    quote: "Quote",
+    "author-note": "Author note",
+    "caption-text": "Caption Text…",
+    "meta-data": "Metadata: Camera | Medium | Date",
+  },
+  iconBlockType: "image",
+  settingsTitle: "Artwork Settings",
+  primaryButtonLabel: "Publish Artwork",
+  allowedBlockTypes: artworkAllowedBlockTypes,
+  disableHero: true,
 };
 
 /** Pick create/edit defaults from API `content_type`. */
@@ -160,6 +242,7 @@ export function contentFormConfigForType(contentType: string | undefined): Conte
   if (t === "video") return videoConfig;
   if (t === "thread") return threadConfig;
   if (t === "audio") return audioConfig;
+  if (t === "artwork") return artworkConfig;
   if (t === "open_call" || t === "opencall") return openCallConfig;
   return articleConfig;
 }
@@ -219,6 +302,17 @@ export function mainMediaEditorCopy(contentType: string | undefined): MainMediaE
       addBlockButton: "Add main media block",
       missingHeroBlurb:
         "No main media yet. Add the main media block — it is the hero at the top of the public page.",
+    };
+  }
+  if (t === "artwork") {
+    return {
+      blockName: "Artwork",
+      uploadTitle: "Upload artwork",
+      uploadDetail: "Image of the artwork — shown as the hero on the public artwork page.",
+      pasteUrlHint: "Or paste an image URL",
+      addBlockButton: "Add artwork block",
+      missingHeroBlurb:
+        "No artwork yet. Add the artwork block — it is the hero at the top of the public page.",
     };
   }
   return {

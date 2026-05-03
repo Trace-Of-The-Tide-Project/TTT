@@ -45,9 +45,11 @@ export function articleDetailBlocksToContentBlocks(blocks: ArticleDetailBlock[])
           (typeof b.content === "string" && b.content.trim().startsWith("http") ? b.content.trim() : "");
         const caption =
           obj && typeof obj.caption === "string" ? obj.caption.trim() : "";
+        const editorType =
+          rawType === "video" ? "video" : rawType === "audio" ? "audio" : "image";
         out.push({
           id,
-          type: "image",
+          type: editorType,
           imageUrl: url || undefined,
           ...(caption ? { imageCaption: caption } : {}),
         });
@@ -105,6 +107,14 @@ export function articleDetailBlocksToContentBlocks(blocks: ArticleDetailBlock[])
 
       case "heading":
         out.push({ id, type: "heading", content: (b.content ?? "").trim() });
+        break;
+
+      case "caption_text":
+        out.push({ id, type: "caption-text", content: (b.content ?? "").trim() });
+        break;
+
+      case "meta_data":
+        out.push({ id, type: "meta-data", content: (b.content ?? "").trim() });
         break;
 
       case "paragraph":

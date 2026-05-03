@@ -33,6 +33,7 @@ function mainMediaNs(contentType: string | undefined): string {
   if (ct === "video") return "video";
   if (ct === "audio") return "audio";
   if (ct === "thread") return "thread";
+  if (ct === "artwork") return "artwork";
   if (ct === "open_call" || ct === "opencall") return "openCall";
   return "article";
 }

@@ -8,9 +8,13 @@ export type BlockType =
   | "heading"
   | "quote"
   | "image"
+  | "video"
+  | "audio"
   | "gallery"
   | "callout"
   | "author-note"
+  | "caption-text"
+  | "meta-data"
   | "divider";
 
 /* ─────────────────────────── icons (Figma `Trailing Icon-{1..6}.svg`) ───
@@ -72,6 +76,42 @@ function DividerTrailingIcon() {
   );
 }
 
+/** Video block — film/camera glyph (aligns with Figma Available Blocks list). */
+function VideoTrailingIcon() {
+  return (
+    <svg {...iconProps} aria-hidden>
+      <path d="M6.5 6.5h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM21.5 8.5l-3 2.5v2l3 2.5v-7z" />
+    </svg>
+  );
+}
+
+/** Audio block — waveform / speaker glyph. */
+function AudioTrailingIcon() {
+  return (
+    <svg {...iconProps} aria-hidden>
+      <path d="M9 7v10M12 5v14M15 8v8M6 10v4M18 10v4" />
+    </svg>
+  );
+}
+
+/** Caption text — short captioned line glyph. */
+function CaptionTextTrailingIcon() {
+  return (
+    <svg {...iconProps} aria-hidden>
+      <path d="M6.5 8.5H21.5M6.5 13H17M6.5 17.5H14" />
+    </svg>
+  );
+}
+
+/** Meta-data — structured rows / pipe glyph. */
+function MetaDataTrailingIcon() {
+  return (
+    <svg {...iconProps} aria-hidden>
+      <path d="M9 7H21M9 12H21M9 17H21M5.5 7H6M5.5 12H6M5.5 17H6" />
+    </svg>
+  );
+}
+
 function PlusTrailingIcon() {
   return (
     <svg {...iconProps} aria-hidden>
@@ -87,11 +127,15 @@ const BLOCKS: { id: BlockType; icon: React.ReactNode }[] = [
   { id: "heading", icon: <ParagraphTrailingIcon /> },
   { id: "quote", icon: <QuoteTrailingIcon /> },
   { id: "image", icon: <ImageTrailingIcon /> },
+  { id: "video", icon: <VideoTrailingIcon /> },
+  { id: "audio", icon: <AudioTrailingIcon /> },
   // Gallery reuses the image (cover) glyph so it reads as "more pictures".
   { id: "gallery", icon: <ImageTrailingIcon /> },
   { id: "callout", icon: <CalloutTrailingIcon /> },
   // Author note shares the paragraph "T" glyph; both are text affordances.
   { id: "author-note", icon: <ParagraphTrailingIcon /> },
+  { id: "caption-text", icon: <CaptionTextTrailingIcon /> },
+  { id: "meta-data", icon: <MetaDataTrailingIcon /> },
   { id: "divider", icon: <DividerTrailingIcon /> },
 ];
 

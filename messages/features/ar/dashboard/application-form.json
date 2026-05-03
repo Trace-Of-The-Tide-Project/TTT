@@ -13,7 +13,9 @@
       },
       "editorOpenCall": {
         "titleRequired": "العنوان مطلوب.",
-        "categoryRequired": "التصنيف مطلوب."
+        "categoryRequired": "التصنيف مطلوب.",
+        "editFormBlock": "تعديل كتلة النموذج",
+        "donePreview": "إنهاء التعديل"
       },
       "fieldNames": {
         "firstName": "الاسم الأول",

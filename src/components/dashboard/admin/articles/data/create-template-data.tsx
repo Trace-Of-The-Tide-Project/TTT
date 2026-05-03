@@ -78,6 +78,7 @@ export const createTemplates: CreateTemplateDef[] = [
     number: "05",
     templateKey: "artwork",
     icon: <ArtworkGlyph />,
+    href: "/admin/articles/create/artwork",
     category: "artwork",
   },
   {

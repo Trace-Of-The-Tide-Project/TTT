@@ -89,14 +89,26 @@
             }
           },
           "openCall": {
-            "titlePlaceholder": "Enter your content title here...",
+            "titlePlaceholder": "Enter your article title…",
             "settingsTitle": "Content Settings",
             "primaryButton": "Publish Now",
             "blockLabels": {
-              "paragraph": "Describe your content...",
+              "paragraph": "Start writing your article…",
               "quote": "Quote",
               "callout": "Callout",
               "author-note": "Author note"
+            }
+          },
+          "artwork": {
+            "titlePlaceholder": "Enter your Artwork title...",
+            "settingsTitle": "Artwork Settings",
+            "primaryButton": "Publish Artwork",
+            "blockLabels": {
+              "paragraph": "Artist statement…",
+              "quote": "Quote",
+              "author-note": "Author note",
+              "caption-text": "Caption Text…",
+              "meta-data": "Metadata: Camera | Medium | Date"
             }
           }
         },
@@ -140,6 +152,14 @@
             "pasteUrlHint": "Or paste main file URL (image, video, or audio)",
             "addBlockButton": "Add main media block",
             "missingHeroBlurb": "No main media yet. Add the main media block — it is the hero at the top of the public page."
+          },
+          "artwork": {
+            "blockName": "Artwork",
+            "uploadTitle": "Upload artwork",
+            "uploadDetail": "Image of the artwork — shown as the hero on the public artwork page.",
+            "pasteUrlHint": "Or paste an image URL",
+            "addBlockButton": "Add artwork block",
+            "missingHeroBlurb": "No artwork yet. Add the artwork block — it is the hero at the top of the public page."
           }
         },
         "availableBlocks": {
@@ -149,9 +169,13 @@
             "heading": "Title",
             "quote": "Quote",
             "image": "Image",
+            "video": "Video",
+            "audio": "Audio",
             "gallery": "Gallery",
             "callout": "Callout",
             "author-note": "Author note",
+            "caption-text": "Caption Text",
+            "meta-data": "Meta Data",
             "divider": "Divider"
           }
         },

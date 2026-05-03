@@ -13,7 +13,9 @@ export type CreateArticleBlock = {
     | "callout"
     | "author_note"
     | "divider"
-    | "heading";
+    | "heading"
+    | "caption_text"
+    | "meta_data";
   content: string | null;
   metadata?: string | null;
 };

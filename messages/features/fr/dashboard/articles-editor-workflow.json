@@ -89,14 +89,26 @@
             }
           },
           "openCall": {
-            "titlePlaceholder": "Entrez le titre de votre contenu ici…",
+            "titlePlaceholder": "Entrez le titre de votre article…",
             "settingsTitle": "Paramètres du contenu",
             "primaryButton": "Publier maintenant",
             "blockLabels": {
-              "paragraph": "Décrivez votre contenu…",
+              "paragraph": "Commencez à écrire votre article…",
               "quote": "Citation",
               "callout": "Encadré",
               "author-note": "Note de l'auteur"
+            }
+          },
+          "artwork": {
+            "titlePlaceholder": "Entrez le titre de votre œuvre…",
+            "settingsTitle": "Paramètres de l’œuvre",
+            "primaryButton": "Publier l’œuvre",
+            "blockLabels": {
+              "paragraph": "Note d’artiste…",
+              "quote": "Citation",
+              "author-note": "Note de l'auteur",
+              "caption-text": "Légende…",
+              "meta-data": "Métadonnées : Appareil | Médium | Date"
             }
           }
         },
@@ -140,6 +152,14 @@
             "pasteUrlHint": "Ou collez l'URL du fichier principal (image, vidéo ou audio)",
             "addBlockButton": "Ajouter un bloc de média principal",
             "missingHeroBlurb": "Pas encore de média principal. Ajoutez le bloc de média principal — c'est l'image principale en haut de la page publique."
+          },
+          "artwork": {
+            "blockName": "Œuvre",
+            "uploadTitle": "Téléverser l’œuvre",
+            "uploadDetail": "Image de l’œuvre — affichée comme visuel principal sur la page publique de l’œuvre.",
+            "pasteUrlHint": "Ou collez l'URL d’une image",
+            "addBlockButton": "Ajouter un bloc d’œuvre",
+            "missingHeroBlurb": "Pas encore d’œuvre. Ajoutez le bloc d’œuvre — c'est l'image principale en haut de la page publique."
           }
         },
         "availableBlocks": {
@@ -149,9 +169,13 @@
             "heading": "Titre",
             "quote": "Citation",
             "image": "Image",
+            "video": "Vidéo",
+            "audio": "Audio",
             "gallery": "Galerie",
             "callout": "Encadré",
             "author-note": "Note de l'auteur",
+            "caption-text": "Légende",
+            "meta-data": "Méta-données",
             "divider": "Séparateur"
           }
         },

@@ -13,7 +13,9 @@
       },
       "editorOpenCall": {
         "titleRequired": "El título es obligatorio.",
-        "categoryRequired": "La categoría es obligatoria."
+        "categoryRequired": "La categoría es obligatoria.",
+        "editFormBlock": "Editar bloque del formulario",
+        "donePreview": "Terminar edición"
       },
       "fieldNames": {
         "firstName": "Nombre",

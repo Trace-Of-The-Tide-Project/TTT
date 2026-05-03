@@ -13,7 +13,9 @@
       },
       "editorOpenCall": {
         "titleRequired": "Title is required.",
-        "categoryRequired": "Category is required."
+        "categoryRequired": "Category is required.",
+        "editFormBlock": "Edit Form Block",
+        "donePreview": "Done editing"
       },
       "fieldNames": {
         "firstName": "First name",

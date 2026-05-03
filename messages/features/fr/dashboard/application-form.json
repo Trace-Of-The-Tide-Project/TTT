@@ -13,7 +13,9 @@
       },
       "editorOpenCall": {
         "titleRequired": "Le titre est requis.",
-        "categoryRequired": "La catégorie est requise."
+        "categoryRequired": "La catégorie est requise.",
+        "editFormBlock": "Modifier le bloc de formulaire",
+        "donePreview": "Terminer l’édition"
       },
       "fieldNames": {
         "firstName": "Prénom",
