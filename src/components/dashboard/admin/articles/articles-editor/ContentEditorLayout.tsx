@@ -538,8 +538,8 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
         </div>
       ) : null}
 
-      <div className="flex flex-1 gap-6 overflow-hidden">
-        <div className="min-w-0 flex-1 space-y-6 overflow-y-auto">
+      <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
+        <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
           {isEditMode && articleId ? (
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4">
               <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -575,7 +575,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
           />
         </div>
 
-        <aside className="flex w-64 shrink-0 flex-col gap-4 overflow-y-auto">
+        <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-64 lg:overflow-y-auto">
           <AvailableBlocks
             onAddBlock={addBlock}
             allowedBlockTypes={config.allowedBlockTypes}
