@@ -40,15 +40,15 @@ export const adminConfig: DashboardConfig = {
           items: [
             {
               kind: "item",
-              labelKey: "sidebar.allArticles",
-              href: "/admin/articles",
-              icon: FileTextIcon,
-            },
-            {
-              kind: "item",
               labelKey: "sidebar.createArticles",
               href: "/admin/articles/create",
               icon: PenLineIcon,
+            },
+            {
+              kind: "item",
+              labelKey: "sidebar.allArticles",
+              href: "/admin/articles",
+              icon: FileTextIcon,
             },
           ],
         },
