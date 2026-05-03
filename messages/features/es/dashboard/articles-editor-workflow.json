@@ -218,8 +218,9 @@
             "public": "Público"
           },
           "seo": {
-            "label": "SEO",
-            "previewPlaceholder": "Añade una meta descripción para mejorar la visibilidad en los motores de búsqueda.",
+            "label": "Vista previa SEO",
+            "previewTitlePlaceholder": "Título del artículo",
+            "previewPlaceholder": "Añade una meta descripción para mejorar la visibilidad en los motores de búsqueda…",
             "seoTitlePlaceholder": "Título SEO",
             "metaDescriptionPlaceholder": "Meta descripción",
             "previewUrlStub": "tusitioweb.com/articulos/…"

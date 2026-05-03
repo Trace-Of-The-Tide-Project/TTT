@@ -218,8 +218,9 @@
             "public": "Public"
           },
           "seo": {
-            "label": "SEO",
-            "previewPlaceholder": "Ajoutez une méta-description pour améliorer la visibilité dans les moteurs de recherche.",
+            "label": "Aperçu SEO",
+            "previewTitlePlaceholder": "Titre de l’article",
+            "previewPlaceholder": "Ajoutez une méta-description pour améliorer la visibilité dans les moteurs de recherche…",
             "seoTitlePlaceholder": "Titre SEO",
             "metaDescriptionPlaceholder": "Méta-description",
             "previewUrlStub": "votresite.com/articles/…"

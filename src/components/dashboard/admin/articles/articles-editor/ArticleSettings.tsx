@@ -1,26 +1,68 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, type ReactNode, type SelectHTMLAttributes } from "react";
 import { useTranslations } from "next-intl";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
-import type { CollectionItem } from "@/services/collections.service";
 import type { AdminTagItem } from "@/services/admin-tags.service";
-import { useCollections } from "@/hooks/queries/collections";
 import { useAdminTags } from "@/hooks/queries/admin-tags";
 import {
-  FileTextIcon,
-  GridIcon,
-  TagIcon,
+  StatusFieldIcon,
+  CategoryFieldIcon,
+  TagFieldIcon,
   GlobeIcon,
   EyeIcon,
   SettingsIcon,
 } from "./ArticleEditorIcons";
 
-const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500";
+// Field tokens are pulled straight from the Figma source SVG so the dark
+// surfaces match exactly (#262626 fill, #333 stroke, 7.5px radius).
+const FIELD_BASE =
+  "w-full rounded-[7.5px] border border-[#333333] bg-[#262626] px-3 py-2.5 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-400";
 
-const selectClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-2 text-sm text-gray-400 outline-none focus:border-gray-500";
+const SELECT_BASE = `${FIELD_BASE} appearance-none pr-9 text-gray-300`;
+
+function ChevronDown() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
+function FieldSelect({ children, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) {
+  return (
+    <div className="relative">
+      <select className={SELECT_BASE} {...rest}>
+        {children}
+      </select>
+      <span
+        className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500"
+        aria-hidden
+      >
+        <ChevronDown />
+      </span>
+    </div>
+  );
+}
+
+function SectionLabel({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+  return (
+    <span className="mb-2 flex items-center gap-2 text-sm text-gray-400">
+      <span className="text-gray-500">{icon}</span>
+      {children}
+    </span>
+  );
+}
 
 export type ArticleWorkflowStatus = "draft" | "published" | "scheduled";
 
@@ -40,6 +82,7 @@ type ContentSettingsProps = {
   onSeoTitleChange: (v: string) => void;
   metaDescription: string;
   onMetaDescriptionChange: (v: string) => void;
+  /** Kept for parent state compatibility — not rendered in this design. */
   collectionId: string;
   onCollectionIdChange: (v: string) => void;
   tagIds: string[];
@@ -74,16 +117,10 @@ export function ContentSettings({
   onSeoTitleChange,
   metaDescription,
   onMetaDescriptionChange,
-  collectionId,
-  onCollectionIdChange,
   tagIds,
   onTagIdsChange,
 }: ContentSettingsProps) {
   const t = useTranslations("Dashboard.articles.editor.settings");
-  const collectionsQuery = useCollections({ limit: 200, page: 1, sortBy: "name", order: "ASC" });
-  const collections: CollectionItem[] = collectionsQuery.data ?? [];
-  const collectionsLoading = collectionsQuery.isPending;
-  const collectionsError = collectionsQuery.error ? t("collectionsLoadError") : null;
 
   const tagsQuery = useAdminTags();
   const adminTags: AdminTagItem[] = tagsQuery.data ?? [];
@@ -93,7 +130,7 @@ export function ContentSettings({
 
   const tagNameById = useMemo(() => {
     const m = new Map<string, string>();
-    for (const t of adminTags) m.set(t.id, t.name);
+    for (const tag of adminTags) m.set(tag.id, tag.name);
     return m;
   }, [adminTags]);
 
@@ -114,203 +151,148 @@ export function ContentSettings({
   );
 
   const tagsAvailableToAdd = useMemo(
-    () => adminTags.filter((t) => !tagIds.includes(t.id)),
+    () => adminTags.filter((tag) => !tagIds.includes(tag.id)),
     [adminTags, tagIds],
   );
 
+  const scheduledLabel = formatScheduledAtHint(scheduledAt ?? null);
+
   return (
     <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-4">
-      <h3 className="mb-4 text-base font-bold text-foreground">{title ?? t("defaultPanelTitle")}</h3>
-
-      <div className="flex flex-col gap-4">
+      <h3 className="mb-4 text-base font-bold text-foreground">
+        {title ?? t("defaultPanelTitle")}
+      </h3>
+      <div className="flex flex-col gap-5">
         <div>
-          <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-400">
-            <FileTextIcon />
-            {t("status.label")}
-          </label>
-          <select
-            className={selectClass}
+          <SectionLabel icon={<StatusFieldIcon />}>{t("status.label")}</SectionLabel>
+          <FieldSelect
             value={workflowStatus}
             onChange={(e) => onWorkflowStatusChange(e.target.value as ArticleWorkflowStatus)}
           >
             <option value="draft">{t("status.draft")}</option>
             <option value="published">{t("status.published")}</option>
             <option value="scheduled">{t("status.scheduled")}</option>
-          </select>
-          {workflowStatus === "scheduled" && formatScheduledAtHint(scheduledAt ?? null) ? (
-            <p className="mt-1 text-xs text-amber-200/90">
-              {t("status.goesLive")} {formatScheduledAtHint(scheduledAt ?? null)}
+          </FieldSelect>
+          {workflowStatus === "scheduled" && scheduledLabel ? (
+            <p className="mt-1.5 text-xs text-amber-200/90">
+              {t("status.goesLive")} {scheduledLabel}
             </p>
           ) : null}
-          <p className="mt-1 text-xs text-gray-500">{t("status.hint")}</p>
         </div>
 
         <div>
-          <label
-            className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-400"
-            htmlFor="article-settings-category"
-          >
-            <GridIcon />
+          <SectionLabel icon={<CategoryFieldIcon />}>
             {t("category.label")}
             <span className="text-amber-500" aria-hidden>
               *
             </span>
-          </label>
+          </SectionLabel>
           <input
             id="article-settings-category"
             type="text"
             value={category}
             onChange={(e) => onCategoryChange(e.target.value)}
             placeholder={t("category.placeholder")}
-            className={inputClass}
+            className={FIELD_BASE}
             required
             aria-required="true"
           />
         </div>
 
         <div>
-          <label
-            className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-400"
-            htmlFor="article-settings-collection"
-          >
-            <SettingsIcon />
-            {t("collection.label")}
-          </label>
-          <select
-            id="article-settings-collection"
-            className={selectClass}
-            value={collectionId}
-            onChange={(e) => onCollectionIdChange(e.target.value)}
-            aria-busy={collectionsLoading}
-          >
-            <option value="">{t("collection.none")}</option>
-            {collectionId &&
-            !collections.some((c) => c.id === collectionId) ? (
-              <option value={collectionId}>
-                {t("collection.currentPrefix")} {collectionId.slice(0, 8)}…
-              </option>
-            ) : null}
-            {collections.map((c) => (
-              <option
-                key={c.id}
-                value={c.id}
-                title={c.description?.trim() || undefined}
-              >
-                {c.name}
-              </option>
-            ))}
-          </select>
-          {collectionsLoading ? (
-            <p className="mt-1 text-xs text-gray-500">{t("collectionLoading")}</p>
-          ) : null}
-          {collectionsError ? (
-            <p className="mt-1 text-xs text-amber-400">{collectionsError}</p>
-          ) : null}
-        </div>
-
-        <div>
-          <label
-            className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-400"
-            htmlFor="article-settings-tag-add"
-          >
-            <TagIcon />
-            {t("tags.label")}
-          </label>
-          <div className="flex flex-col gap-2">
-            {tagIds.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {tagIds.map((id) => (
+          <SectionLabel icon={<TagFieldIcon />}>{t("tags.label")}</SectionLabel>
+          {tagIds.length > 0 ? (
+            <div className="mb-2 flex flex-wrap gap-1.5">
+              {tagIds.map((id) => {
+                const name =
+                  tagNameById.get(id) ?? t("tags.unknownName", { prefix: `${id.slice(0, 8)}…` });
+                return (
                   <span
                     key={id}
-                    className="flex max-w-full items-center gap-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-2.5 py-1 text-xs text-foreground"
+                    className="inline-flex max-w-full items-center gap-1.5 rounded-md bg-[#333333] px-2.5 py-1 text-xs text-foreground"
                   >
                     <span className="truncate" title={id}>
-                      {tagNameById.get(id) ?? t("tags.unknownName", { prefix: `${id.slice(0, 8)}…` })}
+                      {name}
                     </span>
                     <button
                       type="button"
                       onClick={() => removeTagById(id)}
-                      className="ml-0.5 shrink-0 text-gray-500 hover:text-foreground"
+                      className="grid h-3.5 w-3.5 shrink-0 place-items-center text-gray-400 transition-colors hover:text-foreground"
                       aria-label={t("tags.removeAria", {
                         name: tagNameById.get(id) ?? t("tags.fallbackName"),
                       })}
                     >
-                      ×
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        aria-hidden
+                      >
+                        <line x1="5" y1="5" x2="19" y2="19" />
+                        <line x1="19" y1="5" x2="5" y2="19" />
+                      </svg>
                     </button>
                   </span>
-                ))}
-              </div>
-            ) : null}
-            <select
-              id="article-settings-tag-add"
-              className={selectClass}
-              value={tagPicker}
-              aria-busy={tagsLoading}
-              onChange={(e) => {
-                const v = e.target.value;
-                if (v) addTagFromPicker(v);
-                else setTagPicker("");
-              }}
-            >
-              <option value="">
-                {tagsLoading ? t("tags.loading") : t("tags.addPlaceholder")}
+                );
+              })}
+            </div>
+          ) : null}
+          <FieldSelect
+            id="article-settings-tag-add"
+            value={tagPicker}
+            aria-busy={tagsLoading}
+            onChange={(e) => {
+              const v = e.target.value;
+              if (v) addTagFromPicker(v);
+              else setTagPicker("");
+            }}
+          >
+            <option value="">
+              {tagsLoading ? t("tags.loading") : t("tags.addPlaceholder")}
+            </option>
+            {tagsAvailableToAdd.map((tag) => (
+              <option key={tag.id} value={tag.id}>
+                {tag.name}
               </option>
-              {tagsAvailableToAdd.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-            {!tagsLoading && tagsAvailableToAdd.length === 0 && adminTags.length > 0 ? (
-              <p className="text-xs text-gray-500">{t("tags.allSelected")}</p>
-            ) : null}
-            {tagsError ? <p className="text-xs text-amber-400">{tagsError}</p> : null}
-          </div>
+            ))}
+          </FieldSelect>
+          {tagsError ? <p className="mt-1.5 text-xs text-amber-400">{tagsError}</p> : null}
         </div>
 
         <div>
-          <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-400">
-            <GlobeIcon />
-            {t("language.label")}
-          </label>
-          <select
-            className={selectClass}
-            value={language}
-            onChange={(e) => onLanguageChange(e.target.value)}
-          >
+          <SectionLabel icon={<GlobeIcon />}>{t("language.label")}</SectionLabel>
+          <FieldSelect value={language} onChange={(e) => onLanguageChange(e.target.value)}>
             <option value="en">{t("language.en")}</option>
             <option value="ar">{t("language.ar")}</option>
             <option value="he">{t("language.he")}</option>
-          </select>
+          </FieldSelect>
         </div>
 
         <div>
-          <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-400">
-            <EyeIcon />
-            {t("visibility.label")}
-          </label>
-          <select
-            className={selectClass}
+          <SectionLabel icon={<EyeIcon />}>{t("visibility.label")}</SectionLabel>
+          <FieldSelect
             value={visibility}
             onChange={(e) => onVisibilityChange(e.target.value as "public" | "private")}
           >
             <option value="private">{t("visibility.private")}</option>
             <option value="public">{t("visibility.public")}</option>
-          </select>
+          </FieldSelect>
         </div>
 
         <div>
-          <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-gray-400">
-            <SettingsIcon />
-            {t("seo.label")}
-          </label>
-          <div className="space-y-2">
-            <div className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-2 text-xs text-gray-400">
-              <p className="text-foreground">{t("seo.previewUrlStub")}</p>
-              <p className="mt-1">
-                {metaDescription.trim()
-                  ? metaDescription.slice(0, 160) + (metaDescription.length > 160 ? "…" : "")
-                  : t("seo.previewPlaceholder")}
+          <SectionLabel icon={<SettingsIcon />}>{t("seo.label")}</SectionLabel>
+          <div className="space-y-2.5">
+            <div className="rounded-[7.5px] border border-[#333333] bg-[#262626] px-3 py-2.5">
+              <p className="truncate text-sm text-foreground">
+                {seoTitle.trim() || t("seo.previewTitlePlaceholder")}
+              </p>
+              <p className="mt-0.5 truncate text-xs text-gray-500">{t("seo.previewUrlStub")}</p>
+              <p className="mt-1 line-clamp-2 text-xs text-gray-400">
+                {metaDescription.trim() || t("seo.previewPlaceholder")}
               </p>
             </div>
             <input
@@ -318,14 +300,14 @@ export function ContentSettings({
               value={seoTitle}
               onChange={(e) => onSeoTitleChange(e.target.value)}
               placeholder={t("seo.seoTitlePlaceholder")}
-              className={inputClass}
+              className={FIELD_BASE}
             />
-            <input
-              type="text"
+            <textarea
               value={metaDescription}
               onChange={(e) => onMetaDescriptionChange(e.target.value)}
               placeholder={t("seo.metaDescriptionPlaceholder")}
-              className={inputClass}
+              rows={2}
+              className={`${FIELD_BASE} resize-none`}
             />
           </div>
         </div>

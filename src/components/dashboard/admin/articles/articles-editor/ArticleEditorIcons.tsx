@@ -182,6 +182,99 @@ export function CalendarIcon() {
   );
 }
 
+/** Status icon — document with three lines (Figma source). */
+export function StatusFieldIcon() {
+  return (
+    <svg
+      width="18"
+      height="14"
+      viewBox="0 0 28 22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      <path
+        d="M9.83333 7.21875H18.1667M9.83333 10.5H18.1667M9.83333 13.7813H18.1667M6.5 5.57813C6.5 5.143 6.67559 4.7257 6.98816 4.41803C7.30072 4.11035 7.72464 3.9375 8.16667 3.9375H19.8333C20.2754 3.9375 20.6993 4.11035 21.0118 4.41803C21.3244 4.7257 21.5 5.143 21.5 5.57813V15.4219C21.5 15.857 21.3244 16.2743 21.0118 16.582C20.6993 16.8896 20.2754 17.0625 19.8333 17.0625H8.16667C7.72464 17.0625 7.30072 16.8896 6.98816 16.582C6.67559 16.2743 6.5 15.857 6.5 15.4219V5.57813Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** Category icon — three squares + circle in a 2×2 grid (Figma source). */
+export function CategoryFieldIcon() {
+  return (
+    <svg
+      width="18"
+      height="16"
+      viewBox="0 0 28 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      <path
+        d="M7.33301 5.33398H12.333V10.334H7.33301V5.33398Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15.6663 5.33398H20.6663V10.334H15.6663V5.33398Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7.33301 13.6673H12.333V18.6673H7.33301V13.6673Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15.6663 16.1673C15.6663 16.8304 15.9297 17.4662 16.3986 17.9351C16.8674 18.4039 17.5033 18.6673 18.1663 18.6673C18.8294 18.6673 19.4653 18.4039 19.9341 17.9351C20.4029 17.4662 20.6663 16.8304 20.6663 16.1673C20.6663 15.5043 20.4029 14.8684 19.9341 14.3996C19.4653 13.9307 18.8294 13.6673 18.1663 13.6673C17.5033 13.6673 16.8674 13.9307 16.3986 14.3996C15.9297 14.8684 15.6663 15.5043 15.6663 16.1673Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** Tag/luggage-tag icon (Figma source). */
+export function TagFieldIcon() {
+  return (
+    <svg
+      width="18"
+      height="14"
+      viewBox="0 0 28 22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      <path
+        d="M9.41667 7.55599C9.41667 7.75245 9.50446 7.94086 9.66074 8.07977C9.81702 8.21869 10.029 8.29673 10.25 8.29673C10.471 8.29673 10.683 8.21869 10.8393 8.07977C10.9955 7.94086 11.0833 7.75245 11.0833 7.55599C11.0833 7.35953 10.9955 7.17112 10.8393 7.03221C10.683 6.89329 10.471 6.81525 10.25 6.81525C10.029 6.81525 9.81702 6.89329 9.66074 7.03221C9.50446 7.17112 9.41667 7.35953 9.41667 7.55599Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M6.5 6.44488V10.276C6.50009 10.6689 6.67575 11.0456 6.98833 11.3234L13.4133 17.0345C13.79 17.3692 14.3007 17.5573 14.8333 17.5573C15.3659 17.5573 15.8767 17.3692 16.2533 17.0345L20.9133 12.8923C21.2899 12.5575 21.5015 12.1035 21.5015 11.6301C21.5015 11.1566 21.2899 10.7026 20.9133 10.3678L14.4883 4.65673C14.1758 4.37888 13.752 4.22274 13.31 4.22266H9C8.33696 4.22266 7.70107 4.45678 7.23223 4.87353C6.76339 5.29028 6.5 5.85551 6.5 6.44488Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function TrashIcon() {
   return (
     <svg {...iconProps} width={16} height={16}>

@@ -218,8 +218,9 @@
             "public": "عام"
           },
           "seo": {
-            "label": "تحسين محركات البحث",
-            "previewPlaceholder": "أضف وصفًا ميتًا لتحسين الظهور في البحث.",
+            "label": "معاينة SEO",
+            "previewTitlePlaceholder": "عنوان المقالة",
+            "previewPlaceholder": "أضف وصفًا ميتًا لتحسين الظهور في البحث…",
             "seoTitlePlaceholder": "عنوان SEO",
             "metaDescriptionPlaceholder": "الوصف الميتا",
             "previewUrlStub": "yoursite.com/articles/…"

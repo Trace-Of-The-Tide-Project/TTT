@@ -218,8 +218,9 @@
             "public": "Public"
           },
           "seo": {
-            "label": "SEO",
-            "previewPlaceholder": "Add a meta description to improve search visibility.",
+            "label": "SEO Preview",
+            "previewTitlePlaceholder": "Article Title",
+            "previewPlaceholder": "Add a meta description to improve search visibility…",
             "seoTitlePlaceholder": "SEO Title",
             "metaDescriptionPlaceholder": "Meta description",
             "previewUrlStub": "yoursite.com/articles/…"
