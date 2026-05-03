@@ -8,6 +8,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import { TextStyleKit } from "@tiptap/extension-text-style";
 import Highlight from "@tiptap/extension-highlight";
 import { TaskList, TaskItem } from "@tiptap/extension-list";
+import Placeholder from "@tiptap/extension-placeholder";
 import { useEditorRegistry } from "./lib/editor-registry";
 import { Indent, ListStyle } from "./lib/tiptap-extensions";
 
@@ -44,6 +45,10 @@ export function RichTextEditor({ value, onChange, placeholder, className }: Rich
       ListStyle,
       TaskList,
       TaskItem.configure({ nested: true }),
+      Placeholder.configure({
+        placeholder: placeholder ?? "",
+        showOnlyCurrent: false,
+      }),
     ],
     content: value || "",
     onUpdate: ({ editor }) => {
