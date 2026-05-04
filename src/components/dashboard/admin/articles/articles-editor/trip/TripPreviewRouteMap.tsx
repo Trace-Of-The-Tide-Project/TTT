@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import L from "leaflet";
 import { MapContainer, TileLayer, Polyline, Marker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -14,6 +14,8 @@ L.Icon.Default.mergeOptions({
 
 const DARK_TILE =
   "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const LIGHT_TILE =
+  "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 const TILE_ATTRIB =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
@@ -29,13 +31,55 @@ function isValidCoord(lat: number, lng: number): boolean {
   return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
 }
 
+/**
+ * Numbered marker styled to match the mockup:
+ * gold fill + dark numeral, ringed by a white outer halo.
+ */
 function numberedDivIcon(n: number) {
   return L.divIcon({
     className: "!m-0 !bg-transparent !border-0",
-    html: `<div style="width:28px;height:28px;border-radius:9999px;background:#2a2a2a;border:2px solid #CBA158;color:#e5e5e5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-family:system-ui,sans-serif;">${n}</div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
+    html: `<div style="width:30px;height:30px;border-radius:9999px;background:#cba158;border:2.5px solid #ffffff;box-shadow:0 2px 6px rgba(0,0,0,0.35);color:#332217;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;font-family:system-ui,sans-serif;">${n}</div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
   });
+}
+
+/**
+ * Watch html[data-theme] + prefers-color-scheme so the tile layer
+ * matches the active theme. Returns "light" or "dark".
+ */
+function useThemeMode(): "light" | "dark" {
+  const [mode, setMode] = useState<"light" | "dark">("dark");
+
+  useEffect(() => {
+    const compute = (): "light" | "dark" => {
+      const attr = document.documentElement.getAttribute("data-theme");
+      if (attr === "light") return "light";
+      if (attr === "dark") return "dark";
+      return window.matchMedia?.("(prefers-color-scheme: light)").matches
+        ? "light"
+        : "dark";
+    };
+
+    setMode(compute());
+
+    const mq = window.matchMedia?.("(prefers-color-scheme: light)");
+    const onMq = () => setMode(compute());
+    mq?.addEventListener?.("change", onMq);
+
+    const obs = new MutationObserver(() => setMode(compute()));
+    obs.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+
+    return () => {
+      mq?.removeEventListener?.("change", onMq);
+      obs.disconnect();
+    };
+  }, []);
+
+  return mode;
 }
 
 function FitRoute({ points }: { points: [number, number][] }) {
@@ -57,6 +101,9 @@ type TripPreviewRouteMapProps = {
 };
 
 export default function TripPreviewRouteMap({ points, className = "" }: TripPreviewRouteMapProps) {
+  const themeMode = useThemeMode();
+  const tileUrl = themeMode === "light" ? LIGHT_TILE : DARK_TILE;
+
   const positions = useMemo(() => {
     return points
       .filter((p) => isValidCoord(p.lat, p.lng))
@@ -81,16 +128,16 @@ export default function TripPreviewRouteMap({ points, className = "" }: TripPrev
   }
 
   return (
-    <div className={`h-full min-h-[280px] w-full overflow-hidden rounded-xl border border-[var(--tott-card-border)] ${className}`}>
+    <div className={`h-full w-full overflow-hidden ${className}`}>
       <MapContainer
         center={center}
         zoom={11}
         className="h-full w-full"
-        style={{ height: "100%", minHeight: 280 }}
+        style={{ height: "100%", width: "100%" }}
         scrollWheelZoom
         attributionControl
       >
-        <TileLayer attribution={TILE_ATTRIB} url={DARK_TILE} />
+        <TileLayer key={tileUrl} attribution={TILE_ATTRIB} url={tileUrl} />
         {linePositions.length >= 2 && (
           <Polyline
             positions={linePositions}
