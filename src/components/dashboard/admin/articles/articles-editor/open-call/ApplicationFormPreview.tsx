@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import type { ApplicationFormField } from "@/services/open-calls.service";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 
-const FIELD_BG = "bg-[#262626]";
-const FIELD_BORDER = "border-[#333333]";
+const FIELD_BG = "bg-[var(--tott-dash-input-bg)]";
+const FIELD_BORDER = "border-[var(--tott-card-border)]";
 const FIELD_RADIUS = "rounded-[7.5px]";
 
 const FIELD_BASE = `w-full ${FIELD_RADIUS} border ${FIELD_BORDER} ${FIELD_BG} px-3 py-2.5 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-400`;
@@ -230,7 +230,7 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
     <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-5">
       <div className="flex flex-col gap-3">
         {(firstName || lastName) ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {firstName ? (
               <FieldWithLabel field={firstName}>{renderField(firstName)}</FieldWithLabel>
             ) : <div />}
@@ -262,7 +262,7 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
         ) : null}
 
         {(country || city) ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {country ? (
               <FieldWithLabel field={country}>{renderField(country)}</FieldWithLabel>
             ) : <div />}
@@ -301,7 +301,7 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
             {/* Sample file row — purely illustrative for the preview. */}
             <div className={`flex items-center justify-between gap-3 ${FIELD_RADIUS} border ${FIELD_BORDER} ${FIELD_BG} px-3 py-2.5`}>
               <div className="flex min-w-0 items-center gap-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-[#3a3a3a] bg-[#1f1f1f] text-gray-400">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] text-gray-400">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                        strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -332,28 +332,27 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
           <label className="mt-1 flex items-center gap-3 text-sm text-gray-300">
             <input
               type="checkbox"
-              className="h-4 w-4 shrink-0 rounded border-gray-500 bg-[#262626] accent-[#C9A96E]"
+              className="h-4 w-4 shrink-0 rounded border-gray-500 bg-[var(--tott-dash-input-bg)] accent-[var(--tott-accent-gold)]"
             />
             <span className="flex-1 text-center">
               I agree to the{" "}
-              <a className="text-[#C9A96E] hover:underline" href="#">terms</a>
+              <a className="text-[var(--tott-accent-gold)] hover:underline" href="#">terms</a>
               {" "}and{" "}
-              <a className="text-[#C9A96E] hover:underline" href="#">privacy policy.</a>
+              <a className="text-[var(--tott-accent-gold)] hover:underline" href="#">privacy policy.</a>
             </span>
           </label>
         ) : null}
 
         <button
           type="button"
-          className="mt-1 w-full rounded-md py-3 text-sm font-medium text-black"
-          style={{ backgroundColor: "#C9A96E" }}
+          className="mt-1 w-full rounded-md bg-[var(--tott-accent-gold)] py-3 text-sm font-medium text-black"
         >
           Submit
         </button>
 
         <p className="mt-1 text-center text-sm text-gray-400">
           Go back to{" "}
-          <a className="text-[#C9A96E] hover:underline" href="#">Home page</a>
+          <a className="text-[var(--tott-accent-gold)] hover:underline" href="#">Home page</a>
         </p>
       </div>
     </ChamferedPanel>

@@ -48,26 +48,34 @@
           "requestFailed": "Request failed",
           "generic": "Something went wrong"
         },
+        "tabs": {
+          "createTrip": "Create Trip",
+          "archive": "Archive"
+        },
         "joinForm": {
           "title": "Join trip form",
           "hint": "Travelers see this on the public trip page. Same field types as open-call applications; reset restores the default join-trip template (name, email, optional message)."
         },
         "sidebar": {
           "previewTrip": "Preview trip",
-          "duplicateTrip": "Duplicate trip",
+          "duplicateTrip": "Duplicate Trip",
+          "resetForm": "Reset Form",
+          "archiveTrip": "Archive Trip",
           "archive": "Archive"
         },
         "footer": {
           "publishNow": "Publish now"
         },
         "summary": {
-          "heading": "Trip summary",
-          "untitled": "Untitled trip",
+          "heading": "Trip Summary",
+          "untitled": "Untitled Trip",
           "title": "Title",
           "route": "Route",
-          "startDate": "Start date",
+          "startDate": "Start Date",
           "duration": "Duration",
           "durationHours": "{hours} h",
+          "durationDays": "{count, plural, one {# day} other {# days}}",
+          "location": "Location",
           "lastStop": "Last stop",
           "price": "Price",
           "placeholder": "—"
@@ -86,12 +94,21 @@
           "addHighlight": "+ Add highlight"
         },
         "details": {
-          "heading": "Trip details",
+          "heading": "Trip Details",
+          "route": "Route",
+          "startLocation": "Start Location",
+          "startLocationPlaceholder": "e.g. London",
+          "endLocation": "End Location",
+          "endLocationPlaceholder": "e.g. Paris",
+          "startDate": "Start Date",
+          "durationDays": "Duration",
+          "durationDaysSuffix": "(days)",
+          "groupSize": "Group Size",
+          "openGroup": "Open Group",
           "category": "Category",
           "categoryRequired": "*",
           "categoryPlaceholder": "e.g., cultural, adventure",
           "difficulty": "Difficulty",
-          "startDate": "Start date",
           "endDate": "End date",
           "durationHours": "Duration (hours)",
           "maxParticipants": "Max participants",
@@ -107,12 +124,17 @@
           "heading": "Pricing",
           "hint": "Minimum contribution only. On the public trip page, travelers use a scale starting at this amount; they can slide higher (no fixed cap in the editor).",
           "minimumPrice": "Minimum price",
-          "currency": "Currency"
+          "price": "Price",
+          "currency": "Currency",
+          "pricePerPerson": "Price per Person",
+          "discountPercent": "Discount %",
+          "optional": "(Optional)"
         },
         "languages": {
           "heading": "Languages",
           "selectLabel": "Select language",
-          "selectPlaceholder": "Select…",
+          "selectPlaceholder": "Select language",
+          "nSelected": "{count} Selected",
           "removeAria": "Remove {label}",
           "labels": {
             "AR": "Arabic",
@@ -125,18 +147,30 @@
           }
         },
         "itinerary": {
-          "heading": "Stops",
+          "heading": "Itinerary Builder",
+          "addLocation": "Add Location",
+          "dayNumber": "Day {number}",
+          "untitledLocation": "Untitled Location",
+          "route": "Route",
+          "locationName": "Location Name",
+          "locationPlaceholder": "e.g. Park ST",
+          "dateLabel": "Date",
+          "timeLabel": "Time",
+          "detailsLabel": "Details",
+          "latitude": "Latitude",
+          "longitude": "Longitude",
+          "descriptionPlaceholder": "What happens in this location",
+          "removeStopAria": "Remove day {number}",
+          "duplicateStopAria": "Duplicate day {number}",
+          "searchPlaceholder": "Search for a place…",
+          "searching": "Searching…",
           "addStop": "+ Add stop",
           "stopNumber": "Stop {number}",
           "stopTitle": "Stop title",
           "stopTitlePlaceholder": "e.g., Jaffa Gate gathering point",
           "description": "Description",
-          "descriptionPlaceholder": "What happens at this stop…",
           "arrivalTime": "Arrival time",
-          "durationMinutes": "Duration (min)",
-          "removeStopAria": "Remove stop {number}",
-          "searchPlaceholder": "Search for a place…",
-          "searching": "Searching…"
+          "durationMinutes": "Duration (min)"
         }
       }
     }

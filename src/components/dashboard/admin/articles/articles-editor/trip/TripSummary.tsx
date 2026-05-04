@@ -1,6 +1,8 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import type { ReactNode } from "react";
+import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import { tripDisplayPriceLabel } from "@/services/trips.service";
 import type { EditorStop } from "./ItineraryBuilder";
 
@@ -72,11 +74,11 @@ type SummaryRowProps = {
 function SummaryRow({ icon, label, value }: SummaryRowProps) {
   return (
     <div>
-      <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+      <div className="flex items-center gap-2 text-sm text-foreground">
         <span className="text-gray-400">{icon}</span>
         {label}
       </div>
-      <p className="mt-0.5 pl-6 text-xs text-gray-500">{value}</p>
+      <p className="mt-0.5 pl-6 text-xs text-gray-500">{value || "---"}</p>
     </div>
   );
 }
@@ -84,19 +86,30 @@ function SummaryRow({ icon, label, value }: SummaryRowProps) {
 type TripSummaryProps = {
   title: string;
   startDate: string;
+  /** Trip duration in days (preferred). Falls back to `durationHours / 24` if omitted. */
+  durationDays?: number;
   durationHours: number;
   price: string;
   currency: string;
   stops: EditorStop[];
+  /** Start/end location overrides (new Trip Details model). */
+  startLocation?: string;
+  endLocation?: string;
+  /** Action buttons rendered below a divider, inside the same chamfered card. */
+  actions?: ReactNode;
 };
 
 export function TripSummary({
   title,
   startDate,
+  durationDays,
   durationHours,
   price,
   currency,
   stops,
+  startLocation,
+  endLocation,
+  actions,
 }: TripSummaryProps) {
   const t = useTranslations("Dashboard.trips.editor.summary");
   const locale = useLocale();
@@ -131,42 +144,48 @@ export function TripSummary({
         })
       : t("placeholder");
 
+  // The design renders empty values as "---" so the row spacing stays
+  // consistent before the user has entered anything.
+  const titleValue = title.trim() || t("untitled");
+  // Prefer the new start/end location pair; fall back to itinerary stop names.
+  const routeFromLocations =
+    [startLocation?.trim(), endLocation?.trim()]
+      .filter((s): s is string => Boolean(s))
+      .join(" → ") || "";
+  const routeValue = routeFromLocations || (shortNames.length > 0 ? shortNames.join(" → ") : "");
+  const dateValue = startDate ? dateDisplay : "";
+  const locationValue =
+    (endLocation?.trim() || "") ||
+    (namedStops.length > 0 ? lastStop : "");
+  const priceValue = priceNum > 0 ? priceDisplay : "";
+  // Duration display: show days when available, otherwise convert hours.
+  const days = durationDays ?? Math.round(durationHours / 24);
+  const durationValue = days > 0 ? t("durationDays", { count: days }) : "";
+  // routeDisplay is computed for backward-compat with the previous prop
+  // signature but we now key off the empty-checks above.
+  void routeDisplay;
+  void lastStop;
+
+
   return (
-    <div className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] p-4">
-      <h3 className="mb-4 text-base font-bold italic text-foreground">{t("heading")}</h3>
+    <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-4">
+      <h3 className="mb-4 text-base font-bold text-foreground">{t("heading")}</h3>
 
       <div className="flex flex-col gap-3">
-        <SummaryRow
-          icon={<DocIcon />}
-          label={t("title")}
-          value={title.trim() || t("untitled")}
-        />
-        <SummaryRow
-          icon={<RouteIcon />}
-          label={t("route")}
-          value={routeDisplay}
-        />
-        <SummaryRow
-          icon={<CalendarIcon />}
-          label={t("startDate")}
-          value={dateDisplay}
-        />
-        <SummaryRow
-          icon={<ClockIcon />}
-          label={t("duration")}
-          value={t("durationHours", { hours: durationHours })}
-        />
-        <SummaryRow
-          icon={<LocationIcon />}
-          label={t("lastStop")}
-          value={lastStop}
-        />
-        <SummaryRow
-          icon={<DollarIcon />}
-          label={t("price")}
-          value={priceDisplay}
-        />
+        <SummaryRow icon={<DocIcon />} label={t("title")} value={titleValue} />
+        <SummaryRow icon={<RouteIcon />} label={t("route")} value={routeValue} />
+        <SummaryRow icon={<CalendarIcon />} label={t("startDate")} value={dateValue} />
+        <SummaryRow icon={<ClockIcon />} label={t("duration")} value={durationValue} />
+        <SummaryRow icon={<LocationIcon />} label={t("location")} value={locationValue} />
+        <SummaryRow icon={<DollarIcon />} label={t("price")} value={priceValue} />
       </div>
-    </div>
+
+      {actions ? (
+        <>
+          <hr className="my-4 border-[var(--tott-card-border)]" />
+          <div className="flex flex-col gap-2">{actions}</div>
+        </>
+      ) : null}
+    </ChamferedPanel>
   );
 }

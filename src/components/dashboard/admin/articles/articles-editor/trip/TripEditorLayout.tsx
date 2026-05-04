@@ -14,8 +14,6 @@ import { TripLanguages } from "./TripLanguages";
 import { ItineraryBuilder, emptyEditorStop, editorStopsToTripStops, type EditorStop } from "./ItineraryBuilder";
 import { TripSummary } from "./TripSummary";
 import { TripPreviewModal } from "./TripPreviewModal";
-import { isEndDatetimeBeforeStart } from "@/lib/datetime-local";
-import { ApplicationFormBuilder } from "../open-call/ApplicationFormBuilder";
 import {
   DEFAULT_TRIP_BOOKING_FORM_FIELDS,
   createTrip,
@@ -60,15 +58,29 @@ export function TripEditorLayout() {
   // Trip details
   const [category, setCategory] = useState("");
   const [difficulty, setDifficulty] = useState("moderate");
+  const [startLocation, setStartLocation] = useState("");
+  const [endLocation, setEndLocation] = useState("");
   const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [durationHours, setDurationHours] = useState(8);
-  const [maxParticipants, setMaxParticipants] = useState(15);
-  const [minParticipants, setMinParticipants] = useState(0);
+  const [durationDays, setDurationDays] = useState(1);
+  const [groupSize, setGroupSize] = useState(15);
+  const [openGroup, setOpenGroup] = useState(true);
+  // Hours version for the API; the UI works in days for the new design.
+  const durationHours = durationDays * 24;
+  // End date derived from start date + duration so the API still gets it.
+  const endDate = (() => {
+    if (!startDate) return "";
+    const d = new Date(startDate);
+    if (Number.isNaN(d.getTime())) return "";
+    d.setDate(d.getDate() + Math.max(0, durationDays - 1));
+    return d.toISOString().slice(0, 10);
+  })();
+  const minParticipants = openGroup ? 0 : groupSize;
 
   // Pricing (`price` in API = minimum contribution; join form scales upward from here in the UI)
   const [price, setPrice] = useState("");
   const [currency, setCurrency] = useState("USD");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [discount, setDiscount] = useState("");
 
   // Languages
   const [languages, setLanguages] = useState<string[]>(["EN"]);
@@ -91,13 +103,43 @@ export function TripEditorLayout() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const handleResetForm = useCallback(() => {
+    setTitle("");
+    setModeratorName("");
+    setDescription("");
+    setHighlights([""]);
+    setCategory("");
+    setDifficulty("moderate");
+    setStartLocation("");
+    setEndLocation("");
+    setStartDate("");
+    setDurationDays(1);
+    setGroupSize(15);
+    setOpenGroup(true);
+    setPrice("");
+    setCurrency("USD");
+    setMaxPrice("");
+    setDiscount("");
+    setLanguages(["EN"]);
+    setTags([]);
+    setStops([emptyEditorStop()]);
+    setBookingFormFields(
+      DEFAULT_TRIP_BOOKING_FORM_FIELDS.map((f) => JSON.parse(JSON.stringify(f))),
+    );
+    setError(null);
+  }, []);
+
   const buildRouteSummary = useCallback((): string => {
+    const parts: string[] = [];
+    if (startLocation.trim()) parts.push(startLocation.trim());
+    if (endLocation.trim()) parts.push(endLocation.trim());
+    if (parts.length) return parts.join(" \u2192 ");
     return stops
       .map((s) => (s.title.trim() || s.locationName.trim()))
       .filter(Boolean)
       .map((n) => n.split(",")[0]!.trim())
       .join(" \u2192 ");
-  }, [stops]);
+  }, [stops, startLocation, endLocation]);
 
   const buildPayload = useCallback(
     (status: "draft" | "published"): CreateTripPayload => {
@@ -111,7 +153,7 @@ export function TripEditorLayout() {
         end_date: endDate ? new Date(endDate).toISOString() : undefined,
         price: price || "0",
         currency,
-        max_participants: maxParticipants,
+        max_participants: groupSize,
         min_participants: minParticipants || undefined,
         status,
         difficulty,
@@ -125,16 +167,10 @@ export function TripEditorLayout() {
     },
     [
       title, description, category, buildRouteSummary,
-      startDate, endDate, price, currency, maxParticipants, minParticipants,
+      startDate, endDate, price, currency, groupSize, minParticipants,
       difficulty, durationHours, tags, languages, highlights, moderatorName, stops,
     ],
   );
-
-  const handleStartDateChange = useCallback((v: string) => {
-    setStartDate(v);
-    if (!v) return;
-    setEndDate((prev) => (prev && isEndDatetimeBeforeStart(prev, v) ? v : prev));
-  }, []);
 
   const validateBeforeSubmit = useCallback(() => {
     if (!title.trim()) return t("validation.titleRequired");
@@ -221,7 +257,7 @@ export function TripEditorLayout() {
           startDate,
           endDate,
           durationHours,
-          maxParticipants,
+          maxParticipants: groupSize,
           minParticipants,
           price,
           currency,
@@ -232,9 +268,9 @@ export function TripEditorLayout() {
         }}
       />
 
-      <div className="flex flex-1 gap-6 overflow-hidden">
+      <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
         {/* Main column */}
-        <div className="min-w-0 flex-1 space-y-6 overflow-y-auto">
+        <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
           <TripBasicInfo
             title={title}
             onTitleChange={setTitle}
@@ -247,20 +283,18 @@ export function TripEditorLayout() {
           />
 
           <TripDetailsSection
-            category={category}
-            onCategoryChange={setCategory}
-            difficulty={difficulty}
-            onDifficultyChange={setDifficulty}
+            startLocation={startLocation}
+            onStartLocationChange={setStartLocation}
+            endLocation={endLocation}
+            onEndLocationChange={setEndLocation}
             startDate={startDate}
-            onStartDateChange={handleStartDateChange}
-            endDate={endDate}
-            onEndDateChange={setEndDate}
-            durationHours={durationHours}
-            onDurationHoursChange={setDurationHours}
-            maxParticipants={maxParticipants}
-            onMaxParticipantsChange={setMaxParticipants}
-            minParticipants={minParticipants}
-            onMinParticipantsChange={setMinParticipants}
+            onStartDateChange={setStartDate}
+            durationDays={durationDays}
+            onDurationDaysChange={setDurationDays}
+            groupSize={groupSize}
+            onGroupSizeChange={setGroupSize}
+            openGroup={openGroup}
+            onOpenGroupChange={setOpenGroup}
           />
 
           <TripPricing
@@ -268,6 +302,10 @@ export function TripEditorLayout() {
             onMinPriceChange={setPrice}
             currency={currency}
             onCurrencyChange={setCurrency}
+            maxPrice={maxPrice}
+            onMaxPriceChange={setMaxPrice}
+            discount={discount}
+            onDiscountChange={setDiscount}
           />
 
           <TripLanguages
@@ -280,49 +318,60 @@ export function TripEditorLayout() {
             onChange={setStops}
           />
 
-          <section className="rounded-lg border border-[var(--tott-card-border)] p-4 space-y-4">
-            <h3 className="text-sm font-bold text-foreground">{t("joinForm.title")}</h3>
-            <p className="text-xs text-gray-500">{t("joinForm.hint")}</p>
-            <ApplicationFormBuilder
-              fields={bookingFormFields}
-              onChange={setBookingFormFields}
-              defaultTemplateFields={DEFAULT_TRIP_BOOKING_FORM_FIELDS}
-            />
-          </section>
         </div>
 
         {/* Sidebar */}
-        <aside className="flex w-64 shrink-0 flex-col gap-4 overflow-y-auto">
+        <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-64 lg:overflow-y-auto">
           <TripSummary
             title={title}
             startDate={startDate}
+            durationDays={durationDays}
             durationHours={durationHours}
             price={price}
             currency={currency}
             stops={stops}
+            startLocation={startLocation}
+            endLocation={endLocation}
+            actions={
+              <>
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--tott-dash-control-bg)] py-2.5 text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <rect x="9" y="9" width="13" height="13" rx="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  {t("sidebar.duplicateTrip")}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetForm}
+                  className="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--tott-dash-control-bg)] py-2.5 text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
+                >
+                  <svg width="16" height="14" viewBox="0 0 28 24" fill="none" stroke="currentColor"
+                       strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M20.6107 12.8684C20.4534 14.0683 19.9723 15.2028 19.2192 16.1502C18.4661 17.0975 17.4693 17.822 16.3357 18.2459C15.2021 18.6698 13.9745 18.7771 12.7846 18.5564C11.5947 18.3356 10.4873 17.7951 9.58118 16.9928C8.67509 16.1905 8.00448 15.1567 7.64128 14.0022C7.27808 12.8478 7.23599 11.6162 7.51952 10.4397C7.80305 9.26314 8.4015 8.18595 9.2507 7.32367C10.0999 6.46138 11.1678 5.84653 12.3399 5.54504C15.5891 4.7117 18.9524 6.3842 20.1941 9.50087M20.6666 5.33421V9.50087H16.4999" />
+                  </svg>
+                  {t("sidebar.resetForm")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewOpen(true)}
+                  className="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--tott-dash-control-bg)] py-2.5 text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <rect x="2" y="3" width="20" height="5" rx="1" />
+                    <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8" />
+                    <line x1="10" y1="12" x2="14" y2="12" />
+                  </svg>
+                  {t("sidebar.archiveTrip")}
+                </button>
+              </>
+            }
           />
-
-          <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={() => setPreviewOpen(true)}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#CBA158]/30 bg-[#CBA158]/10 py-2 text-sm font-medium text-[#CBA158] transition-colors hover:bg-[#CBA158]/20"
-            >
-              {t("sidebar.previewTrip")}
-            </button>
-            <button
-              type="button"
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-2 text-sm text-gray-400 hover:text-foreground"
-            >
-              {t("sidebar.duplicateTrip")}
-            </button>
-            <button
-              type="button"
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-2 text-sm text-gray-400 hover:text-foreground"
-            >
-              {t("sidebar.archive")}
-            </button>
-          </div>
         </aside>
       </div>
 

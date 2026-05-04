@@ -1,17 +1,15 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { GripIcon, TrashIcon } from "../ArticleEditorIcons";
+import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import type { TripStop } from "@/services/trips.service";
 
 const LocationMapPicker = dynamic(() => import("./LocationMapPicker"), { ssr: false });
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500";
-
-const DRAG_MIME = "application/x-tott-itinerary-idx";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500";
 
 /** Flat editor shape — easier to bind to inputs than nested TripStop */
 export type EditorStop = {
@@ -61,159 +59,209 @@ export function editorStopsToTripStops(stops: EditorStop[]): TripStop[] {
 type StopEntryProps = {
   stop: EditorStop;
   index: number;
-  expanded: boolean;
-  onToggle: () => void;
   onChange: (patch: Partial<EditorStop>) => void;
   onRemove: () => void;
-  isDragging: boolean;
-  isDragOver: boolean;
-  onDragStart: (e: React.DragEvent) => void;
-  onDragOver: (e: React.DragEvent) => void;
-  onDrop: (e: React.DragEvent) => void;
-  onDragEnd: () => void;
 };
 
-function StopEntry({
-  stop,
-  index,
-  expanded,
-  onToggle,
-  onChange,
-  onRemove,
-  isDragging,
-  isDragOver,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onDragEnd,
-}: StopEntryProps) {
+/** Splits an ISO datetime-local value (`YYYY-MM-DDTHH:mm`) into separate date and time parts. */
+function splitDateTime(value: string): { date: string; time: string } {
+  if (!value) return { date: "", time: "" };
+  const [date = "", time = ""] = value.split("T");
+  return { date, time };
+}
+
+function joinDateTime(date: string, time: string): string {
+  if (!date && !time) return "";
+  if (!time) return `${date}T00:00`;
+  if (!date) return "";
+  return `${date}T${time}`;
+}
+
+function StopEntry({ stop, index, onChange, onRemove }: StopEntryProps) {
   const t = useTranslations("Dashboard.trips.editor.itinerary");
+  const { date, time } = splitDateTime(stop.arrivalTime);
+
+  const stopName = stop.title.trim() || stop.locationName.trim() || t("untitledLocation");
+
   return (
-    <div
-      onDragOver={onDragOver}
-      onDrop={onDrop}
-      className={`rounded-lg border bg-[var(--tott-dash-input-bg)] transition-all ${
-        isDragOver
-          ? "border-[#C9A96E]"
-          : isDragging
-            ? "border-dashed border-gray-500 opacity-50"
-            : "border-[var(--tott-card-border)]"
-      }`}
-    >
-      <div className="flex items-center gap-2 px-3 py-2">
-        <span
-          draggable
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          className="cursor-grab text-gray-500 hover:text-gray-300"
-        >
-          <GripIcon />
-        </span>
-        <button
-          type="button"
-          onClick={onToggle}
-          className="flex flex-1 items-center gap-2 text-left text-sm text-foreground"
-        >
-          <span className="font-medium">
-            {stop.title.trim() || stop.locationName.trim() || t("stopNumber", { number: index + 1 })}
-          </span>
-          <svg
-            width={12}
-            height={12}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            className={`ml-auto transition-transform ${expanded ? "rotate-180" : ""}`}
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          onClick={onRemove}
-          className="text-gray-500 hover:text-red-400"
-          aria-label={t("removeStopAria", { number: index + 1 })}
-        >
-          <TrashIcon />
-        </button>
-      </div>
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
+      {/* Left: stop fields card — same chamfered shape as the outer panel */}
+      <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-4">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <p className="flex items-center gap-2 text-sm">
+            <span className="text-gray-400">{t("dayNumber", { number: index + 1 })}</span>
+            <span className="truncate font-semibold text-foreground">{stopName}</span>
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-label={t("duplicateStopAria", { number: index + 1 })}
+              className="text-gray-400 transition-colors hover:text-foreground"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={onRemove}
+              aria-label={t("removeStopAria", { number: index + 1 })}
+              className="text-red-400 transition-colors hover:text-red-300"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+            </button>
+          </div>
+        </div>
 
-      {expanded && (
-        <div className="space-y-3 border-t border-[var(--tott-card-border)] px-3 py-3">
-          <div className="flex gap-4">
-            <div className="min-w-0 flex-1 space-y-3">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-gray-400">{t("stopTitle")}</label>
+        <hr className="mb-3 border-[var(--tott-card-border)]" />
+        <p className="mb-3 text-sm text-gray-400">{t("route")}</p>
+
+        <div className="space-y-3">
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
+              {t("locationName")}
+            </label>
+            <input
+              type="text"
+              value={stop.locationName}
+              onChange={(e) => onChange({ locationName: e.target.value, title: e.target.value })}
+              placeholder={t("locationPlaceholder")}
+              className={inputClass}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">
+                {t("dateLabel")}
+              </label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => onChange({ arrivalTime: joinDateTime(e.target.value, time) })}
+                placeholder="dd/mm/yyyy"
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">
+                {t("timeLabel")}
+              </label>
+              <div className="relative">
                 <input
-                  type="text"
-                  value={stop.title}
-                  onChange={(e) => onChange({ title: e.target.value })}
-                  placeholder={t("stopTitlePlaceholder")}
-                  className={inputClass}
+                  type="time"
+                  value={time}
+                  onChange={(e) => onChange({ arrivalTime: joinDateTime(date, e.target.value) })}
+                  className={`${inputClass} pr-9 [&::-webkit-calendar-picker-indicator]:opacity-0`}
                 />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-xs font-medium text-gray-400">{t("description")}</label>
-                <textarea
-                  value={stop.description}
-                  onChange={(e) => onChange({ description: e.target.value })}
-                  placeholder={t("descriptionPlaceholder")}
-                  rows={3}
-                  className={inputClass}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-400">
-                    {t("arrivalTime")}
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={stop.arrivalTime}
-                    onChange={(e) => onChange({ arrivalTime: e.target.value })}
-                    className={inputClass}
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-400">
-                    {t("durationMinutes")}
-                  </label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={stop.durationMinutes}
-                    onChange={(e) => onChange({ durationMinutes: Number(e.target.value) || 0 })}
-                    className={inputClass}
-                  />
-                </div>
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </span>
               </div>
             </div>
+          </div>
 
-            <div className="w-52 shrink-0">
-              <LocationMapPicker
-                latitude={stop.latitude}
-                longitude={stop.longitude}
-                searchPlaceholder={t("searchPlaceholder")}
-                searchingLabel={t("searching")}
-                onLocationSelect={(sel) => {
-                  const patch: Partial<EditorStop> = {
-                    latitude: sel.latitude,
-                    longitude: sel.longitude,
-                  };
-                  if (sel.name) {
-                    patch.locationName = sel.name;
-                    patch.title = sel.name.split(",")[0]!.trim();
-                  }
-                  onChange(patch);
-                }}
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
+              {t("detailsLabel")}
+            </label>
+            <textarea
+              value={stop.description}
+              onChange={(e) => onChange({ description: e.target.value })}
+              placeholder={t("descriptionPlaceholder")}
+              rows={3}
+              className={inputClass}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">
+                {t("latitude")}
+              </label>
+              <input
+                type="number"
+                step="any"
+                value={stop.latitude}
+                onChange={(e) => onChange({ latitude: e.target.value })}
+                placeholder="33.33.11"
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">
+                {t("longitude")}
+              </label>
+              <input
+                type="number"
+                step="any"
+                value={stop.longitude}
+                onChange={(e) => onChange({ longitude: e.target.value })}
+                placeholder="-7.88.88"
+                className={inputClass}
               />
             </div>
           </div>
         </div>
-      )}
+      </ChamferedPanel>
+
+      {/* Right: map preview */}
+      <div className="h-[260px] overflow-hidden rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] lg:h-auto">
+        <LocationMapPicker
+          latitude={stop.latitude}
+          longitude={stop.longitude}
+          searchPlaceholder={t("searchPlaceholder")}
+          searchingLabel={t("searching")}
+          onLocationSelect={(sel) => {
+            const patch: Partial<EditorStop> = {
+              latitude: sel.latitude,
+              longitude: sel.longitude,
+            };
+            if (sel.name) {
+              patch.locationName = sel.name;
+              patch.title = sel.name.split(",")[0]!.trim();
+            }
+            onChange(patch);
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -223,111 +271,92 @@ type ItineraryBuilderProps = {
   onChange: (stops: EditorStop[]) => void;
 };
 
+function MapPinIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
 export function ItineraryBuilder({ stops, onChange }: ItineraryBuilderProps) {
   const t = useTranslations("Dashboard.trips.editor.itinerary");
-  const [expandedIdx, setExpandedIdx] = useState<number | null>(stops.length > 0 ? 0 : null);
-  const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
-  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
 
   const addStop = useCallback(() => {
-    const next = [...stops, emptyEditorStop()];
-    onChange(next);
-    setExpandedIdx(next.length - 1);
+    onChange([...stops, emptyEditorStop()]);
   }, [stops, onChange]);
 
   const removeStop = useCallback(
     (idx: number) => {
       onChange(stops.filter((_, i) => i !== idx));
-      if (expandedIdx === idx) setExpandedIdx(null);
     },
-    [stops, onChange, expandedIdx]
+    [stops, onChange],
   );
 
   const updateStop = useCallback(
     (idx: number, patch: Partial<EditorStop>) => {
       onChange(stops.map((s, i) => (i === idx ? { ...s, ...patch } : s)));
     },
-    [stops, onChange]
+    [stops, onChange],
   );
-
-  const reorder = useCallback(
-    (from: number, to: number) => {
-      if (from === to) return;
-      const next = [...stops];
-      const [item] = next.splice(from, 1);
-      next.splice(to, 0, item!);
-      onChange(next);
-      if (expandedIdx === from) setExpandedIdx(to);
-    },
-    [stops, onChange, expandedIdx]
-  );
-
-  const handleDragStart = useCallback(
-    (idx: number) => (e: React.DragEvent) => {
-      setDraggingIdx(idx);
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData(DRAG_MIME, String(idx));
-    },
-    []
-  );
-
-  const handleDragOver = useCallback(
-    (idx: number) => (e: React.DragEvent) => {
-      if (!e.dataTransfer.types.includes(DRAG_MIME)) return;
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "move";
-      setDragOverIdx(idx);
-    },
-    []
-  );
-
-  const handleDrop = useCallback(
-    (idx: number) => (e: React.DragEvent) => {
-      e.preventDefault();
-      const from = Number(e.dataTransfer.getData(DRAG_MIME));
-      if (!Number.isNaN(from)) reorder(from, idx);
-      setDraggingIdx(null);
-      setDragOverIdx(null);
-    },
-    [reorder]
-  );
-
-  const handleDragEnd = useCallback(() => {
-    setDraggingIdx(null);
-    setDragOverIdx(null);
-  }, []);
 
   return (
-    <section className="rounded-lg border border-[var(--tott-card-border)] p-4 space-y-4">
-      <h3 className="text-sm font-bold text-foreground">{t("heading")}</h3>
+    <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-5">
+      <h3 className="mb-4 flex items-center gap-2 text-sm font-bold text-foreground">
+        <span className="text-gray-400">
+          <MapPinIcon />
+        </span>
+        {t("heading")}
+      </h3>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {stops.map((stop, i) => (
           <StopEntry
             key={i}
             stop={stop}
             index={i}
-            expanded={expandedIdx === i}
-            onToggle={() => setExpandedIdx(expandedIdx === i ? null : i)}
             onChange={(patch) => updateStop(i, patch)}
             onRemove={() => removeStop(i)}
-            isDragging={draggingIdx === i}
-            isDragOver={dragOverIdx === i}
-            onDragStart={handleDragStart(i)}
-            onDragOver={handleDragOver(i)}
-            onDrop={handleDrop(i)}
-            onDragEnd={handleDragEnd}
           />
         ))}
-      </div>
 
-      <button
-        type="button"
-        onClick={addStop}
-        className="w-full rounded-lg border border-dashed border-[var(--tott-card-border)] py-2.5 text-sm text-gray-400 hover:border-gray-400 hover:text-foreground"
-      >
-        {t("addStop")}
-      </button>
-    </section>
+        {/* Match the stop-card's column width (not the full outer panel) by
+            sitting in the same grid track that StopEntry uses. */}
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
+          <button
+            type="button"
+            onClick={addStop}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-3 text-sm text-gray-300 transition-colors hover:bg-[var(--tott-dash-control-bg)] hover:text-foreground"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            {t("addLocation")}
+          </button>
+        </div>
+      </div>
+    </ChamferedPanel>
   );
 }

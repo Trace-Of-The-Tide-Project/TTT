@@ -17,7 +17,7 @@ import {
 // Field tokens are pulled straight from the Figma source SVG so the dark
 // surfaces match exactly (#262626 fill, #333 stroke, 7.5px radius).
 const FIELD_BASE =
-  "w-full rounded-[7.5px] border border-[#333333] bg-[#262626] px-3 py-2.5 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-400";
+  "w-full rounded-[7.5px] border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2.5 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-400";
 
 const SELECT_BASE = `${FIELD_BASE} appearance-none pr-9 text-gray-300`;
 
@@ -209,7 +209,7 @@ export function ContentSettings({
                 return (
                   <span
                     key={id}
-                    className="inline-flex max-w-full items-center gap-1.5 rounded-md bg-[#333333] px-2.5 py-1 text-xs text-foreground"
+                    className="inline-flex max-w-full items-center gap-1.5 rounded-md bg-[var(--tott-dash-control-bg)] px-2.5 py-1 text-xs text-foreground"
                   >
                     <span className="truncate" title={id}>
                       {name}
@@ -286,7 +286,7 @@ export function ContentSettings({
         <div>
           <SectionLabel icon={<SettingsIcon />}>{t("seo.label")}</SectionLabel>
           <div className="space-y-2.5">
-            <div className="rounded-[7.5px] border border-[#333333] bg-[#262626] px-3 py-2.5">
+            <div className="rounded-[7.5px] border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2.5">
               <p className="truncate text-sm text-foreground">
                 {seoTitle.trim() || t("seo.previewTitlePlaceholder")}
               </p>

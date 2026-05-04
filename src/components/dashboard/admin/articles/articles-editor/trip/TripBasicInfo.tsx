@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
+import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 
 const inputClass =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500";
@@ -47,10 +48,11 @@ export function TripBasicInfo({
   );
 
   return (
-    <section className="rounded-lg border border-[var(--tott-card-border)] p-4 space-y-4">
-      <h3 className="text-sm font-bold text-foreground">{t("heading")}</h3>
+    <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-5">
+      <h3 className="mb-4 text-sm font-bold text-foreground">{t("heading")}</h3>
+      <div className="space-y-4">
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label className="mb-1.5 block text-xs font-medium text-gray-400">
             {t("tripTitle")}
@@ -126,6 +128,7 @@ export function TripBasicInfo({
           {t("addHighlight")}
         </button>
       </div>
-    </section>
+      </div>
+    </ChamferedPanel>
   );
 }
