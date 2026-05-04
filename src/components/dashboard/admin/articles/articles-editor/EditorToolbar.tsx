@@ -70,7 +70,7 @@ function HighlightSquareIcon({ color }: { color: string }) {
       />
       <path
         d="M371.41 42C371.935 42 372.197 42.5678 371.826 42.8999L367.417 46.8456C367.187 47.0515 366.813 47.0515 366.583 46.8456L362.174 42.8999C361.803 42.5678 362.065 42 362.59 42L371.41 42Z"
-        fill="#A3A3A3"
+        fill="currentColor"
       />
     </svg>
   );
@@ -206,7 +206,7 @@ function Popover({
     <div ref={ref} className="relative shrink-0">
       {trigger(open, () => setOpen((o) => !o))}
       {open ? (
-        <div className="absolute left-0 top-full z-30 mt-1 max-h-[320px] min-w-[160px] overflow-y-auto rounded-md border border-[var(--tott-card-border)] bg-[#1f1f1f] py-1 shadow-lg">
+        <div className="absolute left-0 top-full z-30 mt-1 max-h-[320px] min-w-[160px] overflow-y-auto rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] py-1 shadow-lg">
           {children(() => setOpen(false))}
         </div>
       ) : null}
@@ -228,8 +228,8 @@ function PopoverItem({
       type="button"
       onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
-      className={`block w-full px-3 py-1.5 text-left text-xs transition-colors hover:bg-white/5 ${
-        active ? "text-foreground" : "text-[#A3A3A3]"
+      className={`block w-full px-3 py-1.5 text-left text-xs transition-colors hover:bg-[var(--tott-dash-ghost-hover)] ${
+        active ? "text-foreground" : "text-[var(--tott-muted)]"
       }`}
     >
       {children}
@@ -263,7 +263,7 @@ function ToolbarButton({
       className={`flex h-8 w-8 shrink-0 items-center justify-center rounded transition-colors disabled:opacity-40 disabled:hover:bg-transparent ${
         active
           ? "bg-white/10 text-foreground"
-          : "text-[#A3A3A3] hover:bg-white/5 hover:text-foreground"
+          : "text-[var(--tott-muted)] hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
       }`}
     >
       {children}
@@ -335,7 +335,7 @@ export function EditorToolbar() {
     <div
       role="toolbar"
       aria-label="Text formatting"
-      className="flex w-full flex-wrap items-center justify-between gap-y-2 rounded-md bg-[#333333] px-3 py-3"
+      className="flex w-full flex-wrap items-center justify-between gap-y-2 rounded-md bg-[var(--tott-dash-control-bg)] px-3 py-3"
     >
       <ToolbarButton
         label="Undo"
@@ -361,7 +361,7 @@ export function EditorToolbar() {
             aria-expanded={open}
             onMouseDown={(e) => e.preventDefault()}
             onClick={toggle}
-            className="flex h-6 shrink-0 items-center gap-2 rounded bg-[#F4F4F5] px-2 text-xs font-medium text-[#A3A3A3] transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="flex h-6 shrink-0 items-center gap-2 rounded bg-[var(--tott-dash-input-bg)] px-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             <span>{currentFont}</span>
             <FontPickerCaret />
@@ -432,7 +432,7 @@ export function EditorToolbar() {
       </label>
 
       <label className="relative shrink-0 cursor-pointer" aria-label="Text color">
-        <span className="flex h-8 w-8 items-center justify-center text-[#A3A3A3] transition-colors hover:text-foreground">
+        <span className="flex h-8 w-8 items-center justify-center text-[var(--tott-muted)] transition-colors hover:text-foreground">
           <TextColorIcon />
         </span>
         <input
@@ -456,7 +456,7 @@ export function EditorToolbar() {
             aria-expanded={open}
             onMouseDown={(e) => e.preventDefault()}
             onClick={toggle}
-            className="flex h-8 items-center justify-center rounded px-1 text-[#A3A3A3] transition-colors hover:bg-white/5 hover:text-foreground disabled:opacity-40"
+            className="flex h-8 items-center justify-center rounded px-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground disabled:opacity-40"
           >
             <ListWithCaretIcon />
           </button>

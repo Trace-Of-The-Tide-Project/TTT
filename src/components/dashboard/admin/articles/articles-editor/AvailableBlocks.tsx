@@ -167,9 +167,9 @@ export function AvailableBlocks({
             key={block.id}
             type="button"
             onClick={() => onAddBlock(block.id)}
-            className="group flex items-center justify-between gap-3 rounded-lg border border-[#333333] bg-[#262626] px-3 py-2 text-left transition-colors hover:border-[#7B7B7B] hover:bg-[#2c2c2c]"
+            className="group flex items-center justify-between gap-3 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] px-3 py-2 text-left transition-colors hover:border-[var(--tott-muted)] hover:bg-[var(--tott-elevated-hover)]"
           >
-            <div className="flex items-center gap-2 text-[#7B7B7B] group-hover:text-foreground">
+            <div className="flex items-center gap-2 text-[var(--tott-muted)] group-hover:text-foreground">
               <span className="shrink-0">{block.icon}</span>
               <span className="text-sm font-medium">
                 {block.id === "image" && imageBlockLabel?.trim()
@@ -177,7 +177,7 @@ export function AvailableBlocks({
                   : t(`palette.${block.id}`)}
               </span>
             </div>
-            <span className="shrink-0 text-[#7B7B7B] group-hover:text-foreground">
+            <span className="shrink-0 text-[var(--tott-muted)] group-hover:text-foreground">
               <PlusTrailingIcon />
             </span>
           </button>

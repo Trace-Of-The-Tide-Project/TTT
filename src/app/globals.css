@@ -472,7 +472,8 @@ a,
   float: left;
   height: 0;
   pointer-events: none;
-  color: var(--color-foreground);
+  color: var(--tott-muted);
+  opacity: 0.7;
 }
 
 /* Tighten the rendered paragraph height — the default `<p>` margin (~16px

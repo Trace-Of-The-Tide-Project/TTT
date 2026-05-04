@@ -134,7 +134,7 @@ function PanelDragIcon() {
       height="20"
       viewBox="14 18 12 19"
       fill="none"
-      stroke="#A3A3A3"
+      stroke="currentColor"
       strokeWidth={1.5}
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -157,7 +157,7 @@ function PanelCopyIcon() {
       height="20"
       viewBox="10 50 20 20"
       fill="none"
-      stroke="#A3A3A3"
+      stroke="currentColor"
       strokeWidth={1.5}
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -175,7 +175,7 @@ function PanelTrashIcon() {
       height="20"
       viewBox="11 82 18 20"
       fill="none"
-      stroke="#A3A3A3"
+      stroke="currentColor"
       strokeWidth={1.5}
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -206,7 +206,7 @@ function BlockActions({
 }) {
   return (
     <div
-      className="flex h-[120px] w-10 shrink-0 flex-col items-center justify-around self-start rounded-lg bg-[#333333]"
+      className="flex h-[120px] w-10 shrink-0 flex-col items-center justify-around self-start rounded-lg bg-[var(--tott-dash-control-bg)] text-[var(--tott-muted)]"
       style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)" }}
     >
       <div
