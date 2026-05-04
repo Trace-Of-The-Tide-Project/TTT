@@ -143,6 +143,27 @@ export async function createContribution(formData: FormData): Promise<CreatedCon
   return data.data;
 }
 
+/** Delete a contribution by ID. */
+export async function deleteContribution(id: string): Promise<void> {
+  await api.delete(`/contributions/${encodeURIComponent(id)}`);
+}
+
+/** Possible status values that the backend accepts for a contribution. */
+export type ContributionStatusValue =
+  | "pending"
+  | "published"
+  | "archived"
+  | "rejected"
+  | "draft";
+
+/** Update a contribution's status (used for archive / publish / reject). */
+export async function updateContributionStatus(
+  id: string,
+  status: ContributionStatusValue,
+): Promise<void> {
+  await api.patch(`/contributions/${encodeURIComponent(id)}/status`, { status });
+}
+
 /**
  * Append a `files` multipart part: **full file bytes** (same as POST /upload) and the part
  * **filename** set to the storage key from that upload (e.g. `images/….png`). A 1-byte placeholder

@@ -34,6 +34,23 @@ export function AuthedContributionImage({ path, alt = "", className }: AuthedCon
       return;
     }
 
+    // Storage bucket keys (`contributions/…`, `images/…`) are NOT API routes —
+    // they live in the public GCS bucket. Routing them through the API proxy
+    // hits the JSON CRUD handler instead of a file, so resolve them straight
+    // to the bucket URL.
+    const isBucketKey = /^(contributions|images)\//i.test(raw);
+    if (isBucketKey) {
+      const abs = resolveArticleMediaSrc(raw);
+      if (abs) {
+        setSrc(abs);
+        setStatus("ready");
+      } else {
+        setSrc(null);
+        setStatus("error");
+      }
+      return;
+    }
+
     let objectUrl: string | null = null;
     const ac = new AbortController();
     setStatus("loading");
@@ -91,16 +108,41 @@ export function AuthedContributionImage({ path, alt = "", className }: AuthedCon
   if (status === "error" || !src) {
     return (
       <div
-        className={`flex items-center justify-center bg-[var(--tott-dash-input-bg)] text-[10px] text-gray-600 ${className ?? ""}`}
+        className={`flex items-center justify-center bg-[var(--tott-dash-input-bg)] text-xs text-gray-500 ${className ?? ""}`}
         title="Could not load image"
+        aria-label={alt || "Image unavailable"}
       >
-        —
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+          <circle cx="9" cy="9" r="2" />
+          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+        </svg>
       </div>
     );
   }
 
   return (
     // eslint-disable-next-line @next/next/no-img-element -- blob: URL or public https URL
-    <img src={src} alt={alt} className={className} loading="lazy" />
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      loading="lazy"
+      onError={() => {
+        if (src.startsWith("blob:")) URL.revokeObjectURL(src);
+        setSrc(null);
+        setStatus("error");
+      }}
+    />
   );
 }

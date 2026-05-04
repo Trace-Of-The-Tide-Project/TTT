@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { isAxiosError } from "axios";
 import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 import {
   SearchIcon,
   FilterIcon,
@@ -30,6 +32,11 @@ import {
   type ContributionListMeta,
 } from "@/services/contributions.service";
 import { useContributions } from "@/hooks/queries/contributions";
+import {
+  useDeleteContribution,
+  useUpdateContributionStatus,
+} from "@/hooks/mutations/contributions";
+import { formatApiError } from "@/lib/api/error-message";
 
 const ROWS_PER_PAGE = 10;
 
@@ -200,17 +207,19 @@ function ContributionDetailModal({
     };
   }, [onClose]);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-3 sm:p-4">
       <button
         type="button"
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/45 backdrop-blur-md"
         onClick={onClose}
         aria-label={td("closeModalAria")}
       />
 
       <div
-        className="relative mx-2 flex max-h-[90vh] w-full max-w-lg flex-col rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] shadow-2xl sm:mx-4 sm:max-h-[85vh]"
+        className="relative flex max-h-[94vh] w-full max-w-[757px] flex-col overflow-hidden rounded-[20px] border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] shadow-2xl"
         role="dialog"
         aria-modal="true"
       >
@@ -369,7 +378,8 @@ function ContributionDetailModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -480,6 +490,41 @@ export function ContentLibraryContent() {
   };
 
   const totalPages = meta?.totalPages ?? 1;
+
+  const archiveMutation = useUpdateContributionStatus();
+  const deleteMutation = useDeleteContribution();
+
+  const handleRowAction = useCallback(
+    (actionId: string, contentId: string) => {
+      const item = items.find((i) => i.id === contentId);
+      if (!item) return;
+      if (actionId === "view") {
+        setPreviewItem(item);
+        return;
+      }
+      if (actionId === "archive") {
+        archiveMutation.mutate(
+          { id: contentId, status: "archived" },
+          {
+            onSuccess: () => toast.success(`Archived "${item.title}"`),
+            onError: (e) => toast.error(formatApiError(e, "Failed to archive")),
+          },
+        );
+        return;
+      }
+      if (actionId === "delete") {
+        const ok = window.confirm(
+          `Delete "${item.title}"? This cannot be undone.`,
+        );
+        if (!ok) return;
+        deleteMutation.mutate(contentId, {
+          onSuccess: () => toast.success(`Deleted "${item.title}"`),
+          onError: (e) => toast.error(formatApiError(e, "Failed to delete")),
+        });
+      }
+    },
+    [items, archiveMutation, deleteMutation],
+  );
 
   return (
     <div className="space-y-6 px-3 py-4 sm:px-4 sm:py-6">
@@ -592,7 +637,7 @@ export function ContentLibraryContent() {
                     >
                       <EyeIcon />
                     </button>
-                    <ContentActionsDropdown contentId={item.id} />
+                    <ContentActionsDropdown contentId={item.id} onAction={handleRowAction} />
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-400">
@@ -740,7 +785,7 @@ export function ContentLibraryContent() {
                       >
                         <EyeIcon />
                       </button>
-                      <ContentActionsDropdown contentId={item.id} />
+                      <ContentActionsDropdown contentId={item.id} onAction={handleRowAction} />
                     </div>
                   ),
                 },
