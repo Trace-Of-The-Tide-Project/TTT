@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { isAxiosError } from "axios";
 import { useLocale, useTranslations } from "next-intl";
-import { theme } from "@/lib/theme";
 import {
   SearchIcon,
   FilterIcon,
@@ -19,6 +18,11 @@ import {
 import { FilterDropdown } from "@/components/dashboard/admin/users/FilterDropdown";
 import { HexIconOutlined } from "@/components/dashboard/admin/articles/articles-create/HexIconOutlined";
 import { AuthedContributionImage } from "@/components/dashboard/admin/content/AuthedContributionImage";
+import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
+import {
+  ChamferedTable,
+  type ChamferedTableColumn,
+} from "@/components/ui/ChamferedTable";
 import {
   contributionFilePublicUrl,
   type ContributionFile,
@@ -388,6 +392,13 @@ export function ContentLibraryContent() {
   const [page, setPage] = useState(1);
   const [previewItem, setPreviewItem] = useState<ContributionListItem | null>(null);
 
+  // Advanced (popover) filters — applied client-side on top of the
+  // status tab + type pill + search box. Backend list endpoint doesn't
+  // support these fields yet, so we filter the visible page.
+  const [advFilterSubmittedAfter, setAdvFilterSubmittedAfter] = useState("");
+  const [advFilterCollection, setAdvFilterCollection] = useState("");
+  const [advFilterHasFiles, setAdvFilterHasFiles] = useState(false);
+
   const contributionsQuery = useContributions(page, ROWS_PER_PAGE);
   const items: ContributionListItem[] = contributionsQuery.data?.items ?? [];
   const meta: ContributionListMeta | null = contributionsQuery.data?.meta ?? null;
@@ -410,6 +421,10 @@ export function ContentLibraryContent() {
   }, [items, t]);
 
   const filtered = useMemo(() => {
+    const submittedAfterMs = advFilterSubmittedAfter.trim()
+      ? new Date(advFilterSubmittedAfter).getTime()
+      : null;
+    const collectionNeedle = advFilterCollection.trim().toLowerCase();
     return items.filter((item) => {
       const matchesTab =
         activeTab === "all" || item.status.toLowerCase() === activeTab;
@@ -419,9 +434,33 @@ export function ContentLibraryContent() {
         (item.description ?? "").toLowerCase().includes(search.toLowerCase()) ||
         (item.user?.full_name ?? "").toLowerCase().includes(search.toLowerCase());
       const matchesType = typeFilter === TYPE_FILTER_ALL || item.type?.name === typeFilter;
-      return matchesTab && matchesSearch && matchesType;
+      const matchesSubmittedAfter =
+        submittedAfterMs == null ||
+        Number.isNaN(submittedAfterMs) ||
+        (item.submission_date != null &&
+          new Date(item.submission_date).getTime() >= submittedAfterMs);
+      const matchesCollection =
+        !collectionNeedle ||
+        item.collections.some((c) => c.name.toLowerCase().includes(collectionNeedle));
+      const matchesHasFiles = !advFilterHasFiles || (item.files ?? []).length > 0;
+      return (
+        matchesTab &&
+        matchesSearch &&
+        matchesType &&
+        matchesSubmittedAfter &&
+        matchesCollection &&
+        matchesHasFiles
+      );
     });
-  }, [items, activeTab, search, typeFilter]);
+  }, [
+    items,
+    activeTab,
+    search,
+    typeFilter,
+    advFilterSubmittedAfter,
+    advFilterCollection,
+    advFilterHasFiles,
+  ]);
 
   const tabButtons = useMemo(
     () =>
@@ -469,6 +508,8 @@ export function ContentLibraryContent() {
         ))}
       </div>
 
+      <ChamferedPanel className="px-4 py-4 sm:px-6 sm:py-5">
+      <div className="space-y-6">
       {/* Search and filters */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <div className="relative max-w-md flex-1">
@@ -489,13 +530,15 @@ export function ContentLibraryContent() {
             value={typeFilter}
             onChange={setTypeFilter}
           />
-          <button
-            type="button"
-            className="flex items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-2.5 text-gray-400 transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground"
-            aria-label={t("filterAria")}
-          >
-            <FilterIcon />
-          </button>
+          <ContentAdvancedFilterPopover
+            submittedAfter={advFilterSubmittedAfter}
+            onSubmittedAfterChange={setAdvFilterSubmittedAfter}
+            collection={advFilterCollection}
+            onCollectionChange={setAdvFilterCollection}
+            hasFiles={advFilterHasFiles}
+            onHasFilesChange={setAdvFilterHasFiles}
+            label={t("filterAria")}
+          />
         </div>
       </div>
 
@@ -576,93 +619,141 @@ export function ContentLibraryContent() {
             ))}
           </div>
 
-          {/* Table layout — large screens (horizontal scroll keeps all columns + full text visible) */}
-          <div className="hidden overflow-x-auto rounded-xl border border-[var(--tott-card-border)] lg:block">
-            <table className="w-full min-w-[56rem] border-collapse text-start text-sm">
-              <thead>
-                <tr className="border-b border-[var(--tott-card-border)]">
-                  <th className="min-w-[12rem] px-3 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    {t("table.title")}
-                  </th>
-                  <th className="whitespace-nowrap px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    {t("table.type")}
-                  </th>
-                  <th className="min-w-[8rem] px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    {t("table.contributor")}
-                  </th>
-                  <th className="whitespace-nowrap px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    {t("table.status")}
-                  </th>
-                  <th className="whitespace-nowrap px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    {t("table.files")}
-                  </th>
-                  <th className="min-w-[10rem] px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    {t("table.collection")}
-                  </th>
-                  <th className="whitespace-nowrap px-2 py-3 text-xs font-semibold" style={{ color: theme.accentGoldFocus }}>
-                    {t("table.submitted")}
-                  </th>
-                  <th className="w-16 px-2 py-3" aria-hidden />
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-b border-[var(--tott-card-border)] transition-colors last:border-b-0"
-                  >
-                    <td className="align-top px-3 py-3">
-                      <span className="block break-words font-medium text-foreground">
-                        {item.title}
-                      </span>
-                      {item.description && (
-                        <span className="mt-1 block whitespace-pre-wrap break-words text-xs text-gray-500">
-                          {item.description}
-                        </span>
-                      )}
-                    </td>
-                    <td className="align-top whitespace-nowrap px-2 py-3 text-gray-400">
+          {/* Table layout — large screens. The inner band is fluid: columns
+              are sized in `fr` units so they always sum to the panel's
+              available width, and every cell has `min-w-0` so `truncate`
+              actually works when a row's text is longer than its column. */}
+          <div className="hidden lg:block">
+            {(() => {
+              const headerCellClass =
+                "px-3 py-3 flex items-center min-w-0 text-xs font-semibold text-[var(--tott-dash-gold-label)]";
+              const cellBase = "px-3 py-3 flex items-center min-w-0 text-sm";
+              const columns: ChamferedTableColumn<ContributionListItem>[] = [
+                {
+                  key: "title",
+                  header: t("table.title"),
+                  width: "1.5fr",
+                  headerClassName: headerCellClass,
+                  cellClassName: cellBase,
+                  cell: (item) => (
+                    <span
+                      className="min-w-0 truncate font-medium text-foreground"
+                      title={item.title}
+                    >
+                      {item.title}
+                    </span>
+                  ),
+                },
+                {
+                  key: "type",
+                  header: t("table.type"),
+                  width: "1fr",
+                  headerClassName: `${headerCellClass} whitespace-nowrap`,
+                  cellClassName: `${cellBase} text-gray-400`,
+                  cell: (item) => (
+                    <span className="min-w-0 truncate" title={item.type?.name ?? ""}>
                       {item.type?.name ?? "—"}
-                    </td>
-                    <td className="align-top break-words px-2 py-3 text-gray-400">
-                      {item.user?.full_name ?? item.contributor_name ?? "—"}
-                    </td>
-                    <td className="align-top whitespace-nowrap px-2 py-3">
-                      <span
-                        className="text-xs font-medium"
-                        style={{ color: statusColor(item.status) }}
-                      >
-                        {statusLabel(item.status)}
+                    </span>
+                  ),
+                },
+                {
+                  key: "contributor",
+                  header: t("table.contributor"),
+                  width: "1.2fr",
+                  headerClassName: headerCellClass,
+                  cellClassName: `${cellBase} text-gray-400`,
+                  cell: (item) => {
+                    const text =
+                      item.user?.full_name ?? item.contributor_name ?? "—";
+                    return (
+                      <span className="min-w-0 truncate" title={text}>
+                        {text}
                       </span>
-                    </td>
-                    <td className="align-top whitespace-nowrap px-2 py-3 text-gray-400">
-                      {(item.files ?? []).length > 0 ? t("table.fileCount", { count: (item.files ?? []).length }) : "—"}
-                    </td>
-                    <td className="align-top break-words px-2 py-3 text-gray-400">
-                      {item.collections.length > 0
+                    );
+                  },
+                },
+                {
+                  key: "status",
+                  header: t("table.status"),
+                  width: "0.8fr",
+                  headerClassName: `${headerCellClass} whitespace-nowrap`,
+                  cellClassName: `${cellBase} whitespace-nowrap`,
+                  cell: (item) => (
+                    <span
+                      className="text-xs font-medium"
+                      style={{ color: statusColor(item.status) }}
+                    >
+                      {statusLabel(item.status)}
+                    </span>
+                  ),
+                },
+                {
+                  key: "files",
+                  header: t("table.files"),
+                  width: "0.7fr",
+                  headerClassName: `${headerCellClass} whitespace-nowrap`,
+                  cellClassName: `${cellBase} whitespace-nowrap text-gray-400`,
+                  cell: (item) =>
+                    (item.files ?? []).length > 0
+                      ? t("table.fileCount", { count: (item.files ?? []).length })
+                      : "—",
+                },
+                {
+                  key: "collection",
+                  header: t("table.collection"),
+                  width: "1.2fr",
+                  headerClassName: headerCellClass,
+                  cellClassName: `${cellBase} text-gray-400`,
+                  cell: (item) => {
+                    const text =
+                      item.collections.length > 0
                         ? item.collections.map((c) => c.name).join(", ")
-                        : "—"}
-                    </td>
-                    <td className="align-top whitespace-nowrap px-2 py-3 text-gray-400">
-                      {formatDate(item.submission_date, locale)}
-                    </td>
-                    <td className="align-top whitespace-nowrap px-2 py-3">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          type="button"
-                          onClick={() => setPreviewItem(item)}
-                          className="rounded p-1.5 text-gray-500 transition-colors hover:text-foreground"
-                          aria-label={t("table.viewItemAria", { title: item.title })}
-                        >
-                          <EyeIcon />
-                        </button>
-                        <ContentActionsDropdown contentId={item.id} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        : "—";
+                    return (
+                      <span className="min-w-0 truncate" title={text}>
+                        {text}
+                      </span>
+                    );
+                  },
+                },
+                {
+                  key: "submitted",
+                  header: t("table.submitted"),
+                  width: "1fr",
+                  headerClassName: `${headerCellClass} whitespace-nowrap`,
+                  cellClassName: `${cellBase} whitespace-nowrap text-gray-400`,
+                  cell: (item) => formatDate(item.submission_date, locale),
+                },
+                {
+                  key: "actions",
+                  header: "",
+                  width: "5rem",
+                  headerClassName: headerCellClass,
+                  cellClassName: "px-3 py-3 flex items-center justify-end min-w-0",
+                  cell: (item) => (
+                    <div className="flex items-center justify-end gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewItem(item)}
+                        className="rounded p-1.5 text-gray-500 transition-colors hover:text-foreground"
+                        aria-label={t("table.viewItemAria", { title: item.title })}
+                      >
+                        <EyeIcon />
+                      </button>
+                      <ContentActionsDropdown contentId={item.id} />
+                    </div>
+                  ),
+                },
+              ];
+              return (
+                <ChamferedTable
+                  className="w-full"
+                  columns={columns}
+                  rows={filtered}
+                  rowKey={(item) => item.id}
+                />
+              );
+            })()}
           </div>
         </>
       )}
@@ -693,6 +784,162 @@ export function ContentLibraryContent() {
           </div>
         </div>
       )}
+      </div>
+      </ChamferedPanel>
+    </div>
+  );
+}
+
+/**
+ * "Premium" multi-condition filter popover for the Content Library.
+ * Trigger is the FilterIcon button; click opens a panel with content-
+ * specific filter conditions (submitted-after date, collection name,
+ * has-files toggle). The active filter count shows as a badge on the
+ * trigger.
+ */
+function ContentAdvancedFilterPopover({
+  submittedAfter,
+  onSubmittedAfterChange,
+  collection,
+  onCollectionChange,
+  hasFiles,
+  onHasFilesChange,
+  label,
+}: {
+  submittedAfter: string;
+  onSubmittedAfterChange: (v: string) => void;
+  collection: string;
+  onCollectionChange: (v: string) => void;
+  hasFiles: boolean;
+  onHasFilesChange: (v: boolean) => void;
+  label: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDocDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDocDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const activeCount =
+    (submittedAfter.trim() ? 1 : 0) +
+    (collection.trim() ? 1 : 0) +
+    (hasFiles ? 1 : 0);
+
+  const clearAll = () => {
+    onSubmittedAfterChange("");
+    onCollectionChange("");
+    onHasFilesChange(false);
+  };
+
+  const inputClass =
+    "w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-muted)] focus:outline-none";
+
+  return (
+    <div ref={ref} className="relative shrink-0">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-label={label}
+        title={label}
+        className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-gray-400 transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--tott-muted)]"
+      >
+        <FilterIcon />
+        {activeCount > 0 ? (
+          <span
+            aria-hidden
+            className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold"
+            style={{
+              backgroundColor: "var(--tott-dark-pill)",
+              color: "var(--tott-dark-pill-fg)",
+            }}
+          >
+            {activeCount}
+          </span>
+        ) : null}
+      </button>
+
+      {open ? (
+        <div
+          role="dialog"
+          aria-label={label}
+          className="absolute right-0 top-full z-30 mt-2 w-80 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] p-4 shadow-lg"
+        >
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-sm font-semibold text-foreground">Filters</p>
+            {activeCount > 0 ? (
+              <button
+                type="button"
+                onClick={clearAll}
+                className="text-xs font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
+              >
+                Clear all
+              </button>
+            ) : null}
+          </div>
+
+          <div className="mb-3 flex flex-col gap-1.5">
+            <label className="text-[11px] font-medium uppercase tracking-wide text-[var(--tott-dash-gold-label)]">
+              Submitted after
+            </label>
+            <input
+              type="date"
+              value={submittedAfter}
+              onChange={(e) => onSubmittedAfterChange(e.target.value)}
+              className={inputClass}
+            />
+          </div>
+
+          <div className="mb-3 flex flex-col gap-1.5">
+            <label className="text-[11px] font-medium uppercase tracking-wide text-[var(--tott-dash-gold-label)]">
+              Collection contains
+            </label>
+            <input
+              type="text"
+              value={collection}
+              onChange={(e) => onCollectionChange(e.target.value)}
+              placeholder="e.g. Heritage 2025"
+              className={inputClass}
+            />
+          </div>
+
+          <div className="mb-3 flex flex-col gap-1.5">
+            <label className="flex cursor-pointer items-center gap-2 text-[11px] font-medium uppercase tracking-wide text-[var(--tott-dash-gold-label)]">
+              <input
+                type="checkbox"
+                checked={hasFiles}
+                onChange={(e) => onHasFilesChange(e.target.checked)}
+                className="h-4 w-4 rounded border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]"
+              />
+              <span>Only entries with files</span>
+            </label>
+          </div>
+
+          <div className="mt-1 flex justify-end">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
