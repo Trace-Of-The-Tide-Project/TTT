@@ -31,6 +31,11 @@ import {
 } from "@/components/ui/icons";
 import { ConfigureRoleModal } from "@/components/dashboard/modals/ConfigureRoleModal";
 import { PermissionToggle } from "@/components/dashboard/admin/roles/PermissionToggle";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import {
+  ChamferedTable,
+  type ChamferedTableColumn,
+} from "@/components/ui/ChamferedTable";
 
 function hexPath(cx: number, cy: number, r: number) {
   const corners = Array.from({ length: 6 }, (_, i) => {
@@ -359,54 +364,54 @@ function PermissionsMatrix() {
     }));
   };
 
+  const goldHeader =
+    "px-4 py-3 flex items-center text-sm font-semibold text-[var(--tott-dash-gold-label)]";
+  const roleColWidth = `${75 / MATRIX_ROLES.length}%`;
+
+  const columns: ChamferedTableColumn<string>[] = [
+    {
+      key: "permission",
+      header: tm("colPermission"),
+      width: "25%",
+      headerClassName: `${goldHeader} justify-start text-start`,
+      cellClassName: "px-4 py-3 flex items-center text-sm text-foreground",
+      cell: (permission) =>
+        (tm as (key: string) => string)(
+          `permissionNames.${permissionRowKey(permission)}`,
+        ),
+    },
+    ...MATRIX_ROLES.map((role) => ({
+      key: role,
+      header: (tm as (key: string) => string)(
+        `columns.${matrixRoleColumnKey(role)}`,
+      ),
+      width: roleColWidth,
+      align: "center" as const,
+      headerClassName: `${goldHeader} justify-center text-center`,
+      cellClassName: "px-4 py-3 flex items-center justify-center text-center",
+      cell: (permission: string) => (
+        <PermissionToggle
+          checked={matrix[permission]?.[role] ?? false}
+          onChange={(v) => setCell(permission, role, v)}
+          checkedColor={role === "Admin" ? "#332217" : undefined}
+        />
+      ),
+    })),
+  ];
+
   return (
     <div className="space-y-4">
       <div>
         <h3 className="text-lg font-bold text-foreground">{tm("title")}</h3>
         <p className="mt-1 text-sm text-gray-500">{tm("subtitle")}</p>
       </div>
-      <div className="overflow-x-auto rounded-xl border border-[var(--tott-card-border)]">
-        <table className="w-full min-w-[600px] border-collapse text-start">
-          <thead>
-            <tr className="border-b border-[var(--tott-card-border)]">
-              <th
-                className="px-4 py-3 text-start text-sm font-semibold"
-                style={{ color: theme.accentGoldFocus }}
-              >
-                {tm("colPermission")}
-              </th>
-              {MATRIX_ROLES.map((role) => (
-                <th
-                  key={role}
-                  className="px-4 py-3 text-center text-sm font-semibold"
-                  style={{ color: theme.accentGoldFocus }}
-                >
-                  {(tm as (key: string) => string)(`columns.${matrixRoleColumnKey(role)}`)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#444]/60">
-            {PERMISSIONS.map((permission) => (
-              <tr key={permission} className="transition-colors hover:bg-white/2">
-                <td className="px-4 py-3 text-sm text-foreground">
-                  {(tm as (key: string) => string)(`permissionNames.${permissionRowKey(permission)}`)}
-                </td>
-                {MATRIX_ROLES.map((role) => (
-                  <td key={role} className="px-4 py-3 text-center">
-                    <div className="flex justify-center">
-                      <PermissionToggle
-                        checked={matrix[permission]?.[role] ?? false}
-                        onChange={(v) => setCell(permission, role, v)}
-                        checkedColor={role === "Admin" ? "#332217" : undefined}
-                      />
-                    </div>
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="overflow-x-auto">
+        <ChamferedTable
+          className="min-w-[600px]"
+          columns={columns}
+          rows={[...PERMISSIONS]}
+          rowKey={(permission) => permission}
+        />
       </div>
     </div>
   );
@@ -469,18 +474,7 @@ export function RolesPermissionsContent() {
                     key={stat.id}
                     className="relative flex min-w-0 flex-1 flex-col items-center justify-center gap-3 px-4 py-6"
                   >
-                    <svg
-                      className="pointer-events-none absolute inset-0 h-full w-full"
-                      viewBox="0 0 100 100"
-                      preserveAspectRatio="none"
-                    >
-                      <path
-                        d="M14.6 0 L85.4 0 L100 14.6 L100 85.4 L85.4 100 L14.6 100 L0 85.4 L0 14.6 Z"
-                        fill="none"
-                        stroke="#222"
-                        strokeWidth="1.5"
-                      />
-                    </svg>
+                    <ChamferedFrame />
                     <span style={{ color: "#E8DDC0" }}>
                       <Icon />
                     </span>
@@ -494,7 +488,8 @@ export function RolesPermissionsContent() {
             </div>
 
             {/* Role Hierarchy */}
-            <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
+            <div className="relative p-6">
+              <ChamferedFrame />
               <h3 className="text-lg font-bold text-foreground">{tr("hierarchy.title")}</h3>
               <p className="mt-1 text-sm text-gray-500">{tr("hierarchy.subtitle")}</p>
               <div className="mt-6 flex flex-nowrap items-center justify-center gap-0 overflow-x-auto">

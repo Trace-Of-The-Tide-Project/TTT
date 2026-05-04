@@ -26,18 +26,12 @@ import { useRouter } from "@/i18n/navigation";
 import { formatApiError } from "@/lib/api/error-message";
 import { toast } from "sonner";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
-import { ChamferedCap } from "@/components/ui/ChamferedCap";
+import {
+  ChamferedTable,
+  type ChamferedTableColumn,
+} from "@/components/ui/ChamferedTable";
 
 const PAGE_LIMIT = 10;
-
-// Mirrors ContentOverview's grid table: each row is a `grid` with the same
-// column template, and cells use the `border-x` / `border-y` / `border-b`
-// pattern so the chamfered caps connect cleanly into a single bordered band.
-const USER_TABLE_GRID_COLS =
-  "grid-cols-[28%_12%_12%_13%_13%_12%_10%]";
-const USER_TABLE_HEADER_CELL =
-  "px-5 py-3 text-start text-sm font-medium text-[var(--tott-dash-gold-label)]";
-const USER_TABLE_DATA_CELL = "px-5 py-3 text-sm text-foreground";
 
 function displayName(u: AdminUserListItem): string {
   const n = u.full_name?.trim();
@@ -292,6 +286,109 @@ export function UsersManagementContent() {
     [router, updateUserMutation, loadFailedMessage, t],
   );
 
+  const locale = useLocale();
+  const columns = useMemo<ChamferedTableColumn<AdminUserListItem>[]>(
+    () => [
+      {
+        key: "contributor",
+        header: t("table.contributor"),
+        width: "28%",
+        cellClassName: "flex min-w-0 items-center gap-3 px-5 py-3",
+        cell: (user) => (
+          <>
+            <span
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+              style={{ backgroundColor: "#DBC99E", color: theme.bgDark }}
+            >
+              {initialsFromUser(user)}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium" style={{ color: "#DBC99E" }}>
+                {displayName(user)}
+              </p>
+              <p
+                className="mt-0.5 truncate text-xs text-[var(--tott-muted)]"
+                title={user.email}
+              >
+                {user.email || "—"}
+              </p>
+            </div>
+          </>
+        ),
+      },
+      {
+        key: "role",
+        header: t("table.role"),
+        width: "12%",
+        cell: (user) => (
+          <span className="inline-flex max-w-full rounded-full bg-[var(--tott-elevated)] px-2.5 py-1 text-xs font-medium text-foreground">
+            <span className="truncate">{displayRoleLabel(user.role, tRoles)}</span>
+          </span>
+        ),
+      },
+      {
+        key: "status",
+        header: t("table.status"),
+        width: "12%",
+        cell: (user) => {
+          const color = statusColor(user.status);
+          return (
+            <span className="flex min-w-0 items-center gap-1.5">
+              <span
+                className="h-2 w-2 shrink-0 rounded-full"
+                style={{ backgroundColor: color }}
+              />
+              <span className="truncate text-sm" style={{ color }}>
+                {displayUserStatus(user.status, t)}
+              </span>
+            </span>
+          );
+        },
+      },
+      {
+        key: "joined",
+        header: t("table.joined"),
+        width: "13%",
+        headerClassName:
+          "px-5 py-3 text-sm font-medium text-[var(--tott-dash-gold-label)] flex items-center justify-start text-start whitespace-nowrap",
+        cellClassName:
+          "px-5 py-3 text-sm flex items-center whitespace-nowrap text-[var(--tott-muted)]",
+        cell: (user) => formatJoinedDateLocal(user.joined_at, locale),
+      },
+      {
+        key: "lastActive",
+        header: t("table.lastActive"),
+        width: "13%",
+        headerClassName:
+          "px-5 py-3 text-sm font-medium text-[var(--tott-dash-gold-label)] flex items-center justify-start text-start whitespace-nowrap",
+        cellClassName:
+          "px-5 py-3 text-sm flex items-center whitespace-nowrap text-[var(--tott-muted)]",
+        cell: (user) =>
+          formatUserLastActiveRelativeLocalized(user.last_active_at, nowMs, locale),
+      },
+      {
+        key: "contributions",
+        header: t("table.contributions"),
+        width: "12%",
+        align: "center",
+        cellClassName:
+          "px-5 py-3 text-sm text-foreground flex items-center justify-center text-center tabular-nums",
+        cell: (user) => formatContributionsCount(user.contributions_count),
+      },
+      {
+        key: "actions",
+        header: "",
+        width: "10%",
+        align: "end",
+        cellClassName: "flex items-center justify-end px-3 py-3",
+        cell: (user) => (
+          <UserActionsDropdown userId={user.id} onAction={handleRowAction} />
+        ),
+      },
+    ],
+    [t, tRoles, locale, nowMs, handleRowAction],
+  );
+
   const effectivePage = Math.min(page, totalPages);
   const startItem = users.length === 0 ? 0 : (meta.page - 1) * meta.limit + 1;
   const endItem = users.length === 0 ? 0 : (meta.page - 1) * meta.limit + users.length;
@@ -374,70 +471,24 @@ export function UsersManagementContent() {
       ) : null}
 
       <div className="mt-6 sm:mt-8">
-        <ChamferedCap direction="top" />
-      </div>
-
-      {/* Wide layout — same grid+border pattern as the dashboard's
-          ContentOverview table. ≥504px: header rect + per-row rect. */}
-      <div className="hidden min-[504px]:block">
-        <div className={`grid ${USER_TABLE_GRID_COLS} border-x border-y border-[var(--tott-card-border)]`}>
-          <div className={USER_TABLE_HEADER_CELL}>{t("table.contributor")}</div>
-          <div className={USER_TABLE_HEADER_CELL}>{t("table.role")}</div>
-          <div className={USER_TABLE_HEADER_CELL}>{t("table.status")}</div>
-          <div className={`${USER_TABLE_HEADER_CELL} whitespace-nowrap`}>{t("table.joined")}</div>
-          <div className={`${USER_TABLE_HEADER_CELL} whitespace-nowrap`}>{t("table.lastActive")}</div>
-          <div className={`${USER_TABLE_HEADER_CELL} text-center`}>{t("table.contributions")}</div>
-          <div className={USER_TABLE_HEADER_CELL} aria-hidden />
-        </div>
-
-        {loading ? (
-          <div className="border-x border-b border-[var(--tott-card-border)] px-5 py-12 text-center text-sm text-[var(--tott-muted)]">
-            {t("loading")}
-          </div>
-        ) : users.length === 0 ? (
-          <div className="border-x border-b border-[var(--tott-card-border)] px-5 py-12 text-center text-sm text-[var(--tott-muted)]">
-            {t("empty")}
-          </div>
-        ) : (
-          users.map((user) => (
-            <UserRow
-              key={user.id}
-              user={user}
-              nowMs={nowMs}
-              t={t}
-              tRoles={tRoles}
-              onAction={handleRowAction}
-            />
-          ))
-        )}
-      </div>
-
-      {/* Narrow layout — stacked cards. Same chamfered surround,
-          one card per user with the key fields. */}
-      <div className="border-x border-y border-[var(--tott-card-border)] min-[504px]:hidden">
-        {loading ? (
-          <div className="px-3 py-12 text-center text-sm text-[var(--tott-muted)]">
-            {t("loading")}
-          </div>
-        ) : users.length === 0 ? (
-          <div className="px-3 py-12 text-center text-sm text-[var(--tott-muted)]">
-            {t("empty")}
-          </div>
-        ) : (
-          users.map((user) => (
+        <ChamferedTable
+          columns={columns}
+          rows={users}
+          rowKey={(u) => u.id}
+          loading={loading}
+          loadingLabel={t("loading")}
+          emptyLabel={t("empty")}
+          renderNarrow={(user) => (
             <UserCardNarrow
-              key={user.id}
               user={user}
               nowMs={nowMs}
               t={t}
               tRoles={tRoles}
               onAction={handleRowAction}
             />
-          ))
-        )}
+          )}
+        />
       </div>
-
-      <ChamferedCap direction="bottom" />
 
       <div className="mt-4 flex flex-col items-stretch justify-between gap-3 sm:mt-5 sm:flex-row sm:items-center">
         <p className="text-center text-sm text-[var(--tott-muted)] sm:text-left">
@@ -682,73 +733,6 @@ function FilterField({ label, children }: { label: string; children: React.React
   );
 }
 
-function UserRow({
-  user,
-  nowMs,
-  t,
-  tRoles,
-  onAction,
-}: {
-  user: AdminUserListItem;
-  nowMs: number;
-  t: ReturnType<typeof useTranslations>;
-  tRoles: ReturnType<typeof useTranslations>;
-  onAction: (actionId: string, userId: string) => void;
-}) {
-  const locale = useLocale();
-  const color = statusColor(user.status);
-  return (
-    <div
-      className={`grid ${USER_TABLE_GRID_COLS} border-x border-b border-[var(--tott-card-border)] transition-colors hover:bg-[var(--tott-elevated)]`}
-    >
-      <div className="flex min-w-0 items-center gap-3 px-5 py-3">
-        <span
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-          style={{ backgroundColor: "#DBC99E", color: theme.bgDark }}
-        >
-          {initialsFromUser(user)}
-        </span>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-medium" style={{ color: "#DBC99E" }}>
-            {displayName(user)}
-          </p>
-          <p
-            className="mt-0.5 truncate text-xs text-[var(--tott-muted)]"
-            title={user.email}
-          >
-            {user.email || "—"}
-          </p>
-        </div>
-      </div>
-      <div className="flex items-center px-5 py-3">
-        <span className="inline-flex max-w-full rounded-full bg-[var(--tott-elevated)] px-2.5 py-1 text-xs font-medium text-foreground">
-          <span className="truncate">{displayRoleLabel(user.role, tRoles)}</span>
-        </span>
-      </div>
-      <div className="flex items-center px-5 py-3">
-        <span className="flex min-w-0 items-center gap-1.5">
-          <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
-          <span className="truncate text-sm" style={{ color }}>
-            {displayUserStatus(user.status, t)}
-          </span>
-        </span>
-      </div>
-      <div className={`${USER_TABLE_DATA_CELL} flex items-center whitespace-nowrap text-[var(--tott-muted)]`}>
-        {formatJoinedDateLocal(user.joined_at, locale)}
-      </div>
-      <div className={`${USER_TABLE_DATA_CELL} flex items-center whitespace-nowrap text-[var(--tott-muted)]`}>
-        {formatUserLastActiveRelativeLocalized(user.last_active_at, nowMs, locale)}
-      </div>
-      <div className={`${USER_TABLE_DATA_CELL} flex items-center justify-center text-center tabular-nums`}>
-        {formatContributionsCount(user.contributions_count)}
-      </div>
-      <div className="flex items-center justify-end px-3 py-3">
-        <UserActionsDropdown userId={user.id} onAction={onAction} />
-      </div>
-    </div>
-  );
-}
-
 function UserCardNarrow({
   user,
   nowMs,
@@ -765,7 +749,7 @@ function UserCardNarrow({
   const locale = useLocale();
   const color = statusColor(user.status);
   return (
-    <div className="border-b border-[var(--tott-card-border)] px-3 py-3 last:border-b-0">
+    <div className="px-3 py-3">
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3">
           <span

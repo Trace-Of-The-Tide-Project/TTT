@@ -4,7 +4,10 @@ import { useTranslations, useMessages } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { ComponentType } from "react";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
-import { ChamferedCap } from "@/components/ui/ChamferedCap";
+import {
+  ChamferedTable,
+  type ChamferedTableColumn,
+} from "@/components/ui/ChamferedTable";
 
 const CATEGORY_KEY_MAP: Record<string, string> = {
   photography: "photography", artwork: "artwork", "personal story": "personalStory",
@@ -42,11 +45,75 @@ type ContentOverviewProps = {
   manageHref?: string;
 };
 
+function FlaggedCell({ value }: { value: number | string }) {
+  const isActive = value !== "—" && value !== 0;
+  if (!isActive) {
+    return <span className="text-[var(--tott-muted)] opacity-60">—</span>;
+  }
+  return (
+    <span className="font-medium text-[var(--tott-dash-negative)]">
+      {typeof value === "number" ? value.toLocaleString() : value}
+    </span>
+  );
+}
+
 export function ContentOverview({ rows, totalValue, manageHref }: ContentOverviewProps) {
   const t = useTranslations("Dashboard.adminHome.contentOverview");
   const messages = useMessages();
-  const headerCellClass = "px-5 py-3 text-start text-sm font-medium text-[var(--tott-dash-gold-label)]";
-  const dataCellClass = "px-5 py-3 text-sm text-foreground";
+
+  const columns: ChamferedTableColumn<ContentRow>[] = [
+    {
+      key: "category",
+      header: t("headers.category"),
+      width: "30%",
+      cell: (row) => {
+        const Icon = row.icon;
+        return (
+          <span className="inline-flex items-center gap-2.5">
+            <span className="text-[var(--tott-muted)]">
+              <Icon />
+            </span>
+            <span className="text-sm capitalize text-foreground">
+              {translateCategory(messages, row.label)}
+            </span>
+          </span>
+        );
+      },
+    },
+    {
+      key: "published",
+      header: t("headers.published"),
+      width: "23%",
+      cell: (row) => row.published.toLocaleString(),
+    },
+    {
+      key: "drafts",
+      header: t("headers.drafts"),
+      width: "23%",
+      cell: (row) => row.drafts,
+    },
+    {
+      key: "flagged",
+      header: t("headers.flagged"),
+      width: "24%",
+      cell: (row) => <FlaggedCell value={row.flagged} />,
+    },
+  ];
+
+  const wideFooter = (
+    <div className="flex items-center justify-between px-5 py-4">
+      <span className="text-sm text-[var(--tott-muted)]">{t("totalLabel")}</span>
+      <span className="text-base font-semibold text-foreground">{totalValue}</span>
+    </div>
+  );
+
+  const narrowFooter = (
+    <div className="flex items-center justify-between px-3 py-3">
+      <span className="text-sm text-[var(--tott-muted)]">{t("totalLabel")}</span>
+      <span className="text-sm font-semibold text-foreground">{totalValue}</span>
+    </div>
+  );
+
   return (
     <ChamferedPanel className="px-3 pb-4 pt-4 min-[504px]:px-6 min-[504px]:pb-6 min-[504px]:pt-6">
       <div className="mb-5 flex items-center justify-between gap-3">
@@ -61,71 +128,16 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
         )}
       </div>
 
-      {/* Empty chamfered top cap (decorative) */}
-      <ChamferedCap direction="top" />
-
-      {/* Wide layout — ≥504px: 4-column table grid */}
-      <div className="hidden min-[504px]:block">
-        {/* Header rectangle */}
-        <div className="grid grid-cols-[30%_23%_23%_24%] border-x border-y border-[var(--tott-card-border)]">
-          <div className={headerCellClass}>{t("headers.category")}</div>
-          <div className={headerCellClass}>{t("headers.published")}</div>
-          <div className={headerCellClass}>{t("headers.drafts")}</div>
-          <div className={headerCellClass}>{t("headers.flagged")}</div>
-        </div>
-
-        {/* Data rows */}
-        {rows.map((row) => {
+      <ChamferedTable
+        columns={columns}
+        rows={rows}
+        rowKey={(row) => row.id}
+        footer={wideFooter}
+        footerNarrow={narrowFooter}
+        renderNarrow={(row) => {
           const Icon = row.icon;
-          const isFlaggedActive = row.flagged !== "—" && row.flagged !== 0;
           return (
-            <div
-              key={row.id}
-              className="grid grid-cols-[30%_23%_23%_24%] border-x border-b border-[var(--tott-card-border)] transition-colors hover:bg-[var(--tott-elevated)]"
-            >
-              <div className="px-5 py-3">
-                <span className="inline-flex items-center gap-2.5">
-                  <span className="text-[var(--tott-muted)]">
-                    <Icon />
-                  </span>
-                  <span className="text-sm capitalize text-foreground">
-                    {translateCategory(messages, row.label)}
-                  </span>
-                </span>
-              </div>
-              <div className={dataCellClass}>{row.published.toLocaleString()}</div>
-              <div className={dataCellClass}>{row.drafts}</div>
-              <div className="px-5 py-3 text-sm">
-                {isFlaggedActive ? (
-                  <span className="font-medium text-[var(--tott-dash-negative)]">
-                    {typeof row.flagged === "number" ? row.flagged.toLocaleString() : row.flagged}
-                  </span>
-                ) : (
-                  <span className="text-[var(--tott-muted)] opacity-60">—</span>
-                )}
-              </div>
-            </div>
-          );
-        })}
-
-        {/* Total rectangle */}
-        <div className="flex items-center justify-between border-x border-b border-[var(--tott-card-border)] px-5 py-4">
-          <span className="text-sm text-[var(--tott-muted)]">{t("totalLabel")}</span>
-          <span className="text-base font-semibold text-foreground">{totalValue}</span>
-        </div>
-      </div>
-
-      {/* Narrow layout — <504px: stacked cards (each row becomes a card with the
-          category in the heading and the three stats inline below). */}
-      <div className="border-x border-y border-[var(--tott-card-border)] min-[504px]:hidden">
-        {rows.map((row) => {
-          const Icon = row.icon;
-          const isFlaggedActive = row.flagged !== "—" && row.flagged !== 0;
-          return (
-            <div
-              key={row.id}
-              className="border-b border-[var(--tott-card-border)] px-3 py-3 last:border-b-0"
-            >
+            <div className="px-3 py-3">
               <div className="mb-2 flex items-center gap-2">
                 <span className="text-[var(--tott-muted)]">
                   <Icon />
@@ -136,39 +148,32 @@ export function ContentOverview({ rows, totalValue, manageHref }: ContentOvervie
               </div>
               <dl className="grid grid-cols-3 gap-2 text-xs">
                 <div className="flex flex-col gap-0.5">
-                  <dt className="text-[10px] uppercase text-[var(--tott-dash-gold-label)]">{t("headers.published")}</dt>
-                  <dd className="text-sm text-foreground">{row.published.toLocaleString()}</dd>
+                  <dt className="text-[10px] uppercase text-[var(--tott-dash-gold-label)]">
+                    {t("headers.published")}
+                  </dt>
+                  <dd className="text-sm text-foreground">
+                    {row.published.toLocaleString()}
+                  </dd>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <dt className="text-[10px] uppercase text-[var(--tott-dash-gold-label)]">{t("headers.drafts")}</dt>
+                  <dt className="text-[10px] uppercase text-[var(--tott-dash-gold-label)]">
+                    {t("headers.drafts")}
+                  </dt>
                   <dd className="text-sm text-foreground">{row.drafts}</dd>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <dt className="text-[10px] uppercase text-[var(--tott-dash-gold-label)]">{t("headers.flagged")}</dt>
+                  <dt className="text-[10px] uppercase text-[var(--tott-dash-gold-label)]">
+                    {t("headers.flagged")}
+                  </dt>
                   <dd className="text-sm">
-                    {isFlaggedActive ? (
-                      <span className="font-medium text-[var(--tott-dash-negative)]">
-                        {typeof row.flagged === "number" ? row.flagged.toLocaleString() : row.flagged}
-                      </span>
-                    ) : (
-                      <span className="text-[var(--tott-muted)] opacity-60">—</span>
-                    )}
+                    <FlaggedCell value={row.flagged} />
                   </dd>
                 </div>
               </dl>
             </div>
           );
-        })}
-      </div>
-
-      {/* Narrow total — sits below the card stack, mirroring the wide layout */}
-      <div className="flex items-center justify-between border-x border-b border-[var(--tott-card-border)] px-3 py-3 min-[504px]:hidden">
-        <span className="text-sm text-[var(--tott-muted)]">{t("totalLabel")}</span>
-        <span className="text-sm font-semibold text-foreground">{totalValue}</span>
-      </div>
-
-      {/* Empty chamfered bottom cap (decorative, mirror of top) */}
-      <ChamferedCap direction="bottom" />
+        }}
+      />
     </ChamferedPanel>
   );
 }

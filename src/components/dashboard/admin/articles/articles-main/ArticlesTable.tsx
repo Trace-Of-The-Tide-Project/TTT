@@ -13,7 +13,10 @@ import { useDeleteArticle } from "@/hooks/mutations/articles";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import { formatApiError } from "@/lib/api/error-message";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
-import { ChamferedCap } from "@/components/ui/ChamferedCap";
+import {
+  ChamferedTable,
+  type ChamferedTableColumn,
+} from "@/components/ui/ChamferedTable";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 
 type Tab = { id: string; labelKey: string };
@@ -294,96 +297,93 @@ export function ArticlesTable({
 
       {/* Table — chamfered caps + rectangular rows pattern */}
       {(() => {
-        const gridCols = "grid-cols-[32%_14%_20%_12%_12%_10%]";
         const headerCellClass =
-          "px-5 py-3 text-start align-middle text-xs font-semibold";
-        const bodyCellClass =
-          "px-5 py-3 text-start align-middle text-sm font-medium";
-        return (
-          <>
-            <ChamferedCap direction="top" />
-
-            {/* Header rectangle */}
-            <div
-              className={`grid ${gridCols} border-x border-y border-[var(--tott-card-border)]`}
-              style={{ color: "var(--tott-dash-gold-label)" }}
-            >
-              <div className={headerCellClass}>{t("table.title")}</div>
-              <div className={headerCellClass}>{t("table.status")}</div>
-              <div className={`${headerCellClass} whitespace-nowrap`}>
-                {t("table.lastUpdated")}
-              </div>
-              <div className={headerCellClass}>{t("table.views")}</div>
-              <div className={headerCellClass}>{t("table.supporters")}</div>
-              <div className={headerCellClass} aria-hidden />
-            </div>
-
-            {/* Data rows or empty state */}
-            {rowsWithRelativeTime.length === 0 ? (
-              <div className="border-x border-b border-[var(--tott-card-border)] px-5 py-10 text-center text-sm text-gray-500">
-                {t("table.emptyView")}
-              </div>
-            ) : (
-              rowsWithRelativeTime.map((row) => (
-                <div
-                  key={row.id}
-                  className={`grid ${gridCols} border-x border-b border-[var(--tott-card-border)] transition-colors hover:bg-[var(--tott-elevated)]`}
+          "px-5 py-3 flex items-center text-start align-middle text-xs font-semibold text-[var(--tott-dash-gold-label)]";
+        const bodyCellBase =
+          "px-5 py-3 flex items-center text-start align-middle text-sm font-medium";
+        const columns: ChamferedTableColumn<typeof rowsWithRelativeTime[number]>[] = [
+          {
+            key: "title",
+            header: t("table.title"),
+            width: "32%",
+            headerClassName: headerCellClass,
+            cellClassName: bodyCellBase,
+            cell: (row) => (
+              <span style={{ color: "var(--tott-dash-gold-text)" }}>{row.title}</span>
+            ),
+          },
+          {
+            key: "status",
+            header: t("table.status"),
+            width: "14%",
+            headerClassName: headerCellClass,
+            cellClassName: bodyCellBase,
+            cell: (row) => (
+              <span style={{ color: statusColorMap[row.statusColor] ?? "var(--tott-muted)" }}>
+                {t(`table.statusValues.${row.status}`)}
+              </span>
+            ),
+          },
+          {
+            key: "lastUpdated",
+            header: t("table.lastUpdated"),
+            width: "20%",
+            headerClassName: `${headerCellClass} whitespace-nowrap`,
+            cellClassName: `${bodyCellBase} whitespace-nowrap text-[var(--tott-muted)]`,
+            cell: (row) => row.relativeUpdated,
+          },
+          {
+            key: "views",
+            header: t("table.views"),
+            width: "12%",
+            headerClassName: headerCellClass,
+            cellClassName: `${bodyCellBase} tabular-nums text-[var(--tott-muted)]`,
+            cell: (row) => row.views,
+          },
+          {
+            key: "supporters",
+            header: t("table.supporters"),
+            width: "12%",
+            headerClassName: headerCellClass,
+            cellClassName: `${bodyCellBase} tabular-nums text-[var(--tott-muted)]`,
+            cell: (row) => row.supporters,
+          },
+          {
+            key: "actions",
+            header: "",
+            width: "10%",
+            headerClassName: headerCellClass,
+            cellClassName: "flex items-center justify-end px-4 py-3",
+            cell: (row) => (
+              <span data-article-actions={row.id}>
+                <button
+                  type="button"
+                  data-article-menu-trigger={row.id}
+                  className="p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] disabled:opacity-40"
+                  style={{ color: "var(--tott-muted)" }}
+                  aria-label={t("table.menuAria")}
+                  aria-expanded={openMenuId === row.id}
+                  aria-haspopup="menu"
+                  aria-controls={
+                    openMenuId === row.id ? `article-actions-${row.id}` : undefined
+                  }
+                  id={`article-actions-trigger-${row.id}`}
+                  disabled={deleteBusy && deleteTarget?.id === row.id}
+                  onClick={(e) => toggleArticleMenu(row, e.currentTarget)}
                 >
-                  <div
-                    className={bodyCellClass}
-                    style={{ color: "var(--tott-dash-gold-text)" }}
-                  >
-                    {row.title}
-                  </div>
-                  <div
-                    className={bodyCellClass}
-                    style={{ color: statusColorMap[row.statusColor] ?? "var(--tott-muted)" }}
-                  >
-                    {t(`table.statusValues.${row.status}`)}
-                  </div>
-                  <div
-                    className={`${bodyCellClass} whitespace-nowrap`}
-                    style={{ color: "var(--tott-muted)" }}
-                  >
-                    {row.relativeUpdated}
-                  </div>
-                  <div
-                    className={`${bodyCellClass} tabular-nums`}
-                    style={{ color: "var(--tott-muted)" }}
-                  >
-                    {row.views}
-                  </div>
-                  <div
-                    className={`${bodyCellClass} tabular-nums`}
-                    style={{ color: "var(--tott-muted)" }}
-                  >
-                    {row.supporters}
-                  </div>
-                  <div className="flex items-center justify-end px-4 py-3" data-article-actions={row.id}>
-                    <button
-                      type="button"
-                      data-article-menu-trigger={row.id}
-                      className="p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] disabled:opacity-40"
-                      style={{ color: "var(--tott-muted)" }}
-                      aria-label={t("table.menuAria")}
-                      aria-expanded={openMenuId === row.id}
-                      aria-haspopup="menu"
-                      aria-controls={
-                        openMenuId === row.id ? `article-actions-${row.id}` : undefined
-                      }
-                      id={`article-actions-trigger-${row.id}`}
-                      disabled={deleteBusy && deleteTarget?.id === row.id}
-                      onClick={(e) => toggleArticleMenu(row, e.currentTarget)}
-                    >
-                      <MoreDotsIcon />
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-
-            <ChamferedCap direction="bottom" />
-          </>
+                  <MoreDotsIcon />
+                </button>
+              </span>
+            ),
+          },
+        ];
+        return (
+          <ChamferedTable
+            columns={columns}
+            rows={rowsWithRelativeTime}
+            rowKey={(row) => row.id}
+            emptyLabel={t("table.emptyView")}
+          />
         );
       })()}
     </div>
