@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { MessageSquareIcon } from "@/components/ui/icons";
+import { MessageBubbleIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 
 export type ContributionEntry = {
   id: string;
@@ -55,41 +56,40 @@ export function SupportersContent() {
 
       <div className="flex flex-col gap-3">
         {filteredContributions.map((entry) => (
-          <div
-            key={entry.id}
-            className="flex flex-col gap-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
-          >
-            <div className="flex items-center gap-3">
-              <span
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-medium"
-                style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
-              >
-                {entry.initials}
-              </span>
-              <div>
-                <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
-                  {entry.name}
-                </p>
-                <p className="text-xs text-gray-500">{entry.timestamp}</p>
+          <ChamferedPanel key={entry.id} className="px-4 py-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <span
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-medium"
+                  style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
+                >
+                  {entry.initials}
+                </span>
+                <div>
+                  <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
+                    {entry.name}
+                  </p>
+                  <p className="text-xs text-gray-500">{entry.timestamp}</p>
+                </div>
               </div>
-            </div>
 
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-              <div className="flex flex-col items-start sm:items-end">
-                <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
-                  {entry.amount}
-                </p>
-                <p className="text-xs capitalize text-foreground">{typeLabel(entry.type)}</p>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+                <div className="flex flex-col items-start sm:items-end">
+                  <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
+                    {entry.amount}
+                  </p>
+                  <p className="text-xs capitalize text-foreground">{typeLabel(entry.type)}</p>
+                </div>
+                <button
+                  type="button"
+                  className="flex cursor-pointer items-center justify-center gap-2 self-start rounded-lg bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
+                >
+                  <MessageBubbleIcon />
+                  {t("thankContributor")}
+                </button>
               </div>
-              <button
-                type="button"
-                className="flex cursor-pointer items-center justify-center gap-2 self-start rounded-lg bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
-              >
-                <MessageSquareIcon />
-                {t("thankContributor")}
-              </button>
             </div>
-          </div>
+          </ChamferedPanel>
         ))}
       </div>
     </div>

@@ -576,6 +576,26 @@ export function MessageSquareIcon() {
   );
 }
 
+/** Chat-bubble glyph (Figma `icon 2/message.svg`). 20×20 viewBox, uses
+ *  currentColor so the parent's text color drives the stroke (theme-aware). */
+export function MessageBubbleIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M6.66667 7.50065H13.3333M6.66667 10.834H11.6667M7.5 15.0007H5C4.33696 15.0007 3.70107 14.7373 3.23223 14.2684C2.76339 13.7996 2.5 13.1637 2.5 12.5007V5.83398C2.5 5.17094 2.76339 4.53506 3.23223 4.06622C3.70107 3.59738 4.33696 3.33398 5 3.33398H15C15.663 3.33398 16.2989 3.59738 16.7678 4.06622C17.2366 4.53506 17.5 5.17094 17.5 5.83398V12.5007C17.5 13.1637 17.2366 13.7996 16.7678 14.2684C16.2989 14.7373 15.663 15.0007 15 15.0007H12.5L10 17.5007L7.5 15.0007Z" />
+    </svg>
+  );
+}
+
 export function HeartIcon() {
   return (
     <svg {...iconProps}>

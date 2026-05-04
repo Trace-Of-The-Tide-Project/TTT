@@ -31,7 +31,7 @@ export function FilterDropdown({ options, value, onChange, className = "" }: Fil
       <button
         type="button"
         onClick={() => setIsOpen((o) => !o)}
-        className="flex w-full items-center justify-between gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 px-4 text-left text-sm text-foreground hover:bg-[var(--tott-dash-surface-inset)] focus:border-[#555] focus:outline-none"
+        className="flex w-full items-center justify-between gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 px-4 text-left text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] focus:border-[var(--tott-muted)] focus:outline-none"
       >
         <span className="truncate">{displayValue}</span>
 
@@ -50,7 +50,7 @@ export function FilterDropdown({ options, value, onChange, className = "" }: Fil
                 onChange(opt.value);
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-2 text-left text-sm text-foreground hover:bg-[var(--tott-dash-surface-inset)]"
+              className="w-full px-4 py-2 text-left text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
             >
               {opt.label}
             </button>
