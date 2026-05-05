@@ -25,6 +25,7 @@ import {
   ChamferedTable,
   type ChamferedTableColumn,
 } from "@/components/ui/ChamferedTable";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   contributionFilePublicUrl,
   type ContributionFile,
@@ -401,6 +402,8 @@ export function ContentLibraryContent() {
 
   const [page, setPage] = useState(1);
   const [previewItem, setPreviewItem] = useState<ContributionListItem | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ContributionListItem | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Advanced (popover) filters — applied client-side on top of the
   // status tab + type pill + search box. Backend list endpoint doesn't
@@ -513,18 +516,31 @@ export function ContentLibraryContent() {
         return;
       }
       if (actionId === "delete") {
-        const ok = window.confirm(
-          `Delete "${item.title}"? This cannot be undone.`,
-        );
-        if (!ok) return;
-        deleteMutation.mutate(contentId, {
-          onSuccess: () => toast.success(`Deleted "${item.title}"`),
-          onError: (e) => toast.error(formatApiError(e, "Failed to delete")),
-        });
+        setDeleteError(null);
+        setDeleteTarget(item);
       }
     },
-    [items, archiveMutation, deleteMutation],
+    [items, archiveMutation],
   );
+
+  const closeDeleteDialog = useCallback(() => {
+    if (deleteMutation.isPending) return;
+    setDeleteTarget(null);
+    setDeleteError(null);
+  }, [deleteMutation.isPending]);
+
+  const confirmDelete = useCallback(() => {
+    if (!deleteTarget) return;
+    const target = deleteTarget;
+    setDeleteError(null);
+    deleteMutation.mutate(target.id, {
+      onSuccess: () => {
+        toast.success(`Deleted "${target.title}"`);
+        setDeleteTarget(null);
+      },
+      onError: (e) => setDeleteError(formatApiError(e, "Failed to delete")),
+    });
+  }, [deleteTarget, deleteMutation]);
 
   return (
     <div className="space-y-6 px-3 py-4 sm:px-4 sm:py-6">
@@ -534,6 +550,23 @@ export function ContentLibraryContent() {
           onClose={() => setPreviewItem(null)}
         />
       )}
+
+      <ConfirmDialog
+        open={deleteTarget != null}
+        title="Delete contribution"
+        description={
+          deleteTarget
+            ? `Delete "${deleteTarget.title}"? This cannot be undone.`
+            : undefined
+        }
+        confirmLabel="Delete"
+        confirmBusyLabel="Deleting…"
+        destructive
+        busy={deleteMutation.isPending}
+        error={deleteError}
+        onClose={closeDeleteDialog}
+        onConfirm={confirmDelete}
+      />
 
       {/* Tabs */}
       <div className="flex flex-col gap-1 rounded-xl bg-[var(--tott-elevated)] p-1 sm:w-fit sm:flex-row">
