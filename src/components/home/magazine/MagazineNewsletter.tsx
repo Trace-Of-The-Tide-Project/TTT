@@ -1,16 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { PenLineIcon } from "@/components/ui/icons";
-
-const HEX_CLIP =
-  "polygon(50% 5%, 90% 27%, 90% 73%, 50% 95%, 10% 73%, 10% 27%)";
 
 /**
  * Newsletter band — sits between the magazine content and the global
- * footer. Pen-icon hexagon, label, headline, body copy, then an inline
- * email field + gold Subscribe button. Same faint hex-pattern backdrop the
- * support pane uses, for visual continuity.
+ * footer. Big pen-icon hex (Icon-5.svg), label, headline, body copy,
+ * then an inline email field + gold Subscribe button. Hex-pattern
+ * backdrop uses the same mask technique as the founder quote section
+ * so the cells render at full size.
  */
 export function MagazineNewsletter() {
   const t = useTranslations("Home.magazine.newsletter");
@@ -18,32 +16,49 @@ export function MagazineNewsletter() {
   return (
     <section
       aria-labelledby="newsletter-heading"
-      className="relative w-full overflow-hidden px-4 py-16 sm:px-6 sm:py-20 md:px-8 md:py-24"
+      className="relative w-full overflow-hidden px-12 py-24 sm:py-28 md:py-32"
+      style={{ minHeight: "420px" }}
     >
+      {/* Hex pattern backdrop — masked SVG, full size, theme-aware
+          stroke colour. Same approach as the home page "Share your
+          story" and the founder quote sections. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-0 opacity-[0.18]"
-        style={{
-          backgroundImage:
-            "url('/images/home/homepage-share-hex-outline.svg')",
-          backgroundRepeat: "repeat",
-          backgroundSize: "180px",
-        }}
-      />
+        className="pointer-events-none absolute inset-0 flex items-center justify-center"
+      >
+        <div
+          className="w-[min(140%,1232px)] max-w-none sm:w-[min(120%,1232px)] md:w-[min(100%,1232px)]"
+          style={{
+            aspectRatio: "1232 / 294",
+            backgroundColor: "var(--tott-home-hex-stroke)",
+            WebkitMaskImage:
+              "url(/images/home/homepage-share-hex-pattern.svg)",
+            maskImage: "url(/images/home/homepage-share-hex-pattern.svg)",
+            WebkitMaskSize: "100% 100%",
+            maskSize: "100% 100%",
+            WebkitMaskRepeat: "no-repeat",
+            maskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            maskPosition: "center",
+          }}
+        />
+      </div>
 
       <div className="relative mx-auto flex w-full max-w-xl flex-col items-center text-center">
-        {/* Hex with pen icon */}
+        {/* Hex with pen icon — pre-rendered Icon-5.svg (80×88). */}
         <div
-          className="flex h-16 w-16 items-center justify-center"
-          style={{
-            clipPath: HEX_CLIP,
-            WebkitClipPath: HEX_CLIP,
-            backgroundColor: "var(--tott-panel-bg)",
-            color: "var(--tott-accent-gold)",
-          }}
           aria-hidden
+          className="relative"
+          style={{ width: "80px", height: "88px" }}
         >
-          <PenLineIcon />
+          <Image
+            src="/images/home/Icon-5.svg"
+            alt=""
+            fill
+            sizes="80px"
+            className="select-none"
+            draggable={false}
+          />
         </div>
 
         <p
