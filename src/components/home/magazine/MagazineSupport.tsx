@@ -1,222 +1,381 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { ChamferedSurface } from "@/components/ui/ChamferedSurface";
-import { HeartHandshakeIcon, ClockIcon } from "@/components/ui/icons";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
-const HEX_CLIP =
-  "polygon(50% 5%, 90% 27%, 90% 73%, 50% 95%, 10% 73%, 10% 27%)";
+const FRAME_86 = "/images/home/Frame 86.svg";
 
-const SILK = "/images/home/hero-silk.png";
+const BORDER = "#333333";
 
 /**
- * Support pane — "Recent Collaporations" (typo intentional, mirrors Figma).
+ * Support pane — "Recent Collaporations" gallery (typo intentional,
+ * mirrors Figma).
  *
- *  Faint hex-pattern backdrop. A chamfered card holds the heading, subhead,
- *  and a row of "twin-hex" collab cards (author hex + handshake glyph +
- *  contributor hex) with title / type chip / timeline / description /
- *  status. Two circular gold-ringed nav buttons sit at the bottom.
+ * Outer Carousel frame: 1392×620 with corner-decoration borders top
+ * and bottom, vertical hairlines on the sides, heading group and
+ * horizontally scrollable body in between.
+ *
+ * Each Card: 360×382 rounded-rect (radius 24) with Frame 86.svg as
+ * the twin-image header (Author + Contributor hexes connected by the
+ * heart-handshake glyph), a "Completed" pill, and a text block
+ * (title / co-writing / timeline / description) underneath.
  */
+const TOTAL_CARDS = 7;
+// Card width (360) + gap (24) — used for the circular translate math.
+const CARD_STEP = 360 + 24;
+
 export function MagazineSupport() {
   const t = useTranslations("Home.magazine.support");
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const goPrev = () =>
+    setActiveIndex((i) => (i - 1 + TOTAL_CARDS) % TOTAL_CARDS);
+  const goNext = () => setActiveIndex((i) => (i + 1) % TOTAL_CARDS);
 
   return (
     <section
-      className="relative overflow-hidden py-2"
+      className="relative mx-auto w-full max-w-[1392px]"
       aria-labelledby="recent-collabs-heading"
     >
-      {/* Faint hex pattern */}
+      {/* Outer chamfered frame — replaces the manual top/bottom corner
+          decorations + side hairlines with a single component. */}
+      <ChamferedFrame size={24} borderColor={BORDER} />
+
+      {/* Heading group */}
       <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-0 opacity-[0.18]"
-        style={{
-          backgroundImage:
-            "url('/images/home/homepage-share-hex-outline.svg')",
-          backgroundRepeat: "repeat",
-          backgroundSize: "180px",
-        }}
-      />
-
-      <ChamferedSurface
-        chamfer={20}
-        borderColor="var(--tott-card-border)"
-        innerFill="var(--tott-home-surface)"
-        className="relative w-full"
+        className="flex flex-col items-center justify-center gap-2 px-4 pt-8 pb-3"
       >
-        <div className="relative px-6 pb-12 pt-10 sm:px-10 sm:pb-14 sm:pt-12">
-          <header className="text-center">
-            <h2
-              id="recent-collabs-heading"
-              className="text-2xl font-medium tracking-tight sm:text-3xl"
-              style={{ color: "var(--tott-home-text-strong)" }}
-            >
-              {t("heading")}
-            </h2>
-            <p
-              className="mt-2 text-sm sm:text-base"
-              style={{ color: "var(--tott-home-text-muted)" }}
-            >
-              {t("subheading")}
-            </p>
-          </header>
+        <h2
+          id="recent-collabs-heading"
+          style={{
+            fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+            fontWeight: 500,
+            fontSize: "32px",
+            lineHeight: "40px",
+            color: "#FFFFFF",
+            textAlign: "center",
+          }}
+        >
+          {t("heading")}
+        </h2>
+        <p
+          className="max-w-md"
+          style={{
+            fontFamily: "'Inter', var(--font-sans, sans-serif)",
+            fontWeight: 400,
+            fontSize: "14px",
+            lineHeight: "20px",
+            letterSpacing: "-0.005em",
+            color: "#A3A3A3",
+            textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+            textAlign: "center",
+          }}
+        >
+          {t("subheading")}
+        </p>
+      </div>
 
-          {/* Carousel-like row */}
+      {/* Body — cards row + nav arrows. No horizontal padding so the
+          cards row reaches the edge of the chamfered frame. */}
+      <div
+        className="flex flex-col items-center"
+        style={{
+          padding: "16px 0 32px",
+          gap: "24px",
+        }}
+      >
+        {/* Circular cards gallery — render the cards 3 times in a
+            row (clone-before / real / clone-after) so there is always
+            content on both sides of the active card. translateX
+            centres the active card from the MIDDLE (real) set, which
+            means clicking through never reveals an empty edge. */}
+        <div
+          className="relative w-full overflow-hidden"
+          role="region"
+          aria-label={t("heading")}
+          aria-roledescription="carousel"
+        >
           <div
-            className="mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            role="region"
-            aria-label={t("heading")}
+            className="flex justify-start"
+            style={{
+              gap: "24px",
+              // The active card is at index (TOTAL_CARDS + activeIndex)
+              // in the tripled array — shift the row so it sits centre.
+              transform: `translateX(calc(50% - ${
+                (TOTAL_CARDS + activeIndex) * CARD_STEP + 360 / 2
+              }px))`,
+              transition: "transform 500ms cubic-bezier(0.4, 0, 0.2, 1)",
+            }}
           >
-            {[0, 1, 2].map((i) => (
-              <CollabCard key={i} />
+            {/* Clones before the real set */}
+            {Array.from({ length: TOTAL_CARDS }).map((_, i) => (
+              <CollabCard key={`pre-${i}`} isActive={false} />
+            ))}
+            {/* Real set */}
+            {Array.from({ length: TOTAL_CARDS }).map((_, i) => (
+              <CollabCard key={`real-${i}`} isActive={i === activeIndex} />
+            ))}
+            {/* Clones after the real set */}
+            {Array.from({ length: TOTAL_CARDS }).map((_, i) => (
+              <CollabCard key={`post-${i}`} isActive={false} />
             ))}
           </div>
-
-          {/* Carousel nav */}
-          <div className="mt-2 flex items-center justify-center gap-3">
-            <NavRoundBtn label={t("previousCollab")}>
-              <span aria-hidden className="text-xl">‹</span>
-            </NavRoundBtn>
-            <NavRoundBtn label={t("nextCollab")}>
-              <span aria-hidden className="text-xl">›</span>
-            </NavRoundBtn>
-          </div>
         </div>
-      </ChamferedSurface>
+
+        {/* Nav arrows — Frame 87 (gold ←/→). */}
+        <NavArrows
+          prevLabel={t("previousCollab")}
+          nextLabel={t("nextCollab")}
+          onPrev={goPrev}
+          onNext={goNext}
+        />
+      </div>
     </section>
   );
 }
 
-function CollabCard() {
+/** Single collaboration card — 360×382 with twin-hex header.
+ * Clicking the Author or Contributor label cycles the image on that
+ * side (gallery-style). The active card is rendered at full opacity;
+ * non-active siblings dim down slightly to draw the eye to the centre. */
+function CollabCard({ isActive = true }: { isActive?: boolean }) {
   const t = useTranslations("Home.magazine.support");
+
+  // Each side is a small slideshow — clicking the label advances the
+  // image. For now we just track an index; the visible image is
+  // baked into Frame 86.svg, but the indices are wired so a real
+  // image swap can drop in later.
+  const [authorIndex, setAuthorIndex] = useState(0);
+  const [contribIndex, setContribIndex] = useState(0);
+
   return (
     <article
-      className="snap-start shrink-0 basis-[88%] sm:basis-[60%] lg:basis-[32%]"
+      className="relative shrink-0"
+      style={{
+        width: "360px",
+        height: "382px",
+        padding: "16px 24px",
+        backgroundColor: "#171717",
+        borderRadius: "24px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "16px",
+        opacity: isActive ? 1 : 0.45,
+        transition: "opacity 400ms ease",
+      }}
     >
-      <div className="text-center">
-        {/* Twin-hex pair with handshake glyph */}
-        <div className="relative mx-auto flex w-full items-center justify-center">
-          <TwinHex />
-        </div>
+      {/* Frame 86 — pre-rendered twin-hex header (Author + Contributor
+          hexes connected by the heart-handshake glyph). The labels
+          baked into the SVG are the only ones we render — no
+          duplicates on top. */}
+      <div
+        className="relative shrink-0"
+        style={{ width: "270px", height: "156px" }}
+      >
+        <Image
+          src={FRAME_86}
+          alt=""
+          fill
+          sizes="270px"
+          className="select-none"
+          draggable={false}
+          // Hint for screen-readers + a debug data attr that lets us
+          // tell which slide is active.
+          data-author-slide={authorIndex}
+          data-contributor-slide={contribIndex}
+        />
 
-        {/* Roles */}
-        <div
-          className="mt-2 flex items-center justify-center gap-12 text-xs sm:text-sm"
-          style={{ color: "var(--tott-home-text-muted)" }}
-        >
-          <span>{t("roleAuthor")}</span>
-          <span>{t("roleContributor")}</span>
-        </div>
+        {/* Invisible click targets sitting over each label — clicking
+            advances that side's slide. Cursor is a pointer so users
+            see it's interactive. */}
+        <button
+          type="button"
+          aria-label={t("roleAuthor")}
+          onClick={() => setAuthorIndex((i) => i + 1)}
+          className="absolute cursor-pointer"
+          style={{
+            left: "32px",
+            top: "126px",
+            width: "64px",
+            height: "26px",
+            background: "transparent",
+            border: 0,
+          }}
+        />
+        <button
+          type="button"
+          aria-label={t("roleContributor")}
+          onClick={() => setContribIndex((i) => i + 1)}
+          className="absolute cursor-pointer"
+          style={{
+            left: "162px",
+            top: "126px",
+            width: "84px",
+            height: "26px",
+            background: "transparent",
+            border: 0,
+          }}
+        />
+      </div>
 
+      {/* Text block — title + meta + description. */}
+      <div
+        className="flex flex-col items-center"
+        style={{ width: "312px", gap: "8px" }}
+      >
         {/* Title */}
         <h3
-          className="mt-4 text-lg font-medium tracking-tight sm:text-xl"
-          style={{ color: "var(--tott-home-text-strong)" }}
+          style={{
+            fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+            fontWeight: 500,
+            fontSize: "20px",
+            lineHeight: "28px",
+            color: "#FFFFFF",
+            textAlign: "center",
+            textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+          }}
         >
           {t("collabTitle")}
         </h3>
 
-        {/* Type + timeline */}
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
-          <span style={{ color: "var(--tott-accent-gold)" }}>
+        {/* Meta data — Co-writing + Timeline */}
+        <div
+          className="flex items-center justify-center"
+          style={{ gap: "12px" }}
+        >
+          <span
+            style={{
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
+              fontWeight: 400,
+              fontSize: "12px",
+              lineHeight: "16px",
+              color: "#C9A96E",
+              textAlign: "center",
+            }}
+          >
             {t("collabType")}
           </span>
           <span
-            className="inline-flex items-center gap-1.5"
-            style={{ color: "var(--tott-home-text-muted)" }}
+            className="flex items-center"
+            style={{ gap: "6px" }}
           >
-            <ClockIcon />
-            <span>
-              {t("collabTimelineLabel")} {t("collabTimeline")}
+            <AlarmIcon />
+            <span
+              className="flex items-center"
+              style={{ gap: "2px" }}
+            >
+              <span
+                style={{
+                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                  fontWeight: 400,
+                  fontSize: "12px",
+                  lineHeight: "16px",
+                  color: "#A3A3A3",
+                }}
+              >
+                {t("collabTimelineLabel")}
+              </span>
+              <span
+                style={{
+                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                  fontWeight: 400,
+                  fontSize: "12px",
+                  lineHeight: "16px",
+                  color: "#A3A3A3",
+                }}
+              >
+                {t("collabTimeline")}
+              </span>
             </span>
           </span>
         </div>
 
+        {/* Description */}
         <p
-          className="mx-auto mt-3 max-w-[42ch] text-sm leading-relaxed"
-          style={{ color: "var(--tott-home-text-muted)" }}
+          style={{
+            fontFamily: "'Inter', var(--font-sans, sans-serif)",
+            fontWeight: 400,
+            fontSize: "12px",
+            lineHeight: "16px",
+            color: "#A3A3A3",
+            textAlign: "center",
+            margin: 0,
+          }}
         >
           {t("collabBody")}
         </p>
-
-        <div className="mt-4">
-          <span
-            className="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium"
-            style={{
-              backgroundColor: "var(--tott-panel-bg)",
-              color: "var(--tott-home-text-strong)",
-              border: "1px solid var(--tott-card-border)",
-            }}
-          >
-            {t("collabStatus")}
-          </span>
-        </div>
       </div>
     </article>
   );
 }
 
-function TwinHex() {
-  return (
-    <div className="relative flex items-center" style={{ gap: "-12px" }}>
-      <HexCell />
-      <div
-        aria-hidden
-        className="z-10 -mx-3 flex h-9 w-9 items-center justify-center rounded-full"
-        style={{
-          backgroundColor: "var(--tott-home-surface)",
-          color: "var(--tott-accent-gold)",
-        }}
-      >
-        <HeartHandshakeIcon />
-      </div>
-      <HexCell />
-    </div>
-  );
-}
-
-function HexCell() {
-  return (
-    <div
-      className="relative h-[120px] w-[120px] overflow-hidden sm:h-[140px] sm:w-[140px]"
-      style={{
-        clipPath: HEX_CLIP,
-        WebkitClipPath: HEX_CLIP,
-        backgroundColor: "rgba(255,255,255,0.04)",
-      }}
-    >
-      <Image src={SILK} alt="" fill className="object-cover" sizes="140px" />
-      {/* Bottom gold gradient — matches the "warm under-glow" from the design */}
-      <div
-        aria-hidden
-        className="absolute inset-x-0 bottom-0 h-2/3"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(203,161,88,0.45) 100%)",
-        }}
-      />
-    </div>
-  );
-}
-
-function NavRoundBtn({
-  label,
-  children,
+/** Carousel nav — pair of round gold ←/→ buttons that advance the
+ * circular gallery one card at a time. */
+function NavArrows({
+  prevLabel,
+  nextLabel,
+  onPrev,
+  onNext,
 }: {
-  label: string;
-  children: React.ReactNode;
+  prevLabel: string;
+  nextLabel: string;
+  onPrev: () => void;
+  onNext: () => void;
 }) {
   return (
-    <button
-      type="button"
-      aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-white/5"
-      style={{
-        border: "1px solid var(--tott-accent-gold)",
-        color: "var(--tott-accent-gold)",
-      }}
+    <div className="flex items-center" style={{ gap: "80px" }}>
+      <button
+        type="button"
+        aria-label={prevLabel}
+        onClick={onPrev}
+        className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80"
+        style={{
+          border: "2px solid #BD9352",
+          color: "#BD9352",
+        }}
+      >
+        <span aria-hidden className="text-xl">
+          ←
+        </span>
+      </button>
+      <button
+        type="button"
+        aria-label={nextLabel}
+        onClick={onNext}
+        className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80"
+        style={{
+          border: "2px solid #BD9352",
+          color: "#BD9352",
+        }}
+      >
+        <span aria-hidden className="text-xl">
+          →
+        </span>
+      </button>
+    </div>
+  );
+}
+
+/** Alarm/clock icon — 16×16 with #A3A3A3 stroke. */
+function AlarmIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="#A3A3A3"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      {children}
-    </button>
+      <circle cx="8" cy="9" r="5" />
+      <path d="M8 6.5v2.5l1.5 1" />
+      <path d="M5 2l-2 1.5" />
+      <path d="M11 2l2 1.5" />
+    </svg>
   );
 }
