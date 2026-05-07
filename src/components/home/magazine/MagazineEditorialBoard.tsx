@@ -26,11 +26,11 @@ type CategoryConfig = {
 };
 
 const CATEGORIES: CategoryConfig[] = [
-  { key: "category1", iconSrc: "/images/home/Icon.svg" },     // Magic of Art (palette)
-  { key: "category2", iconSrc: "/images/home/Icon-1.svg" },   // Film (filmstrip)
-  { key: "category3", iconSrc: "/images/home/Icon-2.svg" },   // Architecture (temple)
-  { key: "category4", iconSrc: "/images/home/Icon-3.svg" },   // Music (note)
-  { key: "category5", iconSrc: "/images/home/Icon-4.svg" },   // Society (home)
+  { key: "category1", iconSrc: "/images/home/IconArt.svg" },          // Magic of Art (palette)
+  { key: "category2", iconSrc: "/images/home/IconFilm.svg" },         // Film (filmstrip)
+  { key: "category3", iconSrc: "/images/home/IconArchitecture.svg" }, // Architecture (temple)
+  { key: "category4", iconSrc: "/images/home/IconMusic.svg" },        // Music (note)
+  { key: "category5", iconSrc: "/images/home/IconSociety.svg" },      // Society (home)
 ];
 
 /**
