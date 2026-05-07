@@ -3,21 +3,37 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import {
-  Grid2x2Icon,
   CalendarIcon,
   FolderIcon,
   BookIcon,
 } from "@/components/ui/icons";
 
+// Top-icon SVG for the writer cards (Icon-4.svg in the home folder).
+const WRITER_TOP_ICON = "/images/home/Icon-4.svg";
+
+// Octagonal chamfer for label chips — 6px corner cuts. Same shape as
+// the "Architecture / Art / Fashion ..." pills on the Latest Published
+// row above so the page reads as one consistent system.
+const CHIP_CHAMFER =
+  "polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)";
+
 // Pre-rendered hex/mask shape (196×206, transparent outside the
 // hex silhouette). Used as the background mask for category cards.
 const CARD_MASK = "/images/home/Mask.png";
 
-// Rounded-corner hexagon — used by the "Follow our Writers" cards.
-const HEX_CLIP =
+// Pre-rendered hex card image (276×291 with silk fill + transparent
+// hex silhouette). The card "shape" comes from this PNG, not a CSS
+// border — overlay text/icons sit inside the visible hex.
+const WRITER_CARD = "/images/home/Image-2.png";
+
+// Rounded-corner hexagon — used to clip the bottom darken-overlay so
+// it follows the hex silhouette, not a rectangle.
+const WRITER_HEX_CLIP =
   "polygon(47.5% 5.67%, 48.29% 5.3%, 49.13% 5.08%, 50% 5%, 50.87% 5.08%, 51.71% 5.3%, 52.5% 5.67%, 87.14% 25.67%, 87.85% 26.17%, 88.47% 26.79%, 88.97% 27.5%, 89.34% 28.29%, 89.57% 29.13%, 89.64% 30%, 89.64% 70%, 89.57% 70.87%, 89.34% 71.71%, 88.97% 72.5%, 88.47% 73.21%, 87.85% 73.83%, 87.14% 74.33%, 52.5% 94.33%, 51.71% 94.7%, 50.87% 94.92%, 50% 95%, 49.13% 94.92%, 48.29% 94.7%, 47.5% 94.33%, 12.86% 74.33%, 12.15% 73.83%, 11.53% 73.21%, 11.03% 72.5%, 10.66% 71.71%, 10.43% 70.87%, 10.36% 70%, 10.36% 30%, 10.43% 29.13%, 10.66% 28.29%, 11.03% 27.5%, 11.53% 26.79%, 12.15% 26.17%, 12.86% 25.67%)";
 
-const SILK = "/images/home/hero-silk.png";
+// Side filler — gradient strip used at the left/right edges of the
+// writer carousel to suggest more cards beyond the visible row.
+const FILLER = "/images/home/Content Grid Filler.png";
 
 type CategoryConfig = {
   key: "category1" | "category2" | "category3" | "category4" | "category5";
@@ -78,123 +94,156 @@ export function MagazineEditorialBoard() {
         </ul>
       </section>
 
-      {/* ─── Follow our Writers ─────────────────────────────────────── */}
+      {/* ─── Follow our Writers ───────────────────────────────────────
+          Rectangular cards 276×294 (border-radius 16) per the Figma
+          spec. Image fills the card; text + meta + Edition label sit
+          on a bottom dark gradient overlay; top-icon floats above. */}
       <section aria-labelledby="follow-writers-heading">
-        <div>
-          <h2
-            id="follow-writers-heading"
-            className="text-lg font-medium tracking-tight sm:text-xl"
-            style={{ color: "var(--tott-accent-gold)" }}
-          >
-            {t("writersHeading")}
-          </h2>
-          <p
-            className="mt-1 text-sm"
-            style={{ color: "var(--tott-home-text-muted)" }}
-          >
-            {t("writersSubtitle")}
-          </p>
-        </div>
+        <header
+          className="flex items-center"
+          style={{ gap: "24px", padding: "0 24px" }}
+        >
+          <div className="flex flex-col" style={{ gap: "4px" }}>
+            <h2
+              id="follow-writers-heading"
+              style={{
+                fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+                fontWeight: 500,
+                fontSize: "18px",
+                lineHeight: "24px",
+                background:
+                  "radial-gradient(100% 100% at 0% 50%, #C9A96E 0%, rgba(201, 169, 110, 0) 50%), linear-gradient(0deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), #000000",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              {t("writersHeading")}
+            </h2>
+            <p
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: "14px",
+                lineHeight: "20px",
+                letterSpacing: "-0.005em",
+                color: "#A3A3A3",
+                textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+              }}
+            >
+              {t("writersSubtitle")}
+            </p>
+          </div>
+        </header>
 
-        <ul className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-          {[0, 1, 2, 3].map((i) => (
-            <li key={i} className="relative">
-              <div
-                className="relative w-full overflow-hidden"
-                style={{
-                  aspectRatio: "1 / 1.05",
-                  clipPath: HEX_CLIP,
-                  WebkitClipPath: HEX_CLIP,
-                  backgroundColor: "rgba(255,255,255,0.04)",
-                }}
-              >
-                <Image
-                  src={SILK}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 1024px) 240px, (min-width: 640px) 28vw, 45vw"
-                />
-                {/* Dark overlay so white text remains readable */}
-                <div
-                  aria-hidden
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,0.55) 100%)",
-                  }}
-                />
-                {/* Top icon */}
-                <div
-                  className="absolute left-1/2 top-[18%] flex h-8 w-8 -translate-x-1/2 items-center justify-center rounded-md"
-                  style={{
-                    backgroundColor: "rgba(0,0,0,0.45)",
-                    color: "rgba(255,255,255,0.9)",
-                  }}
-                >
-                  <Grid2x2Icon />
-                </div>
-                {/* Title */}
-                <p
-                  className="absolute left-1/2 top-[55%] w-[80%] -translate-x-1/2 text-center text-sm font-medium leading-snug sm:text-[0.95rem]"
-                  style={{ color: "#fff" }}
-                >
-                  {t("writerCardTitle")}
-                </p>
-                {/* Author chip */}
-                <div className="absolute left-1/2 top-[68%] flex -translate-x-1/2 items-center gap-1.5">
-                  <span
-                    className="flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-semibold"
-                    style={{
-                      backgroundColor: "var(--tott-accent-gold)",
-                      color: "var(--tott-auth-btn-text)",
-                    }}
-                  >
-                    A
-                  </span>
-                  <span className="text-xs" style={{ color: "rgba(255,255,255,0.85)" }}>
-                    {t("writerAuthor")}
-                  </span>
-                </div>
-                {/* Edition tag */}
-                <span
-                  className="absolute left-1/2 top-[80%] -translate-x-1/2 rounded-md px-2 py-0.5 text-[11px]"
-                  style={{
-                    backgroundColor: "rgba(0,0,0,0.55)",
-                    color: "rgba(255,255,255,0.9)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                  }}
-                >
-                  {t("writerEdition")}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
+        {/* Carousel row — left filler + 4 cards + right filler in one
+            flex row with a uniform 8px gap, so the half-hex on each
+            side has the same spacing to the next card as the cards
+            have between themselves. */}
+        <div className="relative mt-8 overflow-hidden">
+          <div
+            className="mx-auto flex items-start justify-center"
+            style={{ gap: "8px" }}
+          >
+            {/* Left filler (mirrored so its dark edge faces outward). */}
+            <div
+              aria-hidden
+              className="hidden shrink-0 lg:block"
+              style={{ width: "138px", height: "294px", position: "relative" }}
+            >
+              <Image
+                src={FILLER}
+                alt=""
+                fill
+                className="select-none object-cover"
+                style={{ transform: "scaleX(-1)" }}
+                sizes="138px"
+                draggable={false}
+              />
+            </div>
+
+            {/* Cards */}
+            {[0, 1, 2, 3].map((i) => (
+              <WriterCard key={i} />
+            ))}
+
+            {/* Right filler — dark edge faces outward (rightward). */}
+            <div
+              aria-hidden
+              className="hidden shrink-0 lg:block"
+              style={{ width: "138px", height: "294px", position: "relative" }}
+            >
+              <Image
+                src={FILLER}
+                alt=""
+                fill
+                className="select-none object-cover"
+                sizes="138px"
+                draggable={false}
+              />
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* ─── Founder pull-quote over a faint hex pattern ───────────── */}
-      <section className="relative overflow-hidden py-10 sm:py-14">
+      {/* ─── Founder pull-quote — quote + author centered on the
+          homepage-share-hex-pattern backdrop. Same mask technique as
+          the home page's "Share your story" so the hex cells render
+          at full size. The section is intentionally taller than the
+          294px pattern so no hex gets cropped at top/bottom. */}
+      <section
+        className="relative overflow-hidden px-12 py-24 sm:py-28 md:py-32"
+        style={{ minHeight: "420px" }}
+      >
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              "url('/images/home/homepage-share-hex-outline.svg')",
-            backgroundRepeat: "repeat",
-            backgroundSize: "180px",
-          }}
-        />
-        <blockquote className="mx-auto max-w-3xl text-center">
+          className="pointer-events-none absolute inset-0 flex items-center justify-center"
+        >
+          <div
+            className="w-[min(140%,1232px)] max-w-none sm:w-[min(120%,1232px)] md:w-[min(100%,1232px)]"
+            style={{
+              aspectRatio: "1232 / 294",
+              backgroundColor: "var(--tott-home-hex-stroke)",
+              WebkitMaskImage:
+                "url(/images/home/homepage-share-hex-pattern.svg)",
+              maskImage:
+                "url(/images/home/homepage-share-hex-pattern.svg)",
+              WebkitMaskSize: "100% 100%",
+              maskSize: "100% 100%",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+              WebkitMaskPosition: "center",
+              maskPosition: "center",
+            }}
+          />
+        </div>
+        <blockquote
+          className="relative mx-auto flex w-full max-w-[1232px] flex-col items-stretch"
+          style={{ gap: "16px" }}
+        >
           <p
-            className="text-balance text-2xl font-medium leading-snug sm:text-3xl"
-            style={{ color: "var(--tott-home-text-strong)" }}
+            style={{
+              fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+              fontWeight: 500,
+              fontSize: "32px",
+              lineHeight: "40px",
+              color: "#FFFFFF",
+              textAlign: "center",
+              margin: 0,
+            }}
           >
             {t("founderQuote")}
           </p>
           <footer
-            className="mt-6 text-sm sm:text-[0.95rem]"
-            style={{ color: "var(--tott-home-text-muted)" }}
+            style={{
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
+              fontWeight: 500,
+              fontSize: "16px",
+              lineHeight: "24px",
+              letterSpacing: "-0.01em",
+              color: "#FFFFFF",
+              textAlign: "center",
+            }}
           >
             {t("founderName")}
           </footer>
@@ -373,3 +422,149 @@ function CategoryCard({
   );
 }
 
+/**
+ * Writer card — hex-shaped per the comp. The Image-2.png provides both
+ * the silhouette (transparent outside the hex) AND the silk fill, so
+ * we don't need a CSS clip-path. Overlay elements sit inside the
+ * visible hex area.
+ */
+function WriterCard() {
+  const t = useTranslations("Home.magazine.editorialBoard");
+
+  return (
+    <article
+      className="relative"
+      style={{
+        width: "276px",
+        height: "294px",
+      }}
+    >
+      {/* Hex-shaped image (Image-2.png has transparent corners — they
+          stay transparent so the page background shows through, no
+          black fill). */}
+      <Image
+        src={WRITER_CARD}
+        alt=""
+        fill
+        className="select-none object-contain"
+        sizes="276px"
+        draggable={false}
+      />
+
+      {/* Top icon — pre-rendered Icon-4.svg (48×48 with hex bg + glyph
+          baked in). */}
+      <div
+        aria-hidden
+        className="absolute z-10"
+        style={{
+          width: "48px",
+          height: "48px",
+          left: "calc(50% - 24px)",
+          top: "8px",
+        }}
+      >
+        <Image
+          src={WRITER_TOP_ICON}
+          alt=""
+          fill
+          sizes="48px"
+          className="select-none"
+          draggable={false}
+        />
+      </div>
+
+      {/* Bottom Text frame — 276×164. Gradient from transparent →
+          near-black (matches the page surface), no backdrop-blur.
+          Clipped to the hex silhouette so the dark fade follows the
+          shape of the silk instead of bleeding into the corners. */}
+      <div
+        className="absolute bottom-0 left-0 z-10 flex flex-col items-center justify-end"
+        style={{
+          width: "276px",
+          height: "164px",
+          padding: "24px 24px 56px",
+          gap: "8px",
+          background:
+            "linear-gradient(180deg, rgba(23, 23, 23, 0) 0%, #171717 100%)",
+        }}
+      >
+        {/* Title */}
+        <p
+          className="text-center"
+          style={{
+            width: "228px",
+            fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+            fontWeight: 500,
+            fontSize: "20px",
+            lineHeight: "28px",
+            color: "#FFFFFF",
+            textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+          }}
+        >
+          {t("writerCardTitle")}
+        </p>
+
+        {/* Author meta */}
+        <div
+          className="flex flex-wrap items-center justify-center"
+          style={{ width: "228px", gap: "4px 8px" }}
+        >
+          <span className="flex items-center" style={{ gap: "4px" }}>
+            <span
+              className="flex items-center justify-center"
+              style={{
+                width: "16px",
+                height: "16px",
+                background: "#DBC99E",
+                border: "1px solid rgba(0, 0, 0, 0.08)",
+                borderRadius: "999px",
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 500,
+                fontSize: "8.5px",
+                lineHeight: "10px",
+                color: "#332217",
+              }}
+            >
+              A
+            </span>
+            <span
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: "12px",
+                lineHeight: "16px",
+                color: "#D6D6D6",
+                textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+              }}
+            >
+              {t("writerAuthor")}
+            </span>
+          </span>
+        </div>
+      </div>
+
+      {/* Edition label — chamfered chip (cut corners), same shape as
+          the Latest Published category pills. Dark fill so it reads
+          on the silk image. */}
+      <span
+        className="absolute z-20 inline-flex items-center justify-center"
+        style={{
+          width: "56px",
+          height: "24px",
+          left: "calc(50% - 28px)",
+          bottom: "24px",
+          backgroundColor: "rgba(23, 23, 23, 0.85)",
+          color: "#FFFFFF",
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 500,
+          fontSize: "12px",
+          lineHeight: "16px",
+          clipPath: CHIP_CHAMFER,
+          WebkitClipPath: CHIP_CHAMFER,
+        }}
+      >
+        {t("writerEdition")}
+      </span>
+    </article>
+  );
+}
