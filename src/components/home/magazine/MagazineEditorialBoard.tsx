@@ -3,32 +3,34 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import {
-  PaletteIcon,
-  FilmIcon,
-  HomeIcon,
-  MusicIcon,
   Grid2x2Icon,
   CalendarIcon,
   FolderIcon,
   BookIcon,
 } from "@/components/ui/icons";
 
+// Pre-rendered hex/mask shape (196×206, transparent outside the
+// hex silhouette). Used as the background mask for category cards.
+const CARD_MASK = "/images/home/Mask.png";
+
+// Rounded-corner hexagon — used by the "Follow our Writers" cards.
 const HEX_CLIP =
-  "polygon(50% 5%, 90% 27%, 90% 73%, 50% 95%, 10% 73%, 10% 27%)";
+  "polygon(47.5% 5.67%, 48.29% 5.3%, 49.13% 5.08%, 50% 5%, 50.87% 5.08%, 51.71% 5.3%, 52.5% 5.67%, 87.14% 25.67%, 87.85% 26.17%, 88.47% 26.79%, 88.97% 27.5%, 89.34% 28.29%, 89.57% 29.13%, 89.64% 30%, 89.64% 70%, 89.57% 70.87%, 89.34% 71.71%, 88.97% 72.5%, 88.47% 73.21%, 87.85% 73.83%, 87.14% 74.33%, 52.5% 94.33%, 51.71% 94.7%, 50.87% 94.92%, 50% 95%, 49.13% 94.92%, 48.29% 94.7%, 47.5% 94.33%, 12.86% 74.33%, 12.15% 73.83%, 11.53% 73.21%, 11.03% 72.5%, 10.66% 71.71%, 10.43% 70.87%, 10.36% 70%, 10.36% 30%, 10.43% 29.13%, 10.66% 28.29%, 11.03% 27.5%, 11.53% 26.79%, 12.15% 26.17%, 12.86% 25.67%)";
 
 const SILK = "/images/home/hero-silk.png";
 
 type CategoryConfig = {
   key: "category1" | "category2" | "category3" | "category4" | "category5";
-  Icon: () => React.ReactNode;
+  /** Path to the pre-rendered 48×48 hex-wrapped icon SVG. */
+  iconSrc: string;
 };
 
 const CATEGORIES: CategoryConfig[] = [
-  { key: "category1", Icon: PaletteIcon },
-  { key: "category2", Icon: FilmIcon },
-  { key: "category3", Icon: HomeIcon },
-  { key: "category4", Icon: MusicIcon },
-  { key: "category5", Icon: Grid2x2Icon },
+  { key: "category1", iconSrc: "/images/home/Icon.svg" },     // Magic of Art (palette)
+  { key: "category2", iconSrc: "/images/home/Icon-1.svg" },   // Film (filmstrip)
+  { key: "category3", iconSrc: "/images/home/Icon-2.svg" },   // Architecture (temple)
+  { key: "category4", iconSrc: "/images/home/Icon-3.svg" },   // Music (note)
+  { key: "category5", iconSrc: "/images/home/Icon-4.svg" },   // Society (home)
 ];
 
 /**
@@ -48,16 +50,29 @@ export function MagazineEditorialBoard() {
       <section aria-labelledby="less-read-heading">
         <h2
           id="less-read-heading"
-          className="text-lg font-medium tracking-tight sm:text-xl"
-          style={{ color: "var(--tott-accent-gold)" }}
+          style={{
+            fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+            fontWeight: 500,
+            fontSize: "18px",
+            lineHeight: "24px",
+            background:
+              "radial-gradient(100% 100% at 0% 50%, #C9A96E 0%, rgba(201, 169, 110, 0) 50%), linear-gradient(0deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), #000000",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+          }}
         >
           {t("lessReadHeading")}
         </h2>
 
-        <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
-          {CATEGORIES.map(({ key, Icon }) => (
+        {/* Cards row — gap 24px, wraps to 3 cols / 2 cols on smaller */}
+        <ul
+          className="mt-6 flex flex-wrap items-start justify-center"
+          style={{ gap: "24px" }}
+        >
+          {CATEGORIES.map(({ key, iconSrc }) => (
             <li key={key} className="flex justify-center">
-              <CategoryHex Icon={Icon} title={t(key)} />
+              <CategoryCard iconSrc={iconSrc} title={t(key)} />
             </li>
           ))}
         </ul>
@@ -189,64 +204,170 @@ export function MagazineEditorialBoard() {
   );
 }
 
-function CategoryHex({
-  Icon,
+/**
+ * Category card — Mask.png hex background with a 48×48 SVG icon at the
+ * top, gold-gradient title in the centre, and the Author/Date/Category/
+ * Edition meta row underneath.
+ */
+function CategoryCard({
+  iconSrc,
   title,
 }: {
-  Icon: () => React.ReactNode;
+  iconSrc: string;
   title: string;
 }) {
   const t = useTranslations("Home.magazine.editorialBoard");
+
+  // Gold radial-gradient text effect from the Figma spec.
+  const goldGradientTextStyle = {
+    fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+    fontWeight: 500,
+    fontSize: "16px",
+    lineHeight: "20px",
+    background:
+      "radial-gradient(100% 100% at 0% 50%, #C9A96E 0%, rgba(201, 169, 110, 0) 50%), linear-gradient(0deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), #000000",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text",
+  } as React.CSSProperties;
+
+  const metaTextStyle = {
+    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+    fontWeight: 400,
+    fontSize: "12px",
+    lineHeight: "16px",
+    color: "#D6D6D6",
+    textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+  } as React.CSSProperties;
+
   return (
     <div
-      className="relative w-full max-w-[230px]"
-      style={{ aspectRatio: "1 / 1.05" }}
+      className="relative flex flex-col items-center justify-center"
+      style={{
+        width: "196px",
+        height: "206px",
+        padding: "56px 24px",
+      }}
     >
+      {/* Pre-rendered hex mask as the card background. */}
+      <Image
+        src={CARD_MASK}
+        alt=""
+        fill
+        className="pointer-events-none select-none"
+        sizes="196px"
+        draggable={false}
+      />
+
+      {/* Top icon — pre-rendered 48×48 SVG (hex background + glyph all
+          baked in). Positioned absolutely at the top of the card. */}
       <div
-        className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center"
+        aria-hidden
+        className="absolute z-10"
         style={{
-          clipPath: HEX_CLIP,
-          WebkitClipPath: HEX_CLIP,
-          backgroundColor: "var(--tott-panel-bg)",
+          width: "48px",
+          height: "48px",
+          left: "calc(50% - 24px)",
+          top: "12px",
         }}
       >
-        <div
-          className="mb-2 flex h-7 w-7 items-center justify-center"
-          style={{ color: "var(--tott-home-text-strong)" }}
-        >
-          <Icon />
-        </div>
+        <Image
+          src={iconSrc}
+          alt=""
+          fill
+          sizes="48px"
+          className="select-none"
+          draggable={false}
+        />
+      </div>
+
+      {/* Text block — title + meta, sits in the middle of the hex.
+          z-10 so it renders above the Mask.png background. Margin-top
+          pushes the block down past the absolute icon above. */}
+      <div
+        className="z-10 flex flex-col items-center"
+        style={{ width: "148px", height: "64px", gap: "8px", marginTop: "8px" }}
+      >
+        {/* Title */}
         <p
-          className="text-sm font-medium sm:text-[0.95rem]"
-          style={{ color: "var(--tott-home-text-strong)" }}
+          className="text-center"
+          style={{ ...goldGradientTextStyle, width: "148px" }}
         >
           {title}
         </p>
-        <ul
-          className="mt-3 space-y-1 text-[11px]"
-          style={{ color: "var(--tott-home-text-muted)" }}
+
+        {/* Meta data — flex wrap with row gap 4 / col gap 8 */}
+        <div
+          className="flex flex-wrap items-center justify-center"
+          style={{ width: "148px", gap: "4px 8px" }}
         >
-          <li className="flex items-center justify-center gap-1.5">
-            <span className="inline-flex h-3 w-3 items-center justify-center rounded-full" style={{ backgroundColor: "var(--tott-accent-gold)", color: "var(--tott-auth-btn-text)" }}>
-              <span className="text-[8px] font-semibold">A</span>
+          {/* Author */}
+          <span className="flex items-center" style={{ gap: "4px" }}>
+            <span
+              className="flex items-center justify-center"
+              style={{
+                width: "16px",
+                height: "16px",
+                background: "#DBC99E",
+                border: "1px solid rgba(0, 0, 0, 0.08)",
+                borderRadius: "999px",
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 500,
+                fontSize: "8.5px",
+                lineHeight: "10px",
+                color: "#332217",
+              }}
+            >
+              A
             </span>
-            <span>{t("metaAuthor")}</span>
-            <span aria-hidden style={{ opacity: 0.6 }}>
+            <span style={metaTextStyle}>{t("metaAuthor")}</span>
+          </span>
+
+          {/* Date */}
+          <span className="flex items-center" style={{ gap: "4px" }}>
+            <span
+              aria-hidden
+              className="flex h-4 w-4 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
+              style={{
+                color: "rgba(255, 255, 255, 0.8)",
+                filter: "drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.32))",
+              }}
+            >
               <CalendarIcon />
             </span>
-            <span>{t("metaDate")}</span>
-          </li>
-          <li className="flex items-center justify-center gap-1.5">
-            <span aria-hidden style={{ opacity: 0.7 }}>
+            <span style={metaTextStyle}>{t("metaDate")}</span>
+          </span>
+
+          {/* Category */}
+          <span className="flex items-center" style={{ gap: "4px" }}>
+            <span
+              aria-hidden
+              className="flex h-4 w-4 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
+              style={{
+                color: "rgba(255, 255, 255, 0.8)",
+                filter: "drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.32))",
+              }}
+            >
               <FolderIcon />
             </span>
-            <span>{t("metaCategory")}</span>
-            <span aria-hidden style={{ opacity: 0.7 }}>
+            <span style={metaTextStyle}>{t("metaCategory")}</span>
+          </span>
+
+          {/* Edition */}
+          <span className="flex items-center" style={{ gap: "4px" }}>
+            <span
+              aria-hidden
+              className="flex h-4 w-4 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
+              style={{
+                color: "rgba(255, 255, 255, 0.8)",
+                filter: "drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.32))",
+              }}
+            >
               <BookIcon />
             </span>
-            <span>{t("metaEdition")}</span>
-          </li>
-        </ul>
+            <span style={metaTextStyle}>{t("metaEdition")}</span>
+          </span>
+        </div>
       </div>
     </div>
   );
