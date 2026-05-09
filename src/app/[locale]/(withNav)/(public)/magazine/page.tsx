@@ -296,10 +296,15 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
             ) : undefined
           }
         />
-        <MagazineNewsletter
-          locale={locale}
-          magazineId={magazineMeta.magazineId}
-        />
+        {/* Subscribe endpoint requires a real magazine_id; without
+            one the API rejects the request, so we hide the section
+            entirely until a magazine is seeded. */}
+        {magazineMeta.magazineId ? (
+          <MagazineNewsletter
+            locale={locale}
+            magazineId={magazineMeta.magazineId}
+          />
+        ) : null}
       </div>
     </main>
   );

@@ -12,8 +12,10 @@ import { HexPatternBackdrop } from "./HexPatternBackdrop";
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export type MagazineNewsletterProps = {
-  /** When provided, scopes the subscription to a specific magazine. */
-  magazineId?: string | null;
+  /** Required — subscriptions are scoped to a magazine on the backend.
+   * The component renders null without this so we don't fire requests
+   * that the API will reject with "magazine_id undefined". */
+  magazineId: string;
   /** Locale tag forwarded to the backend so confirmation emails pick
    * the right language. */
   locale?: string;
@@ -22,12 +24,13 @@ export type MagazineNewsletterProps = {
 /**
  * Newsletter band — pen-icon hex, headline, body copy, and an inline
  * email field wired to POST /newsletter-subscribers/subscribe via the
- * shared TanStack mutation.
+ * shared TanStack mutation. Backend requires a real magazine_id, so
+ * the page only renders this section when one is available.
  */
 export function MagazineNewsletter({
   magazineId,
   locale,
-}: MagazineNewsletterProps = {}) {
+}: MagazineNewsletterProps) {
   const t = useTranslations("Home.magazine.newsletter");
   const [email, setEmail] = useState("");
   const subscribe = useSubscribeNewsletter();
@@ -42,7 +45,7 @@ export function MagazineNewsletter({
     subscribe.mutate(
       {
         email: value,
-        ...(magazineId ? { magazine_id: magazineId } : {}),
+        magazine_id: magazineId,
         ...(locale ? { locale } : {}),
       },
       {
