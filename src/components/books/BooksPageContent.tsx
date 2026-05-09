@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import { StarIcon, ChevronDownIcon } from "@/components/ui/icons";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 
@@ -174,7 +175,7 @@ export function BooksPageContent({ items }: { items: BookItem[] }) {
               padding: "24px",
             }}
           >
-            <ChamferedFrame size={24} borderColor="#333333" />
+            <ChamferedFrame size={24} borderColor="var(--tott-card-border)" />
             <div className="flex items-center justify-between">
               <h2
                 style={{
@@ -364,7 +365,7 @@ function RadioRow({
         className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
         aria-hidden
         style={{
-          border: `1.5px solid ${checked ? "#C9A96E" : "#333333"}`,
+          border: `1.5px solid ${checked ? "var(--tott-accent-gold)" : "var(--tott-card-border)"}`,
         }}
       >
         {checked ? (
@@ -373,7 +374,7 @@ function RadioRow({
             style={{
               width: "8px",
               height: "8px",
-              backgroundColor: "#C9A96E",
+              backgroundColor: "var(--tott-accent-gold)",
             }}
           />
         ) : null}
@@ -407,9 +408,14 @@ function CheckboxRow({
         className="flex h-5 w-5 shrink-0 items-center justify-center"
         aria-hidden
         style={{
-          border: `1.5px solid ${checked ? "#C9A96E" : "#333333"}`,
-          backgroundColor: checked ? "#C9A96E" : "transparent",
+          border: `1.5px solid ${checked ? "var(--tott-accent-gold)" : "var(--tott-card-border)"}`,
+          backgroundColor: checked ? "var(--tott-accent-gold)" : "transparent",
           borderRadius: "4px",
+          // Drive the inner check via currentColor so SVG's `stroke`
+          // attribute, which doesn't accept CSS vars, picks the
+          // theme-aware foreground (`auth-btn-text` = dark brown
+          // that reads on gold in both themes).
+          color: "var(--tott-auth-btn-text)",
         }}
       >
         {checked ? (
@@ -418,7 +424,7 @@ function CheckboxRow({
             height="12"
             viewBox="0 0 12 12"
             fill="none"
-            stroke="#171717"
+            stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -453,8 +459,8 @@ function PriceInput({
     <div
       className="flex h-10 min-w-0 flex-1 items-center"
       style={{
-        backgroundColor: "#262626",
-        border: "1px solid #333333",
+        backgroundColor: "var(--tott-panel-bg)",
+        border: "1px solid var(--tott-card-border)",
         borderRadius: "8px",
         padding: "8px",
         gap: "4px",
@@ -508,8 +514,8 @@ function RatingSelect({
     <div
       className="relative mt-2 flex h-10 items-center"
       style={{
-        backgroundColor: "#262626",
-        border: "1px solid #333333",
+        backgroundColor: "var(--tott-panel-bg)",
+        border: "1px solid var(--tott-card-border)",
         borderRadius: "8px",
         padding: "8px",
       }}
@@ -632,12 +638,12 @@ function BookCard({
               style={{
                 width: "16px",
                 height: "16px",
-                backgroundColor: "#DBC99E",
+                backgroundColor: "var(--tott-dash-gold-text)",
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 500,
                 fontSize: "8.5px",
                 lineHeight: "10px",
-                color: "#332217",
+                color: "var(--tott-auth-btn-text)",
               }}
             >
               {book.author.charAt(0).toUpperCase() || "A"}
@@ -648,7 +654,7 @@ function BookCard({
                 fontWeight: 400,
                 fontSize: "12px",
                 lineHeight: "16px",
-                color: "#D6D6D6",
+                color: "var(--tott-home-text-muted)",
                 textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
               }}
             >
@@ -664,7 +670,7 @@ function BookCard({
             <span
               aria-hidden
               className="[&>svg]:h-4 [&>svg]:w-4"
-              style={{ color: "#C9A96E" }}
+              style={{ color: "var(--tott-dash-gold-label)" }}
             >
               <StarIcon />
             </span>
@@ -685,7 +691,7 @@ function BookCard({
                 fontWeight: 400,
                 fontSize: "12px",
                 lineHeight: "16px",
-                color: "#A3A3A3",
+                color: "var(--tott-home-text-muted)",
               }}
             >
               {labels.reviews(book.reviewCount)}
@@ -707,7 +713,7 @@ function BookCard({
               fontSize: "16px",
               lineHeight: "24px",
               letterSpacing: "-0.01em",
-              color: "#C9A96E",
+              color: "var(--tott-dash-gold-label)",
             }}
           >
             {book.price === 0 ? labels.free : `$${book.price.toFixed(2)}`}
@@ -719,11 +725,11 @@ function BookCard({
               height: "32px",
               padding: "4px",
               gap: "0",
-              backgroundColor: "#333333",
+              backgroundColor: "var(--tott-card-border)",
               boxShadow: "inset 0px 1px 1px rgba(255, 255, 255, 0.08)",
               borderRadius: "6px",
               border: "none",
-              color: "#FFFFFF",
+              color: "var(--tott-home-text-strong)",
             }}
           >
             <span
@@ -762,45 +768,83 @@ function BookCard({
 
 // ─── Share Your Story footer ─────────────────────────────────────
 
+/**
+ * Footer band — same visual treatment as the magazine
+ * "Join our cultural circle" newsletter section: HexPatternBackdrop
+ * behind, centered column with the pen-hex icon, gold-first-word
+ * heading, body text, and gold CTA. Uses Home.share* translations
+ * (the existing home-page copy).
+ */
 function ShareYourStory() {
   const t = useTranslations("Home");
   return (
     <section
-      className="relative mt-16 flex flex-col items-center gap-3 rounded-2xl px-6 py-12 text-center"
-      style={{
-        backgroundColor: "var(--tott-panel-bg)",
-        border: "1px solid var(--tott-card-border)",
-      }}
+      aria-labelledby="books-share-heading"
+      className="relative mt-16 w-full overflow-hidden px-4 py-16 sm:px-12 sm:py-28 md:py-32"
+      style={{ minHeight: "420px" }}
     >
-      <div
-        aria-hidden
-        className="relative"
-        style={{ width: "64px", height: "70px" }}
-      >
-        <Image src={SHARE_HEX} alt="" fill sizes="64px" />
+      <HexPatternBackdrop />
+
+      <div className="relative mx-auto flex w-full max-w-[560px] flex-col items-center text-center">
+        <div
+          aria-hidden
+          className="relative"
+          style={{ width: "80px", height: "88px" }}
+        >
+          <Image
+            src={SHARE_HEX}
+            alt=""
+            fill
+            sizes="80px"
+            className="select-none"
+            draggable={false}
+          />
+        </div>
+        {/* Heading group — Figma "Heading" frame: gap 8 between title
+            and body, both centered, fixed to the type-system specs. */}
+        <div className="mt-6 flex w-full flex-col items-center" style={{ gap: "8px" }}>
+          <h2
+            id="books-share-heading"
+            style={{
+              width: "100%",
+              fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+              fontWeight: 500,
+              fontSize: "24px",
+              lineHeight: "32px",
+              color: "var(--tott-home-text-strong)",
+              textAlign: "center",
+              margin: 0,
+            }}
+          >
+            {t("shareTitle")}
+          </h2>
+          <p
+            style={{
+              width: "100%",
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
+              fontWeight: 400,
+              fontSize: "14px",
+              lineHeight: "20px",
+              letterSpacing: "-0.005em",
+              color: "var(--tott-home-text-muted)",
+              textAlign: "center",
+              margin: 0,
+            }}
+          >
+            {t("shareBody")}
+          </p>
+        </div>
+        <Link
+          href="/contribute"
+          className="mt-6 inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium transition-colors hover:opacity-90"
+          style={{
+            backgroundColor: "var(--tott-magazine-btn-bg)",
+            color: "var(--tott-auth-btn-text)",
+          }}
+        >
+          {t("shareCta")}
+        </Link>
       </div>
-      <h2
-        className="text-xl font-medium tracking-tight sm:text-2xl"
-        style={{ color: "var(--tott-home-text-strong)" }}
-      >
-        {t("shareTitle")}
-      </h2>
-      <p
-        className="max-w-xl text-sm sm:text-base"
-        style={{ color: "var(--tott-home-text-muted)" }}
-      >
-        {t("shareBody")}
-      </p>
-      <Link
-        href="/contribute"
-        className="mt-2 inline-flex items-center justify-center rounded-md px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
-        style={{
-          backgroundColor: "var(--tott-magazine-btn-bg)",
-          color: "var(--tott-auth-btn-text)",
-        }}
-      >
-        {t("shareCta")}
-      </Link>
     </section>
   );
 }
