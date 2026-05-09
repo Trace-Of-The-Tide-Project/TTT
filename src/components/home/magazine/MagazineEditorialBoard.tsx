@@ -374,25 +374,39 @@ function CategoryCard({
           pushes the block down past the absolute icon above. */}
       <div
         className="z-10 flex flex-col items-center"
-        style={{ width: "148px", height: "64px", gap: "8px", marginTop: "8px" }}
+        style={{ width: "148px", gap: "8px", marginTop: "8px" }}
       >
-        {/* Title */}
+        {/* Title — single line; long titles truncate so the meta grid
+            below stays anchored at the same y on every card. */}
         <p
-          className="text-center"
-          style={{ ...goldGradientTextStyle, width: "148px" }}
+          className="overflow-hidden text-center"
+          style={{
+            ...goldGradientTextStyle,
+            width: "148px",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+          }}
+          title={title}
         >
           {title}
         </p>
 
-        {/* Meta data — flex wrap with row gap 4 / col gap 8 */}
+        {/* Meta — fixed 2×2 grid (Author | Date / Category | Edition).
+            Locks each piece of meta to a deterministic cell so the
+            date always sits in row 1, column 2 regardless of how
+            long author / category text is. Each cell truncates with
+            an ellipsis instead of wrapping. */}
         <div
-          className="flex flex-wrap items-center justify-center"
-          style={{ width: "148px", gap: "4px 8px" }}
+          className="grid grid-cols-2 items-center justify-items-start"
+          style={{ width: "148px", rowGap: "4px", columnGap: "8px" }}
         >
-          {/* Author */}
-          <span className="flex items-center" style={{ gap: "4px" }}>
+          {/* Author (row 1, col 1) */}
+          <span
+            className="flex min-w-0 items-center"
+            style={{ gap: "4px", maxWidth: "100%" }}
+          >
             <span
-              className="flex items-center justify-center"
+              className="flex shrink-0 items-center justify-center"
               style={{
                 width: "16px",
                 height: "16px",
@@ -408,14 +422,28 @@ function CategoryCard({
             >
               A
             </span>
-            <span style={metaTextStyle}>{author}</span>
+            <span
+              style={{
+                ...metaTextStyle,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                minWidth: 0,
+              }}
+              title={author}
+            >
+              {author}
+            </span>
           </span>
 
-          {/* Date */}
-          <span className="flex items-center" style={{ gap: "4px" }}>
+          {/* Date (row 1, col 2) */}
+          <span
+            className="flex min-w-0 items-center"
+            style={{ gap: "4px", maxWidth: "100%" }}
+          >
             <span
               aria-hidden
-              className="flex h-4 w-4 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
+              className="flex h-4 w-4 shrink-0 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
               style={{
                 color: "var(--tott-home-text-strong)",
                 filter: "drop-shadow(var(--tott-home-text-shadow))",
@@ -423,14 +451,28 @@ function CategoryCard({
             >
               <CalendarIcon />
             </span>
-            <span style={metaTextStyle}>{date}</span>
+            <span
+              style={{
+                ...metaTextStyle,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                minWidth: 0,
+              }}
+              title={date}
+            >
+              {date}
+            </span>
           </span>
 
-          {/* Category */}
-          <span className="flex items-center" style={{ gap: "4px" }}>
+          {/* Category (row 2, col 1) */}
+          <span
+            className="flex min-w-0 items-center"
+            style={{ gap: "4px", maxWidth: "100%" }}
+          >
             <span
               aria-hidden
-              className="flex h-4 w-4 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
+              className="flex h-4 w-4 shrink-0 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
               style={{
                 color: "var(--tott-home-text-strong)",
                 filter: "drop-shadow(var(--tott-home-text-shadow))",
@@ -438,14 +480,28 @@ function CategoryCard({
             >
               <FolderIcon />
             </span>
-            <span style={metaTextStyle}>{category}</span>
+            <span
+              style={{
+                ...metaTextStyle,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                minWidth: 0,
+              }}
+              title={category}
+            >
+              {category}
+            </span>
           </span>
 
-          {/* Edition */}
-          <span className="flex items-center" style={{ gap: "4px" }}>
+          {/* Edition (row 2, col 2) */}
+          <span
+            className="flex min-w-0 items-center"
+            style={{ gap: "4px", maxWidth: "100%" }}
+          >
             <span
               aria-hidden
-              className="flex h-4 w-4 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
+              className="flex h-4 w-4 shrink-0 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
               style={{
                 color: "var(--tott-home-text-strong)",
                 filter: "drop-shadow(var(--tott-home-text-shadow))",
@@ -453,7 +509,18 @@ function CategoryCard({
             >
               <BookIcon />
             </span>
-            <span style={metaTextStyle}>{edition}</span>
+            <span
+              style={{
+                ...metaTextStyle,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                minWidth: 0,
+              }}
+              title={edition}
+            >
+              {edition}
+            </span>
           </span>
         </div>
       </div>
