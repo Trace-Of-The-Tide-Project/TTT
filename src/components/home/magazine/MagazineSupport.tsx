@@ -318,10 +318,19 @@ function CollabCard({
         transition: "opacity 400ms ease",
       }}
     >
-      {/* Frame 86 — pre-rendered twin-hex header. */}
+      {/* Frame 86 — pre-rendered twin-hex header. Pulled up so the
+          top half of the hexes sits above the card's rounded top
+          edge (matches the Figma comp where the hexes "cross" the
+          card boundary). The PNG/SVG has transparent corners, so the
+          portion above the card paints against the page background
+          and the portion below paints against the card's panel-bg. */}
       <div
         className="relative w-full shrink-0"
-        style={{ maxWidth: "270px", aspectRatio: "270 / 156" }}
+        style={{
+          maxWidth: "270px",
+          aspectRatio: "270 / 156",
+          marginTop: "-44px",
+        }}
       >
         <Image
           src={FRAME_86}
@@ -454,9 +463,38 @@ function CollabCard({
         >
           {collab.description}
         </p>
+
+        {/* Status pill — "Completed" / "Pending" / etc. The label
+            comes from the contribution's `status` field; we
+            title-case it so backend values like "completed" /
+            "pending" read naturally. Hidden when no status. */}
+        {collab.status?.trim() ? (
+          <span
+            className="mt-2 inline-flex items-center justify-center"
+            style={{
+              padding: "6px 16px",
+              borderRadius: "999px",
+              backgroundColor: "var(--tott-home-badge-bg)",
+              color: "var(--tott-home-text-strong)",
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
+              fontWeight: 500,
+              fontSize: "12px",
+              lineHeight: "16px",
+              letterSpacing: "-0.005em",
+            }}
+          >
+            {prettifyStatus(collab.status)}
+          </span>
+        ) : null}
       </div>
     </article>
   );
+}
+
+function prettifyStatus(s: string): string {
+  const v = s.trim();
+  if (!v) return "";
+  return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
 }
 
 /** Carousel nav — pair of round gold ←/→ buttons that advance the
