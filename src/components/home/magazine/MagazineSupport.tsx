@@ -6,10 +6,27 @@ import { useTranslations } from "next-intl";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { FirstWordGold } from "./FirstWordGold";
 
-// Pre-rendered card SVG — chamfered/hexagonal outer shape with the
-// twin-hex (Author + Contributor) header baked in. Used as the
-// visual frame; text + status pill are layered on top.
-const CARD_FRAME = "/images/home/Card-2.svg";
+// Pre-rendered twin-hex header (Author + Contributor hexes connected
+// by the heart-handshake glyph). The labels baked into the SVG are
+// the only ones we render — no duplicate text on top.
+const FRAME_86 = "/images/home/Frame 86.svg";
+
+// Outer card silhouette — the chamfered hex from the Figma comp,
+// expressed as a polygon clip-path so the card is theme-aware
+// (`panel-bg` swaps with theme) instead of being baked into a
+// hard-coded dark SVG. Vertices are in % of the 361×384 design frame.
+const CARD_CLIP = `polygon(
+  49.86% 1.30%,
+  96.12% 21.10%,
+  99.86% 26.64%,
+  99.86% 73.88%,
+  96.12% 79.43%,
+  49.86% 99.20%,
+   3.88% 79.43%,
+   0.14% 73.88%,
+   0.14% 26.64%,
+   3.88% 21.10%
+)`;
 
 const BORDER = "var(--tott-card-border)";
 
@@ -235,11 +252,12 @@ export function MagazineSupport({ collaborations }: MagazineSupportProps) {
 
 /** Single collaboration card.
  *
- * Visual chrome (chamfered hex outer shape + twin-hex Author /
- * Contributor header + heart-handshake glyph) is baked into the
- * Card-2.svg asset. Text content and status pill are layered on
- * top via a flex column positioned in the lower portion of the
- * card, below the twin-hex.
+ * The card silhouette is a chamfered hexagon (per the Figma comp),
+ * applied via CSS clip-path on a div filled with the theme-aware
+ * `panel-bg` token — that way the card adapts to light/dark instead
+ * of being baked into a dark-coloured SVG. The twin-hex Author /
+ * Contributor header is layered on top from Frame 86.svg, and the
+ * text + status pill are rendered as DOM in the lower half.
  */
 function CollabCard({
   collab,
@@ -261,35 +279,58 @@ function CollabCard({
       className="relative shrink-0"
       aria-hidden={ariaHidden || undefined}
       style={{
-        // Aspect ratio matches Card-2.svg (361×384) so it scales
-        // proportionally without distorting the chamfered shape.
+        // Aspect ratio matches the Figma comp (361×384) so the
+        // chamfer angles read correctly at every viewport.
         width: "min(85vw, 360px)",
         aspectRatio: "361 / 384",
         opacity: isActive ? 1 : 0.45,
         transition: "opacity 400ms ease",
       }}
     >
-      {/* Card frame — chamfered/hex outline + twin-hex header, all
-          baked in as a single SVG. */}
-      <Image
-        src={CARD_FRAME}
-        alt=""
-        fill
-        sizes="(min-width: 768px) 360px, 85vw"
-        className="pointer-events-none select-none"
-        draggable={false}
-        priority={isActive}
+      {/* Card silhouette — clip-path gives us the chamfered hex
+          shape; backgroundColor uses the theme-aware `panel-bg`
+          token so the same card reads correctly on dark and light. */}
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          backgroundColor: "var(--tott-panel-bg)",
+          clipPath: CARD_CLIP,
+          WebkitClipPath: CARD_CLIP,
+        }}
       />
 
-      {/* Content layered on top of the frame. paddingTop ≈ 56% of
-          the card height pushes content below the twin-hex header
-          baked into the SVG (which spans roughly y=48..198 of 384). */}
+      {/* Twin-hex header — sits in the upper portion of the card. */}
+      <div
+        aria-hidden
+        className="absolute"
+        style={{
+          left: "50%",
+          top: "12%",
+          width: "75%",
+          aspectRatio: "270 / 156",
+          transform: "translateX(-50%)",
+          zIndex: 1,
+        }}
+      >
+        <Image
+          src={FRAME_86}
+          alt=""
+          fill
+          sizes="(min-width: 768px) 270px, 64vw"
+          className="pointer-events-none select-none"
+          draggable={false}
+        />
+      </div>
+
+      {/* Content layered on top — sits in the lower 45% of the
+          card so it doesn't overlap the twin-hex header above. */}
       <div
         className="absolute inset-0 flex flex-col items-center"
         style={{
           padding: "56% 24px 24px",
           gap: "8px",
-          zIndex: 1,
+          zIndex: 2,
         }}
       >
         <h3
