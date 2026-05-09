@@ -6,7 +6,9 @@
  * renders the magazine page so visitors land on the editorial
  * experience first.
  *
- * We re-export rather than duplicate the page body so there's a
- * single source of truth for the magazine route.
+ * We re-export the default but redeclare `dynamic` literally —
+ * Next.js's compile-time static analysis won't follow re-exported
+ * route segment config.
  */
-export { default, dynamic } from "./magazine/page";
+export const dynamic = "force-dynamic";
+export { default } from "./magazine/page";
