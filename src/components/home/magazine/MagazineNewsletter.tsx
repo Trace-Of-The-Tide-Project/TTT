@@ -1,19 +1,65 @@
 "use client";
 
+import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { useSubscribeNewsletter } from "@/hooks/mutations/newsletter";
+import { formatApiError } from "@/lib/api/error-message";
 import { FirstWordGold } from "./FirstWordGold";
 import { HexPatternBackdrop } from "./HexPatternBackdrop";
 
+const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export type MagazineNewsletterProps = {
+  /** When provided, scopes the subscription to a specific magazine. */
+  magazineId?: string | null;
+  /** Locale tag forwarded to the backend so confirmation emails pick
+   * the right language. */
+  locale?: string;
+};
+
 /**
- * Newsletter band — sits between the magazine content and the global
- * footer. Big pen-icon hex (Icon-5.svg), label, headline, body copy,
- * then an inline email field + gold Subscribe button. Hex-pattern
- * backdrop uses the same mask technique as the founder quote section
- * so the cells render at full size.
+ * Newsletter band — pen-icon hex, headline, body copy, and an inline
+ * email field wired to POST /newsletter-subscribers/subscribe via the
+ * shared TanStack mutation.
  */
-export function MagazineNewsletter() {
+export function MagazineNewsletter({
+  magazineId,
+  locale,
+}: MagazineNewsletterProps = {}) {
   const t = useTranslations("Home.magazine.newsletter");
+  const [email, setEmail] = useState("");
+  const subscribe = useSubscribeNewsletter();
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const value = email.trim();
+    if (!EMAIL_RX.test(value)) {
+      toast.error(t("invalidEmail"));
+      return;
+    }
+    subscribe.mutate(
+      {
+        email: value,
+        ...(magazineId ? { magazine_id: magazineId } : {}),
+        ...(locale ? { locale } : {}),
+      },
+      {
+        onSuccess: () => {
+          toast.success(t("successTitle"), { description: t("successBody") });
+          setEmail("");
+        },
+        onError: (err) => {
+          toast.error(t("errorTitle"), {
+            description: formatApiError(err, t("errorBody")),
+          });
+        },
+      },
+    );
+  };
+
+  const submitting = subscribe.isPending;
 
   return (
     <section
@@ -62,7 +108,8 @@ export function MagazineNewsletter() {
 
         <form
           className="mt-6 flex w-full max-w-md flex-col items-stretch gap-3 sm:flex-row"
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={onSubmit}
+          noValidate
         >
           <label className="sr-only" htmlFor="magazine-newsletter-email">
             {t("emailPlaceholder")}
@@ -70,8 +117,13 @@ export function MagazineNewsletter() {
           <input
             id="magazine-newsletter-email"
             type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder={t("emailPlaceholder")}
-            className="w-full rounded-lg px-4 py-2.5 text-sm outline-none placeholder:opacity-70"
+            disabled={submitting}
+            required
+            className="w-full rounded-lg px-4 py-2.5 text-sm outline-none placeholder:opacity-70 focus-visible:ring-2 focus-visible:ring-[var(--tott-accent-gold)] disabled:opacity-60"
             style={{
               backgroundColor: "var(--tott-panel-bg)",
               border: "1px solid var(--tott-card-border)",
@@ -80,13 +132,14 @@ export function MagazineNewsletter() {
           />
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium transition-colors hover:opacity-90"
+            disabled={submitting}
+            className="inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium transition-colors hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)] disabled:opacity-60"
             style={{
               backgroundColor: "var(--tott-magazine-btn-bg)",
               color: "var(--tott-auth-btn-text)",
             }}
           >
-            {t("submit")}
+            {submitting ? t("submitting") : t("submit")}
           </button>
         </form>
       </div>

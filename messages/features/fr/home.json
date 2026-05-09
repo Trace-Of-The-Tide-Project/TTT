@@ -141,7 +141,13 @@
         "title": "Rejoignez notre cercle culturel",
         "body": "Une dépêche bimensuelle sur l'art, le cinéma, le design et les récits qui façonnent la culture contemporaine.",
         "emailPlaceholder": "votre@email.com",
-        "submit": "S'abonner"
+        "submit": "S'abonner",
+        "submitting": "Inscription…",
+        "successTitle": "Vous êtes inscrit",
+        "successBody": "Consultez votre boîte mail pour confirmer.",
+        "errorTitle": "Échec de l'inscription",
+        "errorBody": "Impossible d'inscrire cet e-mail. Réessayez.",
+        "invalidEmail": "Saisissez un e-mail valide."
       },
       "panePlaceholder": "Le contenu de {tab} arrive bientôt."
     }

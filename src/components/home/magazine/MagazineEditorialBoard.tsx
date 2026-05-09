@@ -32,75 +32,124 @@ const WRITER_CARD = "/images/home/Image-2.png";
 // writer carousel to suggest more cards beyond the visible row.
 const FILLER = "/images/home/Content Grid Filler.png";
 
-type CategoryConfig = {
-  key: "category1" | "category2" | "category3" | "category4" | "category5";
-  /** Path to the pre-rendered 48×48 hex-wrapped icon SVG. */
-  iconSrc: string;
+// Fallback hex-wrapped icon for category cards when no specific
+// category-icon mapping matches. The Less Read Content row uses a
+// stable rotation through the available category artworks so each
+// card has a distinct top-icon.
+const CATEGORY_ICON_POOL = [
+  "/images/home/IconArt.svg",          // Art (palette)
+  "/images/home/IconFilm.svg",         // Film (filmstrip)
+  "/images/home/IconArchitecture.svg", // Architecture (temple)
+  "/images/home/IconMusic.svg",        // Music (note)
+  "/images/home/IconSociety.svg",      // Society (home)
+];
+
+export type LessReadArticleItem = {
+  id: string;
+  title: string;
+  author: string;
+  date: string;
+  category: string;
+  edition?: string | null;
+  /** Optional — when provided, replaces the rotating fallback. */
+  iconSrc?: string;
 };
 
-const CATEGORIES: CategoryConfig[] = [
-  { key: "category1", iconSrc: "/images/home/IconArt.svg" },          // Magic of Art (palette)
-  { key: "category2", iconSrc: "/images/home/IconFilm.svg" },         // Film (filmstrip)
-  { key: "category3", iconSrc: "/images/home/IconArchitecture.svg" }, // Architecture (temple)
-  { key: "category4", iconSrc: "/images/home/IconMusic.svg" },        // Music (note)
-  { key: "category5", iconSrc: "/images/home/IconSociety.svg" },      // Society (home)
-];
+export type FollowWriterItem = {
+  id: string;
+  /** Display name shown under the silk hex. */
+  name: string;
+  /** Card title — typically the writer's bio headline; falls back to
+   * the writer's display name when missing. */
+  title?: string | null;
+  edition?: string | null;
+  /** Optional avatar / cover surfaced inside the hex frame. */
+  avatar?: string | null;
+};
+
+export type FounderQuoteData = {
+  quote: string;
+  name: string;
+};
+
+export type MagazineEditorialBoardProps = {
+  /** "Explore Less Read Content" cards. Empty array hides the row. */
+  lessReadArticles: LessReadArticleItem[];
+  /** "Follow our Writers" cards. Empty array hides the row. */
+  writers: FollowWriterItem[];
+  /** Founder pull-quote — when null/undefined, falls back to the
+   * translation strings (the existing copy). */
+  founder?: FounderQuoteData | null;
+};
 
 /**
  * Editorial Board pane:
- *  - Explore Less Read Content: row of 5 hex category cards with icon +
- *    title + meta rows (Author / Date / Category / Edition).
- *  - Follow our Writers: 4 hex author cards with the silk image, title
- *    overlay, author chip and edition tag.
+ *  - Explore Less Read Content: hex category cards from low-view
+ *    articles.
+ *  - Follow our Writers: hex author cards from the featured writers
+ *    endpoint.
  *  - Founder pull-quote at the bottom over a soft hex pattern.
+ *
+ * Each row hides cleanly when its data array is empty.
  */
-export function MagazineEditorialBoard() {
+export function MagazineEditorialBoard({
+  lessReadArticles,
+  writers,
+  founder,
+}: MagazineEditorialBoardProps) {
   const t = useTranslations("Home.magazine.editorialBoard");
+  const founderQuote = founder?.quote ?? t("founderQuote");
+  const founderName = founder?.name ?? t("founderName");
+  const showLessRead = lessReadArticles.length > 0;
+  const showWriters = writers.length > 0;
 
   return (
     <div className="grid gap-16 sm:gap-20">
       {/* ─── Explore Less Read Content ─────────────────────────────── */}
-      <section
-        aria-labelledby="less-read-heading"
-        className="px-4 sm:px-6 md:px-8"
-      >
-        <h2
-          id="less-read-heading"
-          style={{
-            fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
-            fontWeight: 500,
-            fontSize: "18px",
-            lineHeight: "24px",
-            color: "var(--tott-home-text-strong)",
-          }}
+      {showLessRead ? (
+        <section
+          aria-labelledby="less-read-heading"
+          className="px-4 sm:px-6 md:px-8"
         >
-          <FirstWordGold raw={t("lessReadHeading")} />
-        </h2>
+          <h2
+            id="less-read-heading"
+            style={{
+              fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+              fontWeight: 500,
+              fontSize: "18px",
+              lineHeight: "24px",
+              color: "var(--tott-home-text-strong)",
+            }}
+          >
+            <FirstWordGold raw={t("lessReadHeading")} />
+          </h2>
 
-        {/* Cards row — flex-wrap with justify-center so the 5-card row
-            stays balanced at every breakpoint:
-              - <sm: 2 per row, 5th card centred on its own row
-              - sm/md: 3 per row, last 2 cards centred on row 2
-              - lg+: all 5 fit on one row
-            (A regular grid would left-align the last row's orphan
-             cards; flex-wrap + justify-center keeps them centred.) */}
-        <ul className="mt-6 flex flex-wrap justify-center gap-4 sm:gap-6">
-          {CATEGORIES.map(({ key, iconSrc }) => (
-            <li
-              key={key}
-              className="flex basis-[calc(50%-0.5rem)] justify-center sm:basis-[180px] sm:max-w-[196px]"
-            >
-              <CategoryCard iconSrc={iconSrc} title={t(key)} />
-            </li>
-          ))}
-        </ul>
-      </section>
+          <ul className="mt-6 flex flex-wrap justify-center gap-4 sm:gap-6">
+            {lessReadArticles.map((article, i) => (
+              <li
+                key={article.id}
+                className="flex basis-[calc(50%-0.5rem)] justify-center sm:basis-[180px] sm:max-w-[196px]"
+              >
+                <CategoryCard
+                  iconSrc={
+                    article.iconSrc ??
+                    CATEGORY_ICON_POOL[i % CATEGORY_ICON_POOL.length]
+                  }
+                  title={article.title}
+                  author={article.author}
+                  date={article.date}
+                  category={article.category}
+                  edition={article.edition ?? ""}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
-      {/* ─── Follow our Writers ───────────────────────────────────────
-          Rectangular cards 276×294 (border-radius 16) per the Figma
-          spec. Image fills the card; text + meta + Edition label sit
-          on a bottom dark gradient overlay; top-icon floats above. */}
-      <section aria-labelledby="follow-writers-heading">
+      {/* ─── Follow our Writers ─────────────────────────────────────── */}
+      {showWriters ? (
+        <section aria-labelledby="follow-writers-heading">
         <header
           className="flex items-center px-4 sm:px-6 md:px-8"
           style={{ gap: "24px" }}
@@ -134,21 +183,12 @@ export function MagazineEditorialBoard() {
           </div>
         </header>
 
-        {/* Carousel row — left filler + 4 cards + right filler in one
-            flex row with a uniform 8px gap, so the half-hex on each
-            side has the same spacing to the next card as the cards
-            have between themselves. */}
         <div className="relative mt-8 overflow-hidden">
-          {/* xl+: 4 cards in a centred row with side fillers (~1420px wide).
-              lg (≥1024 < 1280): 4 cards in a single row, no fillers.
-              sm (≥640): 2x2 grid of cards.
-              Mobile: 1 column stack. */}
-
           {/* Mobile / tablet / lg — responsive grid (no fillers). */}
           <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 xl:hidden">
-            {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="flex justify-center">
-                <WriterCard />
+            {writers.slice(0, 4).map((w) => (
+              <div key={w.id} className="flex justify-center">
+                <WriterCard writer={w} />
               </div>
             ))}
           </div>
@@ -177,8 +217,8 @@ export function MagazineEditorialBoard() {
                 draggable={false}
               />
             </div>
-            {[0, 1, 2, 3].map((i) => (
-              <WriterCard key={`d-${i}`} />
+            {writers.slice(0, 4).map((w) => (
+              <WriterCard key={`d-${w.id}`} writer={w} />
             ))}
             <div
               aria-hidden
@@ -198,12 +238,11 @@ export function MagazineEditorialBoard() {
           </div>
         </div>
       </section>
+      ) : null}
 
-      {/* ─── Founder pull-quote — quote + author centered on the
-          homepage-share-hex-pattern backdrop. Same mask technique as
-          the home page's "Share your story" so the hex cells render
-          at full size. The section is intentionally taller than the
-          294px pattern so no hex gets cropped at top/bottom. */}
+      {/* ─── Founder pull-quote — falls back to translations when no
+          founder data is wired through (which is the current state
+          until a CMS magazine page lands). */}
       <section
         className="relative overflow-hidden px-4 py-16 sm:px-12 sm:py-28 md:py-32"
         style={{ minHeight: "420px" }}
@@ -224,7 +263,7 @@ export function MagazineEditorialBoard() {
               margin: 0,
             }}
           >
-            {t("founderQuote")}
+            {founderQuote}
           </p>
           <footer
             style={{
@@ -237,7 +276,7 @@ export function MagazineEditorialBoard() {
               textAlign: "center",
             }}
           >
-            {t("founderName")}
+            {founderName}
           </footer>
         </blockquote>
       </section>
@@ -253,12 +292,18 @@ export function MagazineEditorialBoard() {
 function CategoryCard({
   iconSrc,
   title,
+  author,
+  date,
+  category,
+  edition,
 }: {
   iconSrc: string;
   title: string;
+  author: string;
+  date: string;
+  category: string;
+  edition: string;
 }) {
-  const t = useTranslations("Home.magazine.editorialBoard");
-
   // Gold radial-gradient text effect from the Figma spec.
   const goldGradientTextStyle = {
     fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
@@ -363,7 +408,7 @@ function CategoryCard({
             >
               A
             </span>
-            <span style={metaTextStyle}>{t("metaAuthor")}</span>
+            <span style={metaTextStyle}>{author}</span>
           </span>
 
           {/* Date */}
@@ -378,7 +423,7 @@ function CategoryCard({
             >
               <CalendarIcon />
             </span>
-            <span style={metaTextStyle}>{t("metaDate")}</span>
+            <span style={metaTextStyle}>{date}</span>
           </span>
 
           {/* Category */}
@@ -393,7 +438,7 @@ function CategoryCard({
             >
               <FolderIcon />
             </span>
-            <span style={metaTextStyle}>{t("metaCategory")}</span>
+            <span style={metaTextStyle}>{category}</span>
           </span>
 
           {/* Edition */}
@@ -408,7 +453,7 @@ function CategoryCard({
             >
               <BookIcon />
             </span>
-            <span style={metaTextStyle}>{t("metaEdition")}</span>
+            <span style={metaTextStyle}>{edition}</span>
           </span>
         </div>
       </div>
@@ -422,8 +467,11 @@ function CategoryCard({
  * we don't need a CSS clip-path. Overlay elements sit inside the
  * visible hex area.
  */
-function WriterCard() {
+function WriterCard({ writer }: { writer: FollowWriterItem }) {
   const t = useTranslations("Home.magazine.editorialBoard");
+  const cardTitle = writer.title?.trim() || writer.name || t("writerCardTitle");
+  const initial = (writer.name || cardTitle).slice(0, 1).toUpperCase() || "A";
+  const editionLabel = writer.edition?.trim() || t("writerEdition");
 
   return (
     <article
@@ -434,10 +482,19 @@ function WriterCard() {
         flexShrink: 0,
       }}
     >
-      {/* Hex-shaped image (Image-2.png — silk-textured hex with
-          transparent corners). Rendered identically in both themes
-          so the writer card keeps its dark-silk look against any
-          page surface. */}
+      {/* Writer avatar (when present) is layered behind the silk hex
+          frame so the avatar reads inside the hex silhouette without
+          the silk overpowering it. */}
+      {writer.avatar ? (
+        <Image
+          src={writer.avatar}
+          alt=""
+          fill
+          className="absolute inset-0 select-none object-cover opacity-70 mix-blend-luminosity"
+          sizes="276px"
+          draggable={false}
+        />
+      ) : null}
       <Image
         src={WRITER_CARD}
         alt=""
@@ -486,7 +543,7 @@ function WriterCard() {
       >
         {/* Title */}
         <p
-          className="w-full text-center"
+          className="line-clamp-2 w-full text-center"
           style={{
             maxWidth: "228px",
             fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
@@ -497,7 +554,7 @@ function WriterCard() {
             textShadow: "var(--tott-home-text-shadow)",
           }}
         >
-          {t("writerCardTitle")}
+          {cardTitle}
         </p>
 
         {/* Author meta */}
@@ -521,7 +578,7 @@ function WriterCard() {
                 color: "var(--tott-auth-btn-text)",
               }}
             >
-              A
+              {initial}
             </span>
             <span
               style={{
@@ -533,7 +590,7 @@ function WriterCard() {
                 textShadow: "var(--tott-home-text-shadow)",
               }}
             >
-              {t("writerAuthor")}
+              {writer.name}
             </span>
           </span>
         </div>
@@ -545,9 +602,11 @@ function WriterCard() {
       <span
         className="absolute z-20 inline-flex items-center justify-center"
         style={{
-          width: "56px",
+          minWidth: "56px",
           height: "24px",
-          left: "calc(50% - 28px)",
+          left: "50%",
+          transform: "translateX(-50%)",
+          padding: "0 10px",
           bottom: "24px",
           backgroundColor: "var(--tott-home-badge-bg)",
           color: "var(--tott-home-text-strong)",
@@ -559,7 +618,7 @@ function WriterCard() {
           WebkitClipPath: CHIP_CHAMFER,
         }}
       >
-        {t("writerEdition")}
+        {editionLabel}
       </span>
     </article>
   );

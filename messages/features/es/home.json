@@ -141,7 +141,13 @@
         "title": "Únete a nuestro círculo cultural",
         "body": "Una entrega quincenal sobre arte, cine, diseño y las historias que dan forma a la cultura contemporánea.",
         "emailPlaceholder": "tu@email.com",
-        "submit": "Suscribirme"
+        "submit": "Suscribirme",
+        "submitting": "Suscribiendo…",
+        "successTitle": "Te has suscrito",
+        "successBody": "Revisa tu correo para confirmar la suscripción.",
+        "errorTitle": "Error al suscribirse",
+        "errorBody": "No pudimos suscribir ese correo. Inténtalo de nuevo.",
+        "invalidEmail": "Introduce un correo válido."
       },
       "panePlaceholder": "Contenido de {tab} próximamente."
     }

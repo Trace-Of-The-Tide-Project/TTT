@@ -1,16 +1,25 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { SegmentedControl, type SegmentedControlOption } from "@/components/ui/SegmentedControl";
-import { MagazineManifesto } from "./MagazineManifesto";
-import { MagazineLatestPublished } from "./MagazineLatestPublished";
-import { MagazineIssues } from "./MagazineIssues";
-import { MagazineEditorialBoard } from "./MagazineEditorialBoard";
-import { MagazineSupport } from "./MagazineSupport";
 
 const TAB_IDS = ["manifesto", "publications", "issues", "editorialBoard", "support"] as const;
 type TabId = (typeof TAB_IDS)[number];
+
+/**
+ * Slot props — each pane is rendered by the parent (the page server
+ * component) so it can fetch its own data and stream in independently.
+ * Any pane can be omitted; the matching tab will hide and the section
+ * anchor won't render.
+ */
+export type MagazineTabsProps = {
+  manifesto?: ReactNode;
+  publications?: ReactNode;
+  issues?: ReactNode;
+  editorialBoard?: ReactNode;
+  support?: ReactNode;
+};
 
 const SECTION_ID: Record<TabId, string> = {
   manifesto: "magazine-manifesto",
@@ -28,15 +37,35 @@ const SECTION_ID: Record<TabId, string> = {
  * section, and the active highlight updates as the user scrolls (a
  * lightweight IntersectionObserver-based scroll spy).
  */
-export function MagazineTabs() {
+export function MagazineTabs({
+  manifesto,
+  publications,
+  issues,
+  editorialBoard,
+  support,
+}: MagazineTabsProps) {
   const tTabs = useTranslations("Home.magazine.tabs");
-  const [active, setActive] = useState<TabId>("manifesto");
+
+  // Build the slot map from props. Tabs and section anchors only
+  // render for slots the parent supplied — empty sections drop out of
+  // both the nav and the body.
+  const slots: Record<TabId, ReactNode> = {
+    manifesto,
+    publications,
+    issues,
+    editorialBoard,
+    support,
+  };
+  const visibleTabIds = TAB_IDS.filter((id) => slots[id] !== undefined);
+  const initialTab: TabId = visibleTabIds[0] ?? "manifesto";
+
+  const [active, setActive] = useState<TabId>(initialTab);
   // Suppress scroll-spy updates briefly while we are programmatically
   // smooth-scrolling, so the active pill doesn't flicker through every
   // section the user passes over.
   const lockUntilRef = useRef<number>(0);
 
-  const options: SegmentedControlOption<TabId>[] = TAB_IDS.map((id) => ({
+  const options: SegmentedControlOption<TabId>[] = visibleTabIds.map((id) => ({
     id,
     label: tTabs(id),
   }));
@@ -60,10 +89,12 @@ export function MagazineTabs() {
   // the active pill stale once a section that previously won leaves
   // the viewport).
   useEffect(() => {
-    const els = TAB_IDS.map((id) => ({
-      id,
-      el: document.getElementById(SECTION_ID[id]),
-    })).filter((x): x is { id: TabId; el: HTMLElement } => Boolean(x.el));
+    const els = visibleTabIds
+      .map((id) => ({
+        id,
+        el: document.getElementById(SECTION_ID[id]),
+      }))
+      .filter((x): x is { id: TabId; el: HTMLElement } => Boolean(x.el));
 
     if (els.length === 0) return;
 
@@ -72,7 +103,7 @@ export function MagazineTabs() {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          const id = TAB_IDS.find(
+          const id = visibleTabIds.find(
             (tabId) => SECTION_ID[tabId] === (entry.target as HTMLElement).id,
           );
           if (!id) continue;
@@ -106,7 +137,10 @@ export function MagazineTabs() {
 
     els.forEach(({ el }) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+    // visibleTabIds is derived from props (which are stable across
+    // renders for a given page) so we read it freshly each effect run.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibleTabIds.join("|")]);
 
   return (
     <section
@@ -147,21 +181,15 @@ export function MagazineTabs() {
             than the viewport, dragging every other section along with
             it and clipping their wrapped text. */}
         <div className="grid gap-20 sm:gap-24 md:gap-28">
-          <div id={SECTION_ID.manifesto} className="min-w-0 scroll-mt-28">
-            <MagazineManifesto />
-          </div>
-          <div id={SECTION_ID.publications} className="min-w-0 scroll-mt-28">
-            <MagazineLatestPublished />
-          </div>
-          <div id={SECTION_ID.issues} className="min-w-0 scroll-mt-28">
-            <MagazineIssues />
-          </div>
-          <div id={SECTION_ID.editorialBoard} className="min-w-0 scroll-mt-28">
-            <MagazineEditorialBoard />
-          </div>
-          <div id={SECTION_ID.support} className="min-w-0 scroll-mt-28">
-            <MagazineSupport />
-          </div>
+          {visibleTabIds.map((id) => (
+            <div
+              key={id}
+              id={SECTION_ID[id]}
+              className="min-w-0 scroll-mt-28"
+            >
+              {slots[id]}
+            </div>
+          ))}
         </div>
       </div>
     </section>

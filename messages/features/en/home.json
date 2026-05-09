@@ -141,7 +141,13 @@
         "title": "Join our cultural circle",
         "body": "A biweekly dispatch on art, film, design, and the stories that shape contemporary culture.",
         "emailPlaceholder": "your@email.com",
-        "submit": "Subscribe"
+        "submit": "Subscribe",
+        "submitting": "Subscribing…",
+        "successTitle": "You're on the list",
+        "successBody": "Check your inbox for a confirmation link.",
+        "errorTitle": "Subscription failed",
+        "errorBody": "We couldn't subscribe that email. Please try again.",
+        "invalidEmail": "Please enter a valid email address."
       },
       "panePlaceholder": "{tab} content coming soon."
     }

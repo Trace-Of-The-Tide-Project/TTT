@@ -2,16 +2,261 @@ import HexBackground from "@/components/ui/HexBackground";
 import { MagazineHero } from "@/components/home/magazine/MagazineHero";
 import { MagazineTabs } from "@/components/home/magazine/MagazineTabs";
 import { MagazineNewsletter } from "@/components/home/magazine/MagazineNewsletter";
+import { MagazineManifesto } from "@/components/home/magazine/MagazineManifesto";
+import {
+  MagazineLatestPublished,
+  type LatestPublishedItem,
+} from "@/components/home/magazine/MagazineLatestPublished";
+import {
+  MagazineIssues,
+  type MagazineIssueItem,
+} from "@/components/home/magazine/MagazineIssues";
+import {
+  MagazineEditorialBoard,
+  type LessReadArticleItem,
+  type FollowWriterItem,
+  type FounderQuoteData,
+} from "@/components/home/magazine/MagazineEditorialBoard";
+import {
+  MagazineSupport,
+  type CollaborationItem,
+} from "@/components/home/magazine/MagazineSupport";
+import { serverGet } from "@/lib/api/isomorphic-fetch";
+import {
+  writerAvatar,
+  writerDisplayName,
+  type WriterProfile,
+} from "@/services/writers.service";
+import type { MagazineIssue } from "@/services/magazine-issues.service";
+import type { Magazine } from "@/services/magazines.service";
 
-export default function MagazinePreviewPage() {
+// Magazine page is highly dynamic — we don't want it cached.
+export const dynamic = "force-dynamic";
+
+// ─── Backend response shapes (loose; OpenAPI doesn't declare them) ──
+
+type RawArticle = {
+  id: string;
+  title: string;
+  slug?: string;
+  excerpt?: string | null;
+  cover_image?: string | null;
+  category?: string | null;
+  reading_time?: number | null;
+  view_count?: number | null;
+  edition?: string | null;
+  published_at?: string | null;
+  author?: {
+    full_name?: string | null;
+    username?: string | null;
+    profile?: { display_name?: string | null; avatar?: string | null } | null;
+  } | null;
+};
+
+type RawContribution = {
+  id: string;
+  title?: string | null;
+  description?: string | null;
+  status?: string | null;
+  submission_date?: string | null;
+  contributor_name?: string | null;
+  type?: { name?: string | null } | null;
+  user?: { full_name?: string | null; username?: string | null } | null;
+  files?: Array<{ url?: string | null; path?: string | null }> | null;
+};
+
+type Envelope<T> = { data?: T[]; status?: number; results?: number };
+
+// ─── Server-side fetch helpers ──────────────────────────────────────
+
+function unwrapList<T>(raw: Envelope<T> | T[] | null): T[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  return raw.data ?? [];
+}
+
+async function fetchLatestArticles(): Promise<LatestPublishedItem[]> {
+  const raw = await serverGet<Envelope<RawArticle>>("/articles", {
+    limit: 5,
+    status: "published",
+    sortBy: "published_at",
+    order: "DESC",
+  });
+  return unwrapList(raw).map((a) => ({
+    id: a.id,
+    title: a.title,
+    category: prettifyCategory(a.category),
+    author: pickAuthorName(a.author),
+    readingTime: a.reading_time ?? 0,
+    coverImage: a.cover_image ?? null,
+  }));
+}
+
+async function fetchLessReadArticles(): Promise<LessReadArticleItem[]> {
+  const raw = await serverGet<Envelope<RawArticle>>("/articles", {
+    limit: 5,
+    status: "published",
+    sortBy: "view_count",
+    order: "ASC",
+  });
+  return unwrapList(raw).map((a) => ({
+    id: a.id,
+    title: a.title,
+    author: pickAuthorName(a.author),
+    date: formatShortDate(a.published_at),
+    category: prettifyCategory(a.category),
+    edition: a.edition ?? "",
+  }));
+}
+
+async function fetchWriters(): Promise<FollowWriterItem[]> {
+  // Try featured strip first; fall back to the full writers list.
+  const featured = await serverGet<Envelope<WriterProfile>>(
+    "/writers/featured",
+  );
+  const list = unwrapList(featured);
+  if (list.length > 0) return list.map(toWriterItem);
+
+  const all = await serverGet<Envelope<WriterProfile>>("/writers", {
+    limit: 4,
+  });
+  return unwrapList(all).slice(0, 4).map(toWriterItem);
+}
+
+async function fetchMagazineIssues(): Promise<MagazineIssueItem[]> {
+  const raw = await serverGet<Envelope<MagazineIssue>>("/magazine-issues", {
+    limit: 20,
+    status: "published",
+  });
+  return unwrapList(raw).map((it) => ({
+    id: it.id,
+    title: it.title,
+    kind: it.kind ?? null,
+    pageCount: it.page_count ?? null,
+    coverImage: it.cover_image ?? null,
+    excerpt: it.excerpt ?? null,
+  }));
+}
+
+async function fetchCollaborations(): Promise<CollaborationItem[]> {
+  const raw = await serverGet<Envelope<RawContribution>>("/contributions", {
+    page: 1,
+    limit: 7,
+  });
+  return unwrapList(raw).map((c) => ({
+    id: c.id,
+    title: c.title || c.description?.slice(0, 60) || "Collaboration",
+    type: c.type?.name || "Contribution",
+    status: c.status ?? null,
+    timeline: formatShortDate(c.submission_date) || null,
+    description: c.description || "",
+  }));
+}
+
+async function fetchMagazineMeta(): Promise<{
+  hero: { title?: string; subtitle?: string; image?: string } | null;
+  founder: FounderQuoteData | null;
+  magazineId: string | null;
+}> {
+  // Pull the first published magazine entity. When the backend hasn't
+  // been seeded with a magazine record, every field falls back to the
+  // existing translation strings inside the components.
+  const list = await serverGet<Envelope<Magazine>>("/magazines", {
+    limit: 1,
+    status: "published",
+  });
+  const m = unwrapList(list)[0];
+  if (!m) return { hero: null, founder: null, magazineId: null };
+
+  return {
+    hero:
+      m.hero_title || m.hero_subtitle || m.cover_image
+        ? {
+            title: m.hero_title ?? undefined,
+            subtitle: m.hero_subtitle ?? undefined,
+            image: m.cover_image ?? undefined,
+          }
+        : null,
+    founder:
+      m.founder_quote && m.founder_name
+        ? { quote: m.founder_quote, name: m.founder_name }
+        : null,
+    magazineId: m.id,
+  };
+}
+
+// ─── Mapping helpers ────────────────────────────────────────────────
+
+function pickAuthorName(author: RawArticle["author"]): string {
+  return (
+    author?.profile?.display_name?.trim() ||
+    author?.full_name?.trim() ||
+    author?.username?.trim() ||
+    ""
+  );
+}
+
+function prettifyCategory(c: string | null | undefined): string {
+  const v = (c ?? "").trim();
+  if (!v) return "";
+  // Convert snake_case / kebab-case to Title Case for display.
+  return v
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/\b\w/g, (l) => l.toUpperCase());
+}
+
+function formatShortDate(iso: string | null | undefined): string {
+  const v = (iso ?? "").trim();
+  if (!v) return "";
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
+
+function toWriterItem(w: WriterProfile): FollowWriterItem {
+  return {
+    id: w.id,
+    name: writerDisplayName(w) || "Writer",
+    title: w.bio?.slice(0, 80) ?? null,
+    edition: w.edition ?? null,
+    avatar: writerAvatar(w),
+  };
+}
+
+// ─── Page ───────────────────────────────────────────────────────────
+
+type PageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function MagazinePreviewPage({ params }: PageProps) {
+  const { locale } = await params;
+
+  // Parallel fetch — all six endpoints fire in one round trip; each
+  // resolves to an empty array on failure (serverGet swallows errors)
+  // so the page always renders, even with the backend offline.
+  const [
+    latestArticles,
+    lessReadArticles,
+    writers,
+    issues,
+    collaborations,
+    magazineMeta,
+  ] = await Promise.all([
+    fetchLatestArticles(),
+    fetchLessReadArticles(),
+    fetchWriters(),
+    fetchMagazineIssues(),
+    fetchCollaborations(),
+    fetchMagazineMeta(),
+  ]);
+
   return (
     <main
       className="relative min-h-screen w-full overflow-x-hidden"
       style={{ backgroundColor: "var(--tott-home-surface)" }}
     >
-      {/* Decorative hex band — exact same wrapper as admin DashboardLayout
-          (h-35 = 140px, no responsive variants), so the band reads at the
-          same scale here as it does in the admin. */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-35 overflow-hidden"
@@ -21,9 +266,40 @@ export default function MagazinePreviewPage() {
       </div>
 
       <div className="relative">
-        <MagazineHero />
-        <MagazineTabs />
-        <MagazineNewsletter />
+        <MagazineHero
+          artwork={magazineMeta.hero?.image}
+        />
+        <MagazineTabs
+          manifesto={<MagazineManifesto />}
+          publications={
+            latestArticles.length > 0 ? (
+              <MagazineLatestPublished items={latestArticles} />
+            ) : undefined
+          }
+          issues={
+            issues.length > 0 ? <MagazineIssues items={issues} /> : undefined
+          }
+          editorialBoard={
+            lessReadArticles.length > 0 ||
+            writers.length > 0 ||
+            magazineMeta.founder ? (
+              <MagazineEditorialBoard
+                lessReadArticles={lessReadArticles}
+                writers={writers}
+                founder={magazineMeta.founder}
+              />
+            ) : undefined
+          }
+          support={
+            collaborations.length > 0 ? (
+              <MagazineSupport collaborations={collaborations} />
+            ) : undefined
+          }
+        />
+        <MagazineNewsletter
+          locale={locale}
+          magazineId={magazineMeta.magazineId}
+        />
       </div>
     </main>
   );

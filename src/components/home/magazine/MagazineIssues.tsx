@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import {
@@ -39,26 +39,85 @@ const TAB_BORDER = "var(--tott-card-border)";
 const TAB_ACTIVE = "var(--tott-accent-gold)";
 const TAB_INACTIVE_TEXT = "var(--tott-home-text-muted)";
 
-// The Issues pane is currently a visual demo until the real magazine
-// pages drop in — a static spread image with a cosmetic page-flip
-// overlay. Hoisting these so it's obvious the page count + animation
-// are placeholder values, not real data.
-const DEMO_TOTAL_PAGES = 128;
-const DEMO_INITIAL_PAGE = 16;
+// The book spread is a static brand asset; the page-flip animation is
+// cosmetic (we don't have per-page artwork yet). Real-data parts of
+// this pane are the search/filter/sort controls + the issue list.
 const FLIP_MS = 700;
+// Fallback page count used only when the active issue has no
+// `page_count` field — keeps the indicator from reading 0/0.
+const DEMO_FALLBACK_TOTAL_PAGES = 128;
+const DEMO_INITIAL_PAGE = 1;
 
 /**
- * Issues pane — Visual Gallery with a book/spread reader.
+ * One row of the Issues list. Maps from `MagazineIssue` in the
+ * service. Anything that drives the UI (heading, filter, indicator)
+ * lives in this shape so the component stays decoupled from the API
+ * type.
+ */
+export type MagazineIssueItem = {
+  id: string;
+  title: string;
+  /** Maps to the filter chips: "articles" | "essays" | "collections"
+   * | "slides" | other. Items with an unknown kind still appear under
+   * the "all" filter. */
+  kind?: string | null;
+  pageCount?: number | null;
+  coverImage?: string | null;
+  excerpt?: string | null;
+};
+
+export type MagazineIssuesProps = {
+  /** Pass an empty array to hide the section entirely. */
+  items: MagazineIssueItem[];
+};
+
+/**
+ * Issues pane — search/filter chrome over the live magazine-issues
+ * list, with a stylized book-spread reader as the centrepiece.
  *
  *  Header: heading + subtitle + "View more →"
- *  Toolbar: search input | filter chips | sort by | filters
- *  Reader: chamfered white spread (two-page) with prev/next chevrons floating
- *          on the sides.
- *  Footer toolbar: page indicator + view/zoom/fullscreen/share/more controls.
+ *  Toolbar: search input | filter chips (kind) | sort by | filters
+ *  Reader: chamfered white spread (two-page) with prev/next chevrons
+ *  Footer toolbar: page indicator + view/zoom/fullscreen/share/more
+ *
+ * Real-data parts:
+ *  - `items` filters by chip selection + search query.
+ *  - The currently-shown issue (the first item under the active
+ *    filter + search) drives the reader's title overlay and page
+ *    count indicator.
+ *
+ * Stylized parts (not data-driven):
+ *  - The book spread image and the page-flip animation. We don't
+ *    have per-page artwork yet.
  */
-export function MagazineIssues() {
+export function MagazineIssues({ items }: MagazineIssuesProps) {
   const t = useTranslations("Home.magazine.issues");
   const [active, setActive] = useState<FilterId>("all");
+  const [query, setQuery] = useState("");
+
+  // Filtered list — narrow by chip + free-text search. Memoized so
+  // the `currentIssue` derivation below doesn't re-run on every
+  // render.
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return items.filter((it) => {
+      if (active !== "all") {
+        const kind = (it.kind ?? "").toLowerCase();
+        // Filter ids are plural ("articles"); kinds are usually
+        // singular ("article"). Allow both.
+        if (kind !== active && `${kind}s` !== active) return false;
+      }
+      if (q && !it.title.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [items, active, query]);
+
+  // The reader shows the first match — a "now reading" preview.
+  const currentIssue = filtered[0] ?? items[0] ?? null;
+  const totalPages =
+    currentIssue?.pageCount && currentIssue.pageCount > 0
+      ? currentIssue.pageCount
+      : DEMO_FALLBACK_TOTAL_PAGES;
 
   // Page-flip state — `flipping` is set when an animation starts; the
   // `flipPhase` then transitions from "start" (rotateY 0) to "end"
@@ -67,6 +126,13 @@ export function MagazineIssues() {
   const [flipping, setFlipping] = useState<"next" | "prev" | null>(null);
   const [flipPhase, setFlipPhase] = useState<"start" | "end">("start");
   const flipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // When the user changes filter/search and the issue itself changes,
+  // reset the page indicator so we don't show e.g. "page 16/24" on a
+  // different shorter issue.
+  useEffect(() => {
+    setCurrentPage(DEMO_INITIAL_PAGE);
+  }, [currentIssue?.id]);
 
   useEffect(() => {
     return () => {
@@ -86,10 +152,10 @@ export function MagazineIssues() {
   }, [flipping]);
 
   const goNext = () => {
-    if (flipping || currentPage + 2 > DEMO_TOTAL_PAGES) return;
+    if (flipping || currentPage + 2 > totalPages) return;
     setFlipping("next");
     flipTimer.current = setTimeout(() => {
-      setCurrentPage((p) => Math.min(p + 2, DEMO_TOTAL_PAGES));
+      setCurrentPage((p) => Math.min(p + 2, totalPages));
       setFlipping(null);
       setFlipPhase("start");
     }, FLIP_MS);
@@ -104,6 +170,8 @@ export function MagazineIssues() {
       setFlipPhase("start");
     }, FLIP_MS);
   };
+
+  if (items.length === 0) return null;
 
   return (
     <div className="grid w-full min-w-0 gap-8 px-4 sm:gap-10 sm:px-6 md:px-8">
@@ -160,6 +228,8 @@ export function MagazineIssues() {
             </span>
             <input
               type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
               placeholder={t("searchPlaceholder")}
               className="w-full bg-transparent text-sm leading-5 outline-none focus:outline-none focus:ring-0"
               style={{
@@ -216,6 +286,25 @@ export function MagazineIssues() {
         </div>
       </div>
 
+      {/* Now-reading caption — pulls from the active filtered issue
+          so the user can tell which record the reader is previewing.
+          Hidden when the filter+search returned 0 results AND the
+          fallback (items[0]) is also missing — but `items.length > 0`
+          guard above ensures there is always at least one. */}
+      {currentIssue ? (
+        <div
+          className="mx-auto w-full sm:px-12 lg:px-16"
+          aria-live="polite"
+        >
+          <p
+            className="mx-auto max-w-6xl text-center text-sm"
+            style={{ color: "var(--tott-home-text-muted)" }}
+          >
+            {currentIssue.title}
+          </p>
+        </div>
+      ) : null}
+
       {/* Reader — book spread w/ realistic page-flip animation. The
           turning page rotates around the spine using CSS 3D transforms;
           the static pages stay in place underneath.
@@ -237,7 +326,7 @@ export function MagazineIssues() {
         <button
           type="button"
           onClick={goNext}
-          disabled={flipping !== null || currentPage + 2 > DEMO_TOTAL_PAGES}
+          disabled={flipping !== null || currentPage + 2 > totalPages}
           aria-label={t("nextPage")}
           className="absolute right-2 top-1/2 z-20 hidden -translate-y-1/2 transition-opacity hover:opacity-70 disabled:opacity-30 sm:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
           style={{ color: "var(--tott-home-text-strong)" }}
@@ -335,12 +424,12 @@ export function MagazineIssues() {
           >
             <span style={{ color: "var(--tott-home-text-strong)" }}>{currentPage}</span>
             <span style={{ color: TAB_INACTIVE_TEXT }}>/</span>
-            <span style={{ color: TAB_INACTIVE_TEXT }}>{DEMO_TOTAL_PAGES}</span>
+            <span style={{ color: TAB_INACTIVE_TEXT }}>{totalPages}</span>
           </span>
           <button
             type="button"
             onClick={goNext}
-            disabled={flipping !== null || currentPage + 2 > DEMO_TOTAL_PAGES}
+            disabled={flipping !== null || currentPage + 2 > totalPages}
             aria-label={t("nextPage")}
             className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40 [&>svg]:h-6 [&>svg]:w-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
             style={{ color: TAB_INACTIVE_TEXT }}

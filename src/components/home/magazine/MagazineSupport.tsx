@@ -10,7 +10,6 @@ const FRAME_86 = "/images/home/Frame 86.svg";
 
 const BORDER = "var(--tott-card-border)";
 
-const TOTAL_CARDS = 7;
 // Card width matches the inline `min(85vw, 360px)` rule, plus the 24px
 // gap. The translate math uses the same expression so the active card
 // stays centred at every viewport width.
@@ -18,11 +17,32 @@ const CARD_W_CSS = "min(85vw, 360px)";
 const CARD_GAP_PX = 24;
 const TRANSITION_MS = 500;
 
+export type CollaborationItem = {
+  id: string;
+  title: string;
+  /** Co-writing / illustration / etc. — short type label. */
+  type: string;
+  /** Status pill text (e.g. "Completed"). When empty, the pill hides. */
+  status?: string | null;
+  /** Free-form timeline string (e.g. "Mar 2025"). */
+  timeline?: string | null;
+  /** Long-form description. */
+  description: string;
+  /** Optional avatar urls for the twin-hex header. */
+  authorAvatar?: string | null;
+  contributorAvatar?: string | null;
+};
+
+export type MagazineSupportProps = {
+  /** Pass an empty array to hide the section. */
+  collaborations: CollaborationItem[];
+};
+
 /**
  * Support pane — "Recent Collaporations" gallery (typo intentional,
  * mirrors Figma).
  *
- * The gallery cycles through TOTAL_CARDS in both directions. To make
+ * The gallery cycles through totalCards in both directions. To make
  * the wraparound seamless without rewinding through every card, we
  * render a leading + trailing clone strip and animate to a clone
  * position when wrapping, then snap (no transition) back to the real
@@ -33,12 +53,13 @@ const TRANSITION_MS = 500;
  * clone cards stay in sync with the real card and clicks don't
  * scribble onto a clone-only state.
  */
-export function MagazineSupport() {
+export function MagazineSupport({ collaborations }: MagazineSupportProps) {
   const t = useTranslations("Home.magazine.support");
-  // Logical index of the active card — always in [0, TOTAL_CARDS).
+  const totalCards = collaborations.length;
+  // Logical index of the active card — always in [0, totalCards).
   const [active, setActive] = useState(0);
   // Visual position used by the translate. Can briefly hold -1 or
-  // TOTAL_CARDS during a wrap before we snap it back into range.
+  // totalCards during a wrap before we snap it back into range.
   const [position, setPosition] = useState(0);
   // When false, transition is suppressed for a single render so the
   // snap-back doesn't animate.
@@ -46,11 +67,27 @@ export function MagazineSupport() {
   // Slide indices for each real card. Lifted here so the duplicated
   // clone strips render the same slide as the real card.
   const [authorSlides, setAuthorSlides] = useState<number[]>(() =>
-    Array.from({ length: TOTAL_CARDS }, () => 0),
+    Array.from({ length: totalCards }, () => 0),
   );
   const [contribSlides, setContribSlides] = useState<number[]>(() =>
-    Array.from({ length: TOTAL_CARDS }, () => 0),
+    Array.from({ length: totalCards }, () => 0),
   );
+
+  // Resync slide arrays if the collaboration list size changes.
+  useEffect(() => {
+    setAuthorSlides((s) =>
+      s.length === totalCards
+        ? s
+        : Array.from({ length: totalCards }, (_, i) => s[i] ?? 0),
+    );
+    setContribSlides((s) =>
+      s.length === totalCards
+        ? s
+        : Array.from({ length: totalCards }, (_, i) => s[i] ?? 0),
+    );
+    setActive((a) => (a >= totalCards ? 0 : a));
+    setPosition((p) => (p >= totalCards || p < 0 ? 0 : p));
+  }, [totalCards]);
 
   const wrapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -74,9 +111,9 @@ export function MagazineSupport() {
 
   const goNext = () => {
     if (wrapTimer.current) return;
-    if (active === TOTAL_CARDS - 1) {
+    if (active === totalCards - 1) {
       // Animate forward to the leading clone of card 0, then snap.
-      setPosition(TOTAL_CARDS);
+      setPosition(totalCards);
       setActive(0);
       wrapTimer.current = setTimeout(() => {
         setAnimate(false);
@@ -100,10 +137,10 @@ export function MagazineSupport() {
     if (active === 0) {
       // Animate backward to the trailing clone of card last, then snap.
       setPosition(-1);
-      setActive(TOTAL_CARDS - 1);
+      setActive(totalCards - 1);
       wrapTimer.current = setTimeout(() => {
         setAnimate(false);
-        setPosition(TOTAL_CARDS - 1);
+        setPosition(totalCards - 1);
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             setAnimate(true);
@@ -117,6 +154,8 @@ export function MagazineSupport() {
       setPosition(prev);
     }
   };
+
+  if (totalCards === 0) return null;
 
   return (
     <section
@@ -175,12 +214,12 @@ export function MagazineSupport() {
             style={{
               gap: `${CARD_GAP_PX}px`,
               // Centre the card at `position` in the middle (real)
-              // strip. The pre-clones at indices [0, TOTAL_CARDS) let
+              // strip. The pre-clones at indices [0, totalCards) let
               // position go to -1 (last trailing clone), and the
-              // post-clones let it go to TOTAL_CARDS (first leading
+              // post-clones let it go to totalCards (first leading
               // clone) without exposing an empty edge.
               transform: `translateX(calc(50% - ${
-                TOTAL_CARDS + position
+                totalCards + position
               } * (${CARD_W_CSS} + ${CARD_GAP_PX}px) - ${CARD_W_CSS} / 2))`,
               transition: animate
                 ? `transform ${TRANSITION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`
@@ -188,34 +227,37 @@ export function MagazineSupport() {
             }}
           >
             {/* Clones before the real set */}
-            {Array.from({ length: TOTAL_CARDS }).map((_, i) => (
+            {collaborations.map((c, i) => (
               <CollabCard
-                key={`pre-${i}`}
+                key={`pre-${c.id}`}
+                collab={c}
                 isActive={false}
                 isClone
-                authorIndex={authorSlides[i]}
-                contribIndex={contribSlides[i]}
+                authorIndex={authorSlides[i] ?? 0}
+                contribIndex={contribSlides[i] ?? 0}
               />
             ))}
             {/* Real set */}
-            {Array.from({ length: TOTAL_CARDS }).map((_, i) => (
+            {collaborations.map((c, i) => (
               <CollabCard
-                key={`real-${i}`}
+                key={`real-${c.id}`}
+                collab={c}
                 isActive={i === active}
-                authorIndex={authorSlides[i]}
-                contribIndex={contribSlides[i]}
+                authorIndex={authorSlides[i] ?? 0}
+                contribIndex={contribSlides[i] ?? 0}
                 onAdvanceAuthor={() => advanceAuthor(i)}
                 onAdvanceContrib={() => advanceContrib(i)}
               />
             ))}
             {/* Clones after the real set */}
-            {Array.from({ length: TOTAL_CARDS }).map((_, i) => (
+            {collaborations.map((c, i) => (
               <CollabCard
-                key={`post-${i}`}
+                key={`post-${c.id}`}
+                collab={c}
                 isActive={false}
                 isClone
-                authorIndex={authorSlides[i]}
-                contribIndex={contribSlides[i]}
+                authorIndex={authorSlides[i] ?? 0}
+                contribIndex={contribSlides[i] ?? 0}
               />
             ))}
           </div>
@@ -234,6 +276,7 @@ export function MagazineSupport() {
 
 /** Single collaboration card — 360×382 with twin-hex header. */
 function CollabCard({
+  collab,
   isActive = true,
   isClone = false,
   authorIndex,
@@ -241,6 +284,7 @@ function CollabCard({
   onAdvanceAuthor,
   onAdvanceContrib,
 }: {
+  collab: CollaborationItem;
   isActive?: boolean;
   /** Clones are decorative duplicates that flank the real strip; they
    *  echo the active card's slide indices but don't accept input. */
@@ -344,7 +388,7 @@ function CollabCard({
             textShadow: "var(--tott-home-text-shadow)",
           }}
         >
-          {t("collabTitle")}
+          {collab.title}
         </h3>
 
         <div
@@ -361,38 +405,40 @@ function CollabCard({
               textAlign: "center",
             }}
           >
-            {t("collabType")}
+            {collab.type}
           </span>
-          <span
-            className="flex items-center"
-            style={{ gap: "6px", color: "var(--tott-home-text-muted)" }}
-          >
-            <AlarmIcon />
-            <span className="flex items-center" style={{ gap: "2px" }}>
-              <span
-                style={{
-                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                  fontWeight: 400,
-                  fontSize: "12px",
-                  lineHeight: "16px",
-                  color: "var(--tott-home-text-muted)",
-                }}
-              >
-                {t("collabTimelineLabel")}
-              </span>
-              <span
-                style={{
-                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                  fontWeight: 400,
-                  fontSize: "12px",
-                  lineHeight: "16px",
-                  color: "var(--tott-home-text-muted)",
-                }}
-              >
-                {t("collabTimeline")}
+          {collab.timeline ? (
+            <span
+              className="flex items-center"
+              style={{ gap: "6px", color: "var(--tott-home-text-muted)" }}
+            >
+              <AlarmIcon />
+              <span className="flex items-center" style={{ gap: "2px" }}>
+                <span
+                  style={{
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontWeight: 400,
+                    fontSize: "12px",
+                    lineHeight: "16px",
+                    color: "var(--tott-home-text-muted)",
+                  }}
+                >
+                  {t("collabTimelineLabel")}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontWeight: 400,
+                    fontSize: "12px",
+                    lineHeight: "16px",
+                    color: "var(--tott-home-text-muted)",
+                  }}
+                >
+                  {collab.timeline}
+                </span>
               </span>
             </span>
-          </span>
+          ) : null}
         </div>
 
         <p
@@ -406,7 +452,7 @@ function CollabCard({
             margin: 0,
           }}
         >
-          {t("collabBody")}
+          {collab.description}
         </p>
       </div>
     </article>
