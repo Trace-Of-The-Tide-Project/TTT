@@ -19,6 +19,12 @@ const FRAME_86 = "/images/home/Frame 86.svg";
 const CARD_PATH =
   "M170.032 5.07434C176.643 1.86976 184.357 1.86976 190.968 5.07434L346.968 80.6918C355.244 84.7033 360.5 93.0914 360.5 102.288V283.712C360.5 292.909 355.244 301.297 346.968 305.308L190.968 380.926C184.357 384.13 176.643 384.13 170.032 380.926L14.0316 305.308C5.75566 301.297 0.5 292.909 0.5 283.712V102.288C0.5 93.0915 5.75566 84.7033 14.0316 80.6918L170.032 5.07434Z";
 
+// Octagonal chamfer for the status pill — matches the category
+// chip shape on the Latest Published row so the magazine page
+// reads as one consistent system.
+const CHIP_CHAMFER =
+  "polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)";
+
 const BORDER = "var(--tott-card-border)";
 
 // Card width matches the inline `min(85vw, 360px)` rule, plus the 24px
@@ -412,11 +418,12 @@ function CollabCard({
         </p>
       </div>
 
-      {/* Status pill — Figma "Label" element. Sits at the bottom of
-          the card per the user's first target screenshot (rather
-          than the absolute top:100 from the Figma CSS, which is
-          variant-specific). Uses the dark-pill token so it adapts
-          to light/dark. z=3 */}
+      {/* Status pill — Figma "Label" spec: 80×24, #333333 bg with
+          backdrop blur, Inter 500 12/16 white text. Uses the same
+          octagonal chamfer (CHIP_CHAMFER) as the Latest Published
+          category chip so the page reads as one consistent system.
+          min-width 80 lets longer status strings ("Archived" etc.)
+          grow naturally without breaking the layout. z=3 */}
       {collab.status?.trim() ? (
         <span
           className="relative inline-flex items-center justify-center"
@@ -425,14 +432,16 @@ function CollabCard({
             minWidth: "80px",
             height: "24px",
             padding: "4px 12px",
-            backgroundColor: "var(--tott-dark-pill)",
-            color: "var(--tott-dark-pill-fg)",
+            backgroundColor: "#333333",
+            color: "#FFFFFF",
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 500,
             fontSize: "12px",
             lineHeight: "16px",
             backdropFilter: "blur(4px)",
             WebkitBackdropFilter: "blur(4px)",
+            clipPath: CHIP_CHAMFER,
+            WebkitClipPath: CHIP_CHAMFER,
           }}
         >
           {prettifyStatus(collab.status)}
