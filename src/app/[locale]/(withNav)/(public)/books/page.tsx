@@ -66,6 +66,7 @@ export default async function BooksPage() {
 
     return {
       id: a.id,
+      slug: a.slug ?? a.id,
       title: a.title,
       author: pickAuthorName(a.author),
       coverImage: cover,

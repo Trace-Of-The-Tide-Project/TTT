@@ -22,6 +22,8 @@ const BOOK_HEX = "/images/home/Book Cover.png";
 
 export type BookItem = {
   id: string;
+  /** Article slug — used to link the View button to the detail page. */
+  slug: string;
   title: string;
   author: string;
   coverImage: string | null;
@@ -718,9 +720,9 @@ function BookCard({
           >
             {book.price === 0 ? labels.free : `$${book.price.toFixed(2)}`}
           </span>
-          <button
-            type="button"
-            className="inline-flex shrink-0 items-center justify-center"
+          <Link
+            href={`/books/${book.slug}`}
+            className="inline-flex shrink-0 items-center justify-center transition-opacity hover:opacity-90"
             style={{
               height: "32px",
               padding: "4px",
@@ -759,7 +761,7 @@ function BookCard({
             >
               {labels.view}
             </span>
-          </button>
+          </Link>
         </div>
       </div>
     </article>

@@ -195,6 +195,31 @@
       "bookName": "Book name",
       "author": "Author",
       "noResults": "No books match your filters."
+    },
+    "bookDetail": {
+      "breadcrumbBooks": "Books",
+      "ratingReviews": "({count} reviews)",
+      "metaAuthoredBy": "Authored by:",
+      "metaCoAuthors": "Co-authors:",
+      "metaPublisher": "Publisher:",
+      "metaYear": "Year of publication:",
+      "metaLanguage": "Language:",
+      "metaPages": "Number of Pages:",
+      "metaContents": "Number of contents:",
+      "pages": "{count} pages",
+      "downloadPdf": "Download PDF file",
+      "buyNow": "Buy Now",
+      "preview": "Preview",
+      "reviewsHeading": "Reviews",
+      "seeAllReviews": "See all reviews",
+      "writeReviewPlaceholder": "Write a review",
+      "addQuote": "Add Quote",
+      "submitReview": "Submit Review",
+      "reviewQuoteFallback": "“The greatest adventure is what lies ahead.”",
+      "page": "Page {n}",
+      "notFoundHeading": "Book not found",
+      "notFoundBody": "The book you're looking for doesn't exist or was unpublished.",
+      "backToBooks": "Back to all books"
     }
   }
 }
