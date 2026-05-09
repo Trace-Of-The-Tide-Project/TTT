@@ -11,22 +11,13 @@ import { FirstWordGold } from "./FirstWordGold";
 // the only ones we render — no duplicate text on top.
 const FRAME_86 = "/images/home/Frame 86.svg";
 
-// Outer card silhouette — the chamfered hex from the Figma comp,
-// expressed as a polygon clip-path so the card is theme-aware
-// (`panel-bg` swaps with theme) instead of being baked into a
-// hard-coded dark SVG. Vertices are in % of the 361×384 design frame.
-const CARD_CLIP = `polygon(
-  49.86% 1.30%,
-  96.12% 21.10%,
-  99.86% 26.64%,
-  99.86% 73.88%,
-  96.12% 79.43%,
-  49.86% 99.20%,
-   3.88% 79.43%,
-   0.14% 73.88%,
-   0.14% 26.64%,
-   3.88% 21.10%
-)`;
+// Outer card silhouette — chamfered-hex path lifted from the Figma
+// comp (Card-2.svg). Used as both the fill (matching the page
+// surface so the card is "invisible") and the stroke (linear
+// gradient #333333 → transparent, top-to-bottom — edges visible
+// at the top, fading away at the bottom).
+const CARD_PATH =
+  "M170.032 5.07434C176.643 1.86976 184.357 1.86976 190.968 5.07434L346.968 80.6918C355.244 84.7033 360.5 93.0914 360.5 102.288V283.712C360.5 292.909 355.244 301.297 346.968 305.308L190.968 380.926C184.357 384.13 176.643 384.13 170.032 380.926L14.0316 305.308C5.75566 301.297 0.5 292.909 0.5 283.712V102.288C0.5 93.0915 5.75566 84.7033 14.0316 80.6918L170.032 5.07434Z";
 
 const BORDER = "var(--tott-card-border)";
 
@@ -252,12 +243,19 @@ export function MagazineSupport({ collaborations }: MagazineSupportProps) {
 
 /** Single collaboration card.
  *
- * The card silhouette is a chamfered hexagon (per the Figma comp),
- * applied via CSS clip-path on a div filled with the theme-aware
- * `panel-bg` token — that way the card adapts to light/dark instead
- * of being baked into a dark-coloured SVG. The twin-hex Author /
- * Contributor header is layered on top from Frame 86.svg, and the
- * text + status pill are rendered as DOM in the lower half.
+ * Mirrors the Figma autolayout: outer flex column with padding
+ * 16×24 and gap 16, holding (1) Frame 86 twin-hex header, (2) Title
+ * + Meta + Description text block, (3) status pill. Behind everything
+ * the card silhouette is painted on an absolute layer using a
+ * chamfered-hex clip-path filled with the theme-aware `panel-bg`
+ * token so the same shape adapts to light/dark.
+ *
+ * Figma typography mapping:
+ *   Title         IBM Plex Sans 500 20/28  white  text-shadow
+ *   Type          Inter 400        12/16  --tott-dash-gold-label (=#C9A96E)
+ *   Timeline      Inter 400        12/16  --tott-home-text-muted (#A3A3A3-ish)
+ *   Description   Inter 400        12/16  --tott-home-text-muted
+ *   Status pill   Inter 500        12/16  --tott-dark-pill-fg on --tott-dark-pill bg
  */
 function CollabCard({
   collab,
@@ -276,65 +274,77 @@ function CollabCard({
 
   return (
     <article
-      className="relative shrink-0"
+      className="relative flex shrink-0 flex-col items-center justify-center"
       aria-hidden={ariaHidden || undefined}
       style={{
-        // Aspect ratio matches the Figma comp (361×384) so the
-        // chamfer angles read correctly at every viewport.
         width: "min(85vw, 360px)",
-        aspectRatio: "361 / 384",
+        aspectRatio: "360 / 382",
+        padding: "16px 24px",
+        gap: "16px",
         opacity: isActive ? 1 : 0.45,
         transition: "opacity 400ms ease",
+        // isolate so the card's z-index stack stays self-contained
+        // (same as Figma `isolation: isolate`).
+        isolation: "isolate",
       }}
     >
-      {/* Card silhouette — clip-path gives us the chamfered hex
-          shape; backgroundColor uses the theme-aware `panel-bg`
-          token so the same card reads correctly on dark and light. */}
-      <div
+      {/* BG layer — inline SVG so we can paint the chamfered-hex
+          fill (matched to the page surface) AND the stroke (linear
+          gradient #333333 fading to transparent toward the bottom)
+          in one path. preserveAspectRatio="none" lets the path
+          stretch to whatever dimensions the card ends up at. */}
+      <svg
         aria-hidden
-        className="absolute inset-0"
-        style={{
-          backgroundColor: "var(--tott-panel-bg)",
-          clipPath: CARD_CLIP,
-          WebkitClipPath: CARD_CLIP,
-        }}
-      />
+        viewBox="0 0 361 384"
+        preserveAspectRatio="none"
+        className="absolute inset-0 h-full w-full"
+        style={{ zIndex: 0, overflow: "visible" }}
+      >
+        <defs>
+          <linearGradient
+            id="collab-card-stroke"
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="1"
+          >
+            <stop offset="0%" stopColor="#333333" stopOpacity="1" />
+            <stop offset="80%" stopColor="#333333" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <path
+          d={CARD_PATH}
+          fill="var(--tott-home-surface)"
+          stroke="url(#collab-card-stroke)"
+          strokeWidth="1"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
 
-      {/* Twin-hex header — sits in the upper portion of the card. */}
+      {/* Frame 86 — twin-hex header in flow. z=1 */}
       <div
-        aria-hidden
-        className="absolute"
-        style={{
-          left: "50%",
-          top: "12%",
-          width: "75%",
-          aspectRatio: "270 / 156",
-          transform: "translateX(-50%)",
-          zIndex: 1,
-        }}
+        className="relative w-full shrink-0"
+        style={{ maxWidth: "270px", aspectRatio: "270 / 156", zIndex: 1 }}
       >
         <Image
           src={FRAME_86}
           alt=""
           fill
-          sizes="(min-width: 768px) 270px, 64vw"
+          sizes="270px"
           className="pointer-events-none select-none"
           draggable={false}
         />
       </div>
 
-      {/* Content layered on top — sits in the lower 45% of the
-          card so it doesn't overlap the twin-hex header above. */}
+      {/* Text block — Title + Meta + Description, in flow. z=2 */}
       <div
-        className="absolute inset-0 flex flex-col items-center"
-        style={{
-          padding: "56% 24px 24px",
-          gap: "8px",
-          zIndex: 2,
-        }}
+        className="relative flex w-full flex-col items-center"
+        style={{ maxWidth: "312px", gap: "8px", zIndex: 2 }}
       >
         <h3
+          className="line-clamp-1"
           style={{
+            width: "100%",
             fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
             fontWeight: 500,
             fontSize: "20px",
@@ -342,13 +352,15 @@ function CollabCard({
             color: "var(--tott-home-text-strong)",
             textAlign: "center",
             textShadow: "var(--tott-home-text-shadow)",
+            margin: 0,
           }}
         >
           {collab.title}
         </h3>
 
+        {/* Meta row — Type (gold) · Alarm + Timeline */}
         <div
-          className="flex items-center justify-center"
+          className="flex flex-wrap items-center justify-center"
           style={{ gap: "12px" }}
         >
           <span
@@ -369,35 +381,23 @@ function CollabCard({
               style={{ gap: "6px", color: "var(--tott-home-text-muted)" }}
             >
               <AlarmIcon />
-              <span className="flex items-center" style={{ gap: "2px" }}>
-                <span
-                  style={{
-                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                    fontWeight: 400,
-                    fontSize: "12px",
-                    lineHeight: "16px",
-                    color: "var(--tott-home-text-muted)",
-                  }}
-                >
-                  {t("collabTimelineLabel")}
-                </span>
-                <span
-                  style={{
-                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                    fontWeight: 400,
-                    fontSize: "12px",
-                    lineHeight: "16px",
-                    color: "var(--tott-home-text-muted)",
-                  }}
-                >
-                  {collab.timeline}
-                </span>
+              <span
+                style={{
+                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                  fontWeight: 400,
+                  fontSize: "12px",
+                  lineHeight: "16px",
+                  color: "var(--tott-home-text-muted)",
+                }}
+              >
+                {t("collabTimelineLabel")} {collab.timeline}
               </span>
             </span>
           ) : null}
         </div>
 
         <p
+          className="line-clamp-2"
           style={{
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 400,
@@ -410,30 +410,34 @@ function CollabCard({
         >
           {collab.description}
         </p>
-
-        {/* Status pill — "Completed" / "Pending" / etc. The label
-            comes from the contribution's `status` field; we
-            title-case it so backend values like "completed" /
-            "pending" read naturally. Hidden when no status. */}
-        {collab.status?.trim() ? (
-          <span
-            className="mt-2 inline-flex items-center justify-center"
-            style={{
-              padding: "6px 16px",
-              borderRadius: "999px",
-              backgroundColor: "var(--tott-home-badge-bg)",
-              color: "var(--tott-home-text-strong)",
-              fontFamily: "'Inter', var(--font-sans, sans-serif)",
-              fontWeight: 500,
-              fontSize: "12px",
-              lineHeight: "16px",
-              letterSpacing: "-0.005em",
-            }}
-          >
-            {prettifyStatus(collab.status)}
-          </span>
-        ) : null}
       </div>
+
+      {/* Status pill — Figma "Label" element. Sits at the bottom of
+          the card per the user's first target screenshot (rather
+          than the absolute top:100 from the Figma CSS, which is
+          variant-specific). Uses the dark-pill token so it adapts
+          to light/dark. z=3 */}
+      {collab.status?.trim() ? (
+        <span
+          className="relative inline-flex items-center justify-center"
+          style={{
+            zIndex: 3,
+            minWidth: "80px",
+            height: "24px",
+            padding: "4px 12px",
+            backgroundColor: "var(--tott-dark-pill)",
+            color: "var(--tott-dark-pill-fg)",
+            fontFamily: "'Inter', var(--font-sans, sans-serif)",
+            fontWeight: 500,
+            fontSize: "12px",
+            lineHeight: "16px",
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)",
+          }}
+        >
+          {prettifyStatus(collab.status)}
+        </span>
+      ) : null}
     </article>
   );
 }
