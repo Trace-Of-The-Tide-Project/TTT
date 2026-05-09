@@ -149,10 +149,12 @@ export function MagazineTabs({
       <div className="mx-auto w-full max-w-[1392px]">
         {/* Sticky scroll-nav — stays pinned to the top of the viewport
             so the user can jump between sections at any scroll depth.
+            Capped at max-w-2xl + centered so the 5 tabs stay grouped
+            on wide screens (otherwise they sparse out across 1392px).
             Horizontally scrollable on small screens so all 5 tab
-            labels remain reachable without crashing the layout. */}
+            labels remain reachable without breaking the layout. */}
         <div
-          className="sticky top-3 z-30 mb-10 overflow-x-auto sm:top-4 sm:mb-12 md:mb-14 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="sticky top-3 z-30 mx-auto mb-10 max-w-2xl overflow-x-auto sm:top-4 sm:mb-12 md:mb-14 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           style={{
             backgroundColor: "rgba(var(--tott-home-surface-rgb), 0.85)",
             backdropFilter: "saturate(140%) blur(10px)",

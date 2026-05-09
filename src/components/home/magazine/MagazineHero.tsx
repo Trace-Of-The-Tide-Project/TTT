@@ -38,7 +38,7 @@ export function MagazineHero({
   const t = useTranslations("Home.magazine.hero");
 
   return (
-    <section className="relative w-full px-4 pb-10 pt-14 sm:px-6 sm:pb-14 sm:pt-20 md:px-8 md:pb-20 md:pt-24">
+    <section className="relative w-full px-4 pb-10 pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:px-8 md:pb-20 md:pt-32">
       <div className="relative mx-auto w-full max-w-[1392px]">
         {/* Artwork — natural aspect (1392×483 ≈ 2.88:1). */}
         <div
