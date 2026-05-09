@@ -12,10 +12,10 @@ import { HexPatternBackdrop } from "./HexPatternBackdrop";
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export type MagazineNewsletterProps = {
-  /** Required — subscriptions are scoped to a magazine on the backend.
-   * The component renders null without this so we don't fire requests
-   * that the API will reject with "magazine_id undefined". */
-  magazineId: string;
+  /** Magazine the subscription is scoped to. When missing the form
+   * still renders, but submit short-circuits with an error toast —
+   * the backend rejects requests without a real magazine_id. */
+  magazineId?: string | null;
   /** Locale tag forwarded to the backend so confirmation emails pick
    * the right language. */
   locale?: string;
@@ -24,13 +24,12 @@ export type MagazineNewsletterProps = {
 /**
  * Newsletter band — pen-icon hex, headline, body copy, and an inline
  * email field wired to POST /newsletter-subscribers/subscribe via the
- * shared TanStack mutation. Backend requires a real magazine_id, so
- * the page only renders this section when one is available.
+ * shared TanStack mutation.
  */
 export function MagazineNewsletter({
   magazineId,
   locale,
-}: MagazineNewsletterProps) {
+}: MagazineNewsletterProps = {}) {
   const t = useTranslations("Home.magazine.newsletter");
   const [email, setEmail] = useState("");
   const subscribe = useSubscribeNewsletter();
@@ -40,6 +39,13 @@ export function MagazineNewsletter({
     const value = email.trim();
     if (!EMAIL_RX.test(value)) {
       toast.error(t("invalidEmail"));
+      return;
+    }
+    if (!magazineId) {
+      // Backend requires magazine_id; without one the API would
+      // return a 500. Give the user a clean message instead of
+      // letting the request hit the API.
+      toast.error(t("errorTitle"), { description: t("errorBody") });
       return;
     }
     subscribe.mutate(

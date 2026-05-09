@@ -294,15 +294,14 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
             ) : undefined
           }
         />
-        {/* Subscribe endpoint requires a real magazine_id; without
-            one the API rejects the request, so we hide the section
-            entirely until a magazine is seeded. */}
-        {magazineMeta.magazineId ? (
-          <MagazineNewsletter
-            locale={locale}
-            magazineId={magazineMeta.magazineId}
-          />
-        ) : null}
+        {/* Subscribe section always renders. The form short-circuits
+            with an error toast if no magazine is available so the
+            backend's "magazine_id required" 500 is never surfaced
+            to the user. */}
+        <MagazineNewsletter
+          locale={locale}
+          magazineId={magazineMeta.magazineId}
+        />
       </div>
     </main>
   );
