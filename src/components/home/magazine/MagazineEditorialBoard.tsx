@@ -370,88 +370,158 @@ function CategoryCard({
       </div>
 
       {/* Text block — title + meta, sits in the middle of the hex.
-          z-10 so it renders above the Mask.png background. */}
+          z-10 so it renders above the Mask.png background. Margin-top
+          pushes the block down past the absolute icon above. */}
       <div
         className="z-10 flex flex-col items-center"
-        style={{ width: "148px", gap: "6px", marginTop: "8px" }}
+        style={{ width: "148px", gap: "8px", marginTop: "8px" }}
       >
-        {/* Title — clamps to 2 lines so very long titles don't push
-            the meta block past the visible hex bounds. */}
+        {/* Title — single line; long titles truncate so the meta grid
+            below stays anchored at the same y on every card. */}
         <p
-          className="line-clamp-2 text-center"
-          style={{ ...goldGradientTextStyle, width: "148px" }}
+          className="overflow-hidden text-center"
+          style={{
+            ...goldGradientTextStyle,
+            width: "148px",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+          }}
           title={title}
         >
           {title}
         </p>
 
-        {/* Meta — single-column stack so each row gets the full 148px
-            width, dates never get truncated to "May 2…", and the row
-            order is deterministic (Author / Date / Category /
-            Edition). Empty values drop their entire row, so we
-            never render a lone icon with no text. */}
+        {/* Meta — fixed 2×2 grid (Author | Date / Category | Edition).
+            Locks each piece of meta to a deterministic cell so the
+            date always sits in row 1, column 2 regardless of how
+            long author / category text is. Each cell truncates with
+            an ellipsis instead of wrapping. */}
         <div
-          className="flex flex-col items-start"
-          style={{ width: "148px", rowGap: "3px" }}
+          className="grid grid-cols-2 items-center justify-items-start"
+          style={{ width: "148px", rowGap: "4px", columnGap: "8px" }}
         >
-          {author ? (
-            <MetaRow
-              icon={
-                <span
-                  className="flex shrink-0 items-center justify-center"
-                  style={{
-                    width: "16px",
-                    height: "16px",
-                    background: "var(--tott-dash-gold-text)",
-                    border: "1px solid var(--tott-card-border)",
-                    borderRadius: "999px",
-                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                    fontWeight: 500,
-                    fontSize: "8.5px",
-                    lineHeight: "10px",
-                    color: "var(--tott-auth-btn-text)",
-                  }}
-                >
-                  A
-                </span>
-              }
-              text={author}
-              metaTextStyle={metaTextStyle}
-            />
-          ) : null}
-          {date ? (
-            <MetaRow
-              icon={
-                <IconShell>
-                  <CalendarIcon />
-                </IconShell>
-              }
-              text={date}
-              metaTextStyle={metaTextStyle}
-            />
-          ) : null}
-          {category ? (
-            <MetaRow
-              icon={
-                <IconShell>
-                  <FolderIcon />
-                </IconShell>
-              }
-              text={category}
-              metaTextStyle={metaTextStyle}
-            />
-          ) : null}
-          {edition ? (
-            <MetaRow
-              icon={
-                <IconShell>
-                  <BookIcon />
-                </IconShell>
-              }
-              text={edition}
-              metaTextStyle={metaTextStyle}
-            />
-          ) : null}
+          {/* Author (row 1, col 1) */}
+          <span
+            className="flex min-w-0 items-center"
+            style={{ gap: "4px", maxWidth: "100%" }}
+          >
+            <span
+              className="flex shrink-0 items-center justify-center"
+              style={{
+                width: "16px",
+                height: "16px",
+                background: "var(--tott-dash-gold-text)",
+                border: "1px solid var(--tott-card-border)",
+                borderRadius: "999px",
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 500,
+                fontSize: "8.5px",
+                lineHeight: "10px",
+                color: "var(--tott-auth-btn-text)",
+              }}
+            >
+              A
+            </span>
+            <span
+              style={{
+                ...metaTextStyle,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                minWidth: 0,
+              }}
+              title={author}
+            >
+              {author}
+            </span>
+          </span>
+
+          {/* Date (row 1, col 2) */}
+          <span
+            className="flex min-w-0 items-center"
+            style={{ gap: "4px", maxWidth: "100%" }}
+          >
+            <span
+              aria-hidden
+              className="flex h-4 w-4 shrink-0 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
+              style={{
+                color: "var(--tott-home-text-strong)",
+                filter: "drop-shadow(var(--tott-home-text-shadow))",
+              }}
+            >
+              <CalendarIcon />
+            </span>
+            <span
+              style={{
+                ...metaTextStyle,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                minWidth: 0,
+              }}
+              title={date}
+            >
+              {date}
+            </span>
+          </span>
+
+          {/* Category (row 2, col 1) */}
+          <span
+            className="flex min-w-0 items-center"
+            style={{ gap: "4px", maxWidth: "100%" }}
+          >
+            <span
+              aria-hidden
+              className="flex h-4 w-4 shrink-0 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
+              style={{
+                color: "var(--tott-home-text-strong)",
+                filter: "drop-shadow(var(--tott-home-text-shadow))",
+              }}
+            >
+              <FolderIcon />
+            </span>
+            <span
+              style={{
+                ...metaTextStyle,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                minWidth: 0,
+              }}
+              title={category}
+            >
+              {category}
+            </span>
+          </span>
+
+          {/* Edition (row 2, col 2) */}
+          <span
+            className="flex min-w-0 items-center"
+            style={{ gap: "4px", maxWidth: "100%" }}
+          >
+            <span
+              aria-hidden
+              className="flex h-4 w-4 shrink-0 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
+              style={{
+                color: "var(--tott-home-text-strong)",
+                filter: "drop-shadow(var(--tott-home-text-shadow))",
+              }}
+            >
+              <BookIcon />
+            </span>
+            <span
+              style={{
+                ...metaTextStyle,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                minWidth: 0,
+              }}
+              title={edition}
+            >
+              {edition}
+            </span>
+          </span>
         </div>
       </div>
     </div>
@@ -464,58 +534,6 @@ function CategoryCard({
  * we don't need a CSS clip-path. Overlay elements sit inside the
  * visible hex area.
  */
-/** One meta row — icon + label. Truncates if the value is too long
- * for 148px. Used by the Less Read Content cards so empty fields
- * cleanly drop their row instead of leaving a stray icon. */
-function MetaRow({
-  icon,
-  text,
-  metaTextStyle,
-}: {
-  icon: React.ReactNode;
-  text: string;
-  metaTextStyle: React.CSSProperties;
-}) {
-  return (
-    <span
-      className="flex w-full min-w-0 items-center"
-      style={{ gap: "4px" }}
-    >
-      {icon}
-      <span
-        style={{
-          ...metaTextStyle,
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-          minWidth: 0,
-          flex: "1 1 auto",
-        }}
-        title={text}
-      >
-        {text}
-      </span>
-    </span>
-  );
-}
-
-/** Shared 16×16 wrapper for the calendar / folder / book icons in
- * the meta rows — keeps stroke colour + shadow consistent. */
-function IconShell({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      aria-hidden
-      className="flex h-4 w-4 shrink-0 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
-      style={{
-        color: "var(--tott-home-text-strong)",
-        filter: "drop-shadow(var(--tott-home-text-shadow))",
-      }}
-    >
-      {children}
-    </span>
-  );
-}
-
 function WriterCard({ writer }: { writer: FollowWriterItem }) {
   const t = useTranslations("Home.magazine.editorialBoard");
   const cardTitle = writer.title?.trim() || writer.name || t("writerCardTitle");
