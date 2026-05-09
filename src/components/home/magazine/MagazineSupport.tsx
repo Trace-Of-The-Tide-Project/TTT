@@ -307,9 +307,15 @@ function CollabCard({
       style={{
         width: "min(85vw, 360px)",
         minHeight: "382px",
-        padding: "16px 24px",
+        padding: "16px 24px 24px",
         backgroundColor: "var(--tott-panel-bg)",
         borderRadius: "24px",
+        // Hairline border + soft drop shadow so the card edge stays
+        // visible in light mode, where panel-bg and page surface are
+        // nearly the same cream and the card boundary (and the
+        // twin-hex / card crossing) would otherwise disappear.
+        border: "1px solid var(--tott-card-border)",
+        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.08)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -319,17 +325,22 @@ function CollabCard({
       }}
     >
       {/* Frame 86 — pre-rendered twin-hex header. Pulled up so the
-          top half of the hexes sits above the card's rounded top
-          edge (matches the Figma comp where the hexes "cross" the
-          card boundary). The PNG/SVG has transparent corners, so the
-          portion above the card paints against the page background
-          and the portion below paints against the card's panel-bg. */}
+          hex straddles the card's top edge — top half outside, bottom
+          half (with the "Author" / "Contributor" labels) inside the
+          card. Frame 86.svg has transparent corners, so the portion
+          above the card paints against the page background and the
+          portion below against the card's panel-bg.
+
+          -78px is half of the design-spec hex height (156px). The
+          actual rendered height varies a few px on mobile because
+          the parent has `maxWidth: 270`, but the visual offset is
+          close enough across breakpoints to hold the design. */}
       <div
         className="relative w-full shrink-0"
         style={{
           maxWidth: "270px",
           aspectRatio: "270 / 156",
-          marginTop: "-44px",
+          marginTop: "-78px",
         }}
       >
         <Image
