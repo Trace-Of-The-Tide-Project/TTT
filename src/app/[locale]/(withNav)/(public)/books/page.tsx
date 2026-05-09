@@ -1,4 +1,8 @@
 import { serverGet } from "@/lib/api/isomorphic-fetch";
+import {
+  isUsableArticleMediaRef,
+  resolveArticleMediaSrc,
+} from "@/lib/content/article-media-url";
 import { BooksPageContent, type BookItem } from "@/components/books/BooksPageContent";
 
 export const dynamic = "force-dynamic";
@@ -49,20 +53,32 @@ export default async function BooksPage() {
     order: "DESC",
   });
 
-  const items: BookItem[] = unwrapList(raw).map((a, i) => ({
-    id: a.id,
-    title: a.title,
-    author: pickAuthorName(a.author),
-    coverImage: a.cover_image ?? null,
-    category: (a.category ?? "").trim() || null,
-    language: (a.language ?? "").trim().toLowerCase() || null,
-    // Demo pricing/rating — the API doesn't expose these for
-    // articles. Stable derivation from index so the list isn't
-    // jittery between renders.
-    price: i % 3 === 0 ? 0 : 4.99 + (i % 5),
-    rating: 4 + ((i * 0.3) % 1),
-    reviewCount: 50 + i * 17,
-  }));
+  const items: BookItem[] = unwrapList(raw).map((a, i) => {
+    // Cover images come back as a mix of full URLs, storage keys
+    // ("images/…", "contributions/…") and bare filenames. Resolve
+    // anything we recognise; drop the rest so next/image doesn't
+    // throw on a malformed src.
+    const ref = a.cover_image?.trim();
+    const cover =
+      ref && isUsableArticleMediaRef(ref)
+        ? resolveArticleMediaSrc(ref)
+        : null;
+
+    return {
+      id: a.id,
+      title: a.title,
+      author: pickAuthorName(a.author),
+      coverImage: cover,
+      category: (a.category ?? "").trim() || null,
+      language: (a.language ?? "").trim().toLowerCase() || null,
+      // Demo pricing/rating — the API doesn't expose these for
+      // articles. Stable derivation from index so the list isn't
+      // jittery between renders.
+      price: i % 3 === 0 ? 0 : 4.99 + (i % 5),
+      rating: 4 + ((i * 0.3) % 1),
+      reviewCount: 50 + i * 17,
+    };
+  });
 
   return <BooksPageContent items={items} />;
 }

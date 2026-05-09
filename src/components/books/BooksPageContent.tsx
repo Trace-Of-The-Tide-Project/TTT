@@ -5,14 +5,19 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { StarIcon, ChevronDownIcon } from "@/components/ui/icons";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 
-const BOOK_HEX = "/images/home/Book Cover.png";
+// Custom Figma "Leading Icon" SVG used inside the View button on
+// each book card.
+const VIEW_ICON = "/images/books/leading-icon.svg";
+
 const SHARE_HEX = "/images/home/Icon-5.svg";
 
-const CHIP_CHAMFER =
-  "polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)";
+// Pre-rendered silk hex card frame (193×288, hex shape + silk fill
+// baked in). Same brand visual the Latest Published row uses.
+const BOOK_HEX = "/images/home/Book Cover.png";
 
 export type BookItem = {
   id: string;
@@ -158,26 +163,40 @@ export function BooksPageContent({ items }: { items: BookItem[] }) {
 
         {/* ── Body: sidebar + grid ──────────────────────────────── */}
         <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
-          {/* Sidebar */}
+          {/* Sidebar — Figma "Sidebar Container": ChamferedFrame
+              (chamfered corner brackets + edge hairlines) around
+              the filter content, no solid card bg, padding 24px,
+              gap 16px between groups. Border color #333333 matches
+              the Figma stroke spec. */}
           <aside
-            className="rounded-2xl"
+            className="relative self-start"
             style={{
-              backgroundColor: "var(--tott-panel-bg)",
-              border: "1px solid var(--tott-card-border)",
-              padding: "20px",
-              alignSelf: "start",
+              padding: "24px",
             }}
           >
+            <ChamferedFrame size={24} borderColor="#333333" />
             <div className="flex items-center justify-between">
               <h2
-                className="text-base font-medium"
-                style={{ color: "var(--tott-home-text-strong)" }}
+                style={{
+                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                  fontWeight: 500,
+                  fontSize: "16px",
+                  lineHeight: "24px",
+                  letterSpacing: "-0.01em",
+                  color: "var(--tott-home-text-strong)",
+                }}
               >
                 {t("filtersHeading")}
               </h2>
               <span
-                className="text-xs"
-                style={{ color: "var(--tott-home-text-muted)" }}
+                style={{
+                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                  fontWeight: 400,
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  letterSpacing: "-0.005em",
+                  color: "var(--tott-home-text-muted)",
+                }}
               >
                 {t("resultsCount", { count: filtered.length })}
               </span>
@@ -302,14 +321,34 @@ export function BooksPageContent({ items }: { items: BookItem[] }) {
 function SidebarHeading({ children }: { children: React.ReactNode }) {
   return (
     <h3
-      className="mt-6 text-sm font-medium"
-      style={{ color: "var(--tott-home-text-strong)" }}
+      className="mt-6"
+      style={{
+        fontFamily: "'Inter', var(--font-sans, sans-serif)",
+        fontWeight: 500,
+        fontSize: "14px",
+        lineHeight: "20px",
+        letterSpacing: "-0.005em",
+        color: "var(--tott-home-text-strong)",
+      }}
     >
       {children}
     </h3>
   );
 }
 
+const ROW_TEXT_STYLE = {
+  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+  fontWeight: 400,
+  fontSize: "14px",
+  lineHeight: "20px",
+  letterSpacing: "-0.005em",
+  color: "var(--tott-home-text-strong)",
+} as const;
+
+/** Radio: 20×20 wrapper, 16×16 ring with 1.5px border. Selected gets
+ * a gold ring + 6×6 gold dot in the center; unselected gets a grey
+ * #333333 ring with no dot. Standard radio visuals — the Figma's
+ * "square inside circle" export was a Figma autolayout artifact. */
 function RadioRow({
   label,
   checked,
@@ -320,19 +359,22 @@ function RadioRow({
   onChange: () => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 text-sm">
+    <label className="flex cursor-pointer items-center" style={{ gap: "8px" }}>
       <span
-        className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full"
+        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+        aria-hidden
         style={{
-          border: `1px solid ${checked ? "var(--tott-accent-gold)" : "var(--tott-card-border)"}`,
-          backgroundColor: "transparent",
+          border: `1.5px solid ${checked ? "#C9A96E" : "#333333"}`,
         }}
       >
         {checked ? (
           <span
-            aria-hidden
-            className="h-2 w-2 rounded-full"
-            style={{ backgroundColor: "var(--tott-accent-gold)" }}
+            className="rounded-full"
+            style={{
+              width: "8px",
+              height: "8px",
+              backgroundColor: "#C9A96E",
+            }}
           />
         ) : null}
       </span>
@@ -342,11 +384,14 @@ function RadioRow({
         checked={checked}
         onChange={onChange}
       />
-      <span style={{ color: "var(--tott-home-text-strong)" }}>{label}</span>
+      <span style={ROW_TEXT_STYLE}>{label}</span>
     </label>
   );
 }
 
+/** Checkbox: 20×20 wrapper, 16×16 box with 1.5px border + 4px
+ * radius. Selected gets a gold fill with a dark check; unselected
+ * gets a grey #333333 border, transparent fill. */
 function CheckboxRow({
   label,
   checked,
@@ -357,25 +402,26 @@ function CheckboxRow({
   onChange: () => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 text-sm">
+    <label className="flex cursor-pointer items-center" style={{ gap: "8px" }}>
       <span
-        className="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm"
+        className="flex h-5 w-5 shrink-0 items-center justify-center"
+        aria-hidden
         style={{
-          border: `1px solid ${checked ? "var(--tott-accent-gold)" : "var(--tott-card-border)"}`,
-          backgroundColor: checked ? "var(--tott-accent-gold)" : "transparent",
+          border: `1.5px solid ${checked ? "#C9A96E" : "#333333"}`,
+          backgroundColor: checked ? "#C9A96E" : "transparent",
+          borderRadius: "4px",
         }}
       >
         {checked ? (
           <svg
-            width="10"
-            height="10"
+            width="12"
+            height="12"
             viewBox="0 0 12 12"
             fill="none"
-            stroke="var(--tott-auth-btn-text)"
+            stroke="#171717"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            aria-hidden
           >
             <polyline points="2 6 5 9 10 3" />
           </svg>
@@ -387,11 +433,13 @@ function CheckboxRow({
         checked={checked}
         onChange={onChange}
       />
-      <span style={{ color: "var(--tott-home-text-strong)" }}>{label}</span>
+      <span style={ROW_TEXT_STYLE}>{label}</span>
     </label>
   );
 }
 
+/** Text input per Figma: #262626 bg, #333333 border, 8px radius,
+ * 40px tall, 8px padding. */
 function PriceInput({
   placeholder,
   value,
@@ -403,15 +451,18 @@ function PriceInput({
 }) {
   return (
     <div
-      className="flex h-9 flex-1 items-center gap-1 rounded-md px-2 text-sm"
+      className="flex h-10 min-w-0 flex-1 items-center"
       style={{
-        backgroundColor: "var(--tott-home-surface)",
-        border: "1px solid var(--tott-card-border)",
+        backgroundColor: "#262626",
+        border: "1px solid #333333",
+        borderRadius: "8px",
+        padding: "8px",
+        gap: "4px",
       }}
     >
       <span
         aria-hidden
-        style={{ color: "var(--tott-home-text-muted)", fontSize: "12px" }}
+        style={{ color: "var(--tott-home-text-muted)", fontSize: "14px" }}
       >
         {placeholder}
       </span>
@@ -421,13 +472,29 @@ function PriceInput({
         min={0}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-transparent text-sm outline-none focus:outline-none"
-        style={{ color: "var(--tott-home-text-strong)" }}
+        className="w-full bg-transparent outline-none focus:outline-none focus:ring-0"
+        style={{
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 400,
+          fontSize: "14px",
+          lineHeight: "20px",
+          letterSpacing: "-0.005em",
+          color: "var(--tott-home-text-strong)",
+          minWidth: 0,
+          border: "none",
+          boxShadow: "none",
+          padding: 0,
+          appearance: "none",
+          WebkitAppearance: "none",
+          MozAppearance: "textfield",
+        }}
       />
     </div>
   );
 }
 
+/** Select per Figma: full-width 40px tall, #262626 bg, #333333
+ * border, 8px radius. Trailing chevron at the right edge. */
 function RatingSelect({
   value,
   onChange,
@@ -439,17 +506,33 @@ function RatingSelect({
 }) {
   return (
     <div
-      className="relative mt-2 flex h-9 items-center rounded-md px-2 text-sm"
+      className="relative mt-2 flex h-10 items-center"
       style={{
-        backgroundColor: "var(--tott-home-surface)",
-        border: "1px solid var(--tott-card-border)",
+        backgroundColor: "#262626",
+        border: "1px solid #333333",
+        borderRadius: "8px",
+        padding: "8px",
       }}
     >
       <select
         value={String(value)}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full appearance-none bg-transparent pr-6 text-sm outline-none"
-        style={{ color: "var(--tott-home-text-strong)" }}
+        className="w-full bg-transparent pr-7 outline-none focus:outline-none focus:ring-0"
+        style={{
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 400,
+          fontSize: "14px",
+          lineHeight: "20px",
+          letterSpacing: "-0.005em",
+          color: "var(--tott-home-text-strong)",
+          border: "none",
+          boxShadow: "none",
+          padding: 0,
+          appearance: "none",
+          WebkitAppearance: "none",
+          MozAppearance: "none",
+          backgroundImage: "none",
+        }}
       >
         <option value="0">{labels.any}</option>
         <option value="1">{labels.r1}</option>
@@ -459,7 +542,7 @@ function RatingSelect({
       </select>
       <span
         aria-hidden
-        className="pointer-events-none absolute right-2 [&>svg]:h-4 [&>svg]:w-4"
+        className="pointer-events-none absolute right-2 [&>svg]:h-5 [&>svg]:w-5"
         style={{ color: "var(--tott-home-text-muted)" }}
       >
         <ChevronDownIcon />
@@ -484,17 +567,16 @@ function BookCard({
 }) {
   return (
     <article
-      className="flex flex-col items-stretch rounded-2xl"
-      style={{
-        backgroundColor: "var(--tott-panel-bg)",
-        border: "1px solid var(--tott-card-border)",
-        padding: "16px",
-      }}
+      className="flex w-full flex-col items-stretch"
+      style={{ maxWidth: "192px", margin: "0 auto" }}
     >
-      {/* Hex cover */}
+      {/* Cover — pre-rendered silk hex frame (Book Cover.png, hex
+          shape baked in). When the article has a real cover image
+          we layer it behind the silk so the cover fills the visible
+          hex; otherwise the silk shows on its own. */}
       <div
-        className="relative mx-auto w-full"
-        style={{ maxWidth: "192px", aspectRatio: "193 / 288" }}
+        className="relative w-full"
+        style={{ aspectRatio: "193 / 288" }}
       >
         {book.coverImage ? (
           <Image
@@ -514,76 +596,165 @@ function BookCard({
         />
       </div>
 
-      {/* Body */}
-      <div className="mt-3 flex flex-col items-center gap-2 text-center">
-        <p
-          className="line-clamp-1 text-sm font-medium"
-          style={{ color: "var(--tott-home-text-strong)" }}
+      {/* Body — 16px horizontal padding, gap 16, no outer card. */}
+      <div
+        className="flex w-full flex-col items-center"
+        style={{ padding: "16px 16px 0", gap: "16px" }}
+      >
+        {/* Book Info — title + author + reviews, gap 8. */}
+        <div
+          className="flex w-full flex-col items-center"
+          style={{ gap: "8px" }}
         >
-          {book.title}
-        </p>
-        <span className="flex items-center gap-1.5 text-xs">
-          <span
-            className="flex h-4 w-4 items-center justify-center rounded-full"
+          <p
+            className="line-clamp-1 w-full text-center"
             style={{
-              backgroundColor: "var(--tott-dash-gold-text)",
-              border: "1px solid var(--tott-card-border)",
-              fontSize: "8.5px",
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
               fontWeight: 500,
-              color: "var(--tott-auth-btn-text)",
+              fontSize: "16px",
+              lineHeight: "24px",
+              letterSpacing: "-0.01em",
+              color: "var(--tott-home-text-strong)",
+              margin: 0,
             }}
           >
-            {book.author.charAt(0).toUpperCase() || "A"}
+            {book.title}
+          </p>
+
+          {/* Author row */}
+          <span
+            className="flex items-center"
+            style={{ gap: "4px" }}
+          >
+            <span
+              aria-hidden
+              className="flex shrink-0 items-center justify-center rounded-full"
+              style={{
+                width: "16px",
+                height: "16px",
+                backgroundColor: "#DBC99E",
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 500,
+                fontSize: "8.5px",
+                lineHeight: "10px",
+                color: "#332217",
+              }}
+            >
+              {book.author.charAt(0).toUpperCase() || "A"}
+            </span>
+            <span
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: "12px",
+                lineHeight: "16px",
+                color: "#D6D6D6",
+                textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+              }}
+            >
+              {book.author}
+            </span>
           </span>
-          <span style={{ color: "var(--tott-home-text-muted)" }}>{book.author}</span>
-        </span>
-        <span
-          className="flex items-center gap-1 text-xs"
-          style={{ color: "var(--tott-home-text-muted)" }}
+
+          {/* Reviews row — star, rating, "(N reviews)" */}
+          <span
+            className="flex items-center"
+            style={{ gap: "4px" }}
+          >
+            <span
+              aria-hidden
+              className="[&>svg]:h-4 [&>svg]:w-4"
+              style={{ color: "#C9A96E" }}
+            >
+              <StarIcon />
+            </span>
+            <span
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 500,
+                fontSize: "12px",
+                lineHeight: "16px",
+                color: "var(--tott-home-text-strong)",
+              }}
+            >
+              {book.rating.toFixed(1)}
+            </span>
+            <span
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: "12px",
+                lineHeight: "16px",
+                color: "#A3A3A3",
+              }}
+            >
+              {labels.reviews(book.reviewCount)}
+            </span>
+          </span>
+        </div>
+
+        {/* Price & Action — gold "Free" / price on the left,
+            #333333 View button on the right with book icon. */}
+        <div
+          className="flex w-full items-center"
+          style={{ gap: "16px", height: "32px" }}
         >
           <span
-            aria-hidden
-            className="[&>svg]:h-3.5 [&>svg]:w-3.5"
-            style={{ color: "var(--tott-accent-gold)" }}
+            className="flex-1"
+            style={{
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
+              fontWeight: 500,
+              fontSize: "16px",
+              lineHeight: "24px",
+              letterSpacing: "-0.01em",
+              color: "#C9A96E",
+            }}
           >
-            <StarIcon />
+            {book.price === 0 ? labels.free : `$${book.price.toFixed(2)}`}
           </span>
-          {book.rating.toFixed(1)} {labels.reviews(book.reviewCount)}
-        </span>
-      </div>
-
-      {/* Bottom row */}
-      <div className="mt-4 flex items-center justify-between text-sm">
-        <span
-          style={{
-            color:
-              book.price === 0
-                ? "var(--tott-accent-gold)"
-                : "var(--tott-home-text-strong)",
-            fontWeight: 500,
-          }}
-        >
-          {book.price === 0 ? labels.free : `$${book.price.toFixed(2)}`}
-        </span>
-        <button
-          type="button"
-          className="inline-flex items-center justify-center"
-          style={{
-            minWidth: "72px",
-            height: "28px",
-            padding: "4px 12px",
-            backgroundColor: "var(--tott-dark-pill)",
-            color: "var(--tott-dark-pill-fg)",
-            fontFamily: "'Inter', var(--font-sans, sans-serif)",
-            fontWeight: 500,
-            fontSize: "12px",
-            lineHeight: "16px",
-            clipPath: CHIP_CHAMFER,
-            WebkitClipPath: CHIP_CHAMFER,
-          }}
-        >
-          {labels.view}
-        </button>
+          <button
+            type="button"
+            className="inline-flex shrink-0 items-center justify-center"
+            style={{
+              height: "32px",
+              padding: "4px",
+              gap: "0",
+              backgroundColor: "#333333",
+              boxShadow: "inset 0px 1px 1px rgba(255, 255, 255, 0.08)",
+              borderRadius: "6px",
+              border: "none",
+              color: "#FFFFFF",
+            }}
+          >
+            <span
+              aria-hidden
+              className="relative flex h-6 shrink-0"
+              style={{ width: "28px" }}
+            >
+              <Image
+                src={VIEW_ICON}
+                alt=""
+                fill
+                sizes="28px"
+                className="select-none"
+                draggable={false}
+              />
+            </span>
+            <span
+              className="flex items-center justify-center"
+              style={{
+                padding: "2px 4px",
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: "14px",
+                lineHeight: "20px",
+                letterSpacing: "-0.005em",
+              }}
+            >
+              {labels.view}
+            </span>
+          </button>
+        </div>
       </div>
     </article>
   );
