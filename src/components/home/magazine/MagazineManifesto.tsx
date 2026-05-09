@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { PenLineIcon, BookIcon } from "@/components/ui/icons";
+import { FirstWordGold } from "./FirstWordGold";
 
 const HEX_CLIP =
   "polygon(50% 5%, 90% 27%, 90% 73%, 50% 95%, 10% 73%, 10% 27%)";
@@ -45,19 +46,21 @@ export function MagazineManifesto() {
 
   // Body for Vision / Mission / Editorial Values — Figma spec:
   //   font-weight: 400, font-size: 14px, line-height: 20px,
-  //   letter-spacing: -0.005em, color: #FFFFFF.
+  //   letter-spacing: -0.005em. Color is now theme-aware so the text
+  //   stays legible on both the dark and light page surfaces.
   const bodyClass = "w-full";
   const bodyTypoStyle = {
     fontWeight: 400,
-    fontSize: "14px",
-    lineHeight: "20px",
+    fontSize: "clamp(0.875rem, 0.5vw + 0.75rem, 1rem)",
+    lineHeight: 1.6,
     letterSpacing: "-0.005em",
-    color: "#FFFFFF",
+    color: "var(--tott-home-text-strong)",
   } as const;
 
-  // Symmetric horizontal padding — same empty space on the left and the
-  // right of each text section. Banner + dividers above keep full width.
-  const textIndent = "px-12 sm:px-20 md:px-28 lg:px-40";
+  // Symmetric horizontal padding — small on mobile, scales up on
+  // larger screens. Capped earlier so xl screens don't squeeze the text
+  // into a narrow column. Same scale as ExploreSpaces below.
+  const textIndent = "px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32";
   const bodyStrongStyle = { color: "var(--tott-home-text-strong)" } as const;
 
   return (
@@ -68,7 +71,7 @@ export function MagazineManifesto() {
         className="relative w-full overflow-hidden rounded-[28px]"
         style={{
           aspectRatio: "1300 / 220",
-          backgroundColor: "rgba(255,255,255,0.04)",
+          backgroundColor: "var(--tott-panel-bg)",
         }}
         aria-hidden
       >
@@ -90,8 +93,11 @@ export function MagazineManifesto() {
           {t("philosophyHeading")}
         </h2>
         <p
-          className="mt-5 w-full text-2xl leading-snug sm:text-3xl md:text-[1.75rem]"
-          style={bodyStrongStyle}
+          className="mt-5 w-full leading-snug"
+          style={{
+            ...bodyStrongStyle,
+            fontSize: "clamp(1.25rem, 1.5vw + 0.75rem, 2rem)",
+          }}
         >
           {t("philosophyQuote")}
         </p>
@@ -134,17 +140,17 @@ export function MagazineManifesto() {
             <li key={key} className="flex items-start gap-3">
               <span
                 aria-hidden
-                className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
-                style={{ backgroundColor: "#FFFFFF" }}
+                className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full"
+                style={{ backgroundColor: "var(--tott-home-text-strong)" }}
               />
               <span
                 className="block w-full"
                 style={{
                   fontFamily: "'Inter', var(--font-sans, sans-serif)",
                   fontWeight: 400,
-                  fontSize: "12px",
-                  lineHeight: "16px",
-                  color: "#FFFFFF",
+                  fontSize: "clamp(0.8125rem, 0.4vw + 0.7rem, 0.9375rem)",
+                  lineHeight: 1.55,
+                  color: "var(--tott-home-text-strong)",
                   maxWidth: "930px",
                 }}
               >
@@ -166,7 +172,7 @@ export function MagazineManifesto() {
           <span
             aria-hidden
             className="mt-1 block w-px shrink-0 self-stretch"
-            style={{ backgroundColor: "var(--tott-accent-gold)" }}
+            style={{ backgroundColor: "var(--tott-magazine-btn-bg)" }}
           />
           <div
             style={{
@@ -185,8 +191,8 @@ export function MagazineManifesto() {
               style={{
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 400,
-                fontSize: "14px",
-                lineHeight: "20px",
+                fontSize: "clamp(0.9375rem, 0.5vw + 0.8rem, 1.125rem)",
+                lineHeight: 1.55,
                 letterSpacing: "-0.005em",
                 color: "var(--tott-home-text-heading)",
                 margin: 0,
@@ -210,13 +216,13 @@ function ExploreSpaces() {
   const t = useTranslations("Home.magazine.spaces");
 
   return (
-    <section className="mt-6 px-12 sm:px-20 md:px-28 lg:px-40">
+    <section className="mt-6 px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32">
       <header className="text-center">
         <h3
           className="text-xl font-medium tracking-tight"
-          style={{ color: "var(--tott-accent-gold)" }}
+          style={{ color: "var(--tott-home-text-strong)" }}
         >
-          {t("heading")}
+          <FirstWordGold raw={t("heading")} />
         </h3>
         <p
           className="mt-1 text-sm sm:text-base"
@@ -270,8 +276,8 @@ function SpaceCard({
         style={{
           clipPath: HEX_CLIP,
           WebkitClipPath: HEX_CLIP,
-          backgroundColor: "rgba(255,255,255,0.04)",
-          color: "rgba(255,255,255,0.85)",
+          backgroundColor: "var(--tott-panel-bg)",
+          color: "var(--tott-home-text-strong)",
         }}
         aria-hidden
       >
@@ -295,7 +301,7 @@ function SpaceCard({
         type="button"
         className="mt-6 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:opacity-90"
         style={{
-          backgroundColor: "var(--tott-accent-gold)",
+          backgroundColor: "var(--tott-magazine-btn-bg)",
           color: "var(--tott-auth-btn-text)",
         }}
       >

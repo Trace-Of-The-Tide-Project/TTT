@@ -6,7 +6,7 @@ import { MagazineNewsletter } from "@/components/home/magazine/MagazineNewslette
 export default function MagazinePreviewPage() {
   return (
     <main
-      className="relative min-h-screen"
+      className="relative min-h-screen w-full overflow-x-hidden"
       style={{ backgroundColor: "var(--tott-home-surface)" }}
     >
       {/* Decorative hex band — exact same wrapper as admin DashboardLayout

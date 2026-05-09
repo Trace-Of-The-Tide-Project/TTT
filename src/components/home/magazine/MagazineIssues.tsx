@@ -11,6 +11,7 @@ import {
   MoreDotsIcon,
   Grid2x2Icon,
 } from "@/components/ui/icons";
+import { FirstWordGold } from "./FirstWordGold";
 
 // Pre-rendered book spread (1132×802 ≈ 5/3.55 aspect, transparent
 // background outside the rounded rectangle, soft spine highlight built
@@ -31,11 +32,12 @@ const FILTERS: { id: FilterId; key: string; width: number }[] = [
 
 // Figma colors (hard-coded so we exactly match the comp regardless of
 // what the project tokens evaluate to).
-const TAB_BG = "#262626";
-const TAB_BORDER = "#333333";
-const TAB_ACTIVE = "#C9A96E";
-const TAB_INACTIVE_TEXT = "#A3A3A3";
-const TAB_PLACEHOLDER = "#7B7B7B";
+// Theme tokens — adapt to dark/light via globals.css.
+const TAB_BG = "var(--tott-panel-bg)";
+const TAB_BORDER = "var(--tott-card-border)";
+const TAB_ACTIVE = "var(--tott-accent-gold)";
+const TAB_INACTIVE_TEXT = "var(--tott-home-text-muted)";
+const TAB_PLACEHOLDER = "var(--tott-home-text-muted)";
 
 /**
  * Issues pane — Visual Gallery with a book/spread reader.
@@ -101,15 +103,16 @@ export function MagazineIssues() {
   };
 
   return (
-    <div className="grid gap-8 sm:gap-10">
-      {/* Header — aligned to the same max-width as the toolbar/reader. */}
-      <header className="mx-auto flex w-full max-w-6xl flex-wrap items-end justify-between gap-4">
+    <div className="grid w-full min-w-0 gap-8 px-4 sm:gap-10 sm:px-6 md:px-8">
+      {/* Header — full width of the section, so the heading's left
+          edge sits at the same x-coordinate as Latest Published. */}
+      <header className="flex w-full flex-wrap items-end justify-between gap-4">
         <div>
           <h2
             className="text-lg font-medium tracking-tight sm:text-xl"
-            style={{ color: "var(--tott-accent-gold)" }}
+            style={{ color: "var(--tott-home-text-strong)" }}
           >
-            {t("galleryHeading")}
+            <FirstWordGold raw={t("galleryHeading")} />
           </h2>
           <p
             className="mt-1 text-sm"
@@ -120,7 +123,7 @@ export function MagazineIssues() {
         </div>
         <button
           type="button"
-          className="inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-90"
+          className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
           style={{ color: "var(--tott-accent-gold)" }}
         >
           {t("viewMore")}
@@ -128,23 +131,21 @@ export function MagazineIssues() {
         </button>
       </header>
 
-      {/* Toolbar — Figma "Frame 280": search input + filters group with
-          a 48px gap between them. Internal gaps: 8px between filter
-          tabs, 16px between the chips group / divider / sort+filters
-          group. All hard-coded to match the spec exactly. */}
+      {/* Toolbar — Figma "Frame 280": search + filter chips + divider
+          + sort/filters.
+          Stacks into 3 rows below lg (search → chips → sort/filter
+          buttons). At lg+ collapses to a single row matching the
+          original Figma comp. */}
       <div
-        className="mx-auto flex w-full max-w-6xl flex-wrap items-center"
-        style={{ gap: "48px" }}
+        className="flex w-full flex-col gap-3 lg:flex-row lg:items-center lg:gap-6"
       >
-        {/* Search input — 338×40, #262626 fill, 1px #333 border, 8px radius. */}
+        {/* Search input — full width below lg, 338px from lg+. */}
         <label
-          className="flex h-10 items-center gap-2 rounded-lg"
+          className="flex h-10 w-full items-center gap-2 rounded-lg lg:w-[338px] lg:flex-none"
           style={{
             backgroundColor: TAB_BG,
             border: `1px solid ${TAB_BORDER}`,
             borderRadius: "8px",
-            width: "338px",
-            maxWidth: "100%",
             padding: "8px",
           }}
         >
@@ -164,7 +165,7 @@ export function MagazineIssues() {
               fontSize: "14px",
               lineHeight: "20px",
               letterSpacing: "-0.005em",
-              color: "#FFFFFF",
+              color: "var(--tott-home-text-strong)",
               border: "none",
               boxShadow: "none",
               appearance: "none",
@@ -173,10 +174,19 @@ export function MagazineIssues() {
           />
         </label>
 
-        {/* Filters group — chips + divider + sort/filters, gap 16px. */}
-        <div className="flex flex-wrap items-center" style={{ gap: "16px" }}>
-          {/* Filter chips group — gap 8px. */}
-          <div className="flex items-center" style={{ gap: "8px" }}>
+        {/* Filters area — single row: chips on the left (scroll if
+            they overflow), sort/filter buttons pushed to the right.
+            Same layout below lg and at lg+, so the toolbar reads as
+            "search row" then "filters row" on smaller viewports and
+            collapses to a single row at lg+. */}
+        <div className="flex w-full items-center gap-3 lg:flex-1 lg:gap-4">
+          {/* Filter chips — horizontally scrollable inside their own
+              flex-1 lane so they never shove the sort/filter buttons
+              off-screen. */}
+          <div
+            className="flex min-w-0 flex-1 items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            style={{ gap: "8px" }}
+          >
             {FILTERS.map((f) => {
               const isActive = active === f.id;
               return (
@@ -184,11 +194,11 @@ export function MagazineIssues() {
                   key={f.id}
                   type="button"
                   onClick={() => setActive(f.id)}
-                  className="inline-flex items-center justify-center"
+                  className="inline-flex shrink-0 items-center justify-center transition-opacity hover:opacity-90"
                   style={{
-                    width: `${f.width}px`,
+                    minWidth: `${f.width}px`,
                     height: "40px",
-                    padding: "10px 8px",
+                    padding: "10px 12px",
                     backgroundColor: TAB_BG,
                     border: `${isActive ? "2px" : "1px"} solid ${
                       isActive ? TAB_ACTIVE : TAB_BORDER
@@ -209,9 +219,11 @@ export function MagazineIssues() {
             })}
           </div>
 
-          {/* Divider — 1×16, #333. */}
+          {/* Divider — only relevant at lg+ where the chips and the
+              sort/filter buttons share a row. */}
           <span
             aria-hidden
+            className="hidden lg:block"
             style={{
               width: "0",
               height: "16px",
@@ -219,16 +231,14 @@ export function MagazineIssues() {
             }}
           />
 
-          {/* Sort + Filters group — gap 8px. */}
-          <div className="flex items-center" style={{ gap: "8px" }}>
-            {/* Sort by — 186×40 */}
+          {/* Sort + Filters group — pinned to the right of the row at
+              every breakpoint via the chips' flex-1 lane. */}
+          <div className="flex shrink-0 items-center gap-2">
+            {/* Sort by — natural width on mobile, fixed 186 desktop. */}
             <button
               type="button"
-              className="inline-flex items-center justify-center"
+              className="inline-flex h-10 items-center justify-center px-2.5 transition-opacity hover:opacity-90 lg:w-[186px]"
               style={{
-                width: "186px",
-                height: "40px",
-                padding: "10px 8px",
                 gap: "8px",
                 backgroundColor: TAB_BG,
                 border: `1px solid ${TAB_BORDER}`,
@@ -244,18 +254,15 @@ export function MagazineIssues() {
               <span style={{ color: TAB_INACTIVE_TEXT }}>
                 <SortDescIcon />
               </span>
-              <span>{t("sortByLabel")}</span>
-              <span style={{ color: "#FFFFFF" }}>{t("sortNewest")}</span>
+              <span className="hidden sm:inline">{t("sortByLabel")}</span>
+              <span style={{ color: "var(--tott-home-text-strong)" }}>{t("sortNewest")}</span>
             </button>
 
-            {/* Filters — 93×40 */}
+            {/* Filters — natural width on mobile, fixed 93 desktop. */}
             <button
               type="button"
-              className="inline-flex items-center justify-center"
+              className="inline-flex h-10 items-center justify-center px-2.5 lg:w-[93px]"
               style={{
-                width: "93px",
-                height: "40px",
-                padding: "10px 8px",
                 gap: "8px",
                 backgroundColor: TAB_BG,
                 border: `1px solid ${TAB_BORDER}`,
@@ -279,14 +286,23 @@ export function MagazineIssues() {
 
       {/* Reader — book spread w/ realistic page-flip animation. The
           turning page rotates around the spine using CSS 3D transforms;
-          the static pages stay in place underneath. */}
-      <div className="relative mx-auto w-full">
+          the static pages stay in place underneath.
+
+          On mobile the book uses the full width (no side gutters — the
+          bottom toolbar handles paging). At sm+ we add horizontal
+          padding so the book sits centred with side gutters; the
+          arrow buttons live in those gutters instead of on top of the
+          book pages. */}
+      <div className="relative mx-auto w-full sm:px-12 lg:px-16">
+        {/* Side chevrons — hidden on mobile (no room beside the book).
+            Positioned inside the side gutter at sm+ where the book is
+            inset. */}
         <button
           type="button"
           onClick={goPrev}
           disabled={flipping !== null || currentPage - 2 < 1}
           aria-label={t("previousPage")}
-          className="absolute left-2 top-1/2 z-20 -translate-y-1/2 text-2xl transition-opacity hover:opacity-70 disabled:opacity-30 sm:left-4 sm:text-3xl"
+          className="absolute left-2 top-1/2 z-20 hidden -translate-y-1/2 text-2xl transition-opacity hover:opacity-70 disabled:opacity-30 sm:block sm:text-3xl"
           style={{ color: "var(--tott-home-text-strong)" }}
         >
           <span aria-hidden>←</span>
@@ -296,7 +312,7 @@ export function MagazineIssues() {
           onClick={goNext}
           disabled={flipping !== null || currentPage + 2 > TOTAL_PAGES}
           aria-label={t("nextPage")}
-          className="absolute right-2 top-1/2 z-20 -translate-y-1/2 text-2xl transition-opacity hover:opacity-70 disabled:opacity-30 sm:right-4 sm:text-3xl"
+          className="absolute right-2 top-1/2 z-20 hidden -translate-y-1/2 text-2xl transition-opacity hover:opacity-70 disabled:opacity-30 sm:block sm:text-3xl"
           style={{ color: "var(--tott-home-text-strong)" }}
         >
           <span aria-hidden>→</span>
@@ -364,18 +380,19 @@ export function MagazineIssues() {
           542×64 capsule, bg #262626, inset top 1px white at 8%.
           Inside (with 24px caps on each side): Book nav (chev-left, 16/128, chev-right),
           divider, then list / grid / zoom-in / zoom-out / maximize / share / dots-vertical.
-          All icons 24×24, gap 24px between items. */}
+          All icons 24×24, gap 24px between items. On screens narrower
+          than 542px the toolbar scrolls horizontally so every control
+          stays reachable without breaking the capsule shape. */}
       <div
-        className="mx-auto inline-flex items-center justify-center"
+        className="mx-auto flex w-full max-w-[542px] flex-nowrap items-center justify-start overflow-x-auto sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{
-          width: "542px",
-          maxWidth: "100%",
           height: "64px",
-          padding: "0 24px",
+          padding: "0 16px",
           backgroundColor: TAB_BG,
           borderRadius: "32px",
-          boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.08)",
-          gap: "24px",
+          border: "1px solid var(--tott-card-border)",
+          gap: "16px",
+          columnGap: "clamp(12px, 3vw, 24px)",
         }}
       >
         {/* Book navigation: chev-left + N/total + chev-right */}
@@ -401,7 +418,7 @@ export function MagazineIssues() {
               letterSpacing: "-0.005em",
             }}
           >
-            <span style={{ color: "#FFFFFF" }}>{currentPage}</span>
+            <span style={{ color: "var(--tott-home-text-strong)" }}>{currentPage}</span>
             <span style={{ color: TAB_INACTIVE_TEXT }}>/</span>
             <span style={{ color: TAB_INACTIVE_TEXT }}>{TOTAL_PAGES}</span>
           </span>
@@ -423,7 +440,7 @@ export function MagazineIssues() {
           style={{
             width: "1px",
             height: "16px",
-            background: "rgba(255, 255, 255, 0.12)",
+            background: "var(--tott-card-border)",
           }}
         />
 

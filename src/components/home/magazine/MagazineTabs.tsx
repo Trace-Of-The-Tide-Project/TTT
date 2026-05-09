@@ -92,44 +92,53 @@ export function MagazineTabs() {
       className="relative w-full px-4 pb-16 sm:px-6 sm:pb-20 md:px-8 md:pb-28"
     >
       <div className="mx-auto w-full max-w-[1392px]">
-        {/* Sticky scroll-nav — stays pinned to the top of the viewport so
-            the user can jump between sections at any scroll depth. */}
+        {/* Sticky scroll-nav — stays pinned to the top of the viewport
+            so the user can jump between sections at any scroll depth.
+            Horizontally scrollable on small screens so all 5 tab
+            labels remain reachable without crashing the layout. */}
         <div
-          className="sticky top-3 z-30 mb-10 sm:top-4 sm:mb-12 md:mb-14"
+          className="sticky top-3 z-30 mb-10 overflow-x-auto sm:top-4 sm:mb-12 md:mb-14 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           style={{
-            // Soft background so the bar reads cleanly when content
-            // scrolls underneath it.
             backgroundColor: "rgba(var(--tott-home-surface-rgb), 0.85)",
             backdropFilter: "saturate(140%) blur(10px)",
             WebkitBackdropFilter: "saturate(140%) blur(10px)",
             borderRadius: 12,
           }}
         >
-          <SegmentedControl
-            options={options}
-            value={active}
-            onChange={handleChange}
-            ariaLabel={tTabs("manifesto")}
-          />
+          <div className="min-w-max">
+            <SegmentedControl
+              options={options}
+              value={active}
+              onChange={handleChange}
+              ariaLabel={tTabs("manifesto")}
+            />
+          </div>
         </div>
 
         {/* All panes stacked, each anchored for the scroll-nav. The
             "Publications" tab now scrolls to the Latest Published row
-            (the Featured Publication card was removed). */}
+            (the Featured Publication card was removed).
+
+            min-w-0 on each grid item: a grid item's default min-width
+            is `auto` (= its content's min-content). Without this, the
+            wide carousel inside MagazineSupport (≈7560px of cards in
+            a translateX'd row) bullies the implicit grid track wider
+            than the viewport, dragging every other section along with
+            it and clipping their wrapped text. */}
         <div className="grid gap-20 sm:gap-24 md:gap-28">
-          <div id={SECTION_ID.manifesto} className="scroll-mt-28">
+          <div id={SECTION_ID.manifesto} className="min-w-0 scroll-mt-28">
             <MagazineManifesto />
           </div>
-          <div id={SECTION_ID.publications} className="scroll-mt-28">
+          <div id={SECTION_ID.publications} className="min-w-0 scroll-mt-28">
             <MagazineLatestPublished />
           </div>
-          <div id={SECTION_ID.issues} className="scroll-mt-28">
+          <div id={SECTION_ID.issues} className="min-w-0 scroll-mt-28">
             <MagazineIssues />
           </div>
-          <div id={SECTION_ID.editorialBoard} className="scroll-mt-28">
+          <div id={SECTION_ID.editorialBoard} className="min-w-0 scroll-mt-28">
             <MagazineEditorialBoard />
           </div>
-          <div id={SECTION_ID.support} className="scroll-mt-28">
+          <div id={SECTION_ID.support} className="min-w-0 scroll-mt-28">
             <MagazineSupport />
           </div>
         </div>

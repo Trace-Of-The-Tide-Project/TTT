@@ -13,10 +13,19 @@ type MagazineHeroProps = {
 };
 
 /**
- * Top-of-page hero for the Magazine landing. The chamfered shape, silk
- * background and white hairline border are baked into `magazine-hero.svg`
- * (the original Figma export, used as-is) — we render that file directly
- * and layer the headline, subtitle and CTAs absolutely on top.
+ * Top-of-page hero for the Magazine landing.
+ *
+ * Layout strategy:
+ *  - <lg: stack the silk artwork on top, content card below. The artwork
+ *    sits at its natural aspect (1392×483 ≈ 2.88:1) and the content gets
+ *    its own dark card so the headline / CTAs read on the page surface
+ *    rather than fighting a 100–250px tall image strip.
+ *  - lg+: overlay the content on top of the artwork (Figma comp), which
+ *    by then is ~360px+ tall and has room for the headline + CTAs.
+ *
+ * This eliminates the "content overflows a tiny image" problem that
+ * happens whenever you try to absolute-position 3 stacked elements
+ * onto a 111px-tall banner.
  */
 export function MagazineHero({
   artwork = "/images/home/magazine-thumbnail.svg",
@@ -28,10 +37,8 @@ export function MagazineHero({
   return (
     <section className="relative w-full px-4 pb-10 pt-14 sm:px-6 sm:pb-14 sm:pt-20 md:px-8 md:pb-20 md:pt-24">
       <div className="relative mx-auto w-full max-w-[1392px]">
-        {/* The SVG defines its own aspect (1392×483 ≈ 2.88:1). On phones we
-            switch to a taller min-height so the headline/CTAs stay readable
-            without overlapping the bottom edge. */}
-        <div className="relative w-full">
+        {/* Artwork — always renders at its natural aspect. */}
+        <div className="relative w-full overflow-hidden rounded-[20px]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={artwork}
@@ -40,49 +47,109 @@ export function MagazineHero({
             draggable={false}
           />
 
-          {/* Content layer — left-aligned, anchored to the lower-left
-              quadrant of the artwork (matches the Figma comp). The text
-              uses textShadow for legibility against the silk; no dark
-              overlay needed, so the SVG's corners read the same on all
-              four sides. */}
-          <div className="absolute inset-0 z-10 flex flex-col items-start justify-end px-6 pb-10 text-start sm:px-10 sm:pb-12 md:px-16 md:pb-16 lg:pb-20">
-            <h1
-              className="whitespace-nowrap text-[clamp(1.5rem,4vw,3.25rem)] font-medium leading-[1.08] tracking-tight text-white"
-              style={{ textShadow: "0 1px 2px rgba(0,0,0,0.35)" }}
-            >
-              {t("title")}
-            </h1>
-            <p
-              className="mt-4 max-w-[48ch] text-[clamp(0.95rem,1.45vw,1.125rem)] leading-relaxed text-white/85"
-              style={{ textShadow: "0 1px 2px rgba(0,0,0,0.32)" }}
-            >
-              {t("subtitle")}
-            </p>
-            <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-7 sm:gap-3.5">
-              <Link
-                href={primaryHref}
-                className="inline-flex items-center justify-center rounded-md px-5 py-2.5 text-sm font-medium transition-colors sm:px-6 sm:text-[0.95rem]"
-                style={{
-                  backgroundColor: "var(--tott-accent-gold)",
-                  color: "var(--tott-auth-btn-text)",
-                }}
-              >
-                {t("ctaPrimary")}
-              </Link>
-              <Link
-                href={secondaryHref}
-                className="inline-flex items-center justify-center rounded-md border px-5 py-2.5 text-sm font-medium text-white/95 transition-colors hover:bg-white/10 sm:px-6 sm:text-[0.95rem]"
-                style={{
-                  backgroundColor: "rgba(20,20,20,0.65)",
-                  borderColor: "rgba(255,255,255,0.14)",
-                }}
-              >
-                {t("ctaSecondary")}
-              </Link>
-            </div>
+          {/* Content overlay — only enabled at lg+ where the artwork is
+              tall enough (≥350px) to comfortably hold the headline and
+              CTAs without crowding. */}
+          <div className="pointer-events-none absolute inset-0 z-10 hidden flex-col items-start justify-end px-10 pb-12 text-start lg:flex lg:px-16 lg:pb-20">
+            <HeroCopy
+              t={t}
+              primaryHref={primaryHref}
+              secondaryHref={secondaryHref}
+              tone="overlay"
+              className="pointer-events-auto"
+            />
           </div>
+        </div>
+
+        {/* Content card — shown below the artwork on <lg viewports. */}
+        <div className="mt-6 lg:hidden">
+          <HeroCopy
+            t={t}
+            primaryHref={primaryHref}
+            secondaryHref={secondaryHref}
+            tone="stacked"
+          />
         </div>
       </div>
     </section>
+  );
+}
+
+type HeroCopyProps = {
+  t: ReturnType<typeof useTranslations>;
+  primaryHref: string;
+  secondaryHref: string;
+  /** "overlay" = white text + textShadow for placement over silk image.
+   *  "stacked" = themed text colors for placement on the page surface. */
+  tone: "overlay" | "stacked";
+  className?: string;
+};
+
+function HeroCopy({
+  t,
+  primaryHref,
+  secondaryHref,
+  tone,
+  className,
+}: HeroCopyProps) {
+  const isOverlay = tone === "overlay";
+  const titleStyle = isOverlay
+    ? {
+        color: "#ffffff",
+        textShadow: "0 1px 2px rgba(0,0,0,0.35)",
+      }
+    : { color: "var(--tott-home-text-strong)" };
+  const subtitleStyle = isOverlay
+    ? {
+        color: "rgba(255,255,255,0.85)",
+        textShadow: "0 1px 2px rgba(0,0,0,0.32)",
+      }
+    : { color: "var(--tott-home-text-muted)" };
+  const secondaryStyle = isOverlay
+    ? {
+        backgroundColor: "rgba(20,20,20,0.65)",
+        borderColor: "rgba(255,255,255,0.14)",
+        color: "rgba(255,255,255,0.95)",
+      }
+    : {
+        backgroundColor: "var(--tott-panel-bg)",
+        borderColor: "var(--tott-card-border)",
+        color: "var(--tott-home-text-strong)",
+      };
+
+  return (
+    <div className={`flex w-full flex-col items-start ${className ?? ""}`}>
+      <h1
+        className="text-[clamp(1.5rem,4.5vw,3.25rem)] font-medium leading-[1.1] tracking-tight"
+        style={titleStyle}
+      >
+        {t("title")}
+      </h1>
+      <p
+        className="mt-3 max-w-[60ch] text-[clamp(0.95rem,1.4vw,1.125rem)] leading-relaxed sm:mt-4"
+        style={subtitleStyle}
+      >
+        {t("subtitle")}
+      </p>
+      <div className="mt-5 flex flex-wrap items-center gap-3 sm:mt-6 sm:gap-3.5">
+        <Link
+          href={primaryHref}
+          className="inline-flex items-center justify-center rounded-md px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90 sm:px-6 sm:text-[0.95rem]"
+          style={{
+            backgroundColor: "var(--tott-magazine-btn-bg)",
+            color: "var(--tott-auth-btn-text)",
+          }}
+        >
+          {t("ctaPrimary")}
+        </Link>
+        <Link
+          href={secondaryHref}
+          className="inline-flex items-center justify-center rounded-md border px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90 sm:px-6 sm:text-[0.95rem]"
+          style={secondaryStyle}
+        >
+          {t("ctaSecondary")}
+        </Link>
+      </div>
+    </div>
   );
 }

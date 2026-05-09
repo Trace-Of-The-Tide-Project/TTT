@@ -74,6 +74,20 @@ html {
   --tott-home-hero-grad-top: #171717;
   --tott-home-hero-grad-mid: #1e1e1e;
   --tott-home-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.24);
+  /** Filter applied to baked dark-silk imagery (carousel fillers,
+   * decorative grayscale gradients) so the same PNG reads correctly
+   * on both themes — no-op on dark, inverted on light. */
+  --tott-image-invert: none;
+  /** Bottom-fade overlay for the writer cards. The cards keep their
+   * dark silk look across both themes; this fade is only desirable
+   * on dark (where it blends into the page surface) and is removed
+   * on light (where it would render as a dark rectangle outside the
+   * silk silhouette). */
+  --tott-writer-card-fade: linear-gradient(180deg, rgba(23, 23, 23, 0) 0%, #171717 100%);
+  /** Magazine page CTA background — the brand's warm gold that
+   * matches the radial-gradient accent used for headings. Constant
+   * across themes so the buttons read consistently. */
+  --tott-magazine-btn-bg: #c9a96e;
   /** Cream/gold accent for stat icons + topbar utility icons. */
   --tott-stat-icon: #e8ddc0;
   /** Inactive tab text + hover state in segmented controls. */
@@ -232,6 +246,8 @@ html[data-theme="light"] {
   --tott-home-hero-grad-top: #f5f1e8;
   --tott-home-hero-grad-mid: #ece8dc;
   --tott-home-text-shadow: none;
+  --tott-image-invert: invert(1);
+  --tott-writer-card-fade: linear-gradient(180deg, rgba(250, 249, 245, 0) 0%, #faf9f5 100%);
   --tott-stat-icon: #7d5a28;
   --tott-tab-inactive: #6b7280;
   --tott-tab-inactive-hover: #1f2937;

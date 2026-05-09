@@ -7,6 +7,7 @@ import {
   FolderIcon,
   BookIcon,
 } from "@/components/ui/icons";
+import { FirstWordGold } from "./FirstWordGold";
 
 // Top-icon SVG for the writer cards (Icon-4.svg in the home folder).
 const WRITER_TOP_ICON = "/images/home/Icon-4.svg";
@@ -63,7 +64,10 @@ export function MagazineEditorialBoard() {
   return (
     <div className="grid gap-16 sm:gap-20">
       {/* ─── Explore Less Read Content ─────────────────────────────── */}
-      <section aria-labelledby="less-read-heading">
+      <section
+        aria-labelledby="less-read-heading"
+        className="px-4 sm:px-6 md:px-8"
+      >
         <h2
           id="less-read-heading"
           style={{
@@ -71,23 +75,25 @@ export function MagazineEditorialBoard() {
             fontWeight: 500,
             fontSize: "18px",
             lineHeight: "24px",
-            background:
-              "radial-gradient(100% 100% at 0% 50%, #C9A96E 0%, rgba(201, 169, 110, 0) 50%), linear-gradient(0deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), #000000",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
+            color: "var(--tott-home-text-strong)",
           }}
         >
-          {t("lessReadHeading")}
+          <FirstWordGold raw={t("lessReadHeading")} />
         </h2>
 
-        {/* Cards row — gap 24px, wraps to 3 cols / 2 cols on smaller */}
-        <ul
-          className="mt-6 flex flex-wrap items-start justify-center"
-          style={{ gap: "24px" }}
-        >
+        {/* Cards row — flex-wrap with justify-center so the 5-card row
+            stays balanced at every breakpoint:
+              - <sm: 2 per row, 5th card centred on its own row
+              - sm/md: 3 per row, last 2 cards centred on row 2
+              - lg+: all 5 fit on one row
+            (A regular grid would left-align the last row's orphan
+             cards; flex-wrap + justify-center keeps them centred.) */}
+        <ul className="mt-6 flex flex-wrap justify-center gap-4 sm:gap-6">
           {CATEGORIES.map(({ key, iconSrc }) => (
-            <li key={key} className="flex justify-center">
+            <li
+              key={key}
+              className="flex basis-[calc(50%-0.5rem)] justify-center sm:basis-[180px] sm:max-w-[196px]"
+            >
               <CategoryCard iconSrc={iconSrc} title={t(key)} />
             </li>
           ))}
@@ -100,8 +106,8 @@ export function MagazineEditorialBoard() {
           on a bottom dark gradient overlay; top-icon floats above. */}
       <section aria-labelledby="follow-writers-heading">
         <header
-          className="flex items-center"
-          style={{ gap: "24px", padding: "0 24px" }}
+          className="flex items-center px-4 sm:px-6 md:px-8"
+          style={{ gap: "24px" }}
         >
           <div className="flex flex-col" style={{ gap: "4px" }}>
             <h2
@@ -111,14 +117,10 @@ export function MagazineEditorialBoard() {
                 fontWeight: 500,
                 fontSize: "18px",
                 lineHeight: "24px",
-                background:
-                  "radial-gradient(100% 100% at 0% 50%, #C9A96E 0%, rgba(201, 169, 110, 0) 50%), linear-gradient(0deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), #000000",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
+                color: "var(--tott-home-text-strong)",
               }}
             >
-              {t("writersHeading")}
+              <FirstWordGold raw={t("writersHeading")} />
             </h2>
             <p
               style={{
@@ -127,8 +129,8 @@ export function MagazineEditorialBoard() {
                 fontSize: "14px",
                 lineHeight: "20px",
                 letterSpacing: "-0.005em",
-                color: "#A3A3A3",
-                textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                color: "var(--tott-home-text-muted)",
+                textShadow: "var(--tott-home-text-shadow)",
               }}
             >
               {t("writersSubtitle")}
@@ -141,14 +143,29 @@ export function MagazineEditorialBoard() {
             side has the same spacing to the next card as the cards
             have between themselves. */}
         <div className="relative mt-8 overflow-hidden">
+          {/* xl+: 4 cards in a centred row with side fillers (~1420px wide).
+              lg (≥1024 < 1280): 4 cards in a single row, no fillers.
+              sm (≥640): 2x2 grid of cards.
+              Mobile: 1 column stack. */}
+
+          {/* Mobile / tablet / lg — responsive grid (no fillers). */}
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 xl:hidden">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="flex justify-center">
+                <WriterCard />
+              </div>
+            ))}
+          </div>
+
+          {/* xl — flex row with side fillers (clipped on the edges of
+              the viewport at 1280–1535 by the parent's overflow-hidden). */}
           <div
-            className="mx-auto flex items-start justify-center"
+            className="hidden items-start justify-center xl:flex"
             style={{ gap: "8px" }}
           >
-            {/* Left filler (mirrored so its dark edge faces outward). */}
             <div
               aria-hidden
-              className="hidden shrink-0 lg:block"
+              className="shrink-0"
               style={{ width: "138px", height: "294px", position: "relative" }}
             >
               <Image
@@ -156,21 +173,20 @@ export function MagazineEditorialBoard() {
                 alt=""
                 fill
                 className="select-none object-cover"
-                style={{ transform: "scaleX(-1)" }}
+                style={{
+                  transform: "scaleX(-1)",
+                  filter: "var(--tott-image-invert)",
+                }}
                 sizes="138px"
                 draggable={false}
               />
             </div>
-
-            {/* Cards */}
             {[0, 1, 2, 3].map((i) => (
-              <WriterCard key={i} />
+              <WriterCard key={`d-${i}`} />
             ))}
-
-            {/* Right filler — dark edge faces outward (rightward). */}
             <div
               aria-hidden
-              className="hidden shrink-0 lg:block"
+              className="shrink-0"
               style={{ width: "138px", height: "294px", position: "relative" }}
             >
               <Image
@@ -178,6 +194,7 @@ export function MagazineEditorialBoard() {
                 alt=""
                 fill
                 className="select-none object-cover"
+                style={{ filter: "var(--tott-image-invert)" }}
                 sizes="138px"
                 draggable={false}
               />
@@ -192,7 +209,7 @@ export function MagazineEditorialBoard() {
           at full size. The section is intentionally taller than the
           294px pattern so no hex gets cropped at top/bottom. */}
       <section
-        className="relative overflow-hidden px-12 py-24 sm:py-28 md:py-32"
+        className="relative overflow-hidden px-4 py-16 sm:px-12 sm:py-28 md:py-32"
         style={{ minHeight: "420px" }}
       >
         <div
@@ -225,9 +242,9 @@ export function MagazineEditorialBoard() {
             style={{
               fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
               fontWeight: 500,
-              fontSize: "32px",
-              lineHeight: "40px",
-              color: "#FFFFFF",
+              fontSize: "clamp(1.25rem, 3.2vw + 0.5rem, 2rem)",
+              lineHeight: 1.25,
+              color: "var(--tott-home-text-strong)",
               textAlign: "center",
               margin: 0,
             }}
@@ -241,7 +258,7 @@ export function MagazineEditorialBoard() {
               fontSize: "16px",
               lineHeight: "24px",
               letterSpacing: "-0.01em",
-              color: "#FFFFFF",
+              color: "var(--tott-home-text-strong)",
               textAlign: "center",
             }}
           >
@@ -273,11 +290,7 @@ function CategoryCard({
     fontWeight: 500,
     fontSize: "16px",
     lineHeight: "20px",
-    background:
-      "radial-gradient(100% 100% at 0% 50%, #C9A96E 0%, rgba(201, 169, 110, 0) 50%), linear-gradient(0deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), #000000",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
+    color: "var(--tott-dash-gold-label)",
   } as React.CSSProperties;
 
   const metaTextStyle = {
@@ -285,25 +298,31 @@ function CategoryCard({
     fontWeight: 400,
     fontSize: "12px",
     lineHeight: "16px",
-    color: "#D6D6D6",
-    textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+    color: "var(--tott-home-text-heading)",
+    textShadow: "var(--tott-home-text-shadow)",
   } as React.CSSProperties;
 
   return (
     <div
       className="relative flex flex-col items-center justify-center"
       style={{
-        width: "196px",
-        height: "206px",
-        padding: "56px 24px",
+        width: "100%",
+        maxWidth: "196px",
+        aspectRatio: "196 / 206",
+        padding: "12% 12%",
+        flexShrink: 1,
       }}
     >
-      {/* Pre-rendered hex mask as the card background. */}
+      {/* Pre-rendered hex mask as the card background. Inverted on
+          light theme via the shared --tott-image-invert token so the
+          dark hex flips to a light hex without losing the bevel/edge
+          detail baked into Mask.png. */}
       <Image
         src={CARD_MASK}
         alt=""
         fill
         className="pointer-events-none select-none"
+        style={{ filter: "var(--tott-image-invert)" }}
         sizes="196px"
         draggable={false}
       />
@@ -357,14 +376,14 @@ function CategoryCard({
               style={{
                 width: "16px",
                 height: "16px",
-                background: "#DBC99E",
-                border: "1px solid rgba(0, 0, 0, 0.08)",
+                background: "var(--tott-dash-gold-text)",
+                border: "1px solid var(--tott-card-border)",
                 borderRadius: "999px",
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 500,
                 fontSize: "8.5px",
                 lineHeight: "10px",
-                color: "#332217",
+                color: "var(--tott-auth-btn-text)",
               }}
             >
               A
@@ -378,8 +397,8 @@ function CategoryCard({
               aria-hidden
               className="flex h-4 w-4 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
               style={{
-                color: "rgba(255, 255, 255, 0.8)",
-                filter: "drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.32))",
+                color: "var(--tott-home-text-strong)",
+                filter: "drop-shadow(var(--tott-home-text-shadow))",
               }}
             >
               <CalendarIcon />
@@ -393,8 +412,8 @@ function CategoryCard({
               aria-hidden
               className="flex h-4 w-4 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
               style={{
-                color: "rgba(255, 255, 255, 0.8)",
-                filter: "drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.32))",
+                color: "var(--tott-home-text-strong)",
+                filter: "drop-shadow(var(--tott-home-text-shadow))",
               }}
             >
               <FolderIcon />
@@ -408,8 +427,8 @@ function CategoryCard({
               aria-hidden
               className="flex h-4 w-4 items-center justify-center [&>svg]:h-4 [&>svg]:w-4"
               style={{
-                color: "rgba(255, 255, 255, 0.8)",
-                filter: "drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.32))",
+                color: "var(--tott-home-text-strong)",
+                filter: "drop-shadow(var(--tott-home-text-shadow))",
               }}
             >
               <BookIcon />
@@ -433,15 +452,17 @@ function WriterCard() {
 
   return (
     <article
-      className="relative"
+      className="relative w-full"
       style={{
-        width: "276px",
-        height: "294px",
+        maxWidth: "276px",
+        aspectRatio: "276 / 294",
+        flexShrink: 0,
       }}
     >
-      {/* Hex-shaped image (Image-2.png has transparent corners — they
-          stay transparent so the page background shows through, no
-          black fill). */}
+      {/* Hex-shaped image (Image-2.png — silk-textured hex with
+          transparent corners). Rendered identically in both themes
+          so the writer card keeps its dark-silk look against any
+          page surface. */}
       <Image
         src={WRITER_CARD}
         alt=""
@@ -473,32 +494,32 @@ function WriterCard() {
         />
       </div>
 
-      {/* Bottom Text frame — 276×164. Gradient from transparent →
-          near-black (matches the page surface), no backdrop-blur.
-          Clipped to the hex silhouette so the dark fade follows the
-          shape of the silk instead of bleeding into the corners. */}
+      {/* Bottom Text frame — proportional to the card width so the
+          gradient follows the hex silhouette as the card shrinks on
+          mobile/tablet. Padding kept in px to match the Figma spec on
+          desktop. The dark fade is theme-aware: rendered on dark mode
+          (matches the page surface), suppressed on light mode (would
+          otherwise show as a dark rectangle below the silk hex). */}
       <div
-        className="absolute bottom-0 left-0 z-10 flex flex-col items-center justify-end"
+        className="absolute bottom-0 left-0 z-10 flex w-full flex-col items-center justify-end"
         style={{
-          width: "276px",
-          height: "164px",
+          height: "55.78%",
           padding: "24px 24px 56px",
           gap: "8px",
-          background:
-            "linear-gradient(180deg, rgba(23, 23, 23, 0) 0%, #171717 100%)",
+          background: "var(--tott-writer-card-fade)",
         }}
       >
         {/* Title */}
         <p
-          className="text-center"
+          className="w-full text-center"
           style={{
-            width: "228px",
+            maxWidth: "228px",
             fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
             fontWeight: 500,
             fontSize: "20px",
             lineHeight: "28px",
-            color: "#FFFFFF",
-            textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+            color: "var(--tott-home-text-strong)",
+            textShadow: "var(--tott-home-text-shadow)",
           }}
         >
           {t("writerCardTitle")}
@@ -506,8 +527,8 @@ function WriterCard() {
 
         {/* Author meta */}
         <div
-          className="flex flex-wrap items-center justify-center"
-          style={{ width: "228px", gap: "4px 8px" }}
+          className="flex w-full flex-wrap items-center justify-center"
+          style={{ maxWidth: "228px", gap: "4px 8px" }}
         >
           <span className="flex items-center" style={{ gap: "4px" }}>
             <span
@@ -515,14 +536,14 @@ function WriterCard() {
               style={{
                 width: "16px",
                 height: "16px",
-                background: "#DBC99E",
-                border: "1px solid rgba(0, 0, 0, 0.08)",
+                background: "var(--tott-dash-gold-text)",
+                border: "1px solid var(--tott-card-border)",
                 borderRadius: "999px",
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 500,
                 fontSize: "8.5px",
                 lineHeight: "10px",
-                color: "#332217",
+                color: "var(--tott-auth-btn-text)",
               }}
             >
               A
@@ -533,8 +554,8 @@ function WriterCard() {
                 fontWeight: 400,
                 fontSize: "12px",
                 lineHeight: "16px",
-                color: "#D6D6D6",
-                textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                color: "var(--tott-home-text-heading)",
+                textShadow: "var(--tott-home-text-shadow)",
               }}
             >
               {t("writerAuthor")}
@@ -553,8 +574,8 @@ function WriterCard() {
           height: "24px",
           left: "calc(50% - 28px)",
           bottom: "24px",
-          backgroundColor: "rgba(23, 23, 23, 0.85)",
-          color: "#FFFFFF",
+          backgroundColor: "var(--tott-home-badge-bg)",
+          color: "var(--tott-home-text-strong)",
           fontFamily: "'Inter', var(--font-sans, sans-serif)",
           fontWeight: 500,
           fontSize: "12px",

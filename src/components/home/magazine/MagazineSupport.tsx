@@ -4,10 +4,11 @@ import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { FirstWordGold } from "./FirstWordGold";
 
 const FRAME_86 = "/images/home/Frame 86.svg";
 
-const BORDER = "#333333";
+const BORDER = "var(--tott-card-border)";
 
 /**
  * Support pane — "Recent Collaporations" gallery (typo intentional,
@@ -23,8 +24,11 @@ const BORDER = "#333333";
  * (title / co-writing / timeline / description) underneath.
  */
 const TOTAL_CARDS = 7;
-// Card width (360) + gap (24) — used for the circular translate math.
-const CARD_STEP = 360 + 24;
+// Card width matches the inline `min(85vw, 360px)` rule, plus the 24px
+// gap. The circular translate math uses the same expression so the
+// active card stays centred at every viewport width.
+const CARD_W_CSS = "min(85vw, 360px)";
+const CARD_GAP_PX = 24;
 
 export function MagazineSupport() {
   const t = useTranslations("Home.magazine.support");
@@ -54,11 +58,11 @@ export function MagazineSupport() {
             fontWeight: 500,
             fontSize: "32px",
             lineHeight: "40px",
-            color: "#FFFFFF",
+            color: "var(--tott-home-text-strong)",
             textAlign: "center",
           }}
         >
-          {t("heading")}
+          <FirstWordGold raw={t("heading")} />
         </h2>
         <p
           className="max-w-md"
@@ -68,8 +72,8 @@ export function MagazineSupport() {
             fontSize: "14px",
             lineHeight: "20px",
             letterSpacing: "-0.005em",
-            color: "#A3A3A3",
-            textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+            color: "var(--tott-home-text-muted)",
+            textShadow: "var(--tott-home-text-shadow)",
             textAlign: "center",
           }}
         >
@@ -100,12 +104,14 @@ export function MagazineSupport() {
           <div
             className="flex justify-start"
             style={{
-              gap: "24px",
+              gap: `${CARD_GAP_PX}px`,
               // The active card is at index (TOTAL_CARDS + activeIndex)
               // in the tripled array — shift the row so it sits centre.
+              // Use the same `min(85vw, 360px)` expression as the card
+              // width so the centring works at every viewport width.
               transform: `translateX(calc(50% - ${
-                (TOTAL_CARDS + activeIndex) * CARD_STEP + 360 / 2
-              }px))`,
+                TOTAL_CARDS + activeIndex
+              } * (${CARD_W_CSS} + ${CARD_GAP_PX}px) - ${CARD_W_CSS} / 2))`,
               transition: "transform 500ms cubic-bezier(0.4, 0, 0.2, 1)",
             }}
           >
@@ -154,10 +160,11 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
     <article
       className="relative shrink-0"
       style={{
-        width: "360px",
-        height: "382px",
+        // Card scales: ~85% of small viewport, max 360.
+        width: "min(85vw, 360px)",
+        minHeight: "382px",
         padding: "16px 24px",
-        backgroundColor: "#171717",
+        backgroundColor: "var(--tott-panel-bg)",
         borderRadius: "24px",
         display: "flex",
         flexDirection: "column",
@@ -170,10 +177,11 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
       {/* Frame 86 — pre-rendered twin-hex header (Author + Contributor
           hexes connected by the heart-handshake glyph). The labels
           baked into the SVG are the only ones we render — no
-          duplicates on top. */}
+          duplicates on top. Width caps to 270px on desktop and shrinks
+          with the card on mobile so it never spills the card edges. */}
       <div
-        className="relative shrink-0"
-        style={{ width: "270px", height: "156px" }}
+        className="relative w-full shrink-0"
+        style={{ maxWidth: "270px", aspectRatio: "270 / 156" }}
       >
         <Image
           src={FRAME_86}
@@ -191,16 +199,18 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
         {/* Invisible click targets sitting over each label — clicking
             advances that side's slide. Cursor is a pointer so users
             see it's interactive. */}
+        {/* Click targets — percentage-based so they stay aligned with
+            the labels baked into Frame 86.svg as the image scales. */}
         <button
           type="button"
           aria-label={t("roleAuthor")}
           onClick={() => setAuthorIndex((i) => i + 1)}
           className="absolute cursor-pointer"
           style={{
-            left: "32px",
-            top: "126px",
-            width: "64px",
-            height: "26px",
+            left: "11.85%",
+            top: "80.77%",
+            width: "23.7%",
+            height: "16.67%",
             background: "transparent",
             border: 0,
           }}
@@ -211,10 +221,10 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
           onClick={() => setContribIndex((i) => i + 1)}
           className="absolute cursor-pointer"
           style={{
-            left: "162px",
-            top: "126px",
-            width: "84px",
-            height: "26px",
+            left: "60%",
+            top: "80.77%",
+            width: "31.11%",
+            height: "16.67%",
             background: "transparent",
             border: 0,
           }}
@@ -223,8 +233,8 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
 
       {/* Text block — title + meta + description. */}
       <div
-        className="flex flex-col items-center"
-        style={{ width: "312px", gap: "8px" }}
+        className="flex w-full flex-col items-center"
+        style={{ maxWidth: "312px", gap: "8px" }}
       >
         {/* Title */}
         <h3
@@ -233,9 +243,9 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
             fontWeight: 500,
             fontSize: "20px",
             lineHeight: "28px",
-            color: "#FFFFFF",
+            color: "var(--tott-home-text-strong)",
             textAlign: "center",
-            textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+            textShadow: "var(--tott-home-text-shadow)",
           }}
         >
           {t("collabTitle")}
@@ -252,7 +262,7 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
               fontWeight: 400,
               fontSize: "12px",
               lineHeight: "16px",
-              color: "#C9A96E",
+              color: "var(--tott-dash-gold-label)",
               textAlign: "center",
             }}
           >
@@ -260,7 +270,7 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
           </span>
           <span
             className="flex items-center"
-            style={{ gap: "6px" }}
+            style={{ gap: "6px", color: "var(--tott-home-text-muted)" }}
           >
             <AlarmIcon />
             <span
@@ -273,7 +283,7 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
                   fontWeight: 400,
                   fontSize: "12px",
                   lineHeight: "16px",
-                  color: "#A3A3A3",
+                  color: "var(--tott-home-text-muted)",
                 }}
               >
                 {t("collabTimelineLabel")}
@@ -284,7 +294,7 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
                   fontWeight: 400,
                   fontSize: "12px",
                   lineHeight: "16px",
-                  color: "#A3A3A3",
+                  color: "var(--tott-home-text-muted)",
                 }}
               >
                 {t("collabTimeline")}
@@ -300,7 +310,7 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
             fontWeight: 400,
             fontSize: "12px",
             lineHeight: "16px",
-            color: "#A3A3A3",
+            color: "var(--tott-home-text-muted)",
             textAlign: "center",
             margin: 0,
           }}
@@ -333,8 +343,8 @@ function NavArrows({
         onClick={onPrev}
         className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80"
         style={{
-          border: "2px solid #BD9352",
-          color: "#BD9352",
+          border: "2px solid var(--tott-accent-gold)",
+          color: "var(--tott-accent-gold)",
         }}
       >
         <span aria-hidden className="text-xl">
@@ -347,8 +357,8 @@ function NavArrows({
         onClick={onNext}
         className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80"
         style={{
-          border: "2px solid #BD9352",
-          color: "#BD9352",
+          border: "2px solid var(--tott-accent-gold)",
+          color: "var(--tott-accent-gold)",
         }}
       >
         <span aria-hidden className="text-xl">
@@ -359,7 +369,8 @@ function NavArrows({
   );
 }
 
-/** Alarm/clock icon — 16×16 with #A3A3A3 stroke. */
+/** Alarm/clock icon — 16×16 with currentColor stroke (parent sets the
+ * actual hue via a theme-aware token). */
 function AlarmIcon() {
   return (
     <svg
@@ -367,7 +378,7 @@ function AlarmIcon() {
       height="16"
       viewBox="0 0 16 16"
       fill="none"
-      stroke="#A3A3A3"
+      stroke="currentColor"
       strokeWidth={1.5}
       strokeLinecap="round"
       strokeLinejoin="round"

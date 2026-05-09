@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { FirstWordGold } from "./FirstWordGold";
 
 // Pre-rendered hex card image (193×288, transparent background outside
 // the hex). Already has the silk fill and border baked in, so we drop
@@ -43,7 +44,7 @@ export function MagazineLatestPublished() {
             className="text-lg font-medium tracking-tight sm:text-xl"
             style={{ color: "var(--tott-home-text-strong)" }}
           >
-            <LatestPublishedHeading raw={t("latestHeading")} />
+            <FirstWordGold raw={t("latestHeading")} />
           </h2>
           <p
             className="mt-1 text-sm"
@@ -54,7 +55,7 @@ export function MagazineLatestPublished() {
         </div>
         <button
           type="button"
-          className="inline-flex items-center gap-1.5 text-sm font-medium transition-colors hover:opacity-90"
+          className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
           style={{ color: "var(--tott-accent-gold)" }}
         >
           {t("viewMore")}
@@ -62,11 +63,11 @@ export function MagazineLatestPublished() {
         </button>
       </div>
 
-      <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5">
+      <ul className="mt-8 flex flex-wrap justify-center gap-4 sm:gap-5">
         {latest.map((item, i) => (
           <li
             key={i}
-            className="mx-auto flex w-full max-w-[192px] flex-col items-stretch"
+            className="flex basis-[calc(50%-0.5rem)] flex-col items-stretch sm:basis-[170px] sm:max-w-[192px]"
           >
             {/* Pre-rendered hex card image (Book Cover.png) — natural
                 aspect 193×288, hex shape and border baked in. */}
@@ -92,7 +93,7 @@ export function MagazineLatestPublished() {
                   justifyContent: "center",
                   width: "88px",
                   height: "24px",
-                  backgroundColor: "var(--tott-accent-gold)",
+                  backgroundColor: "var(--tott-magazine-btn-bg)",
                   color: "var(--tott-auth-btn-text)",
                   fontSize: "11px",
                   fontWeight: 500,
@@ -122,23 +123,3 @@ export function MagazineLatestPublished() {
   );
 }
 
-/**
- * Splits the heading into "first word (gold) + rest (default)" so only
- * the lead word is accented. Works for any locale that uses spaces —
- * matches the comp's two-tone "Latest Published" treatment.
- */
-function LatestPublishedHeading({ raw }: { raw: string }) {
-  const trimmed = raw.trim();
-  const firstSpace = trimmed.indexOf(" ");
-  if (firstSpace === -1) {
-    return <span style={{ color: "var(--tott-accent-gold)" }}>{trimmed}</span>;
-  }
-  const first = trimmed.slice(0, firstSpace);
-  const rest = trimmed.slice(firstSpace);
-  return (
-    <>
-      <span style={{ color: "var(--tott-accent-gold)" }}>{first}</span>
-      <span>{rest}</span>
-    </>
-  );
-}

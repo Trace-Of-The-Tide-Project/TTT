@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { FirstWordGold } from "./FirstWordGold";
 
 /**
  * Newsletter band — sits between the magazine content and the global
@@ -16,7 +17,7 @@ export function MagazineNewsletter() {
   return (
     <section
       aria-labelledby="newsletter-heading"
-      className="relative w-full overflow-hidden px-12 py-24 sm:py-28 md:py-32"
+      className="relative w-full overflow-hidden px-4 py-16 sm:px-12 sm:py-28 md:py-32"
       style={{ minHeight: "420px" }}
     >
       {/* Hex pattern backdrop — masked SVG, full size, theme-aware
@@ -72,7 +73,7 @@ export function MagazineNewsletter() {
           className="mt-1 text-2xl font-medium tracking-tight sm:text-3xl"
           style={{ color: "var(--tott-home-text-strong)" }}
         >
-          {t("title")}
+          <FirstWordGold raw={t("title")} />
         </h2>
         <p
           className="mt-3 max-w-md text-sm leading-relaxed sm:text-base"
@@ -103,7 +104,7 @@ export function MagazineNewsletter() {
             type="submit"
             className="inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium transition-colors hover:opacity-90"
             style={{
-              backgroundColor: "var(--tott-accent-gold)",
+              backgroundColor: "var(--tott-magazine-btn-bg)",
               color: "var(--tott-auth-btn-text)",
             }}
           >
