@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { hasBrowserAuthSession } from "@/lib/auth/browser-session";
-import type { HexCard } from "@/app/[locale]/(withNav)/(public)/page";
+import type { HexCard } from "@/app/[locale]/(withNav)/(public)/home/page";
 
 /** Figma `Homepage.svg` artboard width — used only for fade-height ratio scaling. */
 const FIGMA_HOMEPAGE_WIDTH = 1440;
