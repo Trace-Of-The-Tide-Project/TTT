@@ -211,7 +211,7 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
           on every viewport. */}
       <div className="w-full sm:px-12 lg:px-16">
         <div
-          className="mx-auto flex w-full max-w-4xl flex-wrap items-center gap-x-6 gap-y-3"
+          className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-12 gap-y-3"
         >
           {/* Search input */}
           <label
