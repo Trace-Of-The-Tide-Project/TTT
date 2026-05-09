@@ -276,9 +276,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
               <MagazineLatestPublished items={latestArticles} />
             ) : undefined
           }
-          issues={
-            issues.length > 0 ? <MagazineIssues items={issues} /> : undefined
-          }
+          issues={<MagazineIssues items={issues} />}
           editorialBoard={
             lessReadArticles.length > 0 ||
             writers.length > 0 ||

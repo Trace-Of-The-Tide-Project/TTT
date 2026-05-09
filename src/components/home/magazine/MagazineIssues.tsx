@@ -171,7 +171,9 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
     }, FLIP_MS);
   };
 
-  if (items.length === 0) return null;
+  // The Issues pane always renders — the book-spread reader is a
+  // brand visual, not driven by data. The list below the search/
+  // filters is what's empty when `items` is empty.
 
   return (
     <div className="grid w-full min-w-0 gap-8 px-4 sm:gap-10 sm:px-6 md:px-8">
