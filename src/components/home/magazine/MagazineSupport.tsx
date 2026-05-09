@@ -6,7 +6,10 @@ import { useTranslations } from "next-intl";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { FirstWordGold } from "./FirstWordGold";
 
-const FRAME_86 = "/images/home/Frame 86.svg";
+// Pre-rendered card SVG — chamfered/hexagonal outer shape with the
+// twin-hex (Author + Contributor) header baked in. Used as the
+// visual frame; text + status pill are layered on top.
+const CARD_FRAME = "/images/home/Card-2.svg";
 
 const BORDER = "var(--tott-card-border)";
 
@@ -47,11 +50,6 @@ export type MagazineSupportProps = {
  * render a leading + trailing clone strip and animate to a clone
  * position when wrapping, then snap (no transition) back to the real
  * position once the animation finishes.
- *
- * Each card has its own author/contributor slide indices. Those live
- * in the parent (one entry per real card index), so the duplicated
- * clone cards stay in sync with the real card and clicks don't
- * scribble onto a clone-only state.
  */
 export function MagazineSupport({ collaborations }: MagazineSupportProps) {
   const t = useTranslations("Home.magazine.support");
@@ -64,27 +62,9 @@ export function MagazineSupport({ collaborations }: MagazineSupportProps) {
   // When false, transition is suppressed for a single render so the
   // snap-back doesn't animate.
   const [animate, setAnimate] = useState(true);
-  // Slide indices for each real card. Lifted here so the duplicated
-  // clone strips render the same slide as the real card.
-  const [authorSlides, setAuthorSlides] = useState<number[]>(() =>
-    Array.from({ length: totalCards }, () => 0),
-  );
-  const [contribSlides, setContribSlides] = useState<number[]>(() =>
-    Array.from({ length: totalCards }, () => 0),
-  );
 
-  // Resync slide arrays if the collaboration list size changes.
+  // Reset active/position if the list size changes.
   useEffect(() => {
-    setAuthorSlides((s) =>
-      s.length === totalCards
-        ? s
-        : Array.from({ length: totalCards }, (_, i) => s[i] ?? 0),
-    );
-    setContribSlides((s) =>
-      s.length === totalCards
-        ? s
-        : Array.from({ length: totalCards }, (_, i) => s[i] ?? 0),
-    );
     setActive((a) => (a >= totalCards ? 0 : a));
     setPosition((p) => (p >= totalCards || p < 0 ? 0 : p));
   }, [totalCards]);
@@ -95,19 +75,6 @@ export function MagazineSupport({ collaborations }: MagazineSupportProps) {
       if (wrapTimer.current) clearTimeout(wrapTimer.current);
     };
   }, []);
-
-  const advanceAuthor = (cardIdx: number) =>
-    setAuthorSlides((s) => {
-      const copy = s.slice();
-      copy[cardIdx] = copy[cardIdx] + 1;
-      return copy;
-    });
-  const advanceContrib = (cardIdx: number) =>
-    setContribSlides((s) => {
-      const copy = s.slice();
-      copy[cardIdx] = copy[cardIdx] + 1;
-      return copy;
-    });
 
   const goNext = () => {
     if (wrapTimer.current) return;
@@ -227,14 +194,12 @@ export function MagazineSupport({ collaborations }: MagazineSupportProps) {
             }}
           >
             {/* Clones before the real set */}
-            {collaborations.map((c, i) => (
+            {collaborations.map((c) => (
               <CollabCard
                 key={`pre-${c.id}`}
                 collab={c}
                 isActive={false}
                 isClone
-                authorIndex={authorSlides[i] ?? 0}
-                contribIndex={contribSlides[i] ?? 0}
               />
             ))}
             {/* Real set */}
@@ -243,21 +208,15 @@ export function MagazineSupport({ collaborations }: MagazineSupportProps) {
                 key={`real-${c.id}`}
                 collab={c}
                 isActive={i === active}
-                authorIndex={authorSlides[i] ?? 0}
-                contribIndex={contribSlides[i] ?? 0}
-                onAdvanceAuthor={() => advanceAuthor(i)}
-                onAdvanceContrib={() => advanceContrib(i)}
               />
             ))}
             {/* Clones after the real set */}
-            {collaborations.map((c, i) => (
+            {collaborations.map((c) => (
               <CollabCard
                 key={`post-${c.id}`}
                 collab={c}
                 isActive={false}
                 isClone
-                authorIndex={authorSlides[i] ?? 0}
-                contribIndex={contribSlides[i] ?? 0}
               />
             ))}
           </div>
@@ -274,28 +233,25 @@ export function MagazineSupport({ collaborations }: MagazineSupportProps) {
   );
 }
 
-/** Single collaboration card — 360×382 with twin-hex header. */
+/** Single collaboration card.
+ *
+ * Visual chrome (chamfered hex outer shape + twin-hex Author /
+ * Contributor header + heart-handshake glyph) is baked into the
+ * Card-2.svg asset. Text content and status pill are layered on
+ * top via a flex column positioned in the lower portion of the
+ * card, below the twin-hex.
+ */
 function CollabCard({
   collab,
   isActive = true,
   isClone = false,
-  authorIndex,
-  contribIndex,
-  onAdvanceAuthor,
-  onAdvanceContrib,
 }: {
   collab: CollaborationItem;
   isActive?: boolean;
-  /** Clones are decorative duplicates that flank the real strip; they
-   *  echo the active card's slide indices but don't accept input. */
+  /** Clones are decorative duplicates that flank the real strip. */
   isClone?: boolean;
-  authorIndex: number;
-  contribIndex: number;
-  onAdvanceAuthor?: () => void;
-  onAdvanceContrib?: () => void;
 }) {
   const t = useTranslations("Home.magazine.support");
-
   // Non-active siblings (and all clones) are hidden from AT so the
   // card text isn't announced multiple times in a row.
   const ariaHidden = isClone || !isActive;
@@ -305,83 +261,36 @@ function CollabCard({
       className="relative shrink-0"
       aria-hidden={ariaHidden || undefined}
       style={{
+        // Aspect ratio matches Card-2.svg (361×384) so it scales
+        // proportionally without distorting the chamfered shape.
         width: "min(85vw, 360px)",
-        minHeight: "382px",
-        padding: "16px 24px",
-        backgroundColor: "var(--tott-panel-bg)",
-        borderRadius: "24px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: "16px",
+        aspectRatio: "361 / 384",
         opacity: isActive ? 1 : 0.45,
         transition: "opacity 400ms ease",
       }}
     >
-      {/* Frame 86 — pre-rendered twin-hex header. Sits inside the
-          card as a normal flex item per the Figma spec; the visual
-          "hex crossing the card top" effect comes from Frame 86.svg's
-          own gradient (dark at top, blending into the card bg, with
-          the silk/gold accent at the bottom of the hex), not from
-          any negative-margin positioning. */}
-      <div
-        className="relative w-full shrink-0"
-        style={{ maxWidth: "270px", aspectRatio: "270 / 156" }}
-      >
-        <Image
-          src={FRAME_86}
-          alt=""
-          fill
-          sizes="270px"
-          className="select-none"
-          draggable={false}
-          data-author-slide={authorIndex}
-          data-contributor-slide={contribIndex}
-        />
+      {/* Card frame — chamfered/hex outline + twin-hex header, all
+          baked in as a single SVG. */}
+      <Image
+        src={CARD_FRAME}
+        alt=""
+        fill
+        sizes="(min-width: 768px) 360px, 85vw"
+        className="pointer-events-none select-none"
+        draggable={false}
+        priority={isActive}
+      />
 
-        {/* Click targets — percentage-based so they stay aligned with
-            the labels baked into Frame 86.svg as the image scales.
-            Disabled (no onClick) on clones / inactive siblings so
-            users can only steer the active card. */}
-        <button
-          type="button"
-          aria-label={t("roleAuthor")}
-          onClick={onAdvanceAuthor}
-          disabled={!onAdvanceAuthor}
-          tabIndex={ariaHidden ? -1 : 0}
-          className="absolute cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)] disabled:cursor-default"
-          style={{
-            left: "11.85%",
-            top: "80.77%",
-            width: "23.7%",
-            height: "16.67%",
-            background: "transparent",
-            border: 0,
-          }}
-        />
-        <button
-          type="button"
-          aria-label={t("roleContributor")}
-          onClick={onAdvanceContrib}
-          disabled={!onAdvanceContrib}
-          tabIndex={ariaHidden ? -1 : 0}
-          className="absolute cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)] disabled:cursor-default"
-          style={{
-            left: "60%",
-            top: "80.77%",
-            width: "31.11%",
-            height: "16.67%",
-            background: "transparent",
-            border: 0,
-          }}
-        />
-      </div>
-
-      {/* Text block — title + meta + description. */}
+      {/* Content layered on top of the frame. paddingTop ≈ 56% of
+          the card height pushes content below the twin-hex header
+          baked into the SVG (which spans roughly y=48..198 of 384). */}
       <div
-        className="flex w-full flex-col items-center"
-        style={{ maxWidth: "312px", gap: "8px" }}
+        className="absolute inset-0 flex flex-col items-center"
+        style={{
+          padding: "56% 24px 24px",
+          gap: "8px",
+          zIndex: 1,
+        }}
       >
         <h3
           style={{
