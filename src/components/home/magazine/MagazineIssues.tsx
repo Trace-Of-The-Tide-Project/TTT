@@ -131,21 +131,29 @@ export function MagazineIssues() {
         </button>
       </header>
 
-      {/* Toolbar — Figma "Frame 280": search + filter chips + divider
-          + sort/filters.
-          Stacks into 3 rows below lg (search → chips → sort/filter
-          buttons). At lg+ collapses to a single row matching the
-          original Figma comp. */}
+      {/* Toolbar — Figma "Frame 280": search input + filters group with
+          a 48px gap between them. Internal gaps: 8px between filter
+          tabs, 16px between the chips group / divider / sort+filters
+          group. All hard-coded to match the spec exactly.
+
+          Wrapped in the same outer (sm:px-12 lg:px-16) + inner
+          (mx-auto max-w-6xl) bounds as the book reader below, so the
+          search bar's left edge sits exactly at the book's left edge
+          on every viewport. */}
+      <div className="w-full sm:px-12 lg:px-16">
       <div
-        className="flex w-full flex-col gap-3 lg:flex-row lg:items-center lg:gap-6"
+        className="mx-auto flex w-full max-w-6xl flex-wrap items-center"
+        style={{ gap: "48px" }}
       >
-        {/* Search input — full width below lg, 338px from lg+. */}
+        {/* Search input — 338×40, fill TAB_BG, 1px TAB_BORDER, 8px radius. */}
         <label
-          className="flex h-10 w-full items-center gap-2 rounded-lg lg:w-[338px] lg:flex-none"
+          className="flex h-10 items-center gap-2 rounded-lg"
           style={{
             backgroundColor: TAB_BG,
             border: `1px solid ${TAB_BORDER}`,
             borderRadius: "8px",
+            width: "338px",
+            maxWidth: "100%",
             padding: "8px",
           }}
         >
@@ -174,19 +182,10 @@ export function MagazineIssues() {
           />
         </label>
 
-        {/* Filters area — single row: chips on the left (scroll if
-            they overflow), sort/filter buttons pushed to the right.
-            Same layout below lg and at lg+, so the toolbar reads as
-            "search row" then "filters row" on smaller viewports and
-            collapses to a single row at lg+. */}
-        <div className="flex w-full items-center gap-3 lg:flex-1 lg:gap-4">
-          {/* Filter chips — horizontally scrollable inside their own
-              flex-1 lane so they never shove the sort/filter buttons
-              off-screen. */}
-          <div
-            className="flex min-w-0 flex-1 items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            style={{ gap: "8px" }}
-          >
+        {/* Filters group — chips + divider + sort/filters, gap 16px. */}
+        <div className="flex flex-wrap items-center" style={{ gap: "16px" }}>
+          {/* Filter chips group — gap 8px. */}
+          <div className="flex items-center" style={{ gap: "8px" }}>
             {FILTERS.map((f) => {
               const isActive = active === f.id;
               return (
@@ -194,11 +193,11 @@ export function MagazineIssues() {
                   key={f.id}
                   type="button"
                   onClick={() => setActive(f.id)}
-                  className="inline-flex shrink-0 items-center justify-center transition-opacity hover:opacity-90"
+                  className="inline-flex items-center justify-center"
                   style={{
-                    minWidth: `${f.width}px`,
+                    width: `${f.width}px`,
                     height: "40px",
-                    padding: "10px 12px",
+                    padding: "10px 8px",
                     backgroundColor: TAB_BG,
                     border: `${isActive ? "2px" : "1px"} solid ${
                       isActive ? TAB_ACTIVE : TAB_BORDER
@@ -219,11 +218,9 @@ export function MagazineIssues() {
             })}
           </div>
 
-          {/* Divider — only relevant at lg+ where the chips and the
-              sort/filter buttons share a row. */}
+          {/* Divider — 1×16. */}
           <span
             aria-hidden
-            className="hidden lg:block"
             style={{
               width: "0",
               height: "16px",
@@ -231,14 +228,16 @@ export function MagazineIssues() {
             }}
           />
 
-          {/* Sort + Filters group — pinned to the right of the row at
-              every breakpoint via the chips' flex-1 lane. */}
-          <div className="flex shrink-0 items-center gap-2">
-            {/* Sort by — natural width on mobile, fixed 186 desktop. */}
+          {/* Sort + Filters group — gap 8px. */}
+          <div className="flex items-center" style={{ gap: "8px" }}>
+            {/* Sort by — 186×40 */}
             <button
               type="button"
-              className="inline-flex h-10 items-center justify-center px-2.5 transition-opacity hover:opacity-90 lg:w-[186px]"
+              className="inline-flex items-center justify-center"
               style={{
+                width: "186px",
+                height: "40px",
+                padding: "10px 8px",
                 gap: "8px",
                 backgroundColor: TAB_BG,
                 border: `1px solid ${TAB_BORDER}`,
@@ -254,15 +253,20 @@ export function MagazineIssues() {
               <span style={{ color: TAB_INACTIVE_TEXT }}>
                 <SortDescIcon />
               </span>
-              <span className="hidden sm:inline">{t("sortByLabel")}</span>
-              <span style={{ color: "var(--tott-home-text-strong)" }}>{t("sortNewest")}</span>
+              <span>{t("sortByLabel")}</span>
+              <span style={{ color: "var(--tott-home-text-strong)" }}>
+                {t("sortNewest")}
+              </span>
             </button>
 
-            {/* Filters — natural width on mobile, fixed 93 desktop. */}
+            {/* Filters — 93×40 */}
             <button
               type="button"
-              className="inline-flex h-10 items-center justify-center px-2.5 lg:w-[93px]"
+              className="inline-flex items-center justify-center"
               style={{
+                width: "93px",
+                height: "40px",
+                padding: "10px 8px",
                 gap: "8px",
                 backgroundColor: TAB_BG,
                 border: `1px solid ${TAB_BORDER}`,
@@ -282,6 +286,7 @@ export function MagazineIssues() {
             </button>
           </div>
         </div>
+      </div>
       </div>
 
       {/* Reader — book spread w/ realistic page-flip animation. The
