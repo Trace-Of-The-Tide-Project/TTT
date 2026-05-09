@@ -10,6 +10,11 @@ import {
   ShareIcon,
   MoreDotsIcon,
   Grid2x2Icon,
+  ListIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
+  ChevronLeftLargeIcon,
+  ChevronRightLargeIcon,
 } from "@/components/ui/icons";
 import { FirstWordGold } from "./FirstWordGold";
 
@@ -20,24 +25,27 @@ const BOOK_IMAGE = "/images/home/Book.png";
 
 type FilterId = "all" | "articles" | "essays" | "collections" | "slides";
 
-// Figma spec: each filter tab is a fixed pixel width — Show all 80,
-// Articles 75, Essays 71, Collections 99, Slides 65.
-const FILTERS: { id: FilterId; key: string; width: number }[] = [
-  { id: "all", key: "filterAll", width: 80 },
-  { id: "articles", key: "filterArticles", width: 75 },
-  { id: "essays", key: "filterEssays", width: 71 },
-  { id: "collections", key: "filterCollections", width: 99 },
-  { id: "slides", key: "filterSlides", width: 65 },
+const FILTERS: { id: FilterId; key: string }[] = [
+  { id: "all", key: "filterAll" },
+  { id: "articles", key: "filterArticles" },
+  { id: "essays", key: "filterEssays" },
+  { id: "collections", key: "filterCollections" },
+  { id: "slides", key: "filterSlides" },
 ];
 
-// Figma colors (hard-coded so we exactly match the comp regardless of
-// what the project tokens evaluate to).
 // Theme tokens — adapt to dark/light via globals.css.
 const TAB_BG = "var(--tott-panel-bg)";
 const TAB_BORDER = "var(--tott-card-border)";
 const TAB_ACTIVE = "var(--tott-accent-gold)";
 const TAB_INACTIVE_TEXT = "var(--tott-home-text-muted)";
-const TAB_PLACEHOLDER = "var(--tott-home-text-muted)";
+
+// The Issues pane is currently a visual demo until the real magazine
+// pages drop in — a static spread image with a cosmetic page-flip
+// overlay. Hoisting these so it's obvious the page count + animation
+// are placeholder values, not real data.
+const DEMO_TOTAL_PAGES = 128;
+const DEMO_INITIAL_PAGE = 16;
+const FLIP_MS = 700;
 
 /**
  * Issues pane — Visual Gallery with a book/spread reader.
@@ -48,9 +56,6 @@ const TAB_PLACEHOLDER = "var(--tott-home-text-muted)";
  *          on the sides.
  *  Footer toolbar: page indicator + view/zoom/fullscreen/share/more controls.
  */
-const TOTAL_PAGES = 128;
-const FLIP_MS = 700;
-
 export function MagazineIssues() {
   const t = useTranslations("Home.magazine.issues");
   const [active, setActive] = useState<FilterId>("all");
@@ -58,7 +63,7 @@ export function MagazineIssues() {
   // Page-flip state — `flipping` is set when an animation starts; the
   // `flipPhase` then transitions from "start" (rotateY 0) to "end"
   // (rotateY ±180) one frame later, so the CSS transition actually fires.
-  const [currentPage, setCurrentPage] = useState(16);
+  const [currentPage, setCurrentPage] = useState(DEMO_INITIAL_PAGE);
   const [flipping, setFlipping] = useState<"next" | "prev" | null>(null);
   const [flipPhase, setFlipPhase] = useState<"start" | "end">("start");
   const flipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -75,18 +80,16 @@ export function MagazineIssues() {
     if (!flipping) return;
     setFlipPhase("start");
     const raf = requestAnimationFrame(() => {
-      // Two RAFs to make sure the browser has committed the initial style
-      // before we change it (avoids the "starts at end state" jump).
       requestAnimationFrame(() => setFlipPhase("end"));
     });
     return () => cancelAnimationFrame(raf);
   }, [flipping]);
 
   const goNext = () => {
-    if (flipping || currentPage + 2 > TOTAL_PAGES) return;
+    if (flipping || currentPage + 2 > DEMO_TOTAL_PAGES) return;
     setFlipping("next");
     flipTimer.current = setTimeout(() => {
-      setCurrentPage((p) => Math.min(p + 2, TOTAL_PAGES));
+      setCurrentPage((p) => Math.min(p + 2, DEMO_TOTAL_PAGES));
       setFlipping(null);
       setFlipPhase("start");
     }, FLIP_MS);
@@ -131,196 +134,115 @@ export function MagazineIssues() {
         </button>
       </header>
 
-      {/* Toolbar — Figma "Frame 280": search input + filters group with
-          a 48px gap between them. Internal gaps: 8px between filter
-          tabs, 16px between the chips group / divider / sort+filters
-          group. All hard-coded to match the spec exactly.
-
+      {/* Toolbar — search input + filter chips + sort + filters.
           Wrapped in the same outer (sm:px-12 lg:px-16) + inner
           (mx-auto max-w-6xl) bounds as the book reader below, so the
           search bar's left edge sits exactly at the book's left edge
           on every viewport. */}
       <div className="w-full sm:px-12 lg:px-16">
-      <div
-        className="mx-auto flex w-full max-w-6xl flex-wrap items-center"
-        style={{ gap: "48px" }}
-      >
-        {/* Search input — 338×40, fill TAB_BG, 1px TAB_BORDER, 8px radius. */}
-        <label
-          className="flex h-10 items-center gap-2 rounded-lg"
-          style={{
-            backgroundColor: TAB_BG,
-            border: `1px solid ${TAB_BORDER}`,
-            borderRadius: "8px",
-            width: "338px",
-            maxWidth: "100%",
-            padding: "8px",
-          }}
+        <div
+          className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-12 gap-y-3"
         >
-          <span
-            className="flex h-6 w-7 items-center justify-center"
-            style={{ color: TAB_PLACEHOLDER }}
+          {/* Search input */}
+          <label
+            className="flex h-10 min-w-[220px] flex-1 items-center gap-2 rounded-lg sm:max-w-[338px] focus-within:ring-2 focus-within:ring-[var(--tott-accent-gold)] focus-within:ring-offset-0"
+            style={{
+              backgroundColor: TAB_BG,
+              border: `1px solid ${TAB_BORDER}`,
+              padding: "8px",
+            }}
           >
-            <SearchIcon />
-          </span>
-          <input
-            type="search"
-            placeholder={t("searchPlaceholder")}
-            className="w-full bg-transparent outline-none focus:outline-none focus:ring-0"
-            style={{
-              fontFamily: "'Inter', var(--font-sans, sans-serif)",
-              fontWeight: 400,
-              fontSize: "14px",
-              lineHeight: "20px",
-              letterSpacing: "-0.005em",
-              color: "var(--tott-home-text-strong)",
-              border: "none",
-              boxShadow: "none",
-              appearance: "none",
-              WebkitAppearance: "none",
-            }}
-          />
-        </label>
+            <span
+              className="flex h-6 w-7 items-center justify-center"
+              style={{ color: TAB_INACTIVE_TEXT }}
+            >
+              <SearchIcon />
+            </span>
+            <input
+              type="search"
+              placeholder={t("searchPlaceholder")}
+              className="w-full bg-transparent text-sm leading-5 outline-none focus:outline-none focus:ring-0"
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                letterSpacing: "-0.005em",
+                color: "var(--tott-home-text-strong)",
+                border: "none",
+                boxShadow: "none",
+                appearance: "none",
+                WebkitAppearance: "none",
+              }}
+            />
+          </label>
 
-        {/* Filters group — chips + divider + sort/filters, gap 16px. */}
-        <div className="flex flex-wrap items-center" style={{ gap: "16px" }}>
-          {/* Filter chips group — gap 8px. */}
-          <div className="flex items-center" style={{ gap: "8px" }}>
-            {FILTERS.map((f) => {
-              const isActive = active === f.id;
-              return (
-                <button
+          {/* Filters group — chips + divider + sort/filters. */}
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <div className="flex flex-wrap items-center gap-2">
+              {FILTERS.map((f) => (
+                <FilterChip
                   key={f.id}
-                  type="button"
+                  label={t(f.key)}
+                  active={active === f.id}
                   onClick={() => setActive(f.id)}
-                  className="inline-flex items-center justify-center"
-                  style={{
-                    width: `${f.width}px`,
-                    height: "40px",
-                    padding: "10px 8px",
-                    backgroundColor: TAB_BG,
-                    border: `${isActive ? "2px" : "1px"} solid ${
-                      isActive ? TAB_ACTIVE : TAB_BORDER
-                    }`,
-                    borderRadius: "8px",
-                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                    fontWeight: 500,
-                    fontSize: "14px",
-                    lineHeight: "20px",
-                    letterSpacing: "-0.005em",
-                    color: isActive ? TAB_ACTIVE : TAB_INACTIVE_TEXT,
-                  }}
-                  aria-pressed={isActive}
-                >
-                  {t(f.key)}
-                </button>
-              );
-            })}
-          </div>
+                />
+              ))}
+            </div>
 
-          {/* Divider — 1×16. */}
-          <span
-            aria-hidden
-            style={{
-              width: "0",
-              height: "16px",
-              borderLeft: `1px solid ${TAB_BORDER}`,
-            }}
-          />
-
-          {/* Sort + Filters group — gap 8px. */}
-          <div className="flex items-center" style={{ gap: "8px" }}>
-            {/* Sort by — 186×40 */}
-            <button
-              type="button"
-              className="inline-flex items-center justify-center"
+            <span
+              aria-hidden
+              className="hidden sm:inline-block"
               style={{
-                width: "186px",
-                height: "40px",
-                padding: "10px 8px",
-                gap: "8px",
-                backgroundColor: TAB_BG,
-                border: `1px solid ${TAB_BORDER}`,
-                borderRadius: "8px",
-                fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                fontWeight: 500,
-                fontSize: "14px",
-                lineHeight: "20px",
-                letterSpacing: "-0.005em",
-                color: TAB_INACTIVE_TEXT,
+                width: 0,
+                height: "16px",
+                borderLeft: `1px solid ${TAB_BORDER}`,
               }}
-            >
-              <span style={{ color: TAB_INACTIVE_TEXT }}>
-                <SortDescIcon />
-              </span>
-              <span>{t("sortByLabel")}</span>
-              <span style={{ color: "var(--tott-home-text-strong)" }}>
-                {t("sortNewest")}
-              </span>
-            </button>
+            />
 
-            {/* Filters — 93×40 */}
-            <button
-              type="button"
-              className="inline-flex items-center justify-center"
-              style={{
-                width: "93px",
-                height: "40px",
-                padding: "10px 8px",
-                gap: "8px",
-                backgroundColor: TAB_BG,
-                border: `1px solid ${TAB_BORDER}`,
-                borderRadius: "8px",
-                fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                fontWeight: 500,
-                fontSize: "14px",
-                lineHeight: "20px",
-                letterSpacing: "-0.005em",
-                color: TAB_INACTIVE_TEXT,
-              }}
-            >
-              <span style={{ color: TAB_INACTIVE_TEXT }}>
-                <FilterIcon />
-              </span>
-              <span>{t("filtersLabel")}</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <FilterChip
+                icon={<SortDescIcon />}
+                label={
+                  <>
+                    <span>{t("sortByLabel")}</span>
+                    <span style={{ color: "var(--tott-home-text-strong)", marginInlineStart: "4px" }}>
+                      {t("sortNewest")}
+                    </span>
+                  </>
+                }
+              />
+              <FilterChip icon={<FilterIcon />} label={t("filtersLabel")} />
+            </div>
           </div>
         </div>
-      </div>
       </div>
 
       {/* Reader — book spread w/ realistic page-flip animation. The
           turning page rotates around the spine using CSS 3D transforms;
           the static pages stay in place underneath.
 
-          On mobile the book uses the full width (no side gutters — the
-          bottom toolbar handles paging). At sm+ we add horizontal
-          padding so the book sits centred with side gutters; the
-          arrow buttons live in those gutters instead of on top of the
-          book pages. */}
+          Note: the book content is currently a single static PNG; the
+          flip overlay is cosmetic. Once real spread data lands the
+          overlay should snap to the new spread. */}
       <div className="relative mx-auto w-full sm:px-12 lg:px-16">
-        {/* Side chevrons — hidden on mobile (no room beside the book).
-            Positioned inside the side gutter at sm+ where the book is
-            inset. */}
         <button
           type="button"
           onClick={goPrev}
           disabled={flipping !== null || currentPage - 2 < 1}
           aria-label={t("previousPage")}
-          className="absolute left-2 top-1/2 z-20 hidden -translate-y-1/2 text-2xl transition-opacity hover:opacity-70 disabled:opacity-30 sm:block sm:text-3xl"
+          className="absolute left-2 top-1/2 z-20 hidden -translate-y-1/2 transition-opacity hover:opacity-70 disabled:opacity-30 sm:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
           style={{ color: "var(--tott-home-text-strong)" }}
         >
-          <span aria-hidden>←</span>
+          <ChevronLeftLargeIcon />
         </button>
         <button
           type="button"
           onClick={goNext}
-          disabled={flipping !== null || currentPage + 2 > TOTAL_PAGES}
+          disabled={flipping !== null || currentPage + 2 > DEMO_TOTAL_PAGES}
           aria-label={t("nextPage")}
-          className="absolute right-2 top-1/2 z-20 hidden -translate-y-1/2 text-2xl transition-opacity hover:opacity-70 disabled:opacity-30 sm:block sm:text-3xl"
+          className="absolute right-2 top-1/2 z-20 hidden -translate-y-1/2 transition-opacity hover:opacity-70 disabled:opacity-30 sm:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
           style={{ color: "var(--tott-home-text-strong)" }}
         >
-          <span aria-hidden>→</span>
+          <ChevronRightLargeIcon />
         </button>
 
         <div
@@ -334,8 +256,6 @@ export function MagazineIssues() {
               transformStyle: "preserve-3d",
             }}
           >
-            {/* Pre-rendered book spread (rounded corners, spine
-                highlight, white pages — all baked into the PNG). */}
             <Image
               src={BOOK_IMAGE}
               alt=""
@@ -346,9 +266,6 @@ export function MagazineIssues() {
               draggable={false}
             />
 
-            {/* Flipping page — half-width overlay anchored to the
-                spine. Mounts at rotateY(0) (phase=start), then
-                transitions to ±180° one frame later (phase=end). */}
             {flipping !== null && (() => {
               const target = flipping === "next" ? -180 : 180;
               const rotation = flipPhase === "end" ? target : 0;
@@ -381,13 +298,7 @@ export function MagazineIssues() {
         </div>
       </div>
 
-      {/* Breadcrumbs / bottom toolbar — Figma spec:
-          542×64 capsule, bg #262626, inset top 1px white at 8%.
-          Inside (with 24px caps on each side): Book nav (chev-left, 16/128, chev-right),
-          divider, then list / grid / zoom-in / zoom-out / maximize / share / dots-vertical.
-          All icons 24×24, gap 24px between items. On screens narrower
-          than 542px the toolbar scrolls horizontally so every control
-          stays reachable without breaking the capsule shape. */}
+      {/* Bottom toolbar — capsule with paging + view controls. */}
       <div
         className="mx-auto flex w-full max-w-[542px] flex-nowrap items-center justify-start overflow-x-auto sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{
@@ -400,17 +311,16 @@ export function MagazineIssues() {
           columnGap: "clamp(12px, 3vw, 24px)",
         }}
       >
-        {/* Book navigation: chev-left + N/total + chev-right */}
         <div className="flex items-center" style={{ gap: "16px" }}>
           <button
             type="button"
             onClick={goPrev}
             disabled={flipping !== null || currentPage - 2 < 1}
             aria-label={t("previousPage")}
-            className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40 [&>svg]:h-6 [&>svg]:w-6"
+            className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40 [&>svg]:h-6 [&>svg]:w-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
             style={{ color: TAB_INACTIVE_TEXT }}
           >
-            <ChevronLeftIcon />
+            <ChevronLeftLargeIcon />
           </button>
           <span
             className="flex items-center"
@@ -425,21 +335,20 @@ export function MagazineIssues() {
           >
             <span style={{ color: "var(--tott-home-text-strong)" }}>{currentPage}</span>
             <span style={{ color: TAB_INACTIVE_TEXT }}>/</span>
-            <span style={{ color: TAB_INACTIVE_TEXT }}>{TOTAL_PAGES}</span>
+            <span style={{ color: TAB_INACTIVE_TEXT }}>{DEMO_TOTAL_PAGES}</span>
           </span>
           <button
             type="button"
             onClick={goNext}
-            disabled={flipping !== null || currentPage + 2 > TOTAL_PAGES}
+            disabled={flipping !== null || currentPage + 2 > DEMO_TOTAL_PAGES}
             aria-label={t("nextPage")}
-            className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40 [&>svg]:h-6 [&>svg]:w-6"
+            className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40 [&>svg]:h-6 [&>svg]:w-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
             style={{ color: TAB_INACTIVE_TEXT }}
           >
-            <ChevronRightIcon />
+            <ChevronRightLargeIcon />
           </button>
         </div>
 
-        {/* Divider — 1×16, white at 12% */}
         <span
           aria-hidden
           style={{
@@ -449,7 +358,6 @@ export function MagazineIssues() {
           }}
         />
 
-        {/* Action icons */}
         <ToolbarBtn label={t("viewList")}>
           <ListIcon />
         </ToolbarBtn>
@@ -476,6 +384,56 @@ export function MagazineIssues() {
   );
 }
 
+/**
+ * Toolbar chip used for filter tabs and the sort/filter buttons.
+ *
+ * - Width comes from intrinsic content + padding instead of fixed pixel
+ *   targets, so translated labels (Arabic / French / Spanish) don't
+ *   overflow or clip.
+ * - Active state keeps the 1px border and adds an inset gold ring,
+ *   instead of swapping border width 1→2 (which shifts the label by
+ *   1px on activation under box-sizing: border-box).
+ * - Passes through focus-visible so keyboard users see a focus ring.
+ */
+function FilterChip({
+  label,
+  icon,
+  active = false,
+  onClick,
+}: {
+  label: React.ReactNode;
+  icon?: React.ReactNode;
+  active?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex h-10 items-center justify-center whitespace-nowrap focus-visible:outline-none"
+      style={{
+        padding: "10px 12px",
+        gap: "8px",
+        minWidth: "64px",
+        backgroundColor: TAB_BG,
+        border: `1px solid ${active ? TAB_ACTIVE : TAB_BORDER}`,
+        boxShadow: active ? `inset 0 0 0 1px ${TAB_ACTIVE}` : undefined,
+        borderRadius: "8px",
+        fontFamily: "'Inter', var(--font-sans, sans-serif)",
+        fontWeight: 500,
+        fontSize: "14px",
+        lineHeight: "20px",
+        letterSpacing: "-0.005em",
+        color: active ? TAB_ACTIVE : TAB_INACTIVE_TEXT,
+      }}
+      aria-pressed={onClick ? active : undefined}
+    >
+      {icon ? <span style={{ color: TAB_INACTIVE_TEXT }}>{icon}</span> : null}
+      <span className="inline-flex items-center">{label}</span>
+    </button>
+  );
+}
+
 function ToolbarBtn({
   label,
   children,
@@ -488,7 +446,7 @@ function ToolbarBtn({
       type="button"
       aria-label={label}
       title={label}
-      className="flex h-6 w-6 items-center justify-center transition-colors hover:opacity-80 [&>svg]:h-6 [&>svg]:w-6"
+      className="flex h-6 w-6 items-center justify-center transition-colors hover:opacity-80 [&>svg]:h-6 [&>svg]:w-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
       style={{ color: TAB_INACTIVE_TEXT }}
     >
       {children}
@@ -496,80 +454,9 @@ function ToolbarBtn({
   );
 }
 
-/** Chevron-left icon — 24×24. */
-function ChevronLeftIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polyline points="15 18 9 12 15 6" />
-    </svg>
-  );
-}
-
-/** Chevron-right icon — 24×24. */
-function ChevronRightIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
-  );
-}
-
-/* Lightweight inline icons that aren't already in the icons file.
- * Sized 24×24 to match the Figma toolbar spec. */
-function ListIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-      <line x1="8" y1="6" x2="21" y2="6" />
-      <line x1="8" y1="12" x2="21" y2="12" />
-      <line x1="8" y1="18" x2="21" y2="18" />
-      <line x1="3" y1="6" x2="3.01" y2="6" />
-      <line x1="3" y1="12" x2="3.01" y2="12" />
-      <line x1="3" y1="18" x2="3.01" y2="18" />
-    </svg>
-  );
-}
-
-function ZoomInIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-      <line x1="11" y1="8" x2="11" y2="14" />
-      <line x1="8" y1="11" x2="14" y2="11" />
-    </svg>
-  );
-}
-
-function ZoomOutIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-      <line x1="8" y1="11" x2="14" y2="11" />
-    </svg>
-  );
-}
-
 /** Sort descending — three lines of decreasing length plus a downward
- * arrow on the right (↓). */
+ * arrow on the right. One-off compound glyph; lives here rather than
+ * in icons.tsx because it's not reused elsewhere. */
 function SortDescIcon() {
   return (
     <svg
@@ -582,11 +469,9 @@ function SortDescIcon() {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      {/* Three lines, decreasing length top to bottom */}
       <line x1="3" y1="6" x2="14" y2="6" />
       <line x1="3" y1="12" x2="10" y2="12" />
       <line x1="3" y1="18" x2="6" y2="18" />
-      {/* Down arrow */}
       <line x1="19" y1="6" x2="19" y2="18" />
       <polyline points="15 14 19 18 23 14" />
     </svg>

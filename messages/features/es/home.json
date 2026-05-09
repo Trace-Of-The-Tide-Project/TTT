@@ -19,6 +19,7 @@
         "imageAlt": "Pliegues suaves de seda translúcida atrapando la luz"
       },
       "tabs": {
+        "ariaLabel": "Secciones de la revista",
         "manifesto": "Manifiesto",
         "publications": "Publicaciones",
         "issues": "Números",

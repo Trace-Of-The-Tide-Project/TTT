@@ -24,6 +24,10 @@ const CHIP_CHAMFER =
 export function MagazineLatestPublished() {
   const t = useTranslations("Home.magazine.publications");
 
+  // TODO(magazine): this is placeholder data — the duplicate
+  // categoryFilm entry, and the fact that every card shares the same
+  // cardTitle / cardAuthor / cardReadTime, will go away once the real
+  // "Latest Published" feed is wired up.
   const latest = [
     { key: "categoryArchitecture" as const },
     { key: "categoryArt" as const },
@@ -66,7 +70,7 @@ export function MagazineLatestPublished() {
       <ul className="mt-8 flex flex-wrap justify-center gap-4 sm:gap-5">
         {latest.map((item, i) => (
           <li
-            key={i}
+            key={`${item.key}-${i}`}
             className="flex basis-[calc(50%-0.5rem)] flex-col items-stretch sm:basis-[170px] sm:max-w-[192px]"
           >
             {/* Pre-rendered hex card image (Book Cover.png) — natural

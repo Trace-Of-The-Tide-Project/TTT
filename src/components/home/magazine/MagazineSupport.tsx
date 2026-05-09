@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
@@ -10,47 +10,123 @@ const FRAME_86 = "/images/home/Frame 86.svg";
 
 const BORDER = "var(--tott-card-border)";
 
+const TOTAL_CARDS = 7;
+// Card width matches the inline `min(85vw, 360px)` rule, plus the 24px
+// gap. The translate math uses the same expression so the active card
+// stays centred at every viewport width.
+const CARD_W_CSS = "min(85vw, 360px)";
+const CARD_GAP_PX = 24;
+const TRANSITION_MS = 500;
+
 /**
  * Support pane — "Recent Collaporations" gallery (typo intentional,
  * mirrors Figma).
  *
- * Outer Carousel frame: 1392×620 with corner-decoration borders top
- * and bottom, vertical hairlines on the sides, heading group and
- * horizontally scrollable body in between.
+ * The gallery cycles through TOTAL_CARDS in both directions. To make
+ * the wraparound seamless without rewinding through every card, we
+ * render a leading + trailing clone strip and animate to a clone
+ * position when wrapping, then snap (no transition) back to the real
+ * position once the animation finishes.
  *
- * Each Card: 360×382 rounded-rect (radius 24) with Frame 86.svg as
- * the twin-image header (Author + Contributor hexes connected by the
- * heart-handshake glyph), a "Completed" pill, and a text block
- * (title / co-writing / timeline / description) underneath.
+ * Each card has its own author/contributor slide indices. Those live
+ * in the parent (one entry per real card index), so the duplicated
+ * clone cards stay in sync with the real card and clicks don't
+ * scribble onto a clone-only state.
  */
-const TOTAL_CARDS = 7;
-// Card width matches the inline `min(85vw, 360px)` rule, plus the 24px
-// gap. The circular translate math uses the same expression so the
-// active card stays centred at every viewport width.
-const CARD_W_CSS = "min(85vw, 360px)";
-const CARD_GAP_PX = 24;
-
 export function MagazineSupport() {
   const t = useTranslations("Home.magazine.support");
-  const [activeIndex, setActiveIndex] = useState(0);
+  // Logical index of the active card — always in [0, TOTAL_CARDS).
+  const [active, setActive] = useState(0);
+  // Visual position used by the translate. Can briefly hold -1 or
+  // TOTAL_CARDS during a wrap before we snap it back into range.
+  const [position, setPosition] = useState(0);
+  // When false, transition is suppressed for a single render so the
+  // snap-back doesn't animate.
+  const [animate, setAnimate] = useState(true);
+  // Slide indices for each real card. Lifted here so the duplicated
+  // clone strips render the same slide as the real card.
+  const [authorSlides, setAuthorSlides] = useState<number[]>(() =>
+    Array.from({ length: TOTAL_CARDS }, () => 0),
+  );
+  const [contribSlides, setContribSlides] = useState<number[]>(() =>
+    Array.from({ length: TOTAL_CARDS }, () => 0),
+  );
 
-  const goPrev = () =>
-    setActiveIndex((i) => (i - 1 + TOTAL_CARDS) % TOTAL_CARDS);
-  const goNext = () => setActiveIndex((i) => (i + 1) % TOTAL_CARDS);
+  const wrapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    return () => {
+      if (wrapTimer.current) clearTimeout(wrapTimer.current);
+    };
+  }, []);
+
+  const advanceAuthor = (cardIdx: number) =>
+    setAuthorSlides((s) => {
+      const copy = s.slice();
+      copy[cardIdx] = copy[cardIdx] + 1;
+      return copy;
+    });
+  const advanceContrib = (cardIdx: number) =>
+    setContribSlides((s) => {
+      const copy = s.slice();
+      copy[cardIdx] = copy[cardIdx] + 1;
+      return copy;
+    });
+
+  const goNext = () => {
+    if (wrapTimer.current) return;
+    if (active === TOTAL_CARDS - 1) {
+      // Animate forward to the leading clone of card 0, then snap.
+      setPosition(TOTAL_CARDS);
+      setActive(0);
+      wrapTimer.current = setTimeout(() => {
+        setAnimate(false);
+        setPosition(0);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setAnimate(true);
+            wrapTimer.current = null;
+          });
+        });
+      }, TRANSITION_MS);
+    } else {
+      const next = active + 1;
+      setActive(next);
+      setPosition(next);
+    }
+  };
+
+  const goPrev = () => {
+    if (wrapTimer.current) return;
+    if (active === 0) {
+      // Animate backward to the trailing clone of card last, then snap.
+      setPosition(-1);
+      setActive(TOTAL_CARDS - 1);
+      wrapTimer.current = setTimeout(() => {
+        setAnimate(false);
+        setPosition(TOTAL_CARDS - 1);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setAnimate(true);
+            wrapTimer.current = null;
+          });
+        });
+      }, TRANSITION_MS);
+    } else {
+      const prev = active - 1;
+      setActive(prev);
+      setPosition(prev);
+    }
+  };
 
   return (
     <section
       className="relative mx-auto w-full max-w-[1392px]"
       aria-labelledby="recent-collabs-heading"
     >
-      {/* Outer chamfered frame — replaces the manual top/bottom corner
-          decorations + side hairlines with a single component. */}
       <ChamferedFrame size={24} borderColor={BORDER} />
 
       {/* Heading group */}
-      <div
-        className="flex flex-col items-center justify-center gap-2 px-4 pt-8 pb-3"
-      >
+      <div className="flex flex-col items-center justify-center gap-2 px-4 pt-8 pb-3">
         <h2
           id="recent-collabs-heading"
           style={{
@@ -81,8 +157,6 @@ export function MagazineSupport() {
         </p>
       </div>
 
-      {/* Body — cards row + nav arrows. No horizontal padding so the
-          cards row reaches the edge of the chamfered frame. */}
       <div
         className="flex flex-col items-center"
         style={{
@@ -90,11 +164,6 @@ export function MagazineSupport() {
           gap: "24px",
         }}
       >
-        {/* Circular cards gallery — render the cards 3 times in a
-            row (clone-before / real / clone-after) so there is always
-            content on both sides of the active card. translateX
-            centres the active card from the MIDDLE (real) set, which
-            means clicking through never reveals an empty edge. */}
         <div
           className="relative w-full overflow-hidden"
           role="region"
@@ -105,32 +174,53 @@ export function MagazineSupport() {
             className="flex justify-start"
             style={{
               gap: `${CARD_GAP_PX}px`,
-              // The active card is at index (TOTAL_CARDS + activeIndex)
-              // in the tripled array — shift the row so it sits centre.
-              // Use the same `min(85vw, 360px)` expression as the card
-              // width so the centring works at every viewport width.
+              // Centre the card at `position` in the middle (real)
+              // strip. The pre-clones at indices [0, TOTAL_CARDS) let
+              // position go to -1 (last trailing clone), and the
+              // post-clones let it go to TOTAL_CARDS (first leading
+              // clone) without exposing an empty edge.
               transform: `translateX(calc(50% - ${
-                TOTAL_CARDS + activeIndex
+                TOTAL_CARDS + position
               } * (${CARD_W_CSS} + ${CARD_GAP_PX}px) - ${CARD_W_CSS} / 2))`,
-              transition: "transform 500ms cubic-bezier(0.4, 0, 0.2, 1)",
+              transition: animate
+                ? `transform ${TRANSITION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`
+                : "none",
             }}
           >
             {/* Clones before the real set */}
             {Array.from({ length: TOTAL_CARDS }).map((_, i) => (
-              <CollabCard key={`pre-${i}`} isActive={false} />
+              <CollabCard
+                key={`pre-${i}`}
+                isActive={false}
+                isClone
+                authorIndex={authorSlides[i]}
+                contribIndex={contribSlides[i]}
+              />
             ))}
             {/* Real set */}
             {Array.from({ length: TOTAL_CARDS }).map((_, i) => (
-              <CollabCard key={`real-${i}`} isActive={i === activeIndex} />
+              <CollabCard
+                key={`real-${i}`}
+                isActive={i === active}
+                authorIndex={authorSlides[i]}
+                contribIndex={contribSlides[i]}
+                onAdvanceAuthor={() => advanceAuthor(i)}
+                onAdvanceContrib={() => advanceContrib(i)}
+              />
             ))}
             {/* Clones after the real set */}
             {Array.from({ length: TOTAL_CARDS }).map((_, i) => (
-              <CollabCard key={`post-${i}`} isActive={false} />
+              <CollabCard
+                key={`post-${i}`}
+                isActive={false}
+                isClone
+                authorIndex={authorSlides[i]}
+                contribIndex={contribSlides[i]}
+              />
             ))}
           </div>
         </div>
 
-        {/* Nav arrows — Frame 87 (gold ←/→). */}
         <NavArrows
           prevLabel={t("previousCollab")}
           nextLabel={t("nextCollab")}
@@ -142,25 +232,35 @@ export function MagazineSupport() {
   );
 }
 
-/** Single collaboration card — 360×382 with twin-hex header.
- * Clicking the Author or Contributor label cycles the image on that
- * side (gallery-style). The active card is rendered at full opacity;
- * non-active siblings dim down slightly to draw the eye to the centre. */
-function CollabCard({ isActive = true }: { isActive?: boolean }) {
+/** Single collaboration card — 360×382 with twin-hex header. */
+function CollabCard({
+  isActive = true,
+  isClone = false,
+  authorIndex,
+  contribIndex,
+  onAdvanceAuthor,
+  onAdvanceContrib,
+}: {
+  isActive?: boolean;
+  /** Clones are decorative duplicates that flank the real strip; they
+   *  echo the active card's slide indices but don't accept input. */
+  isClone?: boolean;
+  authorIndex: number;
+  contribIndex: number;
+  onAdvanceAuthor?: () => void;
+  onAdvanceContrib?: () => void;
+}) {
   const t = useTranslations("Home.magazine.support");
 
-  // Each side is a small slideshow — clicking the label advances the
-  // image. For now we just track an index; the visible image is
-  // baked into Frame 86.svg, but the indices are wired so a real
-  // image swap can drop in later.
-  const [authorIndex, setAuthorIndex] = useState(0);
-  const [contribIndex, setContribIndex] = useState(0);
+  // Non-active siblings (and all clones) are hidden from AT so the
+  // card text isn't announced multiple times in a row.
+  const ariaHidden = isClone || !isActive;
 
   return (
     <article
       className="relative shrink-0"
+      aria-hidden={ariaHidden || undefined}
       style={{
-        // Card scales: ~85% of small viewport, max 360.
         width: "min(85vw, 360px)",
         minHeight: "382px",
         padding: "16px 24px",
@@ -174,11 +274,7 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
         transition: "opacity 400ms ease",
       }}
     >
-      {/* Frame 86 — pre-rendered twin-hex header (Author + Contributor
-          hexes connected by the heart-handshake glyph). The labels
-          baked into the SVG are the only ones we render — no
-          duplicates on top. Width caps to 270px on desktop and shrinks
-          with the card on mobile so it never spills the card edges. */}
+      {/* Frame 86 — pre-rendered twin-hex header. */}
       <div
         className="relative w-full shrink-0"
         style={{ maxWidth: "270px", aspectRatio: "270 / 156" }}
@@ -190,22 +286,21 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
           sizes="270px"
           className="select-none"
           draggable={false}
-          // Hint for screen-readers + a debug data attr that lets us
-          // tell which slide is active.
           data-author-slide={authorIndex}
           data-contributor-slide={contribIndex}
         />
 
-        {/* Invisible click targets sitting over each label — clicking
-            advances that side's slide. Cursor is a pointer so users
-            see it's interactive. */}
         {/* Click targets — percentage-based so they stay aligned with
-            the labels baked into Frame 86.svg as the image scales. */}
+            the labels baked into Frame 86.svg as the image scales.
+            Disabled (no onClick) on clones / inactive siblings so
+            users can only steer the active card. */}
         <button
           type="button"
           aria-label={t("roleAuthor")}
-          onClick={() => setAuthorIndex((i) => i + 1)}
-          className="absolute cursor-pointer"
+          onClick={onAdvanceAuthor}
+          disabled={!onAdvanceAuthor}
+          tabIndex={ariaHidden ? -1 : 0}
+          className="absolute cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)] disabled:cursor-default"
           style={{
             left: "11.85%",
             top: "80.77%",
@@ -218,8 +313,10 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
         <button
           type="button"
           aria-label={t("roleContributor")}
-          onClick={() => setContribIndex((i) => i + 1)}
-          className="absolute cursor-pointer"
+          onClick={onAdvanceContrib}
+          disabled={!onAdvanceContrib}
+          tabIndex={ariaHidden ? -1 : 0}
+          className="absolute cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)] disabled:cursor-default"
           style={{
             left: "60%",
             top: "80.77%",
@@ -236,7 +333,6 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
         className="flex w-full flex-col items-center"
         style={{ maxWidth: "312px", gap: "8px" }}
       >
-        {/* Title */}
         <h3
           style={{
             fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
@@ -251,7 +347,6 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
           {t("collabTitle")}
         </h3>
 
-        {/* Meta data — Co-writing + Timeline */}
         <div
           className="flex items-center justify-center"
           style={{ gap: "12px" }}
@@ -273,10 +368,7 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
             style={{ gap: "6px", color: "var(--tott-home-text-muted)" }}
           >
             <AlarmIcon />
-            <span
-              className="flex items-center"
-              style={{ gap: "2px" }}
-            >
+            <span className="flex items-center" style={{ gap: "2px" }}>
               <span
                 style={{
                   fontFamily: "'Inter', var(--font-sans, sans-serif)",
@@ -303,7 +395,6 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
           </span>
         </div>
 
-        {/* Description */}
         <p
           style={{
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
@@ -323,7 +414,7 @@ function CollabCard({ isActive = true }: { isActive?: boolean }) {
 }
 
 /** Carousel nav — pair of round gold ←/→ buttons that advance the
- * circular gallery one card at a time. */
+ * gallery one card at a time. */
 function NavArrows({
   prevLabel,
   nextLabel,
@@ -341,7 +432,7 @@ function NavArrows({
         type="button"
         aria-label={prevLabel}
         onClick={onPrev}
-        className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80"
+        className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)]"
         style={{
           border: "2px solid var(--tott-accent-gold)",
           color: "var(--tott-accent-gold)",
@@ -355,7 +446,7 @@ function NavArrows({
         type="button"
         aria-label={nextLabel}
         onClick={onNext}
-        className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80"
+        className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)]"
         style={{
           border: "2px solid var(--tott-accent-gold)",
           color: "var(--tott-accent-gold)",
@@ -369,8 +460,7 @@ function NavArrows({
   );
 }
 
-/** Alarm/clock icon — 16×16 with currentColor stroke (parent sets the
- * actual hue via a theme-aware token). */
+/** Alarm/clock icon — 16×16 with currentColor stroke. */
 function AlarmIcon() {
   return (
     <svg

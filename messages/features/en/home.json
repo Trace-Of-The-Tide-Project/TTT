@@ -19,6 +19,7 @@
         "imageAlt": "Soft folds of translucent silk catching the light"
       },
       "tabs": {
+        "ariaLabel": "Magazine sections",
         "manifesto": "Manifesto",
         "publications": "Publications",
         "issues": "Issues",

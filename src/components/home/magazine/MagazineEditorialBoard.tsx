@@ -8,6 +8,7 @@ import {
   BookIcon,
 } from "@/components/ui/icons";
 import { FirstWordGold } from "./FirstWordGold";
+import { HexPatternBackdrop } from "./HexPatternBackdrop";
 
 // Top-icon SVG for the writer cards (Icon-4.svg in the home folder).
 const WRITER_TOP_ICON = "/images/home/Icon-4.svg";
@@ -26,11 +27,6 @@ const CARD_MASK = "/images/home/Mask.png";
 // hex silhouette). The card "shape" comes from this PNG, not a CSS
 // border — overlay text/icons sit inside the visible hex.
 const WRITER_CARD = "/images/home/Image-2.png";
-
-// Rounded-corner hexagon — used to clip the bottom darken-overlay so
-// it follows the hex silhouette, not a rectangle.
-const WRITER_HEX_CLIP =
-  "polygon(47.5% 5.67%, 48.29% 5.3%, 49.13% 5.08%, 50% 5%, 50.87% 5.08%, 51.71% 5.3%, 52.5% 5.67%, 87.14% 25.67%, 87.85% 26.17%, 88.47% 26.79%, 88.97% 27.5%, 89.34% 28.29%, 89.57% 29.13%, 89.64% 30%, 89.64% 70%, 89.57% 70.87%, 89.34% 71.71%, 88.97% 72.5%, 88.47% 73.21%, 87.85% 73.83%, 87.14% 74.33%, 52.5% 94.33%, 51.71% 94.7%, 50.87% 94.92%, 50% 95%, 49.13% 94.92%, 48.29% 94.7%, 47.5% 94.33%, 12.86% 74.33%, 12.15% 73.83%, 11.53% 73.21%, 11.03% 72.5%, 10.66% 71.71%, 10.43% 70.87%, 10.36% 70%, 10.36% 30%, 10.43% 29.13%, 10.66% 28.29%, 11.03% 27.5%, 11.53% 26.79%, 12.15% 26.17%, 12.86% 25.67%)";
 
 // Side filler — gradient strip used at the left/right edges of the
 // writer carousel to suggest more cards beyond the visible row.
@@ -212,28 +208,7 @@ export function MagazineEditorialBoard() {
         className="relative overflow-hidden px-4 py-16 sm:px-12 sm:py-28 md:py-32"
         style={{ minHeight: "420px" }}
       >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 flex items-center justify-center"
-        >
-          <div
-            className="w-[min(140%,1232px)] max-w-none sm:w-[min(120%,1232px)] md:w-[min(100%,1232px)]"
-            style={{
-              aspectRatio: "1232 / 294",
-              backgroundColor: "var(--tott-home-hex-stroke)",
-              WebkitMaskImage:
-                "url(/images/home/homepage-share-hex-pattern.svg)",
-              maskImage:
-                "url(/images/home/homepage-share-hex-pattern.svg)",
-              WebkitMaskSize: "100% 100%",
-              maskSize: "100% 100%",
-              WebkitMaskRepeat: "no-repeat",
-              maskRepeat: "no-repeat",
-              WebkitMaskPosition: "center",
-              maskPosition: "center",
-            }}
-          />
-        </div>
+        <HexPatternBackdrop />
         <blockquote
           className="relative mx-auto flex w-full max-w-[1232px] flex-col items-stretch"
           style={{ gap: "16px" }}

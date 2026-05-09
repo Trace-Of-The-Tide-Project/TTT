@@ -54,6 +54,11 @@ export function MagazineTabs() {
   };
 
   // Scroll spy — highlight whichever section is closest to the top.
+  // Tracks the set of currently-intersecting sections in a ref so each
+  // observer callback re-picks the topmost from the full set, instead
+  // of only the entries that changed in this batch (which would leave
+  // the active pill stale once a section that previously won leaves
+  // the viewport).
   useEffect(() => {
     const els = TAB_IDS.map((id) => ({
       id,
@@ -62,18 +67,34 @@ export function MagazineTabs() {
 
     if (els.length === 0) return;
 
+    const intersecting = new Set<TabId>();
+
     const observer = new IntersectionObserver(
       (entries) => {
+        for (const entry of entries) {
+          const id = TAB_IDS.find(
+            (tabId) => SECTION_ID[tabId] === (entry.target as HTMLElement).id,
+          );
+          if (!id) continue;
+          if (entry.isIntersecting) intersecting.add(id);
+          else intersecting.delete(id);
+        }
         if (Date.now() < lockUntilRef.current) return;
-        // Pick the topmost intersecting section (smallest top after the
-        // sticky bar offset).
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visible.length === 0) return;
-        const topId = TAB_IDS.find(
-          (id) => SECTION_ID[id] === (visible[0].target as HTMLElement).id,
-        );
+        if (intersecting.size === 0) return;
+        // Pick the section whose top is closest to (but at or past)
+        // the sticky bar offset by sampling fresh getBoundingClientRect
+        // values — more reliable than relying on stale entry rects.
+        let topId: TabId | null = null;
+        let topY = Number.POSITIVE_INFINITY;
+        for (const id of intersecting) {
+          const el = document.getElementById(SECTION_ID[id]);
+          if (!el) continue;
+          const y = el.getBoundingClientRect().top;
+          if (y < topY) {
+            topY = y;
+            topId = id;
+          }
+        }
         if (topId) setActive(topId);
       },
       {
@@ -110,7 +131,7 @@ export function MagazineTabs() {
               options={options}
               value={active}
               onChange={handleChange}
-              ariaLabel={tTabs("manifesto")}
+              ariaLabel={tTabs("ariaLabel")}
             />
           </div>
         </div>

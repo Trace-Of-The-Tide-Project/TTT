@@ -19,6 +19,7 @@
         "imageAlt": "Plis doux d'une soie translucide accrochant la lumière"
       },
       "tabs": {
+        "ariaLabel": "Sections du magazine",
         "manifesto": "Manifeste",
         "publications": "Publications",
         "issues": "Numéros",

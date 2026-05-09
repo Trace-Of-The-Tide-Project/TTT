@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
@@ -27,6 +28,8 @@ type MagazineHeroProps = {
  * happens whenever you try to absolute-position 3 stacked elements
  * onto a 111px-tall banner.
  */
+// TODO(magazine): primary/secondary hrefs are placeholders pointing
+// at /fields until the Read / Subscribe destinations are decided.
 export function MagazineHero({
   artwork = "/images/home/magazine-thumbnail.svg",
   primaryHref = "/fields",
@@ -37,13 +40,18 @@ export function MagazineHero({
   return (
     <section className="relative w-full px-4 pb-10 pt-14 sm:px-6 sm:pb-14 sm:pt-20 md:px-8 md:pb-20 md:pt-24">
       <div className="relative mx-auto w-full max-w-[1392px]">
-        {/* Artwork — always renders at its natural aspect. */}
-        <div className="relative w-full overflow-hidden rounded-[20px]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+        {/* Artwork — natural aspect (1392×483 ≈ 2.88:1). */}
+        <div
+          className="relative w-full overflow-hidden rounded-[20px]"
+          style={{ aspectRatio: "1392 / 483" }}
+        >
+          <Image
             src={artwork}
             alt={t("imageAlt")}
-            className="block h-auto w-full select-none"
+            fill
+            priority
+            sizes="(min-width: 1392px) 1392px, 100vw"
+            className="select-none object-cover"
             draggable={false}
           />
 

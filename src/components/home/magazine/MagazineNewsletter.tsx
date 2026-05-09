@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { FirstWordGold } from "./FirstWordGold";
+import { HexPatternBackdrop } from "./HexPatternBackdrop";
 
 /**
  * Newsletter band — sits between the magazine content and the global
@@ -20,30 +21,7 @@ export function MagazineNewsletter() {
       className="relative w-full overflow-hidden px-4 py-16 sm:px-12 sm:py-28 md:py-32"
       style={{ minHeight: "420px" }}
     >
-      {/* Hex pattern backdrop — masked SVG, full size, theme-aware
-          stroke colour. Same approach as the home page "Share your
-          story" and the founder quote sections. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 flex items-center justify-center"
-      >
-        <div
-          className="w-[min(140%,1232px)] max-w-none sm:w-[min(120%,1232px)] md:w-[min(100%,1232px)]"
-          style={{
-            aspectRatio: "1232 / 294",
-            backgroundColor: "var(--tott-home-hex-stroke)",
-            WebkitMaskImage:
-              "url(/images/home/homepage-share-hex-pattern.svg)",
-            maskImage: "url(/images/home/homepage-share-hex-pattern.svg)",
-            WebkitMaskSize: "100% 100%",
-            maskSize: "100% 100%",
-            WebkitMaskRepeat: "no-repeat",
-            maskRepeat: "no-repeat",
-            WebkitMaskPosition: "center",
-            maskPosition: "center",
-          }}
-        />
-      </div>
+      <HexPatternBackdrop />
 
       <div className="relative mx-auto flex w-full max-w-xl flex-col items-center text-center">
         {/* Hex with pen icon — pre-rendered Icon-5.svg (80×88). */}
