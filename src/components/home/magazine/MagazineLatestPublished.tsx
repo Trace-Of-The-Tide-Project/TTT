@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { FirstWordGold } from "./FirstWordGold";
 
 // Pre-rendered hex card image (193×288, transparent background outside
@@ -70,14 +71,14 @@ export function MagazineLatestPublished({
             {t("latestSubtitle")}
           </p>
         </div>
-        <button
-          type="button"
+        <Link
+          href="/books"
           className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
           style={{ color: "var(--tott-accent-gold)" }}
         >
           {t("viewMore")}
           <span aria-hidden>→</span>
-        </button>
+        </Link>
       </div>
 
       <ul className="mt-8 flex flex-wrap justify-center gap-4 sm:gap-5">
