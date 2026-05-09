@@ -1,83 +1,56 @@
-import { serverGet } from "@/lib/api/isomorphic-fetch";
 import {
   isUsableArticleMediaRef,
   resolveArticleMediaSrc,
 } from "@/lib/content/article-media-url";
-import { BooksPageContent, type BookItem } from "@/components/books/BooksPageContent";
+import { getBooks, type Book } from "@/services/books.service";
+import {
+  BooksPageContent,
+  type BookItem,
+} from "@/components/books/BooksPageContent";
 
 export const dynamic = "force-dynamic";
 
-type RawArticle = {
-  id: string;
-  title: string;
-  slug?: string | null;
-  cover_image?: string | null;
-  category?: string | null;
-  language?: string | null;
-  view_count?: number | null;
-  reading_time?: number | null;
-  published_at?: string | null;
-  author?: {
-    full_name?: string | null;
-    username?: string | null;
-    profile?: { display_name?: string | null; avatar?: string | null } | null;
-  } | null;
-};
-
-type Envelope<T> = { data?: T[] };
-
-function unwrapList<T>(raw: Envelope<T> | T[] | null): T[] {
-  if (!raw) return [];
-  if (Array.isArray(raw)) return raw;
-  return raw.data ?? [];
+function priceNumber(p: Book["price"]): number {
+  if (p === null || p === undefined || p === "") return 0;
+  if (typeof p === "number") return Number.isFinite(p) ? p : 0;
+  const n = Number(p);
+  return Number.isFinite(n) ? n : 0;
 }
 
-function pickAuthorName(a: RawArticle["author"]): string {
-  return (
-    a?.profile?.display_name?.trim() ||
-    a?.full_name?.trim() ||
-    a?.username?.trim() ||
-    "Author"
-  );
+function authorOf(b: Book): string {
+  return (b.author?.trim() || b.co_authors?.trim() || "").trim() || "Author";
 }
 
-/** Server component — fetches articles and shapes them into the
- * BookItem contract used by the client page. Treats articles as
- * the "books" data source until the backend exposes a dedicated
- * /books endpoint. */
+/** Server component — fetches the real /knowledge/books catalogue
+ * and shapes each record into BookItem for the client grid. */
 export default async function BooksPage() {
-  const raw = await serverGet<Envelope<RawArticle>>("/articles", {
-    status: "published",
-    limit: 100,
-    sortBy: "published_at",
-    order: "DESC",
-  });
+  const books = await getBooks({ limit: 100 });
 
-  const items: BookItem[] = unwrapList(raw).map((a, i) => {
-    // Cover images come back as a mix of full URLs, storage keys
-    // ("images/…", "contributions/…") and bare filenames. Resolve
-    // anything we recognise; drop the rest so next/image doesn't
-    // throw on a malformed src.
-    const ref = a.cover_image?.trim();
+  const items: BookItem[] = books.map((b) => {
+    const ref = b.cover_image?.trim();
     const cover =
       ref && isUsableArticleMediaRef(ref)
         ? resolveArticleMediaSrc(ref)
         : null;
 
     return {
-      id: a.id,
-      slug: a.slug ?? a.id,
-      title: a.title,
-      author: pickAuthorName(a.author),
+      id: b.id,
+      // Books don't have a slug field — use the id for the route.
+      slug: b.id,
+      title: b.title,
+      author: authorOf(b),
       coverImage: cover,
-      category: (a.category ?? "").trim() || null,
-      language: (a.language ?? "").trim().toLowerCase() || null,
-      // Demo pricing/rating — the API doesn't expose these for
-      // articles. Stable derivation from index so the list isn't
-      // jittery between renders.
-      price: i % 3 === 0 ? 0 : 4.99 + (i % 5),
-      rating: 4 + ((i * 0.3) % 1),
-      reviewCount: 50 + i * 17,
+      category: (b.genre ?? "").trim() || null,
+      language: (b.language ?? "").trim().toLowerCase() || null,
+      price: priceNumber(b.price),
+      rating:
+        typeof b.rating_average === "number" && b.rating_average > 0
+          ? b.rating_average
+          : 0,
+      reviewCount:
+        typeof b.rating_count === "number" && b.rating_count >= 0
+          ? b.rating_count
+          : 0,
     };
   });
 

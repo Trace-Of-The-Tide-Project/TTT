@@ -3,7 +3,10 @@
 import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
+import { useSubmitBookReview } from "@/hooks/mutations/book-reviews";
+import { formatApiError } from "@/lib/api/error-message";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
@@ -31,18 +34,33 @@ export type BookDetail = {
   coverImage: string | null;
   category: string;
   author: string;
+  /** Comma-separated names. Empty string when no co-authors. */
   coAuthors: string;
-  publisher: string;
-  year: string;
-  language: string;
-  pageCount: number;
-  rating: number;
-  reviewCount: number;
-  contentTypeLabel: string;
-  blocksCount: number;
+  /** Publisher name from the book record; null hides the row. */
+  publisher: string | null;
+  /** Year (string for forward-compat with non-numeric values). */
+  year: string | null;
+  /** Display name (e.g. "English"); null hides the row. */
+  language: string | null;
+  /** Reading time in minutes; null hides this row. */
+  readingTime: number | null;
+  /** Page count from the book record; null hides this row. */
+  pageCount: number | null;
+  /** Optional view count fallback (not used on /knowledge/books). */
+  viewCount: number | null;
+  /** Resolved absolute URL when the book has a downloadable PDF. */
+  pdfUrl: string | null;
+  /** rating_average from the book record (0..5). null hides the row. */
+  rating: number | null;
+  /** rating_count from the book record. null hides "(N reviews)". */
+  reviewCount: number | null;
+  /** Numeric price (or null when free / unset). */
+  price: number | null;
+  /** Currency code, used for formatting price. */
+  currency: string;
 };
 
-export type BookReview = {
+export type BookReviewItem = {
   id: string;
   author: string;
   date: string;
@@ -57,7 +75,7 @@ export function BookDetailContent({
   reviews,
 }: {
   book: BookDetail;
-  reviews: BookReview[];
+  reviews: BookReviewItem[];
 }) {
   const t = useTranslations("Home.bookDetail");
 
@@ -278,54 +296,64 @@ export function BookDetailContent({
               {book.title}
             </h1>
 
-            {/* Meta Data row — Category chip · star rating */}
-            <div
-              className="flex flex-wrap items-center"
-              style={{ gap: "12px" }}
-            >
-              {book.category ? <CategoryChip label={book.category} /> : null}
-              <span
-                aria-hidden
-                style={{
-                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                  fontWeight: 500,
-                  fontSize: "12px",
-                  lineHeight: "16px",
-                  color: "var(--tott-home-text-muted)",
-                  textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
-                }}
+            {/* Meta Data row — Category chip · partial-fill star
+                with rating · "(N reviews)". Whole row hides when
+                neither the category nor a rating is available. */}
+            {book.category || book.rating !== null ? (
+              <div
+                className="flex flex-wrap items-center"
+                style={{ gap: "12px" }}
               >
-                ·
-              </span>
-              <span
-                className="flex items-center"
-                style={{ gap: "4px" }}
-              >
-                <PartialStar fill={book.rating / 5} size={16} />
-                <span
-                  style={{
-                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                    fontWeight: 500,
-                    fontSize: "12px",
-                    lineHeight: "16px",
-                    color: "var(--tott-home-text-strong)",
-                  }}
-                >
-                  {book.rating.toFixed(1)}
-                </span>
-                <span
-                  style={{
-                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                    fontWeight: 400,
-                    fontSize: "12px",
-                    lineHeight: "16px",
-                    color: "var(--tott-home-text-muted)",
-                  }}
-                >
-                  {t("ratingReviews", { count: book.reviewCount })}
-                </span>
-              </span>
-            </div>
+                {book.category ? <CategoryChip label={book.category} /> : null}
+                {book.category && book.rating !== null ? (
+                  <span
+                    aria-hidden
+                    style={{
+                      fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                      fontWeight: 500,
+                      fontSize: "12px",
+                      lineHeight: "16px",
+                      color: "var(--tott-home-text-muted)",
+                      textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                    }}
+                  >
+                    ·
+                  </span>
+                ) : null}
+                {book.rating !== null ? (
+                  <span
+                    className="flex items-center"
+                    style={{ gap: "4px" }}
+                  >
+                    <PartialStar fill={book.rating / 5} size={16} />
+                    <span
+                      style={{
+                        fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                        fontWeight: 500,
+                        fontSize: "12px",
+                        lineHeight: "16px",
+                        color: "var(--tott-home-text-strong)",
+                      }}
+                    >
+                      {book.rating.toFixed(1)}
+                    </span>
+                    {book.reviewCount !== null ? (
+                      <span
+                        style={{
+                          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                          fontWeight: 400,
+                          fontSize: "12px",
+                          lineHeight: "16px",
+                          color: "var(--tott-home-text-muted)",
+                        }}
+                      >
+                        {t("ratingReviews", { count: book.reviewCount })}
+                      </span>
+                    ) : null}
+                  </span>
+                ) : null}
+              </div>
+            ) : null}
 
             {/* Book Data — flex column of label+value rows.
                 Each label is a fixed 128px so values align to a
@@ -349,9 +377,11 @@ export function BookDetailContent({
                   </span>
                 </DataRow>
               ) : null}
-              <DataRow label={t("metaPublisher")}>
-                <span style={DATA_VALUE_STYLE}>{book.publisher}</span>
-              </DataRow>
+              {book.publisher ? (
+                <DataRow label={t("metaPublisher")}>
+                  <span style={DATA_VALUE_STYLE}>{book.publisher}</span>
+                </DataRow>
+              ) : null}
               {book.year ? (
                 <DataRow label={t("metaYear")}>
                   <span style={DATA_VALUE_STYLE}>{book.year}</span>
@@ -362,35 +392,46 @@ export function BookDetailContent({
                   <span style={DATA_VALUE_STYLE}>{book.language}</span>
                 </DataRow>
               ) : null}
-              <DataRow label={t("metaPages")}>
-                <span style={DATA_VALUE_STYLE}>
-                  {t("pages", { count: book.pageCount })}
-                </span>
-              </DataRow>
-              <DataRow label={t("metaContents")}>
-                <button
-                  type="button"
-                  className="inline-flex items-center bg-transparent transition-opacity hover:opacity-90"
-                  style={{
-                    gap: "6px",
-                    padding: 0,
-                    border: 0,
-                    color: "var(--tott-dash-gold-label)",
-                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                    fontWeight: 500,
-                    fontSize: "12px",
-                    lineHeight: "16px",
-                  }}
-                >
-                  <span
-                    aria-hidden
-                    className="[&>svg]:h-4 [&>svg]:w-4"
-                  >
-                    <DownloadIcon />
+              {book.pageCount ? (
+                <DataRow label={t("metaPages")}>
+                  <span style={DATA_VALUE_STYLE}>
+                    {t("pages", { count: book.pageCount })}
                   </span>
-                  {book.contentTypeLabel}
-                </button>
-              </DataRow>
+                </DataRow>
+              ) : book.readingTime ? (
+                <DataRow label={t("metaPages")}>
+                  <span style={DATA_VALUE_STYLE}>
+                    {book.readingTime} min read
+                  </span>
+                </DataRow>
+              ) : null}
+              {book.pdfUrl ? (
+                <DataRow label={t("metaContents")}>
+                  <a
+                    href={book.pdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                    className="inline-flex items-center transition-opacity hover:opacity-90"
+                    style={{
+                      gap: "6px",
+                      color: "var(--tott-dash-gold-label)",
+                      fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                      fontWeight: 500,
+                      fontSize: "12px",
+                      lineHeight: "16px",
+                    }}
+                  >
+                    <span
+                      aria-hidden
+                      className="[&>svg]:h-4 [&>svg]:w-4"
+                    >
+                      <DownloadIcon />
+                    </span>
+                    {t("downloadPdf")}
+                  </a>
+                </DataRow>
+              ) : null}
             </div>
 
             {/* Description */}
@@ -426,9 +467,11 @@ export function BookDetailContent({
             ) : null}
 
             {/* Reviews — sits inside the info column so the Figma
-                left:540px position is preserved (the section starts
-                at the same x as the title / meta / description). */}
+                left:540px position is preserved. Wired to
+                /knowledge/books/{id}/reviews via the
+                useSubmitBookReview mutation. */}
             <ReviewsSection
+              bookId={book.id}
               reviews={reviews}
               tHeading={t("reviewsHeading")}
               tSeeAll={t("seeAllReviews")}
@@ -766,6 +809,7 @@ function StarRow({ rating, size = 16 }: { rating: number; size?: number }) {
 // ─── Reviews ─────────────────────────────────────────────────────
 
 function ReviewsSection({
+  bookId,
   reviews,
   tHeading,
   tSeeAll,
@@ -774,7 +818,8 @@ function ReviewsSection({
   tSubmit,
   tPage,
 }: {
-  reviews: BookReview[];
+  bookId: string;
+  reviews: BookReviewItem[];
   tHeading: string;
   tSeeAll: string;
   tPlaceholder: string;
@@ -784,13 +829,45 @@ function ReviewsSection({
 }) {
   const [draft, setDraft] = useState("");
   const [draftRating, setDraftRating] = useState(0);
+  const [showQuote, setShowQuote] = useState(false);
+  const [quote, setQuote] = useState("");
+  const [guestName, setGuestName] = useState("");
+  const submit = useSubmitBookReview(bookId);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    // No reviews API yet; keep the form interactive but a no-op.
-    setDraft("");
-    setDraftRating(0);
+    if (draftRating < 1) {
+      toast.error("Please pick a star rating before submitting.");
+      return;
+    }
+    submit.mutate(
+      {
+        rating: draftRating,
+        review_text: draft.trim() || null,
+        quote: showQuote && quote.trim() ? quote.trim() : null,
+        guest_name: guestName.trim() || null,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Review submitted", {
+            description: "Thanks for sharing your thoughts.",
+          });
+          setDraft("");
+          setQuote("");
+          setShowQuote(false);
+          setDraftRating(0);
+          setGuestName("");
+        },
+        onError: (err) => {
+          toast.error("Couldn't submit review", {
+            description: formatApiError(err, "Please try again."),
+          });
+        },
+      },
+    );
   };
+
+  const submitting = submit.isPending;
 
   return (
     <section
@@ -842,7 +919,10 @@ function ReviewsSection({
         </button>
       </div>
 
-      {/* Write-a-review form */}
+      {/* Write-a-review form — wired to POST /knowledge/books/{id}
+          /reviews via useSubmitBookReview. The endpoint is public,
+          so the form works for guests; we collect a guest_name
+          inline instead of forcing auth. */}
       <form onSubmit={onSubmit} className="mt-4">
         <label
           htmlFor="book-review-textarea"
@@ -865,7 +945,8 @@ function ReviewsSection({
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Share your thoughts about this book"
           rows={4}
-          className="w-full focus:outline-none focus:ring-0"
+          disabled={submitting}
+          className="w-full focus:outline-none focus:ring-0 disabled:opacity-60"
           style={{
             backgroundColor: "var(--tott-dark-pill)",
             border: "1px solid var(--tott-card-border)",
@@ -884,6 +965,58 @@ function ReviewsSection({
           }}
         />
 
+        {/* Optional quote field — toggled via Add Quote button. */}
+        {showQuote ? (
+          <input
+            type="text"
+            value={quote}
+            onChange={(e) => setQuote(e.target.value)}
+            placeholder="Favourite quote (optional)"
+            disabled={submitting}
+            className="mt-3 w-full focus:outline-none focus:ring-0 disabled:opacity-60"
+            style={{
+              backgroundColor: "var(--tott-dark-pill)",
+              border: "1px solid var(--tott-card-border)",
+              borderRadius: "8px",
+              padding: "8px 12px",
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
+              fontStyle: "italic",
+              fontSize: "14px",
+              lineHeight: "20px",
+              color: "var(--tott-home-text-strong)",
+              boxShadow: "none",
+              outline: "none",
+              height: "40px",
+            }}
+          />
+        ) : null}
+
+        {/* Guest name input — only relevant pre-auth. The endpoint
+            accepts no name and stores anonymous reviews, but the
+            UI looks better with a name attached. */}
+        <input
+          type="text"
+          value={guestName}
+          onChange={(e) => setGuestName(e.target.value)}
+          placeholder="Your name (optional)"
+          disabled={submitting}
+          className="mt-3 w-full focus:outline-none focus:ring-0 disabled:opacity-60"
+          style={{
+            backgroundColor: "var(--tott-dark-pill)",
+            border: "1px solid var(--tott-card-border)",
+            borderRadius: "8px",
+            padding: "8px 12px",
+            fontFamily: "'Inter', var(--font-sans, sans-serif)",
+            fontWeight: 400,
+            fontSize: "14px",
+            lineHeight: "20px",
+            color: "var(--tott-home-text-strong)",
+            boxShadow: "none",
+            outline: "none",
+            height: "40px",
+          }}
+        />
+
         {/* Actions row */}
         <div
           className="mt-4 flex flex-wrap items-center"
@@ -898,7 +1031,9 @@ function ReviewsSection({
           </span>
           <button
             type="button"
-            className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
+            onClick={() => setShowQuote((v) => !v)}
+            disabled={submitting}
+            className="inline-flex items-center justify-center transition-opacity hover:opacity-90 disabled:opacity-60"
             style={{
               height: "40px",
               padding: "8px 16px",
@@ -918,7 +1053,8 @@ function ReviewsSection({
           </button>
           <button
             type="submit"
-            className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
+            disabled={submitting}
+            className="inline-flex items-center justify-center transition-opacity hover:opacity-90 disabled:opacity-60"
             style={{
               height: "40px",
               padding: "8px 16px",
@@ -934,7 +1070,7 @@ function ReviewsSection({
               border: "none",
             }}
           >
-            {tSubmit}
+            {submitting ? "Submitting…" : tSubmit}
           </button>
         </div>
       </form>
@@ -946,7 +1082,24 @@ function ReviewsSection({
         style={{ borderTop: "1.5px solid var(--tott-card-border)" }}
       />
 
-      {/* Review list — no card chrome; just avatar + body rows. */}
+      {/* Review list — no card chrome; just avatar + body rows.
+          Empty state shown when no reviews exist (the article API
+          doesn't surface reviews yet). */}
+      {reviews.length === 0 ? (
+        <p
+          className="mt-6 text-center"
+          style={{
+            fontFamily: "'Inter', var(--font-sans, sans-serif)",
+            fontWeight: 400,
+            fontSize: "14px",
+            lineHeight: "20px",
+            letterSpacing: "-0.005em",
+            color: "var(--tott-home-text-muted)",
+          }}
+        >
+          No reviews yet.
+        </p>
+      ) : null}
       <ul className="mt-4 flex flex-col" style={{ gap: "16px" }}>
         {reviews.map((r) => (
           <li
