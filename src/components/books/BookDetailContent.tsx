@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useSubmitBookReview } from "@/hooks/mutations/book-reviews";
 import { formatApiError } from "@/lib/api/error-message";
 import HexBackground from "@/components/ui/HexBackground";
@@ -105,7 +105,8 @@ export function BookDetailContent({
             height: "56px",
             padding: "0 20px",
             gap: "12px",
-            backgroundColor: "var(--tott-dark-pill)",
+            backgroundColor: "var(--tott-panel-bg)",
+            border: "1px solid var(--tott-card-border)",
             borderRadius: "12px",
           }}
         >
@@ -314,7 +315,7 @@ export function BookDetailContent({
                       fontSize: "12px",
                       lineHeight: "16px",
                       color: "var(--tott-home-text-muted)",
-                      textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                      textShadow: "var(--tott-home-text-shadow)",
                     }}
                   >
                     ·
@@ -457,7 +458,7 @@ export function BookDetailContent({
                     lineHeight: "20px",
                     letterSpacing: "-0.005em",
                     color: "var(--tott-home-text-strong)",
-                    textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                    textShadow: "var(--tott-home-text-shadow)",
                     margin: 0,
                   }}
                 >
@@ -569,7 +570,7 @@ function DataRow({
           fontSize: "12px",
           lineHeight: "16px",
           color: "var(--tott-home-text-muted)",
-          textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+          textShadow: "var(--tott-home-text-shadow)",
         }}
       >
         {label}
@@ -833,6 +834,7 @@ function ReviewsSection({
   const [quote, setQuote] = useState("");
   const [guestName, setGuestName] = useState("");
   const submit = useSubmitBookReview(bookId);
+  const router = useRouter();
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -857,6 +859,10 @@ function ReviewsSection({
           setShowQuote(false);
           setDraftRating(0);
           setGuestName("");
+          // Re-run the server component so the new review (and the
+          // updated rating average + count on the book record) appear
+          // without a full page reload.
+          router.refresh();
         },
         onError: (err) => {
           toast.error("Couldn't submit review", {
@@ -894,8 +900,8 @@ function ReviewsSection({
         >
           {tHeading}
         </h2>
-        <button
-          type="button"
+        <Link
+          href={`/books/${bookId}/reviews`}
           className="inline-flex items-center transition-opacity hover:opacity-90"
           style={{ gap: "8px", color: "var(--tott-dash-gold-label)" }}
         >
@@ -916,7 +922,7 @@ function ReviewsSection({
           >
             {tSeeAll}
           </span>
-        </button>
+        </Link>
       </div>
 
       {/* Write-a-review form — wired to POST /knowledge/books/{id}
@@ -948,7 +954,7 @@ function ReviewsSection({
           disabled={submitting}
           className="w-full focus:outline-none focus:ring-0 disabled:opacity-60"
           style={{
-            backgroundColor: "var(--tott-dark-pill)",
+            backgroundColor: "var(--tott-panel-bg)",
             border: "1px solid var(--tott-card-border)",
             borderRadius: "8px",
             padding: "8px 12px",
@@ -975,7 +981,7 @@ function ReviewsSection({
             disabled={submitting}
             className="mt-3 w-full focus:outline-none focus:ring-0 disabled:opacity-60"
             style={{
-              backgroundColor: "var(--tott-dark-pill)",
+              backgroundColor: "var(--tott-panel-bg)",
               border: "1px solid var(--tott-card-border)",
               borderRadius: "8px",
               padding: "8px 12px",
@@ -1002,7 +1008,7 @@ function ReviewsSection({
           disabled={submitting}
           className="mt-3 w-full focus:outline-none focus:ring-0 disabled:opacity-60"
           style={{
-            backgroundColor: "var(--tott-dark-pill)",
+            backgroundColor: "var(--tott-panel-bg)",
             border: "1px solid var(--tott-card-border)",
             borderRadius: "8px",
             padding: "8px 12px",
@@ -1193,7 +1199,7 @@ function ReviewsSection({
                       lineHeight: "24px",
                       letterSpacing: "-0.01em",
                       color: "var(--tott-home-text-strong)",
-                      textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                      textShadow: "var(--tott-home-text-shadow)",
                       margin: 0,
                     }}
                   >
@@ -1224,7 +1230,7 @@ function ReviewsSection({
                   lineHeight: "20px",
                   letterSpacing: "-0.005em",
                   color: "var(--tott-home-text-strong)",
-                  textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                  textShadow: "var(--tott-home-text-shadow)",
                   margin: 0,
                 }}
               >
