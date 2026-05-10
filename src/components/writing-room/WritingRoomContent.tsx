@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -9,11 +8,20 @@ import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { PersonIcon } from "@/components/ui/icons";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 
-const SILK_HEX = "/images/home/Book Cover.png";
 const WRITING_ICON = "/images/writing-room/writing-icon.svg";
 const EXPERIENCES_HONEYCOMB = "/images/writing-room/experiences-honeycomb.svg";
 const QUOTE_ICON = "/images/writing-room/quote-icon.svg";
 const NOTE_ICON = "/images/writing-room/note-icon.svg";
+// Match the home "Follow our Writers" silk hex + top icon assets so
+// the Discover Featured Writing row reads as the same component on
+// both pages. Image-2.png supplies both the hex silhouette and the
+// silk fill (transparent outside the hex), and Icon-4.svg is the
+// pre-baked 48×48 top-of-card icon.
+const WRITER_CARD = "/images/home/Image-2.png";
+const WRITER_TOP_ICON = "/images/home/Icon-4.svg";
+const FILLER = "/images/home/Content Grid Filler.png";
+const CHIP_CHAMFER =
+  "polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)";
 const HEX_CLIP =
   "polygon(50% 5%, 90% 27%, 90% 73%, 50% 95%, 10% 73%, 10% 27%)";
 
@@ -702,12 +710,19 @@ function DictionaryCard({
   );
 }
 
-// ─── Featured Writing carousel-ish row ───────────────────────────
+// ─── Discover Featured Writing ───────────────────────────────────
 
+/** Mirrors the home "Follow our Writers" section (see
+ * `MagazineEditorialBoard`): same 18px IBM Plex heading, same
+ * Image-2.png silk hex card with Icon-4.svg top glyph + bottom-fade
+ * overlay + edition chip, same responsive grid (mobile/sm/lg) →
+ * flex-with-side-fillers (xl+) layout. The only Writing-Room-specific
+ * difference is that each card is wrapped in a Link to /books/{slug},
+ * and the row keeps its "want to engage?" → Reading Room CTA below. */
 function FeaturedWritingRow({
   items,
   heading,
-  viewAll,
+  viewAll: _viewAll,
   cardTitleFallback,
   cardAuthorFallback,
   wantToEngage,
@@ -721,149 +736,85 @@ function FeaturedWritingRow({
   wantToEngage: string;
   visitReadingRoom: string;
 }) {
-  const [index, setIndex] = useState(0);
-  const visible = 4;
-  const max = Math.max(0, items.length - visible);
-  const goPrev = () => setIndex((i) => Math.max(0, i - 1));
-  const goNext = () => setIndex((i) => Math.min(max, i + 1));
-
   return (
-    <section
-      aria-label={heading}
-      className="mt-12"
-    >
-      <div className="flex items-end justify-between">
-        <h2
-          style={{
-            fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
-            fontWeight: 500,
-            fontSize: "20px",
-            lineHeight: "28px",
-            color: "var(--tott-home-text-strong)",
-            margin: 0,
-          }}
-        >
-          <FirstWordGold raw={heading} />
-        </h2>
-        <button
-          type="button"
-          className="text-sm font-medium transition-opacity hover:opacity-90"
-          style={{ color: "var(--tott-accent-gold)" }}
-        >
-          {viewAll}
-          <span aria-hidden> →</span>
-        </button>
-      </div>
-
-      <div className="relative mt-6">
-        <button
-          type="button"
-          onClick={goPrev}
-          disabled={index === 0}
-          aria-label="Previous"
-          className="absolute left-0 top-1/2 z-10 hidden -translate-y-1/2 -translate-x-2 items-center justify-center rounded-full transition-opacity hover:opacity-80 disabled:opacity-30 sm:flex"
-          style={{
-            width: "36px",
-            height: "36px",
-            border: "1px solid var(--tott-card-border)",
-            backgroundColor: "var(--tott-panel-bg)",
-            color: "var(--tott-home-text-strong)",
-          }}
-        >
-          ←
-        </button>
-        <button
-          type="button"
-          onClick={goNext}
-          disabled={index >= max}
-          aria-label="Next"
-          className="absolute right-0 top-1/2 z-10 hidden translate-x-2 -translate-y-1/2 items-center justify-center rounded-full transition-opacity hover:opacity-80 disabled:opacity-30 sm:flex"
-          style={{
-            width: "36px",
-            height: "36px",
-            border: "1px solid var(--tott-card-border)",
-            backgroundColor: "var(--tott-panel-bg)",
-            color: "var(--tott-home-text-strong)",
-          }}
-        >
-          →
-        </button>
-
-        <div className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <ul
-            className="flex"
+    <section aria-label={heading} className="mt-12">
+      <header className="flex items-center" style={{ gap: "24px" }}>
+        <div className="flex flex-col" style={{ gap: "4px" }}>
+          <h2
             style={{
-              gap: "16px",
-              // Responsive scroll: shows 1.5 cards on mobile, ~2.5
-              // on sm, 3 on md, 4 on lg+. Drag/scroll on touch.
-              transform: `translateX(calc(${index} * -1 * (var(--card-w, 25%) + 16px)))`,
-              transition: "transform 400ms cubic-bezier(0.4, 0, 0.2, 1)",
+              fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+              fontWeight: 500,
+              fontSize: "18px",
+              lineHeight: "24px",
+              color: "var(--tott-home-text-strong)",
+              margin: 0,
             }}
           >
-            {items.map((item) => (
-              <li
-                key={item.id}
-                className="basis-[60%] shrink-0 sm:basis-[40%] md:basis-[calc((100%-32px)/3)] lg:basis-[calc((100%-48px)/4)]"
-                style={{
-                  minWidth: "160px",
-                  maxWidth: "240px",
-                }}
-              >
-                <Link
-                  href={`/books/${item.slug}`}
-                  className="flex flex-col items-center text-center transition-opacity hover:opacity-90"
-                  style={{ gap: "12px" }}
-                >
-                  <span
-                    className="relative w-full"
-                    style={{ aspectRatio: "193 / 220" }}
-                  >
-                    {item.coverImage ? (
-                      <Image
-                        src={item.coverImage}
-                        alt=""
-                        fill
-                        className="absolute inset-0 object-cover opacity-70 mix-blend-luminosity"
-                        sizes="220px"
-                      />
-                    ) : null}
-                    <Image
-                      src={SILK_HEX}
-                      alt=""
-                      fill
-                      sizes="220px"
-                      className="object-contain"
-                    />
-                  </span>
-                  <p
-                    className="line-clamp-1"
-                    style={{
-                      fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
-                      fontWeight: 500,
-                      fontSize: "14px",
-                      lineHeight: "20px",
-                      color: "var(--tott-home-text-strong)",
-                      margin: 0,
-                    }}
-                  >
-                    {item.title || cardTitleFallback}
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                      fontWeight: 400,
-                      fontSize: "12px",
-                      lineHeight: "16px",
-                      color: "var(--tott-home-text-muted)",
-                      margin: 0,
-                    }}
-                  >
-                    {item.author || cardAuthorFallback}
-                  </p>
-                </Link>
-              </li>
-            ))}
-          </ul>
+            <FirstWordGold raw={heading} />
+          </h2>
+        </div>
+      </header>
+
+      <div className="relative mt-8 overflow-hidden">
+        {/* Mobile / tablet / lg — responsive grid (no fillers). */}
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 xl:hidden">
+          {items.slice(0, 4).map((item) => (
+            <div key={item.id} className="flex justify-center">
+              <FeaturedWritingCard
+                item={item}
+                cardTitleFallback={cardTitleFallback}
+                cardAuthorFallback={cardAuthorFallback}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* xl — flex row with side fillers. */}
+        <div
+          className="hidden items-start justify-center xl:flex"
+          style={{ gap: "8px" }}
+        >
+          <div
+            aria-hidden
+            className="shrink-0"
+            style={{ width: "138px", height: "294px", position: "relative" }}
+          >
+            <Image
+              src={FILLER}
+              alt=""
+              fill
+              className="select-none object-cover"
+              style={{
+                transform: "scaleX(-1)",
+                filter: "var(--tott-image-invert)",
+              }}
+              sizes="138px"
+              draggable={false}
+            />
+          </div>
+          {items.slice(0, 4).map((item) => (
+            <FeaturedWritingCard
+              key={`d-${item.id}`}
+              item={item}
+              cardTitleFallback={cardTitleFallback}
+              cardAuthorFallback={cardAuthorFallback}
+            />
+          ))}
+          <div
+            aria-hidden
+            className="shrink-0"
+            style={{ width: "138px", height: "294px", position: "relative" }}
+          >
+            <Image
+              src={FILLER}
+              alt=""
+              fill
+              className="select-none object-cover"
+              style={{ filter: "var(--tott-image-invert)" }}
+              sizes="138px"
+              draggable={false}
+            />
+          </div>
         </div>
       </div>
 
@@ -899,5 +850,159 @@ function FeaturedWritingRow({
         </Link>
       </div>
     </section>
+  );
+}
+
+/** Featured-writing card — identical visual structure to the home
+ * `WriterCard`: Image-2.png silk hex frame (silhouette + fill),
+ * Icon-4.svg top glyph, bottom-fade overlay with title + author
+ * chip, chamfered "Featured" edition chip. Wrapped in a Link so
+ * the whole hex routes through to the book detail page. */
+function FeaturedWritingCard({
+  item,
+  cardTitleFallback,
+  cardAuthorFallback,
+}: {
+  item: FeaturedWritingItem;
+  cardTitleFallback: string;
+  cardAuthorFallback: string;
+}) {
+  const cardTitle = item.title?.trim() || cardTitleFallback;
+  const authorName = item.author?.trim() || cardAuthorFallback;
+  const initial = (authorName || cardTitle).slice(0, 1).toUpperCase() || "A";
+
+  return (
+    <Link
+      href={`/books/${item.slug}`}
+      className="relative block w-full transition-opacity hover:opacity-90"
+      style={{
+        maxWidth: "276px",
+        aspectRatio: "276 / 294",
+        flexShrink: 0,
+      }}
+    >
+      {item.coverImage ? (
+        <Image
+          src={item.coverImage}
+          alt=""
+          fill
+          className="absolute inset-0 select-none object-cover opacity-70 mix-blend-luminosity"
+          sizes="276px"
+          draggable={false}
+        />
+      ) : null}
+      <Image
+        src={WRITER_CARD}
+        alt=""
+        fill
+        className="select-none object-contain"
+        sizes="276px"
+        draggable={false}
+      />
+
+      <div
+        aria-hidden
+        className="absolute z-10"
+        style={{
+          width: "48px",
+          height: "48px",
+          left: "calc(50% - 24px)",
+          top: "8px",
+        }}
+      >
+        <Image
+          src={WRITER_TOP_ICON}
+          alt=""
+          fill
+          sizes="48px"
+          className="select-none"
+          draggable={false}
+        />
+      </div>
+
+      <div
+        className="absolute bottom-0 left-0 z-10 flex w-full flex-col items-center justify-end"
+        style={{
+          height: "55.78%",
+          padding: "24px 24px 56px",
+          gap: "8px",
+          background: "var(--tott-writer-card-fade)",
+        }}
+      >
+        <p
+          className="line-clamp-2 w-full text-center"
+          style={{
+            maxWidth: "228px",
+            fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+            fontWeight: 500,
+            fontSize: "20px",
+            lineHeight: "28px",
+            color: "var(--tott-home-text-strong)",
+            textShadow: "var(--tott-home-text-shadow)",
+          }}
+        >
+          {cardTitle}
+        </p>
+
+        <div
+          className="flex w-full flex-wrap items-center justify-center"
+          style={{ maxWidth: "228px", gap: "4px 8px" }}
+        >
+          <span className="flex items-center" style={{ gap: "4px" }}>
+            <span
+              className="flex items-center justify-center"
+              style={{
+                width: "16px",
+                height: "16px",
+                background: "var(--tott-dash-gold-text)",
+                border: "1px solid var(--tott-card-border)",
+                borderRadius: "999px",
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 500,
+                fontSize: "8.5px",
+                lineHeight: "10px",
+                color: "var(--tott-auth-btn-text)",
+              }}
+            >
+              {initial}
+            </span>
+            <span
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: "12px",
+                lineHeight: "16px",
+                color: "var(--tott-home-text-heading)",
+                textShadow: "var(--tott-home-text-shadow)",
+              }}
+            >
+              {authorName}
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <span
+        className="absolute z-20 inline-flex items-center justify-center"
+        style={{
+          minWidth: "56px",
+          height: "24px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          padding: "0 10px",
+          bottom: "24px",
+          backgroundColor: "var(--tott-home-badge-bg)",
+          color: "var(--tott-home-text-strong)",
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 500,
+          fontSize: "12px",
+          lineHeight: "16px",
+          clipPath: CHIP_CHAMFER,
+          WebkitClipPath: CHIP_CHAMFER,
+        }}
+      >
+        Featured
+      </span>
+    </Link>
   );
 }
