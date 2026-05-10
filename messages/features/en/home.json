@@ -220,6 +220,33 @@
       "notFoundHeading": "Book not found",
       "notFoundBody": "The book you're looking for doesn't exist or was unpublished.",
       "backToBooks": "Back to all books"
+    },
+    "writingRoom": {
+      "heroTitle": "Writing Room",
+      "heroSubtitle": "A space for writing, reflection, and collective thinking",
+      "heroBody": "Here, writing is not a solitary act — it is shared, explored, and reshaped through workshops, encounters, and lived experiences.",
+      "experiencesHeading": "Experiences",
+      "exp1Title": "Workshops",
+      "exp1Body": "Guided sessions to explore practice and gather around writing.",
+      "exp2Title": "Residency",
+      "exp2Body": "Long-form creative space. Focused writing time, space, support.",
+      "exp3Title": "Open Encounters",
+      "exp3Body": "Meet, talk, and think together — moments of shared dialogue.",
+      "expEnter": "Enter",
+      "dictionaryHeading": "Living Dictionary",
+      "dictionarySubtitle": "A growing archive of words, notes, and reflections.",
+      "browseAll": "Browse All Notes",
+      "submitWord": "Submit a Note",
+      "discoverHeading": "Discover Featured Writing",
+      "viewAll": "View all",
+      "cardTitle": "Insert card title here",
+      "cardAuthor": "Author",
+      "wantToEngage": "Want to engage with these stories?",
+      "visitReadingRoom": "Visit Reading Room",
+      "joinHeading": "Join the Room",
+      "joinBody": "Whether you write daily or are just beginning — there's a place for you here.",
+      "applyResidency": "Apply for Residency",
+      "joinWorkshop": "Join a Workshop"
     }
   }
 }

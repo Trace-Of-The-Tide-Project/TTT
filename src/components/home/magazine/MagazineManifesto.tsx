@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { PenLineIcon, BookIcon } from "@/components/ui/icons";
 import { FirstWordGold } from "./FirstWordGold";
 
@@ -238,12 +239,14 @@ function ExploreSpaces() {
           title={t("writingRoomTitle")}
           body={t("writingRoomBody")}
           ctaLabel={t("writingRoomCta")}
+          href="/writing-room"
         />
         <SpaceCard
           icon={<BookIcon />}
           title={t("readingSalonTitle")}
           body={t("readingSalonBody")}
           ctaLabel={t("readingSalonCta")}
+          href="/reading-room"
         />
       </div>
     </section>
@@ -256,11 +259,13 @@ function SpaceCard({
   title,
   body,
   ctaLabel,
+  href,
 }: {
   icon: React.ReactNode;
   title: string;
   body: string;
   ctaLabel: string;
+  href: string;
 }) {
   return (
     <div
@@ -297,8 +302,8 @@ function SpaceCard({
         {body}
       </p>
 
-      <button
-        type="button"
+      <Link
+        href={href}
         className="mt-6 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:opacity-90"
         style={{
           backgroundColor: "var(--tott-magazine-btn-bg)",
@@ -307,7 +312,7 @@ function SpaceCard({
       >
         {ctaLabel}
         <span aria-hidden>→</span>
-      </button>
+      </Link>
     </div>
   );
 }
