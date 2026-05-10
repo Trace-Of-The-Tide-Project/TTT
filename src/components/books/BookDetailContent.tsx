@@ -244,9 +244,10 @@ export function BookDetailContent({
             {/* Preview — Figma "Button" spec: 360×40, #333333 bg
                 (theme-aware via --tott-card-border), inset white-8%
                 top highlight, 8px radius, Inter 400 14/20 white
-                label (Paragraph/Small — note weight 400, not 500). */}
-            <button
-              type="button"
+                label (Paragraph/Small — note weight 400, not 500).
+                Links to the dedicated /books/{id}/preview route. */}
+            <Link
+              href={`/books/${book.id}/preview`}
               className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90"
               style={{
                 height: "40px",
@@ -279,7 +280,7 @@ export function BookDetailContent({
                 />
               </span>
               {t("preview")}
-            </button>
+            </Link>
           </div>
 
           {/* Info column */}
