@@ -21,7 +21,7 @@ import {
   type UsersListMeta,
 } from "@/services/users.service";
 import { useUsers } from "@/hooks/queries/users";
-import { useUpdateUser } from "@/hooks/mutations/users";
+import { useUpdateUserStatus } from "@/hooks/mutations/users";
 import { useRouter } from "@/i18n/navigation";
 import { formatApiError } from "@/lib/api/error-message";
 import { toast } from "sonner";
@@ -98,7 +98,7 @@ export function UsersManagementContent() {
   const t = useTranslations("Dashboard.usersManagement");
   const tRoles = useTranslations("Dashboard.adminHome.usersByRole.roles");
   const router = useRouter();
-  const updateUserMutation = useUpdateUser();
+  const updateUserStatusMutation = useUpdateUserStatus();
   const [actionError, setActionError] = useState<string | null>(null);
   const loadFailedMessage = t("errors.loadFailed");
 
@@ -264,8 +264,8 @@ export function UsersManagementContent() {
           router.push(`/admin/users/${userId}/role`);
           return;
         case "verify":
-          updateUserMutation.mutate(
-            { id: userId, payload: { status: "active" } },
+          updateUserStatusMutation.mutate(
+            { id: userId, status: "active" },
             {
               onSuccess: () => toast.success(t("toasts.verified")),
               onError: (e) => setActionError(formatApiError(e, loadFailedMessage)),
@@ -273,8 +273,8 @@ export function UsersManagementContent() {
           );
           return;
         case "suspend":
-          updateUserMutation.mutate(
-            { id: userId, payload: { status: "suspended" } },
+          updateUserStatusMutation.mutate(
+            { id: userId, status: "suspended" },
             {
               onSuccess: () => toast.success(t("toasts.suspended")),
               onError: (e) => setActionError(formatApiError(e, loadFailedMessage)),
@@ -283,7 +283,7 @@ export function UsersManagementContent() {
           return;
       }
     },
-    [router, updateUserMutation, loadFailedMessage, t],
+    [router, updateUserStatusMutation, loadFailedMessage, t],
   );
 
   const locale = useLocale();

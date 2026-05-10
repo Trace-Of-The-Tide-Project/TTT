@@ -187,6 +187,10 @@ export async function updateUser(id: string, payload: UpdateUserPayload): Promis
   await api.patch(`/users/${id}`, payload);
 }
 
+export async function updateUserStatus(id: string, status: AdminUserStatus): Promise<void> {
+  await api.patch(`/users/${id}/status`, { status });
+}
+
 const EXPORT_PAGE_LIMIT = 100;
 const EXPORT_MAX_PAGES = 500;
 
