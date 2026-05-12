@@ -317,6 +317,32 @@
         "cancel": "Cancel",
         "close": "Close"
       }
+    },
+    "residency": {
+      "heroTitle": "Residency",
+      "heroSubtitle": "A quiet, immersive space for deep writing.",
+      "heroBody": "Designed for writers seeking time, focus, and distance from noise — to produce meaningful work.",
+      "getHeading": "What You Get",
+      "getItems": [
+        "Quiet environment",
+        "Time to write",
+        "Minimal distractions",
+        "One-on-one mentorship"
+      ],
+      "idealHeading": "Ideal For",
+      "idealItems": [
+        "Long-form writing",
+        "Personal projects",
+        "Deep thinking",
+        "Manuscript development"
+      ],
+      "readyHeading": "Ready to Begin?",
+      "readyBody": "Tell us about your writing or not — find the right time and space for you.",
+      "applyResidency": "Apply for Residency",
+      "galleryAlt": "A glimpse from a recent residency",
+      "prev": "Previous",
+      "next": "Next",
+      "backToWritingRoom": "Back to Writing Room"
     }
   }
 }

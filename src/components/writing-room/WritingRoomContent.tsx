@@ -67,6 +67,7 @@ const EXPERIENCES: Experience[] = [
   {
     key: "exp2",
     iconSrc: "/images/writing-room/moon-icon.svg",
+    href: "/writing-room/residency",
   },
   {
     key: "exp3",
@@ -462,8 +463,8 @@ export function WritingRoomContent({
               style={{ gap: "12px" }}
             >
             {/* Primary — gold "Apply for Residency". */}
-            <button
-              type="button"
+            <Link
+              href="/writing-room/residency"
               className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
               style={{
                 height: "40px",
@@ -477,11 +478,10 @@ export function WritingRoomContent({
                 fontSize: "14px",
                 lineHeight: "20px",
                 letterSpacing: "-0.005em",
-                border: "none",
               }}
             >
               {t("applyResidency")}
-            </button>
+            </Link>
             {/* Secondary — dark pill "Join a Workshop". */}
             <Link
               href="/writing-room/workshops"
