@@ -92,7 +92,7 @@ export function WritingRoomContent({
         <HexBackground />
       </div>
 
-      <div className="relative mx-auto w-full max-w-[1280px] px-4 pb-16 pt-24 sm:px-6 sm:pt-28 md:px-8 md:pt-32">
+      <div className="relative mx-auto w-full max-w-[1280px] px-4 pb-16 pt-24 sm:px-6 sm:pt-28 md:px-8 md:pt-32 min-[1600px]:max-w-[1500px]">
         {/* ── Hero (Figma "Call To Action" frame) ──────────────
             Self-contained 64×72 writing icon with gradient + gold
             inset shadow baked into Icon-7.svg, then the gold-first
@@ -109,7 +109,7 @@ export function WritingRoomContent({
         >
           <span
             aria-hidden
-            className="relative shrink-0"
+            className="relative shrink-0 min-[1600px]:w-24! min-[1600px]:h-[108px]!"
             style={{
               width: "clamp(48px, 8vw, 64px)",
               height: "clamp(54px, 9vw, 72px)",
@@ -130,6 +130,7 @@ export function WritingRoomContent({
             style={{ gap: "8px" }}
           >
             <h1
+              className="min-[1600px]:text-[44px]! min-[1920px]:text-[56px]!"
               style={{
                 fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
                 fontWeight: 500,
@@ -142,6 +143,7 @@ export function WritingRoomContent({
               <FirstWordGold raw={t("heroTitle")} />
             </h1>
             <p
+              className="min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
               style={{
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 400,
@@ -156,6 +158,7 @@ export function WritingRoomContent({
               {t("heroSubtitle")}
             </p>
             <p
+              className="min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
               style={{
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 400,
@@ -188,7 +191,7 @@ export function WritingRoomContent({
           <ChamferedFrame size={24} borderColor="var(--tott-card-border)" />
           <h2
             id="experiences-heading"
-            className="mt-2 text-center"
+            className="mt-2 text-center min-[1600px]:text-[44px]!"
             style={{
               fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
               fontWeight: 500,
@@ -255,6 +258,7 @@ export function WritingRoomContent({
           <header className="text-center">
             <h2
               id="dictionary-heading"
+              className="min-[1600px]:text-[44px]!"
               style={{
                 fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
                 fontWeight: 500,
@@ -418,6 +422,7 @@ export function WritingRoomContent({
             </div>
             <h2
               id="join-room-heading"
+              className="min-[1600px]:text-[36px]!"
               style={{
                 fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
                 fontWeight: 500,
@@ -430,7 +435,7 @@ export function WritingRoomContent({
               {t("joinHeading")}
             </h2>
             <p
-              className="max-w-xl"
+              className="max-w-xl min-[1600px]:max-w-2xl! min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
               style={{
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 400,
@@ -521,7 +526,7 @@ function ExperienceCard({
 }) {
   return (
     <article
-      className="relative flex w-full flex-col items-center"
+      className="relative flex w-full flex-col items-center min-[1600px]:max-w-[400px]! min-[1600px]:gap-9!"
       style={{
         maxWidth: "322px",
         padding: "clamp(20px, 3vw, 24px) clamp(20px, 4vw, 40px)",
@@ -572,6 +577,7 @@ function ExperienceCard({
         style={{ gap: "4px" }}
       >
         <h3
+          className="min-[1600px]:text-[28px]!"
           style={{
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 500,
@@ -586,6 +592,7 @@ function ExperienceCard({
           {title}
         </h3>
         <p
+          className="min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
           style={{
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 400,
@@ -667,7 +674,7 @@ function DictionaryCard({
 }) {
   return (
     <article
-      className="relative flex w-full flex-col"
+      className="relative flex w-full flex-col min-[1600px]:max-w-[500px]!"
       style={{
         maxWidth: "410px",
         padding: "clamp(20px, 3vw, 24px) clamp(20px, 4vw, 40px)",
@@ -700,6 +707,7 @@ function DictionaryCard({
           style={{ gap: "4px" }}
         >
           <h3
+            className="min-[1600px]:text-[28px]!"
             style={{
               fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
               fontWeight: 500,
@@ -712,6 +720,7 @@ function DictionaryCard({
             {word}
           </h3>
           <p
+            className="min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
             style={{
               fontFamily: "'Inter', var(--font-sans, sans-serif)",
               fontWeight: 400,
@@ -725,6 +734,7 @@ function DictionaryCard({
             {body}
           </p>
           <p
+            className="min-[1600px]:text-[20px]!"
             style={{
               fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
               fontWeight: 500,
@@ -824,7 +834,23 @@ function FeaturedWritingRow({
   // transition disabled for one render, and the loop continues —
   // no visible jump at the seam.
   const itemCount = items.length;
-  const visible = 4;
+  // Visible-card count scales with viewport so big screens stop
+  // pretending cards are hidden when they would actually fit. The
+  // ghost-fade gradients and arrow buttons exist to hint at scroll —
+  // when every item already fits in the row, both become misleading
+  // and are suppressed. SSR starts at 4 (the conservative small
+  // default) and hydrates to 5/6 client-side once we can measure the
+  // viewport.
+  const [visible, setVisible] = useState(4);
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      setVisible(w >= 1920 ? 6 : w >= 1600 ? 5 : 4);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
   const hasCarousel = itemCount > visible;
   // Small (sub-xl) gallery runs a single-card centred carousel
   // whenever there is more than one item — mirrors Recent
@@ -908,6 +934,7 @@ function FeaturedWritingRow({
       <header className="flex items-center" style={{ gap: "24px" }}>
         <div className="flex flex-col" style={{ gap: "4px" }}>
           <h2
+            className="min-[1600px]:text-[28px]! min-[1920px]:text-[32px]!"
             style={{
               fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
               fontWeight: 500,
@@ -1023,29 +1050,33 @@ function FeaturedWritingRow({
           we snap back to the canonical index after the transition
           finishes — the seam is invisible. */}
       <div
-        className="relative mt-8 hidden overflow-hidden xl:block"
+        className="relative mt-8 hidden overflow-hidden xl:block [--carousel-card-w:276px] [--carousel-gap:8px] min-[1600px]:[--carousel-card-w:320px] min-[1600px]:[--carousel-gap:12px] min-[1920px]:[--carousel-card-w:360px] min-[1920px]:[--carousel-gap:16px]"
         style={{
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
           marginRight: "calc(50% - 50vw)",
         }}
       >
-        {/* Inner clipping window — restricts the visible cards to the
-            central 4-card window. Cards slide within this box; the
-            side areas around it stay completely static so no partial
-            hex peeks under the FILLER ghosts. */}
+        {/* Cards-window stage — sized to exactly min(visible,
+            itemCount) cards wide. Acts as the positioning context
+            for the inner clipping mask AND for the ghost gradients
+            and arrow buttons, so those always sit at the visible
+            edges of the cards row regardless of viewport width. */}
         <div
-          className="relative mx-auto overflow-hidden"
-          style={{ width: `${CARDS_WINDOW_WIDTH}px` }}
+          className="relative mx-auto"
+          style={{
+            width: `calc(${Math.min(visible, itemCount)} * var(--carousel-card-w) + ${Math.max(0, Math.min(visible, itemCount) - 1)} * var(--carousel-gap))`,
+          }}
         >
+        <div className="relative overflow-hidden">
         <div
           className="relative flex items-start"
           style={{
-            gap: `${CAROUSEL_GAP}px`,
+            gap: "var(--carousel-gap)",
             transform: hasCarousel
-              ? `translateX(-${
-                  (itemCount + position) * CAROUSEL_STEP
-                }px)`
+              ? `translateX(calc(-1 * ${
+                  itemCount + position
+                } * (var(--carousel-card-w) + var(--carousel-gap))))`
               : undefined,
             transition: animate
               ? `transform ${CAROUSEL_TRANSITION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`
@@ -1110,9 +1141,9 @@ function FeaturedWritingRow({
           <>
             <div
               aria-hidden
-              className="pointer-events-none absolute top-0 z-10"
+              className="pointer-events-none absolute top-0 z-10 min-[1600px]:w-40! min-[1600px]:h-[341px]! min-[1600px]:-left-[176px]! min-[1920px]:w-[180px]! min-[1920px]:h-[384px]! min-[1920px]:-left-[196px]!"
               style={{
-                left: "26px",
+                left: `-${GHOST_WIDTH + 16}px`,
                 width: `${GHOST_WIDTH}px`,
                 height: "294px",
               }}
@@ -1126,16 +1157,16 @@ function FeaturedWritingRow({
                   transform: "scaleX(-1)",
                   filter: "var(--tott-image-invert)",
                 }}
-                sizes={`${GHOST_WIDTH}px`}
+                sizes="(min-width: 1920px) 180px, (min-width: 1600px) 160px, 138px"
                 draggable={false}
               />
             </div>
 
             <div
               aria-hidden
-              className="pointer-events-none absolute top-0 z-10"
+              className="pointer-events-none absolute top-0 z-10 min-[1600px]:w-40! min-[1600px]:h-[341px]! min-[1600px]:-right-[176px]! min-[1920px]:w-[180px]! min-[1920px]:h-[384px]! min-[1920px]:-right-[196px]!"
               style={{
-                right: "26px",
+                right: `-${GHOST_WIDTH + 16}px`,
                 width: `${GHOST_WIDTH}px`,
                 height: "294px",
               }}
@@ -1146,7 +1177,7 @@ function FeaturedWritingRow({
                 fill
                 className="select-none object-cover"
                 style={{ filter: "var(--tott-image-invert)" }}
-                sizes={`${GHOST_WIDTH}px`}
+                sizes="(min-width: 1920px) 180px, (min-width: 1600px) 160px, 138px"
                 draggable={false}
               />
             </div>
@@ -1165,11 +1196,11 @@ function FeaturedWritingRow({
               type="button"
               onClick={goPrev}
               aria-label="Previous"
-              className="absolute z-20 flex items-center justify-center transition-opacity hover:opacity-80"
+              className="absolute z-20 flex items-center justify-center transition-opacity hover:opacity-80 min-[1600px]:w-12! min-[1600px]:h-12! min-[1600px]:top-[148px]! min-[1600px]:-left-24! min-[1920px]:w-14! min-[1920px]:h-14! min-[1920px]:top-[165px]! min-[1920px]:-left-28!"
               style={{
                 width: "40px",
                 height: "40px",
-                left: "24px",
+                left: "-72px",
                 top: "127px",
                 borderRadius: "999px",
                 backgroundColor: "var(--tott-panel-bg)",
@@ -1196,11 +1227,11 @@ function FeaturedWritingRow({
               type="button"
               onClick={goNext}
               aria-label="Next"
-              className="absolute z-20 flex items-center justify-center transition-opacity hover:opacity-80"
+              className="absolute z-20 flex items-center justify-center transition-opacity hover:opacity-80 min-[1600px]:w-12! min-[1600px]:h-12! min-[1600px]:top-[148px]! min-[1600px]:-right-24! min-[1920px]:w-14! min-[1920px]:h-14! min-[1920px]:top-[165px]! min-[1920px]:-right-28!"
               style={{
                 width: "40px",
                 height: "40px",
-                right: "24px",
+                right: "-72px",
                 top: "127px",
                 borderRadius: "999px",
                 backgroundColor: "var(--tott-panel-bg)",
@@ -1225,6 +1256,7 @@ function FeaturedWritingRow({
             </button>
           </>
         ) : null}
+        </div>
       </div>
 
       <div
@@ -1232,6 +1264,7 @@ function FeaturedWritingRow({
         style={{ gap: "12px" }}
       >
         <span
+          className="min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
           style={{
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 400,
@@ -1245,7 +1278,7 @@ function FeaturedWritingRow({
         </span>
         <Link
           href="/reading-room"
-          className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
+          className="inline-flex items-center justify-center transition-opacity hover:opacity-90 min-[1600px]:h-14! min-[1600px]:text-base!"
           style={{
             height: "40px",
             padding: "8px 16px",
@@ -1310,7 +1343,8 @@ function FeaturedWritingCard({
       href={`/books/${item.slug}`}
       className="relative block w-full transition-opacity hover:opacity-90"
       style={{
-        maxWidth: "276px",
+        maxWidth: "var(--carousel-card-w, 276px)",
+        width: "var(--carousel-card-w, 276px)",
         aspectRatio: "276 / 294",
         flexShrink: 0,
       }}
@@ -1321,7 +1355,7 @@ function FeaturedWritingCard({
           alt=""
           fill
           className="absolute inset-0 select-none object-cover opacity-70 mix-blend-luminosity"
-          sizes="276px"
+          sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
           draggable={false}
         />
       ) : null}
@@ -1330,7 +1364,7 @@ function FeaturedWritingCard({
         alt=""
         fill
         className="select-none object-contain"
-        sizes="276px"
+        sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
         draggable={false}
       />
 

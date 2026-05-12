@@ -92,7 +92,7 @@ export function BookDetailContent({
         <HexBackground />
       </div>
 
-      <div className="relative mx-auto w-full max-w-[1100px] px-4 pb-16 pt-24 sm:px-6 sm:pt-28 md:px-8 md:pt-32">
+      <div className="relative mx-auto w-full max-w-[1100px] px-4 pb-16 pt-24 sm:px-6 sm:pt-28 md:px-8 md:pt-32 min-[1600px]:max-w-[1400px]">
         {/* Breadcrumb — simple rounded-rectangle bar with the
             theme-aware --tott-dark-pill fill. Home glyph, then a
             space (no chevron) before the "Books" label, with
@@ -172,7 +172,7 @@ export function BookDetailContent({
         </nav>
 
         {/* ── Top split: cover + info ───────────────────────────── */}
-        <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-[260px_minmax(0,1fr)]">
+        <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-[260px_minmax(0,1fr)] min-[1600px]:gap-12 min-[1600px]:md:grid-cols-[340px_minmax(0,1fr)]">
           {/* Left column: cover + Buy Now / Preview buttons stacked
               under it (matches Figma layout where the actions sit
               beneath the cover, not inside the info column). */}
@@ -208,7 +208,7 @@ export function BookDetailContent({
                 an inset white-40% top highlight, 8px radius. */}
             <button
               type="button"
-              className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90"
+              className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90 min-[1600px]:h-14! min-[1600px]:text-base!"
               style={{
                 height: "40px",
                 padding: "8px",
@@ -248,7 +248,7 @@ export function BookDetailContent({
                 Links to the dedicated /books/{id}/preview route. */}
             <Link
               href={`/books/${book.id}/preview`}
-              className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90"
+              className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90 min-[1600px]:h-14! min-[1600px]:text-base!"
               style={{
                 height: "40px",
                 padding: "8px",
@@ -286,6 +286,7 @@ export function BookDetailContent({
           {/* Info column */}
           <div className="flex flex-col" style={{ padding: "0 8px", gap: "24px" }}>
             <h1
+              className="min-[1600px]:text-[44px]! min-[1920px]:text-[56px]!"
               style={{
                 fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
                 fontWeight: 500,
@@ -440,6 +441,7 @@ export function BookDetailContent({
             {book.excerpt ? (
               <section className="flex flex-col" style={{ gap: "8px" }}>
                 <h2
+                  className="min-[1600px]:text-[22px]!"
                   style={{
                     fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
                     fontWeight: 500,
@@ -452,6 +454,7 @@ export function BookDetailContent({
                   Description
                 </h2>
                 <p
+                  className="min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
                   style={{
                     fontFamily: "'Inter', var(--font-sans, sans-serif)",
                     fontWeight: 400,
@@ -890,6 +893,7 @@ function ReviewsSection({
         style={{ gap: "16px" }}
       >
         <h2
+          className="min-[1600px]:text-[22px]!"
           style={{
             fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
             fontWeight: 500,
@@ -1335,6 +1339,7 @@ function ShareYourStory() {
         >
           <h2
             id="book-detail-share-heading"
+            className="min-[1600px]:text-[36px]! min-[1600px]:leading-[44px]!"
             style={{
               width: "100%",
               fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
@@ -1349,6 +1354,7 @@ function ShareYourStory() {
             {t("shareTitle")}
           </h2>
           <p
+            className="min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
             style={{
               width: "100%",
               fontFamily: "'Inter', var(--font-sans, sans-serif)",
