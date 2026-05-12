@@ -342,7 +342,22 @@
       "galleryAlt": "A glimpse from a recent residency",
       "prev": "Previous",
       "next": "Next",
-      "backToWritingRoom": "Back to Writing Room"
+      "backToWritingRoom": "Back to Writing Room",
+      "applyModal": {
+        "title": "Apply for Residency...",
+        "subtitle": "Share your vision with us.",
+        "nameLabel": "Name",
+        "namePlaceholder": "Name",
+        "emailLabel": "Email",
+        "emailPlaceholder": "email",
+        "whyLabel": "Why do you want to join?",
+        "whyPlaceholder": "Why do you want to join?...",
+        "workingLabel": "What are you working on?",
+        "workingPlaceholder": "What are you working on?",
+        "submit": "Submit Application",
+        "cancel": "Cancel",
+        "close": "Close"
+      }
     }
   }
 }

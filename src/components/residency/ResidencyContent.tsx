@@ -8,6 +8,7 @@ import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
+import { ApplyResidencyModal } from "@/components/residency/ApplyResidencyModal";
 
 // Reuse the workshops' moon glyph (already the Residency icon in
 // the writing-room "Experiences" row) and the same gallery SVGs so
@@ -35,6 +36,11 @@ export function ResidencyContent() {
     if (gallery.length <= 1) return;
     setGalleryIndex((i) => (i + 1) % gallery.length);
   };
+
+  // Apply for Residency modal — single state shared by the
+  // "Ready to Begin?" CTA. Open on click; the modal handles its
+  // own form reset / esc / scroll-lock.
+  const [applyOpen, setApplyOpen] = useState(false);
 
   return (
     <main
@@ -218,6 +224,7 @@ export function ResidencyContent() {
           </p>
           <button
             type="button"
+            onClick={() => setApplyOpen(true)}
             className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
             style={{
               height: "clamp(40px, 2vw + 1rem, 96px)",
@@ -453,6 +460,11 @@ export function ResidencyContent() {
           </Link>
         </div>
       </div>
+
+      <ApplyResidencyModal
+        open={applyOpen}
+        onClose={() => setApplyOpen(false)}
+      />
     </main>
   );
 }
