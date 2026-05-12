@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
+import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 
 // Reuse the workshops' moon glyph (already the Residency icon in
 // the writing-room "Experiences" row) and the same gallery SVGs so
@@ -165,22 +166,29 @@ export function ResidencyContent() {
         </section>
 
         {/* ── Ready to Begin? CTA ──────────────────────────────
-            Sits inside a softly-bordered rounded box per Figma
-            "Group 15" — 1px --tott-elevated outline at radius 8px,
-            generous vertical padding so the heading + button feel
-            anchored within their own surface. */}
+            Frameless section with the shared hex-pattern backdrop
+            behind the content — same treatment as the home page's
+            "Join our cultural circle" newsletter section. */}
         <section
           aria-labelledby="ready-heading"
-          className="relative flex flex-col items-center text-center"
+          className="relative overflow-hidden"
           style={{
             marginTop: "clamp(48px, 4vw + 0.5rem, 200px)",
-            gap: "clamp(16px, 0.8vw + 0.4rem, 32px)",
             padding:
               "clamp(48px, 3vw + 0.5rem, 120px) clamp(24px, 2vw + 0.5rem, 80px)",
-            border: "1px solid var(--tott-elevated)",
-            borderRadius: "8px",
+            // The hex-pattern SVG is ~1232×294 at its native ratio.
+            // If the section's content + padding don't reach 294px
+            // tall, overflow-hidden clips the top/bottom hex rows.
+            // Pin a fluid min-height to envelope the pattern at
+            // every laptop+ viewport.
+            minHeight: "clamp(280px, 18vw + 4rem, 480px)",
           }}
         >
+          <HexPatternBackdrop />
+          <div
+            className="relative z-10 flex flex-col items-center text-center"
+            style={{ gap: "clamp(16px, 0.8vw + 0.4rem, 32px)" }}
+          >
           <h2
             id="ready-heading"
             style={{
@@ -230,6 +238,7 @@ export function ResidencyContent() {
           >
             {t("applyResidency")}
           </button>
+          </div>
         </section>
 
         {/* ── Gallery ───────────────────────────────────────── */}
