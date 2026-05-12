@@ -246,7 +246,28 @@
       "joinHeading": "Join the Room",
       "joinBody": "Whether you write daily or are just beginning — there's a place for you here.",
       "applyResidency": "Apply for Residency",
-      "joinWorkshop": "Join a Workshop"
+      "joinWorkshop": "Join a Workshop",
+      "submitModal": {
+        "title": "Submit a Note...",
+        "subtitle": "Add your word, thought, or reflection to the living dictionary.",
+        "titleLabel": "Title",
+        "titlePlaceholder": "Title",
+        "definitionLabel": "Definition or Thought",
+        "definitionPlaceholder": "Definition or Thought",
+        "nameLabel": "Your Name",
+        "nameOptional": "(Optional)",
+        "namePlaceholder": "your name",
+        "submit": "Submit Note",
+        "submitting": "Submitting…",
+        "cancel": "Cancel",
+        "close": "Close",
+        "successTitle": "Your note was submitted successfully!",
+        "successBody": "Thanks for contributing. Once an editor approves it, your note will appear in the living dictionary alongside the others.",
+        "viewAllNotes": "View all Notes",
+        "contactLead": "If you have any questions",
+        "contactLink": "Contact us",
+        "error": "Couldn't submit your note. Please try again."
+      }
     }
   }
 }

@@ -498,3 +498,11 @@ a,
   margin: 0;
 }
 
+/* Submit-a-Note modal inputs — placeholder color can't be applied
+   via inline `style`, so we target it through a class. */
+.tott-submit-note-input::placeholder,
+.tott-submit-note-input::-webkit-input-placeholder {
+  color: var(--tott-auth-input-placeholder);
+  opacity: 1;
+}
+

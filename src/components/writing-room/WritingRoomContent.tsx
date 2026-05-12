@@ -8,6 +8,7 @@ import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
+import { SubmitNoteModal } from "@/components/writing-room/SubmitNoteModal";
 
 const WRITING_ICON = "/images/writing-room/writing-icon.svg";
 const EXPERIENCES_HONEYCOMB = "/images/writing-room/experiences-honeycomb.svg";
@@ -36,6 +37,14 @@ export type FeaturedWritingItem = {
   coverImage: string | null;
 };
 
+export type DictionaryItem = {
+  id: string;
+  word: string;
+  body: string;
+  author: string;
+  role: string;
+};
+
 type Experience = {
   key: "exp1" | "exp2" | "exp3";
   /** When set, renders this as a full 56×64 SVG asset instead of
@@ -61,23 +70,15 @@ const EXPERIENCES: Experience[] = [
   },
 ];
 
-// Six static dictionary entries — placeholder content matching the
-// Figma comp until a /dictionary endpoint exists.
-const DICTIONARY = [
-  { word: "Sakina", body: "A tranquility that doesn't come from silence, but from understanding.", author: "— Youssef M.", role: "CERAMIC ARTIST · 2023" },
-  { word: "Sakina", body: "A tranquility that doesn't come from silence, but from understanding.", author: "— Youssef M.", role: "CERAMIC ARTIST · 2023" },
-  { word: "Sakina", body: "A tranquility that doesn't come from silence, but from understanding.", author: "— Youssef M.", role: "CERAMIC ARTIST · 2023" },
-  { word: "Sakina", body: "A tranquility that doesn't come from silence, but from understanding.", author: "— Youssef M.", role: "CERAMIC ARTIST · 2023" },
-  { word: "Sakina", body: "A tranquility that doesn't come from silence, but from understanding.", author: "— Youssef M.", role: "CERAMIC ARTIST · 2023" },
-  { word: "Sakina", body: "A tranquility that doesn't come from silence, but from understanding.", author: "— Youssef M.", role: "CERAMIC ARTIST · 2023" },
-];
-
 export function WritingRoomContent({
   featured,
+  dictionary,
 }: {
   featured: FeaturedWritingItem[];
+  dictionary: DictionaryItem[];
 }) {
   const t = useTranslations("Home.writingRoom");
+  const [submitOpen, setSubmitOpen] = useState(false);
 
   return (
     <main
@@ -284,24 +285,26 @@ export function WritingRoomContent({
             </p>
           </header>
 
-          <ul
-            className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-            style={{
-              gap: "clamp(16px, 2.5vw, 24px)",
-              padding: "clamp(8px, 2vw, 16px) clamp(0px, 2vw, 16px) 0",
-            }}
-          >
-            {DICTIONARY.map((d, i) => (
-              <li key={i} className="flex justify-center">
-                <DictionaryCard
-                  word={d.word}
-                  body={d.body}
-                  author={d.author}
-                  role={d.role}
-                />
-              </li>
-            ))}
-          </ul>
+          {dictionary.length > 0 ? (
+            <ul
+              className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+              style={{
+                gap: "clamp(16px, 2.5vw, 24px)",
+                padding: "clamp(8px, 2vw, 16px) clamp(0px, 2vw, 16px) 0",
+              }}
+            >
+              {dictionary.map((d) => (
+                <li key={d.id} className="flex justify-center">
+                  <DictionaryCard
+                    word={d.word}
+                    body={d.body}
+                    author={d.author}
+                    role={d.role}
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : null}
 
           {/* ── Action row (Figma "Labels") — gold primary first,
               dark secondary with trailing arrow second. ────── */}
@@ -309,28 +312,31 @@ export function WritingRoomContent({
             className="mt-8 flex flex-wrap items-center justify-center"
             style={{ gap: "12px" }}
           >
+            {dictionary.length > 0 ? (
+              <button
+                type="button"
+                className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
+                style={{
+                  height: "40px",
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  backgroundColor: "var(--tott-magazine-btn-bg)",
+                  boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
+                  color: "var(--tott-auth-btn-text)",
+                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                  fontWeight: 500,
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  letterSpacing: "-0.005em",
+                  border: "none",
+                }}
+              >
+                {t("browseAll")}
+              </button>
+            ) : null}
             <button
               type="button"
-              className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
-              style={{
-                height: "40px",
-                padding: "8px 16px",
-                borderRadius: "8px",
-                backgroundColor: "var(--tott-magazine-btn-bg)",
-                boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
-                color: "var(--tott-auth-btn-text)",
-                fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                fontWeight: 500,
-                fontSize: "14px",
-                lineHeight: "20px",
-                letterSpacing: "-0.005em",
-                border: "none",
-              }}
-            >
-              {t("browseAll")}
-            </button>
-            <button
-              type="button"
+              onClick={() => setSubmitOpen(true)}
               className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
               style={{
                 height: "40px",
@@ -496,6 +502,11 @@ export function WritingRoomContent({
           </div>
         </section>
       </div>
+
+      <SubmitNoteModal
+        open={submitOpen}
+        onClose={() => setSubmitOpen(false)}
+      />
     </main>
   );
 }
@@ -733,35 +744,39 @@ function DictionaryCard({
           >
             {body}
           </p>
+          {author ? (
+            <p
+              className="min-[1600px]:text-[20px]!"
+              style={{
+                fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+                fontWeight: 500,
+                fontSize: "clamp(1rem, 1.8vw, 1.25rem)",
+                lineHeight: 1.35,
+                color: "var(--tott-home-text-strong)",
+                margin: 0,
+              }}
+            >
+              {author}
+            </p>
+          ) : null}
+        </div>
+        {role ? (
           <p
-            className="min-[1600px]:text-[20px]!"
             style={{
-              fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
               fontWeight: 500,
-              fontSize: "clamp(1rem, 1.8vw, 1.25rem)",
-              lineHeight: 1.35,
-              color: "var(--tott-home-text-strong)",
+              fontSize: "clamp(0.6875rem, 1vw, 0.75rem)",
+              lineHeight: 1.6,
+              letterSpacing: "0.04em",
+              color: "var(--tott-home-text-muted)",
               margin: 0,
+              padding: "8px 0",
+              textTransform: "uppercase",
             }}
           >
-            {author}
+            {role}
           </p>
-        </div>
-        <p
-          style={{
-            fontFamily: "'Inter', var(--font-sans, sans-serif)",
-            fontWeight: 500,
-            fontSize: "clamp(0.6875rem, 1vw, 0.75rem)",
-            lineHeight: 1.6,
-            letterSpacing: "0.04em",
-            color: "var(--tott-home-text-muted)",
-            margin: 0,
-            padding: "8px 0",
-            textTransform: "uppercase",
-          }}
-        >
-          {role}
-        </p>
+        ) : null}
       </div>
     </article>
   );

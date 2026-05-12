@@ -5,6 +5,7 @@ import {
 } from "@/lib/content/article-media-url";
 import {
   WritingRoomContent,
+  type DictionaryItem,
   type FeaturedWritingItem,
 } from "@/components/writing-room/WritingRoomContent";
 
@@ -20,6 +21,22 @@ type RawArticle = {
     full_name?: string | null;
     username?: string | null;
     profile?: { display_name?: string | null } | null;
+  } | null;
+};
+
+type RawDictionaryEntry = {
+  id: string;
+  title?: string | null;
+  definition_or_thought?: string | null;
+  author_name?: string | null;
+  createdAt?: string | null;
+  user?: {
+    full_name?: string | null;
+    username?: string | null;
+    profile?: {
+      display_name?: string | null;
+      job_title?: string | null;
+    } | null;
   } | null;
 };
 
@@ -40,18 +57,43 @@ function pickAuthor(a: RawArticle["author"]): string {
   );
 }
 
-export default async function WritingRoomPage() {
-  // Pull a few published articles for the "Discover Featured
-  // Writing" carousel. Falls back to an empty array when nothing is
-  // seeded; the carousel hides itself in that case.
-  const raw = await serverGet<Envelope<RawArticle>>("/articles", {
-    limit: 8,
-    status: "published",
-    sortBy: "published_at",
-    order: "DESC",
-  });
+function mapDictionaryEntry(e: RawDictionaryEntry): DictionaryItem {
+  const author =
+    e.user?.profile?.display_name?.trim() ||
+    e.user?.full_name?.trim() ||
+    e.user?.username?.trim() ||
+    e.author_name?.trim() ||
+    "";
+  const jobTitle = e.user?.profile?.job_title?.trim() || "";
+  const year =
+    e.createdAt && !Number.isNaN(Date.parse(e.createdAt))
+      ? new Date(e.createdAt).getFullYear().toString()
+      : "";
+  const role = [jobTitle, year].filter(Boolean).join(" · ");
+  return {
+    id: e.id,
+    word: e.title?.trim() || "",
+    body: e.definition_or_thought?.trim() || "",
+    author: author ? `— ${author}` : "",
+    role,
+  };
+}
 
-  const featured: FeaturedWritingItem[] = unwrapList(raw).map((a) => {
+export default async function WritingRoomPage() {
+  const [rawArticles, rawFeaturedDict, rawDict] = await Promise.all([
+    serverGet<Envelope<RawArticle>>("/articles", {
+      limit: 8,
+      status: "published",
+      sortBy: "published_at",
+      order: "DESC",
+    }),
+    serverGet<Envelope<RawDictionaryEntry>>("/dictionary/featured", {
+      limit: 6,
+    }),
+    serverGet<Envelope<RawDictionaryEntry>>("/dictionary", { limit: 6 }),
+  ]);
+
+  const featured: FeaturedWritingItem[] = unwrapList(rawArticles).map((a) => {
     const ref = a.cover_image?.trim();
     const cover =
       ref && isUsableArticleMediaRef(ref)
@@ -66,5 +108,18 @@ export default async function WritingRoomPage() {
     };
   });
 
-  return <WritingRoomContent featured={featured} />;
+  // Prefer curated/featured dictionary entries; fall back to the
+  // general approved list so the section still has content while the
+  // editorial team is building up the feature set.
+  const featuredDict = unwrapList(rawFeaturedDict);
+  const dictionarySource =
+    featuredDict.length > 0 ? featuredDict : unwrapList(rawDict);
+  const dictionary: DictionaryItem[] = dictionarySource
+    .slice(0, 6)
+    .map(mapDictionaryEntry)
+    .filter((d) => d.word && d.body);
+
+  return (
+    <WritingRoomContent featured={featured} dictionary={dictionary} />
+  );
 }
