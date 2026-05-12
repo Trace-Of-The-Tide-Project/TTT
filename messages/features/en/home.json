@@ -286,7 +286,24 @@
       "joinHeading": "Join the Room",
       "joinBody": "Whether you write daily or are just beginning — there's a place for you here.",
       "applyResidency": "Apply for Residency",
-      "joinWorkshop": "Join a Workshop"
+      "joinWorkshop": "Join a Workshop",
+      "modal": {
+        "descriptionHeading": "Workshop Description",
+        "doHeading": "What You'll Do...",
+        "doItems": [
+          "Daily writing prompts",
+          "Peer feedback circles",
+          "One-on-one review with facilitator"
+        ],
+        "gainHeading": "What You'll Gain...",
+        "gainItems": [
+          "Sharper prose instincts",
+          "A portfolio of polished sentences",
+          "Community of practice"
+        ],
+        "apply": "Apply Now",
+        "close": "Close"
+      }
     }
   }
 }

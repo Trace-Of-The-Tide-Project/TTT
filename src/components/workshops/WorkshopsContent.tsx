@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
+import { WorkshopModal } from "@/components/workshops/WorkshopModal";
 
 const HERO_ICON = "/images/writing-room/workshops-icon.svg";
 const JOIN_ROOM_ICON = "/images/writing-room/join-room-icon.svg";
@@ -44,6 +45,11 @@ export function WorkshopsContent() {
   // copy four times — render four placeholder slots with the same
   // localized strings so the layout matches the Figma exactly.
   const cards = [0, 1, 2, 3];
+
+  // Modal open state hoisted here so all four cards share a single
+  // modal instance (lighter mount, also makes the dialog state
+  // reactable from elsewhere if needed later).
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <main
@@ -208,6 +214,7 @@ export function WorkshopsContent() {
                   body={t("cardBody")}
                   chips={[t("chipDuration"), t("chipFormat")]}
                   ctaLabel={t("explore")}
+                  onExplore={() => setModalOpen(true)}
                 />
               </li>
             ))}
@@ -558,6 +565,14 @@ export function WorkshopsContent() {
           </div>
         </section>
       </div>
+
+      <WorkshopModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={t("cardTitle")}
+        body={t("cardBody")}
+        chips={[t("chipDuration"), t("chipFormat")]}
+      />
     </main>
   );
 }
@@ -569,11 +584,13 @@ function WorkshopCard({
   body,
   chips,
   ctaLabel,
+  onExplore,
 }: {
   title: string;
   body: string;
   chips: string[];
   ctaLabel: string;
+  onExplore: () => void;
 }) {
   return (
     <article
@@ -665,10 +682,11 @@ function WorkshopCard({
         ))}
       </div>
 
-      {/* Gold "Explore →" text link per Figma — color from the
-          brand gold var, no button background. */}
+      {/* Gold "Explore →" text link per Figma — opens the workshop
+          detail modal. */}
       <button
         type="button"
+        onClick={onExplore}
         className="inline-flex items-center self-start transition-opacity hover:opacity-80"
         style={{
           gap: "clamp(8px, 0.4vw, 18px)",
