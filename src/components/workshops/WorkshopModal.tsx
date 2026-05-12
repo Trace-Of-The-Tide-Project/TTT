@@ -8,6 +8,9 @@ import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 type Props = {
   open: boolean;
   onClose: () => void;
+  /** Fired when the user clicks "Apply Now" — the host typically
+   * closes this modal and opens the JoinWorkshopModal form. */
+  onApply: () => void;
   title: string;
   body: string;
   chips: string[];
@@ -26,7 +29,14 @@ type Props = {
  * Sizes use fluid clamp() so the modal stays at the Figma 757px
  * intrinsic on standard laptops, shrinks on mobile, and scales up
  * (modestly) on huge displays. All colors come from CSS vars. */
-export function WorkshopModal({ open, onClose, title, body, chips }: Props) {
+export function WorkshopModal({
+  open,
+  onClose,
+  onApply,
+  title,
+  body,
+  chips,
+}: Props) {
   const t = useTranslations("Home.workshops.modal");
   const titleId = useId();
   const descId = useId();
@@ -255,6 +265,7 @@ export function WorkshopModal({ open, onClose, title, body, chips }: Props) {
         >
           <button
             type="button"
+            onClick={onApply}
             className="flex-1 transition-opacity hover:opacity-90"
             style={{
               height: "clamp(40px, 0.7vw + 1.5rem, 64px)",
@@ -271,6 +282,7 @@ export function WorkshopModal({ open, onClose, title, body, chips }: Props) {
               lineHeight: 1.4,
               letterSpacing: "-0.005em",
               border: "none",
+              cursor: "pointer",
             }}
           >
             {t("apply")}

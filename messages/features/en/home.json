@@ -303,6 +303,19 @@
         ],
         "apply": "Apply Now",
         "close": "Close"
+      },
+      "joinModal": {
+        "title": "Join Workshop...",
+        "subtitle": "Tell us about yourself to reserve your spot.",
+        "nameLabel": "Name",
+        "namePlaceholder": "Name",
+        "emailLabel": "Email",
+        "emailPlaceholder": "email",
+        "experienceLabel": "Experience Level",
+        "experiencePlaceholder": "experience level",
+        "apply": "Apply Now",
+        "cancel": "Cancel",
+        "close": "Close"
       }
     }
   }

@@ -8,6 +8,7 @@ import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import { WorkshopModal } from "@/components/workshops/WorkshopModal";
+import { JoinWorkshopModal } from "@/components/workshops/JoinWorkshopModal";
 
 const HERO_ICON = "/images/writing-room/workshops-icon.svg";
 const JOIN_ROOM_ICON = "/images/writing-room/join-room-icon.svg";
@@ -47,9 +48,11 @@ export function WorkshopsContent() {
   const cards = [0, 1, 2, 3];
 
   // Modal open state hoisted here so all four cards share a single
-  // modal instance (lighter mount, also makes the dialog state
-  // reactable from elsewhere if needed later).
-  const [modalOpen, setModalOpen] = useState(false);
+  // modal instance. The detail modal's Apply Now switches the user
+  // into the reservation form, so we track both flags from one
+  // place and keep transitions clean.
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [joinOpen, setJoinOpen] = useState(false);
 
   return (
     <main
@@ -214,7 +217,7 @@ export function WorkshopsContent() {
                   body={t("cardBody")}
                   chips={[t("chipDuration"), t("chipFormat")]}
                   ctaLabel={t("explore")}
-                  onExplore={() => setModalOpen(true)}
+                  onExplore={() => setDetailOpen(true)}
                 />
               </li>
             ))}
@@ -567,11 +570,19 @@ export function WorkshopsContent() {
       </div>
 
       <WorkshopModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={detailOpen}
+        onClose={() => setDetailOpen(false)}
+        onApply={() => {
+          setDetailOpen(false);
+          setJoinOpen(true);
+        }}
         title={t("cardTitle")}
         body={t("cardBody")}
         chips={[t("chipDuration"), t("chipFormat")]}
+      />
+      <JoinWorkshopModal
+        open={joinOpen}
+        onClose={() => setJoinOpen(false)}
       />
     </main>
   );
