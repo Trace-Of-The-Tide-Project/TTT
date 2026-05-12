@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -359,7 +360,7 @@ export function WritingRoomContent({
         <section
           aria-labelledby="join-room-heading"
           className="mt-16 flex flex-col items-center text-center"
-          style={{ gap: "16px" }}
+          style={{ gap: "26px" }}
         >
           <span
             aria-hidden
@@ -381,7 +382,7 @@ export function WritingRoomContent({
               fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
               fontWeight: 500,
               fontSize: "24px",
-              lineHeight: "32px",
+              lineHeight: "26px",
               color: "var(--tott-home-text-strong)",
               margin: 0,
             }}
@@ -478,7 +479,7 @@ function ExperienceCard({
       style={{
         maxWidth: "322px",
         padding: "24px 40px",
-        gap: "16px",
+        gap: "26px",
       }}
     >
       <ChamferedFrame size={24} borderColor="var(--tott-card-border)" />
@@ -528,7 +529,7 @@ function ExperienceCard({
           style={{
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 500,
-            fontSize: "16px",
+            fontSize: "26px",
             lineHeight: "24px",
             letterSpacing: "-0.01em",
             color: "var(--tott-home-text-strong)",
@@ -624,7 +625,7 @@ function DictionaryCard({
       style={{
         maxWidth: "410px",
         padding: "24px 40px",
-        gap: "16px",
+        gap: "26px",
       }}
     >
       <ChamferedFrame size={24} borderColor="var(--tott-card-border)" />
@@ -657,7 +658,7 @@ function DictionaryCard({
               fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
               fontWeight: 500,
               fontSize: "24px",
-              lineHeight: "32px",
+              lineHeight: "26px",
               color: "var(--tott-home-text-strong)",
               margin: 0,
             }}
@@ -695,7 +696,7 @@ function DictionaryCard({
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 500,
             fontSize: "12px",
-            lineHeight: "16px",
+            lineHeight: "26px",
             letterSpacing: "0.04em",
             color: "var(--tott-home-text-muted)",
             margin: 0,
@@ -712,13 +713,35 @@ function DictionaryCard({
 
 // ─── Discover Featured Writing ───────────────────────────────────
 
+// Card geometry for the xl carousel — a 276px-wide silk hex with an
+// 8px gap between cards. STEP is the per-click translation distance
+// (one card width + one gap), used by the prev/next arrows.
+const CAROUSEL_CARD_WIDTH = 276;
+const CAROUSEL_GAP = 8;
+const CAROUSEL_STEP = CAROUSEL_CARD_WIDTH + CAROUSEL_GAP;
+// Width of the central 4-card "window" — used both as the
+// reference point for centring the active 4 cards in the
+// viewport and as the reach measurement that the ghost gradients
+// fade across.
+const CARDS_WINDOW_WIDTH =
+  4 * CAROUSEL_CARD_WIDTH + 3 * CAROUSEL_GAP;
+const CAROUSEL_TRANSITION_MS = 400;
+// Width of the "ghost" gradient strips overlaid on each end of the
+// carousel — these mask the next/previous hexagon as it peeks in
+// from off-screen, fading it out so it reads as a hint rather than
+// a fully visible card.
+const GHOST_WIDTH = 138;
+
 /** Mirrors the home "Follow our Writers" section (see
  * `MagazineEditorialBoard`): same 18px IBM Plex heading, same
  * Image-2.png silk hex card with Icon-4.svg top glyph + bottom-fade
- * overlay + edition chip, same responsive grid (mobile/sm/lg) →
- * flex-with-side-fillers (xl+) layout. The only Writing-Room-specific
- * difference is that each card is wrapped in a Link to /books/{slug},
- * and the row keeps its "want to engage?" → Reading Room CTA below. */
+ * overlay + edition chip. On xl viewports it breaks out of the
+ * page's 1280px container to span the full screen and behaves as a
+ * circular gallery: 4 hexes are fully visible in the center, two
+ * "ghost" hexes peek in from each edge under the gradient masks,
+ * and the prev/next arrows rotate the row by one card so a hidden
+ * hex slides into view while a new one ghosts in on the other side.
+ * Below xl it falls back to a static responsive grid. */
 function FeaturedWritingRow({
   items,
   heading,
@@ -736,6 +759,82 @@ function FeaturedWritingRow({
   wantToEngage: string;
   visitReadingRoom: string;
 }) {
+  // Circular carousel state — same pattern as the home
+  // "Recent Collaporations" gallery (see MagazineSupport.tsx).
+  // The row renders three identical strips of items: pre-clones,
+  // the real strip, and post-clones. `position` indexes the visual
+  // position in the real strip and is allowed to briefly take the
+  // out-of-range values -1 (trailing pre-clone) or itemCount
+  // (leading post-clone) during a wrap so the slide can play out
+  // naturally; a setTimeout fires after the transition completes,
+  // silently snaps `position` back into [0, itemCount-1] with the
+  // transition disabled for one render, and the loop continues —
+  // no visible jump at the seam.
+  const itemCount = items.length;
+  const visible = 4;
+  const hasCarousel = itemCount > visible;
+  const [position, setPosition] = useState(0);
+  const [animate, setAnimate] = useState(true);
+  const wrapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Reset state if the items list size changes under us.
+  useEffect(() => {
+    setPosition((p) => (p >= itemCount || p < 0 ? 0 : p));
+  }, [itemCount]);
+
+  // Clean up any pending wrap timer when the component unmounts so
+  // we don't fire setState on a dead instance.
+  useEffect(() => {
+    return () => {
+      if (wrapTimer.current) clearTimeout(wrapTimer.current);
+    };
+  }, []);
+
+  const goNext = () => {
+    if (!hasCarousel) return;
+    if (wrapTimer.current) return;
+    if (position >= itemCount - 1) {
+      // Animate forward into the leading post-clone of items[0],
+      // then snap back to the canonical position 0 with the
+      // transition disabled so the user sees no jump.
+      setPosition(itemCount);
+      wrapTimer.current = setTimeout(() => {
+        setAnimate(false);
+        setPosition(0);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setAnimate(true);
+            wrapTimer.current = null;
+          });
+        });
+      }, CAROUSEL_TRANSITION_MS);
+    } else {
+      setPosition((p) => p + 1);
+    }
+  };
+
+  const goPrev = () => {
+    if (!hasCarousel) return;
+    if (wrapTimer.current) return;
+    if (position <= 0) {
+      // Animate backward into the trailing pre-clone of the last
+      // item, then snap to itemCount-1 silently.
+      setPosition(-1);
+      wrapTimer.current = setTimeout(() => {
+        setAnimate(false);
+        setPosition(itemCount - 1);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setAnimate(true);
+            wrapTimer.current = null;
+          });
+        });
+      }, CAROUSEL_TRANSITION_MS);
+    } else {
+      setPosition((p) => p - 1);
+    }
+  };
+
   return (
     <section aria-label={heading} className="mt-12">
       <header className="flex items-center" style={{ gap: "24px" }}>
@@ -755,67 +854,233 @@ function FeaturedWritingRow({
         </div>
       </header>
 
-      <div className="relative mt-8 overflow-hidden">
-        {/* Mobile / tablet / lg — responsive grid (no fillers). */}
-        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 xl:hidden">
-          {items.slice(0, 4).map((item) => (
-            <div key={item.id} className="flex justify-center">
-              <FeaturedWritingCard
-                item={item}
-                cardTitleFallback={cardTitleFallback}
-                cardAuthorFallback={cardAuthorFallback}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* xl — flex row with side fillers. */}
-        <div
-          className="hidden items-start justify-center xl:flex"
-          style={{ gap: "8px" }}
-        >
-          <div
-            aria-hidden
-            className="shrink-0"
-            style={{ width: "138px", height: "294px", position: "relative" }}
-          >
-            <Image
-              src={FILLER}
-              alt=""
-              fill
-              className="select-none object-cover"
-              style={{
-                transform: "scaleX(-1)",
-                filter: "var(--tott-image-invert)",
-              }}
-              sizes="138px"
-              draggable={false}
-            />
-          </div>
-          {items.slice(0, 4).map((item) => (
+      {/* Mobile / tablet / lg — responsive grid (no carousel). */}
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 xl:hidden">
+        {items.slice(0, 4).map((item) => (
+          <div key={item.id} className="flex justify-center">
             <FeaturedWritingCard
-              key={`d-${item.id}`}
               item={item}
               cardTitleFallback={cardTitleFallback}
               cardAuthorFallback={cardAuthorFallback}
             />
-          ))}
-          <div
-            aria-hidden
-            className="shrink-0"
-            style={{ width: "138px", height: "294px", position: "relative" }}
-          >
-            <Image
-              src={FILLER}
-              alt=""
-              fill
-              className="select-none object-cover"
-              style={{ filter: "var(--tott-image-invert)" }}
-              sizes="138px"
-              draggable={false}
-            />
           </div>
+        ))}
+      </div>
+
+      {/* xl+ — full-bleed circular gallery. The wrapper breaks out
+          of the parent's max-w-[1280px] container so the row spans
+          the full viewport (the page <main> already sets
+          overflow-x-hidden, so the breakout doesn't introduce a
+          horizontal scrollbar). The inner row uses the same
+          three-strip pattern as the home "Recent Collaporations"
+          carousel: items rendered three times (pre + real + post).
+          The translate formula `50% - half-window - (itemCount +
+          position) * STEP` keeps real[position] aligned with the
+          left edge of the central 4-card window. When position
+          briefly enters the post-clone range (== itemCount) or
+          pre-clone range (== -1), the slide animates naturally and
+          we snap back to the canonical index after the transition
+          finishes — the seam is invisible. */}
+      <div
+        className="relative mt-8 hidden overflow-hidden xl:block"
+        style={{
+          width: "100vw",
+          marginLeft: "calc(50% - 50vw)",
+          marginRight: "calc(50% - 50vw)",
+        }}
+      >
+        {/* Inner clipping window — restricts the visible cards to the
+            central 4-card window. Cards slide within this box; the
+            side areas around it stay completely static so no partial
+            hex peeks under the FILLER ghosts. */}
+        <div
+          className="relative mx-auto overflow-hidden"
+          style={{ width: `${CARDS_WINDOW_WIDTH}px` }}
+        >
+        <div
+          className="relative flex items-start"
+          style={{
+            gap: `${CAROUSEL_GAP}px`,
+            transform: hasCarousel
+              ? `translateX(-${
+                  (itemCount + position) * CAROUSEL_STEP
+                }px)`
+              : undefined,
+            transition: animate
+              ? `transform ${CAROUSEL_TRANSITION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`
+              : "none",
+            justifyContent: hasCarousel ? "flex-start" : "center",
+          }}
+        >
+          {hasCarousel ? (
+            <>
+              {/* Pre-clone strip — items rendered once before the
+                  real strip so position can dip to -1 (trailing
+                  pre-clone of the last item) without exposing an
+                  empty edge. */}
+              {items.map((item) => (
+                <FeaturedWritingCard
+                  key={`pre-${item.id}`}
+                  item={item}
+                  cardTitleFallback={cardTitleFallback}
+                  cardAuthorFallback={cardAuthorFallback}
+                />
+              ))}
+              {/* Real strip — the canonical position 0..itemCount-1
+                  lives here. */}
+              {items.map((item) => (
+                <FeaturedWritingCard
+                  key={`real-${item.id}`}
+                  item={item}
+                  cardTitleFallback={cardTitleFallback}
+                  cardAuthorFallback={cardAuthorFallback}
+                />
+              ))}
+              {/* Post-clone strip — lets position climb to
+                  itemCount (leading post-clone of items[0]) before
+                  the snap back to 0. */}
+              {items.map((item) => (
+                <FeaturedWritingCard
+                  key={`post-${item.id}`}
+                  item={item}
+                  cardTitleFallback={cardTitleFallback}
+                  cardAuthorFallback={cardAuthorFallback}
+                />
+              ))}
+            </>
+          ) : (
+            items.map((item) => (
+              <FeaturedWritingCard
+                key={`d-${item.id}`}
+                item={item}
+                cardTitleFallback={cardTitleFallback}
+                cardAuthorFallback={cardAuthorFallback}
+              />
+            ))
+          )}
         </div>
+        </div>
+
+        {/* Left ghost gradient — Content Grid Filler.png mirrored
+            (scaleX(-1)) so the gradient fades from the screen edge
+            inward. Sits above the cards at z-10 so a hex sliding
+            under it appears as a ghost. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute top-0 z-10"
+          style={{
+            left: "26px",
+            width: `${GHOST_WIDTH}px`,
+            height: "294px",
+          }}
+        >
+          <Image
+            src={FILLER}
+            alt=""
+            fill
+            className="select-none object-cover"
+            style={{
+              transform: "scaleX(-1)",
+              filter: "var(--tott-image-invert)",
+            }}
+            sizes={`${GHOST_WIDTH}px`}
+            draggable={false}
+          />
+        </div>
+
+        {/* Right ghost — same FILLER, no flip. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute top-0 z-10"
+          style={{
+            right: "26px",
+            width: `${GHOST_WIDTH}px`,
+            height: "294px",
+          }}
+        >
+          <Image
+            src={FILLER}
+            alt=""
+            fill
+            className="select-none object-cover"
+            style={{ filter: "var(--tott-image-invert)" }}
+            sizes={`${GHOST_WIDTH}px`}
+            draggable={false}
+          />
+        </div>
+
+        {/* Prev / Next nav arrows — only render when there are
+            extra items beyond the 4 visible. Sit above the ghost
+            gradients at z-20, vertically centered over the 294px
+            card row (top: (294-40)/2 = 127). The carousel is
+            circular, so neither button is ever disabled — clicking
+            past the end loops back to the start. */}
+        {hasCarousel ? (
+          <>
+            <button
+              type="button"
+              onClick={goPrev}
+              aria-label="Previous"
+              className="absolute z-20 flex items-center justify-center transition-opacity hover:opacity-80"
+              style={{
+                width: "40px",
+                height: "40px",
+                left: "24px",
+                top: "127px",
+                borderRadius: "999px",
+                backgroundColor: "var(--tott-panel-bg)",
+                border: "1px solid var(--tott-card-border)",
+                color: "var(--tott-home-text-strong)",
+                boxShadow: "0px 1px 3px rgba(23, 23, 23, 0.4)",
+              }}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="11 6 5 12 11 18" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={goNext}
+              aria-label="Next"
+              className="absolute z-20 flex items-center justify-center transition-opacity hover:opacity-80"
+              style={{
+                width: "40px",
+                height: "40px",
+                right: "24px",
+                top: "127px",
+                borderRadius: "999px",
+                backgroundColor: "var(--tott-panel-bg)",
+                border: "1px solid var(--tott-card-border)",
+                color: "var(--tott-home-text-strong)",
+                boxShadow: "0px 1px 3px rgba(23, 23, 23, 0.4)",
+              }}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="13 6 19 12 13 18" />
+              </svg>
+            </button>
+          </>
+        ) : null}
       </div>
 
       <div
@@ -952,8 +1217,8 @@ function FeaturedWritingCard({
             <span
               className="flex items-center justify-center"
               style={{
-                width: "16px",
-                height: "16px",
+                width: "26px",
+                height: "26px",
                 background: "var(--tott-dash-gold-text)",
                 border: "1px solid var(--tott-card-border)",
                 borderRadius: "999px",
@@ -971,7 +1236,7 @@ function FeaturedWritingCard({
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 400,
                 fontSize: "12px",
-                lineHeight: "16px",
+                lineHeight: "26px",
                 color: "var(--tott-home-text-heading)",
                 textShadow: "var(--tott-home-text-shadow)",
               }}
@@ -996,7 +1261,7 @@ function FeaturedWritingCard({
           fontFamily: "'Inter', var(--font-sans, sans-serif)",
           fontWeight: 500,
           fontSize: "12px",
-          lineHeight: "16px",
+          lineHeight: "26px",
           clipPath: CHIP_CHAMFER,
           WebkitClipPath: CHIP_CHAMFER,
         }}
