@@ -53,12 +53,16 @@ type Experience = {
    * gradient + inner shadow) drop in directly. */
   iconSrc?: string;
   icon?: React.ReactNode;
+  /** When set, the Enter CTA renders as an internal Link instead
+   * of a plain button. */
+  href?: string;
 };
 
 const EXPERIENCES: Experience[] = [
   {
     key: "exp1",
     iconSrc: "/images/writing-room/workshops-icon.svg",
+    href: "/writing-room/workshops",
   },
   {
     key: "exp2",
@@ -216,6 +220,7 @@ export function WritingRoomContent({
                 <ExperienceCard
                   icon={e.icon}
                   iconSrc={e.iconSrc}
+                  href={e.href}
                   title={t(`${e.key}Title`)}
                   body={t(`${e.key}Body`)}
                   ctaLabel={t("expEnter")}
@@ -478,8 +483,8 @@ export function WritingRoomContent({
               {t("applyResidency")}
             </button>
             {/* Secondary — dark pill "Join a Workshop". */}
-            <button
-              type="button"
+            <Link
+              href="/writing-room/workshops"
               className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
               style={{
                 height: "40px",
@@ -493,11 +498,10 @@ export function WritingRoomContent({
                 fontSize: "14px",
                 lineHeight: "20px",
                 letterSpacing: "-0.005em",
-                border: "none",
               }}
             >
               {t("joinWorkshop")}
-            </button>
+            </Link>
           </div>
           </div>
         </section>
@@ -525,16 +529,58 @@ export function WritingRoomContent({
 function ExperienceCard({
   icon,
   iconSrc,
+  href,
   title,
   body,
   ctaLabel,
 }: {
   icon?: React.ReactNode;
   iconSrc?: string;
+  href?: string;
   title: string;
   body: string;
   ctaLabel: string;
 }) {
+  const ctaStyle = {
+    height: "40px",
+    padding: "8px 16px",
+    gap: "8px",
+    borderRadius: "8px",
+    backgroundColor: "var(--tott-magazine-btn-bg)",
+    boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
+    color: "var(--tott-auth-btn-text)",
+    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+    fontWeight: 500,
+    fontSize: "14px",
+    lineHeight: "20px",
+    letterSpacing: "-0.005em",
+    border: "none",
+  } as const;
+
+  const ctaInner = (
+    <>
+      {ctaLabel}
+      <span
+        aria-hidden
+        className="inline-flex items-center justify-center"
+        style={{ width: "20px", height: "20px" }}
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="13 6 19 12 13 18" />
+        </svg>
+      </span>
+    </>
+  );
   return (
     <article
       className="relative flex w-full flex-col items-center min-[1600px]:max-w-[400px]! min-[1600px]:gap-9!"
@@ -619,47 +665,25 @@ function ExperienceCard({
         </p>
       </div>
 
-      {/* Gold "Enter" pill with trailing arrow */}
-      <button
-        type="button"
-        className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
-        style={{
-          height: "40px",
-          padding: "8px 16px",
-          gap: "8px",
-          borderRadius: "8px",
-          backgroundColor: "var(--tott-magazine-btn-bg)",
-          boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
-          color: "var(--tott-auth-btn-text)",
-          fontFamily: "'Inter', var(--font-sans, sans-serif)",
-          fontWeight: 500,
-          fontSize: "14px",
-          lineHeight: "20px",
-          letterSpacing: "-0.005em",
-          border: "none",
-        }}
-      >
-        {ctaLabel}
-        <span
-          aria-hidden
-          className="inline-flex items-center justify-center"
-          style={{ width: "20px", height: "20px" }}
+      {/* Gold "Enter" pill with trailing arrow — Link when an
+          href is supplied, plain button otherwise. */}
+      {href ? (
+        <Link
+          href={href}
+          className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
+          style={ctaStyle}
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="13 6 19 12 13 18" />
-          </svg>
-        </span>
-      </button>
+          {ctaInner}
+        </Link>
+      ) : (
+        <button
+          type="button"
+          className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
+          style={ctaStyle}
+        >
+          {ctaInner}
+        </button>
+      )}
     </article>
   );
 }

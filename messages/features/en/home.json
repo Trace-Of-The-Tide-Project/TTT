@@ -268,6 +268,25 @@
         "contactLink": "Contact us",
         "error": "Couldn't submit your note. Please try again."
       }
+    },
+    "workshops": {
+      "heroTitle": "Workshops",
+      "heroSubtitle": "Guided sessions to explore, practice, and grow your writing.",
+      "heroBody": "A structured yet open space where writing is practiced through prompts, feedback, and shared exploration.",
+      "currentHeading": "Current & Upcoming",
+      "cardTitle": "The Shape of a Sentence",
+      "cardBody": "A focused session on rhythm, structure, and the musicality of prose. Learn how to build sentences that breathe.",
+      "chipDuration": "8 Weeks",
+      "chipFormat": "Online",
+      "explore": "Explore",
+      "backToWritingRoom": "Back to Writing Room",
+      "galleryAlt": "A glimpse from a recent workshop",
+      "prev": "Previous",
+      "next": "Next",
+      "joinHeading": "Join the Room",
+      "joinBody": "Whether you write daily or are just beginning — there's a place for you here.",
+      "applyResidency": "Apply for Residency",
+      "joinWorkshop": "Join a Workshop"
     }
   }
 }
