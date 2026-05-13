@@ -291,15 +291,12 @@ export function OpenEncountersContent() {
           >
             <span
               aria-hidden
-              className="pointer-events-none absolute"
+              // Only render the connecting vertical line at sm+
+              // where the leading calendar icons are visible —
+              // below sm the icons are hidden to free up screen
+              // real-estate, so the line would float in space.
+              className="pointer-events-none absolute hidden sm:block"
               style={{
-                // Center the 1px line through the calendar-icon
-                // column — `left` exactly tracks half the icon's
-                // fluid width so the line always passes through
-                // the icon center at every viewport. Top/bottom
-                // inset = roughly half of row height so the line
-                // begins at the first icon's center and ends at
-                // the last icon's center.
                 left:
                   "calc(clamp(28px, 0.3vw + 1.75rem, 64px) / 2 - 0.5px)",
                 top: "clamp(43px, 2.65vw + 1.875rem, 105px)",
@@ -681,16 +678,20 @@ function EventRow({
 }) {
   return (
     <article
-      className="relative flex flex-row items-center"
+      // On mobile the row stacks: image+content on top, chip+Join
+      // wraps to its own line below. sm+ keeps the full 4-column
+      // horizontal layout (icon → image → content → actions).
+      className="relative flex flex-row flex-wrap items-start sm:flex-nowrap sm:items-center"
       style={{
         gap: "clamp(12px, 0.8vw + 0.3rem, 32px)",
       }}
     >
-      {/* Leading calendar icon — 32×32 dark elevated square with
-          a 1px border, sits over the vertical line in the list. */}
+      {/* Leading calendar icon — 32×32 dark elevated square. The
+          icon column AND the connecting line are hidden below sm
+          to free up horizontal space on narrow screens. */}
       <span
         aria-hidden
-        className="relative shrink-0 inline-flex items-center justify-center"
+        className="relative hidden shrink-0 items-center justify-center sm:inline-flex"
         style={{
           width: "clamp(28px, 0.3vw + 1.75rem, 64px)",
           height: "clamp(28px, 0.3vw + 1.75rem, 64px)",
@@ -780,11 +781,12 @@ function EventRow({
         </p>
       </div>
 
-      {/* Right side — chip + Join link inline on one row per
-          Figma (chip on the left within this column, Join on the
-          right). */}
+      {/* Right side — chip + Join inline. On mobile this wraps
+          onto a new line below the content, taking full width
+          and right-aligning so the actions stay visually
+          anchored. On sm+ it sits inline at the right edge. */}
       <div
-        className="flex shrink-0 flex-row items-center"
+        className="flex w-full flex-row items-center justify-end sm:w-auto sm:shrink-0 sm:justify-start"
         style={{ gap: "clamp(8px, 0.5vw + 0.3rem, 24px)" }}
       >
         <span
