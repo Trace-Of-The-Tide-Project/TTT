@@ -54,33 +54,33 @@ export function EncounterDetailContent() {
             "Trip Info" frame. */}
         <section
           aria-label={t("title")}
-          className="relative w-full"
-          style={{
-            // Match the SVG's 1440×360 native aspect so the
-            // brand-exported chamfered shape renders 1:1.
-            aspectRatio: "1440 / 360",
-          }}
+          // Aspect ratio steps with the viewport: a near-square
+          // 4:3 on mobile so the Trip Info overlay has room to
+          // breathe, a wider 3:1 at sm, then the SVG's native
+          // 4:1 at md+ so the brand shape renders 1:1 on desktop.
+          className="relative w-full aspect-[4/3] sm:aspect-[3/1] md:aspect-[1440/360]"
         >
           <Image
             src={HERO_BG}
             alt=""
             fill
             sizes="(min-width: 1280px) 1440px, 95vw"
-            className="select-none object-contain"
+            // object-cover crops on mobile (where the aspect is
+            // taller than the SVG), object-contain on md+ where
+            // the aspect matches the SVG so the chamfered shape
+            // renders 1:1.
+            className="select-none object-cover md:object-contain"
             priority
           />
 
-          {/* Trip Info overlay panel — covers the bottom 196/440
-              ≈ 45% of the hero. Bottom-heavy dark gradient (Figma
-              `linear-gradient(0deg, surface 64% → 0%)`) layered
-              with a backdrop blur so the silk behind it blurs out
-              for legibility. */}
+          {/* Trip Info overlay panel — covers the bottom 55% on
+              mobile/sm (where the hero is taller), and the bottom
+              45% on md+ where the hero is the Figma 4:1 ratio. */}
           <div
-            className="absolute bottom-0 left-0 flex w-full flex-col justify-center"
+            className="absolute bottom-0 left-0 flex w-full flex-col justify-center h-[60%] sm:h-[55%] md:h-[45%]"
             style={{
-              height: "45%",
               padding:
-                "clamp(20px, 2.5vw + 0.5rem, 80px) clamp(20px, 6vw + 0.5rem, 220px)",
+                "clamp(16px, 2.5vw + 0.5rem, 80px) clamp(16px, 6vw + 0.5rem, 220px)",
               gap: "clamp(10px, 0.6vw + 0.3rem, 24px)",
               background:
                 "linear-gradient(0deg, color-mix(in srgb, var(--tott-home-surface) 64%, transparent) 0%, color-mix(in srgb, var(--tott-home-surface) 0%, transparent) 100%)",
@@ -263,13 +263,12 @@ export function EncounterDetailContent() {
             />
           </div>
 
-          {/* Right column — Book this Encounter form (~360px on
-              desktop, full-width below lg). Wrapped in a
-              ChamferedFrame per Figma. */}
-          <aside
-            className="w-full shrink-0"
-            style={{ maxWidth: "min(100%, clamp(280px, 24vw, 480px))" }}
-          >
+          {/* Right column — Book this Encounter form. Full-width
+              on small screens (when stacked below the main
+              content) and capped at ~480px on lg+ where it sits
+              beside the content. Wrapped in a ChamferedFrame
+              per Figma. */}
+          <aside className="w-full shrink-0 lg:max-w-[clamp(320px,28vw,480px)]">
             <form
               onSubmit={submit}
               className="relative flex flex-col"
@@ -771,15 +770,19 @@ function StatsRow({
         {items.map((it, i) => (
           <li
             key={it.label}
-            className="flex flex-col items-center text-center"
+            // Dividers only render at md+ where the 5-column row
+            // actually fits without wrapping; below md the grid
+            // is 2 or 3 columns and per-row left borders would
+            // look wrong on the wrapped items.
+            className={
+              i === 0
+                ? "flex flex-col items-center text-center"
+                : "flex flex-col items-center text-center md:[border-left:1px_solid_color-mix(in_srgb,var(--tott-home-text-strong)_8%,transparent)]"
+            }
             style={{
               gap: "clamp(6px, 0.3vw + 0.2rem, 16px)",
               padding:
                 "clamp(4px, 0.2vw, 12px) clamp(8px, 0.4vw + 0.2rem, 24px)",
-              borderLeft:
-                i === 0
-                  ? undefined
-                  : "1px solid color-mix(in srgb, var(--tott-home-text-strong) 8%, transparent)",
             }}
           >
           <span
@@ -925,8 +928,8 @@ function ScheduleCard({
             {title}
           </h3>
           <div
-            className="flex flex-row items-center"
-            style={{ gap: "clamp(12px, 0.6vw + 0.3rem, 24px)" }}
+            className="flex flex-row flex-wrap items-center"
+            style={{ gap: "clamp(8px, 0.4vw + 0.3rem, 24px)" }}
           >
             <ScheduleMeta icon="calendar" label={start} />
             <ScheduleMeta icon="clock" label={end} />
