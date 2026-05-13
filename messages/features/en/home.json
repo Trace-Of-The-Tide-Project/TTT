@@ -405,7 +405,55 @@
       "joinHeading": "Join the Room",
       "joinBody": "Whether you write daily or are just beginning — there's a place for you here.",
       "applyResidency": "Apply for Residency",
-      "joinWorkshop": "Join a Workshop"
+      "joinWorkshop": "Join a Workshop",
+      "encounter": {
+        "chipTalk": "Talk",
+        "chipWorkshops": "Workshops",
+        "title": "Encounter Title",
+        "location": "Location",
+        "stats": {
+          "dateLabel": "Date",
+          "dateValue": "August 15, 2025",
+          "durationLabel": "Duration",
+          "durationValue": "4 Hours",
+          "groupLabel": "Group size",
+          "groupValue": "6-12 poeple",
+          "languagesLabel": "Languages",
+          "languagesValue": "English, Arabic",
+          "locationLabel": "Location",
+          "locationValue": "USA"
+        },
+        "aboutHeading": "About this Encounter",
+        "aboutBody": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sodales sagittis tempor. Donec elementum ornare justo, nec feugiat lorem sodales eu. Ut tincidunt, velit eget faucibus auctor, leo metus porttitor ipsum, in lobortis nisl libero euismod nulla. Donec iaculis tincidunt lacinia. Vestibulum vel volutpat ante. Mauris rutrum enim vitae mi posuere, sit amet pulvinar enim ultrices. Vivamus efficitur quis vitae mauris vitae auctor.",
+        "highlightsHeading": "Trip highlights",
+        "highlights": [
+          "Lorem ipsum dolor sit amet elit.",
+          "Sed ac sapien tristique urna porta leo.",
+          "Quisque tempor felis a pretium.",
+          "Fusce suscipit felis ut quam bibendum.",
+          "Maecenas vel nulla nec leo tincidunt.",
+          "In tempor massa eget lobortis."
+        ],
+        "scheduleHeading": "Encounter schedule",
+        "scheduleStart": "March 10, 12:54",
+        "scheduleEnd": "1:30 PM",
+        "scheduleBody": "Lorem ipsum dolor sit amet adipiscing elit. Curabitur sodales sagittis tempor. Donec elementum ornare justo nec feugiat lorem sodales eu auctor odio metus.",
+        "scheduleLocation": "Lat: 48.66150, Lng: 7.85222",
+        "joinFormTitle": "Join this Encounter",
+        "joinFormSubtitle": "Secure your spot on this amazing journey!",
+        "joinFullNameLabel": "Full Name",
+        "joinFullNamePlaceholder": "e.g. Sahara El-Morocy",
+        "joinEmailLabel": "Email Address",
+        "joinEmailPlaceholder": "e.g. hi@email.com",
+        "joinMessageLabel": "Additional message",
+        "joinMessageOptional": "(Optional)",
+        "joinMessagePlaceholder": "Any requests or questions?",
+        "joinTipLabel": "Trip price:",
+        "joinTipFree": "Free",
+        "joinSubmit": "Book Now",
+        "joinDisclaimer": "By booking, you agree to our terms and conditions. You'll receive a confirmation email shortly.",
+        "backToWritingRoom": "Back to Writing Room"
+      }
     }
   }
 }

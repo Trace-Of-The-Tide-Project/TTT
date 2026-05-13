@@ -808,8 +808,8 @@ function EventRow({
         >
           {event.type}
         </span>
-        <button
-          type="button"
+        <Link
+          href="/writing-room/open-encounters/encounter"
           className="inline-flex items-center self-end transition-opacity hover:opacity-80"
           style={{
             gap: "clamp(6px, 0.3vw, 12px)",
@@ -819,10 +819,6 @@ function EventRow({
             fontSize: "clamp(0.875rem, 0.4vw + 0.45rem, 1.5rem)",
             lineHeight: 1.4,
             letterSpacing: "-0.005em",
-            background: "none",
-            border: "none",
-            padding: 0,
-            cursor: "pointer",
           }}
         >
           {joinLabel}
@@ -848,7 +844,7 @@ function EventRow({
               <polyline points="13 6 19 12 13 18" />
             </svg>
           </span>
-        </button>
+        </Link>
       </div>
     </article>
   );
