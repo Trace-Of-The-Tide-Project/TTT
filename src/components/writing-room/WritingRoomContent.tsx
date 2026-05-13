@@ -72,6 +72,7 @@ const EXPERIENCES: Experience[] = [
   {
     key: "exp3",
     iconSrc: "/images/writing-room/moon-icon.svg",
+    href: "/writing-room/open-encounters",
   },
 ];
 

@@ -363,6 +363,49 @@
         "contactLead": "If you have any questions",
         "contactLink": "Contact us"
       }
+    },
+    "openEncounters": {
+      "heroTitle": "Open Encounters",
+      "heroSubtitle": "Meet, talk, and think together — without structure.",
+      "heroBody": "Informal gatherings where writers and thinkers come together to exchange ideas freely. No agenda. No pressure. Just conversation.",
+      "upcomingHeading": "Upcoming",
+      "dateRangeFrom": "From 2025",
+      "dateRangeTo": "to 2025",
+      "events": [
+        {
+          "date": "NOVEMBER 2, 1944",
+          "title": "On Silence and Writing",
+          "body": "Lorem ipsum dolor sit amet adipiscing elit suscipit aliquam et tellus sit sapien porttitor purus.",
+          "type": "Meetup"
+        },
+        {
+          "date": "NOVEMBER 2, 1944",
+          "title": "On Silence and Writing",
+          "body": "Lorem ipsum dolor sit amet adipiscing elit suscipit aliquam et tellus sit sapien porttitor purus.",
+          "type": "Discussion"
+        },
+        {
+          "date": "NOVEMBER 2, 1944",
+          "title": "On Silence and Writing",
+          "body": "Lorem ipsum dolor sit amet adipiscing elit suscipit aliquam et tellus sit sapien porttitor purus.",
+          "type": "Discussion"
+        },
+        {
+          "date": "NOVEMBER 2, 1944",
+          "title": "On Silence and Writing",
+          "body": "Lorem ipsum dolor sit amet adipiscing elit suscipit aliquam et tellus sit sapien porttitor purus.",
+          "type": "Discussion"
+        }
+      ],
+      "join": "Join",
+      "backToWritingRoom": "Back to Writing Room",
+      "galleryAlt": "A glimpse from a recent open encounter",
+      "prev": "Previous",
+      "next": "Next",
+      "joinHeading": "Join the Room",
+      "joinBody": "Whether you write daily or are just beginning — there's a place for you here.",
+      "applyResidency": "Apply for Residency",
+      "joinWorkshop": "Join a Workshop"
     }
   }
 }
