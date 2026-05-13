@@ -4,6 +4,8 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
+import { HeadsetIcon } from "@/components/ui/icons";
+import { Link } from "@/i18n/navigation";
 
 type Props = {
   open: boolean;
@@ -25,6 +27,9 @@ export function ApplyResidencyModal({ open, onClose, onSubmitted }: Props) {
   const [email, setEmail] = useState("");
   const [why, setWhy] = useState("");
   const [working, setWorking] = useState("");
+  // Submitted flag swaps the form view for the success view
+  // (Figma "Modal-7") while keeping the same modal shell open.
+  const [submitted, setSubmitted] = useState(false);
   const nameRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -33,6 +38,7 @@ export function ApplyResidencyModal({ open, onClose, onSubmitted }: Props) {
     setEmail("");
     setWhy("");
     setWorking("");
+    setSubmitted(false);
     const id = window.setTimeout(() => nameRef.current?.focus(), 50);
     return () => window.clearTimeout(id);
   }, [open]);
@@ -57,8 +63,9 @@ export function ApplyResidencyModal({ open, onClose, onSubmitted }: Props) {
     e.preventDefault();
     // No backend yet — the residency-applications endpoint will
     // POST { name, email, why, working } from here once it exists.
+    // Swap to the success view; the user can close it themselves.
+    setSubmitted(true);
     onSubmitted?.();
-    onClose();
   };
 
   const canSubmit =
@@ -97,6 +104,14 @@ export function ApplyResidencyModal({ open, onClose, onSubmitted }: Props) {
           overflow: "hidden",
         }}
       >
+        {submitted ? (
+          <SuccessView
+            titleId={titleId}
+            descId={descId}
+            onClose={onClose}
+          />
+        ) : (
+          <>
         {/* ── Header band ─────────────────────────────────────── */}
         <div
           className="flex flex-row items-center"
@@ -300,6 +315,8 @@ export function ApplyResidencyModal({ open, onClose, onSubmitted }: Props) {
             {t("cancel")}
           </button>
         </div>
+          </>
+        )}
       </form>
     </div>,
     document.body,
@@ -353,3 +370,164 @@ const inputStyle: React.CSSProperties = {
   letterSpacing: "-0.005em",
   outline: "none",
 };
+
+// ─── Success state (Modal-7) ───────────────────────────────────
+
+/** Confirmation view shown after a successful submit. Replaces the
+ * three-band form with a single centered column: green-tinted check
+ * badge, success heading, supporting copy, dark "Back to Writing
+ * Room" pill that returns to /writing-room, and a muted
+ * "If you have any questions — Contact us" footer. */
+function SuccessView({
+  titleId,
+  descId,
+  onClose,
+}: {
+  titleId: string;
+  descId: string;
+  onClose: () => void;
+}) {
+  const t = useTranslations("Home.residency.applyModal");
+
+  return (
+    <div
+      className="flex flex-col items-center text-center"
+      style={{
+        padding:
+          "clamp(40px, 2vw + 1rem, 80px) clamp(24px, 2vw + 0.5rem, 64px) clamp(28px, 2vw + 0.5rem, 64px)",
+        gap: "clamp(12px, 0.6vw + 0.4rem, 24px)",
+        backgroundColor: "var(--tott-home-surface)",
+      }}
+    >
+      {/* Green check badge — same color recipe as the
+          SubmitNoteModal success view so both confirmations read
+          as one system. */}
+      <span
+        aria-hidden
+        className="inline-flex shrink-0 items-center justify-center"
+        style={{
+          width: "clamp(48px, 1vw + 2rem, 80px)",
+          height: "clamp(48px, 1vw + 2rem, 80px)",
+          borderRadius: "999px",
+          backgroundColor:
+            "color-mix(in srgb, var(--tott-dash-positive) 28%, var(--tott-panel-bg))",
+          color: "var(--tott-dash-positive)",
+          marginBottom: "8px",
+        }}
+      >
+        <svg
+          width="56%"
+          height="56%"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2.25}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      </span>
+
+      <h2
+        id={titleId}
+        style={{
+          fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+          fontWeight: 600,
+          fontSize: "clamp(1.125rem, 0.7vw + 0.6rem, 2.25rem)",
+          lineHeight: 1.3,
+          color: "var(--tott-home-text-strong)",
+          margin: 0,
+          textShadow: "var(--tott-home-text-shadow)",
+        }}
+      >
+        {t("successTitle")}
+      </h2>
+
+      <p
+        id={descId}
+        style={{
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 400,
+          fontSize: "clamp(0.875rem, 0.3vw + 0.5rem, 1.25rem)",
+          lineHeight: 1.55,
+          letterSpacing: "-0.005em",
+          color: "var(--tott-home-text-muted)",
+          margin: 0,
+          maxWidth: "clamp(280px, 32vw, 720px)",
+        }}
+      >
+        {t("successBody")}
+      </p>
+
+      <Link
+        href="/writing-room"
+        onClick={onClose}
+        className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
+        style={{
+          marginTop: "clamp(8px, 0.4vw + 0.2rem, 20px)",
+          height: "clamp(40px, 0.7vw + 1.5rem, 64px)",
+          padding:
+            "clamp(8px, 0.3vw + 0.3rem, 16px) clamp(20px, 1vw + 0.5rem, 40px)",
+          gap: "clamp(8px, 0.4vw + 0.2rem, 16px)",
+          borderRadius: "8px",
+          backgroundColor: "var(--tott-card-border)",
+          boxShadow:
+            "inset 0px 1px 1px color-mix(in srgb, var(--tott-home-text-strong) 8%, transparent)",
+          color: "var(--tott-home-text-strong)",
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 500,
+          fontSize: "clamp(0.875rem, 0.3vw + 0.5rem, 1.25rem)",
+          lineHeight: 1.4,
+          letterSpacing: "-0.005em",
+        }}
+      >
+        <svg
+          aria-hidden
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="11 6 5 12 11 18" />
+        </svg>
+        {t("backToWritingRoom")}
+      </Link>
+
+      <p
+        className="flex flex-wrap items-center justify-center"
+        style={{
+          marginTop: "clamp(8px, 0.4vw + 0.2rem, 20px)",
+          gap: "clamp(6px, 0.3vw, 12px)",
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 400,
+          fontSize: "clamp(0.875rem, 0.3vw + 0.5rem, 1.25rem)",
+          lineHeight: 1.4,
+          color: "var(--tott-home-text-muted)",
+          margin: 0,
+        }}
+      >
+        {t("contactLead")}
+        <span
+          aria-hidden
+          className="inline-flex shrink-0 items-center"
+          style={{ color: "var(--tott-accent-gold)" }}
+        >
+          <HeadsetIcon />
+        </span>
+        <Link
+          href="/contact"
+          className="inline-flex hover:underline"
+          style={{ color: "var(--tott-accent-gold)" }}
+        >
+          {t("contactLink")}
+        </Link>
+      </p>
+    </div>
+  );
+}

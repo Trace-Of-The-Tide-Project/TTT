@@ -356,7 +356,12 @@
         "workingPlaceholder": "What are you working on?",
         "submit": "Submit Application",
         "cancel": "Cancel",
-        "close": "Close"
+        "close": "Close",
+        "successTitle": "Your Application was Submitted successfully!",
+        "successBody": "Thank you for applying. We'll review your submission and reach out within a few days to find the right time and space for you.",
+        "backToWritingRoom": "Back to Writing Room",
+        "contactLead": "If you have any questions",
+        "contactLink": "Contact us"
       }
     }
   }
