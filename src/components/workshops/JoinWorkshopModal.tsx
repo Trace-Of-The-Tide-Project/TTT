@@ -3,11 +3,17 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
+import { isAxiosError } from "axios";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
+import { applyToWorkshop } from "@/services/workshops.service";
 
 type Props = {
   open: boolean;
   onClose: () => void;
+  /** Workshop being applied to. Required for the POST to land on
+   * the correct endpoint; passed by the host when the user clicks
+   * Apply Now in a specific workshop's detail modal. */
+  workshopId: string | null;
   /** Fired after a successful submit so the host can chain into
    * a confirmation flow if it wants to. Not required. */
   onSubmitted?: () => void;
@@ -18,7 +24,12 @@ type Props = {
  * borders, fluid clamps) but the body is a three-field reservation
  * form: Name, Email, Experience Level. Footer pairs a wide gold
  * "Apply Now" with a small dark "Cancel". */
-export function JoinWorkshopModal({ open, onClose, onSubmitted }: Props) {
+export function JoinWorkshopModal({
+  open,
+  onClose,
+  workshopId,
+  onSubmitted,
+}: Props) {
   const t = useTranslations("Home.workshops.joinModal");
   const titleId = useId();
   const descId = useId();
@@ -26,6 +37,8 @@ export function JoinWorkshopModal({ open, onClose, onSubmitted }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [experience, setExperience] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const nameRef = useRef<HTMLInputElement | null>(null);
 
   // Reset transient form state + autofocus the first field whenever
@@ -35,6 +48,8 @@ export function JoinWorkshopModal({ open, onClose, onSubmitted }: Props) {
     setName("");
     setEmail("");
     setExperience("");
+    setBusy(false);
+    setError(null);
     const id = window.setTimeout(() => nameRef.current?.focus(), 50);
     return () => window.clearTimeout(id);
   }, [open]);
@@ -55,16 +70,33 @@ export function JoinWorkshopModal({ open, onClose, onSubmitted }: Props) {
 
   if (!open || typeof document === "undefined") return null;
 
-  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // No backend yet — once the workshop applications endpoint
-    // exists, post `{ name, email, experience }` here. For now the
-    // form acts as a UI prototype: close and notify the host.
-    onSubmitted?.();
-    onClose();
+    if (!workshopId) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await applyToWorkshop(workshopId, {
+        name: name.trim(),
+        email: email.trim(),
+        experience_level: experience.trim() || undefined,
+      });
+      onSubmitted?.();
+      onClose();
+    } catch (err) {
+      const msg =
+        (isAxiosError(err) &&
+          (err.response?.data as { message?: string } | undefined)?.message) ||
+        t("error");
+      setError(typeof msg === "string" ? msg : t("error"));
+    } finally {
+      setBusy(false);
+    }
   };
 
   const canSubmit =
+    !busy &&
+    !!workshopId &&
     name.trim().length > 0 &&
     email.trim().length > 0 &&
     experience.trim().length > 0;
@@ -233,6 +265,26 @@ export function JoinWorkshopModal({ open, onClose, onSubmitted }: Props) {
               style={inputStyle}
             />
           </Field>
+
+          {error ? (
+            <p
+              role="alert"
+              style={{
+                margin: 0,
+                padding: "10px 12px",
+                borderRadius: "8px",
+                backgroundColor:
+                  "color-mix(in srgb, var(--tott-dash-negative) 16%, transparent)",
+                color: "var(--tott-dash-negative)",
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 500,
+                fontSize: "clamp(0.8125rem, 0.25vw + 0.45rem, 1.125rem)",
+                lineHeight: 1.45,
+              }}
+            >
+              {error}
+            </p>
+          ) : null}
         </div>
 
         {/* ── Footer band ─────────────────────────────────────── */}
@@ -267,7 +319,7 @@ export function JoinWorkshopModal({ open, onClose, onSubmitted }: Props) {
               cursor: canSubmit ? "pointer" : "not-allowed",
             }}
           >
-            {t("apply")}
+            {busy ? t("submitting") : t("apply")}
           </button>
           <button
             type="button"

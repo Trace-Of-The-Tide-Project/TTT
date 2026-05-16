@@ -7,6 +7,28 @@ import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
+import type { EncounterListItem } from "@/services/encounters.service";
+
+type EventListInput = Array<
+  Pick<EncounterListItem, "id" | "title"> & {
+    about?: string | null;
+    type?: string | null;
+    date?: string | null;
+  }
+>;
+
+/** Format an ISO-ish date string into the uppercase
+ * "MONTH DD, YYYY" display the design uses. Falls back to the
+ * raw string when parsing fails. */
+function formatEncounterDate(input?: string | null): string {
+  if (!input) return "";
+  const d = new Date(input);
+  if (Number.isNaN(d.getTime())) return input;
+  const month = d
+    .toLocaleString("en-US", { month: "long" })
+    .toUpperCase();
+  return `${month} ${d.getDate()}, ${d.getFullYear()}`;
+}
 
 // Reuse the writing-room moon glyph (Open Encounters icon in the
 // experiences row) so this page stays in the family. Event-row
@@ -22,15 +44,32 @@ const GALLERY_IMAGES: string[] = [
 const GALLERY_PEEK = "/images/workshops/gallery-peek.svg";
 
 type Event = {
+  /** Encounter id when the event came from the API; absent for
+   * the locale-default placeholder rows. */
+  id?: string;
   date: string;
   title: string;
   body: string;
   type: string;
 };
 
-export function OpenEncountersContent() {
+export function OpenEncountersContent({
+  events: eventsProp = [],
+}: {
+  events?: EventListInput;
+} = {}) {
   const t = useTranslations("Home.openEncounters");
-  const events = t.raw("events") as Event[];
+  // Map the API list shape onto the locale Event shape. When the
+  // API returns nothing we render the empty-state row instead of
+  // falling back to placeholder events so it's clear when the
+  // backend is empty.
+  const events: Event[] = eventsProp.map((e) => ({
+    id: e.id,
+    date: formatEncounterDate(e.date),
+    title: e.title || "",
+    body: e.about || "",
+    type: e.type || "",
+  }));
 
   const gallery = GALLERY_IMAGES;
   const [galleryIndex, setGalleryIndex] = useState(0);
@@ -306,11 +345,33 @@ export function OpenEncountersContent() {
                 zIndex: 0,
               }}
             />
-            {events.map((e, i) => (
-              <li key={i} className="relative" style={{ zIndex: 1 }}>
-                <EventRow event={e} joinLabel={t("join")} />
+            {events.length === 0 ? (
+              <li
+                style={{
+                  zIndex: 1,
+                  textAlign: "center",
+                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                  fontWeight: 400,
+                  fontSize: "clamp(0.875rem, 0.3vw + 0.5rem, 1.25rem)",
+                  lineHeight: 1.5,
+                  color: "var(--tott-home-text-muted)",
+                  padding:
+                    "clamp(24px, 1.5vw + 0.5rem, 64px) clamp(16px, 1vw, 32px)",
+                }}
+              >
+                {t("emptyState")}
               </li>
-            ))}
+            ) : (
+              events.map((e, i) => (
+                <li
+                  key={e.id ?? i}
+                  className="relative"
+                  style={{ zIndex: 1 }}
+                >
+                  <EventRow event={e} joinLabel={t("join")} />
+                </li>
+              ))
+            )}
           </ul>
 
           <div
@@ -811,7 +872,14 @@ function EventRow({
           {event.type}
         </span>
         <Link
-          href="/writing-room/open-encounters/encounter"
+          // Encounters without an id come from the locale-default
+          // placeholders — fall back to the generic detail slug so
+          // dev/preview rows still link somewhere reasonable.
+          href={
+            event.id
+              ? `/writing-room/open-encounters/${event.id}`
+              : "/writing-room/open-encounters/encounter"
+          }
           className="inline-flex items-center self-end transition-opacity hover:opacity-80"
           style={{
             gap: "clamp(6px, 0.3vw, 12px)",

@@ -9,6 +9,11 @@ import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import { WorkshopModal } from "@/components/workshops/WorkshopModal";
 import { JoinWorkshopModal } from "@/components/workshops/JoinWorkshopModal";
+import type {
+  WorkshopListItem,
+  WorkshopDetail,
+} from "@/services/workshops.service";
+import { getWorkshop } from "@/services/workshops.service";
 
 const HERO_ICON = "/images/writing-room/workshops-icon.svg";
 const JOIN_ROOM_ICON = "/images/writing-room/join-room-icon.svg";
@@ -28,7 +33,11 @@ const GALLERY_IMAGES: string[] = [
 // a decorative "more content beyond" cue.
 const GALLERY_PEEK = "/images/workshops/gallery-peek.svg";
 
-export function WorkshopsContent() {
+export function WorkshopsContent({
+  workshops,
+}: {
+  workshops: WorkshopListItem[];
+}) {
   const t = useTranslations("Home.workshops");
 
   const gallery = GALLERY_IMAGES;
@@ -42,17 +51,33 @@ export function WorkshopsContent() {
     setGalleryIndex((i) => (i + 1) % gallery.length);
   };
 
-  // Until real workshop data lands the mock shows the same card
-  // copy four times — render four placeholder slots with the same
-  // localized strings so the layout matches the Figma exactly.
-  const cards = [0, 1, 2, 3];
-
-  // Modal open state hoisted here so all four cards share a single
-  // modal instance. The detail modal's Apply Now switches the user
-  // into the reservation form, so we track both flags from one
-  // place and keep transitions clean.
+  // Detail modal opens when a card's Explore is clicked. We fetch
+  // the full workshop detail on click (list call only returns
+  // summaries) and pre-fill the modal once it lands. Apply Now
+  // inside the detail modal swaps to the Join Workshop form,
+  // pre-filled with the same workshop id.
   const [detailOpen, setDetailOpen] = useState(false);
+  const [detail, setDetail] = useState<WorkshopDetail | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
   const [joinOpen, setJoinOpen] = useState(false);
+  const [activeWorkshopId, setActiveWorkshopId] = useState<string | null>(null);
+
+  const openDetail = async (w: WorkshopListItem) => {
+    setActiveWorkshopId(w.id);
+    setDetail(null);
+    setDetailLoading(true);
+    setDetailOpen(true);
+    try {
+      const full = await getWorkshop(w.id);
+      setDetail(full);
+    } catch {
+      // Fall back to the list-item fields so the modal still
+      // renders something useful even if detail fetch fails.
+      setDetail(w as WorkshopDetail);
+    } finally {
+      setDetailLoading(false);
+    }
+  };
 
   return (
     <main
@@ -210,17 +235,38 @@ export function WorkshopsContent() {
               padding: "clamp(0px, 0.6vw, 24px) clamp(0px, 0.8vw, 32px) 0",
             }}
           >
-            {cards.map((i) => (
-              <li key={i} className="flex">
-                <WorkshopCard
-                  title={t("cardTitle")}
-                  body={t("cardBody")}
-                  chips={[t("chipDuration"), t("chipFormat")]}
-                  ctaLabel={t("explore")}
-                  onExplore={() => setDetailOpen(true)}
-                />
+            {workshops.length === 0 ? (
+              <li
+                style={{
+                  gridColumn: "1 / -1",
+                  textAlign: "center",
+                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                  fontWeight: 400,
+                  fontSize: "clamp(0.875rem, 0.3vw + 0.5rem, 1.25rem)",
+                  lineHeight: 1.5,
+                  color: "var(--tott-home-text-muted)",
+                  padding:
+                    "clamp(24px, 1.5vw + 0.5rem, 64px) clamp(16px, 1vw, 32px)",
+                }}
+              >
+                {t("emptyState")}
               </li>
-            ))}
+            ) : (
+              workshops.map((w) => (
+                <li key={w.id} className="flex">
+                  <WorkshopCard
+                    title={w.title || t("cardTitle")}
+                    body={w.body || t("cardBody")}
+                    chips={[
+                      w.duration_label || t("chipDuration"),
+                      w.format_label || t("chipFormat"),
+                    ].filter(Boolean)}
+                    ctaLabel={t("explore")}
+                    onExplore={() => openDetail(w)}
+                  />
+                </li>
+              ))
+            )}
           </ul>
 
           <div
@@ -576,13 +622,20 @@ export function WorkshopsContent() {
           setDetailOpen(false);
           setJoinOpen(true);
         }}
-        title={t("cardTitle")}
-        body={t("cardBody")}
-        chips={[t("chipDuration"), t("chipFormat")]}
+        loading={detailLoading}
+        title={detail?.title || t("cardTitle")}
+        body={detail?.description || detail?.body || t("cardBody")}
+        chips={[
+          detail?.duration_label || t("chipDuration"),
+          detail?.format_label || t("chipFormat"),
+        ].filter(Boolean)}
+        doItems={detail?.what_youll_do ?? undefined}
+        gainItems={detail?.what_youll_gain ?? undefined}
       />
       <JoinWorkshopModal
         open={joinOpen}
         onClose={() => setJoinOpen(false)}
+        workshopId={activeWorkshopId}
       />
     </main>
   );

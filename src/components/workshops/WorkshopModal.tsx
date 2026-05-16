@@ -14,6 +14,14 @@ type Props = {
   title: string;
   body: string;
   chips: string[];
+  /** Set while the host is fetching workshop detail; shows a tiny
+   * inline indicator next to the title. */
+  loading?: boolean;
+  /** Override the locale-default "What You'll Do…" checklist. When
+   * undefined, the modal falls back to the translation array. */
+  doItems?: string[];
+  /** Same idea for "What You'll Gain…". */
+  gainItems?: string[];
 };
 
 /** Workshop detail modal — Figma "Modal-4" comp. Three-band layout:
@@ -36,13 +44,22 @@ export function WorkshopModal({
   title,
   body,
   chips,
+  doItems: doItemsProp,
+  gainItems: gainItemsProp,
 }: Props) {
   const t = useTranslations("Home.workshops.modal");
   const titleId = useId();
   const descId = useId();
 
-  const doItems = t.raw("doItems") as string[];
-  const gainItems = t.raw("gainItems") as string[];
+  // Prefer the props from the host (real workshop data) and fall
+  // back to the locale-default translation arrays when undefined
+  // or empty.
+  const defaultDo = t.raw("doItems") as string[];
+  const defaultGain = t.raw("gainItems") as string[];
+  const doItems =
+    doItemsProp && doItemsProp.length > 0 ? doItemsProp : defaultDo;
+  const gainItems =
+    gainItemsProp && gainItemsProp.length > 0 ? gainItemsProp : defaultGain;
 
   useEffect(() => {
     if (!open) return;

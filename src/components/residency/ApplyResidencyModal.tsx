@@ -3,9 +3,11 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
+import { isAxiosError } from "axios";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 import { HeadsetIcon } from "@/components/ui/icons";
 import { Link } from "@/i18n/navigation";
+import { applyForResidency } from "@/services/residency.service";
 
 type Props = {
   open: boolean;
@@ -27,6 +29,8 @@ export function ApplyResidencyModal({ open, onClose, onSubmitted }: Props) {
   const [email, setEmail] = useState("");
   const [why, setWhy] = useState("");
   const [working, setWorking] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   // Submitted flag swaps the form view for the success view
   // (Figma "Modal-7") while keeping the same modal shell open.
   const [submitted, setSubmitted] = useState(false);
@@ -39,6 +43,8 @@ export function ApplyResidencyModal({ open, onClose, onSubmitted }: Props) {
     setWhy("");
     setWorking("");
     setSubmitted(false);
+    setBusy(false);
+    setError(null);
     const id = window.setTimeout(() => nameRef.current?.focus(), 50);
     return () => window.clearTimeout(id);
   }, [open]);
@@ -59,16 +65,32 @@ export function ApplyResidencyModal({ open, onClose, onSubmitted }: Props) {
 
   if (!open || typeof document === "undefined") return null;
 
-  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // No backend yet — the residency-applications endpoint will
-    // POST { name, email, why, working } from here once it exists.
-    // Swap to the success view; the user can close it themselves.
-    setSubmitted(true);
-    onSubmitted?.();
+    setBusy(true);
+    setError(null);
+    try {
+      await applyForResidency({
+        name: name.trim(),
+        email: email.trim(),
+        why_join: why.trim() || undefined,
+        working_on: working.trim() || undefined,
+      });
+      setSubmitted(true);
+      onSubmitted?.();
+    } catch (err) {
+      const msg =
+        (isAxiosError(err) &&
+          (err.response?.data as { message?: string } | undefined)?.message) ||
+        t("error");
+      setError(typeof msg === "string" ? msg : t("error"));
+    } finally {
+      setBusy(false);
+    }
   };
 
   const canSubmit =
+    !busy &&
     name.trim().length > 0 &&
     email.trim().length > 0 &&
     why.trim().length > 0 &&
@@ -255,6 +277,26 @@ export function ApplyResidencyModal({ open, onClose, onSubmitted }: Props) {
               style={inputStyle}
             />
           </Field>
+
+          {error ? (
+            <p
+              role="alert"
+              style={{
+                margin: 0,
+                padding: "10px 12px",
+                borderRadius: "8px",
+                backgroundColor:
+                  "color-mix(in srgb, var(--tott-dash-negative) 16%, transparent)",
+                color: "var(--tott-dash-negative)",
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 500,
+                fontSize: "clamp(0.8125rem, 0.25vw + 0.45rem, 1.125rem)",
+                lineHeight: 1.45,
+              }}
+            >
+              {error}
+            </p>
+          ) : null}
         </div>
 
         {/* ── Footer band ─────────────────────────────────────── */}
@@ -289,7 +331,7 @@ export function ApplyResidencyModal({ open, onClose, onSubmitted }: Props) {
               cursor: canSubmit ? "pointer" : "not-allowed",
             }}
           >
-            {t("submit")}
+            {busy ? t("submitting") : t("submit")}
           </button>
           <button
             type="button"

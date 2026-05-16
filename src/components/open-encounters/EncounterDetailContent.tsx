@@ -3,30 +3,99 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { isAxiosError } from "axios";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
+import type {
+  EncounterDetail,
+  EncounterScheduleItem,
+} from "@/services/encounters.service";
+import { bookEncounter } from "@/services/encounters.service";
 
 // Brand-exported encounter hero (Thumbnail-5, 1440×360). The SVG
 // bakes in the silk photograph + the chamfered/diagonal-cut shape
 // so we drop it in as-is; the Trip Info overlay sits on top.
 const HERO_BG = "/images/open-encounters/encounter-hero.svg";
 
-export function EncounterDetailContent() {
+export function EncounterDetailContent({
+  encounter,
+}: {
+  encounter?: EncounterDetail | null;
+} = {}) {
   const t = useTranslations("Home.openEncounters.encounter");
   const tParent = useTranslations("Home.openEncounters");
-  const highlights = t.raw("highlights") as string[];
+
+  // The real encounter overrides the locale-default copy field by
+  // field. We still fall through to translations whenever the API
+  // omits an attribute so the layout never collapses.
+  const placeholderHighlights = t.raw("highlights") as string[];
+  const highlights =
+    encounter?.highlights && encounter.highlights.length > 0
+      ? encounter.highlights
+      : placeholderHighlights;
+  const title = encounter?.title || t("title");
+  const location = encounter?.location || t("location");
+  const chips =
+    encounter?.chips && encounter.chips.length > 0
+      ? encounter.chips
+      : [t("chipTalk"), t("chipWorkshops")];
+  const heroSrc = encounter?.hero_image || HERO_BG;
+  const dateValue = encounter?.date
+    ? new Date(encounter.date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : t("stats.dateValue");
+  const durationValue = encounter?.duration || t("stats.durationValue");
+  const groupValue = encounter?.group_size || t("stats.groupValue");
+  const languagesValue = encounter?.languages || t("stats.languagesValue");
+  const locationValue = encounter?.location || t("stats.locationValue");
+  const aboutBody = encounter?.about || t("aboutBody");
+  const tipPrice = encounter?.tip_price || t("joinTipFree");
+  // Schedule rows can come in either `schedule` or `stops`
+  // depending on the API shape — try both.
+  const scheduleRows =
+    encounter?.schedule ?? encounter?.stops ?? [];
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
-  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // No backend yet — stub submit until the encounter-booking
-    // endpoint is wired up.
+    if (!encounter?.id) {
+      // No live encounter (preview/dev) — keep the existing stub
+      // behaviour so the UI prototype still demos.
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      await bookEncounter(encounter.id, {
+        name: fullName.trim(),
+        email: email.trim(),
+        message: message.trim() || undefined,
+      });
+      setSubmitted(true);
+      setFullName("");
+      setEmail("");
+      setMessage("");
+    } catch (err) {
+      const msg =
+        (isAxiosError(err) &&
+          (err.response?.data as { message?: string } | undefined)?.message) ||
+        t("joinError");
+      setError(typeof msg === "string" ? msg : t("joinError"));
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -53,7 +122,7 @@ export function EncounterDetailContent() {
             gradient title + location text, matching the Figma
             "Trip Info" frame. */}
         <section
-          aria-label={t("title")}
+          aria-label={title}
           // Aspect ratio steps with the viewport: a near-square
           // 4:3 on mobile so the Trip Info overlay has room to
           // breathe, a wider 3:1 at sm, then the SVG's native
@@ -61,7 +130,7 @@ export function EncounterDetailContent() {
           className="relative w-full aspect-[4/3] sm:aspect-[3/1] md:aspect-[1440/360]"
         >
           <Image
-            src={HERO_BG}
+            src={heroSrc}
             alt=""
             fill
             sizes="(min-width: 1280px) 1440px, 95vw"
@@ -92,8 +161,9 @@ export function EncounterDetailContent() {
               className="flex flex-row flex-wrap items-center"
               style={{ gap: "clamp(6px, 0.3vw + 0.2rem, 16px)" }}
             >
-              <Chip label={t("chipTalk")} variant="gold" />
-              <Chip label={t("chipWorkshops")} />
+              {chips.map((c, i) => (
+                <Chip key={c} label={c} variant={i === 0 ? "gold" : "dark"} />
+              ))}
             </div>
             <h1
               style={{
@@ -106,7 +176,7 @@ export function EncounterDetailContent() {
                   "0px 1px 1px color-mix(in srgb, var(--tott-panel-bg) 24%, transparent)",
               }}
             >
-              <FirstWordGold raw={t("title")} />
+              <FirstWordGold raw={title} />
             </h1>
             <p
               style={{
@@ -120,7 +190,7 @@ export function EncounterDetailContent() {
                 margin: 0,
               }}
             >
-              {t("location")}
+              {location}
             </p>
           </div>
         </section>
@@ -145,27 +215,27 @@ export function EncounterDetailContent() {
                 {
                   icon: "calendar",
                   label: t("stats.dateLabel"),
-                  value: t("stats.dateValue"),
+                  value: dateValue,
                 },
                 {
                   icon: "clock",
                   label: t("stats.durationLabel"),
-                  value: t("stats.durationValue"),
+                  value: durationValue,
                 },
                 {
                   icon: "users",
                   label: t("stats.groupLabel"),
-                  value: t("stats.groupValue"),
+                  value: groupValue,
                 },
                 {
                   icon: "globe",
                   label: t("stats.languagesLabel"),
-                  value: t("stats.languagesValue"),
+                  value: languagesValue,
                 },
                 {
                   icon: "pin",
                   label: t("stats.locationLabel"),
-                  value: t("stats.locationValue"),
+                  value: locationValue,
                 },
               ]}
             />
@@ -186,7 +256,7 @@ export function EncounterDetailContent() {
                   margin: 0,
                 }}
               >
-                {t("aboutBody")}
+                {aboutBody}
               </p>
             </Section>
 
@@ -254,13 +324,34 @@ export function EncounterDetailContent() {
               </ul>
             </Section>
 
-            <ScheduleCard
-              title={t("scheduleHeading")}
-              start={t("scheduleStart")}
-              end={t("scheduleEnd")}
-              body={t("scheduleBody")}
-              locationLabel={t("scheduleLocation")}
-            />
+            {/* Render real schedule rows when the API supplies
+                them, otherwise fall through to the locale-default
+                single placeholder card so the layout stays full. */}
+            {scheduleRows.length > 0
+              ? scheduleRows.map((row, i) => (
+                  <ScheduleCard
+                    key={row.id ?? i}
+                    index={i + 1}
+                    title={row.title || t("scheduleHeading")}
+                    start={formatScheduleStart(row.arrival_time)}
+                    end={formatScheduleEnd(
+                      row.arrival_time,
+                      row.duration_minutes,
+                    )}
+                    body={row.description || t("scheduleBody")}
+                    locationLabel={formatScheduleLocation(row)}
+                  />
+                ))
+              : (
+                <ScheduleCard
+                  index={1}
+                  title={t("scheduleHeading")}
+                  start={t("scheduleStart")}
+                  end={t("scheduleEnd")}
+                  body={t("scheduleBody")}
+                  locationLabel={t("scheduleLocation")}
+                />
+              )}
           </div>
 
           {/* Right column — Book this Encounter form. Full-width
@@ -399,13 +490,53 @@ export function EncounterDetailContent() {
                     color: "var(--tott-magazine-btn-bg)",
                   }}
                 >
-                  {t("joinTipFree")}
+                  {tipPrice}
                 </span>
               </div>
 
+              {error ? (
+                <p
+                  role="alert"
+                  style={{
+                    margin: 0,
+                    padding: "10px 12px",
+                    borderRadius: "8px",
+                    backgroundColor:
+                      "color-mix(in srgb, var(--tott-dash-negative) 16%, transparent)",
+                    color: "var(--tott-dash-negative)",
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontWeight: 500,
+                    fontSize: "clamp(0.8125rem, 0.25vw + 0.45rem, 1.125rem)",
+                    lineHeight: 1.45,
+                  }}
+                >
+                  {error}
+                </p>
+              ) : null}
+              {submitted ? (
+                <p
+                  role="status"
+                  style={{
+                    margin: 0,
+                    padding: "10px 12px",
+                    borderRadius: "8px",
+                    backgroundColor:
+                      "color-mix(in srgb, var(--tott-dash-positive) 16%, transparent)",
+                    color: "var(--tott-dash-positive)",
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontWeight: 500,
+                    fontSize: "clamp(0.8125rem, 0.25vw + 0.45rem, 1.125rem)",
+                    lineHeight: 1.45,
+                    textAlign: "center",
+                  }}
+                >
+                  {t("joinSuccess")}
+                </p>
+              ) : null}
               <button
                 type="submit"
-                className="w-full transition-opacity hover:opacity-90"
+                disabled={busy || submitted}
+                className="w-full transition-opacity hover:opacity-90 disabled:opacity-60"
                 style={{
                   // Figma: full content-width gold pill, 40px tall
                   // at laptop, padding 8px, 8px radius, inset
@@ -424,10 +555,14 @@ export function EncounterDetailContent() {
                   letterSpacing: "-0.005em",
                   textAlign: "center",
                   border: "none",
-                  cursor: "pointer",
+                  cursor: busy || submitted ? "not-allowed" : "pointer",
                 }}
               >
-                {t("joinSubmit")}
+                {busy
+                  ? t("joinSubmitting")
+                  : submitted
+                    ? t("joinBooked")
+                    : t("joinSubmit")}
               </button>
 
               <p
@@ -595,6 +730,49 @@ export function EncounterDetailContent() {
 }
 
 // ─── Helpers ──────────────────────────────────────────────────
+
+/** "March 10, 12:54" style — the date + start-time line we show
+ * at the top of each schedule card. */
+function formatScheduleStart(input?: string | null): string {
+  if (!input) return "";
+  const d = new Date(input);
+  if (Number.isNaN(d.getTime())) return input;
+  const date = d.toLocaleString("en-US", {
+    month: "long",
+    day: "numeric",
+  });
+  const time = d.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: false,
+  });
+  return `${date}, ${time}`;
+}
+
+/** Start + duration_minutes → "1:30 PM" end time string. */
+function formatScheduleEnd(
+  start?: string | null,
+  durationMinutes?: number | null,
+): string {
+  if (!start || !durationMinutes) return "";
+  const d = new Date(start);
+  if (Number.isNaN(d.getTime())) return "";
+  d.setMinutes(d.getMinutes() + durationMinutes);
+  return d.toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
+/** Lat/Lng → "Lat: 46.6863, Lng: 7.8632" label. Falls back to
+ * an empty string when the row doesn't carry coordinates. */
+function formatScheduleLocation(row: EncounterScheduleItem): string {
+  const lat = row.lat;
+  const lng = row.lng;
+  if (lat == null || lng == null) return "";
+  return `Lat: ${lat}, Lng: ${lng}`;
+}
 
 function Chip({
   label,
@@ -840,12 +1018,16 @@ function StatsRow({
 }
 
 function ScheduleCard({
+  index = 1,
   title,
   start,
   end,
   body,
   locationLabel,
 }: {
+  /** Stop number shown in the leading circle — defaults to 1
+   * when the schedule only has a single row. */
+  index?: number;
   title: string;
   start: string;
   end: string;
@@ -887,7 +1069,7 @@ function ScheduleCard({
             letterSpacing: "-0.01em",
           }}
         >
-          1
+          {index}
         </span>
         <span
           aria-hidden

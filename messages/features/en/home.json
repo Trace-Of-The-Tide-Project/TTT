@@ -279,6 +279,7 @@
       "chipDuration": "8 Weeks",
       "chipFormat": "Online",
       "explore": "Explore",
+      "emptyState": "No workshops are scheduled right now — check back soon.",
       "backToWritingRoom": "Back to Writing Room",
       "galleryAlt": "A glimpse from a recent workshop",
       "prev": "Previous",
@@ -314,8 +315,10 @@
         "experienceLabel": "Experience Level",
         "experiencePlaceholder": "experience level",
         "apply": "Apply Now",
+        "submitting": "Sending…",
         "cancel": "Cancel",
-        "close": "Close"
+        "close": "Close",
+        "error": "Couldn't submit your application. Please try again."
       }
     },
     "residency": {
@@ -355,6 +358,8 @@
         "workingLabel": "What are you working on?",
         "workingPlaceholder": "What are you working on?",
         "submit": "Submit Application",
+        "submitting": "Submitting…",
+        "error": "Couldn't submit your application. Please try again.",
         "cancel": "Cancel",
         "close": "Close",
         "successTitle": "Your Application was Submitted successfully!",
@@ -398,6 +403,7 @@
         }
       ],
       "join": "Join",
+      "emptyState": "No upcoming encounters right now — check back soon.",
       "backToWritingRoom": "Back to Writing Room",
       "galleryAlt": "A glimpse from a recent open encounter",
       "prev": "Previous",
@@ -451,6 +457,10 @@
         "joinTipLabel": "Trip price:",
         "joinTipFree": "Free",
         "joinSubmit": "Book Now",
+        "joinSubmitting": "Booking…",
+        "joinBooked": "Booked",
+        "joinSuccess": "Your spot is booked. Check your email for confirmation.",
+        "joinError": "Couldn't book your spot. Please try again.",
         "joinDisclaimer": "By booking, you agree to our terms and conditions. You'll receive a confirmation email shortly.",
         "backToWritingRoom": "Back to Writing Room"
       }
