@@ -6,15 +6,24 @@ import { useRouter } from "@/i18n/navigation";
 import { isAxiosError } from "axios";
 import {
   CloudUploadIcon,
-  ChevronDownIcon,
   FileTextIcon,
-  Grid2x2Icon,
   TrashIcon,
 } from "@/components/ui/icons";
-import { theme } from "@/lib/theme";
-import { CONTRIBUTION_FORM_INPUT_BASE as inputBase, COUNTRY_CODES } from "@/lib/constants";
-import { appendContributionFile, createContribution } from "@/services/contributions.service";
+import { COUNTRY_CODES } from "@/lib/constants";
+import {
+  appendContributionFile,
+  createContribution,
+} from "@/services/contributions.service";
 import { uploadFileForContribution } from "@/services/uploads.service";
+
+const FIELD_BG = "#262626";
+const FIELD_BORDER = "#333333";
+const FIELD_RADIUS = 8;
+const LABEL_COLOR = "#FFFFFF";
+const HELPER_COLOR = "#A3A3A3";
+const PLACEHOLDER_COLOR = "#7B7B7B";
+const ACCENT = "#C9A96E";
+const ACCENT_TEXT = "#332217";
 
 type UploadedFile = { id: string; file: File; sizeLabel: string };
 
@@ -27,8 +36,6 @@ function formatFileSize(bytes: number): string {
 type ContributionFormProps = {
   selectedTypeId: string | null;
 };
-
-const borderVar = { borderColor: "var(--tott-card-border)" } as const;
 
 export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
   const t = useTranslations("Contribute.form");
@@ -75,16 +82,20 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
     e.preventDefault();
 
     const form = e.currentTarget;
-    const title = (form.elements.namedItem("title") as HTMLInputElement | null)?.value ?? "";
+    const title =
+      (form.elements.namedItem("title") as HTMLInputElement | null)?.value ?? "";
     const description =
-      (form.elements.namedItem("description") as HTMLTextAreaElement | null)?.value ?? "";
+      (form.elements.namedItem("description") as HTMLTextAreaElement | null)
+        ?.value ?? "";
     const contributorName =
       (form.elements.namedItem("name") as HTMLInputElement | null)?.value ?? "";
     const contributorEmail =
       (form.elements.namedItem("email") as HTMLInputElement | null)?.value ?? "";
     const countryCode =
-      (form.elements.namedItem("countryCode") as HTMLSelectElement | null)?.value ?? "";
-    const mobile = (form.elements.namedItem("mobile") as HTMLInputElement | null)?.value ?? "";
+      (form.elements.namedItem("countryCode") as HTMLSelectElement | null)
+        ?.value ?? "";
+    const mobile =
+      (form.elements.namedItem("mobile") as HTMLInputElement | null)?.value ?? "";
 
     const phone = `${countryCode}${mobile}`.trim();
 
@@ -141,105 +152,247 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto w-[80vw] max-w-[80vw] select-none space-y-4 sm:w-full sm:max-w-xl sm:space-y-5"
+      className="flex w-full flex-col items-stretch"
+      style={{ gap: "24px" }}
     >
-      <div>
-        <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          {t("titleLabel")}
-        </label>
-        <input
-          name="title"
-          type="text"
-          placeholder={t("titlePlaceholder")}
-          className={inputBase}
-          style={borderVar}
-        />
-      </div>
+      {/* Title */}
+      <Field label={t("titleLabel")}>
+        <span style={inputBoxStyle}>
+          <input
+            name="title"
+            type="text"
+            placeholder={t("titlePlaceholder")}
+            style={inputElementStyle}
+            className="min-w-0 flex-1 bg-transparent focus:outline-none"
+          />
+        </span>
+      </Field>
 
-      <div>
-        <label className="mb-1 block cursor-pointer select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          {t("collectionLabel")}{" "}
-          <span className="text-[var(--tott-muted)]">{t("optional")}</span>
-        </label>
-        <div className="relative select-none">
+      {/* Collection select */}
+      <Field label={t("collectionLabel")} optionalLabel={t("optional")}>
+        <span style={{ ...inputBoxStyle, position: "relative" }}>
           <select
             name="collection"
-            className={`${inputBase} appearance-none pr-10`}
-            style={borderVar}
+            defaultValue=""
+            style={{
+              ...inputElementStyle,
+              appearance: "none",
+              WebkitAppearance: "none",
+              MozAppearance: "none",
+              backgroundImage: "none",
+              cursor: "pointer",
+              paddingRight: "28px",
+            }}
+            className="min-w-0 flex-1 bg-transparent focus:outline-none"
           >
-            <option value="">{t("collectionPlaceholder")}</option>
-            <option value="stories">{t("collectionStories")}</option>
-            <option value="documents">{t("collectionDocuments")}</option>
-            <option value="media">{t("collectionMedia")}</option>
+            <option
+              value=""
+              style={{ backgroundColor: FIELD_BG, color: PLACEHOLDER_COLOR }}
+            >
+              {t("collectionPlaceholder")}
+            </option>
+            <option
+              value="stories"
+              style={{ backgroundColor: FIELD_BG, color: LABEL_COLOR }}
+            >
+              {t("collectionStories")}
+            </option>
+            <option
+              value="documents"
+              style={{ backgroundColor: FIELD_BG, color: LABEL_COLOR }}
+            >
+              {t("collectionDocuments")}
+            </option>
+            <option
+              value="media"
+              style={{ backgroundColor: FIELD_BG, color: LABEL_COLOR }}
+            >
+              {t("collectionMedia")}
+            </option>
           </select>
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 select-none text-[var(--tott-muted)]">
-            <ChevronDownIcon />
-          </span>
-        </div>
-      </div>
+          <TrailingChevron />
+        </span>
+      </Field>
 
-      <div>
-        <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          {t("descriptionLabel")}
-        </label>
-        <textarea
-          name="description"
-          rows={4}
-          placeholder={t("descriptionPlaceholder")}
-          className={inputBase}
-          style={borderVar}
-        />
-      </div>
-
-      <div>
-        <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          {t("uploadLabel")}
-        </label>
-        <div
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          onDragLeave={onDragLeave}
-          className={`flex select-none flex-col items-center justify-center rounded-lg border-2 border-dashed px-4 py-6 transition-colors sm:px-6 sm:py-10 ${
-            isDragging
-              ? "border-[#C9A96E] bg-[#C9A96E]/10"
-              : "border-[var(--tott-card-border)] bg-[var(--tott-well-bg)]"
-          }`}
+      {/* Description */}
+      <Field label={t("descriptionLabel")}>
+        <span
+          className="relative w-full"
+          style={{
+            backgroundColor: FIELD_BG,
+            border: `1px solid ${FIELD_BORDER}`,
+            borderRadius: `${FIELD_RADIUS}px`,
+          }}
         >
-          <input
-            type="file"
-            multiple
-            className="hidden"
-            id="file-upload"
-            onChange={(e) => addFiles(e.target.files)}
+          <textarea
+            name="description"
+            rows={5}
+            placeholder={t("descriptionPlaceholder")}
+            className="block w-full resize-y bg-transparent focus:outline-none"
+            style={{
+              height: "112px",
+              padding: "8px 12px",
+              color: LABEL_COLOR,
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
+              fontWeight: 400,
+              fontSize: "14px",
+              lineHeight: "20px",
+              letterSpacing: "0.005em",
+              border: "none",
+              borderRadius: `${FIELD_RADIUS}px`,
+              boxSizing: "border-box",
+            }}
           />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute"
+            style={{
+              width: "6px",
+              height: "6px",
+              right: "8px",
+              bottom: "8px",
+              backgroundColor: "#5C5C5C",
+            }}
+          />
+        </span>
+      </Field>
+
+      {/* Upload */}
+      <div className="flex flex-col" style={{ gap: "16px" }}>
+        <div className="flex flex-col" style={{ gap: "8px" }}>
+          <span className="flex flex-row items-center" style={{ gap: "8px" }}>
+            <span style={labelStyle}>{t("uploadLabel")}</span>
+            <span style={optionalStyle}>{t("optional")}</span>
+          </span>
           <label
             htmlFor="file-upload"
-            className="flex cursor-pointer select-none flex-col items-center gap-2 text-[var(--tott-muted)]"
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            className="flex w-full cursor-pointer flex-col items-center justify-center transition-colors"
+            style={{
+              padding: "24px",
+              gap: "8px",
+              backgroundColor: FIELD_BG,
+              border: `1px dashed ${isDragging ? ACCENT : FIELD_BORDER}`,
+              borderRadius: `${FIELD_RADIUS}px`,
+              minHeight: "120px",
+              boxSizing: "border-box",
+            }}
           >
-            <span style={{ color: theme.accentGoldFocus }}>
+            <input
+              type="file"
+              multiple
+              className="hidden"
+              id="file-upload"
+              onChange={(e) => addFiles(e.target.files)}
+            />
+            <span
+              aria-hidden
+              className="inline-flex items-center justify-center [&>svg]:h-6 [&>svg]:w-6"
+              style={{ color: HELPER_COLOR }}
+            >
               <CloudUploadIcon />
             </span>
-            <span className="text-center text-xs sm:text-sm">{t("uploadHint")}</span>
-            <span className="text-xs text-[var(--tott-muted)]">{t("uploadFormats")}</span>
+            <span
+              className="text-center"
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 500,
+                fontSize: "14px",
+                lineHeight: "20px",
+                letterSpacing: "-0.005em",
+                color: LABEL_COLOR,
+              }}
+            >
+              {t("uploadHint")}
+            </span>
+            <span
+              className="text-center"
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: "12px",
+                lineHeight: "16px",
+                color: HELPER_COLOR,
+              }}
+            >
+              {t("uploadFormats")}
+            </span>
           </label>
         </div>
 
-        {files.length > 0 && (
-          <ul className="mt-3 select-none space-y-2">
+        {files.length > 0 ? (
+          <ul className="flex flex-col" style={{ gap: "8px" }}>
             {files.map(({ id, file, sizeLabel }) => (
               <li
                 key={id}
-                className="flex select-none items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] px-3 py-2 sm:gap-3 sm:px-4 sm:py-3"
+                className="flex w-full flex-row items-center"
+                style={{
+                  padding: "12px",
+                  gap: "12px",
+                  backgroundColor: FIELD_BG,
+                  border: `1px solid ${FIELD_BORDER}`,
+                  borderRadius: `${FIELD_RADIUS}px`,
+                  boxSizing: "border-box",
+                }}
               >
-                <span className="text-[var(--tott-muted)]">
+                <span
+                  aria-hidden
+                  className="inline-flex shrink-0 items-center justify-center [&>svg]:h-6 [&>svg]:w-6"
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    border: `1px solid ${FIELD_BORDER}`,
+                    borderRadius: "4px",
+                    color: HELPER_COLOR,
+                  }}
+                >
                   <FileTextIcon />
                 </span>
-                <span className="min-w-0 flex-1 truncate text-sm text-foreground">{file.name}</span>
-                <span className="text-xs text-[var(--tott-muted)]">{sizeLabel}</span>
+                <div
+                  className="flex min-w-0 flex-1 flex-col"
+                  style={{ gap: "4px" }}
+                >
+                  <span
+                    className="truncate"
+                    style={{
+                      fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                      fontWeight: 500,
+                      fontSize: "14px",
+                      lineHeight: "20px",
+                      letterSpacing: "-0.005em",
+                      color: "rgba(255, 255, 255, 0.72)",
+                    }}
+                  >
+                    {file.name}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                      fontWeight: 400,
+                      fontSize: "12px",
+                      lineHeight: "16px",
+                      color: "rgba(255, 255, 255, 0.48)",
+                    }}
+                  >
+                    {sizeLabel}
+                  </span>
+                </div>
                 <button
                   type="button"
                   onClick={() => removeFile(id)}
-                  className="select-none rounded p-1 text-[var(--tott-muted)] hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A96E]"
+                  className="inline-flex shrink-0 items-center justify-center transition-opacity hover:opacity-70 focus:outline-none focus-visible:ring-2"
+                  style={{
+                    width: "24px",
+                    height: "24px",
+                    padding: "4px",
+                    borderRadius: "6px",
+                    background: "transparent",
+                    border: "none",
+                    color: HELPER_COLOR,
+                    cursor: "pointer",
+                  }}
                   aria-label={t("removeFileAria")}
                 >
                   <TrashIcon />
@@ -247,102 +400,282 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
               </li>
             ))}
           </ul>
-        )}
+        ) : null}
       </div>
 
-      <div>
-        <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          {t("nameLabel")}
-        </label>
-        <input
-          name="name"
-          type="text"
-          placeholder={t("namePlaceholder")}
-          className={inputBase}
-          style={borderVar}
-        />
-      </div>
+      {/* Name */}
+      <Field label={t("nameLabel")}>
+        <span style={inputBoxStyle}>
+          <input
+            name="name"
+            type="text"
+            placeholder={t("namePlaceholder")}
+            style={inputElementStyle}
+            className="min-w-0 flex-1 bg-transparent focus:outline-none"
+          />
+        </span>
+      </Field>
 
-      <div>
-        <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          {t("emailLabel")}
-        </label>
-        <input
-          name="email"
-          type="email"
-          placeholder={t("emailPlaceholder")}
-          className={inputBase}
-          style={borderVar}
-        />
-      </div>
+      {/* Email */}
+      <Field label={t("emailLabel")}>
+        <span style={inputBoxStyle}>
+          <input
+            name="email"
+            type="email"
+            placeholder={t("emailPlaceholder")}
+            style={inputElementStyle}
+            className="min-w-0 flex-1 bg-transparent focus:outline-none"
+          />
+        </span>
+      </Field>
 
-      <div>
-        <label className="mb-1 block select-none text-xs font-medium text-foreground sm:mb-1.5 sm:text-sm">
-          {t("mobileLabel")}{" "}
-          <span className="text-[var(--tott-muted)]">{t("optional")}</span>
-        </label>
-        <div
-          className="flex select-none items-stretch overflow-hidden rounded-lg border border-[var(--tott-card-border)]"
+      {/* Phone — 44px tall, with country code section + separator */}
+      <Field label={t("mobileLabel")} optionalLabel={t("optional")}>
+        <span
+          className="flex w-full flex-row items-center"
+          style={{
+            height: "44px",
+            padding: "8px",
+            backgroundColor: FIELD_BG,
+            border: `1px solid ${FIELD_BORDER}`,
+            borderRadius: `${FIELD_RADIUS}px`,
+            boxSizing: "border-box",
+          }}
         >
-          <div className="relative flex w-[120px] shrink-0 cursor-pointer select-none items-center border-r border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] sm:w-[140px]">
+          <span
+            className="relative inline-flex shrink-0 items-center"
+            style={{
+              height: "24px",
+              padding: "2px 0",
+              borderRight: "1px solid #5C5C5C",
+              paddingRight: "8px",
+              marginRight: "8px",
+            }}
+          >
             <select
               name="countryCode"
-              className="absolute inset-0 z-10 cursor-pointer select-none appearance-none border-0 bg-transparent py-2 pl-6 pr-6 text-xs text-foreground focus:outline-none focus:ring-0 sm:py-2.5 sm:pl-8 sm:pr-8"
               defaultValue="+20"
+              className="appearance-none bg-transparent focus:outline-none"
+              style={{
+                paddingLeft: "8px",
+                paddingRight: "24px",
+                color: PLACEHOLDER_COLOR,
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: "14px",
+                lineHeight: "20px",
+                letterSpacing: "-0.005em",
+                border: "none",
+                cursor: "pointer",
+                appearance: "none",
+                WebkitAppearance: "none",
+                MozAppearance: "none",
+                backgroundImage: "none",
+              }}
             >
               {COUNTRY_CODES.map(({ code, country }) => (
                 <option
                   key={code}
                   value={code}
-                  className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]"
+                  style={{ backgroundColor: FIELD_BG, color: LABEL_COLOR }}
                 >
                   {code} {country}
                 </option>
               ))}
             </select>
-            <span className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-[var(--tott-muted)] [&>svg]:h-4 [&>svg]:w-4">
-              <Grid2x2Icon />
-            </span>
             <span
-              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--tott-muted)] [&>svg]:h-4 [&>svg]:w-4"
               aria-hidden
+              className="pointer-events-none absolute"
+              style={{
+                right: "8px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: PLACEHOLDER_COLOR,
+              }}
             >
-              <ChevronDownIcon />
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
             </span>
-          </div>
+          </span>
           <input
             name="mobile"
             type="tel"
             placeholder={t("mobilePlaceholder")}
-            className={`${inputBase} min-w-0 flex-1 rounded-none border-0 border-l-0`}
-            style={{ borderColor: "transparent" }}
+            className="min-w-0 flex-1 bg-transparent focus:outline-none"
+            style={{
+              padding: "2px 8px",
+              color: LABEL_COLOR,
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
+              fontWeight: 400,
+              fontSize: "14px",
+              lineHeight: "20px",
+              letterSpacing: "-0.005em",
+              border: "none",
+            }}
           />
-        </div>
-      </div>
+        </span>
+      </Field>
 
-      <p className="select-none text-xs text-[var(--tott-muted)]">{t("consent")}</p>
-      <p className="select-none text-xs text-[var(--tott-muted)]">{t("technicalNote")}</p>
+      {/* Consent */}
+      <p
+        style={{
+          margin: 0,
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 400,
+          fontSize: "12px",
+          lineHeight: "16px",
+          color: PLACEHOLDER_COLOR,
+        }}
+      >
+        {t("consent")}
+      </p>
 
       {submitError ? (
-        <p className="rounded-lg border px-3 py-2 text-sm" style={{ borderColor: "rgba(220,38,38,0.35)", backgroundColor: "rgba(220,38,38,0.08)", color: "var(--tott-dash-negative)" }}>
+        <p
+          className="rounded-lg border px-3 py-2 text-sm"
+          style={{
+            borderColor: "rgba(220,38,38,0.35)",
+            backgroundColor: "rgba(220,38,38,0.08)",
+            color: "var(--tott-dash-negative)",
+            margin: 0,
+          }}
+        >
           {submitError}
         </p>
       ) : null}
 
-      <div className="pt-2">
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full select-none cursor-pointer rounded-lg px-4 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background)] disabled:cursor-not-allowed disabled:opacity-60 sm:px-6 sm:py-3.5 sm:text-base"
-          style={{
-            backgroundColor: theme.accentGold,
-            boxShadow: `0 0 0 1px ${theme.accentGold}`,
-            color: theme.bgDark,
-          }}
-        >
-          {isSubmitting ? t("submitting") : t("submit")}
-        </button>
-      </div>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        style={{
+          height: "40px",
+          padding: "8px 16px",
+          borderRadius: `${FIELD_RADIUS}px`,
+          backgroundColor: ACCENT,
+          boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
+          color: ACCENT_TEXT,
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 500,
+          fontSize: "14px",
+          lineHeight: "20px",
+          letterSpacing: "-0.005em",
+          textAlign: "center",
+          border: "none",
+          cursor: isSubmitting ? "not-allowed" : "pointer",
+        }}
+      >
+        {isSubmitting ? t("submitting") : t("submit")}
+      </button>
     </form>
+  );
+}
+
+// ─── Field / Input building blocks ───────────────────────────────
+
+const inputBoxStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  height: "40px",
+  padding: "8px",
+  width: "100%",
+  backgroundColor: FIELD_BG,
+  border: `1px solid ${FIELD_BORDER}`,
+  borderRadius: `${FIELD_RADIUS}px`,
+  boxSizing: "border-box",
+};
+
+const inputElementStyle: React.CSSProperties = {
+  padding: "2px 8px",
+  color: LABEL_COLOR,
+  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+  fontWeight: 400,
+  fontSize: "14px",
+  lineHeight: "20px",
+  letterSpacing: "-0.005em",
+  border: "none",
+  background: "transparent",
+};
+
+const labelStyle: React.CSSProperties = {
+  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+  fontWeight: 500,
+  fontSize: "14px",
+  lineHeight: "20px",
+  letterSpacing: "-0.005em",
+  color: LABEL_COLOR,
+};
+
+const optionalStyle: React.CSSProperties = {
+  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+  fontWeight: 400,
+  fontSize: "14px",
+  lineHeight: "20px",
+  letterSpacing: "-0.005em",
+  color: HELPER_COLOR,
+};
+
+function Field({
+  label,
+  optionalLabel,
+  children,
+}: {
+  label: string;
+  optionalLabel?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="flex w-full flex-col" style={{ gap: "8px" }}>
+      <span className="flex flex-row items-center" style={{ gap: "8px" }}>
+        <span style={labelStyle}>{label}</span>
+        {optionalLabel ? <span style={optionalStyle}>{optionalLabel}</span> : null}
+      </span>
+      {children}
+    </label>
+  );
+}
+
+function TrailingChevron() {
+  // Figma "Trailing Icon" wrapper: 28px wide, 24px tall, 2/4 padding,
+  // chevron centered inside. With the input's own 8px right padding,
+  // that leaves the chevron's visual centerline ~22px from the input's
+  // right edge — i.e. the 20px chevron sits at right: 12px.
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inline-flex items-center justify-center"
+      style={{
+        right: "12px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        width: "20px",
+        height: "20px",
+        color: PLACEHOLDER_COLOR,
+      }}
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </span>
   );
 }

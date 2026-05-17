@@ -3,7 +3,9 @@
     "page": {
       "title": "Contribuer à Trace of the Tides",
       "subtitle": "Que souhaitez-vous contribuer ?",
-      "typesLoadError": "Impossible de charger les types de contribution"
+      "typesLoadError": "Impossible de charger les types de contribution",
+      "heroTitle": "Laissez une trace",
+      "heroSubtitle": "Partagez votre histoire, document, œuvre ou musique. Chaque contribution aide à construire une archive vivante de voix et de mémoires."
     },
     "types": {
       "personal_story": "Histoire personnelle",
