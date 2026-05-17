@@ -1,0 +1,33 @@
+{
+  "OpenIssues": {
+    "eyebrow": "قيد التمويل",
+    "title": "الأعداد المفتوحة",
+    "subtitle": "ساعد في إحياء القصص المستقلة. كل عدد مفتوح فرصة لدعم عمل قيد التطوير.",
+    "badgeAlmostFunded": "اكتمل تقريباً",
+    "raisedOf": "من",
+    "supporters": "{count, plural, =1 {داعم واحد} other {# داعمين}}",
+    "supportCta": "ادعم هذا العدد",
+    "modal": {
+      "title": "ادعم {author}",
+      "subtitle": "عبّر عن تقديرك لمحتوى {author} الرائع",
+      "close": "إغلاق",
+      "tip1Amount": "$1",
+      "tip1Label": "اشترِ لي قهوة",
+      "tip5Amount": "$5",
+      "tip5Label": "أظهر بعض الحب",
+      "tip10Amount": "$10",
+      "tip10Label": "أنت مذهل",
+      "tip25Amount": "$25",
+      "tip25Label": "كرم استثنائي",
+      "customAmountLabel": "مبلغ مخصص",
+      "customAmountPlaceholder": "100",
+      "messageLabel": "رسالة",
+      "messageOptional": "(اختياري)",
+      "messagePlaceholder": "اكتب شيئاً لطيفاً للمؤلف.",
+      "continueCta": "متابعة بمبلغ {amount} دولار",
+      "continueDisabledCta": "اختر مبلغاً",
+      "submitting": "جارٍ المعالجة…",
+      "submitted": "شكراً على دعمك!"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "OpenIssues": {
+    "eyebrow": "Now Funding",
+    "title": "Open Issues",
+    "subtitle": "Help bring independent stories to life. Each open issue is a chance to support work in progress.",
+    "badgeAlmostFunded": "Almost Funded",
+    "raisedOf": "of",
+    "supporters": "{count, plural, =1 {1 supporter} other {# supporters}}",
+    "supportCta": "Support this Issue",
+    "modal": {
+      "title": "Support {author}",
+      "subtitle": "Give your appreciation for {author}'s great content",
+      "close": "Close",
+      "tip1Amount": "$1",
+      "tip1Label": "Buy me a coffee",
+      "tip5Amount": "$5",
+      "tip5Label": "Show some love",
+      "tip10Amount": "$10",
+      "tip10Label": "You're amazing",
+      "tip25Amount": "$25",
+      "tip25Label": "Super generous",
+      "customAmountLabel": "Custom Amount",
+      "customAmountPlaceholder": "100",
+      "messageLabel": "Message",
+      "messageOptional": "(Optional)",
+      "messagePlaceholder": "Say something nice to the author.",
+      "continueCta": "Continue with {amount} USD",
+      "continueDisabledCta": "Choose an amount",
+      "submitting": "Processing…",
+      "submitted": "Thanks for your support!"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "OpenIssues": {
+    "eyebrow": "En financement",
+    "title": "Numéros ouverts",
+    "subtitle": "Aidez à donner vie à des récits indépendants. Chaque numéro ouvert est une chance de soutenir un travail en cours.",
+    "badgeAlmostFunded": "Presque financé",
+    "raisedOf": "sur",
+    "supporters": "{count, plural, =1 {1 soutien} other {# soutiens}}",
+    "supportCta": "Soutenir ce numéro",
+    "modal": {
+      "title": "Soutenir {author}",
+      "subtitle": "Témoignez votre appréciation pour le travail de {author}",
+      "close": "Fermer",
+      "tip1Amount": "$1",
+      "tip1Label": "Offrez-moi un café",
+      "tip5Amount": "$5",
+      "tip5Label": "Un peu d'amour",
+      "tip10Amount": "$10",
+      "tip10Label": "Vous êtes formidable",
+      "tip25Amount": "$25",
+      "tip25Label": "Super généreux",
+      "customAmountLabel": "Montant personnalisé",
+      "customAmountPlaceholder": "100",
+      "messageLabel": "Message",
+      "messageOptional": "(Facultatif)",
+      "messagePlaceholder": "Écrivez un mot gentil à l'auteur.",
+      "continueCta": "Continuer avec {amount} USD",
+      "continueDisabledCta": "Choisissez un montant",
+      "submitting": "Traitement…",
+      "submitted": "Merci pour votre soutien !"
+    }
+  }
+}
