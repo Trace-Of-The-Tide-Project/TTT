@@ -1,0 +1,49 @@
+{
+  "StartAnIssue": {
+    "eyebrow": "Participa",
+    "title": "Crea un número...",
+    "subtitle": "Propón un tema, reúne colaboradores y dirige un número desde el concepto hasta la publicación. Da forma a la conversación cultural.",
+    "form": {
+      "firstName": "Nombre",
+      "firstNamePlaceholder": "Introduce tu nombre",
+      "lastName": "Apellido",
+      "lastNamePlaceholder": "Introduce tu apellido",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@ejemplo.com",
+      "phone": "Número de teléfono",
+      "phonePlaceholder": "Introduce tu número de teléfono",
+      "phoneHint": "No olvides escribir el número con el código de país.",
+      "experienceField": "Campo de experiencia",
+      "experiencePlaceholder": "Selecciona o describe tu campo de experiencia",
+      "experienceJournalism": "Periodismo",
+      "experienceResearch": "Investigación",
+      "experiencePhotography": "Fotografía",
+      "experienceFilmmaking": "Cine",
+      "experienceWriting": "Escritura",
+      "experienceArt": "Arte",
+      "experienceEducation": "Educación",
+      "experienceTechnology": "Tecnología",
+      "experienceOther": "Otro",
+      "issueTitle": "Título del número",
+      "issueTitlePlaceholder": "p. ej. Identidad y fronteras",
+      "theme": "Tema",
+      "themePlaceholder": "p. ej. Migración",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Describe tu visión para este número: qué historias, colaboradores, perspectivas y voces te gustaría reunir.",
+      "terms": "Acepto los",
+      "termsLink": "términos",
+      "and": "y la",
+      "privacyLink": "política de privacidad",
+      "submit": "Enviar propuesta",
+      "submitting": "Enviando…",
+      "submitted": "Propuesta enviada",
+      "backToHomeLead": "Volver a la",
+      "backToHomeLink": "página de inicio"
+    },
+    "support": {
+      "title": "O apoya un número",
+      "description": "Lorem ipsum dolor sit amet adipiscing elit accepit aliquam et porttitor purus.",
+      "cta": "Apoyar número"
+    }
+  }
+}

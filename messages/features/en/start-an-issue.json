@@ -1,0 +1,49 @@
+{
+  "StartAnIssue": {
+    "eyebrow": "Participate",
+    "title": "Create an Issue...",
+    "subtitle": "Propose a theme, curate contributors, and lead an issue from concept to publication. Shape the cultural conversation.",
+    "form": {
+      "firstName": "First name",
+      "firstNamePlaceholder": "Enter your first name",
+      "lastName": "Last name",
+      "lastNamePlaceholder": "Enter your last name",
+      "email": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "phone": "Phone number",
+      "phonePlaceholder": "Enter your phone number",
+      "phoneHint": "Don't forget to write the phone number with your country code.",
+      "experienceField": "Experience field",
+      "experiencePlaceholder": "Select or describe your experience field",
+      "experienceJournalism": "Journalism",
+      "experienceResearch": "Research",
+      "experiencePhotography": "Photography",
+      "experienceFilmmaking": "Filmmaking",
+      "experienceWriting": "Writing",
+      "experienceArt": "Art",
+      "experienceEducation": "Education",
+      "experienceTechnology": "Technology",
+      "experienceOther": "Other",
+      "issueTitle": "Issue Title",
+      "issueTitlePlaceholder": "e.g. Identity & Borders",
+      "theme": "Theme",
+      "themePlaceholder": "e.g. Migration",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your Vision for this Issue – what stories, contributors, perspectives, and voices would you like to bring together?",
+      "terms": "I agree to the",
+      "termsLink": "terms",
+      "and": "and",
+      "privacyLink": "privacy policy",
+      "submit": "Submit Proposal",
+      "submitting": "Submitting…",
+      "submitted": "Proposal sent",
+      "backToHomeLead": "Go back to",
+      "backToHomeLink": "Home page"
+    },
+    "support": {
+      "title": "Or Support an Issue",
+      "description": "Lorem ipsum dolor sit amet adipiscing elit accepit aliquam et porttitor purus.",
+      "cta": "Support Issue"
+    }
+  }
+}

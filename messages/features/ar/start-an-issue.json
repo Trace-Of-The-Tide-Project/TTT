@@ -1,0 +1,49 @@
+{
+  "StartAnIssue": {
+    "eyebrow": "شارك",
+    "title": "أنشئ عدداً...",
+    "subtitle": "اقترح موضوعاً، وادعُ المساهمين، وقد عدداً من الفكرة إلى النشر. شكّل الحوار الثقافي.",
+    "form": {
+      "firstName": "الاسم الأول",
+      "firstNamePlaceholder": "أدخل اسمك الأول",
+      "lastName": "اسم العائلة",
+      "lastNamePlaceholder": "أدخل اسم العائلة",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "you@example.com",
+      "phone": "رقم الهاتف",
+      "phonePlaceholder": "أدخل رقم هاتفك",
+      "phoneHint": "لا تنسَ كتابة رقم الهاتف مع رمز الدولة.",
+      "experienceField": "مجال الخبرة",
+      "experiencePlaceholder": "اختر أو صف مجال خبرتك",
+      "experienceJournalism": "الصحافة",
+      "experienceResearch": "البحث",
+      "experiencePhotography": "التصوير",
+      "experienceFilmmaking": "صناعة الأفلام",
+      "experienceWriting": "الكتابة",
+      "experienceArt": "الفن",
+      "experienceEducation": "التعليم",
+      "experienceTechnology": "التكنولوجيا",
+      "experienceOther": "أخرى",
+      "issueTitle": "عنوان العدد",
+      "issueTitlePlaceholder": "مثلاً: الهوية والحدود",
+      "theme": "الموضوع",
+      "themePlaceholder": "مثلاً: الهجرة",
+      "description": "الوصف",
+      "descriptionPlaceholder": "اوصف رؤيتك لهذا العدد – أيّ القصص والمساهمين ووجهات النظر والأصوات تودّ جمعها؟",
+      "terms": "أوافق على",
+      "termsLink": "الشروط",
+      "and": "و",
+      "privacyLink": "سياسة الخصوصية",
+      "submit": "إرسال المقترح",
+      "submitting": "جارٍ الإرسال…",
+      "submitted": "تم إرسال المقترح",
+      "backToHomeLead": "العودة إلى",
+      "backToHomeLink": "الصفحة الرئيسية"
+    },
+    "support": {
+      "title": "أو ادعم عدداً",
+      "description": "لوريم إيبسوم دولور سيت أميت أديبيسسينج إليت أكسيبيت أليكوام إت بورتيتور بوروس.",
+      "cta": "ادعم العدد"
+    }
+  }
+}

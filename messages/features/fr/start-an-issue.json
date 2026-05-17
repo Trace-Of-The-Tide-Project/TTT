@@ -1,0 +1,49 @@
+{
+  "StartAnIssue": {
+    "eyebrow": "Participez",
+    "title": "Créez un numéro...",
+    "subtitle": "Proposez un thème, réunissez des contributeurs et dirigez un numéro du concept à la publication. Façonnez la conversation culturelle.",
+    "form": {
+      "firstName": "Prénom",
+      "firstNamePlaceholder": "Saisissez votre prénom",
+      "lastName": "Nom",
+      "lastNamePlaceholder": "Saisissez votre nom",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "vous@exemple.com",
+      "phone": "Numéro de téléphone",
+      "phonePlaceholder": "Saisissez votre numéro",
+      "phoneHint": "N'oubliez pas d'indiquer l'indicatif du pays.",
+      "experienceField": "Domaine d'expérience",
+      "experiencePlaceholder": "Sélectionnez ou décrivez votre domaine",
+      "experienceJournalism": "Journalisme",
+      "experienceResearch": "Recherche",
+      "experiencePhotography": "Photographie",
+      "experienceFilmmaking": "Cinéma",
+      "experienceWriting": "Écriture",
+      "experienceArt": "Art",
+      "experienceEducation": "Éducation",
+      "experienceTechnology": "Technologie",
+      "experienceOther": "Autre",
+      "issueTitle": "Titre du numéro",
+      "issueTitlePlaceholder": "ex. Identité & frontières",
+      "theme": "Thème",
+      "themePlaceholder": "ex. Migration",
+      "description": "Description",
+      "descriptionPlaceholder": "Décrivez votre vision pour ce numéro — quelles histoires, contributeurs, perspectives et voix souhaitez-vous réunir ?",
+      "terms": "J'accepte les",
+      "termsLink": "conditions",
+      "and": "et la",
+      "privacyLink": "politique de confidentialité",
+      "submit": "Soumettre la proposition",
+      "submitting": "Envoi en cours…",
+      "submitted": "Proposition envoyée",
+      "backToHomeLead": "Retour à la",
+      "backToHomeLink": "page d'accueil"
+    },
+    "support": {
+      "title": "Ou soutenez un numéro",
+      "description": "Lorem ipsum dolor sit amet adipiscing elit accepit aliquam et porttitor purus.",
+      "cta": "Soutenir le numéro"
+    }
+  }
+}
