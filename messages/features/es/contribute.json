@@ -48,11 +48,12 @@
     },
     "success": {
       "title": "¡Gracias por tu contribución!",
+      "description": "Tu contribución ya está en nuestras manos. Nuestros editores la revisarán en breve y se pondrán en contacto si fuera necesario.",
       "backHome": "Volver al inicio"
     },
     "error": {
-      "title": "Algo salió mal",
-      "description": "No pudimos completar tu envío. Por favor, inténtalo de nuevo o contáctanos si el problema persiste.",
+      "title": "Vaya… Algo salió mal.",
+      "description": "No pudimos procesar tu envío. Inténtalo de nuevo en un momento, o contáctanos si el problema continúa.",
       "tryAgain": "Intentar de nuevo"
     },
     "contact": {

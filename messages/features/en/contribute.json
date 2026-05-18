@@ -48,11 +48,12 @@
     },
     "success": {
       "title": "Thank you for your contribution!",
+      "description": "Your contribution is now in our hands. Our editors will review it shortly and reach out if anything is needed.",
       "backHome": "Back to home"
     },
     "error": {
-      "title": "Something went wrong",
-      "description": "We could not complete your submission. Please try again, or contact us if the problem continues.",
+      "title": "Hmm… Something went wrong.",
+      "description": "We couldn't process your submission. Please try again in a moment, or reach out if the problem keeps happening.",
       "tryAgain": "Try again"
     },
     "contact": {

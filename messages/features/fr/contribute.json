@@ -48,11 +48,12 @@
     },
     "success": {
       "title": "Merci pour votre contribution !",
+      "description": "Votre contribution est entre nos mains. Nos éditeurs la passeront en revue sous peu et vous contacteront si nécessaire.",
       "backHome": "Retour à l'accueil"
     },
     "error": {
-      "title": "Quelque chose s'est mal passé",
-      "description": "Nous n'avons pas pu compléter votre soumission. Veuillez réessayer ou nous contacter si le problème persiste.",
+      "title": "Hmm… Quelque chose s'est mal passé.",
+      "description": "Nous n'avons pas pu traiter votre soumission. Réessayez dans un instant, ou contactez-nous si le problème persiste.",
       "tryAgain": "Réessayer"
     },
     "contact": {
