@@ -262,7 +262,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
         <div className="flex flex-col" style={{ gap: "8px" }}>
           <span className="flex flex-row items-center" style={{ gap: "8px" }}>
             <span style={labelStyle}>{t("uploadLabel")}</span>
-            <span style={optionalStyle}>{t("optional")}</span>
+            <span style={optionalStyle}>{t("uploadHelper")}</span>
           </span>
           <label
             htmlFor="file-upload"

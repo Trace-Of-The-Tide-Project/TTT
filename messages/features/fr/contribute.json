@@ -8,14 +8,14 @@
       "heroSubtitle": "Partagez votre histoire, document, œuvre ou musique. Chaque contribution aide à construire une archive vivante de voix et de mémoires."
     },
     "types": {
-      "personal_story": "Histoire personnelle",
-      "testimony": "Témoignage",
+      "personal_story": "Récit de vie",
+      "testimony": "Témoin",
       "biography": "Biographie",
       "artwork": "Œuvre d'art",
       "music": "Musique",
       "literature": "Littérature",
       "photography": "Photographie",
-      "history_document": "Document historique",
+      "history_document": "Archive",
       "other": "Autre"
     },
     "form": {
@@ -30,6 +30,7 @@
       "descriptionLabel": "Description",
       "descriptionPlaceholder": "Entrez une description pour la contribution",
       "uploadLabel": "Télécharger des fichiers",
+      "uploadHelper": "Téléversez autant que vous voulez",
       "uploadHint": "Glissez-déposez des fichiers ici, ou cliquez pour parcourir",
       "uploadFormats": "Formats pris en charge : JPG, PNG, PDF, MP3, MP4, DOC (max 20 Mo)",
       "removeFileAria": "Supprimer le fichier",
@@ -41,7 +42,7 @@
       "mobilePlaceholder": "01 2345 6789",
       "consent": "En soumettant, vous acceptez que votre contribution puisse être utilisée et attribuée conformément à nos conditions. Nous pouvons vous contacter concernant votre soumission.",
       "technicalNote": "Chaque fichier est d'abord envoyé à POST /upload, puis à nouveau dans le formulaire de contribution.",
-      "submit": "Soumettre la contribution",
+      "submit": "Plantez une trace",
       "submitting": "Téléchargement et soumission en cours…",
       "submitErrorDefault": "La soumission a échoué. Veuillez réessayer."
     },
