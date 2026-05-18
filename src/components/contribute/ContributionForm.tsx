@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { isAxiosError } from "axios";
@@ -10,6 +11,12 @@ import {
   TrashIcon,
 } from "@/components/ui/icons";
 import { COUNTRY_CODES } from "@/lib/constants";
+
+// Brand "Leading Icon-5" — 32×28 SVG with four small rhombus
+// shapes arranged in a diamond pattern (the decorative glyph that
+// sits at the leading edge of the phone-number input). Copied
+// verbatim from the Figma export.
+const PHONE_LEADING_ICON = "/images/contribute/phone-leading-icon.svg";
 import {
   appendContributionFile,
   createContribution,
@@ -44,6 +51,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [countryCode, setCountryCode] = useState("+20");
 
   const addFiles = useCallback((fileList: FileList | null) => {
     if (!fileList?.length) return;
@@ -429,7 +437,12 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
         </span>
       </Field>
 
-      {/* Phone — 44px tall, with country code section + separator */}
+      {/* Phone — 44px tall. Three-part internal layout per Figma:
+          [decorative leading icon] | [+20 chevron, with right border]
+          | [phone input]. The country-code <select> is rendered as
+          an invisible overlay on top of the "+20" display so the
+          dropdown shows the full "+20 Egypt" labels while the
+          collapsed state shows only the dial code. */}
       <Field label={t("mobileLabel")} optionalLabel={t("optional")}>
         <span
           className="flex w-full flex-row items-center"
@@ -442,36 +455,82 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
             boxSizing: "border-box",
           }}
         >
+          {/* Leading icon — brand-exported 32×28 SVG (four diamonds
+              in a diamond pattern, #A3A3A3 stroke baked in). */}
+          <span
+            aria-hidden
+            className="relative inline-block shrink-0"
+            style={{ width: "32px", height: "28px" }}
+          >
+            <Image
+              src={PHONE_LEADING_ICON}
+              alt=""
+              fill
+              sizes="32px"
+              className="select-none"
+              draggable={false}
+            />
+          </span>
+
+          {/* +20 + chevron, with right divider — Figma 67×24. The
+              native <select> sits invisibly on top of this block so
+              clicking anywhere in the area opens the country picker
+              (which shows the full "+20 Egypt" labels). */}
           <span
             className="relative inline-flex shrink-0 items-center"
             style={{
+              width: "67px",
               height: "24px",
               padding: "2px 0",
+              gap: "8px",
               borderRight: "1px solid #5C5C5C",
-              paddingRight: "8px",
               marginRight: "8px",
             }}
           >
-            <select
-              name="countryCode"
-              defaultValue="+20"
-              className="appearance-none bg-transparent focus:outline-none"
+            <span
+              aria-hidden
+              className="inline-block"
               style={{
-                paddingLeft: "8px",
-                paddingRight: "24px",
+                width: "27px",
                 color: PLACEHOLDER_COLOR,
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 400,
                 fontSize: "14px",
                 lineHeight: "20px",
                 letterSpacing: "-0.005em",
-                border: "none",
-                cursor: "pointer",
-                appearance: "none",
-                WebkitAppearance: "none",
-                MozAppearance: "none",
-                backgroundImage: "none",
               }}
+            >
+              {countryCode}
+            </span>
+            <span
+              aria-hidden
+              className="inline-flex items-center justify-center"
+              style={{
+                width: "20px",
+                height: "20px",
+                color: PLACEHOLDER_COLOR,
+              }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </span>
+            <select
+              name="countryCode"
+              value={countryCode}
+              onChange={(e) => setCountryCode(e.target.value)}
+              className="absolute inset-0 cursor-pointer opacity-0"
+              style={{ width: "100%", height: "100%", border: "none" }}
+              aria-label={t("mobileLabel")}
             >
               {COUNTRY_CODES.map(({ code, country }) => (
                 <option
@@ -483,30 +542,8 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
                 </option>
               ))}
             </select>
-            <span
-              aria-hidden
-              className="pointer-events-none absolute"
-              style={{
-                right: "8px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: PLACEHOLDER_COLOR,
-              }}
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </span>
           </span>
+
           <input
             name="mobile"
             type="tel"
