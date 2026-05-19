@@ -68,7 +68,7 @@ export function BookCover({ src, alt }: BookCoverProps) {
         <path
           d={BOOK_STROKE_PATH}
           fill="none"
-          stroke="rgba(255, 255, 255, 0.08)"
+          stroke="var(--tott-home-hex-sheen)"
           strokeWidth="1"
         />
       </svg>

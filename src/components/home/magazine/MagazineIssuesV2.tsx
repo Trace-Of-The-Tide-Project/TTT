@@ -129,8 +129,8 @@ function BookCard({
                 fontWeight: 400,
                 fontSize: 12,
                 lineHeight: "16px",
-                color: "#D6D6D6",
-                textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                color: "var(--tott-home-text-heading)",
+                textShadow: "var(--tott-home-text-shadow)",
                 margin: 0,
               }}
             >
@@ -159,8 +159,8 @@ function BookCard({
                 fontWeight: 400,
                 fontSize: 12,
                 lineHeight: "16px",
-                color: "rgba(255, 255, 255, 0.48)",
-                textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                color: "var(--tott-home-text-muted)",
+                textShadow: "var(--tott-home-text-shadow)",
                 margin: 0,
               }}
             >
@@ -179,7 +179,7 @@ function BookCard({
             fontSize: 14,
             lineHeight: "20px",
             letterSpacing: "-0.005em",
-            color: "#C9A96E",
+            color: "var(--tott-accent-gold)",
             textDecoration: "none",
           }}
         >
@@ -191,13 +191,13 @@ function BookCard({
   );
 }
 
-/** 20×20 arrow-right matching the Figma Vector (1.5px stroke, #C9A96E). */
+/** 20×20 arrow-right matching the Figma Vector (1.5px stroke, accent gold). */
 function ArrowRightIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
       <path
         d="M4.167 10h11.666M10 4.167L15.833 10 10 15.833"
-        stroke="#C9A96E"
+        stroke="var(--tott-accent-gold)"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"

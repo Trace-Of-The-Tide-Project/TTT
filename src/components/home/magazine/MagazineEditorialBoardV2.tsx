@@ -31,12 +31,14 @@ const HEX_FADE_MASK = {
 } as React.CSSProperties;
 
 /* ─────────────────────────── tokens (Figma) ─────────────────────────── */
-const EYEBROW = "#AF7E47";
-const TEXT_STRONG = "#FFFFFF";
-const TEXT_META = "#D6D6D6";
-const TEXT_MUTED = "#A3A3A3";
-const GOLD_TEXT = "#332217";
-const AVATAR_BG = "#DBC99E";
+// All colors resolve to CSS variables in globals.css so the cards
+// swap with the dark/light theme.
+const EYEBROW = "var(--tott-home-eyebrow)";
+const TEXT_STRONG = "var(--tott-home-text-strong)";
+const TEXT_META = "var(--tott-home-text-heading)";
+const TEXT_MUTED = "var(--tott-home-text-muted)";
+const GOLD_TEXT = "var(--tott-auth-btn-text)";
+const AVATAR_BG = "var(--tott-dash-gold-text)";
 const CARD_W = 276;
 const CARD_H = 294;
 
@@ -148,7 +150,7 @@ function BoardHeader({
           lineHeight: "20px",
           letterSpacing: "-0.005em",
           color: EYEBROW,
-          textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+          textShadow: "var(--tott-home-text-shadow)",
           margin: 0,
           textAlign: "center",
         }}
@@ -177,7 +179,7 @@ function BoardHeader({
           lineHeight: "20px",
           letterSpacing: "-0.005em",
           color: TEXT_MUTED,
-          textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+          textShadow: "var(--tott-home-text-shadow)",
           margin: 0,
           textAlign: "center",
         }}
@@ -294,7 +296,7 @@ function Carousel({
           backgroundColor: "var(--tott-panel-bg)",
           border: "1px solid var(--tott-card-border)",
           color: "var(--tott-home-text-strong)",
-          boxShadow: "0px 1px 3px rgba(23, 23, 23, 0.4)",
+          boxShadow: "var(--tott-home-text-shadow)",
         }}
       >
         <ArrowIcon direction="left" />
@@ -310,7 +312,7 @@ function Carousel({
           backgroundColor: "var(--tott-panel-bg)",
           border: "1px solid var(--tott-card-border)",
           color: "var(--tott-home-text-strong)",
-          boxShadow: "0px 1px 3px rgba(23, 23, 23, 0.4)",
+          boxShadow: "var(--tott-home-text-shadow)",
         }}
       >
         <ArrowIcon direction="right" />
@@ -417,7 +419,7 @@ function CarouselCard({
             fontSize: 20,
             lineHeight: "28px",
             color: TEXT_STRONG,
-            textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+            textShadow: "var(--tott-home-text-shadow)",
             margin: 0,
             textAlign: "center",
             width: 228,
@@ -439,7 +441,7 @@ function CarouselCard({
                 fontSize: 12,
                 lineHeight: "16px",
                 color: TEXT_META,
-                textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                textShadow: "var(--tott-home-text-shadow)",
               }}
             >
               {author}
@@ -456,7 +458,7 @@ function CarouselCard({
                   fontSize: 12,
                   lineHeight: "16px",
                   color: TEXT_META,
-                  textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                  textShadow: "var(--tott-home-text-shadow)",
                 }}
               >
                 {date}
@@ -483,7 +485,7 @@ function Avatar({ name }: { name: string }) {
         height: 16,
         borderRadius: 999,
         backgroundColor: AVATAR_BG,
-        border: "1px solid rgba(0,0,0,0.08)",
+        border: "1px solid var(--tott-card-border)",
       }}
     >
       <span
@@ -520,7 +522,7 @@ function RolePill({ label }: { label: string }) {
       <span style={chevronStyle("left")} />
       <span
         style={{
-          backgroundColor: "rgba(23, 23, 23, 0.8)",
+          backgroundColor: "var(--tott-home-badge-bg)",
           backdropFilter: "blur(4px)",
           WebkitBackdropFilter: "blur(4px)",
           padding: "4px 0",
@@ -552,7 +554,7 @@ function chevronStyle(direction: "left" | "right"): React.CSSProperties {
   return {
     width: 8,
     height: 24,
-    backgroundColor: "rgba(23, 23, 23, 0.8)",
+    backgroundColor: "var(--tott-home-badge-bg)",
     backdropFilter: "blur(4px)",
     WebkitBackdropFilter: "blur(4px)",
     clipPath:
@@ -649,7 +651,7 @@ function SectionHeader({
           lineHeight: "20px",
           letterSpacing: "-0.005em",
           color: EYEBROW,
-          textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+          textShadow: "var(--tott-home-text-shadow)",
           margin: 0,
           textAlign: "center",
         }}
@@ -742,7 +744,7 @@ function PeopleHexCard({ label, count }: { label: string; count: number }) {
             fontSize: 20,
             lineHeight: "28px",
             color: TEXT_STRONG,
-            textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+            textShadow: "var(--tott-home-text-shadow)",
             margin: 0,
           }}
         >
@@ -781,7 +783,13 @@ function CalendarIcon() {
       viewBox="0 0 16 16"
       fill="none"
       aria-hidden
-      style={{ filter: "drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.32))" }}
+      style={{
+        // Stroke follows the theme via `currentColor`, set by the
+        // wrapping span/h3's `color` style. Drop-shadow stays as a
+        // raw rgba — it's a decorative depth cue, theme-agnostic.
+        color: TEXT_META,
+        filter: "drop-shadow(var(--tott-home-text-shadow))",
+      }}
     >
       <rect
         x="2.67"
@@ -789,12 +797,12 @@ function CalendarIcon() {
         width="10.67"
         height="10.67"
         rx="1.5"
-        stroke="rgba(255,255,255,0.8)"
+        stroke="currentColor"
         strokeWidth="1.25"
       />
       <path
         d="M5.33 1.83v3.33M10.67 1.83v3.33M2.67 7h10.67"
-        stroke="rgba(255,255,255,0.8)"
+        stroke="currentColor"
         strokeWidth="1.25"
         strokeLinecap="round"
       />

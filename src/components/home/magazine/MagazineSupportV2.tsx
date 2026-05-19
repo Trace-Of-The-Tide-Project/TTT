@@ -30,16 +30,20 @@ const ICON_IMPACT_4 = "/images/home/support-impact-4.svg"; // book-2
 // and the embedded silk artwork).
 const ISSUE_THUMBNAIL = "/images/home/support-issue-thumbnail.svg";
 
-/* ─────────────────────────── tokens (Figma) ─────────────────────────── */
-const GOLD = "#C9A96E";
-const GOLD_TEXT = "#332217";
-const TEXT_STRONG = "#FFFFFF";
-const TEXT_MUTED = "#A3A3A3";
-const TEXT_DIM = "#7B7B7B";
-const EYEBROW = "#AF7E47";
-const FRAME = "#333333";
-const ICON_TINT = "#E8DDC0";
-const PANEL_BG = "#262626";
+/* ─────────────────────────── theme tokens ───────────────────────────
+   All colors here resolve to CSS variables defined in globals.css, so
+   the Support tab swaps cleanly between dark and light themes. The
+   Figma comp is dark-only; the light values are tuned in globals.css.
+*/
+const GOLD = "var(--tott-accent-gold)";
+const GOLD_TEXT = "var(--tott-auth-btn-text)";
+const TEXT_STRONG = "var(--tott-home-text-strong)";
+const TEXT_MUTED = "var(--tott-home-text-muted)";
+const TEXT_DIM = "var(--tott-home-text-muted)";
+const EYEBROW = "var(--tott-home-eyebrow)";
+const FRAME = "var(--tott-card-border)";
+const ICON_TINT = "var(--tott-stat-icon)";
+const PANEL_BG = "var(--tott-elevated)";
 
 const SECTION_GAP = 48;
 
@@ -540,7 +544,7 @@ function OpenIssueCard({
         style={{
           height: 43,
           padding: "4px 12px",
-          backgroundColor: "#333333",
+          backgroundColor: FRAME,
           backdropFilter: "blur(4px)",
           WebkitBackdropFilter: "blur(4px)",
           borderRadius: 8,
@@ -739,7 +743,7 @@ function IconBadge({ children }: { children: React.ReactNode }) {
         width: 56,
         height: 64,
         background: PANEL_BG,
-        boxShadow: "inset 0px 1px 0px #333333",
+        boxShadow: `inset 0px 1px 0px ${FRAME}`,
         borderRadius: 8,
         color: ICON_TINT,
       }}

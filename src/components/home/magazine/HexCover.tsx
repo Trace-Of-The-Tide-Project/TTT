@@ -62,8 +62,8 @@ export function HexCover({ src, alt, showFade = false }: HexCoverProps) {
               y2="1"
               gradientUnits="objectBoundingBox"
             >
-              <stop stopColor="#171717" stopOpacity="0" />
-              <stop offset="1" stopColor="#171717" />
+              <stop stopColor="var(--tott-home-surface)" stopOpacity="0" />
+              <stop offset="1" stopColor="var(--tott-home-surface)" />
             </linearGradient>
           ) : null}
         </defs>
@@ -92,7 +92,7 @@ export function HexCover({ src, alt, showFade = false }: HexCoverProps) {
         <path
           d={HEX_STROKE_PATH}
           fill="none"
-          stroke="rgba(255, 255, 255, 0.08)"
+          stroke="var(--tott-home-hex-sheen)"
           strokeWidth="1"
         />
       </svg>

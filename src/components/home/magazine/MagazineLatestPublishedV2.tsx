@@ -97,8 +97,8 @@ function BookCard({ item }: { item: LatestPublishedItem }) {
                 fontWeight: 400,
                 fontSize: 12,
                 lineHeight: "16px",
-                color: "#D6D6D6",
-                textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                color: "var(--tott-home-text-heading)",
+                textShadow: "var(--tott-home-text-shadow)",
                 margin: 0,
               }}
             >
@@ -114,7 +114,7 @@ function BookCard({ item }: { item: LatestPublishedItem }) {
                 fontSize: 16,
                 lineHeight: "24px",
                 letterSpacing: "-0.01em",
-                color: "#FFFFFF",
+                color: "var(--tott-home-text-strong)",
                 margin: 0,
                 display: "-webkit-box",
                 WebkitBoxOrient: "vertical",
@@ -133,7 +133,7 @@ function BookCard({ item }: { item: LatestPublishedItem }) {
                 fontWeight: 400,
                 fontSize: 12,
                 lineHeight: "16px",
-                color: "#A3A3A3",
+                color: "var(--tott-home-text-muted)",
                 margin: 0,
               }}
             >
