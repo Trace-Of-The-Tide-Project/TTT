@@ -277,6 +277,8 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
       <div className="relative">
         <MagazineHero
           artwork={magazineMeta.hero?.image}
+          title={magazineMeta.hero?.title}
+          subtitle={magazineMeta.hero?.subtitle}
         />
         {/* MagazineBody is a thin client wrapper that owns the active
             tab state so the Newsletter section below can swap its

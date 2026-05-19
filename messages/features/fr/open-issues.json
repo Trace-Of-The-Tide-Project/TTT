@@ -7,6 +7,7 @@
     "raisedOf": "sur",
     "supporters": "{count, plural, =1 {1 soutien} other {# soutiens}}",
     "supportCta": "Soutenir ce numéro",
+    "emptyState": "Aucun numéro ouvert pour le moment — revenez bientôt.",
     "modal": {
       "title": "Soutenir {author}",
       "subtitle": "Témoignez votre appréciation pour le travail de {author}",
@@ -27,7 +28,8 @@
       "continueCta": "Continuer avec {amount} USD",
       "continueDisabledCta": "Choisissez un montant",
       "submitting": "Traitement…",
-      "submitted": "Merci pour votre soutien !"
+      "submitted": "Merci pour votre soutien !",
+      "error": "Nous n'avons pas pu enregistrer votre don. Veuillez réessayer."
     }
   }
 }

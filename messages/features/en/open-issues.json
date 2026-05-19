@@ -7,6 +7,7 @@
     "raisedOf": "of",
     "supporters": "{count, plural, =1 {1 supporter} other {# supporters}}",
     "supportCta": "Support this Issue",
+    "emptyState": "No open issues right now — check back soon.",
     "modal": {
       "title": "Support {author}",
       "subtitle": "Give your appreciation for {author}'s great content",
@@ -27,7 +28,8 @@
       "continueCta": "Continue with {amount} USD",
       "continueDisabledCta": "Choose an amount",
       "submitting": "Processing…",
-      "submitted": "Thanks for your support!"
+      "submitted": "Thanks for your support!",
+      "error": "We couldn't record your pledge. Please try again."
     }
   }
 }

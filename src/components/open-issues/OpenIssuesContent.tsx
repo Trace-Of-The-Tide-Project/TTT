@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { SupportIssueModal } from "@/components/open-issues/SupportIssueModal";
+import type { MagazineIssue } from "@/services/magazine-issues.service";
 
 // All colors map to --tott-* theme tokens so the card swaps cleanly
 // between dark and light, matching the Open Issues block in the
@@ -18,108 +19,65 @@ const TEXT_MUTED = "var(--tott-home-text-muted)";
 
 const PLACEHOLDER_IMAGE = "/images/home/support-issue-thumbnail.svg";
 
+/** Card view-model — only the fields the grid renders. Funding stats
+ * stay optional: until the backend exposes a public per-issue stats
+ * endpoint we leave them undefined and the card hides the progress
+ * bar entirely (rather than showing a misleading 24% on every card). */
 type IssueCard = {
   id: string;
   prefix: string;
   title: string;
   author: string;
   description: string;
-  raised: number;
-  goal: number;
-  supporters: number;
   image: string;
-  badge?: string;
+  funding?: {
+    raised: number;
+    goal: number;
+    supporters: number;
+  };
+  badge?: "almost";
 };
 
-const ISSUES: IssueCard[] = [
-  {
-    id: "issue-09",
-    prefix: "Issue 09:",
-    title: "Identity & Borders",
-    author: "Faiz Berghouli",
-    description:
-      "Exploring the fluid boundaries of belonging, displacement, and cultural memory across continents…",
-    raised: 1200,
-    goal: 5000,
-    supporters: 42,
-    image: PLACEHOLDER_IMAGE,
-    badge: "almost",
-  },
-  {
-    id: "issue-09-2",
-    prefix: "Issue 09:",
-    title: "Identity & Borders",
-    author: "Hala Younes",
-    description:
-      "Exploring the fluid boundaries of belonging, displacement, and cultural memory across continents…",
-    raised: 1200,
-    goal: 5000,
-    supporters: 42,
-    image: PLACEHOLDER_IMAGE,
-    badge: "almost",
-  },
-  {
-    id: "issue-09-3",
-    prefix: "Issue 09:",
-    title: "Identity & Borders",
-    author: "Omar Khalidi",
-    description:
-      "Exploring the fluid boundaries of belonging, displacement, and cultural memory across continents…",
-    raised: 1200,
-    goal: 5000,
-    supporters: 42,
-    image: PLACEHOLDER_IMAGE,
-    badge: "almost",
-  },
-  {
-    id: "issue-10",
-    prefix: "Issue 09:",
-    title: "Identity & Borders",
-    author: "Layla Saab",
-    description:
-      "Exploring the fluid boundaries of belonging, displacement, and cultural memory across continents…",
-    raised: 1200,
-    goal: 5000,
-    supporters: 42,
-    image: PLACEHOLDER_IMAGE,
-    badge: "almost",
-  },
-  {
-    id: "issue-10-2",
-    prefix: "Issue 09:",
-    title: "Identity & Borders",
-    author: "Nadia Rahim",
-    description:
-      "Exploring the fluid boundaries of belonging, displacement, and cultural memory across continents…",
-    raised: 1200,
-    goal: 5000,
-    supporters: 42,
-    image: PLACEHOLDER_IMAGE,
-    badge: "almost",
-  },
-  {
-    id: "issue-10-3",
-    prefix: "Issue 09:",
-    title: "Identity & Borders",
-    author: "Karim Aboud",
-    description:
-      "Exploring the fluid boundaries of belonging, displacement, and cultural memory across continents…",
-    raised: 1200,
-    goal: 5000,
-    supporters: 42,
-    image: PLACEHOLDER_IMAGE,
-    badge: "almost",
-  },
-];
+function isValidImageUrl(url: string | null | undefined): url is string {
+  if (!url) return false;
+  try {
+    const u = new URL(url);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
 
 function formatUsd(n: number): string {
   return `$${n.toLocaleString("en-US")}`;
 }
 
-export function OpenIssuesContent() {
+function mapIssueToCard(it: MagazineIssue): IssueCard {
+  const editionLabel = it.edition ? `Issue ${it.edition}:` : "Issue:";
+  return {
+    id: it.id,
+    prefix: editionLabel,
+    title: it.title || "",
+    // Backend doesn't yet expose a per-issue "lead author/editor"
+    // field, so leave author blank — the modal still receives it as
+    // an empty string and the title rendering tolerates that.
+    author: "",
+    description: (it.excerpt || it.description || "").trim(),
+    image: isValidImageUrl(it.cover_image) ? it.cover_image! : PLACEHOLDER_IMAGE,
+  };
+}
+
+export function OpenIssuesContent({
+  issues: rawIssues = [],
+}: {
+  issues?: MagazineIssue[];
+}) {
   const t = useTranslations("OpenIssues");
   const [activeIssue, setActiveIssue] = useState<IssueCard | null>(null);
-  const issues = useMemo(() => ISSUES, []);
+  const issues = useMemo(
+    () => rawIssues.map(mapIssueToCard).filter((c) => c.title),
+    [rawIssues],
+  );
 
   return (
     <main
@@ -187,37 +145,60 @@ export function OpenIssuesContent() {
           </p>
         </header>
 
-        {/* Grid */}
-        <ul
-          className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-          style={{
-            gap: "24px",
-            padding: 0,
-            listStyle: "none",
-          }}
-        >
-          {issues.map((issue) => (
-            <li key={issue.id}>
-              <IssueCardView
-                issue={issue}
-                onSupport={() => setActiveIssue(issue)}
-                badgeAlmostFunded={t("badgeAlmostFunded")}
-                raisedOfLabel={t("raisedOf")}
-                supportersLabel={t("supporters", {
-                  count: issue.supporters,
-                })}
-                ctaLabel={t("supportCta")}
-              />
-            </li>
-          ))}
-        </ul>
+        {/* Grid — empty-state row spans all columns. */}
+        {issues.length === 0 ? (
+          <p
+            className="mt-12 text-center"
+            style={{
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
+              fontWeight: 400,
+              fontSize: 14,
+              lineHeight: "20px",
+              color: TEXT_MUTED,
+            }}
+          >
+            {t("emptyState")}
+          </p>
+        ) : (
+          <ul
+            className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+            style={{
+              gap: "24px",
+              padding: 0,
+              listStyle: "none",
+            }}
+          >
+            {issues.map((issue) => (
+              <li key={issue.id}>
+                <IssueCardView
+                  issue={issue}
+                  onSupport={() => setActiveIssue(issue)}
+                  badgeAlmostFunded={t("badgeAlmostFunded")}
+                  raisedOfLabel={t("raisedOf")}
+                  supportersLabel={
+                    issue.funding
+                      ? t("supporters", { count: issue.funding.supporters })
+                      : ""
+                  }
+                  ctaLabel={t("supportCta")}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <SupportIssueModal
         open={activeIssue != null}
         onClose={() => setActiveIssue(null)}
         issue={
-          activeIssue ?? { title: "", author: "" }
+          activeIssue
+            ? {
+                id: activeIssue.id,
+                title: activeIssue.title,
+                author: activeIssue.author,
+              }
+            : { title: "", author: "" }
         }
       />
     </main>
@@ -239,7 +220,9 @@ function IssueCardView({
   supportersLabel: string;
   ctaLabel: string;
 }) {
-  const pct = Math.min(100, Math.round((issue.raised / issue.goal) * 100));
+  const pct = issue.funding
+    ? Math.min(100, Math.round((issue.funding.raised / issue.funding.goal) * 100))
+    : 0;
 
   // Card layout mirrors `OpenIssueCard` in `MagazineSupportV2`:
   // ChamferedFrame outline → pill chip → silk thumbnail → Frame 52
@@ -251,7 +234,8 @@ function IssueCardView({
         className="flex h-full w-full flex-col items-start"
         style={{ padding: "24px 40px", gap: 16 }}
       >
-        {/* Pill chip — Figma `Pills` rounded #333 badge. */}
+        {/* Pill chip — only renders when we have real funding data AND
+            the issue is past the "almost funded" threshold. */}
         {issue.badge === "almost" ? (
           <span
             className="inline-flex items-center justify-center self-start"
@@ -303,67 +287,74 @@ function IssueCardView({
             <span style={{ color: ACCENT }}>{issue.prefix}</span> {issue.title}
           </h3>
 
-          <p
-            className="line-clamp-3"
-            style={{
-              fontFamily: "'Inter', var(--font-sans, sans-serif)",
-              fontWeight: 400,
-              fontSize: 16,
-              lineHeight: "24px",
-              letterSpacing: "-0.01em",
-              color: TEXT_MUTED,
-              margin: 0,
-            }}
-          >
-            {issue.description}
-          </p>
-
-          {/* Progress bar — 3px grey track + gold linear-gradient fill. */}
-          <div
-            aria-hidden
-            className="relative w-full"
-            style={{ height: 3, backgroundColor: FRAME }}
-          >
-            <div
-              className="absolute left-0 top-0 h-full"
-              style={{
-                width: `${pct}%`,
-                background:
-                  "linear-gradient(90deg, #34281A 0%, #AF7E47 100%)",
-              }}
-            />
-          </div>
-
-          {/* Funding row — raised/goal + supporters split. */}
-          <div className="flex w-full items-center justify-between">
-            <span
+          {issue.description ? (
+            <p
+              className="line-clamp-3"
               style={{
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 400,
-                fontSize: 14,
-                lineHeight: "20px",
-                letterSpacing: "-0.005em",
+                fontSize: 16,
+                lineHeight: "24px",
+                letterSpacing: "-0.01em",
                 color: TEXT_MUTED,
+                margin: 0,
               }}
             >
-              {formatUsd(issue.raised)}{" "}
-              <span style={{ color: TEXT_MUTED, fontWeight: 400 }}>
-                {raisedOfLabel} {formatUsd(issue.goal)}
-              </span>
-            </span>
-            <span
-              style={{
-                fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                fontWeight: 400,
-                fontSize: 14,
-                lineHeight: "20px",
-                letterSpacing: "-0.005em",
-                color: TEXT_MUTED,
-              }}
-            >
-              {supportersLabel}
-            </span>
-          </div>
+              {issue.description}
+            </p>
+          ) : null}
+
+          {/* Funding bar + numbers only render when backend exposes
+              real stats. Until then the card stays informational
+              instead of showing a fake 24% on every card. */}
+          {issue.funding ? (
+            <>
+              <div
+                aria-hidden
+                className="relative w-full"
+                style={{ height: 3, backgroundColor: FRAME }}
+              >
+                <div
+                  className="absolute left-0 top-0 h-full"
+                  style={{
+                    width: `${pct}%`,
+                    background:
+                      "linear-gradient(90deg, #34281A 0%, #AF7E47 100%)",
+                  }}
+                />
+              </div>
+
+              <div className="flex w-full items-center justify-between">
+                <span
+                  style={{
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontWeight: 400,
+                    fontSize: 14,
+                    lineHeight: "20px",
+                    letterSpacing: "-0.005em",
+                    color: TEXT_MUTED,
+                  }}
+                >
+                  {formatUsd(issue.funding.raised)}{" "}
+                  <span style={{ color: TEXT_MUTED, fontWeight: 400 }}>
+                    {raisedOfLabel} {formatUsd(issue.funding.goal)}
+                  </span>
+                </span>
+                <span
+                  style={{
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontWeight: 400,
+                    fontSize: 14,
+                    lineHeight: "20px",
+                    letterSpacing: "-0.005em",
+                    color: TEXT_MUTED,
+                  }}
+                >
+                  {supportersLabel}
+                </span>
+              </div>
+            </>
+          ) : null}
         </div>
 
         {/* Gold CTA — same spec as the Support tab's Open Issues button. */}

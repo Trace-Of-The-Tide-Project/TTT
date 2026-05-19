@@ -7,6 +7,7 @@
     "raisedOf": "de",
     "supporters": "{count, plural, =1 {1 colaborador} other {# colaboradores}}",
     "supportCta": "Apoyar este número",
+    "emptyState": "No hay números abiertos por ahora — vuelve pronto.",
     "modal": {
       "title": "Apoyar a {author}",
       "subtitle": "Expresa tu agradecimiento por el gran contenido de {author}",
@@ -27,7 +28,8 @@
       "continueCta": "Continuar con {amount} USD",
       "continueDisabledCta": "Elige una cantidad",
       "submitting": "Procesando…",
-      "submitted": "¡Gracias por tu apoyo!"
+      "submitted": "¡Gracias por tu apoyo!",
+      "error": "No pudimos registrar tu aporte. Inténtalo de nuevo."
     }
   }
 }

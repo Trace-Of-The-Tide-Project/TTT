@@ -3,6 +3,8 @@
 import { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
+import { isAxiosError } from "axios";
+import { useCreateIssuePledge } from "@/hooks/mutations/issue-pledges";
 
 /* Theme tokens — colors resolve via globals.css so the modal swaps
    between dark/light themes consistently with the rest of the app. */
@@ -41,22 +43,30 @@ export function SupportIssueModal({
 }: {
   open: boolean;
   onClose: () => void;
-  issue: { title: string; author: string };
+  /** `id` is required to POST a real pledge. When missing we render
+   * the modal but disable submit + show an error — protects against
+   * a placeholder card opening a non-functional payment flow. */
+  issue: { id?: string; title: string; author: string };
 }) {
   const t = useTranslations("OpenIssues.modal");
   const titleId = useId();
+  const pledge = useCreateIssuePledge();
 
   const [selectedTip, setSelectedTip] = useState<TipKey | null>("tip25");
   const [customAmount, setCustomAmount] = useState("");
   const [message, setMessage] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const busy = pledge.isPending;
 
   useEffect(() => {
     if (!open) return;
-    setBusy(false);
     setSubmitted(false);
-  }, [open]);
+    setSubmitError(null);
+    pledge.reset();
+    // The mutation owns busy state; resetting here is enough — no
+    // explicit setBusy call needed.
+  }, [open, pledge]);
 
   useEffect(() => {
     if (!open) return;
@@ -83,16 +93,40 @@ export function SupportIssueModal({
     : presetAmount != null
       ? presetAmount
       : null;
-  const canSubmit = effectiveAmount != null;
+  const canSubmit = effectiveAmount != null && Boolean(issue.id) && !busy;
 
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!canSubmit || busy) return;
-    setBusy(true);
-    window.setTimeout(() => {
-      setBusy(false);
-      setSubmitted(true);
-    }, 600);
+    if (effectiveAmount == null || !issue.id || busy) return;
+    setSubmitError(null);
+    const trimmedMessage = message.trim();
+    pledge.mutate(
+      {
+        issue_id: issue.id,
+        amount: effectiveAmount,
+        ...(trimmedMessage ? { message: trimmedMessage } : {}),
+      },
+      {
+        onSuccess: (data) => {
+          // If the backend hands back a payment-provider URL (Stripe
+          // Checkout etc.), route the user there to actually pay.
+          // Otherwise show the in-modal success state.
+          if (data?.payment_url) {
+            window.location.assign(data.payment_url);
+            return;
+          }
+          setSubmitted(true);
+        },
+        onError: (err) => {
+          const msg =
+            (isAxiosError(err) &&
+              (err.response?.data as { message?: string } | undefined)
+                ?.message) ||
+            t("error");
+          setSubmitError(typeof msg === "string" ? msg : t("error"));
+        },
+      },
+    );
   };
 
   return createPortal(
@@ -360,6 +394,27 @@ export function SupportIssueModal({
                   />
                 </span>
               </label>
+
+              {submitError ? (
+                <p
+                  role="alert"
+                  style={{
+                    padding: "10px 12px",
+                    borderRadius: 8,
+                    border:
+                      "1px solid color-mix(in srgb, var(--tott-status-coral) 45%, transparent)",
+                    backgroundColor:
+                      "color-mix(in srgb, var(--tott-status-coral) 16%, transparent)",
+                    color: "var(--tott-dash-negative)",
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontSize: 13,
+                    lineHeight: "18px",
+                    margin: 0,
+                  }}
+                >
+                  {submitError}
+                </p>
+              ) : null}
 
               {/* Message textarea (Text Input, 408×140). */}
               <label className="flex flex-col" style={{ gap: 8 }}>

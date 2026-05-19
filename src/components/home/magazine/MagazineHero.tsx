@@ -7,6 +7,11 @@ import { Link } from "@/i18n/navigation";
 type MagazineHeroProps = {
   /** Path to the hero artwork — defaults to the design SVG bundled in /public. */
   artwork?: string;
+  /** Headline override. When supplied, replaces the i18n default
+   * (used when the backend magazine record has `hero_title` seeded). */
+  title?: string;
+  /** Subhead override. Falls back to the i18n string. */
+  subtitle?: string;
   /** Where the primary CTA links. */
   primaryHref?: string;
   /** Where the secondary CTA links. */
@@ -32,6 +37,8 @@ type MagazineHeroProps = {
 // at /fields until the Read / Subscribe destinations are decided.
 export function MagazineHero({
   artwork = "/images/home/magazine-thumbnail.svg",
+  title,
+  subtitle,
   primaryHref = "/fields",
   secondaryHref = "/fields",
 }: MagazineHeroProps) {
@@ -61,6 +68,8 @@ export function MagazineHero({
           <div className="pointer-events-none absolute inset-0 z-10 hidden flex-col items-start justify-end px-10 pb-12 text-start lg:flex lg:px-16 lg:pb-20">
             <HeroCopy
               t={t}
+              title={title}
+              subtitle={subtitle}
               primaryHref={primaryHref}
               secondaryHref={secondaryHref}
               tone="overlay"
@@ -73,6 +82,8 @@ export function MagazineHero({
         <div className="mt-6 lg:hidden">
           <HeroCopy
             t={t}
+            title={title}
+            subtitle={subtitle}
             primaryHref={primaryHref}
             secondaryHref={secondaryHref}
             tone="stacked"
@@ -85,6 +96,8 @@ export function MagazineHero({
 
 type HeroCopyProps = {
   t: ReturnType<typeof useTranslations>;
+  title?: string;
+  subtitle?: string;
   primaryHref: string;
   secondaryHref: string;
   /** "overlay" = white text + textShadow for placement over silk image.
@@ -95,6 +108,8 @@ type HeroCopyProps = {
 
 function HeroCopy({
   t,
+  title,
+  subtitle,
   primaryHref,
   secondaryHref,
   tone,
@@ -131,13 +146,13 @@ function HeroCopy({
         className="text-[clamp(1.5rem,4.5vw,3.25rem)] font-medium leading-[1.1] tracking-tight"
         style={titleStyle}
       >
-        {t("title")}
+        {title?.trim() || t("title")}
       </h1>
       <p
         className="mt-3 max-w-[60ch] text-[clamp(0.95rem,1.4vw,1.125rem)] leading-relaxed sm:mt-4"
         style={subtitleStyle}
       >
-        {t("subtitle")}
+        {subtitle?.trim() || t("subtitle")}
       </p>
       <div className="mt-5 flex flex-wrap items-center gap-3 sm:mt-6 sm:gap-3.5">
         <Link

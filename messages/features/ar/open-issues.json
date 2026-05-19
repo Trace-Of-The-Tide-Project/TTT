@@ -7,6 +7,7 @@
     "raisedOf": "من",
     "supporters": "{count, plural, =1 {داعم واحد} other {# داعمين}}",
     "supportCta": "ادعم هذا العدد",
+    "emptyState": "لا توجد أعداد مفتوحة حالياً — تفقد لاحقاً.",
     "modal": {
       "title": "ادعم {author}",
       "subtitle": "عبّر عن تقديرك لمحتوى {author} الرائع",
@@ -27,7 +28,8 @@
       "continueCta": "متابعة بمبلغ {amount} دولار",
       "continueDisabledCta": "اختر مبلغاً",
       "submitting": "جارٍ المعالجة…",
-      "submitted": "شكراً على دعمك!"
+      "submitted": "شكراً على دعمك!",
+      "error": "تعذّر تسجيل دعمك. يرجى المحاولة مرة أخرى."
     }
   }
 }
