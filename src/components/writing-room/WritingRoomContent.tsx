@@ -810,17 +810,9 @@ function DictionaryCard({
 // ─── Discover Featured Writing ───────────────────────────────────
 
 // Card geometry for the xl carousel — a 276px-wide silk hex with an
-// 8px gap between cards. STEP is the per-click translation distance
-// (one card width + one gap), used by the prev/next arrows.
+// 8px gap between cards.
 const CAROUSEL_CARD_WIDTH = 276;
 const CAROUSEL_GAP = 8;
-const CAROUSEL_STEP = CAROUSEL_CARD_WIDTH + CAROUSEL_GAP;
-// Width of the central 4-card "window" — used both as the
-// reference point for centring the active 4 cards in the
-// viewport and as the reach measurement that the ghost gradients
-// fade across.
-const CARDS_WINDOW_WIDTH =
-  4 * CAROUSEL_CARD_WIDTH + 3 * CAROUSEL_GAP;
 const CAROUSEL_TRANSITION_MS = 400;
 // Width of the "ghost" gradient strips overlaid on each end of the
 // carousel — these mask the next/previous hexagon as it peeks in
@@ -848,7 +840,6 @@ const SMALL_CARD_GAP = 24;
 function FeaturedWritingRow({
   items,
   heading,
-  viewAll: _viewAll,
   cardTitleFallback,
   cardAuthorFallback,
   wantToEngage,

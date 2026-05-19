@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { createElement, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import HexBackground from "@/components/ui/HexBackground";
 import { ContributionForm } from "@/components/contribute/ContributionForm";
@@ -279,7 +279,7 @@ function SelectCard({
   onClick?: () => void;
 }) {
   const iconPath = getCardIconPath(typeName);
-  const FallbackIcon = iconPath ? null : getContributionTypeIcon(typeName);
+  const fallbackIcon = iconPath ? null : getContributionTypeIcon(typeName);
   const iconColor = selected ? ACCENT : HELPER_COLOR;
   const labelColor = selected ? ACCENT : LABEL_COLOR;
   const hexStroke = selected ? ACCENT : CARD_BORDER;
@@ -328,7 +328,7 @@ function SelectCard({
         ) : null}
       </svg>
 
-      {FallbackIcon ? (
+      {fallbackIcon ? (
         <span
           aria-hidden
           className="pointer-events-none absolute left-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center justify-center [&>svg]:h-6 [&>svg]:w-6"
@@ -339,7 +339,7 @@ function SelectCard({
             color: iconColor,
           }}
         >
-          <FallbackIcon />
+          {createElement(fallbackIcon)}
         </span>
       ) : null}
 

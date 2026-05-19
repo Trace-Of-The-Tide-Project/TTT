@@ -39,8 +39,6 @@ export function DashboardLayout({
     };
   }, [mobileOpen]);
 
-  const panelClass = "rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-panel-bg)]";
-
   return (
     <div className="relative min-h-[calc(100dvh-72px)] bg-[var(--tott-dash-surface)]">
       {/* Hex background — decorative accent at the top */}

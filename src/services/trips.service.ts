@@ -154,7 +154,6 @@ export function tripDisplayPriceLabel(
   const min = parseFloat(trip.price);
   const maxStr = trip.max_price ?? trip.maxPrice;
   const max = maxStr != null && String(maxStr).trim() !== "" ? parseFloat(String(maxStr)) : NaN;
-  const cur = (trip.currency || "USD").toUpperCase();
   if (!Number.isFinite(min) || min <= 0) return "Free";
   if (Number.isFinite(max) && max > min) {
     return `${formatTripPriceAmount(min, trip.currency || "USD")} – ${formatTripPriceAmount(max, trip.currency || "USD")}`;

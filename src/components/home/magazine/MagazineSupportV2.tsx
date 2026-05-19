@@ -761,24 +761,6 @@ function CornerFrame({
   );
 }
 
-function IconBadge({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      className="flex shrink-0 items-center justify-center"
-      style={{
-        width: 56,
-        height: 64,
-        background: PANEL_BG,
-        boxShadow: `inset 0px 1px 0px ${FRAME}`,
-        borderRadius: 8,
-        color: ICON_TINT,
-      }}
-    >
-      {children}
-    </span>
-  );
-}
-
 function IconInline({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center justify-center" style={{ width: 24, height: 24, color: ICON_TINT }}>
