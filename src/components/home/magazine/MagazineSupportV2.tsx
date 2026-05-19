@@ -25,6 +25,10 @@ const ICON_IMPACT_1 = "/images/home/support-impact-1.svg"; // palette
 const ICON_IMPACT_2 = "/images/home/support-impact-2.svg"; // users
 const ICON_IMPACT_3 = "/images/home/support-impact-3.svg"; // book
 const ICON_IMPACT_4 = "/images/home/support-impact-4.svg"; // book-2
+// 318×98 brand-exported thumbnail for the Open Issues cards
+// (Figma `Thumbnail` — rounded rect with 1px white-8% inner stroke
+// and the embedded silk artwork).
+const ISSUE_THUMBNAIL = "/images/home/support-issue-thumbnail.svg";
 
 /* ─────────────────────────── tokens (Figma) ─────────────────────────── */
 const GOLD = "#C9A96E";
@@ -521,41 +525,55 @@ function OpenIssueCard({
   buttonLabel: string;
   href: string;
 }) {
+  // Figma `Body` (398×389): padding 0 40, gap 16, align-items flex-start.
+  // Stretchy children (thumbnail, title block, progress bar, progress
+  // row) are explicitly w-full; the gold button stays auto-width per
+  // the Figma `Actions` 161px box.
   return (
-    <div className="flex flex-col gap-4 px-10 py-6">
-      {/* Pill */}
-      <div className="inline-flex items-center self-start">
-        <span style={{ width: 8, height: 43, background: "#333333", clipPath: "polygon(100% 0,100% 100%,0 50%)" }} />
-        <span
-          className="inline-flex items-center justify-center px-2"
-          style={{
-            background: "#333333",
-            height: 43,
-            fontFamily: "'Inter', var(--font-sans, sans-serif)",
-            fontWeight: 500,
-            fontSize: 12,
-            lineHeight: "16px",
-            color: TEXT_STRONG,
-          }}
-        >
-          {pill}
-        </span>
-        <span style={{ width: 8, height: 43, background: "#333333", clipPath: "polygon(0 0,0 100%,100% 50%)" }} />
+    <div className="flex flex-col items-start gap-4 px-10 py-6">
+      {/* Figma `Pills` — 106×43 dark rounded rectangle. The spec
+          splits it into Left / Frame 44 / Right segments (same #333
+          fill) for auto-layout reasons, but visually it renders as
+          one rounded badge with the label centred. */}
+      <span
+        className="inline-flex items-center justify-center self-start"
+        style={{
+          height: 43,
+          padding: "4px 12px",
+          backgroundColor: "#333333",
+          backdropFilter: "blur(4px)",
+          WebkitBackdropFilter: "blur(4px)",
+          borderRadius: 8,
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 500,
+          fontSize: 12,
+          lineHeight: "16px",
+          color: TEXT_STRONG,
+          whiteSpace: "nowrap",
+        }}
+      >
+        {pill}
+      </span>
+
+      {/* Figma `Thumbnail` — 318×98 brand-exported silk artwork with
+          a 1px white-8% inner stroke + 8px rounded corners, all baked
+          into the SVG so we just drop it in. */}
+      <div className="relative w-full" style={{ aspectRatio: "318 / 98" }}>
+        <Image
+          src={ISSUE_THUMBNAIL}
+          alt=""
+          fill
+          className="select-none object-cover"
+          sizes="(min-width: 768px) 320px, 100vw"
+          draggable={false}
+          style={{ borderRadius: 8 }}
+        />
       </div>
 
-      {/* Thumbnail placeholder (Figma `Thumbnail` — image with white-8% border) */}
-      <div
-        className="w-full"
-        style={{
-          height: 98,
-          background: "linear-gradient(135deg, #333 0%, #222 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          borderRadius: 8,
-        }}
-      />
-
-      {/* Title + body */}
-      <div className="flex flex-col" style={{ gap: 8 }}>
+      {/* Frame 52 — title + body description + progress bar + progress
+          row, ALL children of Frame 52 with `gap: 8` between them
+          (NOT the outer 16-gap). Per Figma 318×139 spec. */}
+      <div className="flex w-full flex-col" style={{ gap: 8 }}>
         <h3
           style={{
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
@@ -582,13 +600,27 @@ function OpenIssueCard({
         >
           {body}
         </p>
-      </div>
 
-      {/* Divider */}
-      <div style={{ height: 0, borderTop: `1px solid ${FRAME}` }} />
+        {/* Frame 283 — 3px progress bar: grey track + gold linear-
+            gradient fill (`#34281A` → `#AF7E47`) at the card's funded
+            ratio. Figma uses 230/318 ≈ 72% for the sample card. */}
+        <div
+          aria-hidden
+          className="relative w-full"
+          style={{ height: 3, backgroundColor: FRAME }}
+        >
+          <div
+            className="absolute left-0 top-0 h-full"
+            style={{
+              width: "72%",
+              background:
+                "linear-gradient(90deg, #34281A 0%, #AF7E47 100%)",
+            }}
+          />
+        </div>
 
-      {/* Progress + supporters */}
-      <div className="flex items-center justify-between">
+        {/* Frame 282 — progress text + supporters, justify-between. */}
+        <div className="flex w-full items-center justify-between">
         <span
           style={{
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
@@ -613,6 +645,7 @@ function OpenIssueCard({
         >
           {supporters}
         </span>
+        </div>
       </div>
 
       <GoldButton href={href}>{buttonLabel}</GoldButton>
