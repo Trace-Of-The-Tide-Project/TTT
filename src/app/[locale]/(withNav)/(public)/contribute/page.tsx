@@ -17,11 +17,14 @@ import { getCardIconPath } from "@/lib/contributions/contribution-card-icon-path
 import type { ContributionType } from "@/services/contributions.service";
 import { useContributionTypes } from "@/hooks/queries/contributions";
 
-const ACCENT = "#C9A96E";
-const CARD_BG = "#242424";
-const CARD_BORDER = "#333333";
-const LABEL_COLOR = "#FFFFFF";
-const HELPER_COLOR = "#A3A3A3";
+// Theme tokens — every color routes through globals.css so the
+// contribute page (Leave a Trace hero + honeycomb of contribution
+// types) swaps cleanly between dark and light themes.
+const ACCENT = "var(--tott-accent-gold)";
+const CARD_BG = "var(--tott-elevated)";
+const CARD_BORDER = "var(--tott-card-border)";
+const LABEL_COLOR = "var(--tott-home-text-strong)";
+const HELPER_COLOR = "var(--tott-home-text-muted)";
 
 // Figma honeycomb layout — 9 cards staggered in a 3-2-3-1 pattern.
 // Each entry is (col, row) in the 3-column / 4-row grid; the middle
@@ -185,8 +188,12 @@ export default function ContributePage() {
             <div
               className="w-full rounded-lg border px-4 py-3 text-sm"
               style={{
-                borderColor: "rgba(220,38,38,0.35)",
-                backgroundColor: "rgba(220,38,38,0.08)",
+                // Tint the error banner from the negative token so it
+                // adapts to theme without hardcoding red literals.
+                borderColor:
+                  "color-mix(in srgb, var(--tott-dash-negative) 35%, transparent)",
+                backgroundColor:
+                  "color-mix(in srgb, var(--tott-dash-negative) 8%, transparent)",
                 color: "var(--tott-dash-negative)",
               }}
             >

@@ -23,14 +23,16 @@ import {
 } from "@/services/contributions.service";
 import { uploadFileForContribution } from "@/services/uploads.service";
 
-const FIELD_BG = "#262626";
-const FIELD_BORDER = "#333333";
+// All colors resolve to --tott-* CSS variables in globals.css so the
+// contribute form swaps cleanly between dark and light themes.
+const FIELD_BG = "var(--tott-elevated)";
+const FIELD_BORDER = "var(--tott-card-border)";
 const FIELD_RADIUS = 8;
-const LABEL_COLOR = "#FFFFFF";
-const HELPER_COLOR = "#A3A3A3";
-const PLACEHOLDER_COLOR = "#7B7B7B";
-const ACCENT = "#C9A96E";
-const ACCENT_TEXT = "#332217";
+const LABEL_COLOR = "var(--tott-home-text-strong)";
+const HELPER_COLOR = "var(--tott-home-text-muted)";
+const PLACEHOLDER_COLOR = "var(--tott-home-text-muted)";
+const ACCENT = "var(--tott-accent-gold)";
+const ACCENT_TEXT = "var(--tott-auth-btn-text)";
 
 type UploadedFile = { id: string; file: File; sizeLabel: string };
 
@@ -259,7 +261,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
               height: "6px",
               right: "8px",
               bottom: "8px",
-              backgroundColor: "#5C5C5C",
+              backgroundColor: "var(--tott-home-text-muted)",
             }}
           />
         </span>
@@ -370,7 +372,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
                       fontSize: "14px",
                       lineHeight: "20px",
                       letterSpacing: "-0.005em",
-                      color: "rgba(255, 255, 255, 0.72)",
+                      color: "var(--tott-home-text-strong)",
                     }}
                   >
                     {file.name}
@@ -381,7 +383,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
                       fontWeight: 400,
                       fontSize: "12px",
                       lineHeight: "16px",
-                      color: "rgba(255, 255, 255, 0.48)",
+                      color: "var(--tott-home-text-muted)",
                     }}
                   >
                     {sizeLabel}
@@ -483,7 +485,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
               height: "24px",
               padding: "2px 0",
               gap: "8px",
-              borderRight: "1px solid #5C5C5C",
+              borderRight: "1px solid var(--tott-home-text-muted)",
               marginRight: "8px",
             }}
           >
@@ -581,8 +583,12 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
         <p
           className="rounded-lg border px-3 py-2 text-sm"
           style={{
-            borderColor: "rgba(220,38,38,0.35)",
-            backgroundColor: "rgba(220,38,38,0.08)",
+            // Tint the error banner from the negative token so it
+            // tracks the theme without hardcoding a red literal.
+            borderColor:
+              "color-mix(in srgb, var(--tott-dash-negative) 35%, transparent)",
+            backgroundColor:
+              "color-mix(in srgb, var(--tott-dash-negative) 8%, transparent)",
             color: "var(--tott-dash-negative)",
             margin: 0,
           }}

@@ -77,7 +77,7 @@ function ScatteredHexBackground() {
           key={i}
           d={hexPath(h.cx, h.cy, h.r)}
           fill="none"
-          stroke="#bbbbbb"
+          stroke="var(--tott-home-text-muted)"
           strokeWidth="1.2"
           strokeOpacity="0.14"
         />
@@ -91,7 +91,7 @@ function ScatteredHexBackground() {
       />
       <g
         transform="translate(742.5, 71) scale(0.5)"
-        stroke="#CBA158"
+        stroke="var(--tott-accent-gold)"
         fill="none"
         strokeWidth="1.2"
         strokeLinecap="round"
@@ -123,7 +123,7 @@ export function ShareYourStory() {
 
         <Link
           href="/contribute"
-          className="mt-8 inline-block select-none rounded-lg px-8 py-3.5 text-base font-medium text-[#1a1a1a] transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
+          className="mt-8 inline-block select-none rounded-lg px-8 py-3.5 text-base font-medium text-[var(--tott-auth-btn-text)] transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
           style={{ backgroundColor: theme.accentGold }}
         >
           {t("shareCta")}

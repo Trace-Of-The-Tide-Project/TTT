@@ -10,15 +10,17 @@ import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 
 const TIP_JAR_ICON = "/images/start-an-issue/tip-jar-icon.svg";
 
-const ICON_STROKE = "#7B7B7B";
-const FIELD_BG = "#262626";
-const FIELD_BORDER = "#333333";
+// All colors resolve via the project's --tott-* CSS variables so the
+// form swaps cleanly between dark and light themes.
+const ICON_STROKE = "var(--tott-home-text-muted)";
+const FIELD_BG = "var(--tott-elevated)";
+const FIELD_BORDER = "var(--tott-card-border)";
 const FIELD_RADIUS = 8;
-const LABEL_COLOR = "#FFFFFF";
-const HELPER_COLOR = "#A3A3A3";
-const PLACEHOLDER_COLOR = "#7B7B7B";
-const ACCENT = "#C9A96E";
-const ACCENT_TEXT = "#332217";
+const LABEL_COLOR = "var(--tott-home-text-strong)";
+const HELPER_COLOR = "var(--tott-home-text-muted)";
+const PLACEHOLDER_COLOR = "var(--tott-home-text-muted)";
+const ACCENT = "var(--tott-accent-gold)";
+const ACCENT_TEXT = "var(--tott-auth-btn-text)";
 
 export function StartAnIssueContent() {
   const t = useTranslations("StartAnIssue");
@@ -264,7 +266,7 @@ export function StartAnIssueContent() {
                         height: "6px",
                         right: "8px",
                         bottom: "8px",
-                        backgroundColor: "#5C5C5C",
+                        backgroundColor: "var(--tott-home-text-muted)",
                       }}
                     />
                   </div>
@@ -306,7 +308,7 @@ export function StartAnIssueContent() {
                         top: "3.5px",
                         width: "13px",
                         height: "13px",
-                        backgroundColor: "#171717",
+                        backgroundColor: "var(--tott-home-surface)",
                         borderRadius: "2.5px",
                       }}
                     />
@@ -481,7 +483,7 @@ export function StartAnIssueContent() {
                       lineHeight: "20px",
                       letterSpacing: "-0.005em",
                       color: HELPER_COLOR,
-                      textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)",
+                      textShadow: "var(--tott-home-text-shadow)",
                     }}
                   >
                     {ts("description")}
