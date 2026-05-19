@@ -23,6 +23,7 @@ import {
   MagazineSupport,
   type CollaborationItem,
 } from "@/components/home/magazine/MagazineSupport";
+import { MagazineSupportV2 } from "@/components/home/magazine/MagazineSupportV2";
 import { serverGet } from "@/lib/api/isomorphic-fetch";
 import {
   writerAvatar,
@@ -307,6 +308,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
               ),
               issues: <MagazineIssuesV2 items={issues} />,
               editorialBoard: <MagazineEditorialBoardV2 writers={writers} />,
+              support: <MagazineSupportV2 />,
             },
           }}
           newsletter={{
