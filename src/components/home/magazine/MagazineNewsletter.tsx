@@ -122,12 +122,11 @@ export function MagazineNewsletter({
             fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
             // Figma Title/H4 — 24/32 white centred. We let the default
             // `Join our cultural circle` keep its gold first-word
-            // accent; override copy renders flat white per the spec.
+            // accent; override copy renders flat strong-text per the
+            // spec (theme-aware via --tott-home-text-strong).
             fontSize: 24,
             lineHeight: "32px",
-            color: titleOverride
-              ? "#FFFFFF"
-              : "var(--tott-home-text-strong)",
+            color: "var(--tott-home-text-strong)",
             maxWidth: 529,
             margin: "4px 0 0",
           }}
@@ -137,15 +136,14 @@ export function MagazineNewsletter({
         <p
           className="mt-3"
           style={{
-            // Figma Paragraph/Small — Inter 400 14/20, ‑0.005em, #A3A3A3.
+            // Figma Paragraph/Small — Inter 400 14/20, ‑0.005em,
+            // theme-muted (--tott-home-text-muted swaps light/dark).
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 400,
             fontSize: 14,
             lineHeight: "20px",
             letterSpacing: "-0.005em",
-            color: bodyOverride
-              ? "#A3A3A3"
-              : "var(--tott-home-text-muted)",
+            color: "var(--tott-home-text-muted)",
             maxWidth: 529,
           }}
         >
@@ -153,8 +151,9 @@ export function MagazineNewsletter({
         </p>
 
         {ctaButton ? (
-          // Figma Button — 116×40, #C9A96E with inset 1px white-40%
-          // top highlight, label Inter 500 14/20 ‑0.005em #332217.
+          // Figma Button — 116×40, gold with inset 1px white-40%
+          // top highlight, dark label. All colors resolve to theme
+          // tokens so the button swaps with light/dark.
           <Link
             href={ctaButton.href}
             className="mt-6 inline-flex items-center justify-center transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)]"
@@ -162,7 +161,7 @@ export function MagazineNewsletter({
               minWidth: 116,
               height: 40,
               padding: "8px 16px",
-              backgroundColor: "#C9A96E",
+              backgroundColor: "var(--tott-accent-gold)",
               boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
               borderRadius: 8,
               fontFamily: "'Inter', var(--font-sans, sans-serif)",
@@ -170,7 +169,7 @@ export function MagazineNewsletter({
               fontSize: 14,
               lineHeight: "20px",
               letterSpacing: "-0.005em",
-              color: "#332217",
+              color: "var(--tott-auth-btn-text)",
               textDecoration: "none",
             }}
           >
