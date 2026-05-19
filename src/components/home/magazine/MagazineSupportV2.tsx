@@ -44,12 +44,11 @@ const SECTION_GAP = 48;
  *   1. Create or Fund an Issue — eyebrow + heading + body + 2 CTA cards
  *   2. How Support Works — gradient heading + 4 numbered process steps
  *   3. Your Impact — eyebrow + heading + 4 outcome cards
- *   4. Open Issues — eyebrow + heading + body + 3 fundraising cards
- *   5. What we fund — 4 small chip cards (Pay Writers / Produce Visuals / …)
+ *   4. What we fund — 4 small chip cards (Pay Writers / Produce Visuals / …)
+ *   5. Open Issues — eyebrow + heading + body + 3 fundraising cards
  *
- * The Figma comp wraps every section in its signature "corner frame":
- * a thin 1px #333 outline with 24×24 corner squares at each corner,
- * the top-left square filled solid grey #D9D9D9 as a visual anchor.
+ * The Figma comp wraps every section in its signature chamfered
+ * frame; we share one outline via the project's <ChamferedFrame />.
  */
 export function MagazineSupportV2() {
   const t = useTranslations("Home.magazine.supportV2");
@@ -62,8 +61,8 @@ export function MagazineSupportV2() {
       <CreateOrFundSection t={t} />
       <HowSupportWorksSection t={t} />
       <YourImpactSection t={t} />
-      <OpenIssuesSection t={t} />
       <WhatWeFundSection t={t} />
+      <OpenIssuesSection t={t} />
     </div>
   );
 }
@@ -621,34 +620,55 @@ function OpenIssueCard({
   );
 }
 
-/* ─────────────────────────── 5. What we fund ─────────────────────────── */
+/* ─────────────────────────── 4. What we fund ─────────────────────────── */
 function WhatWeFundSection({ t }: { t: ReturnType<typeof useTranslations> }) {
+  // Figma Frame 60 — row, align-items center, gap 24, width 1128
+  // (4 × 264 + 3 × 24). Each Form is 264×104 with the chamfered frame:
+  // Top 24 / Body 56 (padding 0 40, gap 8: icon 24 + label 24) /
+  // Bottom 24.
   const items = [
     { label: t("payWriters"), icon: <WritingIcon /> },
     { label: t("produceVisuals"), icon: <ImageIcon /> },
     { label: t("publishIssue"), icon: <Book2Icon /> },
     { label: t("growCommunity"), icon: <UsersIcon /> },
   ];
+  // Match the Your Impact body layout one-for-one (same outer width,
+  // padding 16/40, gap 24, 4-up grid on md+) so the four card columns
+  // align horizontally with the Your Impact columns above.
   return (
-    <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+    <div
+      className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4"
+      style={{ gap: 24, padding: "16px 40px" }}
+    >
       {items.map((it, i) => (
         <CornerFrame key={i}>
-          <div className="flex flex-col items-center justify-center gap-2 px-10 py-4" style={{ minHeight: 56 }}>
+          <div
+            className="flex flex-col items-center"
+            style={{
+              // Body padding mirrors the top/bottom corner-row chrome
+              // (24) + 40 L/R per Figma `Form` Body.
+              padding: "24px 40px",
+              gap: 8,
+            }}
+          >
             <IconInline>{it.icon}</IconInline>
-            <p
-              style={{
-                fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                fontWeight: 500,
-                fontSize: 16,
-                lineHeight: "24px",
-                letterSpacing: "-0.01em",
-                color: TEXT_STRONG,
-                margin: 0,
-                textAlign: "center",
-              }}
-            >
-              {it.label}
-            </p>
+            {/* Figma `Frame 52` — label wrapper. */}
+            <div className="w-full" style={{ height: 24 }}>
+              <p
+                style={{
+                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                  fontWeight: 500,
+                  fontSize: 16,
+                  lineHeight: "24px",
+                  letterSpacing: "-0.01em",
+                  color: TEXT_STRONG,
+                  margin: 0,
+                  textAlign: "center",
+                }}
+              >
+                {it.label}
+              </p>
+            </div>
           </div>
         </CornerFrame>
       ))}
