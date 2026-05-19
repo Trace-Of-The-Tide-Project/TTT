@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import type { MagazineIssueItem } from "./MagazineIssuesV2";
 
 // Figma "Icon Wrapper" assets — 56×64 chamfered hex with the glyph
 // (writing / heart-handshake) baked in, inset shadow filter included.
@@ -58,7 +59,14 @@ const SECTION_GAP = 48;
  * The Figma comp wraps every section in its signature chamfered
  * frame; we share one outline via the project's <ChamferedFrame />.
  */
-export function MagazineSupportV2() {
+export type MagazineSupportV2Props = {
+  /** Magazine issues from `/magazine-issues`. The Open Issues section
+   *  maps these into fundraising cards. Falls back to placeholder cards
+   *  when the array is empty so the layout never collapses. */
+  issues?: MagazineIssueItem[];
+};
+
+export function MagazineSupportV2({ issues = [] }: MagazineSupportV2Props) {
   const t = useTranslations("Home.magazine.supportV2");
 
   return (
@@ -70,7 +78,7 @@ export function MagazineSupportV2() {
       <HowSupportWorksSection t={t} />
       <YourImpactSection t={t} />
       <WhatWeFundSection t={t} />
-      <OpenIssuesSection t={t} />
+      <OpenIssuesSection t={t} issues={issues} />
     </div>
   );
 }
@@ -484,8 +492,18 @@ function YourImpactSection({ t }: { t: ReturnType<typeof useTranslations> }) {
 }
 
 /* ─────────────────────────── 4. Open Issues ─────────────────────────── */
-function OpenIssuesSection({ t }: { t: ReturnType<typeof useTranslations> }) {
-  const cards = [0, 1, 2];
+function OpenIssuesSection({
+  t,
+  issues,
+}: {
+  t: ReturnType<typeof useTranslations>;
+  issues: MagazineIssueItem[];
+}) {
+  // Show 3 issue cards. Real magazine-issues data fills first, then
+  // we pad with translation placeholders so the layout always renders
+  // 3 cards even when the backend has fewer (or none).
+  const slots = Array.from({ length: 3 }).map((_, i) => issues[i] ?? null);
+
   return (
     <CornerFrame>
       <div className="flex w-full flex-col items-center" style={{ gap: 8, padding: "32px 0 16px" }}>
@@ -494,19 +512,27 @@ function OpenIssuesSection({ t }: { t: ReturnType<typeof useTranslations> }) {
         <Body className="max-w-[442px] text-center">{t("openBody")}</Body>
       </div>
       <div className="grid grid-cols-1 gap-6 px-4 py-4 md:grid-cols-3 md:px-10">
-        {cards.map((i) => (
-          <CornerFrame key={i}>
-            <OpenIssueCard
-              pill={t("openPill")}
-              title={t("openIssueTitle")}
-              body={t("openIssueBody")}
-              progress={t("openProgress")}
-              supporters={t("openSupporters")}
-              buttonLabel={t("openButton")}
-              href="/open-issues"
-            />
-          </CornerFrame>
-        ))}
+        {slots.map((issue, i) => {
+          const title = issue?.title?.trim() || t("openIssueTitle");
+          const body = issue?.excerpt?.trim() || t("openIssueBody");
+          // No magazine-issue detail page yet; every "Support this
+          // Issue" button drops the visitor on /open-issues where
+          // they can pick an issue from the list.
+          const href = "/open-issues";
+          return (
+            <CornerFrame key={issue?.id ?? i}>
+              <OpenIssueCard
+                pill={t("openPill")}
+                title={title}
+                body={body}
+                progress={t("openProgress")}
+                supporters={t("openSupporters")}
+                buttonLabel={t("openButton")}
+                href={href}
+              />
+            </CornerFrame>
+          );
+        })}
       </div>
     </CornerFrame>
   );

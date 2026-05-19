@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 // Same silk-hex + top-icon brand assets used by the writing-room
 // "Discover Featured Writing" row, so the Editorial Board gallery
@@ -337,10 +338,15 @@ function CarouselCard({
   const date = writer.edition?.trim() || "";
   const role = writer.role?.trim() || rolePlaceholder;
 
+  // No per-writer detail page exists yet, so every card lands on
+  // /writing-room (where the writers are featured + you can apply to
+  // join the editorial board).
   return (
-    <article
-      className="relative w-full"
+    <Link
+      href="/writing-room"
+      className="relative block w-full transition-opacity hover:opacity-90"
       style={{ height: CARD_H, width: CARD_W }}
+      aria-label={author}
     >
       {/* Optional cover image — sits behind the silk hex so the
           writer's photo reads through the silk silhouette. */}
@@ -471,7 +477,7 @@ function CarouselCard({
       {/* Role pill — sits over the bottom fade, centered, with the
           dark chevron caps from the Figma comp. */}
       <RolePill label={role} />
-    </article>
+    </Link>
   );
 }
 

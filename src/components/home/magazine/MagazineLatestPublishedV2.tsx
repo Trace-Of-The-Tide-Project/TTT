@@ -1,5 +1,6 @@
 "use client";
 
+import { Link } from "@/i18n/navigation";
 import { BookCover } from "./BookCover";
 
 const FALLBACK_IMAGE = "/images/image.png";
@@ -12,6 +13,8 @@ export type LatestPublishedItem = {
   readingTime: number;
   coverImage?: string | null;
   publishedAt?: string | null;
+  /** Article slug used to build the `/books/{slug}` deep link. */
+  slug?: string | null;
   href?: string | null;
 };
 
@@ -77,9 +80,15 @@ export function MagazineLatestPublishedV2({
 function BookCard({ item }: { item: LatestPublishedItem }) {
   const date = formatMonthYear(item.publishedAt);
   const imgSrc = isValidImageUrl(item.coverImage) ? item.coverImage : FALLBACK_IMAGE;
+  // Deep-link to the book detail when we have a slug, otherwise drop
+  // visitors on the books index so they can browse manually.
+  const href = item.slug ? `/books/${item.slug}` : "/books";
 
   return (
-    <article className="flex w-full max-w-[192px] flex-col items-start">
+    <Link
+      href={href}
+      className="flex w-full max-w-[192px] flex-col items-start transition-opacity hover:opacity-90"
+    >
       <BookCover src={imgSrc} alt={item.title || item.category} />
 
       <div
@@ -142,6 +151,6 @@ function BookCard({ item }: { item: LatestPublishedItem }) {
           ) : null}
         </div>
       </div>
-    </article>
+    </Link>
   );
 }

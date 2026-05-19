@@ -93,6 +93,7 @@ async function fetchLatestArticles(): Promise<LatestPublishedItem[]> {
     readingTime: a.reading_time ?? 0,
     coverImage: a.cover_image ?? null,
     publishedAt: a.published_at ?? null,
+    slug: a.slug ?? null,
   }));
 }
 
@@ -308,7 +309,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
               ),
               issues: <MagazineIssuesV2 items={issues} />,
               editorialBoard: <MagazineEditorialBoardV2 writers={writers} />,
-              support: <MagazineSupportV2 />,
+              support: <MagazineSupportV2 issues={issues} />,
             },
           }}
           newsletter={{

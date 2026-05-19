@@ -4,16 +4,19 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import HexBackground from "@/components/ui/HexBackground";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { SupportIssueModal } from "@/components/open-issues/SupportIssueModal";
 
-const ACCENT = "#C9A96E";
-const ACCENT_TEXT = "#332217";
-const FIELD_BG = "#262626";
-const FIELD_BORDER = "#333333";
-const LABEL_COLOR = "#FFFFFF";
-const HELPER_COLOR = "#A3A3A3";
+// All colors map to --tott-* theme tokens so the card swaps cleanly
+// between dark and light, matching the Open Issues block in the
+// Support Hertz tab.
+const ACCENT = "var(--tott-accent-gold)";
+const ACCENT_TEXT = "var(--tott-auth-btn-text)";
+const FRAME = "var(--tott-card-border)";
+const TEXT_STRONG = "var(--tott-home-text-strong)";
+const TEXT_MUTED = "var(--tott-home-text-muted)";
 
-const PLACEHOLDER_IMAGE = "/images/home/Image-2.png";
+const PLACEHOLDER_IMAGE = "/images/home/support-issue-thumbnail.svg";
 
 type IssueCard = {
   id: string;
@@ -163,7 +166,7 @@ export function OpenIssuesContent() {
               fontWeight: 500,
               fontSize: "32px",
               lineHeight: "40px",
-              color: LABEL_COLOR,
+              color: TEXT_STRONG,
               margin: 0,
             }}
           >
@@ -176,7 +179,7 @@ export function OpenIssuesContent() {
               fontSize: "14px",
               lineHeight: "20px",
               letterSpacing: "-0.005em",
-              color: HELPER_COLOR,
+              color: TEXT_MUTED,
               margin: 0,
             }}
           >
@@ -238,165 +241,156 @@ function IssueCardView({
 }) {
   const pct = Math.min(100, Math.round((issue.raised / issue.goal) * 100));
 
+  // Card layout mirrors `OpenIssueCard` in `MagazineSupportV2`:
+  // ChamferedFrame outline → pill chip → silk thumbnail → Frame 52
+  // (title + body + gradient progress bar + funding row) → gold CTA.
   return (
-    <article
-      className="flex h-full w-full flex-col"
-      style={{
-        padding: "16px",
-        gap: "12px",
-        backgroundColor: FIELD_BG,
-        border: `1px solid ${FIELD_BORDER}`,
-        borderRadius: "12px",
-      }}
-    >
-      {/* Image with badge */}
+    <div className="relative h-full w-full">
+      <ChamferedFrame borderColor={FRAME} />
       <div
-        className="relative w-full overflow-hidden"
-        style={{
-          aspectRatio: "256 / 120",
-          borderRadius: "8px",
-          backgroundColor: "var(--tott-panel-bg, #121212)",
-        }}
+        className="flex h-full w-full flex-col items-start"
+        style={{ padding: "24px 40px", gap: 16 }}
       >
-        <Image
-          src={issue.image}
-          alt=""
-          fill
-          sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
-          className="select-none object-cover"
-          draggable={false}
-        />
+        {/* Pill chip — Figma `Pills` rounded #333 badge. */}
         {issue.badge === "almost" ? (
           <span
+            className="inline-flex items-center justify-center self-start"
             style={{
-              position: "absolute",
-              top: "8px",
-              left: "8px",
-              padding: "4px 8px",
-              borderRadius: "4px",
-              backgroundColor: ACCENT,
-              boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
-              color: ACCENT_TEXT,
+              height: 43,
+              padding: "4px 12px",
+              backgroundColor: FRAME,
+              backdropFilter: "blur(4px)",
+              WebkitBackdropFilter: "blur(4px)",
+              borderRadius: 8,
               fontFamily: "'Inter', var(--font-sans, sans-serif)",
               fontWeight: 500,
-              fontSize: "11px",
+              fontSize: 12,
               lineHeight: "16px",
-              letterSpacing: "-0.005em",
+              color: TEXT_STRONG,
+              whiteSpace: "nowrap",
             }}
           >
             {badgeAlmostFunded}
           </span>
         ) : null}
-      </div>
 
-      {/* Title — prefix in gold + main in white */}
-      <h3
-        style={{
-          fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
-          fontWeight: 500,
-          fontSize: "16px",
-          lineHeight: "24px",
-          color: LABEL_COLOR,
-          margin: 0,
-        }}
-      >
-        <span style={{ color: ACCENT }}>{issue.prefix}</span> {issue.title}
-      </h3>
+        {/* Thumbnail — 318×98 with rounded corners + 1px white-8% stroke. */}
+        <div className="relative w-full" style={{ aspectRatio: "318 / 98" }}>
+          <Image
+            src={issue.image}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
+            className="select-none object-cover"
+            draggable={false}
+            style={{ borderRadius: 8 }}
+          />
+        </div>
 
-      {/* Description */}
-      <p
-        className="line-clamp-3"
-        style={{
-          fontFamily: "'Inter', var(--font-sans, sans-serif)",
-          fontWeight: 400,
-          fontSize: "13px",
-          lineHeight: "18px",
-          letterSpacing: "-0.005em",
-          color: HELPER_COLOR,
-          margin: 0,
-          flex: 1,
-        }}
-      >
-        {issue.description}
-      </p>
+        {/* Frame 52 — title + body + progress bar + funding row, gap 8. */}
+        <div className="flex w-full flex-col" style={{ gap: 8 }}>
+          <h3
+            style={{
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
+              fontWeight: 500,
+              fontSize: 16,
+              lineHeight: "24px",
+              letterSpacing: "-0.01em",
+              color: TEXT_STRONG,
+              margin: 0,
+            }}
+          >
+            <span style={{ color: ACCENT }}>{issue.prefix}</span> {issue.title}
+          </h3>
 
-      {/* Funding row */}
-      <div
-        className="flex flex-row items-center justify-between"
-        style={{ gap: "8px" }}
-      >
-        <span
+          <p
+            className="line-clamp-3"
+            style={{
+              fontFamily: "'Inter', var(--font-sans, sans-serif)",
+              fontWeight: 400,
+              fontSize: 16,
+              lineHeight: "24px",
+              letterSpacing: "-0.01em",
+              color: TEXT_MUTED,
+              margin: 0,
+            }}
+          >
+            {issue.description}
+          </p>
+
+          {/* Progress bar — 3px grey track + gold linear-gradient fill. */}
+          <div
+            aria-hidden
+            className="relative w-full"
+            style={{ height: 3, backgroundColor: FRAME }}
+          >
+            <div
+              className="absolute left-0 top-0 h-full"
+              style={{
+                width: `${pct}%`,
+                background:
+                  "linear-gradient(90deg, #34281A 0%, #AF7E47 100%)",
+              }}
+            />
+          </div>
+
+          {/* Funding row — raised/goal + supporters split. */}
+          <div className="flex w-full items-center justify-between">
+            <span
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: 14,
+                lineHeight: "20px",
+                letterSpacing: "-0.005em",
+                color: TEXT_MUTED,
+              }}
+            >
+              {formatUsd(issue.raised)}{" "}
+              <span style={{ color: TEXT_MUTED, fontWeight: 400 }}>
+                {raisedOfLabel} {formatUsd(issue.goal)}
+              </span>
+            </span>
+            <span
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: 14,
+                lineHeight: "20px",
+                letterSpacing: "-0.005em",
+                color: TEXT_MUTED,
+              }}
+            >
+              {supportersLabel}
+            </span>
+          </div>
+        </div>
+
+        {/* Gold CTA — same spec as the Support tab's Open Issues button. */}
+        <button
+          type="button"
+          onClick={onSupport}
+          className="inline-flex shrink-0 items-center justify-center whitespace-nowrap transition-opacity hover:opacity-90"
           style={{
+            minWidth: 116,
+            height: 40,
+            padding: "8px 16px",
+            backgroundColor: ACCENT,
+            boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
+            borderRadius: 8,
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 500,
-            fontSize: "13px",
-            lineHeight: "18px",
-            color: LABEL_COLOR,
+            fontSize: 14,
+            lineHeight: "20px",
+            letterSpacing: "-0.005em",
+            color: ACCENT_TEXT,
+            border: "none",
+            cursor: "pointer",
           }}
         >
-          {formatUsd(issue.raised)}{" "}
-          <span style={{ color: HELPER_COLOR, fontWeight: 400 }}>
-            {raisedOfLabel} {formatUsd(issue.goal)}
-          </span>
-        </span>
-        <span
-          style={{
-            fontFamily: "'Inter', var(--font-sans, sans-serif)",
-            fontWeight: 400,
-            fontSize: "12px",
-            lineHeight: "16px",
-            color: HELPER_COLOR,
-          }}
-        >
-          {supportersLabel}
-        </span>
+          {ctaLabel}
+        </button>
       </div>
-
-      {/* Progress bar */}
-      <div
-        aria-hidden
-        style={{
-          height: "4px",
-          width: "100%",
-          backgroundColor: FIELD_BORDER,
-          borderRadius: "999px",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            height: "100%",
-            width: `${pct}%`,
-            backgroundColor: ACCENT,
-            borderRadius: "999px",
-          }}
-        />
-      </div>
-
-      {/* CTA */}
-      <button
-        type="button"
-        onClick={onSupport}
-        className="w-full transition-opacity hover:opacity-90"
-        style={{
-          height: "40px",
-          padding: "8px 16px",
-          borderRadius: "8px",
-          backgroundColor: ACCENT,
-          boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
-          color: ACCENT_TEXT,
-          fontFamily: "'Inter', var(--font-sans, sans-serif)",
-          fontWeight: 500,
-          fontSize: "14px",
-          lineHeight: "20px",
-          letterSpacing: "-0.005em",
-          textAlign: "center",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
-        {ctaLabel}
-      </button>
-    </article>
+    </div>
   );
 }
