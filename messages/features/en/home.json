@@ -80,6 +80,8 @@
         "categoryFilm": "Film"
       },
       "issues": {
+        "issuePrefix": "Issue",
+        "readOnline": "Read Online",
         "galleryHeading": "Visual Gallery",
         "gallerySubtitle": "Lorem ipsum dolor sit amet adipiscing elit.",
         "viewMore": "View more",
@@ -104,6 +106,22 @@
         "more": "More options"
       },
       "editorialBoard": {
+        "mastheadEyebrow": "Masthead · 2026",
+        "mastheadHeading": "Editorial Board",
+        "mastheadBody": "Meet the minds shaping our voice, vision, and editorial standards — a team of editors, writers, and translators working across continents and languages.",
+        "peopleEyebrow": "The full masthead",
+        "peopleHeading": "Our People",
+        "roleEditors": "Editors",
+        "roleWriters": "Writers",
+        "roleTranslators": "Translators",
+        "roleContributors": "Contributors",
+        "roleReviewers": "Reviewers",
+        "rolePlaceholder": "Editors",
+        "previousSlide": "Previous slide",
+        "nextSlide": "Next slide",
+        "newsletterTitle": "Interested in contributing to our editorial board?",
+        "newsletterBody": "We read every application. Tell us about your work, the languages you carry, and the stories you believe deserve more attention.",
+        "newsletterCta": "Apply to Join",
         "lessReadHeading": "Explore Less Read Content",
         "metaAuthor": "Author",
         "metaDate": "Date",

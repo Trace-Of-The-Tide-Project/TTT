@@ -80,6 +80,8 @@
         "categoryFilm": "Cine"
       },
       "issues": {
+        "issuePrefix": "Número",
+        "readOnline": "Leer en línea",
         "galleryHeading": "Galería visual",
         "gallerySubtitle": "Lorem ipsum dolor sit amet adipiscing elit.",
         "viewMore": "Ver más",
@@ -104,6 +106,22 @@
         "more": "Más opciones"
       },
       "editorialBoard": {
+        "mastheadEyebrow": "Cabecera · 2026",
+        "mastheadHeading": "Consejo editorial",
+        "mastheadBody": "Conoce a las mentes que dan forma a nuestra voz, visión y estándares editoriales — un equipo de editores, escritores y traductores que trabajan a través de continentes y lenguas.",
+        "peopleEyebrow": "La cabecera completa",
+        "peopleHeading": "Nuestro equipo",
+        "roleEditors": "Editores",
+        "roleWriters": "Escritores",
+        "roleTranslators": "Traductores",
+        "roleContributors": "Colaboradores",
+        "roleReviewers": "Revisores",
+        "rolePlaceholder": "Editores",
+        "previousSlide": "Diapositiva anterior",
+        "nextSlide": "Diapositiva siguiente",
+        "newsletterTitle": "¿Te interesa colaborar con nuestro consejo editorial?",
+        "newsletterBody": "Leemos cada solicitud. Cuéntanos sobre tu trabajo, los idiomas que dominas y las historias que crees que merecen más atención.",
+        "newsletterCta": "Solicita unirte",
         "lessReadHeading": "Explora contenido menos leído",
         "metaAuthor": "Autor",
         "metaDate": "Fecha",

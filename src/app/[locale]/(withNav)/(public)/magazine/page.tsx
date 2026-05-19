@@ -1,22 +1,24 @@
 import HexBackground from "@/components/ui/HexBackground";
 import { MagazineHero } from "@/components/home/magazine/MagazineHero";
-import { MagazineTabs } from "@/components/home/magazine/MagazineTabs";
-import { MagazineNewsletter } from "@/components/home/magazine/MagazineNewsletter";
+import { MagazineBody } from "@/components/home/magazine/MagazineBody";
 import { MagazineManifesto } from "@/components/home/magazine/MagazineManifesto";
 import {
   MagazineLatestPublished,
   type LatestPublishedItem,
 } from "@/components/home/magazine/MagazineLatestPublished";
+import { MagazineLatestPublishedV2 } from "@/components/home/magazine/MagazineLatestPublishedV2";
 import {
   MagazineIssues,
   type MagazineIssueItem,
 } from "@/components/home/magazine/MagazineIssues";
+import { MagazineIssuesV2 } from "@/components/home/magazine/MagazineIssuesV2";
 import {
   MagazineEditorialBoard,
   type LessReadArticleItem,
   type FollowWriterItem,
   type FounderQuoteData,
 } from "@/components/home/magazine/MagazineEditorialBoard";
+import { MagazineEditorialBoardV2 } from "@/components/home/magazine/MagazineEditorialBoardV2";
 import {
   MagazineSupport,
   type CollaborationItem,
@@ -89,6 +91,7 @@ async function fetchLatestArticles(): Promise<LatestPublishedItem[]> {
     author: pickAuthorName(a.author),
     readingTime: a.reading_time ?? 0,
     coverImage: a.cover_image ?? null,
+    publishedAt: a.published_at ?? null,
   }));
 }
 
@@ -135,6 +138,10 @@ async function fetchMagazineIssues(): Promise<MagazineIssueItem[]> {
     pageCount: it.page_count ?? null,
     coverImage: it.cover_image ?? null,
     excerpt: it.excerpt ?? null,
+    edition: it.edition ?? null,
+    category: it.category ?? null,
+    publishedAt: it.published_at ?? null,
+    slug: it.slug ?? null,
   }));
 }
 
@@ -269,38 +276,43 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
         <MagazineHero
           artwork={magazineMeta.hero?.image}
         />
-        <MagazineTabs
-          manifesto={<MagazineManifesto />}
-          publications={
-            latestArticles.length > 0 ? (
-              <MagazineLatestPublished items={latestArticles} />
-            ) : undefined
-          }
-          issues={<MagazineIssues items={issues} />}
-          editorialBoard={
-            lessReadArticles.length > 0 ||
-            writers.length > 0 ||
-            magazineMeta.founder ? (
-              <MagazineEditorialBoard
-                lessReadArticles={lessReadArticles}
-                writers={writers}
-                founder={magazineMeta.founder}
-              />
-            ) : undefined
-          }
-          support={
-            collaborations.length > 0 ? (
-              <MagazineSupport collaborations={collaborations} />
-            ) : undefined
-          }
-        />
-        {/* Subscribe section always renders. The form short-circuits
-            with an error toast if no magazine is available so the
-            backend's "magazine_id required" 500 is never surfaced
-            to the user. */}
-        <MagazineNewsletter
-          locale={locale}
-          magazineId={magazineMeta.magazineId}
+        {/* MagazineBody is a thin client wrapper that owns the active
+            tab state so the Newsletter section below can swap its
+            copy when the Editorial Board tab is active. */}
+        <MagazineBody
+          tabs={{
+            manifesto: <MagazineManifesto />,
+            publications:
+              latestArticles.length > 0 ? (
+                <MagazineLatestPublished items={latestArticles} />
+              ) : undefined,
+            issues: <MagazineIssues items={issues} />,
+            editorialBoard:
+              lessReadArticles.length > 0 ||
+              writers.length > 0 ||
+              magazineMeta.founder ? (
+                <MagazineEditorialBoard
+                  lessReadArticles={lessReadArticles}
+                  writers={writers}
+                  founder={magazineMeta.founder}
+                />
+              ) : undefined,
+            support:
+              collaborations.length > 0 ? (
+                <MagazineSupport collaborations={collaborations} />
+              ) : undefined,
+            standalone: {
+              publications: (
+                <MagazineLatestPublishedV2 items={latestArticles} />
+              ),
+              issues: <MagazineIssuesV2 items={issues} />,
+              editorialBoard: <MagazineEditorialBoardV2 writers={writers} />,
+            },
+          }}
+          newsletter={{
+            locale,
+            magazineId: magazineMeta.magazineId,
+          }}
         />
       </div>
     </main>

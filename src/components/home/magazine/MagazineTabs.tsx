@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { SegmentedControl, type SegmentedControlOption } from "@/components/ui/SegmentedControl";
 
@@ -10,32 +10,47 @@ type TabId = (typeof TAB_IDS)[number];
 /**
  * Slot props — each pane is rendered by the parent (the page server
  * component) so it can fetch its own data and stream in independently.
- * Any pane can be omitted; the matching tab will hide and the section
- * anchor won't render.
+ *
+ *   - `manifesto / publications / issues / editorialBoard / support`
+ *     drive the stacked "Manifesto" view (the original landing page).
+ *     Any pane can be omitted; the matching tab will hide.
+ *   - `standalone.{publications, issues, editorialBoard, support}`
+ *     overrides the slot when that tab is active on its own (Figma
+ *     Variants 2-5). Falls back to the same stacked slot when omitted.
  */
+export type MagazineTabId = (typeof TAB_IDS)[number];
+
 export type MagazineTabsProps = {
   manifesto?: ReactNode;
   publications?: ReactNode;
   issues?: ReactNode;
   editorialBoard?: ReactNode;
   support?: ReactNode;
-};
-
-const SECTION_ID: Record<TabId, string> = {
-  manifesto: "magazine-manifesto",
-  publications: "magazine-publications",
-  issues: "magazine-issues",
-  editorialBoard: "magazine-editorial-board",
-  support: "magazine-support",
+  standalone?: {
+    publications?: ReactNode;
+    issues?: ReactNode;
+    editorialBoard?: ReactNode;
+    support?: ReactNode;
+  };
+  /** Optional external active-tab state — lets a parent client
+   *  component lift this state up to coordinate sibling sections
+   *  (e.g. the page's MagazineNewsletter swapping its copy when the
+   *  Editorial Board tab is active). Falls back to internal useState
+   *  when omitted. */
+  active?: MagazineTabId;
+  onActiveChange?: (id: MagazineTabId) => void;
 };
 
 /**
- * Magazine body — the design is a single tall scrolling page where every
- * pane (Manifesto / Publications / Issues / Editorial Board / Support) is
- * stacked vertically. The segmented control above the content acts as a
- * sticky scroll-to-anchor nav: clicking a tab smooth-scrolls to that
- * section, and the active highlight updates as the user scrolls (a
- * lightweight IntersectionObserver-based scroll spy).
+ * Magazine body.
+ *
+ * Tab behavior:
+ *   - First tab ("Manifesto") = the full landing experience: every
+ *     visible stacked-slot pane rendered vertically. This stays as the
+ *     original landing page.
+ *   - Every other tab = the matching `standalone[tab]` if provided,
+ *     else the stacked slot. Matches the Figma variants where each
+ *     tab reveals a single focused redesign.
  */
 export function MagazineTabs({
   manifesto,
@@ -43,12 +58,12 @@ export function MagazineTabs({
   issues,
   editorialBoard,
   support,
+  standalone,
+  active: activeProp,
+  onActiveChange,
 }: MagazineTabsProps) {
   const tTabs = useTranslations("Home.magazine.tabs");
 
-  // Build the slot map from props. Tabs and section anchors only
-  // render for slots the parent supplied — empty sections drop out of
-  // both the nav and the body.
   const slots: Record<TabId, ReactNode> = {
     manifesto,
     publications,
@@ -56,103 +71,43 @@ export function MagazineTabs({
     editorialBoard,
     support,
   };
-  const visibleTabIds = TAB_IDS.filter((id) => slots[id] !== undefined);
+  /** Per-tab override used when the tab is the active standalone view. */
+  const standaloneSlots: Partial<Record<TabId, ReactNode>> = {
+    publications: standalone?.publications,
+    issues: standalone?.issues,
+    editorialBoard: standalone?.editorialBoard,
+    support: standalone?.support,
+  };
+  // A tab shows if it has *either* a stacked slot or a standalone
+  // override. Manifesto only ever uses the stacked slot.
+  const visibleTabIds = TAB_IDS.filter(
+    (id) => slots[id] !== undefined || standaloneSlots[id] !== undefined,
+  );
   const initialTab: TabId = visibleTabIds[0] ?? "manifesto";
 
-  const [active, setActive] = useState<TabId>(initialTab);
-  // Suppress scroll-spy updates briefly while we are programmatically
-  // smooth-scrolling, so the active pill doesn't flicker through every
-  // section the user passes over.
-  const lockUntilRef = useRef<number>(0);
+  // Internal state used as a fallback when a parent doesn't lift the
+  // active tab up. When the parent passes `active` + `onActiveChange`,
+  // those win and the internal state is unused.
+  const [internalActive, setInternalActive] = useState<TabId>(initialTab);
+  const active = activeProp ?? internalActive;
+  const setActive = (id: TabId) => {
+    setInternalActive(id);
+    onActiveChange?.(id);
+  };
 
   const options: SegmentedControlOption<TabId>[] = visibleTabIds.map((id) => ({
     id,
     label: tTabs(id),
   }));
 
-  const handleChange = (id: TabId) => {
-    setActive(id);
-    const el = document.getElementById(SECTION_ID[id]);
-    if (!el) return;
-    // Account for the sticky tab bar (~96px on desktop) so the section
-    // heading isn't hidden behind it after scroll.
-    const offset = 96;
-    const top = el.getBoundingClientRect().top + window.scrollY - offset;
-    lockUntilRef.current = Date.now() + 800;
-    window.scrollTo({ top, behavior: "smooth" });
-  };
-
-  // Scroll spy — highlight whichever section is closest to the top.
-  // Tracks the set of currently-intersecting sections in a ref so each
-  // observer callback re-picks the topmost from the full set, instead
-  // of only the entries that changed in this batch (which would leave
-  // the active pill stale once a section that previously won leaves
-  // the viewport).
-  useEffect(() => {
-    const els = visibleTabIds
-      .map((id) => ({
-        id,
-        el: document.getElementById(SECTION_ID[id]),
-      }))
-      .filter((x): x is { id: TabId; el: HTMLElement } => Boolean(x.el));
-
-    if (els.length === 0) return;
-
-    const intersecting = new Set<TabId>();
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const id = visibleTabIds.find(
-            (tabId) => SECTION_ID[tabId] === (entry.target as HTMLElement).id,
-          );
-          if (!id) continue;
-          if (entry.isIntersecting) intersecting.add(id);
-          else intersecting.delete(id);
-        }
-        if (Date.now() < lockUntilRef.current) return;
-        if (intersecting.size === 0) return;
-        // Pick the section whose top is closest to (but at or past)
-        // the sticky bar offset by sampling fresh getBoundingClientRect
-        // values — more reliable than relying on stale entry rects.
-        let topId: TabId | null = null;
-        let topY = Number.POSITIVE_INFINITY;
-        for (const id of intersecting) {
-          const el = document.getElementById(SECTION_ID[id]);
-          if (!el) continue;
-          const y = el.getBoundingClientRect().top;
-          if (y < topY) {
-            topY = y;
-            topId = id;
-          }
-        }
-        if (topId) setActive(topId);
-      },
-      {
-        // Trigger when a section's top crosses ~30% from the viewport top.
-        rootMargin: "-30% 0px -55% 0px",
-        threshold: 0,
-      },
-    );
-
-    els.forEach(({ el }) => observer.observe(el));
-    return () => observer.disconnect();
-    // visibleTabIds is derived from props (which are stable across
-    // renders for a given page) so we read it freshly each effect run.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visibleTabIds.join("|")]);
-
   return (
     <section
       className="relative w-full px-4 pb-16 sm:px-6 sm:pb-20 md:px-8 md:pb-28"
     >
       <div className="mx-auto w-full max-w-[1392px]">
-        {/* Sticky scroll-nav — stays pinned to the top of the viewport
-            so the user can jump between sections at any scroll depth.
-            Capped at max-w-2xl + centered so the 5 tabs stay grouped
-            on wide screens (otherwise they sparse out across 1392px).
-            Horizontally scrollable on small screens so all 5 tab
-            labels remain reachable without breaking the layout. */}
+        {/* Sticky tab bar — pinned while the user scrolls the active
+            pane(s). Capped at max-w-2xl so the 5 tabs stay grouped on
+            wide screens. Horizontally scrollable on small screens. */}
         <div
           className="sticky top-3 z-30 mx-auto mb-10 max-w-2xl overflow-x-auto sm:top-4 sm:mb-12 md:mb-14 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           style={{
@@ -166,33 +121,34 @@ export function MagazineTabs({
             <SegmentedControl
               options={options}
               value={active}
-              onChange={handleChange}
+              onChange={setActive}
               ariaLabel={tTabs("ariaLabel")}
             />
           </div>
         </div>
 
-        {/* All panes stacked, each anchored for the scroll-nav. The
-            "Publications" tab now scrolls to the Latest Published row
-            (the Featured Publication card was removed).
-
-            min-w-0 on each grid item: a grid item's default min-width
-            is `auto` (= its content's min-content). Without this, the
-            wide carousel inside MagazineSupport (≈7560px of cards in
-            a translateX'd row) bullies the implicit grid track wider
-            than the viewport, dragging every other section along with
-            it and clipping their wrapped text. */}
-        <div className="grid gap-20 sm:gap-24 md:gap-28">
-          {visibleTabIds.map((id) => (
-            <div
-              key={id}
-              id={SECTION_ID[id]}
-              className="min-w-0 scroll-mt-28"
-            >
-              {slots[id]}
-            </div>
-          ))}
-        </div>
+        {/* min-w-0 on each grid item: a grid item's default min-width
+            is `auto` (= its content's min-content). Without this, wide
+            content (like Support's carousel) can drag the page wider
+            than the viewport.
+            Manifesto stack uses the original stacked slots; every other
+            tab prefers its standalone override (the Figma variant
+            redesign) and falls back to the stacked slot when missing. */}
+        {active === "manifesto" ? (
+          <div className="grid gap-20 sm:gap-24 md:gap-28">
+            {visibleTabIds
+              .filter((id) => slots[id] !== undefined)
+              .map((id) => (
+                <div key={id} className="min-w-0">
+                  {slots[id]}
+                </div>
+              ))}
+          </div>
+        ) : (
+          <div className="min-w-0">
+            {standaloneSlots[active] ?? slots[active]}
+          </div>
+        )}
       </div>
     </section>
   );

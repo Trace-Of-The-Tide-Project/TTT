@@ -80,6 +80,8 @@
         "categoryFilm": "سينما"
       },
       "issues": {
+        "issuePrefix": "عدد",
+        "readOnline": "اقرأ على الإنترنت",
         "galleryHeading": "المعرض البصري",
         "gallerySubtitle": "Lorem ipsum dolor sit amet adipiscing elit.",
         "viewMore": "عرض المزيد",
@@ -104,6 +106,22 @@
         "more": "خيارات أخرى"
       },
       "editorialBoard": {
+        "mastheadEyebrow": "هيئة التحرير · 2026",
+        "mastheadHeading": "هيئة التحرير",
+        "mastheadBody": "تعرّف على العقول التي تصوغ صوتنا ورؤيتنا ومعاييرنا التحريرية — فريق من المحرّرين والكتّاب والمترجمين العاملين عبر القارات واللغات.",
+        "peopleEyebrow": "الهيئة الكاملة",
+        "peopleHeading": "فريقنا",
+        "roleEditors": "محرّرون",
+        "roleWriters": "كتّاب",
+        "roleTranslators": "مترجمون",
+        "roleContributors": "مساهمون",
+        "roleReviewers": "مراجعون",
+        "rolePlaceholder": "محرّرون",
+        "previousSlide": "الشريحة السابقة",
+        "nextSlide": "الشريحة التالية",
+        "newsletterTitle": "هل تودّ المساهمة في هيئة التحرير لدينا؟",
+        "newsletterBody": "نقرأ كلّ طلب. أخبرنا عن عملك، واللغات التي تحملها، والقصص التي تستحق أن تُروى.",
+        "newsletterCta": "تقدّم للانضمام",
         "lessReadHeading": "اكتشف محتوى أقلّ قراءة",
         "metaAuthor": "الكاتب",
         "metaDate": "التاريخ",

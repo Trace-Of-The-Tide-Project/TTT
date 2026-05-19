@@ -80,6 +80,8 @@
         "categoryFilm": "Cinéma"
       },
       "issues": {
+        "issuePrefix": "Numéro",
+        "readOnline": "Lire en ligne",
         "galleryHeading": "Galerie visuelle",
         "gallerySubtitle": "Lorem ipsum dolor sit amet adipiscing elit.",
         "viewMore": "Voir plus",
@@ -104,6 +106,22 @@
         "more": "Plus d'options"
       },
       "editorialBoard": {
+        "mastheadEyebrow": "Ours · 2026",
+        "mastheadHeading": "Comité éditorial",
+        "mastheadBody": "Découvrez les esprits qui façonnent notre voix, notre vision et nos standards éditoriaux — une équipe d'éditeurs, d'auteurs et de traducteurs réunis à travers les continents et les langues.",
+        "peopleEyebrow": "L'ours complet",
+        "peopleHeading": "Notre équipe",
+        "roleEditors": "Éditeurs",
+        "roleWriters": "Auteurs",
+        "roleTranslators": "Traducteurs",
+        "roleContributors": "Contributeurs",
+        "roleReviewers": "Relecteurs",
+        "rolePlaceholder": "Éditeurs",
+        "previousSlide": "Diapositive précédente",
+        "nextSlide": "Diapositive suivante",
+        "newsletterTitle": "Envie de rejoindre notre comité éditorial ?",
+        "newsletterBody": "Nous lisons chaque candidature. Parlez-nous de votre travail, des langues que vous portez et des histoires qui méritent plus d'attention.",
+        "newsletterCta": "Postuler",
         "lessReadHeading": "Explorez les contenus moins lus",
         "metaAuthor": "Auteur",
         "metaDate": "Date",
