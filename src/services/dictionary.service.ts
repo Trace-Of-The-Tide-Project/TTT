@@ -30,6 +30,36 @@ function unwrapOne(raw: unknown): DictionaryEntry | null {
   return raw as DictionaryEntry;
 }
 
+function unwrapList(raw: unknown): DictionaryEntry[] {
+  if (!raw || typeof raw !== "object") return [];
+  const o = raw as Record<string, unknown>;
+  if (Array.isArray(o.data)) return o.data as DictionaryEntry[];
+  if (Array.isArray(o)) return o as unknown as DictionaryEntry[];
+  return [];
+}
+
+export type GetDictionaryParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+};
+
+/** GET /dictionary — public list of approved entries. Server- or
+ * client-safe; returns [] on failure. */
+export async function getDictionaryEntries(
+  params?: GetDictionaryParams,
+): Promise<DictionaryEntry[]> {
+  if (typeof window === "undefined") {
+    return unwrapList(await serverGet<unknown>("/dictionary", params));
+  }
+  try {
+    const { data } = await api.get<unknown>("/dictionary", { params });
+    return unwrapList(data);
+  } catch {
+    return [];
+  }
+}
+
 /** GET /dictionary/{id} — public. Works server- or client-side.
  * Returns null on 404 / error. */
 export async function getDictionaryEntry(

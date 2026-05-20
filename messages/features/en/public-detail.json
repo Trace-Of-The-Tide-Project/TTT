@@ -7,7 +7,10 @@
     "backToMagazine": "Back to Magazine"
   },
   "DictionaryEntry": {
-    "backToDictionary": "Back to the Living Dictionary"
+    "backToDictionary": "Back to the Living Dictionary",
+    "indexTitle": "The Living Dictionary",
+    "indexSubtitle": "Words, definitions, and thoughts contributed by our community.",
+    "empty": "No entries yet — be the first to submit one."
   },
   "Writers": {
     "follow": "Follow",

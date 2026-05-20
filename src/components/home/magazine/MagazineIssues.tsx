@@ -3,17 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useMagazineIssues } from "@/hooks/queries/magazine-issues";
 import {
   SearchIcon,
-  FilterIcon,
-  FullscreenIcon,
-  ShareIcon,
-  MoreDotsIcon,
-  Grid2x2Icon,
-  ListIcon,
-  ZoomInIcon,
-  ZoomOutIcon,
   ChevronLeftLargeIcon,
   ChevronRightLargeIcon,
 } from "@/components/ui/icons";
@@ -224,14 +217,14 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
             {t("gallerySubtitle")}
           </p>
         </div>
-        <button
-          type="button"
+        <Link
+          href="/open-issues"
           className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
           style={{ color: "var(--tott-accent-gold)" }}
         >
           {t("viewMore")}
           <span aria-hidden>→</span>
-        </button>
+        </Link>
       </header>
 
       {/* Toolbar — search input + filter chips + sort + filters.
@@ -277,43 +270,16 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
             />
           </label>
 
-          {/* Filters group — chips + divider + sort/filters. */}
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-            <div className="flex flex-wrap items-center gap-2">
-              {FILTERS.map((f) => (
-                <FilterChip
-                  key={f.id}
-                  label={t(f.key)}
-                  active={active === f.id}
-                  onClick={() => setActive(f.id)}
-                />
-              ))}
-            </div>
-
-            <span
-              aria-hidden
-              className="hidden sm:inline-block"
-              style={{
-                width: 0,
-                height: "16px",
-                borderLeft: `1px solid ${TAB_BORDER}`,
-              }}
-            />
-
-            <div className="flex flex-wrap items-center gap-2">
+          {/* Kind filter chips — functional client-side narrowing. */}
+          <div className="flex flex-wrap items-center gap-2">
+            {FILTERS.map((f) => (
               <FilterChip
-                icon={<SortDescIcon />}
-                label={
-                  <>
-                    <span>{t("sortByLabel")}</span>
-                    <span style={{ color: "var(--tott-home-text-strong)", marginInlineStart: "4px" }}>
-                      {t("sortNewest")}
-                    </span>
-                  </>
-                }
+                key={f.id}
+                label={t(f.key)}
+                active={active === f.id}
+                onClick={() => setActive(f.id)}
               />
-              <FilterChip icon={<FilterIcon />} label={t("filtersLabel")} />
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -469,37 +435,6 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
             <ChevronRightLargeIcon />
           </button>
         </div>
-
-        <span
-          aria-hidden
-          style={{
-            width: "1px",
-            height: "16px",
-            background: "var(--tott-card-border)",
-          }}
-        />
-
-        <ToolbarBtn label={t("viewList")}>
-          <ListIcon />
-        </ToolbarBtn>
-        <ToolbarBtn label={t("viewGrid")}>
-          <Grid2x2Icon />
-        </ToolbarBtn>
-        <ToolbarBtn label={t("zoomIn")}>
-          <ZoomInIcon />
-        </ToolbarBtn>
-        <ToolbarBtn label={t("zoomOut")}>
-          <ZoomOutIcon />
-        </ToolbarBtn>
-        <ToolbarBtn label={t("fullscreen")}>
-          <FullscreenIcon />
-        </ToolbarBtn>
-        <ToolbarBtn label={t("share")}>
-          <ShareIcon />
-        </ToolbarBtn>
-        <ToolbarBtn label={t("more")}>
-          <MoreDotsIcon />
-        </ToolbarBtn>
       </div>
     </div>
   );
@@ -552,49 +487,5 @@ function FilterChip({
       {icon ? <span style={{ color: TAB_INACTIVE_TEXT }}>{icon}</span> : null}
       <span className="inline-flex items-center">{label}</span>
     </button>
-  );
-}
-
-function ToolbarBtn({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      title={label}
-      className="flex h-6 w-6 items-center justify-center transition-colors hover:opacity-80 [&>svg]:h-6 [&>svg]:w-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
-      style={{ color: TAB_INACTIVE_TEXT }}
-    >
-      {children}
-    </button>
-  );
-}
-
-/** Sort descending — three lines of decreasing length plus a downward
- * arrow on the right. One-off compound glyph; lives here rather than
- * in icons.tsx because it's not reused elsewhere. */
-function SortDescIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="3" y1="6" x2="14" y2="6" />
-      <line x1="3" y1="12" x2="10" y2="12" />
-      <line x1="3" y1="18" x2="6" y2="18" />
-      <line x1="19" y1="6" x2="19" y2="18" />
-      <polyline points="15 14 19 18 23 14" />
-    </svg>
   );
 }

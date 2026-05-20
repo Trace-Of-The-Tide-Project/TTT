@@ -491,8 +491,8 @@ function SuccessView({
         {t("successBody")}
       </p>
 
-      <button
-        type="button"
+      <Link
+        href="/dictionary"
         onClick={onClose}
         className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
         style={{
@@ -528,7 +528,7 @@ function SuccessView({
           <polyline points="11 6 5 12 11 18" />
         </svg>
         {t("viewAllNotes")}
-      </button>
+      </Link>
 
       {/* "If you have any questions [headset] Contact us" footer.
           Mirrors the existing ContactUsLink pattern but inlined so we

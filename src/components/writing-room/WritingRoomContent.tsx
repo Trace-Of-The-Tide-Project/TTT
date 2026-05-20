@@ -325,8 +325,8 @@ export function WritingRoomContent({
             style={{ gap: "12px" }}
           >
             {dictionary.length > 0 ? (
-              <button
-                type="button"
+              <Link
+                href="/dictionary"
                 className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
                 style={{
                   height: "40px",
@@ -340,11 +340,10 @@ export function WritingRoomContent({
                   fontSize: "14px",
                   lineHeight: "20px",
                   letterSpacing: "-0.005em",
-                  border: "none",
                 }}
               >
                 {t("browseAll")}
-              </button>
+              </Link>
             ) : null}
             <button
               type="button"
@@ -1313,7 +1312,7 @@ function FeaturedWritingRow({
           {wantToEngage}
         </span>
         <Link
-          href="/reading-room"
+          href="/books"
           className="inline-flex items-center justify-center transition-opacity hover:opacity-90 min-[1600px]:h-14! min-[1600px]:text-base!"
           style={{
             height: "40px",

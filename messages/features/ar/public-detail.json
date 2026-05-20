@@ -7,7 +7,10 @@
     "backToMagazine": "العودة إلى المجلة"
   },
   "DictionaryEntry": {
-    "backToDictionary": "العودة إلى القاموس الحي"
+    "backToDictionary": "العودة إلى القاموس الحي",
+    "indexTitle": "القاموس الحي",
+    "indexSubtitle": "كلمات وتعريفات وأفكار يساهم بها مجتمعنا.",
+    "empty": "لا توجد مدخلات بعد — كن أول من يضيف واحدة."
   },
   "Writers": {
     "follow": "متابعة",

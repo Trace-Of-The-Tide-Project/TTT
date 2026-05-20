@@ -7,7 +7,10 @@
     "backToMagazine": "Volver a la revista"
   },
   "DictionaryEntry": {
-    "backToDictionary": "Volver al Diccionario vivo"
+    "backToDictionary": "Volver al Diccionario vivo",
+    "indexTitle": "El Diccionario vivo",
+    "indexSubtitle": "Palabras, definiciones y reflexiones aportadas por nuestra comunidad.",
+    "empty": "Aún no hay entradas — sé el primero en enviar una."
   },
   "Writers": {
     "follow": "Seguir",

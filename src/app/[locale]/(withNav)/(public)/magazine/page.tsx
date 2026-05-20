@@ -280,10 +280,13 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
           artwork={magazineMeta.hero?.image}
           title={magazineMeta.hero?.title}
           subtitle={magazineMeta.hero?.subtitle}
+          primaryHref="/magazine#magazine-content"
+          secondaryHref="/magazine#newsletter-heading"
         />
         {/* MagazineBody is a thin client wrapper that owns the active
             tab state so the Newsletter section below can swap its
             copy when the Editorial Board tab is active. */}
+        <div id="magazine-content" />
         <MagazineBody
           tabs={{
             manifesto: <MagazineManifesto />,

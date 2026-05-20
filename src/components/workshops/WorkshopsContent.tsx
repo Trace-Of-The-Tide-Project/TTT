@@ -570,8 +570,8 @@ export function WorkshopsContent({
               className="mt-2 flex flex-wrap items-center justify-center"
               style={{ gap: "12px" }}
             >
-              <button
-                type="button"
+              <Link
+                href="/writing-room/residency"
                 className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
                 style={{
                   height: "clamp(40px, 2vw + 1rem, 96px)",
@@ -585,13 +585,12 @@ export function WorkshopsContent({
                   fontSize: "clamp(0.875rem, 0.5vw + 0.5rem, 2rem)",
                   lineHeight: 1.4,
                   letterSpacing: "-0.005em",
-                  border: "none",
                 }}
               >
                 {t("applyResidency")}
-              </button>
-              <button
-                type="button"
+              </Link>
+              <Link
+                href="/writing-room/workshops#current-heading"
                 className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
                 style={{
                   height: "clamp(40px, 2vw + 1rem, 96px)",
@@ -605,11 +604,10 @@ export function WorkshopsContent({
                   fontSize: "clamp(0.875rem, 0.5vw + 0.5rem, 2rem)",
                   lineHeight: 1.4,
                   letterSpacing: "-0.005em",
-                  border: "none",
                 }}
               >
                 {t("joinWorkshop")}
-              </button>
+              </Link>
             </div>
           </div>
         </section>

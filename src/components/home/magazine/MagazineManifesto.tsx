@@ -246,7 +246,7 @@ function ExploreSpaces() {
           title={t("readingSalonTitle")}
           body={t("readingSalonBody")}
           ctaLabel={t("readingSalonCta")}
-          href="/reading-room"
+          href="/books"
         />
       </div>
     </section>

@@ -33,14 +33,12 @@ type MagazineHeroProps = {
  * happens whenever you try to absolute-position 3 stacked elements
  * onto a 111px-tall banner.
  */
-// TODO(magazine): primary/secondary hrefs are placeholders pointing
-// at /fields until the Read / Subscribe destinations are decided.
 export function MagazineHero({
   artwork = "/images/home/magazine-thumbnail.svg",
   title,
   subtitle,
-  primaryHref = "/fields",
-  secondaryHref = "/fields",
+  primaryHref = "/magazine#magazine-content",
+  secondaryHref = "/magazine#newsletter-heading",
 }: MagazineHeroProps) {
   const t = useTranslations("Home.magazine.hero");
 

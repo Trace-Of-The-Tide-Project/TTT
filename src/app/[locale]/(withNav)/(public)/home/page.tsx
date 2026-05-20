@@ -20,7 +20,7 @@ async function fetchHexCards(): Promise<HexCard[]> {
         ? a.category.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
         : "Article",
       image: a.cover_image,
-      href: `/fields/${a.slug}`,
+      href: `/content/article?id=${encodeURIComponent(a.id)}`,
     }));
   } catch {
     return [];
