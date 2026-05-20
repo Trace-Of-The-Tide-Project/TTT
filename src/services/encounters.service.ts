@@ -66,10 +66,20 @@ export async function listEncountersServer(opts?: {
   return raw.data ?? [];
 }
 
+/** Unwraps the `{ status, results, data }` envelope the backend wraps
+ * single records in. Tolerates a bare record too. */
+function unwrapOne(raw: unknown): EncounterDetail | null {
+  if (!raw || typeof raw !== "object") return null;
+  if ("data" in (raw as object)) {
+    return ((raw as { data?: EncounterDetail }).data ?? null);
+  }
+  return raw as EncounterDetail;
+}
+
 export async function getEncounterServer(
   id: string,
 ): Promise<EncounterDetail | null> {
-  return serverGet<EncounterDetail>(`/encounters/${id}`);
+  return unwrapOne(await serverGet<unknown>(`/encounters/${id}`));
 }
 
 /** POST /encounters/{id}/book — public, guest-allowed. */

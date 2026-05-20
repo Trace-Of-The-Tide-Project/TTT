@@ -32,6 +32,16 @@ export type ApplyToWorkshopResponse = {
 
 type Envelope<T> = { data?: T[] };
 
+/** Unwraps the `{ status, results, data }` envelope the backend wraps
+ * single records in. Tolerates a bare record too. */
+function unwrapOne(raw: unknown): WorkshopDetail | null {
+  if (!raw || typeof raw !== "object") return null;
+  if ("data" in (raw as object)) {
+    return ((raw as { data?: WorkshopDetail }).data ?? null);
+  }
+  return raw as WorkshopDetail;
+}
+
 /** Server-side fetch — used in page.tsx server components. */
 export async function listWorkshopsServer(opts?: {
   limit?: number;
@@ -51,13 +61,13 @@ export async function listWorkshopsServer(opts?: {
 export async function getWorkshopServer(
   id: string,
 ): Promise<WorkshopDetail | null> {
-  return serverGet<WorkshopDetail>(`/workshops/${id}`);
+  return unwrapOne(await serverGet<unknown>(`/workshops/${id}`));
 }
 
 /** Client-side detail fetch — used when the Workshop Detail modal opens. */
 export async function getWorkshop(id: string): Promise<WorkshopDetail> {
-  const { data } = await api.get<WorkshopDetail>(`/workshops/${id}`);
-  return data;
+  const { data } = await api.get<unknown>(`/workshops/${id}`);
+  return (unwrapOne(data) ?? ({} as WorkshopDetail));
 }
 
 /** POST /workshops/{id}/apply — public, guest-allowed. */
