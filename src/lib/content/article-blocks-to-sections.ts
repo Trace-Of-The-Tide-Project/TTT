@@ -4,6 +4,40 @@ import { isLikelyAudioUrl, isLikelyVideoUrl } from "@/lib/content/media-url";
 
 type Figure = { src: string; alt?: string; caption?: string };
 
+/** Decode the handful of HTML entities that survive tag stripping. */
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'");
+}
+
+/**
+ * The editor stores block content as HTML (e.g. "<p>text</p>"), but the
+ * reader renders plain-text paragraphs. Convert that HTML into one or
+ * more plain-text paragraphs: block-level tags become line breaks,
+ * remaining tags are stripped, entities decoded.
+ */
+function htmlToParagraphs(html: string): string[] {
+  return decodeEntities(
+    html
+      .replace(/<\s*br\s*\/?>/gi, "\n")
+      .replace(/<\/(p|div|h[1-6]|li|blockquote)>/gi, "\n")
+      .replace(/<[^>]+>/g, ""),
+  )
+    .split(/\n+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+/** Single-line plain text from HTML — for headings/quotes/callouts. */
+function htmlToText(html: string): string {
+  return htmlToParagraphs(html).join(" ").trim();
+}
+
 /** API may return metadata as a JSON string or a parsed object. */
 function metadataString(
   metadata: string | Record<string, unknown> | null | undefined
@@ -174,7 +208,7 @@ export function articleBlocksToSections(
 
     if (type === "heading") {
       pushParas();
-      const h = (b.content ?? "").trim();
+      const h = htmlToText(b.content ?? "");
       if (h) {
         const sec: ContentArticleSection = { heading: h, paragraphs: [] };
         sections.push(sec);
@@ -188,7 +222,7 @@ export function articleBlocksToSections(
     if (type === "quote") {
       pushParas();
       breakOpenHeading();
-      sections.push({ paragraphs: [], quote: (b.content ?? "").trim() || "—" });
+      sections.push({ paragraphs: [], quote: htmlToText(b.content ?? "") || "—" });
       continue;
     }
 
@@ -198,7 +232,7 @@ export function articleBlocksToSections(
       const obj = parseMetadataObject(b.metadata);
       const title = obj && typeof obj.title === "string" ? obj.title.trim() : "";
       const bodyFromMeta = obj && typeof obj.body === "string" ? obj.body.trim() : "";
-      const body = (b.content ?? "").trim() || bodyFromMeta;
+      const body = htmlToText(b.content ?? "") || bodyFromMeta;
       if (title && body) {
         sections.push({ paragraphs: [], callout: { title, body } });
       } else if (title) {
@@ -252,8 +286,7 @@ export function articleBlocksToSections(
       continue;
     }
 
-    const text = (b.content ?? "").trim();
-    if (text) {
+    for (const text of htmlToParagraphs(b.content ?? "")) {
       if (openHeading) {
         openHeading.paragraphs.push(text);
       } else {

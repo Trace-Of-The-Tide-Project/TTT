@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { theme } from "@/lib/theme";
 import { isUsableImageSrc } from "@/lib/content/content-image-src";
@@ -48,8 +49,12 @@ function DefaultCoverHero({ coverLabel }: { coverLabel?: string }) {
 }
 
 export function ContentImageDisplay({ src, coverLabel, layoutId }: ContentImageDisplayProps) {
+  // Remote URLs can be unusable up front OR fail at load time (e.g.
+  // expired Google Cloud Storage signed URLs). In both cases we show
+  // the branded gradient placeholder instead of a broken-image icon.
+  const [failed, setFailed] = useState(false);
   const trimmed = src.trim();
-  if (!isUsableImageSrc(trimmed)) {
+  if (!isUsableImageSrc(trimmed) || failed) {
     return (
       <div className="relative overflow-hidden rounded-xl">
         <DefaultCoverHero coverLabel={coverLabel} />
@@ -71,6 +76,7 @@ export function ContentImageDisplay({ src, coverLabel, layoutId }: ContentImageD
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 60vw"
             unoptimized={isRemote || isData}
+            onError={() => setFailed(true)}
           />
         </SharedImage>
         {coverLabel ? (
