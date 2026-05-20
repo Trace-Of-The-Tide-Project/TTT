@@ -42,7 +42,13 @@ export function EncounterDetailContent({
     encounter?.chips && encounter.chips.length > 0
       ? encounter.chips
       : [t("chipTalk"), t("chipWorkshops")];
-  const heroSrc = encounter?.hero_image || HERO_BG;
+  // Remote hero can be missing OR an unreachable/placeholder URL
+  // (the backend seeds e.g. https://cdn.example.com/image.jpg). Track
+  // load failure so we fall back to the local brand SVG instead of
+  // showing a broken-image icon.
+  const [heroFailed, setHeroFailed] = useState(false);
+  const heroSrc =
+    encounter?.hero_image && !heroFailed ? encounter.hero_image : HERO_BG;
   const dateValue = encounter?.date
     ? new Date(encounter.date).toLocaleDateString("en-US", {
         year: "numeric",
@@ -140,6 +146,7 @@ export function EncounterDetailContent({
             // renders 1:1.
             className="select-none object-cover md:object-contain"
             priority
+            onError={() => setHeroFailed(true)}
           />
 
           {/* Trip Info overlay panel — covers the bottom 55% on
