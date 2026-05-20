@@ -1369,9 +1369,14 @@ function FeaturedWritingCard({
   const authorName = item.author?.trim() || cardAuthorFallback;
   const initial = (authorName || cardTitle).slice(0, 1).toUpperCase() || "A";
 
+  // Public article reader lives at /content/article?id=... — the
+  // legacy /books/[id] route is for book records, not articles.
+  const href = item.id
+    ? `/content/article?id=${encodeURIComponent(item.id)}`
+    : "/content/article";
   return (
     <Link
-      href={`/books/${item.slug}`}
+      href={href}
       className="relative block w-full transition-opacity hover:opacity-90"
       style={{
         maxWidth: "var(--carousel-card-w, 276px)",

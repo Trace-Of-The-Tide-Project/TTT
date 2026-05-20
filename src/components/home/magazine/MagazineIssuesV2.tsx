@@ -107,9 +107,11 @@ function BookCard({
   const editionLabel = item.edition ? `${issuePrefix} ${item.edition}` : "";
   const metaTop = [editionLabel, date].filter(Boolean).join(" · ");
   const tag = prettify(item.category ?? item.kind ?? "");
-  // No magazine-issue detail route yet; deep link to /open-issues
-  // where the user can browse and pick an issue to read.
-  const href = "/open-issues";
+  // Deep-link to the issue detail page when we have a slug; otherwise
+  // fall back to the Open Issues index so visitors can browse.
+  const href = item.slug
+    ? `/magazine-issues/${encodeURIComponent(item.slug)}`
+    : "/open-issues";
   const imgSrc = isValidImageUrl(item.coverImage) ? item.coverImage : FALLBACK_IMAGE;
 
   return (

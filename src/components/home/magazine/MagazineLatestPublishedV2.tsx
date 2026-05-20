@@ -80,9 +80,10 @@ export function MagazineLatestPublishedV2({
 function BookCard({ item }: { item: LatestPublishedItem }) {
   const date = formatMonthYear(item.publishedAt);
   const imgSrc = isValidImageUrl(item.coverImage) ? item.coverImage : FALLBACK_IMAGE;
-  // Deep-link to the book detail when we have a slug, otherwise drop
-  // visitors on the books index so they can browse manually.
-  const href = item.slug ? `/books/${item.slug}` : "/books";
+  // Public article reader lives at /content/article?id=... — the
+  // /books/[id] route is for book records, not articles. Fall back to
+  // the public books index when we somehow lack an id.
+  const href = item.id ? `/content/article?id=${encodeURIComponent(item.id)}` : "/books";
 
   return (
     <Link

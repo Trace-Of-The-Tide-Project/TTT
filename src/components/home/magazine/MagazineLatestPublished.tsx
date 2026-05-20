@@ -87,6 +87,7 @@ export function MagazineLatestPublished({
             key={item.id}
             className="flex basis-[calc(50%-0.5rem)] flex-col items-stretch sm:basis-[170px] sm:max-w-[192px]"
           >
+            <PublishedCardLink id={item.id}>
             <div
               className="relative w-full"
               style={{ aspectRatio: "193 / 288" }}
@@ -149,9 +150,31 @@ export function MagazineLatestPublished({
                 ) : null}
               </p>
             </div>
+            </PublishedCardLink>
           </li>
         ))}
       </ul>
     </section>
+  );
+}
+
+/** Wraps a card body in a Link to the public article reader when an
+ * id is present; otherwise renders the body unwrapped so we never
+ * produce a dead link. */
+function PublishedCardLink({
+  id,
+  children,
+}: {
+  id: string | null | undefined;
+  children: React.ReactNode;
+}) {
+  if (!id) return <>{children}</>;
+  return (
+    <Link
+      href={`/content/article?id=${encodeURIComponent(id)}`}
+      className="flex flex-col items-stretch transition-opacity hover:opacity-90"
+    >
+      {children}
+    </Link>
   );
 }

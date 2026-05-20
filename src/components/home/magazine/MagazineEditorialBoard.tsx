@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   CalendarIcon,
   FolderIcon,
@@ -125,11 +126,8 @@ export function MagazineEditorialBoard({
           </h2>
 
           <ul className="mt-6 flex flex-wrap justify-center gap-4 sm:gap-6">
-            {lessReadArticles.map((article, i) => (
-              <li
-                key={article.id}
-                className="flex basis-[calc(50%-0.5rem)] justify-center sm:basis-[180px] sm:max-w-[196px]"
-              >
+            {lessReadArticles.map((article, i) => {
+              const card = (
                 <CategoryCard
                   iconSrc={
                     article.iconSrc ??
@@ -141,8 +139,25 @@ export function MagazineEditorialBoard({
                   category={article.category}
                   edition={article.edition ?? ""}
                 />
-              </li>
-            ))}
+              );
+              return (
+                <li
+                  key={article.id}
+                  className="flex basis-[calc(50%-0.5rem)] justify-center sm:basis-[180px] sm:max-w-[196px]"
+                >
+                  {article.id ? (
+                    <Link
+                      href={`/content/article?id=${encodeURIComponent(article.id)}`}
+                      className="flex w-full justify-center transition-opacity hover:opacity-90"
+                    >
+                      {card}
+                    </Link>
+                  ) : (
+                    card
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
       ) : null}
@@ -188,7 +203,9 @@ export function MagazineEditorialBoard({
           <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 xl:hidden">
             {writers.slice(0, 4).map((w) => (
               <div key={w.id} className="flex justify-center">
-                <WriterCard writer={w} />
+                <WriterCardLink id={w.id}>
+                  <WriterCard writer={w} />
+                </WriterCardLink>
               </div>
             ))}
           </div>
@@ -218,7 +235,9 @@ export function MagazineEditorialBoard({
               />
             </div>
             {writers.slice(0, 4).map((w) => (
-              <WriterCard key={`d-${w.id}`} writer={w} />
+              <WriterCardLink key={`d-${w.id}`} id={w.id}>
+                <WriterCard writer={w} />
+              </WriterCardLink>
             ))}
             <div
               aria-hidden
@@ -281,6 +300,28 @@ export function MagazineEditorialBoard({
         </blockquote>
       </section>
     </div>
+  );
+}
+
+/** Wraps a writer card in a Link to the writer detail page when an id
+ * is present. Uses `display:contents` so the link is transparent to
+ * the parent flex/grid layout — the inner card keeps its own sizing. */
+function WriterCardLink({
+  id,
+  children,
+}: {
+  id: string | null | undefined;
+  children: React.ReactNode;
+}) {
+  if (!id) return <>{children}</>;
+  return (
+    <Link
+      href={`/writers/${encodeURIComponent(id)}`}
+      className="contents"
+      aria-label="View writer"
+    >
+      {children}
+    </Link>
   );
 }
 
