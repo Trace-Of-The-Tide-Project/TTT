@@ -76,7 +76,7 @@ export function ContentVideoPlayer({ src, thumbnail }: ContentVideoPlayerProps) 
   const handleLoadedMetadata = useCallback(() => {
     const v = videoRef.current;
     if (v) {
-      setDuration(v.duration);
+      if (Number.isFinite(v.duration)) setDuration(v.duration);
       setCurrentTime(v.currentTime);
       setVolume(v.volume);
       setMuted(v.muted);
@@ -86,7 +86,7 @@ export function ContentVideoPlayer({ src, thumbnail }: ContentVideoPlayerProps) 
   const handleCanPlay = useCallback(() => {
     const v = videoRef.current;
     if (v) {
-      setDuration(v.duration);
+      if (Number.isFinite(v.duration)) setDuration(v.duration);
       setCurrentTime(v.currentTime);
     }
   }, []);
@@ -100,7 +100,12 @@ export function ContentVideoPlayer({ src, thumbnail }: ContentVideoPlayerProps) 
     const v = videoRef.current;
     const bar = e.currentTarget;
     if (!v || !bar) return;
+    // Duration is NaN until metadata loads, and Infinity for live
+    // streams — seeking with either makes currentTime non-finite and
+    // throws. Bail out until we have a real, finite duration.
+    if (!Number.isFinite(v.duration) || v.duration <= 0) return;
     const rect = bar.getBoundingClientRect();
+    if (rect.width <= 0) return;
     const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     v.currentTime = pct * v.duration;
   }, []);
