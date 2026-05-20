@@ -226,6 +226,7 @@ function formatShortDate(iso: string | null | undefined): string {
 function toWriterItem(w: WriterProfile): FollowWriterItem {
   return {
     id: w.id,
+    userId: w.user_id ?? w.user?.id ?? null,
     name: writerDisplayName(w) || "Writer",
     title: w.bio?.slice(0, 80) ?? null,
     edition: w.edition ?? null,

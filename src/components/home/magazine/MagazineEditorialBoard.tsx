@@ -58,6 +58,8 @@ export type LessReadArticleItem = {
 
 export type FollowWriterItem = {
   id: string;
+  /** User id the follow toggle targets (writer profiles wrap a user). */
+  userId?: string | null;
   /** Display name shown under the silk hex. */
   name: string;
   /** Card title — typically the writer's bio headline; falls back to

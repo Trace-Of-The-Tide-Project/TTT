@@ -12,11 +12,15 @@ export const magazineIssuesKeys = {
   bySlug: (slug: string) => ["magazine-issues", "slug", slug] as const,
 };
 
-export function useMagazineIssues(params?: GetMagazineIssuesParams) {
+export function useMagazineIssues(
+  params?: GetMagazineIssuesParams,
+  options?: { enabled?: boolean },
+) {
   return useQuery({
     queryKey: magazineIssuesKeys.list(params),
     queryFn: () => getMagazineIssues(params),
     placeholderData: (prev) => prev,
+    enabled: options?.enabled ?? true,
   });
 }
 

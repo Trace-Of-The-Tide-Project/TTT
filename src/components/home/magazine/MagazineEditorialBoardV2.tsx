@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { FollowButton } from "@/components/writers/FollowButton";
 
 // Same silk-hex + top-icon brand assets used by the writing-room
 // "Discover Featured Writing" row, so the Editorial Board gallery
@@ -46,6 +47,8 @@ const CARD_H = 294;
 /* ─────────────────────────── types ─────────────────────────── */
 export type FollowWriterItem = {
   id: string;
+  /** User id the follow toggle targets (writer profiles wrap a user). */
+  userId?: string | null;
   name: string;
   title?: string | null;
   edition?: string | null;
@@ -337,17 +340,34 @@ function CarouselCard({
   const author = writer.name?.trim() || authorPlaceholder;
   const date = writer.edition?.trim() || "";
   const role = writer.role?.trim() || rolePlaceholder;
+  // Card links to the writer's profile when we have an id; the
+  // follow button sits above the stretched link as an interactive
+  // island so clicking it doesn't navigate.
+  const profileHref = writer.id
+    ? `/writers/${encodeURIComponent(writer.id)}`
+    : "/writing-room";
 
-  // No per-writer detail page exists yet, so every card lands on
-  // /writing-room (where the writers are featured + you can apply to
-  // join the editorial board).
   return (
-    <Link
-      href="/writing-room"
+    <div
       className="relative block w-full transition-opacity hover:opacity-90"
       style={{ height: CARD_H, width: CARD_W }}
-      aria-label={author}
     >
+      {/* Stretched navigation link — covers the whole card (z-25, above
+          the silk + text overlay but below the follow island at z-30). */}
+      <Link
+        href={profileHref}
+        aria-label={author}
+        className="absolute inset-0 z-[25]"
+      />
+
+      {/* Follow island — independent interactive control above the
+          stretched link. */}
+      {writer.userId ? (
+        <div className="absolute right-2 top-2 z-30">
+          <FollowButton targetUserId={writer.userId} size="sm" />
+        </div>
+      ) : null}
+
       {/* Optional cover image — sits behind the silk hex so the
           writer's photo reads through the silk silhouette. */}
       {writer.avatar ? (
@@ -477,7 +497,7 @@ function CarouselCard({
       {/* Role pill — sits over the bottom fade, centered, with the
           dark chevron caps from the Figma comp. */}
       <RolePill label={role} />
-    </Link>
+    </div>
   );
 }
 

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { useMagazineIssues } from "@/hooks/queries/magazine-issues";
 import {
   SearchIcon,
   FilterIcon,
@@ -95,22 +96,51 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
   const [active, setActive] = useState<FilterId>("all");
   const [query, setQuery] = useState("");
 
-  // Filtered list — narrow by chip + free-text search. Memoized so
-  // the `currentIssue` derivation below doesn't re-run on every
-  // render.
+  // Debounce the search box so we don't fire a request per keystroke.
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQuery(query.trim()), 300);
+    return () => clearTimeout(id);
+  }, [query]);
+
+  // Server-side search: once the user types, query the backend with
+  // `?search=` so results aren't limited to the first page the page
+  // server-fetched. Kind chips stay client-side because the
+  // chip→kind mapping (plural id vs singular kind) is fuzzy and the
+  // backend's `kind` filter semantics aren't guaranteed. When there's
+  // no query we show the SSR `items` the page passed in.
+  const hasQuery = debouncedQuery.length > 0;
+  const { data: searchResults } = useMagazineIssues(
+    { status: "published", search: debouncedQuery, limit: 20 },
+    { enabled: hasQuery },
+  );
+
+  const source: MagazineIssueItem[] = useMemo(() => {
+    if (!hasQuery) return items;
+    return (searchResults ?? []).map((it) => ({
+      id: it.id,
+      title: it.title,
+      kind: it.kind ?? null,
+      pageCount: it.page_count ?? null,
+      coverImage: it.cover_image ?? null,
+      excerpt: it.excerpt ?? null,
+    }));
+  }, [hasQuery, items, searchResults]);
+
+  // Narrow the active source by the kind chip only — search is already
+  // applied server-side (or, for the no-query case, there's nothing to
+  // search). Memoized so `currentIssue` doesn't recompute every render.
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return items.filter((it) => {
+    return source.filter((it) => {
       if (active !== "all") {
         const kind = (it.kind ?? "").toLowerCase();
         // Filter ids are plural ("articles"); kinds are usually
         // singular ("article"). Allow both.
         if (kind !== active && `${kind}s` !== active) return false;
       }
-      if (q && !it.title.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [items, active, query]);
+  }, [source, active]);
 
   // The reader shows the first match — a "now reading" preview.
   const currentIssue = filtered[0] ?? items[0] ?? null;
