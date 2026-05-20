@@ -91,19 +91,8 @@
         "filterEssays": "دراسات",
         "filterCollections": "مجموعات",
         "filterSlides": "شرائح",
-        "sortByLabel": "ترتيب حسب:",
-        "sortNewest": "الأحدث أوّلًا",
-        "filtersLabel": "تصفية",
-        "pageIndicator": "{current} / {total}",
         "previousPage": "الصفحة السابقة",
-        "nextPage": "الصفحة التالية",
-        "viewList": "عرض قائمة",
-        "viewGrid": "عرض شبكة",
-        "zoomIn": "تكبير",
-        "zoomOut": "تصغير",
-        "fullscreen": "ملء الشاشة",
-        "share": "مشاركة",
-        "more": "خيارات أخرى"
+        "nextPage": "الصفحة التالية"
       },
       "editorialBoard": {
         "mastheadEyebrow": "هيئة التحرير · 2026",

@@ -91,19 +91,8 @@
         "filterEssays": "Essays",
         "filterCollections": "Collections",
         "filterSlides": "Slides",
-        "sortByLabel": "Sort by:",
-        "sortNewest": "Newest first",
-        "filtersLabel": "Filters",
-        "pageIndicator": "{current} / {total}",
         "previousPage": "Previous page",
-        "nextPage": "Next page",
-        "viewList": "List view",
-        "viewGrid": "Grid view",
-        "zoomIn": "Zoom in",
-        "zoomOut": "Zoom out",
-        "fullscreen": "Fullscreen",
-        "share": "Share",
-        "more": "More options"
+        "nextPage": "Next page"
       },
       "editorialBoard": {
         "mastheadEyebrow": "Masthead · 2026",

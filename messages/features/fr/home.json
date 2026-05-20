@@ -91,19 +91,8 @@
         "filterEssays": "Essais",
         "filterCollections": "Collections",
         "filterSlides": "Diapositives",
-        "sortByLabel": "Trier par :",
-        "sortNewest": "Plus récents d'abord",
-        "filtersLabel": "Filtres",
-        "pageIndicator": "{current} / {total}",
         "previousPage": "Page précédente",
-        "nextPage": "Page suivante",
-        "viewList": "Vue liste",
-        "viewGrid": "Vue grille",
-        "zoomIn": "Zoom avant",
-        "zoomOut": "Zoom arrière",
-        "fullscreen": "Plein écran",
-        "share": "Partager",
-        "more": "Plus d'options"
+        "nextPage": "Page suivante"
       },
       "editorialBoard": {
         "mastheadEyebrow": "Ours · 2026",

@@ -91,19 +91,8 @@
         "filterEssays": "Ensayos",
         "filterCollections": "Colecciones",
         "filterSlides": "Diapositivas",
-        "sortByLabel": "Ordenar por:",
-        "sortNewest": "Más reciente primero",
-        "filtersLabel": "Filtros",
-        "pageIndicator": "{current} / {total}",
         "previousPage": "Página anterior",
-        "nextPage": "Página siguiente",
-        "viewList": "Vista de lista",
-        "viewGrid": "Vista de cuadrícula",
-        "zoomIn": "Acercar",
-        "zoomOut": "Alejar",
-        "fullscreen": "Pantalla completa",
-        "share": "Compartir",
-        "more": "Más opciones"
+        "nextPage": "Página siguiente"
       },
       "editorialBoard": {
         "mastheadEyebrow": "Cabecera · 2026",
