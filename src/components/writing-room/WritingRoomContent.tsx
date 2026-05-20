@@ -302,12 +302,17 @@ export function WritingRoomContent({
             >
               {dictionary.map((d) => (
                 <li key={d.id} className="flex justify-center">
-                  <DictionaryCard
-                    word={d.word}
-                    body={d.body}
-                    author={d.author}
-                    role={d.role}
-                  />
+                  <Link
+                    href={`/dictionary/${encodeURIComponent(d.id)}`}
+                    className="flex w-full justify-center transition-opacity hover:opacity-90"
+                  >
+                    <DictionaryCard
+                      word={d.word}
+                      body={d.body}
+                      author={d.author}
+                      role={d.role}
+                    />
+                  </Link>
                 </li>
               ))}
             </ul>

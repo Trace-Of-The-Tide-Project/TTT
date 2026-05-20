@@ -69,6 +69,28 @@ export async function getWriters(
   }
 }
 
+function unwrapOne(raw: unknown): WriterProfile | null {
+  if (!raw || typeof raw !== "object") return null;
+  if ("data" in (raw as object)) {
+    return ((raw as { data?: WriterProfile }).data ?? null);
+  }
+  return raw as WriterProfile;
+}
+
+/** GET /writers/{id} — public. Works server- or client-side. Returns
+ * null on 404 / error. */
+export async function getWriter(id: string): Promise<WriterProfile | null> {
+  if (typeof window === "undefined") {
+    return unwrapOne(await serverGet<unknown>(`/writers/${encodeURIComponent(id)}`));
+  }
+  try {
+    const { data } = await api.get<unknown>(`/writers/${encodeURIComponent(id)}`);
+    return unwrapOne(data);
+  } catch {
+    return null;
+  }
+}
+
 /** Pick the best display name from the writer record (falls back
  * through profile.display_name → user.full_name → username). */
 export function writerDisplayName(w: WriterProfile): string {

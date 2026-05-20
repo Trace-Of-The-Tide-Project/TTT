@@ -1,4 +1,55 @@
 import { api } from "./api";
+import { serverGet } from "@/lib/api/isomorphic-fetch";
+
+/** A Living-Dictionary entry as returned by the public list +
+ * detail endpoints. Fields are loose because OpenAPI doesn't declare
+ * the response shape. */
+export type DictionaryEntry = {
+  id: string;
+  title?: string | null;
+  definition_or_thought?: string | null;
+  author_name?: string | null;
+  status?: string | null;
+  createdAt?: string | null;
+  user?: {
+    full_name?: string | null;
+    username?: string | null;
+    profile?: {
+      display_name?: string | null;
+      job_title?: string | null;
+      avatar?: string | null;
+    } | null;
+  } | null;
+};
+
+function unwrapOne(raw: unknown): DictionaryEntry | null {
+  if (!raw || typeof raw !== "object") return null;
+  if ("data" in (raw as object)) {
+    return ((raw as { data?: DictionaryEntry }).data ?? null);
+  }
+  return raw as DictionaryEntry;
+}
+
+/** GET /dictionary/{id} — public. Works server- or client-side.
+ * Returns null on 404 / error. */
+export async function getDictionaryEntry(
+  id: string,
+): Promise<DictionaryEntry | null> {
+  if (typeof window === "undefined") {
+    const raw = await serverGet<unknown>(
+      `/dictionary/${encodeURIComponent(id)}`,
+    );
+    return unwrapOne(raw);
+  }
+  try {
+    const { data } = await api.get<unknown>(
+      `/dictionary/${encodeURIComponent(id)}`,
+    );
+    return unwrapOne(data);
+  } catch {
+    return null;
+  }
+}
 
 export type SubmitDictionaryNotePayload = {
   title: string;

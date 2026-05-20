@@ -1,0 +1,18 @@
+{
+  "MagazineIssueDetail": {
+    "issuePrefix": "Numéro",
+    "pages": "{count, plural, =1 {1 page} other {# pages}}",
+    "readTime": "{minutes} min de lecture",
+    "supportCta": "Soutenir ce numéro",
+    "backToMagazine": "Retour au magazine"
+  },
+  "DictionaryEntry": {
+    "backToDictionary": "Retour au Dictionnaire vivant"
+  },
+  "Writers": {
+    "follow": "Suivre",
+    "following": "Suivi",
+    "editionPrefix": "Édition",
+    "backToMagazine": "Retour au magazine"
+  }
+}

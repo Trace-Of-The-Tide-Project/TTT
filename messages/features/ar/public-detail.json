@@ -1,0 +1,18 @@
+{
+  "MagazineIssueDetail": {
+    "issuePrefix": "العدد",
+    "pages": "{count, plural, =1 {صفحة واحدة} other {# صفحات}}",
+    "readTime": "قراءة {minutes} دقيقة",
+    "supportCta": "ادعم هذا العدد",
+    "backToMagazine": "العودة إلى المجلة"
+  },
+  "DictionaryEntry": {
+    "backToDictionary": "العودة إلى القاموس الحي"
+  },
+  "Writers": {
+    "follow": "متابعة",
+    "following": "تتابعه",
+    "editionPrefix": "الإصدار",
+    "backToMagazine": "العودة إلى المجلة"
+  }
+}
