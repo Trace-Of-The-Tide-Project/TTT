@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/icons";
 
 const BOOK_IMAGE = "/images/home/Book.png";
+const BOOK_COVER = "/images/home/Book Cover.png";
 const SHARE_HEX = "/images/home/Icon-5.svg";
 
 const CHIP_CHAMFER =
@@ -41,7 +42,14 @@ export type BookPreviewBook = {
   reviewCount: number | null;
   pageCount: number | null;
   pdfUrl: string | null;
+  /** Resolved cover image URL; null falls back to the brand cover. */
+  coverImage: string | null;
+  /** Numeric price; null or 0 means the book is free. */
+  price: number | null;
 };
+
+// Paid books expose only the first few pages before the buy gate.
+const PREVIEW_PAGE_LIMIT = 4;
 
 /**
  * Book preview reader — same visual treatment as the magazine
@@ -59,11 +67,25 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
   const tDetail = useTranslations("Home.bookDetail");
 
   const totalPages = book.pageCount ?? FALLBACK_TOTAL_PAGES;
-  // Start the indicator at min(16, totalPages) so demos still feel
-  // "in the middle" without overshooting on short books.
-  const initialPage = Math.min(DEFAULT_INITIAL_PAGE, totalPages);
+  // Free books with a PDF show the real content inline; paid books
+  // are gated to the first few pages behind a buy prompt. A free book
+  // with no PDF has nothing to show, so it gets an empty state instead
+  // of a blank placeholder spread.
+  const isFree = book.price == null || book.price === 0;
+  const showPdf = isFree && Boolean(book.pdfUrl);
+  const showEmpty = isFree && !book.pdfUrl;
+  const showReader = !showPdf && !showEmpty;
+  const gated = !isFree;
+  const previewLimit = gated
+    ? Math.min(PREVIEW_PAGE_LIMIT, totalPages)
+    : totalPages;
+  // Gated previews start at page 1 so the reader can actually reach
+  // the lock; the cosmetic demo starts mid-book.
+  const initialPage = gated ? 1 : Math.min(DEFAULT_INITIAL_PAGE, totalPages);
+  const displayTotal = gated ? previewLimit : totalPages;
 
   const [currentPage, setCurrentPage] = useState(initialPage);
+  const [locked, setLocked] = useState(false);
   const [flipping, setFlipping] = useState<"next" | "prev" | null>(null);
   const [flipPhase, setFlipPhase] = useState<"start" | "end">("start");
   const flipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -86,17 +108,30 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
   }, [flipping]);
 
   const goNext = () => {
-    if (flipping || currentPage + 2 > totalPages) return;
+    if (flipping || locked) return;
+    // Past the preview limit a paid book reveals the buy gate instead
+    // of more pages.
+    if (gated && currentPage + 2 > previewLimit) {
+      setLocked(true);
+      return;
+    }
+    if (currentPage + 2 > previewLimit) return;
     setFlipping("next");
     flipTimer.current = setTimeout(() => {
-      setCurrentPage((p) => Math.min(p + 2, totalPages));
+      setCurrentPage((p) => Math.min(p + 2, previewLimit));
       setFlipping(null);
       setFlipPhase("start");
     }, FLIP_MS);
   };
 
   const goPrev = () => {
-    if (flipping || currentPage - 2 < 1) return;
+    if (flipping) return;
+    // Backing out of the lock returns to the last preview spread.
+    if (locked) {
+      setLocked(false);
+      return;
+    }
+    if (currentPage - 2 < 1) return;
     setFlipping("prev");
     flipTimer.current = setTimeout(() => {
       setCurrentPage((p) => Math.max(p - 2, 1));
@@ -104,6 +139,12 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
       setFlipPhase("start");
     }, FLIP_MS);
   };
+
+  // Prev stays active while locked (it backs out of the gate). Next
+  // stays active for gated books at the limit so it can open the gate.
+  const prevDisabled = flipping !== null || (!locked && currentPage - 2 < 1);
+  const nextDisabled =
+    flipping !== null || locked || (!gated && currentPage + 2 > previewLimit);
 
   return (
     <main
@@ -264,84 +305,187 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
           ) : null}
         </header>
 
-        {/* Reader — book spread with a cosmetic page-flip overlay
-            and side chevrons. Same pattern as MagazineIssues. */}
+        {/* Reader — for free books with a PDF we embed the real
+            content; otherwise a cosmetic page-flip spread with side
+            chevrons (same pattern as MagazineIssues), gated behind a
+            buy prompt for paid books. */}
         <div className="relative mt-8 mx-auto w-full sm:px-12 lg:px-16">
-          <button
-            type="button"
-            onClick={goPrev}
-            disabled={flipping !== null || currentPage - 2 < 1}
-            aria-label={tIssues("previousPage")}
-            className="absolute left-2 top-1/2 z-20 hidden -translate-y-1/2 transition-opacity hover:opacity-70 disabled:opacity-30 sm:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
-            style={{ color: "var(--tott-home-text-strong)" }}
-          >
-            <ChevronLeftLargeIcon />
-          </button>
-          <button
-            type="button"
-            onClick={goNext}
-            disabled={flipping !== null || currentPage + 2 > totalPages}
-            aria-label={tIssues("nextPage")}
-            className="absolute right-2 top-1/2 z-20 hidden -translate-y-1/2 transition-opacity hover:opacity-70 disabled:opacity-30 sm:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
-            style={{ color: "var(--tott-home-text-strong)" }}
-          >
-            <ChevronRightLargeIcon />
-          </button>
+          {showReader && (
+            <>
+              <button
+                type="button"
+                onClick={goPrev}
+                disabled={prevDisabled}
+                aria-label={tIssues("previousPage")}
+                className="absolute left-2 top-1/2 z-20 hidden -translate-y-1/2 transition-opacity hover:opacity-70 disabled:opacity-30 sm:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
+                style={{ color: "var(--tott-home-text-strong)" }}
+              >
+                <ChevronLeftLargeIcon />
+              </button>
+              <button
+                type="button"
+                onClick={goNext}
+                disabled={nextDisabled}
+                aria-label={tIssues("nextPage")}
+                className="absolute right-2 top-1/2 z-20 hidden -translate-y-1/2 transition-opacity hover:opacity-70 disabled:opacity-30 sm:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
+                style={{ color: "var(--tott-home-text-strong)" }}
+              >
+                <ChevronRightLargeIcon />
+              </button>
+            </>
+          )}
 
+          {showEmpty && (
+            <LockedBook3D
+              cover={book.coverImage || BOOK_COVER}
+              title={book.title}
+              caption={tDetail("previewNoContent")}
+            />
+          )}
+
+          {!showEmpty && (
           <div
             className="relative mx-auto w-full max-w-[1100px]"
             style={{ perspective: "2000px" }}
           >
             <div
-              className="relative w-full"
+              className="relative w-full overflow-hidden"
               style={{
                 aspectRatio: "1132 / 802",
                 transformStyle: "preserve-3d",
+                borderRadius: showReader ? undefined : "24px",
               }}
             >
-              <Image
-                src={BOOK_IMAGE}
-                alt=""
-                fill
-                priority
-                sizes="(min-width: 1280px) 1100px, 100vw"
-                className="select-none object-contain"
-                draggable={false}
-              />
-
-              {flipping !== null && (() => {
-                const target = flipping === "next" ? -180 : 180;
-                const rotation = flipPhase === "end" ? target : 0;
-                return (
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute top-0 z-10 h-full"
-                    style={{
-                      width: "50%",
-                      left: flipping === "next" ? "50%" : "0%",
-                      transformOrigin:
-                        flipping === "next" ? "left center" : "right center",
-                      transform: `rotateY(${rotation}deg)`,
-                      transition: `transform ${FLIP_MS}ms cubic-bezier(0.45, 0.05, 0.55, 0.95)`,
-                      transformStyle: "preserve-3d",
-                      backgroundColor: "#ffffff",
-                      borderRadius:
-                        flipping === "next"
-                          ? "0 24px 24px 0"
-                          : "24px 0 0 24px",
-                      boxShadow:
-                        flipping === "next"
-                          ? "inset 8px 0 16px -8px rgba(0,0,0,0.15), -10px 0 20px rgba(0,0,0,0.18)"
-                          : "inset -8px 0 16px -8px rgba(0,0,0,0.15), 10px 0 20px rgba(0,0,0,0.18)",
-                    }}
+              {showPdf ? (
+                <iframe
+                  src={book.pdfUrl ?? undefined}
+                  title={book.title}
+                  className="absolute inset-0 h-full w-full border-0 bg-white"
+                />
+              ) : (
+                <>
+                  <Image
+                    src={BOOK_IMAGE}
+                    alt=""
+                    fill
+                    priority
+                    sizes="(min-width: 1280px) 1100px, 100vw"
+                    className="select-none object-contain"
+                    draggable={false}
                   />
-                );
-              })()}
+
+                  {flipping !== null && (() => {
+                    const target = flipping === "next" ? -180 : 180;
+                    const rotation = flipPhase === "end" ? target : 0;
+                    return (
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute top-0 z-10 h-full"
+                        style={{
+                          width: "50%",
+                          left: flipping === "next" ? "50%" : "0%",
+                          transformOrigin:
+                            flipping === "next" ? "left center" : "right center",
+                          transform: `rotateY(${rotation}deg)`,
+                          transition: `transform ${FLIP_MS}ms cubic-bezier(0.45, 0.05, 0.55, 0.95)`,
+                          transformStyle: "preserve-3d",
+                          backgroundColor: "#ffffff",
+                          borderRadius:
+                            flipping === "next"
+                              ? "0 24px 24px 0"
+                              : "24px 0 0 24px",
+                          boxShadow:
+                            flipping === "next"
+                              ? "inset 8px 0 16px -8px rgba(0,0,0,0.15), -10px 0 20px rgba(0,0,0,0.18)"
+                              : "inset -8px 0 16px -8px rgba(0,0,0,0.15), 10px 0 20px rgba(0,0,0,0.18)",
+                        }}
+                      />
+                    );
+                  })()}
+
+                  {locked && (
+                    <div
+                      className="absolute inset-0 z-30 flex flex-col items-center justify-center px-6 text-center"
+                      style={{
+                        borderRadius: "24px",
+                        backgroundColor: "rgba(0, 0, 0, 0.55)",
+                        backdropFilter: "blur(4px)",
+                        WebkitBackdropFilter: "blur(4px)",
+                      }}
+                    >
+                      <span
+                        aria-hidden
+                        className="flex items-center justify-center [&>svg]:h-8 [&>svg]:w-8"
+                        style={{
+                          width: "64px",
+                          height: "64px",
+                          borderRadius: "9999px",
+                          backgroundColor: "var(--tott-magazine-btn-bg)",
+                          color: "var(--tott-auth-btn-text)",
+                        }}
+                      >
+                        <LockIcon />
+                      </span>
+                      <h2
+                        className="mt-5"
+                        style={{
+                          fontFamily:
+                            "'IBM Plex Sans', var(--font-sans, sans-serif)",
+                          fontWeight: 500,
+                          fontSize: "22px",
+                          lineHeight: "28px",
+                          color: "#ffffff",
+                          margin: 0,
+                        }}
+                      >
+                        {tDetail("previewLockedTitle")}
+                      </h2>
+                      <p
+                        className="mt-2 max-w-[420px]"
+                        style={{
+                          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                          fontWeight: 400,
+                          fontSize: "14px",
+                          lineHeight: "20px",
+                          letterSpacing: "-0.005em",
+                          color: "rgba(255, 255, 255, 0.82)",
+                          margin: 0,
+                        }}
+                      >
+                        {tDetail("previewLockedBody")}
+                      </p>
+                      <Link
+                        href={`/books/${book.id}`}
+                        className="mt-6 inline-flex items-center justify-center transition-opacity hover:opacity-90"
+                        style={{
+                          height: "44px",
+                          padding: "0 24px",
+                          gap: "8px",
+                          borderRadius: "8px",
+                          backgroundColor: "var(--tott-magazine-btn-bg)",
+                          boxShadow:
+                            "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
+                          color: "var(--tott-auth-btn-text)",
+                          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                          fontWeight: 500,
+                          fontSize: "14px",
+                          lineHeight: "20px",
+                          letterSpacing: "-0.005em",
+                        }}
+                      >
+                        {tDetail("previewBuy")}
+                      </Link>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
+          )}
         </div>
 
         {/* Bottom capsule toolbar — page nav + view controls. */}
+        {!showEmpty && (
         <div
           className="mx-auto mt-8 flex w-full max-w-[542px] flex-nowrap items-center overflow-x-auto justify-start sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           style={{
@@ -354,54 +498,58 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
             columnGap: "clamp(12px, 3vw, 24px)",
           }}
         >
-          <div className="flex items-center" style={{ gap: "16px" }}>
-            <button
-              type="button"
-              onClick={goPrev}
-              disabled={flipping !== null || currentPage - 2 < 1}
-              aria-label={tIssues("previousPage")}
-              className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40 [&>svg]:h-6 [&>svg]:w-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
-              style={{ color: TAB_INACTIVE_TEXT }}
-            >
-              <ChevronLeftLargeIcon />
-            </button>
-            <span
-              className="flex items-center"
-              style={{
-                gap: "4px",
-                fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                fontWeight: 400,
-                fontSize: "14px",
-                lineHeight: "20px",
-                letterSpacing: "-0.005em",
-              }}
-            >
-              <span style={{ color: "var(--tott-home-text-strong)" }}>
-                {currentPage}
-              </span>
-              <span style={{ color: TAB_INACTIVE_TEXT }}>/</span>
-              <span style={{ color: TAB_INACTIVE_TEXT }}>{totalPages}</span>
-            </span>
-            <button
-              type="button"
-              onClick={goNext}
-              disabled={flipping !== null || currentPage + 2 > totalPages}
-              aria-label={tIssues("nextPage")}
-              className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40 [&>svg]:h-6 [&>svg]:w-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
-              style={{ color: TAB_INACTIVE_TEXT }}
-            >
-              <ChevronRightLargeIcon />
-            </button>
-          </div>
+          {showReader && (
+            <>
+              <div className="flex items-center" style={{ gap: "16px" }}>
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  disabled={prevDisabled}
+                  aria-label={tIssues("previousPage")}
+                  className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40 [&>svg]:h-6 [&>svg]:w-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
+                  style={{ color: TAB_INACTIVE_TEXT }}
+                >
+                  <ChevronLeftLargeIcon />
+                </button>
+                <span
+                  className="flex items-center"
+                  style={{
+                    gap: "4px",
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontWeight: 400,
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    letterSpacing: "-0.005em",
+                  }}
+                >
+                  <span style={{ color: "var(--tott-home-text-strong)" }}>
+                    {currentPage}
+                  </span>
+                  <span style={{ color: TAB_INACTIVE_TEXT }}>/</span>
+                  <span style={{ color: TAB_INACTIVE_TEXT }}>{displayTotal}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={goNext}
+                  disabled={nextDisabled}
+                  aria-label={tIssues("nextPage")}
+                  className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40 [&>svg]:h-6 [&>svg]:w-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
+                  style={{ color: TAB_INACTIVE_TEXT }}
+                >
+                  <ChevronRightLargeIcon />
+                </button>
+              </div>
 
-          <span
-            aria-hidden
-            style={{
-              width: "1px",
-              height: "16px",
-              background: TAB_BORDER,
-            }}
-          />
+              <span
+                aria-hidden
+                style={{
+                  width: "1px",
+                  height: "16px",
+                  background: TAB_BORDER,
+                }}
+              />
+            </>
+          )}
 
           <ToolbarBtn label={tIssues("viewList")}>
             <ListIcon />
@@ -425,6 +573,7 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
             <MoreDotsIcon />
           </ToolbarBtn>
         </div>
+        )}
       </div>
 
       <ShareYourStory tShare={t} />
@@ -497,6 +646,181 @@ function BreadcrumbChevron() {
         <polyline points="9 18 15 12 9 6" />
       </svg>
     </span>
+  );
+}
+
+/**
+ * A locked book rendered as a CSS 3D cuboid: the cover image is the
+ * front face, with a spine on the left, page edges on the right and a
+ * back cover, tilted on a perspective stage. A frosted padlock badge
+ * over a darkened cover signals that the content is gated. Shown when a
+ * free book has no PDF preview to embed.
+ */
+function LockedBook3D({
+  cover,
+  title,
+  caption,
+}: {
+  cover: string;
+  title: string;
+  caption: string;
+}) {
+  const [hover, setHover] = useState(false);
+  // Book thickness, in px, used for the spine / page-edge faces.
+  const THICKNESS = 42;
+
+  return (
+    <div className="flex flex-col items-center justify-center py-10 sm:py-14">
+      <div style={{ perspective: "1600px" }}>
+        <div
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          className="relative"
+          style={{
+            width: "clamp(168px, 24vw, 224px)",
+            aspectRatio: "193 / 288",
+            transformStyle: "preserve-3d",
+            transform: hover
+              ? "rotateY(-12deg) rotateX(4deg)"
+              : "rotateY(-26deg) rotateX(7deg)",
+            transition: "transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        >
+          {/* Spine — left face, hinged at the cover's left edge. */}
+          <div
+            className="absolute left-0 top-0 h-full"
+            style={{
+              width: `${THICKNESS}px`,
+              transformOrigin: "left center",
+              transform: "rotateY(90deg)",
+              background:
+                "linear-gradient(90deg, rgba(0,0,0,0.55), rgba(0,0,0,0.25) 55%, rgba(255,255,255,0.04))",
+              backgroundColor: "var(--tott-card-border)",
+            }}
+          />
+          {/* Page edges — right face, hinged at the cover's right edge. */}
+          <div
+            className="absolute right-0 top-0 h-full"
+            style={{
+              width: `${THICKNESS}px`,
+              transformOrigin: "right center",
+              transform: "rotateY(-90deg)",
+              background:
+                "repeating-linear-gradient(90deg, #f3ede1 0, #f3ede1 1px, #d8cfba 1.5px, #f3ede1 3px)",
+            }}
+          />
+          {/* Back cover. */}
+          <div
+            className="absolute inset-0"
+            style={{
+              transform: `translateZ(-${THICKNESS}px)`,
+              backgroundColor: "var(--tott-card-border)",
+              borderRadius: "3px 10px 10px 3px",
+            }}
+          />
+          {/* Front cover — the book artwork + lock. */}
+          <div
+            className="absolute inset-0 overflow-hidden"
+            style={{
+              borderRadius: "3px 10px 10px 3px",
+              boxShadow:
+                "0 28px 55px -18px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.07)",
+              backgroundColor: "var(--tott-panel-bg)",
+            }}
+          >
+            <Image
+              src={cover}
+              alt={title}
+              fill
+              sizes="224px"
+              className="select-none object-cover"
+              draggable={false}
+            />
+            {/* Darkening veil — reads as "locked". */}
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            />
+            {/* Spine shadow down the binding edge. */}
+            <div
+              aria-hidden
+              className="absolute inset-y-0 left-0"
+              style={{
+                width: "14px",
+                background:
+                  "linear-gradient(90deg, rgba(0,0,0,0.4), rgba(0,0,0,0))",
+              }}
+            />
+            {/* Glass padlock badge. */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span
+                aria-hidden
+                className="flex items-center justify-center [&>svg]:h-7 [&>svg]:w-7"
+                style={{
+                  width: "60px",
+                  height: "60px",
+                  borderRadius: "9999px",
+                  color: "#ffffff",
+                  backgroundColor: "rgba(255, 255, 255, 0.14)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                  backdropFilter: "blur(4px)",
+                  WebkitBackdropFilter: "blur(4px)",
+                }}
+              >
+                <LockIcon />
+              </span>
+            </div>
+          </div>
+        </div>
+        {/* Floor shadow. */}
+        <div
+          aria-hidden
+          className="mx-auto"
+          style={{
+            marginTop: "26px",
+            width: "78%",
+            height: "20px",
+            borderRadius: "9999px",
+            background:
+              "radial-gradient(ellipse at center, rgba(0,0,0,0.32), rgba(0,0,0,0) 70%)",
+            filter: "blur(3px)",
+          }}
+        />
+      </div>
+      <p
+        className="mt-7 max-w-[420px] text-center"
+        style={{
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 500,
+          fontSize: "15px",
+          lineHeight: "22px",
+          color: "var(--tott-home-text-muted)",
+          margin: 0,
+        }}
+      >
+        {caption}
+      </p>
+    </div>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <rect x="4" y="10" width="16" height="11" rx="2" />
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </svg>
   );
 }
 

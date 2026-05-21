@@ -92,7 +92,14 @@
         "filterCollections": "مجموعات",
         "filterSlides": "شرائح",
         "previousPage": "الصفحة السابقة",
-        "nextPage": "الصفحة التالية"
+        "nextPage": "الصفحة التالية",
+        "viewList": "عرض قائمة",
+        "viewGrid": "عرض شبكة",
+        "zoomIn": "تكبير",
+        "zoomOut": "تصغير",
+        "fullscreen": "ملء الشاشة",
+        "share": "مشاركة",
+        "more": "خيارات أخرى"
       },
       "editorialBoard": {
         "mastheadEyebrow": "هيئة التحرير · 2026",

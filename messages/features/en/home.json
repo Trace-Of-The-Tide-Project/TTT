@@ -92,7 +92,14 @@
         "filterCollections": "Collections",
         "filterSlides": "Slides",
         "previousPage": "Previous page",
-        "nextPage": "Next page"
+        "nextPage": "Next page",
+        "viewList": "List view",
+        "viewGrid": "Grid view",
+        "zoomIn": "Zoom in",
+        "zoomOut": "Zoom out",
+        "fullscreen": "Fullscreen",
+        "share": "Share",
+        "more": "More options"
       },
       "editorialBoard": {
         "mastheadEyebrow": "Masthead · 2026",
@@ -270,7 +277,11 @@
       "page": "Page {n}",
       "notFoundHeading": "Book not found",
       "notFoundBody": "The book you're looking for doesn't exist or was unpublished.",
-      "backToBooks": "Back to all books"
+      "backToBooks": "Back to all books",
+      "previewLockedTitle": "Free preview ends here",
+      "previewLockedBody": "You've reached the end of the free preview. Buy this book to keep reading.",
+      "previewBuy": "Buy to read the full book",
+      "previewNoContent": "No preview is available for this book yet."
     },
     "writingRoom": {
       "heroTitle": "Writing Room",

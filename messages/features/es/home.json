@@ -92,7 +92,14 @@
         "filterCollections": "Colecciones",
         "filterSlides": "Diapositivas",
         "previousPage": "Página anterior",
-        "nextPage": "Página siguiente"
+        "nextPage": "Página siguiente",
+        "viewList": "Vista de lista",
+        "viewGrid": "Vista de cuadrícula",
+        "zoomIn": "Acercar",
+        "zoomOut": "Alejar",
+        "fullscreen": "Pantalla completa",
+        "share": "Compartir",
+        "more": "Más opciones"
       },
       "editorialBoard": {
         "mastheadEyebrow": "Cabecera · 2026",

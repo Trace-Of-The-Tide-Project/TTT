@@ -92,7 +92,14 @@
         "filterCollections": "Collections",
         "filterSlides": "Diapositives",
         "previousPage": "Page précédente",
-        "nextPage": "Page suivante"
+        "nextPage": "Page suivante",
+        "viewList": "Vue liste",
+        "viewGrid": "Vue grille",
+        "zoomIn": "Zoom avant",
+        "zoomOut": "Zoom arrière",
+        "fullscreen": "Plein écran",
+        "share": "Partager",
+        "more": "Plus d'options"
       },
       "editorialBoard": {
         "mastheadEyebrow": "Ours · 2026",

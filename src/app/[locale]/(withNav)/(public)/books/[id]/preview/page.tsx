@@ -24,6 +24,12 @@ export default async function BookPreviewPage({ params }: PageProps) {
   const pdfUrl =
     ref && isUsableArticleMediaRef(ref) ? resolveArticleMediaSrc(ref) : null;
 
+  const coverRef = book.cover_image?.trim();
+  const coverImage =
+    coverRef && isUsableArticleMediaRef(coverRef)
+      ? resolveArticleMediaSrc(coverRef)
+      : null;
+
   const summary: BookPreviewBook = {
     id: book.id,
     title: book.title,
@@ -41,6 +47,9 @@ export default async function BookPreviewPage({ params }: PageProps) {
         ? book.page_count
         : null,
     pdfUrl,
+    coverImage,
+    price:
+      book.price == null || book.price === "" ? null : Number(book.price),
   };
 
   return <BookPreviewContent book={summary} />;
