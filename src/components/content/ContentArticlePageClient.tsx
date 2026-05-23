@@ -25,11 +25,11 @@ import {
 } from "@/lib/constants";
 import { useOptionalArticleReadingHeader } from "@/components/layout/ArticleReadingHeaderContext";
 
-function StaticArticleDemo() {
+function StaticArticleDemo({ media }: { media: ContentPageLayoutProps["media"] }) {
   return (
     <ContentPageLayout
       breadcrumbs={[{ label: "Collections", href: "/content" }, { label: CONTENT_ARTICLE.title }]}
-      media={{ ...CONTENT_MEDIA_ARTICLE }}
+      media={media}
       article={{
         title: CONTENT_ARTICLE.title,
         edition: CONTENT_ARTICLE.edition,
@@ -172,7 +172,7 @@ function ArticleByIdLoader({ id }: { id: string }) {
     return (
       <div
         className="flex min-h-[50vh] items-center justify-center px-6 text-sm text-gray-500"
-        style={{ backgroundColor: theme.pageBackground }}
+        style={{ backgroundColor: theme.homeSurface }}
       >
         Loading article…
       </div>
@@ -224,7 +224,7 @@ function ArticleByIdLoader({ id }: { id: string }) {
   return null;
 }
 
-function ContentArticlePageInner() {
+function ContentArticlePageInner({ demoMedia }: { demoMedia: ContentPageLayoutProps["media"] }) {
   const searchParams = useSearchParams();
   const setArticleHeaderMeta = useOptionalArticleReadingHeader()?.setArticleHeaderMeta;
   const id = searchParams.get("id")?.trim();
@@ -234,25 +234,36 @@ function ContentArticlePageInner() {
   }, [id, setArticleHeaderMeta]);
 
   if (!id) {
-    return <StaticArticleDemo />;
+    return <StaticArticleDemo media={demoMedia} />;
   }
 
   return <ArticleByIdLoader id={id} />;
 }
 
-export function ContentArticlePageClient() {
+/**
+ * Shared client for the article/video/audio content pages. With `?id=` it
+ * loads a real article (media type derived from its content); without one it
+ * renders the static demo. `demoMedia` picks the demo hero so `/content/video`
+ * shows the video player and `/content/audio` the audio player — defaulting to
+ * the image hero for `/content/article`.
+ */
+export function ContentArticlePageClient({
+  demoMedia = { ...CONTENT_MEDIA_ARTICLE },
+}: {
+  demoMedia?: ContentPageLayoutProps["media"];
+} = {}) {
   return (
     <Suspense
       fallback={
         <div
           className="flex min-h-[50vh] items-center justify-center text-sm text-gray-500"
-          style={{ backgroundColor: theme.pageBackground }}
+          style={{ backgroundColor: theme.homeSurface }}
         >
           Loading…
         </div>
       }
     >
-      <ContentArticlePageInner />
+      <ContentArticlePageInner demoMedia={demoMedia} />
     </Suspense>
   );
 }

@@ -1,97 +1,40 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { theme } from "@/lib/theme";
-import { RelatedContentCard, type RelatedContentCardData } from "./RelatedContentCard";
-import { StaggerContainer } from "@/components/motion/StaggerContainer";
-import { StaggerItem } from "@/components/motion/StaggerItem";
+import { FeaturedHexRow } from "./FeaturedHexRow";
+import type { FeaturedHexItem } from "./FeaturedHexCard";
+import type { RelatedContentCardData } from "./RelatedContentCard";
 
 type RelatedContentProps = {
   items: RelatedContentCardData[];
   viewMoreHref?: string;
 };
 
-function RelatedContentHexBackground() {
-  return (
-    <svg
-      className="pointer-events-none absolute inset-0 h-full w-full"
-      viewBox="0 0 1200 200"
-      preserveAspectRatio="xMidYMid slice"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M60 20l16 9v18l-16 9-16-9V29l16-9z"
-        fill="none"
-        stroke="rgba(255,255,255,0.04)"
-        strokeWidth="1"
-      />
-      <path
-        d="M90 70l16 9v18l-16 9-16-9V79l16-9z"
-        fill="none"
-        stroke="rgba(255,255,255,0.04)"
-        strokeWidth="1"
-      />
-      <path
-        d="M1110 30l16 9v18l-16 9-16-9V39l16-9z"
-        fill="none"
-        stroke="rgba(255,255,255,0.04)"
-        strokeWidth="1"
-      />
-      <path
-        d="M1140 80l16 9v18l-16 9-16-9V89l16-9z"
-        fill="none"
-        stroke="rgba(255,255,255,0.04)"
-        strokeWidth="1"
-      />
-    </svg>
-  );
-}
-
 export function RelatedContent({ items, viewMoreHref = "#" }: RelatedContentProps) {
   const t = useTranslations("Content");
 
-  return (
-    <section className="relative py-10 sm:py-14" style={{ backgroundColor: theme.pageBackground }}>
-      <RelatedContentHexBackground />
-      <div className="relative mx-auto max-w-6xl px-6 sm:px-10">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-bold" style={{ color: theme.accentGold }}>
-              {t("relatedContent")}
-            </h2>
-            <p className="mt-1 text-sm text-[var(--tott-muted)]">
-              {t("relatedDescription")}
-            </p>
-          </div>
-          <Link
-            href={viewMoreHref}
-            className="flex shrink-0 items-center gap-1 text-sm font-medium hover:underline"
-            style={{ color: theme.accentGold }}
-          >
-            {t("viewMore")} <span>→</span>
-          </Link>
-        </div>
+  const hexItems: FeaturedHexItem[] = items.map((item, i) => ({
+    id: item.id ?? `related-${i}`,
+    title: item.title,
+    author: item.author,
+    coverImage: item.image,
+    chipLabel: item.edition,
+    href: item.href,
+  }));
 
-        <div
-          className="related-scroll -mx-6 mt-6 overflow-x-auto pb-4 sm:-mx-10"
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
-        >
-          <style>{`
-            .related-scroll::-webkit-scrollbar { display: none; }
-          `}</style>
-          <StaggerContainer className="flex" style={{ marginLeft: "-138px", paddingRight: "138px", gap: 0 }}>
-            {items.map((item, i) => (
-              <StaggerItem key={i} style={{ flexShrink: 0 }}>
-                <RelatedContentCard {...item} />
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </div>
+  return (
+    <section
+      className="relative overflow-x-hidden py-10 sm:py-14"
+      style={{ backgroundColor: theme.homeSurface }}
+    >
+      <FeaturedHexRow
+        items={hexItems}
+        heading={t("relatedContent")}
+        subtitle={t("relatedDescription")}
+        viewMoreHref={viewMoreHref}
+        viewMoreLabel={t("viewMore")}
+      />
     </section>
   );
 }

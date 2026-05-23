@@ -36,18 +36,19 @@ export function ContentAuthorCard({
   return (
     <div className="flex items-center gap-4">
       <div
-        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-base font-bold"
-        style={{ backgroundColor: color, color: "#1a1a1a" }}
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-medium"
+        style={{ backgroundColor: color, color: "#332217" }}
       >
         {initials}
       </div>
 
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-2">
-          <p className="min-w-0 flex-1 text-lg font-bold text-foreground wrap-break-word">{name}</p>
+          <p className="min-w-0 flex-1 text-xl font-medium text-foreground wrap-break-word">{name}</p>
           <button
             type="button"
-            className="shrink-0 rounded-lg border border-[var(--tott-card-border)] p-1.5 text-[var(--tott-muted)] hover:text-foreground"
+            className="shrink-0 rounded-md p-1.5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] hover:opacity-90"
+            style={{ backgroundColor: "#333333" }}
           >
             <MoreDotsIcon />
           </button>
@@ -55,11 +56,12 @@ export function ContentAuthorCard({
             type="button"
             onClick={handleFollow}
             disabled={toggling || !authorId}
-            className="shrink-0 rounded-lg px-4 py-1.5 text-xs font-semibold transition-colors hover:opacity-90 disabled:opacity-50"
+            className="shrink-0 rounded-md px-4 py-1.5 text-sm font-medium transition-colors hover:opacity-90 disabled:opacity-50"
             style={{
               backgroundColor: isFollowing ? "transparent" : "#C9A96E",
-              color: isFollowing ? "#C9A96E" : "#1a1a1a",
+              color: isFollowing ? "#C9A96E" : "#332217",
               border: isFollowing ? "1px solid #C9A96E" : "none",
+              boxShadow: isFollowing ? "none" : "inset 0 1px 0 rgba(255,255,255,0.4)",
             }}
           >
             {isFollowing ? t("following") : t("follow")}

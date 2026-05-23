@@ -103,11 +103,11 @@ function ScatteredHexBackground() {
   );
 }
 
-export function ShareYourStory() {
+export function ShareYourStory({ surface = theme.pageBackground }: { surface?: string } = {}) {
   const t = useTranslations("Content");
   return (
     <section className="relative w-full overflow-hidden py-16 sm:py-20">
-      <div className="absolute inset-0" style={{ backgroundColor: theme.pageBackground }} />
+      <div className="absolute inset-0" style={{ backgroundColor: surface }} />
       <div className="absolute inset-0">
         <ScatteredHexBackground />
       </div>

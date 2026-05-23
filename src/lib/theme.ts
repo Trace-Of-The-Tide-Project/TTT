@@ -24,6 +24,13 @@ export const theme = {
 
   /** Full-page / section background — follows global light/dark (see globals.css). */
   pageBackground: "var(--background)",
+  /**
+   * Primary page surface used by the home, writing-room, residency,
+   * start-an-issue and content pages (#171717 dark / #faf9f5 light).
+   * Slightly darker than {@link pageBackground}; use it so a page reads
+   * as the same surface as the rest of the site.
+   */
+  homeSurface: "var(--tott-home-surface)",
   /** Default body text color for themed surfaces. */
   pageForeground: "var(--foreground)",
 

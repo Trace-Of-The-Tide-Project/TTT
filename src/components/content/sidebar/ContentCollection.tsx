@@ -35,10 +35,10 @@ export function ContentCollection({
   return (
     <div
       className="rounded-xl border p-4"
-      style={{ backgroundColor: theme.pageBackground, borderColor: theme.cardBorder }}
+      style={{ backgroundColor: theme.homeSurface, borderColor: theme.cardBorder }}
     >
-      <h3 className="text-lg font-bold text-foreground">{t("collectionTitle")}</h3>
-      <p className="mt-0.5 text-sm text-[var(--tott-muted)]">
+      <h3 className="text-xl font-medium text-foreground">{t("collectionTitle")}</h3>
+      <p className="mt-1 text-xs text-[var(--tott-muted)]">
         {t("articlesCount", { count: articleCount })} • {duration} {t("ofContent")}
       </p>
 
@@ -61,7 +61,7 @@ export function ContentCollection({
                 }}
               />
               <div
-                className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg border-2 bg-[var(--tott-well-bg)]"
+                className="relative h-20 w-32 shrink-0 overflow-hidden rounded-lg border-2 bg-[var(--tott-well-bg)]"
                 style={{
                   borderColor: isSelected ? theme.accentGoldFocus : "var(--tott-card-border)",
                 }}
@@ -71,7 +71,7 @@ export function ContentCollection({
                   alt={item.title}
                   fill
                   className="object-cover"
-                  sizes="80px"
+                  sizes="128px"
                 />
                 <div className="absolute left-1.5 top-1.5 text-white">
                   <Grid2x2Icon />

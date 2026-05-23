@@ -28,13 +28,13 @@ export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
       {sections.map((section, i) => (
         <div key={i} className="space-y-4">
           {section.heading && (
-            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+            <h2 className="text-xl font-medium leading-7 text-foreground">
               {section.heading}
             </h2>
           )}
 
           {section.paragraphs.map((p, j) => (
-            <p key={j} className="text-sm leading-relaxed text-foreground/75">
+            <p key={j} className="text-sm leading-relaxed text-foreground">
               {p}
             </p>
           ))}
@@ -104,8 +104,8 @@ export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
 
           {section.quote && (
             <blockquote
-              className="rounded-r-lg border-l-4 bg-[var(--tott-well-bg)] py-3 pl-5 pr-4 text-sm leading-relaxed text-foreground/85"
-              style={{ borderColor: theme.accentGold }}
+              className="rounded-r-lg border-l-2 px-6 py-4 text-sm font-medium leading-relaxed text-foreground"
+              style={{ borderColor: "#BD9352", backgroundColor: "#262626" }}
             >
               {section.quote}
             </blockquote>
