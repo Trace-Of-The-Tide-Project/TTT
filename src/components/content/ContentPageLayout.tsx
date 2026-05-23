@@ -86,18 +86,47 @@ export function ContentPageLayout({
 }: ContentPageLayoutProps) {
   const isOpenCall =
     contentType === "open_call" || contentType === "open-call" || contentType === "opencall";
+  const isAudio = media.type === "audio";
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden" style={{ backgroundColor: theme.homeSurface }}>
-      {/* Hex-cell backdrop behind the hero — the same pattern the home and auth
-          pages use; sits behind the (absolute) navbar and the breadcrumb so the
-          top of the page reads as the rest of the site. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-35 overflow-hidden"
-        style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
-      >
-        <HexBackground />
-      </div>
+      {isAudio && media.thumbnail ? (
+        /* Audio hero band — a full-bleed blurred cover image behind the
+           breadcrumb + player, darkened by a dual gradient that vignettes the
+           edges and fades into the page surface at the bottom. Replaces the hex
+           backdrop on the audio page (see Audio Figma). */
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-20 h-[432px] overflow-hidden"
+        >
+          <div
+            className="absolute inset-0 scale-110"
+            style={{
+              backgroundImage: `url(${media.thumbnail})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "blur(20px)",
+            }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(270deg, rgba(var(--tott-home-surface-rgb), 0.96) 0%, rgba(var(--tott-home-surface-rgb), 0.4) 25%, rgba(var(--tott-home-surface-rgb), 0.24) 50%, rgba(var(--tott-home-surface-rgb), 0.4) 75%, rgba(var(--tott-home-surface-rgb), 0.96) 100%), linear-gradient(180deg, rgba(var(--tott-home-surface-rgb), 0.96) 0%, rgba(var(--tott-home-surface-rgb), 0.4) 25%, rgba(var(--tott-home-surface-rgb), 0.24) 50%, rgba(var(--tott-home-surface-rgb), 0.4) 75%, var(--tott-home-surface) 100%)",
+            }}
+          />
+        </div>
+      ) : (
+        /* Hex-cell backdrop behind the hero — the same pattern the home and auth
+            pages use; sits behind the (absolute) navbar and the breadcrumb so the
+            top of the page reads as the rest of the site. */
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-35 overflow-hidden"
+          style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
+        >
+          <HexBackground />
+        </div>
+      )}
 
       {/* Hero content — lifted above the cells and padded clear of the
           absolute navbar so the breadcrumb no longer tucks under it. */}
