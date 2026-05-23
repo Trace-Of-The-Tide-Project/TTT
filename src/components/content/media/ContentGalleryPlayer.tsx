@@ -171,25 +171,11 @@ export function ContentGalleryPlayer({ items }: ContentGalleryPlayerProps) {
   const skipAnim = isDragging || noTransition;
 
   return (
-    <div className="flex select-none items-center gap-2 sm:gap-3">
-      {/* Left arrow */}
-      {loopable && (
-        <button
-          type="button"
-          onClick={prev}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] text-foreground transition-colors hover:border-[var(--tott-dash-control-hover)] hover:bg-[var(--tott-dash-control-bg)] sm:h-12 sm:w-12"
-          aria-label="Previous"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </button>
-      )}
-
-      {/* Carousel viewport */}
+    <div className="relative select-none">
+      {/* Carousel viewport — full width; arrows overlay the dimmed peeks */}
       <div
         ref={viewportRef}
-        className="relative min-w-0 flex-1 overflow-hidden"
+        className="relative min-w-0 overflow-hidden"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -211,18 +197,32 @@ export function ContentGalleryPlayer({ items }: ContentGalleryPlayerProps) {
         </div>
       </div>
 
-      {/* Right arrow */}
+      {/* Plain-chevron arrows overlaid on the left/right edges */}
       {loopable && (
-        <button
-          type="button"
-          onClick={next}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] text-foreground transition-colors hover:border-[var(--tott-dash-control-hover)] hover:bg-[var(--tott-dash-control-bg)] sm:h-12 sm:w-12"
-          aria-label="Next"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={prev}
+            aria-label="Previous"
+            className="absolute left-1 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-foreground/90 transition-colors hover:text-foreground sm:left-3"
+            style={{ filter: "drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5))" }}
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={next}
+            aria-label="Next"
+            className="absolute right-1 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-foreground/90 transition-colors hover:text-foreground sm:right-3"
+            style={{ filter: "drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5))" }}
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </>
       )}
     </div>
   );
