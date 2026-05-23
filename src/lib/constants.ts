@@ -195,6 +195,65 @@ export const CONTENT_ARTICLE = {
   ],
 } as const;
 
+/**
+ * Article-page demo content. Richer than {@link CONTENT_ARTICLE} (which the
+ * video/audio demos reuse): adds the inline figure, the stat-card row, the
+ * attributed pull quote, and the closing paragraph so `/content/article`
+ * matches the Article Figma. Keep these two in sync only where they overlap —
+ * the extra blocks here are intentional and must not leak into the video page.
+ */
+export const CONTENT_ARTICLE_FULL = {
+  title: "The Future of Sustainable Technology",
+  edition: "Edition",
+  category: "Name",
+  publishedDate: "June 27, 2025",
+  readingTime: "15 min",
+  sections: [
+    {
+      paragraphs: [
+        "In an era where climate change and technological advancement intersect, sustainable technology emerges as our beacon of hope. This comprehensive exploration delves into the revolutionary innovations that are not only transforming industries but also paving the way for a more environmentally conscious future. From renewable energy breakthroughs to circular economy principles, discover how technology is becoming the catalyst for global sustainability.",
+      ],
+      quote: "The Dawn of a Sustainable Revolution",
+    },
+    {
+      paragraphs: [
+        "The 21st century has witnessed an unprecedented convergence of technological innovation and environmental consciousness. As we stand at the crossroads of climate crisis and digital transformation, sustainable technology has emerged as the defining paradigm of our time. This revolution isn't just about creating cleaner energy sources or more efficient systems—it's about fundamentally reimagining how we interact with our planet through the lens of advanced technology.",
+        "The concept of sustainable technology encompasses a broad spectrum of innovations designed to meet human needs while minimizing environmental impact. From artificial intelligence optimizing energy grids to biotechnology creating biodegradable materials, these technologies represent a holistic approach to progress that considers long-term planetary health alongside immediate human benefits.",
+      ],
+      images: [
+        {
+          src: "/article-figure.png",
+          caption: "Modern renewable energy infrastructure combining wind and solar technology",
+        },
+      ],
+    },
+    {
+      heading: "Energy Storage: Solving the Intermittency Challenge",
+      paragraphs: [
+        "One of the most significant challenges facing renewable energy has been intermittency—the sun doesn't always shine, and the wind doesn't always blow. However, revolutionary advances in energy storage technology are rapidly solving this problem. Lithium-ion battery costs have plummeted by 89% since 2010, while new technologies like solid-state batteries, compressed air energy storage, and green hydrogen are pushing the boundaries of what's possible.",
+      ],
+      stats: [
+        { value: "35%", label: "Global renewable energy growth in 2024" },
+        { value: "$1.8T", label: "Investment in renewable energy globally" },
+        { value: "12%", label: "Of global energy from renewables" },
+      ],
+    },
+    {
+      paragraphs: [
+        "The world is rapidly urbanizing, with more than half of the global population now living in cities. This urbanization trend presents both challenges and opportunities for sustainability. Smart city technologies are emerging as powerful tools for managing urban resources more efficiently, reducing waste, and improving quality of life for residents.",
+        "Internet of Things (IoT) sensors are being deployed throughout urban environments to monitor everything from air quality and noise levels to traffic patterns and energy consumption. This data is then processed using artificial intelligence and machine learning algorithms to optimize city operations in real-time. For example, smart traffic management systems can reduce congestion and emissions by dynamically adjusting traffic light timing based on current conditions.",
+      ],
+      quote:
+        '"Smart cities represent the future of urban living, where technology and sustainability converge to create environments that are not only more efficient but also more livable and equitable for all residents." - Prof. Michael Rodriguez, Urban Planning Institute',
+    },
+    {
+      paragraphs: [
+        "Transportation accounts for approximately 24% of global CO2 emissions, making it a critical area for sustainable innovation. Electric vehicles (EVs) have moved from curiosity to mainstream adoption, with global EV sales exceeding 10 million units in 2024. The success of EVs has been driven by improvements in battery technology, expanding charging infrastructure, and supportive government policies.",
+      ],
+    },
+  ],
+} as const;
+
 export const CONTENT_AUTHOR = {
   name: "Fadi Barghouti",
   initials: "FB",

@@ -18,6 +18,7 @@ import type { RelatedContentCardData } from "@/components/content/related/Relate
 import {
   CONTENT_MEDIA_ARTICLE,
   CONTENT_ARTICLE,
+  CONTENT_ARTICLE_FULL,
   CONTENT_AUTHOR,
   CONTENT_CONTRIBUTORS,
   CONTENT_COLLECTION,
@@ -25,21 +26,31 @@ import {
 } from "@/lib/constants";
 import { useOptionalArticleReadingHeader } from "@/components/layout/ArticleReadingHeaderContext";
 
-function StaticArticleDemo({ media }: { media: ContentPageLayoutProps["media"] }) {
+type DemoArticle = typeof CONTENT_ARTICLE | typeof CONTENT_ARTICLE_FULL;
+
+function StaticArticleDemo({
+  media,
+  article = CONTENT_ARTICLE,
+}: {
+  media: ContentPageLayoutProps["media"];
+  article?: DemoArticle;
+}) {
   return (
     <ContentPageLayout
-      breadcrumbs={[{ label: "Collections", href: "/content" }, { label: CONTENT_ARTICLE.title }]}
+      breadcrumbs={[{ label: "Collections", href: "/content" }, { label: article.title }]}
       media={media}
       article={{
-        title: CONTENT_ARTICLE.title,
-        edition: CONTENT_ARTICLE.edition,
-        category: CONTENT_ARTICLE.category,
-        publishedDate: CONTENT_ARTICLE.publishedDate,
-        readingTime: CONTENT_ARTICLE.readingTime,
-        sections: CONTENT_ARTICLE.sections.map((s) => ({
+        title: article.title,
+        edition: article.edition,
+        category: article.category,
+        publishedDate: article.publishedDate,
+        readingTime: article.readingTime,
+        sections: article.sections.map((s) => ({
           heading: "heading" in s ? s.heading : undefined,
           paragraphs: [...s.paragraphs],
           quote: "quote" in s ? s.quote : undefined,
+          images: "images" in s ? s.images.map((im) => ({ ...im })) : undefined,
+          stats: "stats" in s ? s.stats.map((st) => ({ ...st })) : undefined,
         })),
       }}
       author={{ ...CONTENT_AUTHOR }}
@@ -224,7 +235,13 @@ function ArticleByIdLoader({ id }: { id: string }) {
   return null;
 }
 
-function ContentArticlePageInner({ demoMedia }: { demoMedia: ContentPageLayoutProps["media"] }) {
+function ContentArticlePageInner({
+  demoMedia,
+  demoArticle,
+}: {
+  demoMedia: ContentPageLayoutProps["media"];
+  demoArticle?: DemoArticle;
+}) {
   const searchParams = useSearchParams();
   const setArticleHeaderMeta = useOptionalArticleReadingHeader()?.setArticleHeaderMeta;
   const id = searchParams.get("id")?.trim();
@@ -234,7 +251,7 @@ function ContentArticlePageInner({ demoMedia }: { demoMedia: ContentPageLayoutPr
   }, [id, setArticleHeaderMeta]);
 
   if (!id) {
-    return <StaticArticleDemo media={demoMedia} />;
+    return <StaticArticleDemo media={demoMedia} article={demoArticle} />;
   }
 
   return <ArticleByIdLoader id={id} />;
@@ -245,12 +262,16 @@ function ContentArticlePageInner({ demoMedia }: { demoMedia: ContentPageLayoutPr
  * loads a real article (media type derived from its content); without one it
  * renders the static demo. `demoMedia` picks the demo hero so `/content/video`
  * shows the video player and `/content/audio` the audio player — defaulting to
- * the image hero for `/content/article`.
+ * the image hero for `/content/article`. `demoArticle` swaps the demo body so
+ * `/content/article` can render its richer Figma layout (stats, inline figure,
+ * pull quote) while the video/audio demos keep the shorter shared content.
  */
 export function ContentArticlePageClient({
   demoMedia = { ...CONTENT_MEDIA_ARTICLE },
+  demoArticle,
 }: {
   demoMedia?: ContentPageLayoutProps["media"];
+  demoArticle?: DemoArticle;
 } = {}) {
   return (
     <Suspense
@@ -263,7 +284,7 @@ export function ContentArticlePageClient({
         </div>
       }
     >
-      <ContentArticlePageInner demoMedia={demoMedia} />
+      <ContentArticlePageInner demoMedia={demoMedia} demoArticle={demoArticle} />
     </Suspense>
   );
 }

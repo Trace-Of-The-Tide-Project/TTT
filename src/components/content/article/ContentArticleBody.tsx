@@ -16,6 +16,8 @@ export type ContentArticleSection = {
   divider?: boolean;
   /** Inline figures from API image / gallery blocks */
   images?: { src: string; alt?: string; caption?: string }[];
+  /** Highlighted figures shown as a 3-up grid of stat cards */
+  stats?: { value: string; label: string }[];
 };
 
 type ContentArticleBodyProps = {
@@ -38,6 +40,28 @@ export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
               {p}
             </p>
           ))}
+
+          {section.stats && section.stats.length > 0 ? (
+            <div className="flex flex-col gap-4 sm:flex-row">
+              {section.stats.map((stat, k) => (
+                <div
+                  key={k}
+                  className="flex min-h-[120px] flex-1 flex-col items-start gap-2 rounded-lg p-6"
+                  style={{ backgroundColor: "#262626", border: "1px solid #333333" }}
+                >
+                  <span className="text-2xl font-medium leading-8 tracking-[-0.015em] text-white">
+                    {stat.value}
+                  </span>
+                  <span
+                    className="self-stretch text-xs font-normal leading-4 text-[#A3A3A3]"
+                    style={{ textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)" }}
+                  >
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : null}
 
           {section.divider ? (
             <div className="py-3" role="separator">
@@ -88,7 +112,7 @@ export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
                     <img
                       src={resolveArticleMediaSrc(img.src)}
                       alt={img.alt ?? ""}
-                      className="max-h-[min(70vh,720px)] w-full max-w-3xl rounded-lg border border-[var(--tott-card-border)] object-contain"
+                      className="aspect-[16/9] w-full rounded-2xl border border-[var(--tott-card-border)] object-cover"
                       loading="lazy"
                       decoding="async"
                     />

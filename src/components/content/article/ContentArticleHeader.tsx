@@ -26,8 +26,12 @@ export function ContentArticleHeader({
       <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-white/65">
         {edition && (
           <span
-            className="mr-1 inline-flex items-center px-2 py-1 text-xs font-medium"
-            style={{ backgroundColor: "#DBC99E", color: "#332217" }}
+            className="mr-1 inline-flex items-center justify-center rounded-md px-2 py-1 text-xs font-medium leading-4"
+            style={{
+              backgroundColor: "#DBC99E",
+              color: "#332217",
+              boxShadow: "inset 0px 1px 1px rgba(255, 255, 255, 0.04)",
+            }}
           >
             {edition}
           </span>
