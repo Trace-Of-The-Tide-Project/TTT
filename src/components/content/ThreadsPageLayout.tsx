@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
+import HexBackground from "@/components/ui/HexBackground";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { ContentBreadcrumb } from "./related/ContentBreadcrumb";
 import { ContentArticleHeader } from "./article/ContentArticleHeader";
@@ -101,12 +102,22 @@ export function ThreadsPageLayout({
   const canCollapse = visibleCount > initialVisibleCount;
 
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: theme.pageBackground }}>
-      <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
+    <div className="relative min-h-screen w-full overflow-x-hidden" style={{ backgroundColor: theme.homeSurface }}>
+      {/* Hex-cell backdrop behind the top of the page — matches the other
+          content pages so the area under the (absolute) navbar reads the same. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-35 overflow-hidden"
+        style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
+      >
+        <HexBackground />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-24 sm:px-10 sm:pt-28">
         <ContentBreadcrumb items={breadcrumbs} />
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-7xl px-6 py-8 sm:px-10 sm:py-10">
         <div className="flex flex-col gap-10 lg:flex-row lg:gap-8">
           {/* Left — timeline */}
           <div className="flex min-w-0 flex-1 flex-col">
@@ -238,7 +249,7 @@ export function ThreadsPageLayout({
           <aside className="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-6 lg:w-[24rem] lg:self-start">
             <div
               className="rounded-2xl border border-[var(--tott-card-border)] p-5"
-              style={{ backgroundColor: theme.pageBackground }}
+              style={{ backgroundColor: theme.homeSurface }}
             >
               <ContentAuthorCard {...author} />
               <div className="my-5 h-px bg-[var(--tott-card-border)]" />
@@ -250,7 +261,7 @@ export function ThreadsPageLayout({
       </div>
 
       <RelatedContent items={relatedContent} />
-      <ShareYourStory />
+      <ShareYourStory surface={theme.homeSurface} />
     </div>
   );
 }
