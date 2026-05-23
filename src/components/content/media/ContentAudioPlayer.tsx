@@ -4,7 +4,6 @@
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { PlayIcon, PauseIcon } from "@/components/ui/icons";
-import { theme } from "@/lib/theme";
 import { formatTime } from "./mediaUtils";
 import { useArticleMediaPlaybackUrl } from "@/hooks/useArticleMediaPlaybackUrl";
 
@@ -14,6 +13,12 @@ type ContentAudioPlayerProps = {
   title?: string;
   duration?: string;
 };
+
+/** Discrete bar heights (px) the Figma waveform draws within an 88px track. */
+const BAR_HEIGHTS = [16, 24, 32, 40, 56, 72, 88];
+const BAR_COUNT = 180;
+/** Bars just ahead of the playhead stay bright before fading to the far tint. */
+const NEAR_BAND = 44;
 
 export function ContentAudioPlayer({
   src,
@@ -98,20 +103,22 @@ export function ContentAudioPlayer({
     a.currentTime = t;
   }, []);
 
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const progress = duration > 0 ? currentTime / duration : 0;
   const displayTotalTime =
     duration > 0 && isFinite(duration)
       ? formatTime(duration)
       : durationLabel ?? "0:00";
 
-  const waveformHeights = useMemo(
+  // Stable, seeded bar heights so the waveform shape doesn't reshuffle on render.
+  const bars = useMemo(
     () =>
-      Array.from(
-        { length: 200 },
-        (_, i) => 0.35 + (Math.sin(i * 0.7) * 0.3 + Math.cos(i * 0.4) * 0.35)
-      ),
-    []
+      Array.from({ length: BAR_COUNT }, (_, i) => {
+        const r = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453) % 1;
+        return BAR_HEIGHTS[Math.floor(r * BAR_HEIGHTS.length)];
+      }),
+    [],
   );
+  const playedCount = Math.round(progress * BAR_COUNT);
 
   useEffect(() => {
     setPlaying(false);
@@ -122,43 +129,63 @@ export function ContentAudioPlayer({
   const showLoading = status === "loading" || (status === "ready" && !playbackUrl);
 
   return (
-    <div className="relative overflow-hidden rounded-xl p-4 sm:p-6 md:p-8 lg:p-10">
+    <div className="relative">
       {showLoading ? (
         <div
-          className="absolute inset-0 z-[1] animate-pulse rounded-xl bg-[var(--tott-well-bg)]"
+          className="absolute inset-0 z-[1] animate-pulse rounded-2xl bg-[var(--tott-well-bg)]"
           aria-busy="true"
           aria-label="Loading audio"
         />
       ) : null}
-      <div className="flex gap-4 sm:gap-6 md:gap-8">
+      <div className="flex flex-col items-center gap-6 sm:flex-row sm:gap-12">
         {thumbnail && (
-          <div className="relative h-24 w-24 shrink-0 self-center overflow-hidden rounded-lg sm:h-32 sm:w-32 md:h-40 md:w-40 lg:h-48 lg:w-48">
-            <Image src={thumbnail} alt="" fill className="object-cover" sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, (max-width: 1024px) 160px, 192px" />
+          <div className="relative aspect-square w-40 shrink-0 overflow-hidden rounded-2xl border border-[var(--tott-card-border)] sm:w-52 lg:w-64">
+            <Image
+              src={thumbnail}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 160px, (max-width: 1024px) 208px, 256px"
+            />
           </div>
         )}
-        <div className="flex min-w-0 flex-1 flex-col justify-center gap-3 sm:gap-4 md:gap-5">
-          {/* Upper section: play, name + time */}
-          <div className="flex items-center gap-3 sm:gap-4">
+
+        <div className="flex w-full min-w-0 flex-1 flex-col gap-8 sm:gap-10">
+          {/* Play button + title */}
+          <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={togglePlay}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--tott-well-bg)] text-foreground transition-colors hover:bg-[var(--tott-dash-control-bg)] sm:h-12 sm:w-12 md:h-14 md:w-14"
+              aria-label={playing ? "Pause" : "Play"}
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-foreground backdrop-blur-sm transition-opacity hover:opacity-90 [&>svg]:h-6 [&>svg]:w-6"
+              style={{
+                backgroundColor: "var(--tott-glass-bg)",
+                boxShadow: "inset 0px 1px 0px var(--tott-glass-highlight)",
+              }}
             >
               {playing ? <PauseIcon /> : <PlayIcon />}
             </button>
-            <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 flex-col gap-1">
               {title && (
-                <p className="text-sm font-semibold text-foreground sm:text-base md:text-lg">{title}</p>
+                <p
+                  className="truncate text-2xl font-medium leading-8 text-foreground"
+                  style={{ textShadow: "var(--tott-home-text-shadow)" }}
+                >
+                  {title}
+                </p>
               )}
-              <p className="mt-0.5 text-xs text-[var(--tott-muted)] sm:text-sm">
+              <p
+                className="text-xs font-medium leading-4 text-[var(--tott-muted)]"
+                style={{ textShadow: "var(--tott-home-text-shadow)" }}
+              >
                 Audio time: <span className="tabular-nums">{displayTotalTime}</span>
               </p>
             </div>
           </div>
 
-          {/* Waveform with mirrored bottom (curved, reflection effect) */}
+          {/* Waveform */}
           <div
-            className="relative flex cursor-pointer flex-col overflow-hidden rounded-2xl"
+            className="relative flex h-[88px] cursor-pointer items-center gap-[3px] overflow-hidden"
             role="slider"
             tabIndex={0}
             aria-valuemin={0}
@@ -166,67 +193,30 @@ export function ContentAudioPlayer({
             aria-valuenow={currentTime}
             onClick={handleSeek}
           >
+            {bars.map((h, i) => {
+              const color =
+                i < playedCount
+                  ? "var(--tott-dash-gold-label)"
+                  : i < playedCount + NEAR_BAND
+                    ? "var(--tott-wave-near)"
+                    : "var(--tott-wave-far)";
+              return (
+                <div
+                  key={i}
+                  className="w-[1.5px] shrink-0 rounded-full"
+                  style={{ height: `${h}px`, backgroundColor: color }}
+                />
+              );
+            })}
             <span
-              className="absolute right-2 top-2 z-10 whitespace-nowrap rounded-full bg-[var(--tott-well-bg)] px-3 py-1 tabular-nums text-sm text-foreground"
+              className="absolute right-0 top-1/2 z-10 -translate-y-1/2 whitespace-nowrap rounded px-1.5 py-1 text-[11px] font-medium uppercase tracking-[0.02em] tabular-nums text-foreground backdrop-blur-[1px]"
+              style={{
+                backgroundColor: "var(--tott-glass-bg)",
+                boxShadow: "inset 0px 1px 0px var(--tott-glass-highlight)",
+              }}
             >
-              {formatTime(currentTime)}
+              {currentTime > 0 ? formatTime(currentTime) : displayTotalTime}
             </span>
-            {/* Main waveform */}
-            <div className="relative flex h-12 w-full items-end gap-0.5 pr-16 sm:h-14">
-              <div className="relative flex h-full w-full items-end gap-0.5">
-                <div className="flex h-full w-full items-end gap-0.5">
-                  {waveformHeights.map((h, i) => (
-                    <div
-                      key={i}
-                      className="w-0.5 shrink-0 rounded-sm"
-                      style={{ height: `${h * 100}%`, backgroundColor: "#CCCCCC" }}
-                    />
-                  ))}
-                </div>
-                <div
-                  className="absolute left-0 top-0 flex h-full items-end gap-0.5 overflow-hidden"
-                  style={{ width: `${progress}%` }}
-                >
-                  {waveformHeights.map((h, i) => (
-                    <div
-                      key={i}
-                      className="w-0.5 shrink-0 rounded-sm"
-                      style={{ height: `${h * 100}%`, backgroundColor: theme.accentGold }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-            {/* Mirrored waveform (reflection) */}
-            <div
-              className="relative flex h-12 w-full items-end gap-0.5 pr-16 sm:h-14"
-              style={{ transform: "scaleY(-1)" }}
-              aria-hidden
-            >
-              <div className="relative flex h-full w-full items-end gap-0.5">
-                <div className="flex h-full w-full items-end gap-0.5">
-                  {waveformHeights.map((h, i) => (
-                    <div
-                      key={i}
-                      className="w-0.5 shrink-0 rounded-sm"
-                      style={{ height: `${h * 100}%`, backgroundColor: "#CCCCCC" }}
-                    />
-                  ))}
-                </div>
-                <div
-                  className="absolute left-0 top-0 flex h-full items-end gap-0.5 overflow-hidden"
-                  style={{ width: `${progress}%` }}
-                >
-                  {waveformHeights.map((h, i) => (
-                    <div
-                      key={i}
-                      className="w-0.5 shrink-0 rounded-sm"
-                      style={{ height: `${h * 100}%`, backgroundColor: theme.accentGold }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

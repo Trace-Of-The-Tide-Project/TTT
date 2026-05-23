@@ -104,6 +104,17 @@ html {
   /** Dark filled action pill (e.g. "Manage all", "Dismiss all") — visible in both themes. */
   --tott-dark-pill: #262626;
   --tott-dark-pill-fg: #ededed;
+  /* Content media + article chips (Figma article/audio pages). The gold chip
+   * and its ink stay constant across themes (ink-on-gold UI); the waveform and
+   * stat-label tokens flip in the light blocks below. */
+  --tott-gold-chip-bg: #dbc99e;
+  --tott-gold-chip-ink: #332217;
+  --tott-content-quote-border: #bd9352;
+  --tott-content-stat-label: #a3a3a3;
+  --tott-glass-bg: rgba(var(--tott-home-surface-rgb), 0.64);
+  --tott-glass-highlight: rgba(255, 255, 255, 0.08);
+  --tott-wave-near: rgba(255, 255, 255, 0.8);
+  --tott-wave-far: rgba(255, 255, 255, 0.4);
 
   /* Auth routes only — sign-in / sign-up surfaces (see .tott-auth-page) */
   --tott-auth-shell-bg: var(--background);
@@ -175,6 +186,9 @@ html {
     --tott-status-coral: #dc2626;
     --tott-dark-pill: #1f2937;
     --tott-dark-pill-fg: #ffffff;
+    --tott-content-stat-label: #6b7280;
+    --tott-wave-near: rgba(23, 23, 23, 0.7);
+    --tott-wave-far: rgba(23, 23, 23, 0.35);
 
     --tott-auth-shell-bg: #ebe4d4;
     --tott-auth-foreground: #1a1510;
@@ -261,6 +275,9 @@ html[data-theme="light"] {
   --tott-status-coral: #dc2626;
   --tott-dark-pill: #1f2937;
   --tott-dark-pill-fg: #ffffff;
+  --tott-content-stat-label: #6b7280;
+  --tott-wave-near: rgba(23, 23, 23, 0.7);
+  --tott-wave-far: rgba(23, 23, 23, 0.35);
 
   --tott-auth-shell-bg: #ebe4d4;
   --tott-auth-foreground: #1a1510;
