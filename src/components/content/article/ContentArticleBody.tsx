@@ -46,15 +46,15 @@ export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
               {section.stats.map((stat, k) => (
                 <div
                   key={k}
-                  className="flex min-h-[120px] flex-1 flex-col items-start gap-2 rounded-lg p-6"
-                  style={{ backgroundColor: "#262626", border: "1px solid #333333" }}
+                  className="flex min-h-[120px] flex-1 flex-col items-start gap-2 rounded-lg border border-[var(--tott-card-border)] p-6"
+                  style={{ backgroundColor: "var(--tott-elevated)" }}
                 >
-                  <span className="text-2xl font-medium leading-8 tracking-[-0.015em] text-white">
+                  <span className="text-2xl font-medium leading-8 tracking-[-0.015em] text-foreground">
                     {stat.value}
                   </span>
                   <span
-                    className="self-stretch text-xs font-normal leading-4 text-[#A3A3A3]"
-                    style={{ textShadow: "0px 1px 2px rgba(0, 0, 0, 0.24)" }}
+                    className="self-stretch text-xs font-normal leading-4 text-[var(--tott-content-stat-label)]"
+                    style={{ textShadow: "var(--tott-home-text-shadow)" }}
                   >
                     {stat.label}
                   </span>
@@ -129,7 +129,7 @@ export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
           {section.quote && (
             <blockquote
               className="rounded-r-lg border-l-2 px-6 py-4 text-sm font-medium leading-relaxed text-foreground"
-              style={{ borderColor: "#BD9352", backgroundColor: "#262626" }}
+              style={{ borderColor: "var(--tott-content-quote-border)", backgroundColor: "var(--tott-elevated)" }}
             >
               {section.quote}
             </blockquote>

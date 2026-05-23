@@ -198,7 +198,7 @@ function ArticleByIdLoader({ id }: { id: string }) {
       >
         <h1 className="text-xl font-semibold">Article not found</h1>
         <p className="text-sm text-[var(--tott-muted)]">No article exists for this link.</p>
-        <Link href="/content" className="text-sm font-medium text-[#C9A96E] hover:underline">
+        <Link href="/content" className="text-sm font-medium text-[var(--tott-dash-gold-label)] hover:underline">
           Back to content
         </Link>
       </div>
@@ -213,7 +213,7 @@ function ArticleByIdLoader({ id }: { id: string }) {
       >
         <h1 className="text-xl font-semibold">Could not load article</h1>
         <p className="text-sm text-[var(--tott-muted)]">Check your connection or try again later.</p>
-        <Link href="/content" className="text-sm font-medium text-[#C9A96E] hover:underline">
+        <Link href="/content" className="text-sm font-medium text-[var(--tott-dash-gold-label)] hover:underline">
           Back to content
         </Link>
       </div>

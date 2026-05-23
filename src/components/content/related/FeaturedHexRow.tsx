@@ -322,7 +322,7 @@ export function FeaturedHexRow({ items, heading, subtitle, viewMoreHref, viewMor
                   backgroundColor: "var(--tott-panel-bg)",
                   border: "1px solid var(--tott-card-border)",
                   color: "var(--tott-home-text-strong)",
-                  boxShadow: "0px 1px 3px rgba(23, 23, 23, 0.4)",
+                  boxShadow: "0px 1px 3px rgba(var(--tott-home-surface-rgb), 0.4)",
                 }}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
@@ -344,7 +344,7 @@ export function FeaturedHexRow({ items, heading, subtitle, viewMoreHref, viewMor
                   backgroundColor: "var(--tott-panel-bg)",
                   border: "1px solid var(--tott-card-border)",
                   color: "var(--tott-home-text-strong)",
-                  boxShadow: "0px 1px 3px rgba(23, 23, 23, 0.4)",
+                  boxShadow: "0px 1px 3px rgba(var(--tott-home-surface-rgb), 0.4)",
                 }}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">

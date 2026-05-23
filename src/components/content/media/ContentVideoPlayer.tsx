@@ -152,7 +152,7 @@ export function ContentVideoPlayer({ src, thumbnail }: ContentVideoPlayerProps) 
   const showLoading = status === "loading" || (status === "ready" && !playbackUrl);
 
   return (
-    <div ref={containerRef} className="relative aspect-[21/9] overflow-hidden rounded-xl bg-[#111]">
+    <div ref={containerRef} className="relative aspect-[21/9] overflow-hidden rounded-xl bg-[var(--tott-panel-bg)]">
       {showLoading ? (
         <div
           className="absolute inset-0 z-[1] animate-pulse bg-[var(--tott-well-bg)]"
@@ -210,7 +210,7 @@ export function ContentVideoPlayer({ src, thumbnail }: ContentVideoPlayerProps) 
           >
             <div className="relative h-1.5 w-full cursor-pointer rounded-full bg-gray-700">
               <div
-                className="absolute left-0 top-0 h-full min-w-[2px] rounded-full bg-[#C9A96E] transition-all"
+                className="absolute left-0 top-0 h-full min-w-[2px] rounded-full bg-[var(--tott-dash-gold-label)] transition-all"
                 style={{ width: `${progress}%` }}
               />
               <div

@@ -34,7 +34,7 @@ export function ContentContributors({
           >
             <div
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-base"
-              style={{ backgroundColor: c.color || "#DBC99E", color: "#332217" }}
+              style={{ backgroundColor: c.color || "var(--tott-gold-chip-bg)", color: "var(--tott-gold-chip-ink)" }}
             >
               {c.initials}
             </div>

@@ -210,7 +210,7 @@ export function ThreadsPageLayout({
                     <button
                       type="button"
                       onClick={showMore}
-                      className="rounded-lg px-6 py-3 text-sm font-semibold text-[#1a1a1a] transition-opacity hover:opacity-90"
+                      className="rounded-lg px-6 py-3 text-sm font-semibold text-[var(--tott-gold-chip-ink)] transition-opacity hover:opacity-90"
                       style={{ backgroundColor: theme.accentGold }}
                     >
                       {t("showMore")}

@@ -28,9 +28,9 @@ export function ContentArticleHeader({
           <span
             className="mr-1 inline-flex items-center justify-center rounded-md px-2 py-1 text-xs font-medium leading-4"
             style={{
-              backgroundColor: "#DBC99E",
-              color: "#332217",
-              boxShadow: "inset 0px 1px 1px rgba(255, 255, 255, 0.04)",
+              backgroundColor: "var(--tott-gold-chip-bg)",
+              color: "var(--tott-gold-chip-ink)",
+              boxShadow: "inset 0px 1px 1px var(--tott-glass-highlight)",
             }}
           >
             {edition}

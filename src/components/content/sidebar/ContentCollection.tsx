@@ -88,7 +88,7 @@ export function ContentCollection({
                   <span className="flex min-w-0 shrink items-center gap-1.5">
                     <span
                       className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
-                      style={{ backgroundColor: "#C9A96E", color: "#1a1a1a" }}
+                      style={{ backgroundColor: "var(--tott-dash-gold-label)", color: "var(--tott-gold-chip-ink)" }}
                     >
                       {item.author.charAt(0).toUpperCase()}
                     </span>

@@ -28,7 +28,7 @@ export function ArticleBodyAudio({ src }: ArticleBodyAudioProps) {
       key={playbackUrl}
       src={playbackUrl}
       controls
-      className="w-full max-w-3xl rounded-lg border border-[var(--tott-card-border)] bg-[#111] py-2"
+      className="w-full max-w-3xl rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-panel-bg)] py-2"
       preload="metadata"
     />
   );
