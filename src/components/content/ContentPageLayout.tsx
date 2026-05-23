@@ -1,5 +1,6 @@
 import { theme } from "@/lib/theme";
 import { SpringLink } from "@/components/motion/SpringLink";
+import HexBackground from "@/components/ui/HexBackground";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { ContentBreadcrumb } from "./related/ContentBreadcrumb";
 import { ContentMediaPlayer } from "./media/ContentMediaPlayer";
@@ -86,21 +87,23 @@ export function ContentPageLayout({
   const isOpenCall =
     contentType === "open_call" || contentType === "open-call" || contentType === "opencall";
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: theme.pageBackground }}>
-      {/* Gradient overlay: header + media only (stops before article); white center, fades to outer */}
+    <div className="relative min-h-screen w-full overflow-x-hidden" style={{ backgroundColor: theme.homeSurface }}>
+      {/* Hex-cell backdrop behind the hero — the same pattern the home and auth
+          pages use; sits behind the (absolute) navbar and the breadcrumb so the
+          top of the page reads as the rest of the site. */}
       <div
-        className="relative overflow-hidden"
-        style={{
-          background: `
-            linear-gradient(to bottom, transparent 50%, rgba(25, 25, 25, 0.4) 85%, rgba(35, 35, 35, 0.5) 100%),
-            radial-gradient(ellipse 120% 100% at 50% 45%, rgba(120, 120, 120, 0.5) 0%, rgba(70, 70, 70, 0.25) 65%, transparent 100%)
-          `,
-          WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 97%, transparent 100%)",
-          maskImage: "linear-gradient(to bottom, black 0%, black 97%, transparent 100%)",
-        }}
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-35 overflow-hidden"
+        style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
       >
+        <HexBackground />
+      </div>
+
+      {/* Hero content — lifted above the cells and padded clear of the
+          absolute navbar so the breadcrumb no longer tucks under it. */}
+      <div className="relative z-10">
         {/* Breadcrumb */}
-        <div className="mx-auto max-w-7xl px-6 pt-4 sm:px-10">
+        <div className="mx-auto max-w-7xl px-6 pt-24 sm:px-10 sm:pt-28">
           <ContentBreadcrumb items={breadcrumbs} />
         </div>
 
@@ -109,7 +112,7 @@ export function ContentPageLayout({
           <ContentMediaPlayer {...media} />
         </div>
 
-        {/* Article title (at end of fade) */}
+        {/* Article title */}
         <div className="mx-auto max-w-7xl px-6 pb-4 sm:px-10">
           <ContentArticleHeader
             title={article.title}
@@ -147,7 +150,7 @@ export function ContentPageLayout({
           <aside className="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-6 lg:w-[24rem] lg:self-start">
             <div
               className="rounded-2xl border border-[var(--tott-card-border)] p-5"
-              style={{ backgroundColor: theme.pageBackground }}
+              style={{ backgroundColor: theme.homeSurface }}
             >
               <ContentAuthorCard {...author} authorId={author.id} />
               <div className="my-5 h-px bg-[var(--tott-card-border)]" />
@@ -162,7 +165,7 @@ export function ContentPageLayout({
       <RelatedContent items={relatedContent} />
 
       {/* Share your story */}
-      <ShareYourStory />
+      <ShareYourStory surface={theme.homeSurface} />
     </div>
   );
 }
