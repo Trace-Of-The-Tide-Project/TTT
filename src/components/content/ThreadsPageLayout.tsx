@@ -154,8 +154,15 @@ export function ThreadsPageLayout({
                         <div className="h-3" aria-hidden />
                       </>
                     )}
-                    {/* Number badge */}
-                    <div className="z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)] text-sm font-medium text-foreground">
+                    {/* Number badge ("Stop point") */}
+                    <div
+                      className="z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-base font-medium tracking-[-0.01em] text-foreground"
+                      style={{
+                        backgroundColor: "var(--tott-elevated)",
+                        boxShadow:
+                          "inset 0px 1px 1px var(--tott-glass-highlight), inset 0px -1.5px 0px rgba(0, 0, 0, 0.32)",
+                      }}
+                    >
                       {index + 1}
                     </div>
                     {/* Gap */}
@@ -172,8 +179,9 @@ export function ThreadsPageLayout({
                     className="min-w-0 flex-1 pb-4"
                     style={{ paddingTop: index === 0 ? "0" : "3rem" }}
                   >
-                    <div className="space-y-4 pt-10">
-                      <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-[var(--tott-well-bg)]">
+                    <div className="space-y-6 pt-10">
+                      {/* Thumbnail spans the column; title + body are inset 24px */}
+                      <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)]">
                         <Image
                           src={entry.image}
                           alt=""
@@ -182,36 +190,39 @@ export function ThreadsPageLayout({
                           sizes="(max-width: 640px) 100vw, 672px"
                         />
                       </div>
-                      <ContentArticleHeader
-                        title={entry.title}
-                        edition={entry.edition}
-                        category={entry.category}
-                        publishedDate={entry.publishedDate}
-                        readingTime={entry.readingTime}
-                      />
-                      {isExpanded(index) && (
-                        <ContentArticleBody sections={entry.sections} />
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => toggleEntry(index)}
-                        className="flex items-center gap-1.5 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
-                      >
-                        {isExpanded(index) ? t("showLess") : t("readMore")}
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className={`transition-transform ${isExpanded(index) ? "rotate-180" : ""}`}
+                      <div className="space-y-4 px-6">
+                        <ContentArticleHeader
+                          title={entry.title}
+                          edition={entry.edition}
+                          category={entry.category}
+                          publishedDate={entry.publishedDate}
+                          readingTime={entry.readingTime}
+                          metaIcons
+                        />
+                        {isExpanded(index) && (
+                          <ContentArticleBody sections={entry.sections} />
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => toggleEntry(index)}
+                          className="flex items-center gap-1.5 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
                         >
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
-                      </button>
+                          {isExpanded(index) ? t("showLess") : t("readMore")}
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className={`transition-transform ${isExpanded(index) ? "rotate-180" : ""}`}
+                          >
+                            <path d="M6 9l6 6 6-6" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

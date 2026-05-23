@@ -7,7 +7,47 @@ type ContentArticleHeaderProps = {
   publishedDate?: string;
   readingTime?: string;
   viewCount?: number;
+  /** Show folder/calendar/clock icons before the meta items (Thread Figma). */
+  metaIcons?: boolean;
 };
+
+const META_ICON_PROPS = {
+  width: 14,
+  height: 14,
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.75,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+  className: "shrink-0",
+};
+
+function FolderIcon() {
+  return (
+    <svg {...META_ICON_PROPS} aria-hidden>
+      <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" />
+    </svg>
+  );
+}
+
+function CalendarIcon() {
+  return (
+    <svg {...META_ICON_PROPS} aria-hidden>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg {...META_ICON_PROPS} aria-hidden>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
 
 export function ContentArticleHeader({
   title,
@@ -16,6 +56,7 @@ export function ContentArticleHeader({
   publishedDate,
   readingTime,
   viewCount,
+  metaIcons = false,
 }: ContentArticleHeaderProps) {
   return (
     <div>
@@ -39,19 +80,28 @@ export function ContentArticleHeader({
         {category && (
           <>
             <span className="text-white/40">·</span>
-            <span>Category: {category}</span>
+            <span className="inline-flex items-center gap-1">
+              {metaIcons && <FolderIcon />}
+              {metaIcons ? category : `Category: ${category}`}
+            </span>
           </>
         )}
         {publishedDate && (
           <>
             <span className="text-white/40">·</span>
-            <span>Published: {publishedDate}</span>
+            <span className="inline-flex items-center gap-1">
+              {metaIcons && <CalendarIcon />}
+              Published: {publishedDate}
+            </span>
           </>
         )}
         {readingTime && (
           <>
             <span className="text-white/40">·</span>
-            <span>Reading Time: {readingTime}</span>
+            <span className="inline-flex items-center gap-1">
+              {metaIcons && <ClockIcon />}
+              {metaIcons ? readingTime : `Reading Time: ${readingTime}`}
+            </span>
           </>
         )}
         {viewCount != null && viewCount >= 0 && (
