@@ -73,10 +73,13 @@ export function ThreadsPageLayout({
 }: ThreadsPageLayoutProps) {
   const t = useTranslations("Content");
   const [visibleCount, setVisibleCount] = useState(initialVisibleCount);
-  const [expandedEntries, setExpandedEntries] = useState<Set<number>>(new Set());
+  // Entries are expanded by default (per the Thread Figma); we track the ones
+  // the reader has collapsed so newly loaded entries also start expanded.
+  const [collapsedEntries, setCollapsedEntries] = useState<Set<number>>(new Set());
+  const isExpanded = (index: number) => !collapsedEntries.has(index);
 
   const toggleEntry = (index: number) => {
-    setExpandedEntries((prev) => {
+    setCollapsedEntries((prev) => {
       const next = new Set(prev);
       if (next.has(index)) next.delete(index);
       else next.add(index);
@@ -159,7 +162,7 @@ export function ThreadsPageLayout({
                     style={{ paddingTop: index === 0 ? "0" : "3rem" }}
                   >
                     <div className="space-y-4 pt-10">
-                      <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-[var(--tott-well-bg)]">
+                      <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-[var(--tott-well-bg)]">
                         <Image
                           src={entry.image}
                           alt=""
@@ -175,7 +178,7 @@ export function ThreadsPageLayout({
                         publishedDate={entry.publishedDate}
                         readingTime={entry.readingTime}
                       />
-                      {expandedEntries.has(index) && (
+                      {isExpanded(index) && (
                         <ContentArticleBody sections={entry.sections} />
                       )}
                       <button
@@ -183,7 +186,7 @@ export function ThreadsPageLayout({
                         onClick={() => toggleEntry(index)}
                         className="flex items-center gap-1.5 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
                       >
-                        {expandedEntries.has(index) ? t("showLess") : t("readMore")}
+                        {isExpanded(index) ? t("showLess") : t("readMore")}
                         <svg
                           width="14"
                           height="14"
@@ -193,7 +196,7 @@ export function ThreadsPageLayout({
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          className={`transition-transform ${expandedEntries.has(index) ? "rotate-180" : ""}`}
+                          className={`transition-transform ${isExpanded(index) ? "rotate-180" : ""}`}
                         >
                           <path d="M6 9l6 6 6-6" />
                         </svg>
