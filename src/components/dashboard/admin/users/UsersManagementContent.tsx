@@ -173,7 +173,12 @@ export function UsersManagementContent() {
   const [advFilterJoinedAfter, setAdvFilterJoinedAfter] = useState("");
 
   const usersQuery = useUsers(queryParams, { silent: true });
-  const allUsers: AdminUserListItem[] = usersQuery.data?.users ?? [];
+  // Memoize so the downstream `useMemo` filter pipeline sees a stable
+  // reference between renders.
+  const allUsers: AdminUserListItem[] = useMemo(
+    () => usersQuery.data?.users ?? [],
+    [usersQuery.data?.users],
+  );
   // Role filter + advanced filters apply on the client because the API only
   // supports status / search / sort.
   const users = useMemo(() => {

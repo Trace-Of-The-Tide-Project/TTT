@@ -63,7 +63,12 @@ export default function ContributePage() {
   const t = useTranslations("Contribute");
   const tPage = useTranslations("Contribute.page");
   const typesQuery = useContributionTypes();
-  const types: ContributionType[] = typesQuery.data ?? [];
+  // Memoize the fallback so downstream `useMemo`s see a stable
+  // reference between renders.
+  const types: ContributionType[] = useMemo(
+    () => typesQuery.data ?? [],
+    [typesQuery.data],
+  );
   const isLoadingTypes = typesQuery.isPending;
   const typesError = typesQuery.error
     ? typesQuery.error instanceof Error

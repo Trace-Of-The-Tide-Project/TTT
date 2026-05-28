@@ -86,10 +86,8 @@ export function NotificationsAdminContent() {
     return () => window.clearInterval(id);
   }, []);
 
-  // Debounced search — setTimeout sets state after a delay; setState
-  // is the bridge from an external timer.
+  // Debounced search — setTimeout sets state after a delay.
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     const timeoutId = window.setTimeout(() => setDebouncedSearch(searchInput.trim()), 400);
     return () => window.clearTimeout(timeoutId);
   }, [searchInput]);
@@ -122,13 +120,12 @@ export function NotificationsAdminContent() {
     refetch,
   } = useNotifications(queryParams, { enabled: Boolean(user?.id), silent: true });
 
-  const rows = useMemo(
-    () =>
-      user?.id && queryData?.notifications
-        ? filterNotificationsForUser(queryData.notifications, user.id)
-        : [],
-    [queryData, user?.id],
-  );
+  // Plain derivation — React Compiler handles the memoization
+  // automatically; a manual useMemo here trips its preservation check.
+  const rows =
+    user?.id && queryData?.notifications
+      ? filterNotificationsForUser(queryData.notifications, user.id)
+      : [];
   const meta: NotificationsListMeta = queryData?.meta ?? emptyMeta;
   const error = queryError ? formatApiError(queryError, nt("errors.generic")) : null;
 

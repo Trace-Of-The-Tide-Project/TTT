@@ -40,7 +40,9 @@ export function LanguageSwitcher({ className, mode = "dropdown" }: Props) {
     if (next === locale) { setOpen(false); return; }
     const base = stripLocalePrefixesFromPath(pathname ?? "/");
     const target = `/${next}${base === "/" ? "" : base}`;
-    window.location.href = target;
+    // Use `.assign()` instead of mutating `location.href` so React 19's
+    // immutability rule is happy. Same hard-navigation semantics.
+    window.location.assign(target);
   };
 
   const current = LOCALE_LABELS[locale] ?? { short: locale.toUpperCase(), native: locale };

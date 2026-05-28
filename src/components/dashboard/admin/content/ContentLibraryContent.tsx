@@ -413,7 +413,12 @@ export function ContentLibraryContent() {
   const [advFilterHasFiles, setAdvFilterHasFiles] = useState(false);
 
   const contributionsQuery = useContributions(page, ROWS_PER_PAGE);
-  const items: ContributionListItem[] = contributionsQuery.data?.items ?? [];
+  // Memoize so downstream `useMemo`/`useCallback` see a stable
+  // reference between renders.
+  const items: ContributionListItem[] = useMemo(
+    () => contributionsQuery.data?.items ?? [],
+    [contributionsQuery.data?.items],
+  );
   const meta: ContributionListMeta | null = contributionsQuery.data?.meta ?? null;
   const loading = contributionsQuery.isFetching;
   const error = contributionsQuery.error

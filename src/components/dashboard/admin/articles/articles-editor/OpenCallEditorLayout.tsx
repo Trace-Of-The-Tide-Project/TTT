@@ -192,7 +192,7 @@ export function OpenCallEditorLayout() {
 
       return { openCall, articleBlocks, coverImage, excerpt };
     },
-    [blocks, title, applicationFields, category, language, visibility, seoTitle, metaDescription, tagIds],
+    [blocks, title, applicationFields, category, language, visibility, seoTitle, metaDescription, tagIds, adminTagsData],
   );
 
   const createArticleFromBlocks = useCallback(
@@ -222,7 +222,7 @@ export function OpenCallEditorLayout() {
         scheduled_at: extra.scheduledAt,
       });
     },
-    [title, category, language, visibility, seoTitle, metaDescription, collectionId, tagIds, adminTagsData, applicationFields, blocks],
+    [title, category, language, visibility, seoTitle, metaDescription, collectionId, tagIds],
   );
 
   const validateBeforeSubmit = useCallback(() => {
