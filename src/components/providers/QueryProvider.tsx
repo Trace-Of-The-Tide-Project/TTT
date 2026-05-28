@@ -101,9 +101,9 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
               "!rounded-lg !bg-[var(--tott-dash-surface-inset)] !text-foreground",
             closeButton:
               "!border-[var(--tott-card-border)] !bg-[var(--tott-dash-surface)] !text-[var(--tott-muted)] hover:!text-foreground",
-            success: "[&_[data-icon]]:!text-[#2ECC71]",
-            error: "[&_[data-icon]]:!text-[#EF4444]",
-            warning: "[&_[data-icon]]:!text-[#E67E22]",
+            success: "[&_[data-icon]]:!text-[var(--tott-status-emerald)]",
+            error: "[&_[data-icon]]:!text-[var(--tott-status-coral)]",
+            warning: "[&_[data-icon]]:!text-[var(--tott-status-amber)]",
             info: "[&_[data-icon]]:!text-[var(--tott-accent-gold)]",
           },
         }}

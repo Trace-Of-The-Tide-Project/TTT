@@ -26,11 +26,12 @@ function timeAgo(iso: string): string {
   return `${Math.floor(days / 30)}mo ago`;
 }
 
+/** Notification-type accents resolve to theme-aware CSS vars. */
 const TYPE_COLORS: Record<string, string> = {
-  system: "#6b7280",
-  review: "#CBA158",
-  update: "#60a5fa",
-  announcement: "#a78bfa",
+  system: "var(--tott-muted)",
+  review: "var(--tott-accent-gold)",
+  update: "var(--tott-status-blue)",
+  announcement: "var(--tott-status-emerald)",
 };
 
 function NotifRow({
@@ -55,7 +56,7 @@ function NotifRow({
         <div className="flex items-start gap-3">
           <span
             className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
-            style={{ backgroundColor: isUnread ? "#ef4444" : "transparent", marginTop: "6px" }}
+            style={{ backgroundColor: isUnread ? "var(--tott-status-coral)" : "transparent", marginTop: "6px" }}
           />
           <div className="min-w-0 flex-1">
             <p
@@ -70,7 +71,10 @@ function NotifRow({
             <div className="mt-1 flex items-center gap-2">
               <span
                 className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
-                style={{ backgroundColor: `${typeColor}22`, color: typeColor }}
+                style={{
+                  backgroundColor: `color-mix(in srgb, ${typeColor} 13%, transparent)`,
+                  color: typeColor,
+                }}
               >
                 {n.type}
               </span>
@@ -152,14 +156,14 @@ export function NotificationDropdown() {
         {unreadCount > 0 ? (
           <span
             className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-white"
-            style={{ backgroundColor: "#ef4444" }}
+            style={{ backgroundColor: "var(--tott-status-coral)" }}
           >
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         ) : (
           <span
             className="absolute right-1 top-1 h-2 w-2 rounded-full"
-            style={{ backgroundColor: "#ef4444" }}
+            style={{ backgroundColor: "var(--tott-status-coral)" }}
           />
         )}
       </button>
@@ -184,7 +188,7 @@ export function NotificationDropdown() {
               {unreadCount > 0 && (
                 <span
                   className="rounded-full px-1.5 py-0.5 text-[10px] font-bold text-white"
-                  style={{ backgroundColor: "#ef4444" }}
+                  style={{ backgroundColor: "var(--tott-status-coral)" }}
                 >
                   {unreadCount} new
                 </span>
@@ -210,7 +214,9 @@ export function NotificationDropdown() {
               <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
                 <span className="text-2xl">🔔</span>
                 <p className="text-sm font-medium text-foreground">You&apos;re all caught up!</p>
-                <p className="text-xs text-gray-500">No notifications right now.</p>
+                <p className="text-xs" style={{ color: "var(--tott-muted)" }}>
+                  No notifications right now.
+                </p>
               </div>
             ) : (
               <ul className="divide-y" style={{ borderColor: "var(--tott-card-border)" }}>

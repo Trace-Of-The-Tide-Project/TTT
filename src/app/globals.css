@@ -101,6 +101,10 @@ html {
   --tott-status-emerald: #3ee089;
   --tott-status-blue: #6895ff;
   --tott-status-coral: #e93544;
+  /** Pending / warning status — dark-theme amber. */
+  --tott-status-amber: #f59e0b;
+  /** Modal backdrop scrim used by dashboard dialogs. */
+  --tott-overlay: rgba(0, 0, 0, 0.55);
   /** Dark filled action pill (e.g. "Manage all", "Dismiss all") — visible in both themes. */
   --tott-dark-pill: #262626;
   --tott-dark-pill-fg: #ededed;
@@ -184,6 +188,8 @@ html {
     --tott-status-emerald: #16a34a;
     --tott-status-blue: #2563eb;
     --tott-status-coral: #dc2626;
+    --tott-status-amber: #b45309;
+    --tott-overlay: rgba(17, 24, 39, 0.45);
     --tott-dark-pill: #1f2937;
     --tott-dark-pill-fg: #ffffff;
     --tott-content-stat-label: #6b7280;
@@ -273,6 +279,8 @@ html[data-theme="light"] {
   --tott-status-emerald: #16a34a;
   --tott-status-blue: #2563eb;
   --tott-status-coral: #dc2626;
+  --tott-status-amber: #b45309;
+  --tott-overlay: rgba(17, 24, 39, 0.45);
   --tott-dark-pill: #1f2937;
   --tott-dark-pill-fg: #ffffff;
   --tott-content-stat-label: #6b7280;
