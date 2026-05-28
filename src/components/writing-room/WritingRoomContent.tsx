@@ -813,10 +813,6 @@ function DictionaryCard({
 
 // ─── Discover Featured Writing ───────────────────────────────────
 
-// Card geometry for the xl carousel — a 276px-wide silk hex with an
-// 8px gap between cards.
-const CAROUSEL_CARD_WIDTH = 276;
-const CAROUSEL_GAP = 8;
 const CAROUSEL_TRANSITION_MS = 400;
 // Width of the "ghost" gradient strips overlaid on each end of the
 // carousel — these mask the next/previous hexagon as it peeks in

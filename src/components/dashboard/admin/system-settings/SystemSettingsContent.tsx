@@ -34,10 +34,6 @@ import {
 
 const ACCENT = "#E8DDC0";
 
-/** Chamfered row (matches Reports audit log cards). */
-const ROW_CLIP =
-  "polygon(11px 0, calc(100% - 11px) 0, 100% 11px, 100% calc(100% - 11px), calc(100% - 11px) 100%, 11px 100%, 0 calc(100% - 11px), 0 11px)";
-
 type CategoryModalState =
   | { type: "closed" }
   | { type: "add" }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { CloudUploadIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
 import { useCmsSettings } from "@/hooks/queries/cms";
@@ -140,9 +141,15 @@ export function BrandingTab() {
           >
             {logoPreview ? (
               <div className="relative w-full overflow-hidden rounded">
-                <img
+                {/* User-uploaded blob/remote URL — `unoptimized` skips
+                 *  the Next image optimizer (no remotePatterns config
+                 *  needed for arbitrary preview sources). */}
+                <Image
                   src={logoPreview}
                   alt="Logo preview"
+                  width={240}
+                  height={96}
+                  unoptimized
                   className="mx-auto max-h-24 w-auto object-contain"
                 />
                 <p className="mt-2 text-xs text-gray-400">{logoFile?.name ?? "Saved logo"}</p>
@@ -202,9 +209,12 @@ export function BrandingTab() {
           >
             {faviconPreview ? (
               <div className="relative w-full overflow-hidden rounded">
-                <img
+                <Image
                   src={faviconPreview}
                   alt="Favicon preview"
+                  width={64}
+                  height={64}
+                  unoptimized
                   className="mx-auto max-h-16 w-auto object-contain"
                 />
                 <p className="mt-2 text-xs text-gray-400">{faviconFile?.name ?? "Saved favicon"}</p>

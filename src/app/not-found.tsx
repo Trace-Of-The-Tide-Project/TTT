@@ -2,6 +2,7 @@
  * Root fallback 404 — fires when no [locale] segment matches.
  * No next-intl context here, so hardcoded English + plain anchors only.
  */
+import Link from "next/link";
 import HexBackground404 from "@/components/ui/HexBackground404";
 import { HeadsetIcon } from "@/components/ui/icons";
 
@@ -52,16 +53,16 @@ export default function RootNotFound() {
             We couldn&apos;t find the page you were looking for. It may have been moved, renamed, or never existed.
           </p>
 
-          <a
+          <Link
             href="/en"
             className="mt-5 inline-block rounded-xl px-8 py-3 text-sm font-semibold transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2"
             style={{
               backgroundColor: "var(--tott-accent-gold)",
-              color: "#1a1a1a",
+              color: "var(--tott-auth-btn-text)",
             }}
           >
             Go back to Homepage
-          </a>
+          </Link>
 
           <p
             className="mt-5 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-sm"
@@ -75,13 +76,13 @@ export default function RootNotFound() {
             >
               <HeadsetIcon />
             </span>
-            <a
+            <Link
               href="/en/contact"
               className="font-medium hover:underline"
               style={{ color: "var(--tott-dash-gold-label)" }}
             >
               Contact us
-            </a>
+            </Link>
             <span>and we&apos;ll help you find your way.</span>
           </p>
 

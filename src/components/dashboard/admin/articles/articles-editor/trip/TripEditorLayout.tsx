@@ -97,7 +97,7 @@ export function TripEditorLayout() {
   );
 
   // Workflow
-  const [workflowStatus, setWorkflowStatus] = useState<ArticleWorkflowStatus>("draft");
+  const [workflowStatus] = useState<ArticleWorkflowStatus>("draft");
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [busy, setBusy] = useState(false);

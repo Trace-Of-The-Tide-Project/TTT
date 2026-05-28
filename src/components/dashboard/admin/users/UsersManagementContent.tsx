@@ -114,7 +114,7 @@ export function UsersManagementContent() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [roleFilter, setRoleFilter] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("username");
+  const [sortBy] = useState<string>("username");
   const [order, setOrder] = useState<"ASC" | "DESC">("ASC");
   const [page, setPage] = useState(1);
 

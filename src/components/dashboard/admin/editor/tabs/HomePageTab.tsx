@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import {
   EyeIcon,
   GripVerticalIcon,
@@ -280,9 +281,12 @@ export function HomePageTab() {
                 >
                   {previewUrl ? (
                     <div className="relative w-full max-h-40 overflow-hidden rounded">
-                      <img
+                      <Image
                         src={previewUrl}
                         alt="Preview"
+                        width={480}
+                        height={160}
+                        unoptimized
                         className="mx-auto max-h-40 w-auto object-contain"
                       />
                       <p className="mt-2 text-xs text-gray-400">{backgroundFile?.name}</p>
