@@ -6,6 +6,7 @@ import {
   type NotificationPreferences,
 } from "@/services/notifications.service";
 import { notificationsKeys } from "@/hooks/queries/notifications";
+import { useAuthUser } from "@/components/providers/AuthProvider";
 
 export function useMarkNotificationRead() {
   const qc = useQueryClient();
@@ -17,8 +18,12 @@ export function useMarkNotificationRead() {
 
 export function useMarkAllNotificationsRead() {
   const qc = useQueryClient();
+  const user = useAuthUser();
   return useMutation({
-    mutationFn: () => markAllNotificationsRead(),
+    mutationFn: () => {
+      if (!user?.id) throw new Error("Not authenticated");
+      return markAllNotificationsRead(user.id);
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: notificationsKeys.all }),
   });
 }

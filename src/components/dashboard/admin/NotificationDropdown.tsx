@@ -60,7 +60,10 @@ function NotifRow({
           <div className="min-w-0 flex-1">
             <p
               className="text-sm leading-snug"
-              style={{ color: isUnread ? "#f3f4f6" : "#9ca3af", fontWeight: isUnread ? 500 : 400 }}
+              style={{
+                color: isUnread ? "var(--foreground)" : "var(--tott-muted)",
+                fontWeight: isUnread ? 500 : 400,
+              }}
             >
               {n.message}
             </p>
@@ -71,7 +74,9 @@ function NotifRow({
               >
                 {n.type}
               </span>
-              <span className="text-xs text-gray-600">{timeAgo(n.created_at)}</span>
+              <span className="text-xs" style={{ color: "var(--tott-muted)" }}>
+                {timeAgo(n.created_at)}
+              </span>
             </div>
           </div>
         </div>
@@ -85,10 +90,10 @@ function Skeleton() {
     <div className="space-y-px px-4 py-2">
       {[1, 2, 3].map((i) => (
         <div key={i} className="flex gap-3 py-2">
-          <div className="mt-1.5 h-2 w-2 shrink-0 animate-pulse rounded-full bg-gray-700" />
+          <div className="mt-1.5 h-2 w-2 shrink-0 animate-pulse rounded-full bg-[var(--tott-card-border)]" />
           <div className="flex-1 space-y-2">
-            <div className="h-3 w-3/4 animate-pulse rounded bg-gray-700" />
-            <div className="h-2.5 w-1/3 animate-pulse rounded bg-gray-700" />
+            <div className="h-3 w-3/4 animate-pulse rounded bg-[var(--tott-card-border)]" />
+            <div className="h-2.5 w-1/3 animate-pulse rounded bg-[var(--tott-card-border)]" />
           </div>
         </div>
       ))}

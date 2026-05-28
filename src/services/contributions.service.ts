@@ -148,6 +148,90 @@ export async function deleteContribution(id: string): Promise<void> {
   await api.delete(`/contributions/${encodeURIComponent(id)}`);
 }
 
+// ─── Magazine-issue intake ──────────────────────────────────────────
+// Public "Start an Issue" submissions can't hit POST /magazine-issues
+// (admin-only). They land as contributions of a dedicated type so the
+// magazine admin can review + approve them into real issues.
+
+export const MAGAZINE_ISSUE_TYPE_NAME = "Magazine Issue";
+
+function findTypeByName(
+  types: ContributionType[],
+  name: string,
+): ContributionType | undefined {
+  const lower = name.toLowerCase();
+  return types.find((t) => t.name.toLowerCase() === lower);
+}
+
+/**
+ * Admin-auth helper: return the "Magazine Issue" contribution type,
+ * creating it on first use. Safe to call repeatedly (no-op once it
+ * exists). Requires an authenticated admin session.
+ */
+export async function ensureMagazineIssueType(): Promise<ContributionType> {
+  const types = await fetchContributionTypes();
+  const existing = findTypeByName(types, MAGAZINE_ISSUE_TYPE_NAME);
+  if (existing) return existing;
+  const { data } = await api.post<ApiEnvelope<ContributionType>>(
+    "/contributions/types",
+    {
+      name: MAGAZINE_ISSUE_TYPE_NAME,
+      description:
+        "Reader-submitted magazine issue proposals from the public site.",
+    },
+  );
+  return data.data;
+}
+
+export type IssueProposalInput = {
+  title: string;
+  theme?: string;
+  experience?: string;
+  description: string;
+  contributorName: string;
+  contributorEmail: string;
+  contributorPhone?: string;
+  consent: boolean;
+};
+
+/**
+ * Public submission: create a contribution tagged as a Magazine Issue
+ * proposal. Resolves the dedicated type by name (falls back to "Other"
+ * then the first available type, since a guest can't create types).
+ * Theme/experience are folded into the description because the
+ * contribution entity has no dedicated fields for them.
+ */
+export async function submitIssueProposal(
+  input: IssueProposalInput,
+): Promise<CreatedContribution> {
+  const types = await fetchContributionTypes();
+  const typeId = (
+    findTypeByName(types, MAGAZINE_ISSUE_TYPE_NAME) ??
+    findTypeByName(types, "Other") ??
+    types[0]
+  )?.id;
+
+  const description = [
+    input.theme ? `Theme: ${input.theme}` : "",
+    input.experience ? `Relevant experience: ${input.experience}` : "",
+    input.description,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
+  const fd = new FormData();
+  fd.append("title", input.title);
+  fd.append("description", description);
+  if (typeId) fd.append("type_id", typeId);
+  fd.append("contributor_name", input.contributorName);
+  fd.append("contributor_email", input.contributorEmail);
+  if (input.contributorPhone) {
+    fd.append("contributor_phone", input.contributorPhone);
+  }
+  fd.append("consent_given", String(input.consent));
+  return createContribution(fd);
+}
+
 /** Possible status values that the backend accepts for a contribution. */
 export type ContributionStatusValue =
   | "pending"

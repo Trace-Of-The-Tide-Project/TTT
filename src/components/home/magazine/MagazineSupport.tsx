@@ -177,7 +177,15 @@ export function MagazineSupport({ collaborations }: MagazineSupportProps) {
         </p>
       </div>
 
+      {/* Carousel mechanics are pinned to LTR: the track is positioned
+          with a translateX(calc(50% - …)) that assumes left-to-right
+          flow. Under RTL the flex main axis flips while the transform
+          does not, so the active card lands off-centre / off-screen.
+          dir="ltr" keeps the math (and the ←/→ arrow pairing) intact;
+          the card content is centre-aligned so Arabic still renders
+          correctly. This is a no-op on LTR locales. */}
       <div
+        dir="ltr"
         className="flex flex-col items-center"
         style={{
           padding: "16px 0 32px",

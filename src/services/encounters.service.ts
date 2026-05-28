@@ -93,3 +93,43 @@ export async function bookEncounter(
   );
   return data ?? {};
 }
+
+// ─── Admin: encounter bookings ──────────────────────────────────────
+// The backend does NOT currently expose any way to list bookings or
+// change their status. Both `getEncounter` and `listEncountersServer`
+// return only the schedule. The two functions below target the
+// *expected* endpoint shape the backend dev needs to add:
+//   GET   /encounter-bookings              → list all bookings
+//   PATCH /encounter-bookings/{id}         → { status: approved|rejected }
+// They 404 today; the UI catches the error and surfaces it as a toast.
+
+export type EncounterBooking = {
+  id: string;
+  encounter_id?: string | null;
+  name: string;
+  email: string;
+  message?: string | null;
+  status: string;
+  createdAt?: string;
+  updatedAt?: string;
+  /** Attached client-side from the parent encounter for display. */
+  encounter_title?: string;
+};
+
+export type EncounterBookingStatus = "approved" | "rejected" | "pending";
+
+export async function listAllEncounterBookings(): Promise<EncounterBooking[]> {
+  const { data } = await api.get<unknown>("/encounter-bookings");
+  const raw =
+    data && typeof data === "object" && "data" in (data as object)
+      ? (data as { data?: unknown }).data
+      : data;
+  return Array.isArray(raw) ? (raw as EncounterBooking[]) : [];
+}
+
+export async function updateEncounterBookingStatus(
+  id: string,
+  status: EncounterBookingStatus,
+): Promise<void> {
+  await api.patch(`/encounter-bookings/${encodeURIComponent(id)}`, { status });
+}

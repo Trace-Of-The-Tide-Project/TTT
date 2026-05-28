@@ -37,6 +37,10 @@
       "submit": "Soumettre la proposition",
       "submitting": "Envoi en cours…",
       "submitted": "Proposition envoyée",
+      "validationError": "Veuillez ajouter un titre de numéro, votre e-mail et une description.",
+      "submittedToast": "Votre proposition de numéro a été soumise pour examen.",
+      "submitError": "Impossible d’envoyer votre proposition",
+      "submitErrorBody": "Veuillez réessayer.",
       "backToHomeLead": "Retour à la",
       "backToHomeLink": "page d'accueil"
     },

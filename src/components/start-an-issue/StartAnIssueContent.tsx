@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
+import { useSubmitIssueProposal } from "@/hooks/mutations/magazine-intake";
+import { formatApiError } from "@/lib/api/error-message";
 import { ContributionPageLayout } from "@/components/contribute/ContributionPageLayout";
 import {
   Field,
@@ -47,17 +50,40 @@ export function StartAnIssueContent() {
   const [theme, setTheme] = useState("");
   const [description, setDescription] = useState("");
   const [agreed, setAgreed] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  const submit = useSubmitIssueProposal();
+  const submitting = submit.isPending;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!agreed || submitting) return;
-    setSubmitting(true);
-    window.setTimeout(() => {
-      setSubmitting(false);
-      setSubmitted(true);
-    }, 600);
+    if (!agreed || submitting || submitted) return;
+    if (!issueTitle.trim() || !email.trim() || !description.trim()) {
+      toast.error(tf("validationError"));
+      return;
+    }
+    submit.mutate(
+      {
+        title: issueTitle.trim(),
+        theme: theme.trim() || undefined,
+        experience: experience.trim() || undefined,
+        description: description.trim(),
+        contributorName: `${firstName} ${lastName}`.trim(),
+        contributorEmail: email.trim(),
+        contributorPhone: phone.trim() || undefined,
+        consent: agreed,
+      },
+      {
+        onSuccess: () => {
+          setSubmitted(true);
+          toast.success(tf("submittedToast"));
+        },
+        onError: (err) =>
+          toast.error(tf("submitError"), {
+            description: formatApiError(err, tf("submitErrorBody")),
+          }),
+      },
+    );
   };
 
   // Title block — Figma "Title" frame. Page-specific, so it's passed to the

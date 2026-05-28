@@ -37,6 +37,10 @@
       "submit": "Enviar propuesta",
       "submitting": "Enviando…",
       "submitted": "Propuesta enviada",
+      "validationError": "Añade un título del número, tu correo y una descripción.",
+      "submittedToast": "Tu propuesta de número se envió para revisión.",
+      "submitError": "No se pudo enviar tu propuesta",
+      "submitErrorBody": "Inténtalo de nuevo.",
       "backToHomeLead": "Volver a la",
       "backToHomeLink": "página de inicio"
     },

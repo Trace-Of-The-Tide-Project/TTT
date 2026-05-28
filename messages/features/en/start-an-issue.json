@@ -37,6 +37,10 @@
       "submit": "Submit Proposal",
       "submitting": "Submitting…",
       "submitted": "Proposal sent",
+      "validationError": "Please add an issue title, your email, and a description.",
+      "submittedToast": "Your issue proposal was submitted for review.",
+      "submitError": "Could not submit your proposal",
+      "submitErrorBody": "Please try again.",
       "backToHomeLead": "Go back to",
       "backToHomeLink": "Home page"
     },
