@@ -59,14 +59,18 @@ export function SupportIssueModal({
   const [submitted, setSubmitted] = useState(false);
   const busy = pledge.isPending;
 
-  useEffect(() => {
-    if (!open) return;
+  // Reset each time the modal opens. React 19 prefers adjusting state
+  // during render over doing it in an effect. The mutation owns busy
+  // state; resetting here is enough — no explicit setBusy call needed.
+  const [prevOpen, setPrevOpen] = useState(false);
+  if (open && !prevOpen) {
+    setPrevOpen(true);
     setSubmitted(false);
     setSubmitError(null);
     pledge.reset();
-    // The mutation owns busy state; resetting here is enough — no
-    // explicit setBusy call needed.
-  }, [open, pledge]);
+  } else if (!open && prevOpen) {
+    setPrevOpen(false);
+  }
 
   useEffect(() => {
     if (!open) return;

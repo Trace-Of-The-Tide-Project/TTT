@@ -1,6 +1,6 @@
 "use client";
 
-import { createElement, useEffect, useMemo, useState } from "react";
+import { createElement, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import HexBackground from "@/components/ui/HexBackground";
 import { ContributionForm } from "@/components/contribute/ContributionForm";
@@ -72,17 +72,17 @@ export default function ContributePage() {
     : null;
   const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!types.length) return;
-    setSelectedTypeId((prev) => {
-      if (prev) return prev;
-      return (
-        types.find((ty) => ty.name === "Personal Story")?.id ??
+  // Seed the default selection once `types` finishes loading. React 19
+  // prefers adjusting state during render over doing it in an effect.
+  const [hasSeededDefault, setHasSeededDefault] = useState(false);
+  if (types.length > 0 && !hasSeededDefault && selectedTypeId === null) {
+    setHasSeededDefault(true);
+    setSelectedTypeId(
+      types.find((ty) => ty.name === "Personal Story")?.id ??
         types[0]?.id ??
-        null
-      );
-    });
-  }, [types]);
+        null,
+    );
+  }
 
   const orderedTypes = useMemo(() => {
     if (!types.length) return [];

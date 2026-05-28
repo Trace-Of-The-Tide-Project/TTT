@@ -12,7 +12,6 @@ import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import { MessageBubbleIcon } from "@/components/ui/icons";
 import {
-  StarIcon,
   DownloadIcon,
   ChevronRightIcon,
 } from "@/components/ui/icons";

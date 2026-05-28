@@ -61,6 +61,9 @@ function useThemeMode(): "light" | "dark" {
         : "dark";
     };
 
+    // External system (DOM attribute + media query) — setState is the
+    // bridge. No render-phase alternative.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMode(compute());
 
     const mq = window.matchMedia?.("(prefers-color-scheme: light)");

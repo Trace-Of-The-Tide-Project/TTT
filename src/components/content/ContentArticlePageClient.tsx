@@ -124,20 +124,37 @@ function ArticleByIdLoader({ id }: { id: string }) {
   const recordedIdRef = useRef<string | null>(null);
   const recordViewMutation = useRecordArticleView();
 
-  useEffect(() => {
+  // Clear cached live data each time the article id changes. State
+  // resets are done during render (React 19's preferred pattern); the
+  // ref reset must stay in an effect because refs can't be assigned
+  // during render.
+  const [prevId, setPrevId] = useState(id);
+  if (prevId !== id) {
+    setPrevId(id);
     setLiveRelated([]);
     setLiveCollection(null);
     setDisplayViewCount(undefined);
+  }
+  useEffect(() => {
     recordedIdRef.current = null;
   }, [id]);
 
-  useEffect(() => {
-    if (!article) return;
+  // Seed displayViewCount from the loaded article's view_count
+  // synchronously (render-phase prev-value pattern instead of effect).
+  const [prevArticleVc, setPrevArticleVc] = useState<unknown>(null);
+  if (article && article.view_count !== prevArticleVc) {
+    setPrevArticleVc(article.view_count);
     setDisplayViewCount(
       typeof article.view_count === "number" && Number.isFinite(article.view_count)
         ? article.view_count
         : undefined,
     );
+  }
+
+  // Async fetches stay in an effect — these setStates resolve later
+  // (after the await), so the lint rule doesn't apply.
+  useEffect(() => {
+    if (!article) return;
     let cancelled = false;
     getRelatedArticles(id).then((items) => {
       if (!cancelled) setLiveRelated(mapRelated(items));

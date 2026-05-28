@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { CloudUploadIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
@@ -27,24 +27,28 @@ export function BrandingTab() {
   const { data: settings } = useCmsSettings();
   const updateMutation = useUpdateCmsSetting({ silent: true });
 
-  useEffect(() => {
-    if (!settings) return;
+  // Seed the form fields once the settings query finishes loading.
+  // Render-phase prev-value pattern instead of an effect.
+  const [prevSettings, setPrevSettings] = useState(settings);
+  if (settings && settings !== prevSettings) {
+    setPrevSettings(settings);
     const branding = settings.branding as {
       primary_color?: string;
       logo?: string;
       favicon?: string;
     } | undefined;
-    if (!branding) return;
-    if (branding.primary_color) setPrimaryColor(branding.primary_color);
-    if (branding.logo) {
-      setSavedLogoUrl(branding.logo);
-      setLogoPreview(branding.logo);
+    if (branding) {
+      if (branding.primary_color) setPrimaryColor(branding.primary_color);
+      if (branding.logo) {
+        setSavedLogoUrl(branding.logo);
+        setLogoPreview(branding.logo);
+      }
+      if (branding.favicon) {
+        setSavedFaviconUrl(branding.favicon);
+        setFaviconPreview(branding.favicon);
+      }
     }
-    if (branding.favicon) {
-      setSavedFaviconUrl(branding.favicon);
-      setFaviconPreview(branding.favicon);
-    }
-  }, [settings]);
+  }
 
   const handleLogoSelect = (file: File | null) => {
     if (logoPreview && logoPreview !== savedLogoUrl) URL.revokeObjectURL(logoPreview);

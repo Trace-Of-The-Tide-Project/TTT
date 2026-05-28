@@ -83,15 +83,19 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open, roleMenuOpen]);
 
-  useEffect(() => {
-    if (!open) return;
-    // Reset each time it opens to match typical modal UX.
+  // Reset each time the modal opens. React 19 prefers adjusting state
+  // during render over doing it in an effect.
+  const [prevOpen, setPrevOpen] = useState(false);
+  if (open && !prevOpen) {
+    setPrevOpen(true);
     setSelectedIcon("award");
     setName("");
     setRole("");
     setReason("");
     setRoleMenuOpen(false);
-  }, [open]);
+  } else if (!open && prevOpen) {
+    setPrevOpen(false);
+  }
 
   if (!open) return null;
 

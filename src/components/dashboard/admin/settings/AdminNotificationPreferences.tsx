@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import { SettingsRow, settingsCardClass, SettingsToggle } from "./SettingsPrimitives";
@@ -26,9 +26,13 @@ export function AdminNotificationPreferences() {
   const [prefs, setPrefs] = useState<NotificationPreferences>(DEFAULTS);
   const [saveState, setSaveState] = useState<SaveState>("idle");
 
-  useEffect(() => {
-    if (serverPrefs) setPrefs(serverPrefs);
-  }, [serverPrefs]);
+  // Seed local prefs from the server response. Render-phase prev-value
+  // pattern instead of an effect.
+  const [prevServerPrefs, setPrevServerPrefs] = useState(serverPrefs);
+  if (serverPrefs && serverPrefs !== prevServerPrefs) {
+    setPrevServerPrefs(serverPrefs);
+    setPrefs(serverPrefs);
+  }
 
   const toggle = useCallback((key: keyof NotificationPreferences) => {
     setPrefs((p) => ({ ...p, [key]: !p[key] }));

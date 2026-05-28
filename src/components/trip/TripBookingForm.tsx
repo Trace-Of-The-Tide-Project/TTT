@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { DynamicOpenCallForm } from "@/components/open-call/DynamicOpenCallForm";
 import type { ApplicationFormField } from "@/services/open-calls.service";
@@ -43,15 +43,20 @@ export function TripBookingForm({
     Number.isFinite(minNum) && minNum > 0 ? minNum : 0,
   );
 
-  useEffect(() => {
+  // Clamp the selected amount when the trip's min price changes.
+  // Render-phase prev-value pattern instead of an effect.
+  const [prevMinPrice, setPrevMinPrice] = useState(minPrice);
+  if (prevMinPrice !== minPrice) {
+    setPrevMinPrice(minPrice);
     const lo = parseFloat(minPrice);
-    if (!tripHasMinimumContribution(minPrice) || !Number.isFinite(lo)) return;
-    const hi = sliderUiMaxForMinPrice(lo);
-    setSelected((prev) => {
-      const p = Number.isFinite(prev) ? prev : lo;
-      return Math.min(hi, Math.max(lo, p));
-    });
-  }, [minPrice]);
+    if (tripHasMinimumContribution(minPrice) && Number.isFinite(lo)) {
+      const hi = sliderUiMaxForMinPrice(lo);
+      setSelected((prev) => {
+        const p = Number.isFinite(prev) ? prev : lo;
+        return Math.min(hi, Math.max(lo, p));
+      });
+    }
+  }
 
   const summaryLabel = tripDisplayPriceLabel({
     price: minPrice,

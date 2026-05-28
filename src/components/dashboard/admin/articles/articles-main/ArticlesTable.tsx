@@ -87,12 +87,16 @@ export function ArticlesTable({
   const deleteMutation = useDeleteArticle({ silent: true });
   const deleteBusy = deleteMutation.isPending;
 
-  useEffect(() => {
-    const fromUrl = searchParams.get("tab");
-    if (fromUrl && tabs.some((t) => t.id === fromUrl)) {
-      setActiveTab(fromUrl);
+  // Sync the active tab to the `?tab=` query param. Render-phase
+  // prev-value pattern instead of an effect.
+  const urlTab = searchParams.get("tab");
+  const [prevUrlTab, setPrevUrlTab] = useState(urlTab);
+  if (urlTab !== prevUrlTab) {
+    setPrevUrlTab(urlTab);
+    if (urlTab && tabs.some((t) => t.id === urlTab)) {
+      setActiveTab(urlTab);
     }
-  }, [searchParams, tabs]);
+  }
 
   const selectTab = useCallback(
     (tabId: string) => {
@@ -167,12 +171,12 @@ export function ArticlesTable({
     [openMenuId, rows],
   );
 
-  useEffect(() => {
-    if (openMenuId && !openMenuRow) {
-      setOpenMenuId(null);
-      setMenuPosition(null);
-    }
-  }, [openMenuId, openMenuRow]);
+  // Close the open row menu if the row it points at vanishes (e.g.
+  // delete). Render-phase pattern instead of an effect.
+  if (openMenuId && !openMenuRow) {
+    setOpenMenuId(null);
+    setMenuPosition(null);
+  }
 
   const openDeleteModal = useCallback((row: ArticleRow) => {
     setDeleteError(null);

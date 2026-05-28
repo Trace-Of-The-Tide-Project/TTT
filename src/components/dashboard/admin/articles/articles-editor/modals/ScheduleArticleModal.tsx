@@ -41,11 +41,16 @@ export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: Schedul
     };
   }, [open, handleKeyDown]);
 
-  useEffect(() => {
-    if (!open) return;
+  // Reset each time the modal opens. React 19 prefers adjusting state
+  // during render over doing it in an effect.
+  const [prevOpen, setPrevOpen] = useState(false);
+  if (open && !prevOpen) {
+    setPrevOpen(true);
     setScheduleAt("");
     setHint(null);
-  }, [open]);
+  } else if (!open && prevOpen) {
+    setPrevOpen(false);
+  }
 
   if (!open) return null;
 

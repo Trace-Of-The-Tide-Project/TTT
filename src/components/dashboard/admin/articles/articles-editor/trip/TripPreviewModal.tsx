@@ -508,7 +508,11 @@ function StopRow({
 export function TripPreviewModal({ open, onClose, data, trip }: TripPreviewModalProps) {
   const [mounted, setMounted] = useState(false);
 
+  // Standard "have we hydrated yet?" guard. setState in effect is the
+  // documented pattern here — React 19's set-state-in-effect rule
+  // doesn't have a cleaner alternative for this case.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

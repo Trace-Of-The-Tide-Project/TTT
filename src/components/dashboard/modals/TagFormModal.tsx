@@ -24,10 +24,16 @@ export function TagFormModal({
 }: TagFormModalProps) {
   const [label, setLabel] = useState("");
 
-  useEffect(() => {
-    if (!open) return;
+  // Reset the label each time the modal opens. React 19 prefers
+  // adjusting state during render over doing it in an effect.
+  const openKey = open ? `${mode}|${initialLabel}` : null;
+  const [prevOpenKey, setPrevOpenKey] = useState<string | null>(null);
+  if (openKey && openKey !== prevOpenKey) {
+    setPrevOpenKey(openKey);
     setLabel(mode === "edit" ? initialLabel : "");
-  }, [open, mode, initialLabel]);
+  } else if (!openKey && prevOpenKey !== null) {
+    setPrevOpenKey(null);
+  }
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

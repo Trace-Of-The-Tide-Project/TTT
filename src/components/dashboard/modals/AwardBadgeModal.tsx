@@ -41,12 +41,19 @@ export function AwardBadgeModal({ open, badge, onClose, onAward }: AwardBadgeMod
     };
   }, [open, handleKeyDown]);
 
-  useEffect(() => {
-    if (!open) return;
+  // Reset form fields each time the modal opens or the target badge
+  // changes. React 19 prefers adjusting state during render (with a
+  // previous-value tracker) over doing it in an effect.
+  const openKey = open ? (badge?.id ?? "open") : null;
+  const [prevOpenKey, setPrevOpenKey] = useState<string | null>(null);
+  if (openKey && openKey !== prevOpenKey) {
+    setPrevOpenKey(openKey);
     setUserQuery("");
     setDescription("");
     setCriteria("");
-  }, [open, badge?.id]);
+  } else if (!openKey && prevOpenKey !== null) {
+    setPrevOpenKey(null);
+  }
 
   if (!open || !badge) return null;
 

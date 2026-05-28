@@ -259,11 +259,15 @@ export function MessagingContent() {
     [inboxThreads, archivedThreads],
   );
 
-  useEffect(() => {
-    if (activeTab !== "inbox" && activeTab !== "archived") return;
+  // Auto-select the first thread when the inbox/archived list loads.
+  // Render-phase pattern instead of an effect.
+  if (
+    (activeTab === "inbox" || activeTab === "archived") &&
+    !selectedThreadId
+  ) {
     const list = activeTab === "inbox" ? inboxThreads : archivedThreads;
-    if (list.length > 0 && !selectedThreadId) setSelectedThreadId(list[0].id);
-  }, [activeTab, inboxThreads, archivedThreads, selectedThreadId]);
+    if (list.length > 0) setSelectedThreadId(list[0].id);
+  }
 
   const { data: rawTemplates = [] } = useMessageTemplates();
   const templates: MessageTemplate[] = useMemo(
