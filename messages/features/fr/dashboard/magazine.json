@@ -33,7 +33,7 @@
         "rejected": "Candidature rejetée.",
         "approveError": "Impossible d'approuver la candidature",
         "rejectError": "Impossible de rejeter la candidature",
-        "errorBody": "Le backend n'expose pas encore d'endpoint d'approbation/rejet pour les candidatures aux ateliers. Voir la documentation du projet."
+        "errorBody": "Veuillez réessayer."
       }
     },
     "encounterBookings": {
@@ -69,7 +69,7 @@
         "rejected": "Réservation rejetée.",
         "approveError": "Impossible d'approuver la réservation",
         "rejectError": "Impossible de rejeter la réservation",
-        "errorBody": "Le backend n'expose pas encore d'endpoint d'approbation/rejet pour les réservations de rencontres. Voir la documentation du projet."
+        "errorBody": "Veuillez réessayer."
       }
     },
     "residency": {

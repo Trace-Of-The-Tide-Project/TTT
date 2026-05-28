@@ -1,7 +1,17 @@
 # Backend Asks — Writing Room intake (workshops & encounters)
 
-> Scope: the admin **Writing Room** review screens under `/admin/*` (workshops, encounters). The residency review already works end-to-end. The two endpoints below are the only thing missing for workshops + encounters; once they exist, the frontend works with no further changes.
+> **STATUS (2026-05-28): ✅ shipped.** Backend added the four endpoints below. Frontend was repointed onto them in the same change.
 >
+> Shipped endpoints (final paths):
+> - `GET   /workshops/applications`
+> - `PATCH /workshops/applications/{id}`           `{status}`
+> - `GET   /encounters/bookings`
+> - `PATCH /encounters/bookings/{id}`              `{status}`
+>
+> (My initial draft of this doc proposed `/workshop-applications` and `/encounter-bookings`; the backend chose to nest them under their parent resource. Same shape, different prefix.)
+>
+> The rest of this doc is kept as a record of the request.
+
 > Backend reference: `https://ttt-api-619600614028.europe-west2.run.app/api/docs`.
 
 ---

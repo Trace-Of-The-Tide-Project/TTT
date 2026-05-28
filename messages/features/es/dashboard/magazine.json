@@ -33,7 +33,7 @@
         "rejected": "Solicitud rechazada.",
         "approveError": "No se pudo aprobar la solicitud",
         "rejectError": "No se pudo rechazar la solicitud",
-        "errorBody": "El backend aún no expone un endpoint de aprobación/rechazo para solicitudes de talleres. Consulta la documentación del proyecto."
+        "errorBody": "Inténtalo de nuevo."
       }
     },
     "encounterBookings": {
@@ -69,7 +69,7 @@
         "rejected": "Reserva rechazada.",
         "approveError": "No se pudo aprobar la reserva",
         "rejectError": "No se pudo rechazar la reserva",
-        "errorBody": "El backend aún no expone un endpoint de aprobación/rechazo para reservas de encuentros. Consulta la documentación del proyecto."
+        "errorBody": "Inténtalo de nuevo."
       }
     },
     "residency": {

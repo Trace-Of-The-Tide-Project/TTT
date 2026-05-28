@@ -95,13 +95,8 @@ export async function bookEncounter(
 }
 
 // ─── Admin: encounter bookings ──────────────────────────────────────
-// The backend does NOT currently expose any way to list bookings or
-// change their status. Both `getEncounter` and `listEncountersServer`
-// return only the schedule. The two functions below target the
-// *expected* endpoint shape the backend dev needs to add:
-//   GET   /encounter-bookings              → list all bookings
-//   PATCH /encounter-bookings/{id}         → { status: approved|rejected }
-// They 404 today; the UI catches the error and surfaces it as a toast.
+// Backend ships GET /encounters/bookings + PATCH /encounters/
+// bookings/{id} with {status}.
 
 export type EncounterBooking = {
   id: string;
@@ -112,14 +107,16 @@ export type EncounterBooking = {
   status: string;
   createdAt?: string;
   updatedAt?: string;
-  /** Attached client-side from the parent encounter for display. */
+  /** May be included by the backend list response; otherwise the
+   *  UI shows the encounter id. */
   encounter_title?: string;
 };
 
 export type EncounterBookingStatus = "approved" | "rejected" | "pending";
 
+/** GET /encounters/bookings — admin/editor. */
 export async function listAllEncounterBookings(): Promise<EncounterBooking[]> {
-  const { data } = await api.get<unknown>("/encounter-bookings");
+  const { data } = await api.get<unknown>("/encounters/bookings");
   const raw =
     data && typeof data === "object" && "data" in (data as object)
       ? (data as { data?: unknown }).data
@@ -127,9 +124,10 @@ export async function listAllEncounterBookings(): Promise<EncounterBooking[]> {
   return Array.isArray(raw) ? (raw as EncounterBooking[]) : [];
 }
 
+/** PATCH /encounters/bookings/{id} — admin/editor. */
 export async function updateEncounterBookingStatus(
   id: string,
   status: EncounterBookingStatus,
 ): Promise<void> {
-  await api.patch(`/encounter-bookings/${encodeURIComponent(id)}`, { status });
+  await api.patch(`/encounters/bookings/${encodeURIComponent(id)}`, { status });
 }

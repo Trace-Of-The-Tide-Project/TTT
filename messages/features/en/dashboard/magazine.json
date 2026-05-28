@@ -33,7 +33,7 @@
         "rejected": "Application rejected.",
         "approveError": "Could not approve the application",
         "rejectError": "Could not reject the application",
-        "errorBody": "The backend does not yet expose an approve/reject endpoint for workshop applications. See the project doc."
+        "errorBody": "Please try again."
       }
     },
     "encounterBookings": {
@@ -46,7 +46,7 @@
         "loading": "Loading bookings…",
         "empty": "No encounter bookings yet.",
         "noMatch": "No bookings match this filter.",
-        "loadError": "Could not load bookings — the backend endpoint for listing bookings doesn't exist yet.",
+        "loadError": "Could not load bookings.",
         "retry": "Try again",
         "review": "Review",
         "headers": { "primary": "Guest", "secondary": "Encounter", "date": "Date", "status": "Status" },
@@ -69,7 +69,7 @@
         "rejected": "Booking rejected.",
         "approveError": "Could not approve the booking",
         "rejectError": "Could not reject the booking",
-        "errorBody": "The backend does not yet expose an approve/reject endpoint for encounter bookings. See the project doc."
+        "errorBody": "Please try again."
       }
     },
     "residency": {
