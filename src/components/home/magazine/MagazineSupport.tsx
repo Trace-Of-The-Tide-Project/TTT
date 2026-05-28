@@ -77,11 +77,16 @@ export function MagazineSupport({ collaborations }: MagazineSupportProps) {
   // snap-back doesn't animate.
   const [animate, setAnimate] = useState(true);
 
-  // Reset active/position if the list size changes.
-  useEffect(() => {
+  // Reset active/position if the list size changes. React 19 prefers
+  // adjusting state during render (with a previous-value tracker) over
+  // doing it in an effect — the effect path triggers a cascading render
+  // and lints under react-hooks/set-state-in-effect.
+  const [prevTotal, setPrevTotal] = useState(totalCards);
+  if (prevTotal !== totalCards) {
+    setPrevTotal(totalCards);
     setActive((a) => (a >= totalCards ? 0 : a));
     setPosition((p) => (p >= totalCards || p < 0 ? 0 : p));
-  }, [totalCards]);
+  }
 
   const wrapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
