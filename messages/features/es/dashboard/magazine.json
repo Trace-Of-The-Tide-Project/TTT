@@ -1,0 +1,189 @@
+{
+  "Dashboard": {
+    "workshopApplications": {
+      "title": "Solicitudes de talleres",
+      "subtitle": "Revisa las solicitudes enviadas a tus talleres y apruébalas o recházalas.",
+      "tabs": { "all": "Todas", "pending": "Pendientes", "approved": "Aprobadas", "rejected": "Rechazadas" },
+      "statuses": { "pending": "Pendiente", "approved": "Aprobada", "rejected": "Rechazada", "draft": "Borrador" },
+      "list": {
+        "searchPlaceholder": "Buscar por nombre, correo, taller o experiencia…",
+        "loading": "Cargando solicitudes…",
+        "empty": "Aún no hay solicitudes de talleres.",
+        "noMatch": "Ninguna solicitud coincide con este filtro.",
+        "loadError": "No se pudieron cargar las solicitudes.",
+        "retry": "Reintentar",
+        "review": "Revisar",
+        "headers": { "primary": "Solicitante", "secondary": "Taller", "date": "Fecha", "status": "Estado" },
+        "pagination": "Mostrando {from}–{to} de {total}",
+        "previous": "Anterior",
+        "next": "Siguiente"
+      },
+      "detail": {
+        "close": "Cerrar",
+        "status": "Estado",
+        "workshop": "Taller",
+        "email": "Correo",
+        "experienceLevel": "Nivel de experiencia",
+        "approve": "Aprobar",
+        "reject": "Rechazar",
+        "alreadyHandled": "Esta solicitud ya ha sido gestionada."
+      },
+      "toast": {
+        "approved": "Solicitud aprobada.",
+        "rejected": "Solicitud rechazada.",
+        "approveError": "No se pudo aprobar la solicitud",
+        "rejectError": "No se pudo rechazar la solicitud",
+        "errorBody": "El backend aún no expone un endpoint de aprobación/rechazo para solicitudes de talleres. Consulta la documentación del proyecto."
+      }
+    },
+    "encounterBookings": {
+      "title": "Reservas de encuentros",
+      "subtitle": "Revisa las reservas hechas en tus encuentros y apruébalas o recházalas.",
+      "tabs": { "all": "Todas", "pending": "Pendientes", "approved": "Aprobadas", "rejected": "Rechazadas" },
+      "statuses": { "pending": "Pendiente", "approved": "Aprobada", "rejected": "Rechazada", "draft": "Borrador" },
+      "list": {
+        "searchPlaceholder": "Buscar por nombre, correo, encuentro o mensaje…",
+        "loading": "Cargando reservas…",
+        "empty": "Aún no hay reservas de encuentros.",
+        "noMatch": "Ninguna reserva coincide con este filtro.",
+        "loadError": "No se pudieron cargar las reservas — el endpoint de backend para listarlas aún no existe.",
+        "retry": "Reintentar",
+        "review": "Revisar",
+        "headers": { "primary": "Invitado", "secondary": "Encuentro", "date": "Fecha", "status": "Estado" },
+        "pagination": "Mostrando {from}–{to} de {total}",
+        "previous": "Anterior",
+        "next": "Siguiente"
+      },
+      "detail": {
+        "close": "Cerrar",
+        "status": "Estado",
+        "encounter": "Encuentro",
+        "email": "Correo",
+        "message": "Mensaje",
+        "approve": "Aprobar",
+        "reject": "Rechazar",
+        "alreadyHandled": "Esta reserva ya ha sido gestionada."
+      },
+      "toast": {
+        "approved": "Reserva aprobada.",
+        "rejected": "Reserva rechazada.",
+        "approveError": "No se pudo aprobar la reserva",
+        "rejectError": "No se pudo rechazar la reserva",
+        "errorBody": "El backend aún no expone un endpoint de aprobación/rechazo para reservas de encuentros. Consulta la documentación del proyecto."
+      }
+    },
+    "residency": {
+      "title": "Sala de escritura — Residencia",
+      "subtitle": "Revisa las solicitudes de residencia enviadas desde la Sala de escritura y apruébalas o recházalas.",
+      "tabs": {
+        "all": "Todas",
+        "pending": "Pendientes",
+        "approved": "Aprobadas",
+        "rejected": "Rechazadas"
+      },
+      "statuses": {
+        "pending": "Pendiente",
+        "approved": "Aprobada",
+        "rejected": "Rechazada"
+      },
+      "list": {
+        "searchPlaceholder": "Buscar por nombre, correo o proyecto…",
+        "loading": "Cargando solicitudes…",
+        "empty": "Aún no hay solicitudes de residencia.",
+        "noMatch": "Ninguna solicitud coincide con este filtro.",
+        "loadError": "No se pudieron cargar las solicitudes.",
+        "retry": "Reintentar",
+        "review": "Revisar",
+        "headers": {
+          "primary": "Solicitante",
+          "secondary": "Correo",
+          "date": "Fecha",
+          "status": "Estado"
+        },
+        "pagination": "Mostrando {from}–{to} de {total}",
+        "previous": "Anterior",
+        "next": "Siguiente"
+      },
+      "detail": {
+        "close": "Cerrar",
+        "email": "Correo",
+        "status": "Estado",
+        "whyJoin": "Por qué quiere unirse",
+        "workingOn": "En qué está trabajando",
+        "approve": "Aprobar",
+        "reject": "Rechazar",
+        "alreadyHandled": "Esta solicitud ya ha sido gestionada."
+      },
+      "toast": {
+        "approved": "Solicitud aprobada.",
+        "rejected": "Solicitud rechazada.",
+        "approveError": "No se pudo aprobar la solicitud",
+        "rejectError": "No se pudo rechazar la solicitud",
+        "errorBody": "Inténtalo de nuevo."
+      }
+    },
+    "magazineIssues": {
+      "title": "Números de la revista",
+      "subtitle": "Revisa las propuestas de números enviadas desde el sitio y apruébalas para publicarlas.",
+      "tabs": {
+        "all": "Todas",
+        "pending": "Pendientes",
+        "published": "Publicadas",
+        "archived": "Archivadas"
+      },
+      "statuses": {
+        "pending": "Pendiente",
+        "published": "Publicado",
+        "archived": "Archivado",
+        "rejected": "Rechazado",
+        "draft": "Borrador"
+      },
+      "kinds": {
+        "article": "Artículo",
+        "essay": "Ensayo",
+        "collection": "Colección",
+        "slides": "Diapositivas"
+      },
+      "list": {
+        "searchPlaceholder": "Buscar por título, remitente o descripción…",
+        "loading": "Cargando propuestas…",
+        "empty": "Aún no hay propuestas. Aparecen aquí cuando se envían desde el sitio.",
+        "noMatch": "Ninguna propuesta coincide con este filtro.",
+        "loadError": "No se pudieron cargar las propuestas.",
+        "retry": "Reintentar",
+        "review": "Revisar",
+        "headers": {
+          "title": "Título",
+          "submittedBy": "Enviado por",
+          "date": "Fecha",
+          "status": "Estado"
+        },
+        "pagination": "Mostrando {from}–{to} de {total}",
+        "previous": "Anterior",
+        "next": "Siguiente"
+      },
+      "detail": {
+        "close": "Cerrar",
+        "submitter": "Enviado por",
+        "email": "Correo",
+        "phone": "Teléfono",
+        "status": "Estado",
+        "description": "Propuesta",
+        "kindLabel": "Publicar como",
+        "approveHint": "Al aprobar se crea un número publicado en la página de la revista a partir de esta propuesta.",
+        "approve": "Aprobar y publicar",
+        "approving": "Publicando…",
+        "reject": "Rechazar",
+        "rejecting": "Rechazando…",
+        "alreadyHandled": "Esta propuesta ya ha sido gestionada."
+      },
+      "toast": {
+        "approved": "Número publicado.",
+        "approveError": "No se pudo aprobar la propuesta",
+        "rejected": "Propuesta rechazada.",
+        "rejectError": "No se pudo rechazar la propuesta",
+        "errorBody": "Inténtalo de nuevo."
+      }
+    }
+  }
+}

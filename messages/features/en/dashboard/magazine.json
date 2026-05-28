@@ -1,0 +1,189 @@
+{
+  "Dashboard": {
+    "workshopApplications": {
+      "title": "Workshop applications",
+      "subtitle": "Review applications submitted to your workshops and approve or reject them.",
+      "tabs": { "all": "All", "pending": "Pending", "approved": "Approved", "rejected": "Rejected" },
+      "statuses": { "pending": "Pending", "approved": "Approved", "rejected": "Rejected", "draft": "Draft" },
+      "list": {
+        "searchPlaceholder": "Search by name, email, workshop, or experience…",
+        "loading": "Loading applications…",
+        "empty": "No workshop applications yet.",
+        "noMatch": "No applications match this filter.",
+        "loadError": "Could not load applications.",
+        "retry": "Try again",
+        "review": "Review",
+        "headers": { "primary": "Applicant", "secondary": "Workshop", "date": "Date", "status": "Status" },
+        "pagination": "Showing {from}–{to} of {total}",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "detail": {
+        "close": "Close",
+        "status": "Status",
+        "workshop": "Workshop",
+        "email": "Email",
+        "experienceLevel": "Experience level",
+        "approve": "Approve",
+        "reject": "Reject",
+        "alreadyHandled": "This application has already been handled."
+      },
+      "toast": {
+        "approved": "Application approved.",
+        "rejected": "Application rejected.",
+        "approveError": "Could not approve the application",
+        "rejectError": "Could not reject the application",
+        "errorBody": "The backend does not yet expose an approve/reject endpoint for workshop applications. See the project doc."
+      }
+    },
+    "encounterBookings": {
+      "title": "Encounter bookings",
+      "subtitle": "Review bookings made on your encounters and approve or reject them.",
+      "tabs": { "all": "All", "pending": "Pending", "approved": "Approved", "rejected": "Rejected" },
+      "statuses": { "pending": "Pending", "approved": "Approved", "rejected": "Rejected", "draft": "Draft" },
+      "list": {
+        "searchPlaceholder": "Search by name, email, encounter, or message…",
+        "loading": "Loading bookings…",
+        "empty": "No encounter bookings yet.",
+        "noMatch": "No bookings match this filter.",
+        "loadError": "Could not load bookings — the backend endpoint for listing bookings doesn't exist yet.",
+        "retry": "Try again",
+        "review": "Review",
+        "headers": { "primary": "Guest", "secondary": "Encounter", "date": "Date", "status": "Status" },
+        "pagination": "Showing {from}–{to} of {total}",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "detail": {
+        "close": "Close",
+        "status": "Status",
+        "encounter": "Encounter",
+        "email": "Email",
+        "message": "Message",
+        "approve": "Approve",
+        "reject": "Reject",
+        "alreadyHandled": "This booking has already been handled."
+      },
+      "toast": {
+        "approved": "Booking approved.",
+        "rejected": "Booking rejected.",
+        "approveError": "Could not approve the booking",
+        "rejectError": "Could not reject the booking",
+        "errorBody": "The backend does not yet expose an approve/reject endpoint for encounter bookings. See the project doc."
+      }
+    },
+    "residency": {
+      "title": "Writing Room — Residency",
+      "subtitle": "Review residency applications submitted from the Writing Room and approve or reject them.",
+      "tabs": {
+        "all": "All",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "list": {
+        "searchPlaceholder": "Search by name, email, or project…",
+        "loading": "Loading applications…",
+        "empty": "No residency applications yet.",
+        "noMatch": "No applications match this filter.",
+        "loadError": "Could not load applications.",
+        "retry": "Try again",
+        "review": "Review",
+        "headers": {
+          "primary": "Applicant",
+          "secondary": "Email",
+          "date": "Date",
+          "status": "Status"
+        },
+        "pagination": "Showing {from}–{to} of {total}",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "detail": {
+        "close": "Close",
+        "email": "Email",
+        "status": "Status",
+        "whyJoin": "Why they want to join",
+        "workingOn": "What they're working on",
+        "approve": "Approve",
+        "reject": "Reject",
+        "alreadyHandled": "This application has already been handled."
+      },
+      "toast": {
+        "approved": "Application approved.",
+        "rejected": "Application rejected.",
+        "approveError": "Could not approve the application",
+        "rejectError": "Could not reject the application",
+        "errorBody": "Please try again."
+      }
+    },
+    "magazineIssues": {
+      "title": "Magazine Issues",
+      "subtitle": "Review issue proposals submitted from the site and approve them into published issues.",
+      "tabs": {
+        "all": "All",
+        "pending": "Pending",
+        "published": "Published",
+        "archived": "Archived"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "published": "Published",
+        "archived": "Archived",
+        "rejected": "Rejected",
+        "draft": "Draft"
+      },
+      "kinds": {
+        "article": "Article",
+        "essay": "Essay",
+        "collection": "Collection",
+        "slides": "Slides"
+      },
+      "list": {
+        "searchPlaceholder": "Search by title, submitter, or description…",
+        "loading": "Loading proposals…",
+        "empty": "No issue proposals yet. They appear here when submitted from the site.",
+        "noMatch": "No proposals match this filter.",
+        "loadError": "Could not load proposals.",
+        "retry": "Try again",
+        "review": "Review",
+        "headers": {
+          "title": "Title",
+          "submittedBy": "Submitted by",
+          "date": "Date",
+          "status": "Status"
+        },
+        "pagination": "Showing {from}–{to} of {total}",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "detail": {
+        "close": "Close",
+        "submitter": "Submitted by",
+        "email": "Email",
+        "phone": "Phone",
+        "status": "Status",
+        "description": "Proposal",
+        "kindLabel": "Publish as",
+        "approveHint": "Approving creates a published issue on the magazine page from this proposal.",
+        "approve": "Approve & publish",
+        "approving": "Publishing…",
+        "reject": "Reject",
+        "rejecting": "Rejecting…",
+        "alreadyHandled": "This proposal has already been handled."
+      },
+      "toast": {
+        "approved": "Issue published.",
+        "approveError": "Could not approve the proposal",
+        "rejected": "Proposal rejected.",
+        "rejectError": "Could not reject the proposal",
+        "errorBody": "Please try again."
+      }
+    }
+  }
+}

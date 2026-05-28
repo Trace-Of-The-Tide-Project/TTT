@@ -13,6 +13,7 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/admin-home.json`),
     import(`../../messages/features/${locale}/dashboard/users-management.json`),
     import(`../../messages/features/${locale}/dashboard/trips.json`),
+    import(`../../messages/features/${locale}/dashboard/magazine.json`),
     import(`../../messages/features/${locale}/dashboard/open-call-public.json`),
     import(`../../messages/features/${locale}/dashboard/application-form.json`),
     import(`../../messages/features/${locale}/dashboard/engagements.json`),

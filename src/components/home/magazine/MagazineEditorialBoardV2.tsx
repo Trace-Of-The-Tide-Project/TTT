@@ -217,7 +217,14 @@ function Carousel({
   };
 
   return (
-    <div className="relative w-full">
+    // Carousel mechanics are pinned to LTR: the row is scrolled with
+    // scrollBy({ left }) and the prev/next arrows + ghost gradients are
+    // positioned with physical left/right offsets. Under RTL the flex
+    // row reverses and scrollLeft inverts, so the arrows scroll the
+    // wrong way and cards shift. dir="ltr" keeps the scroll + arrows
+    // consistent; the card content is centre-aligned so Arabic still
+    // renders correctly. No-op on LTR locales.
+    <div dir="ltr" className="relative w-full">
       {/* Side ghost gradients — same `Content Grid Filler.png` strip
           the writing-room "Discover Featured Writing" row uses, so
           the next/previous hexagon peeks in under a matching fade. */}

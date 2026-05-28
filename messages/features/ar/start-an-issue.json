@@ -37,6 +37,10 @@
       "submit": "إرسال المقترح",
       "submitting": "جارٍ الإرسال…",
       "submitted": "تم إرسال المقترح",
+      "validationError": "يرجى إضافة عنوان العدد وبريدك الإلكتروني ووصف.",
+      "submittedToast": "تم إرسال مقترح العدد للمراجعة.",
+      "submitError": "تعذّر إرسال مقترحك",
+      "submitErrorBody": "يرجى المحاولة مجددًا.",
       "backToHomeLead": "العودة إلى",
       "backToHomeLink": "الصفحة الرئيسية"
     },

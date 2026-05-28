@@ -1,6 +1,7 @@
 import {
   LayoutDashboardIcon,
   FileTextIcon,
+  BookIcon,
   PenLineIcon,
   HeartHandshakeIcon,
   UsersIcon,
@@ -112,6 +113,39 @@ export const adminConfig: DashboardConfig = {
               labelKey: "sidebar.visualEditor",
               href: "/admin/editor",
               icon: CodeIcon,
+            },
+          ],
+        },
+        {
+          kind: "group",
+          groupId: "magazine",
+          labelKey: "sidebar.magazine",
+          icon: BookIcon,
+          defaultOpen: true,
+          items: [
+            {
+              kind: "item",
+              labelKey: "sidebar.magazineIssues",
+              href: "/admin/magazine-issues",
+              icon: FileTextIcon,
+            },
+            {
+              kind: "item",
+              labelKey: "sidebar.residency",
+              href: "/admin/residency",
+              icon: PenLineIcon,
+            },
+            {
+              kind: "item",
+              labelKey: "sidebar.workshopApplications",
+              href: "/admin/workshops",
+              icon: PenLineIcon,
+            },
+            {
+              kind: "item",
+              labelKey: "sidebar.encounterBookings",
+              href: "/admin/encounters",
+              icon: PenLineIcon,
             },
           ],
         },

@@ -183,14 +183,16 @@ export async function getNotifications(params?: GetNotificationsParams): Promise
   return normalizeNotificationsPayload(data);
 }
 
-/** PATCH /notifications/:id — mark a single notification as read. */
+/** PATCH /notifications/:id/read — mark a single notification as read. */
 export async function markNotificationRead(id: string): Promise<void> {
-  await api.patch(`/notifications/${id}`, { status: "read" });
+  await api.patch(`/notifications/${encodeURIComponent(id)}/read`);
 }
 
-/** PATCH /notifications/mark-all-read — mark all notifications as read. */
-export async function markAllNotificationsRead(): Promise<void> {
-  await api.patch("/notifications/mark-all-read");
+/** PATCH /notifications/user/:userId/read-all — mark all as read. */
+export async function markAllNotificationsRead(userId: string): Promise<void> {
+  await api.patch(
+    `/notifications/user/${encodeURIComponent(userId)}/read-all`,
+  );
 }
 
 /** Keep only notifications owned by the given user (safety check on top of API). */

@@ -11,12 +11,30 @@ export type WorkshopListItem = {
   status?: "draft" | "published" | null;
 };
 
+/** A single application to a workshop (embedded in `GET /workshops/{id}`). */
+export type WorkshopApplication = {
+  id: string;
+  workshop_id?: string | null;
+  name: string;
+  email: string;
+  experience_level?: string | null;
+  status: string;
+  createdAt?: string;
+  updatedAt?: string;
+  /** Attached client-side from the parent workshop for display. */
+  workshop_title?: string;
+};
+
 /** Full workshop detail (`GET /workshops/{id}`). */
 export type WorkshopDetail = WorkshopListItem & {
   description?: string | null;
   what_youll_do?: string[] | null;
   what_youll_gain?: string[] | null;
+  /** Applications are embedded in the detail response. */
+  applications?: WorkshopApplication[] | null;
 };
+
+export type WorkshopApplicationStatus = "approved" | "rejected" | "pending";
 
 export type ApplyToWorkshopPayload = {
   name: string;
@@ -80,4 +98,67 @@ export async function applyToWorkshop(
     payload,
   );
   return data ?? {};
+}
+
+// ─── Admin: workshop applications ───────────────────────────────────
+// The backend currently exposes applications only nested inside
+// `GET /workshops/{id}`. There's no dedicated list endpoint and no
+// approve/reject route, so for now the admin screen aggregates the
+// nested arrays from `/workshops/admin` (drafts included). The
+// `updateWorkshopApplicationStatus` helper below targets the *expected*
+// endpoint name (`PATCH /workshop-applications/{id}`) so once the
+// backend adds it, no UI changes are needed.
+
+export async function listAllWorkshopsForAdmin(): Promise<WorkshopDetail[]> {
+  const { data } = await api.get<unknown>("/workshops/admin");
+  const raw = data && typeof data === "object" && "data" in (data as object)
+    ? (data as { data?: unknown }).data
+    : data;
+  return Array.isArray(raw) ? (raw as WorkshopDetail[]) : [];
+}
+
+/**
+ * Fetch every workshop's detail in parallel and flatten the embedded
+ * `applications` arrays. Each entry is augmented with `workshop_title`
+ * so the admin list can show which workshop the applicant chose.
+ */
+export async function listAllWorkshopApplications(): Promise<
+  WorkshopApplication[]
+> {
+  const workshops = await listAllWorkshopsForAdmin();
+  const details = await Promise.all(
+    workshops.map((w) =>
+      getWorkshop(w.id).catch(() => null as WorkshopDetail | null),
+    ),
+  );
+  const out: WorkshopApplication[] = [];
+  for (const w of details) {
+    if (!w?.applications) continue;
+    for (const a of w.applications) {
+      out.push({ ...a, workshop_id: a.workshop_id ?? w.id, workshop_title: w.title });
+    }
+  }
+  // Newest first.
+  out.sort(
+    (a, b) =>
+      new Date(b.createdAt ?? 0).getTime() -
+      new Date(a.createdAt ?? 0).getTime(),
+  );
+  return out;
+}
+
+/**
+ * Set a workshop-application status. Targets the expected backend
+ * endpoint `PATCH /workshop-applications/{id}` with `{status}`. Until
+ * the backend ships that route this throws (caught by the mutation,
+ * surfaced as a toast) — see the project doc for the exact request
+ * the backend dev needs to implement.
+ */
+export async function updateWorkshopApplicationStatus(
+  id: string,
+  status: WorkshopApplicationStatus,
+): Promise<void> {
+  await api.patch(`/workshop-applications/${encodeURIComponent(id)}`, {
+    status,
+  });
 }

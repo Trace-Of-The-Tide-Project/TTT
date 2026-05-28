@@ -60,6 +60,74 @@ export async function getMagazineIssues(
   }
 }
 
+/**
+ * Create / update payload. The backend's Swagger spec does not declare
+ * a request schema for `POST /magazine-issues`, so we send the same
+ * snake_case fields the read model exposes; unknown fields are ignored
+ * server-side. `title` is the only hard requirement.
+ */
+export type MagazineIssueInput = {
+  title: string;
+  slug?: string;
+  kind?: string | null;
+  status?: string | null;
+  cover_image?: string | null;
+  excerpt?: string | null;
+  description?: string | null;
+  page_count?: number | null;
+  edition?: string | null;
+  category?: string | null;
+  magazine_id?: string | null;
+  published_at?: string | null;
+};
+
+function unwrapOne(raw: unknown): MagazineIssue | null {
+  if (!raw || typeof raw !== "object") return null;
+  if ("data" in (raw as object)) {
+    return (raw as { data?: MagazineIssue }).data ?? null;
+  }
+  return raw as MagazineIssue;
+}
+
+/** Admin — fetch a single issue by id. */
+export async function getMagazineIssue(
+  id: string,
+): Promise<MagazineIssue | null> {
+  try {
+    const { data } = await api.get<unknown>(
+      `/magazine-issues/${encodeURIComponent(id)}`,
+    );
+    return unwrapOne(data);
+  } catch {
+    return null;
+  }
+}
+
+/** Admin — create an issue. POST /magazine-issues */
+export async function createMagazineIssue(
+  payload: MagazineIssueInput,
+): Promise<MagazineIssue | null> {
+  const { data } = await api.post<unknown>("/magazine-issues", payload);
+  return unwrapOne(data);
+}
+
+/** Admin — update an issue. PATCH /magazine-issues/{id} */
+export async function updateMagazineIssue(
+  id: string,
+  payload: Partial<MagazineIssueInput>,
+): Promise<MagazineIssue | null> {
+  const { data } = await api.patch<unknown>(
+    `/magazine-issues/${encodeURIComponent(id)}`,
+    payload,
+  );
+  return unwrapOne(data);
+}
+
+/** Admin — delete an issue. DELETE /magazine-issues/{id} */
+export async function deleteMagazineIssue(id: string): Promise<void> {
+  await api.delete(`/magazine-issues/${encodeURIComponent(id)}`);
+}
+
 export async function getMagazineIssueBySlug(
   slug: string,
 ): Promise<MagazineIssue | null> {

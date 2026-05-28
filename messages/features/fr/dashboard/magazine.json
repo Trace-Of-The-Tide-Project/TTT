@@ -1,0 +1,189 @@
+{
+  "Dashboard": {
+    "workshopApplications": {
+      "title": "Candidatures aux ateliers",
+      "subtitle": "Examinez les candidatures envoyées à vos ateliers et approuvez-les ou rejetez-les.",
+      "tabs": { "all": "Toutes", "pending": "En attente", "approved": "Approuvées", "rejected": "Rejetées" },
+      "statuses": { "pending": "En attente", "approved": "Approuvée", "rejected": "Rejetée", "draft": "Brouillon" },
+      "list": {
+        "searchPlaceholder": "Rechercher par nom, e-mail, atelier ou expérience…",
+        "loading": "Chargement des candidatures…",
+        "empty": "Aucune candidature aux ateliers pour l'instant.",
+        "noMatch": "Aucune candidature ne correspond à ce filtre.",
+        "loadError": "Impossible de charger les candidatures.",
+        "retry": "Réessayer",
+        "review": "Examiner",
+        "headers": { "primary": "Candidat", "secondary": "Atelier", "date": "Date", "status": "Statut" },
+        "pagination": "Affichage de {from} à {to} sur {total}",
+        "previous": "Précédent",
+        "next": "Suivant"
+      },
+      "detail": {
+        "close": "Fermer",
+        "status": "Statut",
+        "workshop": "Atelier",
+        "email": "E-mail",
+        "experienceLevel": "Niveau d'expérience",
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "alreadyHandled": "Cette candidature a déjà été traitée."
+      },
+      "toast": {
+        "approved": "Candidature approuvée.",
+        "rejected": "Candidature rejetée.",
+        "approveError": "Impossible d'approuver la candidature",
+        "rejectError": "Impossible de rejeter la candidature",
+        "errorBody": "Le backend n'expose pas encore d'endpoint d'approbation/rejet pour les candidatures aux ateliers. Voir la documentation du projet."
+      }
+    },
+    "encounterBookings": {
+      "title": "Réservations de rencontres",
+      "subtitle": "Examinez les réservations faites sur vos rencontres et approuvez-les ou rejetez-les.",
+      "tabs": { "all": "Toutes", "pending": "En attente", "approved": "Approuvées", "rejected": "Rejetées" },
+      "statuses": { "pending": "En attente", "approved": "Approuvée", "rejected": "Rejetée", "draft": "Brouillon" },
+      "list": {
+        "searchPlaceholder": "Rechercher par nom, e-mail, rencontre ou message…",
+        "loading": "Chargement des réservations…",
+        "empty": "Aucune réservation de rencontre pour l'instant.",
+        "noMatch": "Aucune réservation ne correspond à ce filtre.",
+        "loadError": "Impossible de charger les réservations — l'endpoint backend pour lister les réservations n'existe pas encore.",
+        "retry": "Réessayer",
+        "review": "Examiner",
+        "headers": { "primary": "Invité", "secondary": "Rencontre", "date": "Date", "status": "Statut" },
+        "pagination": "Affichage de {from} à {to} sur {total}",
+        "previous": "Précédent",
+        "next": "Suivant"
+      },
+      "detail": {
+        "close": "Fermer",
+        "status": "Statut",
+        "encounter": "Rencontre",
+        "email": "E-mail",
+        "message": "Message",
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "alreadyHandled": "Cette réservation a déjà été traitée."
+      },
+      "toast": {
+        "approved": "Réservation approuvée.",
+        "rejected": "Réservation rejetée.",
+        "approveError": "Impossible d'approuver la réservation",
+        "rejectError": "Impossible de rejeter la réservation",
+        "errorBody": "Le backend n'expose pas encore d'endpoint d'approbation/rejet pour les réservations de rencontres. Voir la documentation du projet."
+      }
+    },
+    "residency": {
+      "title": "Salle d'écriture — Résidence",
+      "subtitle": "Examinez les candidatures de résidence soumises depuis la Salle d'écriture et approuvez-les ou rejetez-les.",
+      "tabs": {
+        "all": "Toutes",
+        "pending": "En attente",
+        "approved": "Approuvées",
+        "rejected": "Rejetées"
+      },
+      "statuses": {
+        "pending": "En attente",
+        "approved": "Approuvée",
+        "rejected": "Rejetée"
+      },
+      "list": {
+        "searchPlaceholder": "Rechercher par nom, e-mail ou projet…",
+        "loading": "Chargement des candidatures…",
+        "empty": "Aucune candidature de résidence pour l'instant.",
+        "noMatch": "Aucune candidature ne correspond à ce filtre.",
+        "loadError": "Impossible de charger les candidatures.",
+        "retry": "Réessayer",
+        "review": "Examiner",
+        "headers": {
+          "primary": "Candidat",
+          "secondary": "E-mail",
+          "date": "Date",
+          "status": "Statut"
+        },
+        "pagination": "Affichage de {from} à {to} sur {total}",
+        "previous": "Précédent",
+        "next": "Suivant"
+      },
+      "detail": {
+        "close": "Fermer",
+        "email": "E-mail",
+        "status": "Statut",
+        "whyJoin": "Pourquoi rejoindre",
+        "workingOn": "Projet en cours",
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "alreadyHandled": "Cette candidature a déjà été traitée."
+      },
+      "toast": {
+        "approved": "Candidature approuvée.",
+        "rejected": "Candidature rejetée.",
+        "approveError": "Impossible d'approuver la candidature",
+        "rejectError": "Impossible de rejeter la candidature",
+        "errorBody": "Veuillez réessayer."
+      }
+    },
+    "magazineIssues": {
+      "title": "Numéros du magazine",
+      "subtitle": "Examinez les propositions de numéros soumises depuis le site et approuvez-les pour publication.",
+      "tabs": {
+        "all": "Tous",
+        "pending": "En attente",
+        "published": "Publié",
+        "archived": "Archivé"
+      },
+      "statuses": {
+        "pending": "En attente",
+        "published": "Publié",
+        "archived": "Archivé",
+        "rejected": "Rejeté",
+        "draft": "Brouillon"
+      },
+      "kinds": {
+        "article": "Article",
+        "essay": "Essai",
+        "collection": "Collection",
+        "slides": "Diapositives"
+      },
+      "list": {
+        "searchPlaceholder": "Rechercher par titre, auteur ou description…",
+        "loading": "Chargement des propositions…",
+        "empty": "Aucune proposition pour l’instant. Elles apparaissent ici lorsqu’elles sont soumises depuis le site.",
+        "noMatch": "Aucune proposition ne correspond à ce filtre.",
+        "loadError": "Impossible de charger les propositions.",
+        "retry": "Réessayer",
+        "review": "Examiner",
+        "headers": {
+          "title": "Titre",
+          "submittedBy": "Soumis par",
+          "date": "Date",
+          "status": "Statut"
+        },
+        "pagination": "Affichage de {from} à {to} sur {total}",
+        "previous": "Précédent",
+        "next": "Suivant"
+      },
+      "detail": {
+        "close": "Fermer",
+        "submitter": "Soumis par",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "status": "Statut",
+        "description": "Proposition",
+        "kindLabel": "Publier en tant que",
+        "approveHint": "L’approbation crée un numéro publié sur la page du magazine à partir de cette proposition.",
+        "approve": "Approuver et publier",
+        "approving": "Publication…",
+        "reject": "Rejeter",
+        "rejecting": "Rejet…",
+        "alreadyHandled": "Cette proposition a déjà été traitée."
+      },
+      "toast": {
+        "approved": "Numéro publié.",
+        "approveError": "Impossible d’approuver la proposition",
+        "rejected": "Proposition rejetée.",
+        "rejectError": "Impossible de rejeter la proposition",
+        "errorBody": "Veuillez réessayer."
+      }
+    }
+  }
+}
