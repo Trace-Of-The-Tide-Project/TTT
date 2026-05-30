@@ -191,6 +191,15 @@
       "loading": "جارٍ تحميل المحرر…",
       "publish": "نشر الكل",
       "publishing": "جارٍ النشر…",
+      "saveAndPublish": "حفظ ونشر",
+      "unsavedChanges": "تغييرات غير محفوظة",
+      "toast": {
+        "saved": "تم حفظ القسم.",
+        "saveError": "تعذّر حفظ القسم",
+        "published": "تم نشر صفحة المجلة.",
+        "publishError": "تعذّر نشر الصفحة",
+        "errorBody": "يرجى المحاولة مجددًا."
+      },
       "sectionsHeading": "الأقسام",
       "comingSoonChip": "قريبًا",
       "comingSoonBody": "نموذج هذا القسم قادم لاحقًا. استخدم أيقونة العين لإظهاره أو إخفائه.",

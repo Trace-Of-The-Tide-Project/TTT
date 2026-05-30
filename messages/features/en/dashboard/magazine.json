@@ -191,6 +191,15 @@
       "loading": "Loading editor…",
       "publish": "Publish all",
       "publishing": "Publishing…",
+      "saveAndPublish": "Save & Publish",
+      "unsavedChanges": "Unsaved changes",
+      "toast": {
+        "saved": "Section saved.",
+        "saveError": "Could not save the section",
+        "published": "Magazine page published.",
+        "publishError": "Could not publish the page",
+        "errorBody": "Please try again."
+      },
       "sectionsHeading": "Sections",
       "comingSoonChip": "Soon",
       "comingSoonBody": "Form for this section is coming next. Use the eye icon to show or hide it.",

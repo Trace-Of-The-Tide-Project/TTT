@@ -14,6 +14,8 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { formatApiError } from "@/lib/api/error-message";
 import {
   EyeIcon,
   RefreshCwIcon,
@@ -90,6 +92,16 @@ export function MagazinePageEditorContent() {
   const [activeSection, setActiveSection] =
     useState<MagazineSectionKey>("hero");
 
+  // The active editor reports its dirty state + a save closure up
+  // here so the global Publish button can save unsaved work before
+  // flipping the page status. Without this users would click Publish
+  // expecting it to commit their typed changes, when actually it only
+  // changes the page-level status.
+  const [activeDraftState, setActiveDraftState] = useState<{
+    isDirty: boolean;
+    save: () => Promise<void>;
+  } | null>(null);
+
   const sectionsByKey = useMemo(() => {
     const map = new Map<MagazineSectionKey, CmsSection>();
     if (!page) return map;
@@ -119,14 +131,43 @@ export function MagazinePageEditorContent() {
           </h1>
           <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
         </div>
-        <button
-          type="button"
-          onClick={() => publishPage.mutate(page.id)}
-          disabled={publishPage.isPending}
-          className="rounded-lg border border-[#C9A96E] bg-[#C9A96E] px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
-        >
-          {publishPage.isPending ? t("publishing") : t("publish")}
-        </button>
+        <div className="flex items-center gap-3">
+          {activeDraftState?.isDirty ? (
+            <span className="flex items-center gap-1.5 text-xs font-medium text-[#C9A96E]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#C9A96E]" />
+              {t("unsavedChanges")}
+            </span>
+          ) : null}
+          <button
+            type="button"
+            onClick={async () => {
+              // Save unsaved draft in the active section first so the
+              // Publish click can't drop work the user typed.
+              if (activeDraftState?.isDirty) {
+                try {
+                  await activeDraftState.save();
+                } catch {
+                  return; // save's own toast already surfaced the error
+                }
+              }
+              publishPage.mutate(page.id, {
+                onSuccess: () => toast.success(t("toast.published")),
+                onError: (err) =>
+                  toast.error(t("toast.publishError"), {
+                    description: formatApiError(err, t("toast.errorBody")),
+                  }),
+              });
+            }}
+            disabled={publishPage.isPending}
+            className="rounded-lg border border-[#C9A96E] bg-[#C9A96E] px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+          >
+            {publishPage.isPending
+              ? t("publishing")
+              : activeDraftState?.isDirty
+                ? t("saveAndPublish")
+                : t("publish")}
+          </button>
+        </div>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
@@ -202,16 +243,26 @@ export function MagazinePageEditorContent() {
                 </div>
               );
             }
-            const save = (configJson: string) =>
-              updateSection.mutate({
-                pageId: page.id,
-                sectionId: activeRecord.id,
-                data: { config: configJson },
-              });
-            const props = {
+            const save = async (configJson: string) => {
+              try {
+                await updateSection.mutateAsync({
+                  pageId: page.id,
+                  sectionId: activeRecord.id,
+                  data: { config: configJson },
+                });
+                toast.success(t("toast.saved"));
+              } catch (err) {
+                toast.error(t("toast.saveError"), {
+                  description: formatApiError(err, t("toast.errorBody")),
+                });
+                throw err;
+              }
+            };
+            const props: EditorProps = {
               section: activeRecord,
               onSave: save,
               isSaving: updateSection.isPending,
+              registerDraftState: setActiveDraftState,
             };
             switch (activeSection) {
               case "hero":
@@ -238,11 +289,21 @@ export function MagazinePageEditorContent() {
 
 type EditorProps = {
   section: CmsSection;
-  onSave: (configJson: string) => void;
+  onSave: (configJson: string) => Promise<void>;
   isSaving: boolean;
+  /** Reports the active editor's dirty + save closure to the parent so
+   * the global Publish button can save unsaved work first. */
+  registerDraftState: (
+    state: { isDirty: boolean; save: () => Promise<void> } | null,
+  ) => void;
 };
 
-function HeroEditor({ section, onSave, isSaving }: EditorProps) {
+function HeroEditor({
+  section,
+  onSave,
+  isSaving,
+  registerDraftState,
+}: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.hero");
 
   const {
@@ -255,6 +316,7 @@ function HeroEditor({ section, onSave, isSaving }: EditorProps) {
     isDirty,
     reset,
   } = useLocalizedDraft<HeroLocaleFields, HeroConfig>(section, parseHeroConfig);
+  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
 
   const isRtl = RTL_LOCALES.has(activeLocale);
   const setSharedField = (
@@ -643,6 +705,40 @@ function FieldGroup({
   );
 }
 
+/**
+ * Effect that publishes the current editor's dirty flag + save closure
+ * up to the parent, so the global Publish button can flush unsaved
+ * work before flipping the page status. Clears the registration on
+ * unmount so navigating away leaves no stale closure behind.
+ */
+function useRegisterDraftState(
+  register: EditorProps["registerDraftState"],
+  isDirty: boolean,
+  draft: unknown,
+  onSave: (configJson: string) => Promise<void>,
+) {
+  // Latest values held in refs so the registered save closure always
+  // sees the current draft without re-registering on every keystroke.
+  // React 19's refs rule disallows mutation during render, so we
+  // assign inside effects.
+  const draftRef = useRef(draft);
+  const onSaveRef = useRef(onSave);
+  useEffect(() => {
+    draftRef.current = draft;
+  });
+  useEffect(() => {
+    onSaveRef.current = onSave;
+  });
+
+  useEffect(() => {
+    register({
+      isDirty,
+      save: () => onSaveRef.current(JSON.stringify(draftRef.current)),
+    });
+    return () => register(null);
+  }, [register, isDirty]);
+}
+
 // ─── Generic locale-keyed editor hook ──────────────────────────────
 
 function useLocalizedDraft<T extends object, C extends { copy: Record<string, T> }>(
@@ -693,7 +789,12 @@ function useLocalizedDraft<T extends object, C extends { copy: Record<string, T>
 
 // ─── Manifesto editor ──────────────────────────────────────────────
 
-function ManifestoEditor({ section, onSave, isSaving }: EditorProps) {
+function ManifestoEditor({
+  section,
+  onSave,
+  isSaving,
+  registerDraftState,
+}: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.manifesto");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
   const {
@@ -709,6 +810,7 @@ function ManifestoEditor({ section, onSave, isSaving }: EditorProps) {
     section,
     parseManifestoConfig,
   );
+  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
   const isRtl = RTL_LOCALES.has(activeLocale);
 
   return (
@@ -825,7 +927,12 @@ function ManifestoEditor({ section, onSave, isSaving }: EditorProps) {
 
 // ─── Founder quote editor ──────────────────────────────────────────
 
-function FounderQuoteEditor({ section, onSave, isSaving }: EditorProps) {
+function FounderQuoteEditor({
+  section,
+  onSave,
+  isSaving,
+  registerDraftState,
+}: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.founderQuote");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
   const {
@@ -841,6 +948,7 @@ function FounderQuoteEditor({ section, onSave, isSaving }: EditorProps) {
     section,
     parseFounderConfig,
   );
+  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
   const isRtl = RTL_LOCALES.has(activeLocale);
 
   return (
@@ -915,7 +1023,12 @@ function FounderQuoteEditor({ section, onSave, isSaving }: EditorProps) {
 
 // ─── Newsletter copy editor ────────────────────────────────────────
 
-function NewsletterCopyEditor({ section, onSave, isSaving }: EditorProps) {
+function NewsletterCopyEditor({
+  section,
+  onSave,
+  isSaving,
+  registerDraftState,
+}: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.newsletterCopy");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
   const {
@@ -930,6 +1043,7 @@ function NewsletterCopyEditor({ section, onSave, isSaving }: EditorProps) {
     section,
     parseNewsletterConfig,
   );
+  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
   const isRtl = RTL_LOCALES.has(activeLocale);
 
   return (
@@ -996,7 +1110,12 @@ const PREVIEW_COLLABS_PLACEHOLDER = [
   },
 ];
 
-function SupportEditor({ section, onSave, isSaving }: EditorProps) {
+function SupportEditor({
+  section,
+  onSave,
+  isSaving,
+  registerDraftState,
+}: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.support");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
   const {
@@ -1011,6 +1130,7 @@ function SupportEditor({ section, onSave, isSaving }: EditorProps) {
     section,
     parseSupportConfig,
   );
+  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
   const isRtl = RTL_LOCALES.has(activeLocale);
 
   return (

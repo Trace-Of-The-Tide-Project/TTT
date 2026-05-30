@@ -36,8 +36,29 @@ type MagazineHeroProps = {
  * happens whenever you try to absolute-position 3 stacked elements
  * onto a 111px-tall banner.
  */
+const DEFAULT_ARTWORK = "/images/home/magazine-thumbnail.svg";
+
+/** Treat any value that isn't a local path or http(s) URL as invalid,
+ * since Next/Image will throw `Failed to construct URL`. Falls back to
+ * the bundled default. */
+function safeArtwork(src: string | undefined): {
+  src: string;
+  unoptimized: boolean;
+} {
+  const value = src?.trim();
+  if (!value) return { src: DEFAULT_ARTWORK, unoptimized: false };
+  const ok =
+    value.startsWith("/") ||
+    value.startsWith("http://") ||
+    value.startsWith("https://");
+  if (!ok) return { src: DEFAULT_ARTWORK, unoptimized: false };
+  // External URLs use unoptimized so the Next loader doesn't gate the
+  // hostname; local paths can be optimized normally.
+  return { src: value, unoptimized: !value.startsWith("/") };
+}
+
 export function MagazineHero({
-  artwork = "/images/home/magazine-thumbnail.svg",
+  artwork,
   title,
   subtitle,
   primaryCtaLabel,
@@ -46,6 +67,8 @@ export function MagazineHero({
   secondaryHref = "/magazine#newsletter-heading",
 }: MagazineHeroProps) {
   const t = useTranslations("Home.magazine.hero");
+  const { src: artworkSrc, unoptimized: artworkUnoptimized } =
+    safeArtwork(artwork);
 
   return (
     <section className="relative w-full px-4 pb-10 pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:px-8 md:pb-20 md:pt-32">
@@ -56,13 +79,14 @@ export function MagazineHero({
           style={{ aspectRatio: "1392 / 483" }}
         >
           <Image
-            src={artwork}
+            src={artworkSrc}
             alt={t("imageAlt")}
             fill
             priority
             sizes="(min-width: 1392px) 1392px, 100vw"
             className="select-none object-cover"
             draggable={false}
+            unoptimized={artworkUnoptimized}
           />
 
           {/* Content overlay — only enabled at lg+ where the artwork is

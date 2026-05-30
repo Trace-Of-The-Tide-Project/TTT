@@ -169,9 +169,32 @@ export function findSection(
   );
 }
 
+/**
+ * The CMS API returns `config` as a JSON-encoded **string** (see the
+ * UpdatePageSectionDto in the backend OpenAPI). Older code paths
+ * sometimes also pre-parsed it into an object. Be tolerant of both.
+ */
+function unwrapConfig(
+  section: CmsSection | undefined,
+): Record<string, unknown> | null {
+  const raw = section?.config;
+  if (raw == null) return null;
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object"
+        ? (parsed as Record<string, unknown>)
+        : null;
+    } catch {
+      return null;
+    }
+  }
+  return raw as Record<string, unknown>;
+}
+
 export function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
-  if (!section?.config) return EMPTY_HERO_CONFIG;
-  const cfg = section.config as Record<string, unknown>;
+  const cfg = unwrapConfig(section);
+  if (!cfg) return EMPTY_HERO_CONFIG;
   const copyRaw = (cfg.copy as Record<string, unknown>) ?? {};
   const copy: Localized<HeroLocaleFields> = {};
   for (const loc of SUPPORTED_LOCALES) {
@@ -213,8 +236,8 @@ function parseLocaleKeyed<T>(
   section: CmsSection | undefined,
   empty: { copy: Localized<T> },
 ): { copy: Localized<T> } {
-  if (!section?.config) return empty;
-  const cfg = section.config as Record<string, unknown>;
+  const cfg = unwrapConfig(section);
+  if (!cfg) return empty;
   const copyRaw = (cfg.copy as Record<string, unknown>) ?? {};
   const copy: Localized<T> = {};
   for (const loc of SUPPORTED_LOCALES) {
@@ -231,7 +254,7 @@ export function parseManifestoConfig(
     section,
     EMPTY_MANIFESTO_CONFIG,
   );
-  const cfg = (section?.config as Record<string, unknown> | undefined) ?? {};
+  const cfg = unwrapConfig(section) ?? {};
   return {
     copy: base.copy,
     banner: typeof cfg.banner === "string" ? cfg.banner : undefined,
@@ -245,7 +268,7 @@ export function parseFounderConfig(
     section,
     EMPTY_FOUNDER_CONFIG,
   );
-  const cfg = (section?.config as Record<string, unknown> | undefined) ?? {};
+  const cfg = unwrapConfig(section) ?? {};
   return {
     copy: base.copy,
     avatar: typeof cfg.avatar === "string" ? cfg.avatar : undefined,

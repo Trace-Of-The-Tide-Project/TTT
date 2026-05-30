@@ -265,6 +265,9 @@ const EMPTY_CMS_COPY: MagazineCmsCopy = {
 };
 
 async function fetchMagazineCmsCopy(): Promise<MagazineCmsCopy> {
+  // GET /cms/pages/slug/{slug} is documented as public (no security in
+  // OpenAPI). serverGet swallows failures so the page falls back to
+  // i18n + legacy /magazines record on backend errors.
   const page = await serverGet<CmsPage | { data: CmsPage }>(
     `/cms/pages/slug/${MAGAZINE_PAGE_SLUG}`,
   );

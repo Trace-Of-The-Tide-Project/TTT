@@ -191,6 +191,15 @@
       "loading": "Chargement de l’éditeur…",
       "publish": "Tout publier",
       "publishing": "Publication…",
+      "saveAndPublish": "Enregistrer & publier",
+      "unsavedChanges": "Modifications non enregistrées",
+      "toast": {
+        "saved": "Section enregistrée.",
+        "saveError": "Impossible d’enregistrer la section",
+        "published": "Page Magazine publiée.",
+        "publishError": "Impossible de publier la page",
+        "errorBody": "Veuillez réessayer."
+      },
       "sectionsHeading": "Sections",
       "comingSoonChip": "Bientôt",
       "comingSoonBody": "Le formulaire de cette section arrive bientôt. Utilisez l’icône œil pour l’afficher ou la masquer.",

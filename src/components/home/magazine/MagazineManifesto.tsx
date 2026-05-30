@@ -9,6 +9,24 @@ import { FirstWordGold } from "./FirstWordGold";
 const HEX_CLIP =
   "polygon(50% 5%, 90% 27%, 90% 73%, 50% 95%, 10% 73%, 10% 27%)";
 
+const DEFAULT_BANNER = "/images/home/hero-silk.png";
+
+/** Reject non-URL strings so Next/Image doesn't throw `Failed to
+ * construct URL` when admins type partial input. */
+function safeBanner(src: string | undefined): {
+  src: string;
+  unoptimized: boolean;
+} {
+  const value = src?.trim();
+  if (!value) return { src: DEFAULT_BANNER, unoptimized: false };
+  const ok =
+    value.startsWith("/") ||
+    value.startsWith("http://") ||
+    value.startsWith("https://");
+  if (!ok) return { src: DEFAULT_BANNER, unoptimized: false };
+  return { src: value, unoptimized: !value.startsWith("/") };
+}
+
 /**
  * Manifesto pane content. The Figma comp has:
  *
@@ -103,13 +121,13 @@ export function MagazineManifesto({
         aria-hidden
       >
         <Image
-          src={bannerOverride?.trim() || "/images/home/hero-silk.png"}
+          src={safeBanner(bannerOverride).src}
           alt=""
           fill
           className="object-cover"
           sizes="(min-width: 1280px) 1300px, 100vw"
           priority={false}
-          unoptimized={Boolean(bannerOverride?.trim())}
+          unoptimized={safeBanner(bannerOverride).unoptimized}
         />
       </div>
 
