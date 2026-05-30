@@ -184,6 +184,92 @@
         "rejectError": "Could not reject the proposal",
         "errorBody": "Please try again."
       }
+    },
+    "magazinePageEditor": {
+      "title": "Magazine page editor",
+      "subtitle": "Edit the public Magazine page — copy, images, and section visibility per locale.",
+      "loading": "Loading editor…",
+      "publish": "Publish all",
+      "publishing": "Publishing…",
+      "sectionsHeading": "Sections",
+      "comingSoonChip": "Soon",
+      "comingSoonBody": "Form for this section is coming next. Use the eye icon to show or hide it.",
+      "previewUnavailable": "Live preview will appear once the form is wired.",
+      "previewHeading": "Live preview",
+      "hideSection": "Hide section",
+      "showSection": "Show section",
+      "sections": {
+        "hero": "Hero",
+        "manifesto": "Manifesto",
+        "founderQuote": "Founder quote",
+        "newsletterCopy": "Newsletter copy",
+        "supportCuration": "Support / Collaborations"
+      },
+      "hero": {
+        "title": "Hero",
+        "subtitle": "Top banner — headline, subhead, CTAs, and background image.",
+        "reset": "Reset",
+        "save": "Save",
+        "saving": "Saving…",
+        "sharedHeading": "Shared (all locales)",
+        "perLocaleHeading": "Per-locale content",
+        "previewHeading": "Live preview",
+        "fields": {
+          "headline": "Headline",
+          "headlinePlaceholder": "Stories shaping modern culture.",
+          "subheadline": "Subheadline",
+          "subheadlinePlaceholder": "A journal exploring the intersection of art, design, cinema…",
+          "primaryCta": "Primary CTA",
+          "primaryCtaPlaceholder": "Explore Publications",
+          "secondaryCta": "Secondary CTA",
+          "secondaryCtaPlaceholder": "Latest Issue",
+          "artworkUrl": "Background image URL",
+          "primaryHref": "Primary CTA link",
+          "secondaryHref": "Secondary CTA link"
+        }
+      },
+      "manifesto": {
+        "title": "Manifesto",
+        "subtitle": "Philosophy, vision, mission, values, and closing quote.",
+        "fields": {
+          "philosophyHeading": "Philosophy heading",
+          "philosophyQuote": "Philosophy quote",
+          "visionHeading": "Vision heading",
+          "visionBody": "Vision body",
+          "missionHeading": "Mission heading",
+          "missionBody": "Mission body",
+          "valuesHeading": "Values heading",
+          "closingQuote": "Closing quote"
+        }
+      },
+      "founderQuote": {
+        "title": "Founder quote",
+        "subtitle": "Pull-quote shown on the Editorial Board tab.",
+        "sharedHeading": "Shared (all locales)",
+        "fields": {
+          "quote": "Quote",
+          "name": "Name",
+          "role": "Role",
+          "avatarUrl": "Avatar URL"
+        }
+      },
+      "newsletterCopy": {
+        "title": "Newsletter section",
+        "subtitle": "Title and body shown above the email field.",
+        "fields": {
+          "title": "Title",
+          "body": "Body"
+        }
+      },
+      "support": {
+        "title": "Support / Collaborations",
+        "subtitle": "Edit the section heading and subheading.",
+        "curationNote": "The carousel itself is fed by approved contributions. Curating which contributions appear is coming in a follow-up.",
+        "fields": {
+          "heading": "Heading",
+          "subheading": "Subheading"
+        }
+      }
     }
   }
 }

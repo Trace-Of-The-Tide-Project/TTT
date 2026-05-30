@@ -7,11 +7,14 @@ import { Link } from "@/i18n/navigation";
 type MagazineHeroProps = {
   /** Path to the hero artwork — defaults to the design SVG bundled in /public. */
   artwork?: string;
-  /** Headline override. When supplied, replaces the i18n default
-   * (used when the backend magazine record has `hero_title` seeded). */
+  /** Headline override. Empty/whitespace falls back to i18n. */
   title?: string;
-  /** Subhead override. Falls back to the i18n string. */
+  /** Subhead override. Empty/whitespace falls back to i18n. */
   subtitle?: string;
+  /** Primary CTA label override. Empty/whitespace falls back to i18n. */
+  primaryCtaLabel?: string;
+  /** Secondary CTA label override. Empty/whitespace falls back to i18n. */
+  secondaryCtaLabel?: string;
   /** Where the primary CTA links. */
   primaryHref?: string;
   /** Where the secondary CTA links. */
@@ -37,6 +40,8 @@ export function MagazineHero({
   artwork = "/images/home/magazine-thumbnail.svg",
   title,
   subtitle,
+  primaryCtaLabel,
+  secondaryCtaLabel,
   primaryHref = "/magazine#magazine-content",
   secondaryHref = "/magazine#newsletter-heading",
 }: MagazineHeroProps) {
@@ -68,6 +73,8 @@ export function MagazineHero({
               t={t}
               title={title}
               subtitle={subtitle}
+              primaryCtaLabel={primaryCtaLabel}
+              secondaryCtaLabel={secondaryCtaLabel}
               primaryHref={primaryHref}
               secondaryHref={secondaryHref}
               tone="overlay"
@@ -82,6 +89,8 @@ export function MagazineHero({
             t={t}
             title={title}
             subtitle={subtitle}
+            primaryCtaLabel={primaryCtaLabel}
+            secondaryCtaLabel={secondaryCtaLabel}
             primaryHref={primaryHref}
             secondaryHref={secondaryHref}
             tone="stacked"
@@ -96,6 +105,8 @@ type HeroCopyProps = {
   t: ReturnType<typeof useTranslations>;
   title?: string;
   subtitle?: string;
+  primaryCtaLabel?: string;
+  secondaryCtaLabel?: string;
   primaryHref: string;
   secondaryHref: string;
   /** "overlay" = white text + textShadow for placement over silk image.
@@ -108,6 +119,8 @@ function HeroCopy({
   t,
   title,
   subtitle,
+  primaryCtaLabel,
+  secondaryCtaLabel,
   primaryHref,
   secondaryHref,
   tone,
@@ -161,14 +174,14 @@ function HeroCopy({
             color: "var(--tott-auth-btn-text)",
           }}
         >
-          {t("ctaPrimary")}
+          {primaryCtaLabel?.trim() || t("ctaPrimary")}
         </Link>
         <Link
           href={secondaryHref}
           className="inline-flex items-center justify-center rounded-md border px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90 sm:px-6 sm:text-[0.95rem]"
           style={secondaryStyle}
         >
-          {t("ctaSecondary")}
+          {secondaryCtaLabel?.trim() || t("ctaSecondary")}
         </Link>
       </div>
     </div>

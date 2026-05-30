@@ -53,6 +53,10 @@ export type CollaborationItem = {
 export type MagazineSupportProps = {
   /** Pass an empty array to hide the section. */
   collaborations: CollaborationItem[];
+  /** Section heading override. Empty/whitespace falls back to i18n. */
+  headingOverride?: string;
+  /** Section subheading override. Empty/whitespace falls back to i18n. */
+  subheadingOverride?: string;
 };
 
 /**
@@ -65,8 +69,14 @@ export type MagazineSupportProps = {
  * position when wrapping, then snap (no transition) back to the real
  * position once the animation finishes.
  */
-export function MagazineSupport({ collaborations }: MagazineSupportProps) {
+export function MagazineSupport({
+  collaborations,
+  headingOverride,
+  subheadingOverride,
+}: MagazineSupportProps) {
   const t = useTranslations("Home.magazine.support");
+  const headingText = headingOverride?.trim() || t("heading");
+  const subheadingText = subheadingOverride?.trim() || t("subheading");
   const totalCards = collaborations.length;
   // Logical index of the active card — always in [0, totalCards).
   const [active, setActive] = useState(0);
@@ -163,7 +173,7 @@ export function MagazineSupport({ collaborations }: MagazineSupportProps) {
             textAlign: "center",
           }}
         >
-          <FirstWordGold raw={t("heading")} />
+          <FirstWordGold raw={headingText} />
         </h2>
         <p
           className="max-w-md"
@@ -178,7 +188,7 @@ export function MagazineSupport({ collaborations }: MagazineSupportProps) {
             textAlign: "center",
           }}
         >
-          {t("subheading")}
+          {subheadingText}
         </p>
       </div>
 

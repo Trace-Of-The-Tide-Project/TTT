@@ -184,6 +184,92 @@
         "rejectError": "Impossible de rejeter la proposition",
         "errorBody": "Veuillez réessayer."
       }
+    },
+    "magazinePageEditor": {
+      "title": "Éditeur de la page Magazine",
+      "subtitle": "Modifiez la page Magazine publique — textes, images et visibilité des sections par langue.",
+      "loading": "Chargement de l’éditeur…",
+      "publish": "Tout publier",
+      "publishing": "Publication…",
+      "sectionsHeading": "Sections",
+      "comingSoonChip": "Bientôt",
+      "comingSoonBody": "Le formulaire de cette section arrive bientôt. Utilisez l’icône œil pour l’afficher ou la masquer.",
+      "previewUnavailable": "L’aperçu en direct s’affichera dès que le formulaire sera connecté.",
+      "previewHeading": "Aperçu en direct",
+      "hideSection": "Masquer la section",
+      "showSection": "Afficher la section",
+      "sections": {
+        "hero": "Hero",
+        "manifesto": "Manifeste",
+        "founderQuote": "Citation du fondateur",
+        "newsletterCopy": "Texte newsletter",
+        "supportCuration": "Soutien / Collaborations"
+      },
+      "hero": {
+        "title": "Hero",
+        "subtitle": "Bannière supérieure — titre, sous-titre, CTA et image de fond.",
+        "reset": "Réinitialiser",
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "sharedHeading": "Partagé (toutes langues)",
+        "perLocaleHeading": "Contenu par langue",
+        "previewHeading": "Aperçu en direct",
+        "fields": {
+          "headline": "Titre",
+          "headlinePlaceholder": "Des récits qui façonnent la culture moderne.",
+          "subheadline": "Sous-titre",
+          "subheadlinePlaceholder": "Une revue explorant le croisement de l’art, du design, du cinéma…",
+          "primaryCta": "CTA principal",
+          "primaryCtaPlaceholder": "Explorer les publications",
+          "secondaryCta": "CTA secondaire",
+          "secondaryCtaPlaceholder": "Dernier numéro",
+          "artworkUrl": "URL de l’image de fond",
+          "primaryHref": "Lien du CTA principal",
+          "secondaryHref": "Lien du CTA secondaire"
+        }
+      },
+      "manifesto": {
+        "title": "Manifeste",
+        "subtitle": "Philosophie, vision, mission, valeurs et citation de clôture.",
+        "fields": {
+          "philosophyHeading": "Titre — Philosophie",
+          "philosophyQuote": "Citation — Philosophie",
+          "visionHeading": "Titre — Vision",
+          "visionBody": "Texte — Vision",
+          "missionHeading": "Titre — Mission",
+          "missionBody": "Texte — Mission",
+          "valuesHeading": "Titre — Valeurs",
+          "closingQuote": "Citation de clôture"
+        }
+      },
+      "founderQuote": {
+        "title": "Citation du fondateur",
+        "subtitle": "Citation affichée dans l’onglet Comité éditorial.",
+        "sharedHeading": "Partagé (toutes langues)",
+        "fields": {
+          "quote": "Citation",
+          "name": "Nom",
+          "role": "Rôle",
+          "avatarUrl": "URL de l’avatar"
+        }
+      },
+      "newsletterCopy": {
+        "title": "Section Newsletter",
+        "subtitle": "Titre et corps affichés au-dessus du champ e-mail.",
+        "fields": {
+          "title": "Titre",
+          "body": "Corps"
+        }
+      },
+      "support": {
+        "title": "Soutien / Collaborations",
+        "subtitle": "Modifier le titre et le sous-titre de la section.",
+        "curationNote": "Le carrousel est alimenté par les contributions approuvées. Le choix des contributions affichées arrivera plus tard.",
+        "fields": {
+          "heading": "Titre",
+          "subheading": "Sous-titre"
+        }
+      }
     }
   }
 }

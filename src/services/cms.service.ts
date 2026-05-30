@@ -27,8 +27,41 @@ function unwrap<T>(body: unknown): T {
 }
 
 export async function getCmsHomepage(): Promise<CmsPage> {
-  const res = await api.get("/cms/pages/slug/homepage");
+  return getCmsPageBySlug("homepage");
+}
+
+export async function getCmsPageBySlug(slug: string): Promise<CmsPage> {
+  const res = await api.get(`/cms/pages/slug/${slug}`);
   return unwrap<CmsPage>(res.data);
+}
+
+export async function createCmsPage(data: {
+  slug: string;
+  title: string;
+  page_type?: string;
+}): Promise<CmsPage> {
+  const res = await api.post("/cms/pages", {
+    page_type: "landing",
+    ...data,
+  });
+  return unwrap<CmsPage>(res.data);
+}
+
+export async function createCmsSection(
+  pageId: string,
+  data: {
+    section_type: string;
+    title: string;
+    section_order: number;
+    is_visible?: boolean;
+    config?: string;
+  },
+): Promise<CmsSection> {
+  const res = await api.post(`/cms/pages/${pageId}/sections`, {
+    is_visible: true,
+    ...data,
+  });
+  return unwrap<CmsSection>(res.data);
 }
 
 export async function getCmsPages(): Promise<CmsPage[]> {

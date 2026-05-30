@@ -184,6 +184,92 @@
         "rejectError": "No se pudo rechazar la propuesta",
         "errorBody": "Inténtalo de nuevo."
       }
+    },
+    "magazinePageEditor": {
+      "title": "Editor de la página Revista",
+      "subtitle": "Edita la página Revista pública: textos, imágenes y visibilidad de secciones por idioma.",
+      "loading": "Cargando editor…",
+      "publish": "Publicar todo",
+      "publishing": "Publicando…",
+      "sectionsHeading": "Secciones",
+      "comingSoonChip": "Pronto",
+      "comingSoonBody": "El formulario de esta sección llegará pronto. Usa el icono de ojo para mostrar u ocultar.",
+      "previewUnavailable": "La vista previa en vivo aparecerá cuando el formulario esté conectado.",
+      "previewHeading": "Vista previa en vivo",
+      "hideSection": "Ocultar sección",
+      "showSection": "Mostrar sección",
+      "sections": {
+        "hero": "Hero",
+        "manifesto": "Manifiesto",
+        "founderQuote": "Cita del fundador",
+        "newsletterCopy": "Texto del boletín",
+        "supportCuration": "Apoyo / Colaboraciones"
+      },
+      "hero": {
+        "title": "Hero",
+        "subtitle": "Banner superior — titular, subtítulo, CTAs e imagen de fondo.",
+        "reset": "Restablecer",
+        "save": "Guardar",
+        "saving": "Guardando…",
+        "sharedHeading": "Compartido (todos los idiomas)",
+        "perLocaleHeading": "Contenido por idioma",
+        "previewHeading": "Vista previa en vivo",
+        "fields": {
+          "headline": "Titular",
+          "headlinePlaceholder": "Historias que dan forma a la cultura moderna.",
+          "subheadline": "Subtítulo",
+          "subheadlinePlaceholder": "Una revista que explora la intersección del arte, el diseño y el cine…",
+          "primaryCta": "CTA principal",
+          "primaryCtaPlaceholder": "Explorar publicaciones",
+          "secondaryCta": "CTA secundario",
+          "secondaryCtaPlaceholder": "Último número",
+          "artworkUrl": "URL de la imagen de fondo",
+          "primaryHref": "Enlace del CTA principal",
+          "secondaryHref": "Enlace del CTA secundario"
+        }
+      },
+      "manifesto": {
+        "title": "Manifiesto",
+        "subtitle": "Filosofía, visión, misión, valores y cita de cierre.",
+        "fields": {
+          "philosophyHeading": "Título — Filosofía",
+          "philosophyQuote": "Cita — Filosofía",
+          "visionHeading": "Título — Visión",
+          "visionBody": "Cuerpo — Visión",
+          "missionHeading": "Título — Misión",
+          "missionBody": "Cuerpo — Misión",
+          "valuesHeading": "Título — Valores",
+          "closingQuote": "Cita de cierre"
+        }
+      },
+      "founderQuote": {
+        "title": "Cita del fundador",
+        "subtitle": "Cita mostrada en la pestaña Comité editorial.",
+        "sharedHeading": "Compartido (todos los idiomas)",
+        "fields": {
+          "quote": "Cita",
+          "name": "Nombre",
+          "role": "Rol",
+          "avatarUrl": "URL del avatar"
+        }
+      },
+      "newsletterCopy": {
+        "title": "Sección del boletín",
+        "subtitle": "Título y cuerpo mostrados sobre el campo de correo.",
+        "fields": {
+          "title": "Título",
+          "body": "Cuerpo"
+        }
+      },
+      "support": {
+        "title": "Apoyo / Colaboraciones",
+        "subtitle": "Editar el título y subtítulo de la sección.",
+        "curationNote": "El carrusel se alimenta de las contribuciones aprobadas. La selección de cuáles aparecen llegará más adelante.",
+        "fields": {
+          "heading": "Título",
+          "subheading": "Subtítulo"
+        }
+      }
     }
   }
 }
