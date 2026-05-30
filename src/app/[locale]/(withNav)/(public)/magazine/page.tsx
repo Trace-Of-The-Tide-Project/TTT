@@ -414,6 +414,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
                 missionBodyOverride={manifestoLocale.missionBody}
                 valuesHeadingOverride={manifestoLocale.valuesHeading}
                 closingQuoteOverride={manifestoLocale.closingQuote}
+                bannerOverride={cmsCopy.manifesto?.banner}
               />
             ),
             publications:

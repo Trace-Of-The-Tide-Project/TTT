@@ -41,6 +41,8 @@ export type MagazineManifestoProps = {
   missionBodyOverride?: string;
   valuesHeadingOverride?: string;
   closingQuoteOverride?: string;
+  /** Silk banner image at the top. Empty falls back to the bundled default. */
+  bannerOverride?: string;
 };
 
 export function MagazineManifesto({
@@ -52,6 +54,7 @@ export function MagazineManifesto({
   missionBodyOverride,
   valuesHeadingOverride,
   closingQuoteOverride,
+  bannerOverride,
 }: MagazineManifestoProps = {}) {
   const t = useTranslations("Home.magazine.manifesto");
   const tr = (key: string, override?: string) =>
@@ -100,12 +103,13 @@ export function MagazineManifesto({
         aria-hidden
       >
         <Image
-          src="/images/home/hero-silk.png"
+          src={bannerOverride?.trim() || "/images/home/hero-silk.png"}
           alt=""
           fill
           className="object-cover"
           sizes="(min-width: 1280px) 1300px, 100vw"
           priority={false}
+          unoptimized={Boolean(bannerOverride?.trim())}
         />
       </div>
 

@@ -239,7 +239,8 @@
           "missionHeading": "Mission heading",
           "missionBody": "Mission body",
           "valuesHeading": "Values heading",
-          "closingQuote": "Closing quote"
+          "closingQuote": "Closing quote",
+          "bannerUrl": "Banner image URL"
         }
       },
       "founderQuote": {

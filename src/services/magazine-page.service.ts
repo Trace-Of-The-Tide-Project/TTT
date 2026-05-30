@@ -57,8 +57,8 @@ export type HeroConfig = {
 
 export const EMPTY_HERO_CONFIG: HeroConfig = { copy: {} };
 
-/** Manifesto — long-form per-locale copy. No shared fields (the silk
- * banner image is hardcoded). */
+/** Manifesto — long-form per-locale copy plus the silk banner image
+ * (shared across locales, same as Hero artwork). */
 export type ManifestoLocaleFields = {
   philosophyHeading?: string;
   philosophyQuote?: string;
@@ -69,7 +69,10 @@ export type ManifestoLocaleFields = {
   valuesHeading?: string;
   closingQuote?: string;
 };
-export type ManifestoConfig = { copy: Localized<ManifestoLocaleFields> };
+export type ManifestoConfig = {
+  copy: Localized<ManifestoLocaleFields>;
+  banner?: string;
+};
 export const EMPTY_MANIFESTO_CONFIG: ManifestoConfig = { copy: {} };
 
 /** Founder quote — quote/name/role per locale, avatar URL shared. */
@@ -224,7 +227,15 @@ function parseLocaleKeyed<T>(
 export function parseManifestoConfig(
   section: CmsSection | undefined,
 ): ManifestoConfig {
-  return parseLocaleKeyed<ManifestoLocaleFields>(section, EMPTY_MANIFESTO_CONFIG);
+  const base = parseLocaleKeyed<ManifestoLocaleFields>(
+    section,
+    EMPTY_MANIFESTO_CONFIG,
+  );
+  const cfg = (section?.config as Record<string, unknown> | undefined) ?? {};
+  return {
+    copy: base.copy,
+    banner: typeof cfg.banner === "string" ? cfg.banner : undefined,
+  };
 }
 
 export function parseFounderConfig(

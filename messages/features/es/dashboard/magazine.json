@@ -239,7 +239,8 @@
           "missionHeading": "Título — Misión",
           "missionBody": "Cuerpo — Misión",
           "valuesHeading": "Título — Valores",
-          "closingQuote": "Cita de cierre"
+          "closingQuote": "Cita de cierre",
+          "bannerUrl": "URL de la imagen del banner"
         }
       },
       "founderQuote": {

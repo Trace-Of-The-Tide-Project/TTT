@@ -239,7 +239,8 @@
           "missionHeading": "عنوان الرسالة",
           "missionBody": "نص الرسالة",
           "valuesHeading": "عنوان القيم",
-          "closingQuote": "الاقتباس الختامي"
+          "closingQuote": "الاقتباس الختامي",
+          "bannerUrl": "رابط صورة البانر"
         }
       },
       "founderQuote": {

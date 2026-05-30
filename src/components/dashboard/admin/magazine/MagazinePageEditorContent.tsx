@@ -698,6 +698,7 @@ function ManifestoEditor({ section, onSave, isSaving }: EditorProps) {
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
   const {
     draft,
+    setDraft,
     activeLocale,
     setActiveLocale,
     localeFields,
@@ -789,6 +790,19 @@ function ManifestoEditor({ section, onSave, isSaving }: EditorProps) {
               />
             </Field>
           </FieldGroup>
+
+          <FieldGroup label={tShared("sharedHeading")}>
+            <Field label={t("fields.bannerUrl")}>
+              <TextInput
+                type="url"
+                value={draft.banner ?? ""}
+                onChange={(v) =>
+                  setDraft((prev) => ({ ...prev, banner: v || undefined }))
+                }
+                placeholder="/images/home/hero-silk.png"
+              />
+            </Field>
+          </FieldGroup>
         </div>
       </FormCard>
 
@@ -802,6 +816,7 @@ function ManifestoEditor({ section, onSave, isSaving }: EditorProps) {
           missionBodyOverride={localeFields.missionBody}
           valuesHeadingOverride={localeFields.valuesHeading}
           closingQuoteOverride={localeFields.closingQuote}
+          bannerOverride={draft.banner}
         />
       </PreviewFrame>
     </>
