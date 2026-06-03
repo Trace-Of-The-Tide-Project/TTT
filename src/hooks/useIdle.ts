@@ -14,8 +14,12 @@ export function useIdle({ timeout = 2500 }: { timeout?: number } = {}): boolean 
     timerRef.current = setTimeout(() => setIsIdle(true), timeout);
   }, [timeout]);
 
+  // External-system subscription (window events). `reset()` calls
+  // setState, which is the whole point — there is no render-phase
+  // alternative for arming the idle timer.
   useEffect(() => {
     IDLE_EVENTS.forEach((e) => window.addEventListener(e, reset, { passive: true }));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     reset();
     return () => {
       IDLE_EVENTS.forEach((e) => window.removeEventListener(e, reset));

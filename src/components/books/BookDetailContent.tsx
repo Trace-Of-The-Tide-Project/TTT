@@ -12,7 +12,6 @@ import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import { MessageBubbleIcon } from "@/components/ui/icons";
 import {
-  StarIcon,
   DownloadIcon,
   ChevronRightIcon,
 } from "@/components/ui/icons";
@@ -771,45 +770,6 @@ function PartialStar({ fill, size = 16 }: { fill: number; size?: number }) {
   );
 }
 
-function StarRow({ rating, size = 16 }: { rating: number; size?: number }) {
-  return (
-    <span
-      className="inline-flex items-center"
-      style={{ gap: "2px", color: "var(--tott-accent-gold)" }}
-      aria-label={`${rating.toFixed(1)} out of 5`}
-    >
-      {[0, 1, 2, 3, 4].map((i) => {
-        const fill = Math.max(0, Math.min(1, rating - i));
-        return (
-          <span
-            key={i}
-            className="relative inline-block"
-            style={{ width: `${size}px`, height: `${size}px` }}
-            aria-hidden
-          >
-            <span
-              className="absolute inset-0 [&>svg]:h-full [&>svg]:w-full"
-              style={{ color: "var(--tott-card-border)" }}
-            >
-              <StarIcon />
-            </span>
-            {fill > 0 ? (
-              <span
-                className="absolute inset-0 overflow-hidden [&>svg]:h-full [&>svg]:w-full"
-                style={{
-                  width: `${fill * 100}%`,
-                  color: "var(--tott-accent-gold)",
-                }}
-              >
-                <StarIcon />
-              </span>
-            ) : null}
-          </span>
-        );
-      })}
-    </span>
-  );
-}
 
 // ─── Reviews ─────────────────────────────────────────────────────
 

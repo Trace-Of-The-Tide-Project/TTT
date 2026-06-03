@@ -32,6 +32,26 @@ import {
 } from "@/services/writers.service";
 import type { MagazineIssue } from "@/services/magazine-issues.service";
 import type { Magazine } from "@/services/magazines.service";
+import {
+  MAGAZINE_PAGE_SLUG,
+  parseHeroConfig,
+  parseManifestoConfig,
+  parseFounderConfig,
+  parseNewsletterConfig,
+  parseSupportConfig,
+  pickHeroLocale,
+  pickManifestoLocale,
+  pickFounderLocale,
+  pickNewsletterLocale,
+  pickSupportLocale,
+  findSection,
+  type HeroConfig,
+  type ManifestoConfig,
+  type FounderQuoteConfig,
+  type NewsletterCopyConfig,
+  type SupportConfig,
+} from "@/services/magazine-page.service";
+import type { CmsPage } from "@/services/cms.service";
 
 // Magazine page is highly dynamic — we don't want it cached.
 export const dynamic = "force-dynamic";
@@ -223,6 +243,61 @@ function formatShortDate(iso: string | null | undefined): string {
   return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
+/**
+ * Snapshot of CMS-driven copy for all magazine sections. Each entry is
+ * null when the section is missing, hidden, or the page hasn't been
+ * bootstrapped — caller treats null as "use i18n + legacy fallback".
+ */
+type MagazineCmsCopy = {
+  hero: HeroConfig | null;
+  manifesto: ManifestoConfig | null;
+  founder: FounderQuoteConfig | null;
+  newsletter: NewsletterCopyConfig | null;
+  support: SupportConfig | null;
+};
+
+const EMPTY_CMS_COPY: MagazineCmsCopy = {
+  hero: null,
+  manifesto: null,
+  founder: null,
+  newsletter: null,
+  support: null,
+};
+
+async function fetchMagazineCmsCopy(): Promise<MagazineCmsCopy> {
+  // GET /cms/pages/slug/{slug} is documented as public (no security in
+  // OpenAPI). serverGet swallows failures so the page falls back to
+  // i18n + legacy /magazines record on backend errors.
+  const page = await serverGet<CmsPage | { data: CmsPage }>(
+    `/cms/pages/slug/${MAGAZINE_PAGE_SLUG}`,
+  );
+  if (!page) return EMPTY_CMS_COPY;
+  const unwrapped =
+    (page as { data?: CmsPage }).data ?? (page as CmsPage);
+  if (!unwrapped?.sections) return EMPTY_CMS_COPY;
+
+  const pickVisible = (key: Parameters<typeof findSection>[1]) => {
+    const s = findSection(unwrapped, key);
+    return s && s.is_visible ? s : undefined;
+  };
+
+  return {
+    hero: pickVisible("hero") ? parseHeroConfig(pickVisible("hero")) : null,
+    manifesto: pickVisible("manifesto")
+      ? parseManifestoConfig(pickVisible("manifesto"))
+      : null,
+    founder: pickVisible("founderQuote")
+      ? parseFounderConfig(pickVisible("founderQuote"))
+      : null,
+    newsletter: pickVisible("newsletterCopy")
+      ? parseNewsletterConfig(pickVisible("newsletterCopy"))
+      : null,
+    support: pickVisible("supportCuration")
+      ? parseSupportConfig(pickVisible("supportCuration"))
+      : null,
+  };
+}
+
 function toWriterItem(w: WriterProfile): FollowWriterItem {
   return {
     id: w.id,
@@ -253,6 +328,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
     issues,
     collaborations,
     magazineMeta,
+    cmsCopy,
   ] = await Promise.all([
     fetchLatestArticles(),
     fetchLessReadArticles(),
@@ -260,7 +336,47 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
     fetchMagazineIssues(),
     fetchCollaborations(),
     fetchMagazineMeta(),
+    fetchMagazineCmsCopy(),
   ]);
+
+  // Priority for every section: CMS (admin-edited, per-locale) →
+  // legacy backend record → component i18n defaults.
+  const cmsHeroLocale = cmsCopy.hero ? pickHeroLocale(cmsCopy.hero, locale) : {};
+  const heroArtwork = cmsCopy.hero?.artwork || magazineMeta.hero?.image;
+  const heroTitle = cmsHeroLocale.title || magazineMeta.hero?.title;
+  const heroSubtitle = cmsHeroLocale.subtitle || magazineMeta.hero?.subtitle;
+  const heroPrimaryCta = cmsHeroLocale.primaryCtaLabel;
+  const heroSecondaryCta = cmsHeroLocale.secondaryCtaLabel;
+  const heroPrimaryHref =
+    cmsCopy.hero?.primaryHref || "/magazine#magazine-content";
+  const heroSecondaryHref =
+    cmsCopy.hero?.secondaryHref || "/magazine#newsletter-heading";
+
+  const manifestoLocale = cmsCopy.manifesto
+    ? pickManifestoLocale(cmsCopy.manifesto, locale)
+    : {};
+  const newsletterLocale = cmsCopy.newsletter
+    ? pickNewsletterLocale(cmsCopy.newsletter, locale)
+    : {};
+  const supportLocale = cmsCopy.support
+    ? pickSupportLocale(cmsCopy.support, locale)
+    : {};
+
+  // Founder: merge CMS override into the legacy magazineMeta.founder
+  // object so MagazineEditorialBoard receives a single FounderQuoteData.
+  const founderLocale = cmsCopy.founder
+    ? pickFounderLocale(cmsCopy.founder, locale)
+    : {};
+  const founderForRender = (() => {
+    const legacy = magazineMeta.founder ?? null;
+    const cmsQuote = founderLocale.quote?.trim();
+    const cmsName = founderLocale.name?.trim();
+    if (!legacy && !cmsQuote && !cmsName) return null;
+    return {
+      quote: cmsQuote || legacy?.quote || "",
+      name: cmsName || legacy?.name || "",
+    };
+  })();
 
   return (
     <main
@@ -277,11 +393,13 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
 
       <div className="relative">
         <MagazineHero
-          artwork={magazineMeta.hero?.image}
-          title={magazineMeta.hero?.title}
-          subtitle={magazineMeta.hero?.subtitle}
-          primaryHref="/magazine#magazine-content"
-          secondaryHref="/magazine#newsletter-heading"
+          artwork={heroArtwork}
+          title={heroTitle}
+          subtitle={heroSubtitle}
+          primaryCtaLabel={heroPrimaryCta}
+          secondaryCtaLabel={heroSecondaryCta}
+          primaryHref={heroPrimaryHref}
+          secondaryHref={heroSecondaryHref}
         />
         {/* MagazineBody is a thin client wrapper that owns the active
             tab state so the Newsletter section below can swap its
@@ -289,7 +407,19 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
         <div id="magazine-content" />
         <MagazineBody
           tabs={{
-            manifesto: <MagazineManifesto />,
+            manifesto: (
+              <MagazineManifesto
+                philosophyHeadingOverride={manifestoLocale.philosophyHeading}
+                philosophyQuoteOverride={manifestoLocale.philosophyQuote}
+                visionHeadingOverride={manifestoLocale.visionHeading}
+                visionBodyOverride={manifestoLocale.visionBody}
+                missionHeadingOverride={manifestoLocale.missionHeading}
+                missionBodyOverride={manifestoLocale.missionBody}
+                valuesHeadingOverride={manifestoLocale.valuesHeading}
+                closingQuoteOverride={manifestoLocale.closingQuote}
+                bannerOverride={cmsCopy.manifesto?.banner}
+              />
+            ),
             publications:
               latestArticles.length > 0 ? (
                 <MagazineLatestPublished items={latestArticles} />
@@ -298,16 +428,20 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
             editorialBoard:
               lessReadArticles.length > 0 ||
               writers.length > 0 ||
-              magazineMeta.founder ? (
+              founderForRender ? (
                 <MagazineEditorialBoard
                   lessReadArticles={lessReadArticles}
                   writers={writers}
-                  founder={magazineMeta.founder}
+                  founder={founderForRender}
                 />
               ) : undefined,
             support:
               collaborations.length > 0 ? (
-                <MagazineSupport collaborations={collaborations} />
+                <MagazineSupport
+                  collaborations={collaborations}
+                  headingOverride={supportLocale.heading}
+                  subheadingOverride={supportLocale.subheading}
+                />
               ) : undefined,
             standalone: {
               publications: (
@@ -321,6 +455,8 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
           newsletter={{
             locale,
             magazineId: magazineMeta.magazineId,
+            titleOverride: newsletterLocale.title,
+            bodyOverride: newsletterLocale.body,
           }}
         />
       </div>

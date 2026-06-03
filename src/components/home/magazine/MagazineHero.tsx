@@ -7,11 +7,14 @@ import { Link } from "@/i18n/navigation";
 type MagazineHeroProps = {
   /** Path to the hero artwork — defaults to the design SVG bundled in /public. */
   artwork?: string;
-  /** Headline override. When supplied, replaces the i18n default
-   * (used when the backend magazine record has `hero_title` seeded). */
+  /** Headline override. Empty/whitespace falls back to i18n. */
   title?: string;
-  /** Subhead override. Falls back to the i18n string. */
+  /** Subhead override. Empty/whitespace falls back to i18n. */
   subtitle?: string;
+  /** Primary CTA label override. Empty/whitespace falls back to i18n. */
+  primaryCtaLabel?: string;
+  /** Secondary CTA label override. Empty/whitespace falls back to i18n. */
+  secondaryCtaLabel?: string;
   /** Where the primary CTA links. */
   primaryHref?: string;
   /** Where the secondary CTA links. */
@@ -33,14 +36,39 @@ type MagazineHeroProps = {
  * happens whenever you try to absolute-position 3 stacked elements
  * onto a 111px-tall banner.
  */
+const DEFAULT_ARTWORK = "/images/home/magazine-thumbnail.svg";
+
+/** Treat any value that isn't a local path or http(s) URL as invalid,
+ * since Next/Image will throw `Failed to construct URL`. Falls back to
+ * the bundled default. */
+function safeArtwork(src: string | undefined): {
+  src: string;
+  unoptimized: boolean;
+} {
+  const value = src?.trim();
+  if (!value) return { src: DEFAULT_ARTWORK, unoptimized: false };
+  const ok =
+    value.startsWith("/") ||
+    value.startsWith("http://") ||
+    value.startsWith("https://");
+  if (!ok) return { src: DEFAULT_ARTWORK, unoptimized: false };
+  // External URLs use unoptimized so the Next loader doesn't gate the
+  // hostname; local paths can be optimized normally.
+  return { src: value, unoptimized: !value.startsWith("/") };
+}
+
 export function MagazineHero({
-  artwork = "/images/home/magazine-thumbnail.svg",
+  artwork,
   title,
   subtitle,
+  primaryCtaLabel,
+  secondaryCtaLabel,
   primaryHref = "/magazine#magazine-content",
   secondaryHref = "/magazine#newsletter-heading",
 }: MagazineHeroProps) {
   const t = useTranslations("Home.magazine.hero");
+  const { src: artworkSrc, unoptimized: artworkUnoptimized } =
+    safeArtwork(artwork);
 
   return (
     <section className="relative w-full px-4 pb-10 pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:px-8 md:pb-20 md:pt-32">
@@ -51,13 +79,14 @@ export function MagazineHero({
           style={{ aspectRatio: "1392 / 483" }}
         >
           <Image
-            src={artwork}
+            src={artworkSrc}
             alt={t("imageAlt")}
             fill
             priority
             sizes="(min-width: 1392px) 1392px, 100vw"
             className="select-none object-cover"
             draggable={false}
+            unoptimized={artworkUnoptimized}
           />
 
           {/* Content overlay — only enabled at lg+ where the artwork is
@@ -68,6 +97,8 @@ export function MagazineHero({
               t={t}
               title={title}
               subtitle={subtitle}
+              primaryCtaLabel={primaryCtaLabel}
+              secondaryCtaLabel={secondaryCtaLabel}
               primaryHref={primaryHref}
               secondaryHref={secondaryHref}
               tone="overlay"
@@ -82,6 +113,8 @@ export function MagazineHero({
             t={t}
             title={title}
             subtitle={subtitle}
+            primaryCtaLabel={primaryCtaLabel}
+            secondaryCtaLabel={secondaryCtaLabel}
             primaryHref={primaryHref}
             secondaryHref={secondaryHref}
             tone="stacked"
@@ -96,6 +129,8 @@ type HeroCopyProps = {
   t: ReturnType<typeof useTranslations>;
   title?: string;
   subtitle?: string;
+  primaryCtaLabel?: string;
+  secondaryCtaLabel?: string;
   primaryHref: string;
   secondaryHref: string;
   /** "overlay" = white text + textShadow for placement over silk image.
@@ -108,6 +143,8 @@ function HeroCopy({
   t,
   title,
   subtitle,
+  primaryCtaLabel,
+  secondaryCtaLabel,
   primaryHref,
   secondaryHref,
   tone,
@@ -161,14 +198,14 @@ function HeroCopy({
             color: "var(--tott-auth-btn-text)",
           }}
         >
-          {t("ctaPrimary")}
+          {primaryCtaLabel?.trim() || t("ctaPrimary")}
         </Link>
         <Link
           href={secondaryHref}
           className="inline-flex items-center justify-center rounded-md border px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90 sm:px-6 sm:text-[0.95rem]"
           style={secondaryStyle}
         >
-          {t("ctaSecondary")}
+          {secondaryCtaLabel?.trim() || t("ctaSecondary")}
         </Link>
       </div>
     </div>

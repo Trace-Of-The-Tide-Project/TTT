@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import Image from "next/image";
 import {
   EyeIcon,
   GripVerticalIcon,
@@ -61,8 +62,11 @@ export function HomePageTab() {
     secondary_cta: "",
   });
 
-  useEffect(() => {
-    if (!homepage) return;
+  // Seed selection + hero config once the homepage query loads.
+  // Render-phase prev-value pattern instead of an effect.
+  const [prevHomepage, setPrevHomepage] = useState(homepage);
+  if (homepage && homepage !== prevHomepage) {
+    setPrevHomepage(homepage);
     const sorted = [...homepage.sections].sort((a, b) => a.section_order - b.section_order);
     const heroSection = sorted.find((s) => s.section_type === "hero");
     if (heroSection) {
@@ -73,7 +77,7 @@ export function HomePageTab() {
     } else if (sorted.length > 0) {
       setSelectedSectionId((id) => id ?? sorted[0].id);
     }
-  }, [homepage]);
+  }
 
   const handleToggleVisibility = (section: CmsSection) => {
     if (!pageId) return;
@@ -280,9 +284,12 @@ export function HomePageTab() {
                 >
                   {previewUrl ? (
                     <div className="relative w-full max-h-40 overflow-hidden rounded">
-                      <img
+                      <Image
                         src={previewUrl}
                         alt="Preview"
+                        width={480}
+                        height={160}
+                        unoptimized
                         className="mx-auto max-h-40 w-auto object-contain"
                       />
                       <p className="mt-2 text-xs text-gray-400">{backgroundFile?.name}</p>

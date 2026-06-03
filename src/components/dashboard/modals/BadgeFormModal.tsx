@@ -34,8 +34,12 @@ export function BadgeFormModal({
   const [name, setName] = useState("");
   const [milestone, setMilestone] = useState("");
 
-  useEffect(() => {
-    if (!open) return;
+  // Reset form fields each time the modal opens. React 19 prefers
+  // adjusting state during render over doing it in an effect.
+  const openKey = open ? `${mode}|${initialIconId}|${initialName}|${initialMilestone}` : null;
+  const [prevOpenKey, setPrevOpenKey] = useState<string | null>(null);
+  if (openKey && openKey !== prevOpenKey) {
+    setPrevOpenKey(openKey);
     if (mode === "edit") {
       setIconId(initialIconId);
       setName(initialName);
@@ -45,7 +49,9 @@ export function BadgeFormModal({
       setName("");
       setMilestone("");
     }
-  }, [open, mode, initialIconId, initialName, initialMilestone]);
+  } else if (!openKey && prevOpenKey !== null) {
+    setPrevOpenKey(null);
+  }
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

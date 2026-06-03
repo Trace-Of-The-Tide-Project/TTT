@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 

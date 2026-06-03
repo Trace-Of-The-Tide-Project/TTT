@@ -125,6 +125,12 @@ export const adminConfig: DashboardConfig = {
           items: [
             {
               kind: "item",
+              labelKey: "sidebar.magazinePageEditor",
+              href: "/admin/magazine/page-editor",
+              icon: FileTextIcon,
+            },
+            {
+              kind: "item",
               labelKey: "sidebar.magazineIssues",
               href: "/admin/magazine-issues",
               icon: FileTextIcon,

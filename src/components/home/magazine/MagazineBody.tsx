@@ -8,8 +8,10 @@ import { MagazineNewsletter, type MagazineNewsletterProps } from "./MagazineNews
 type Props = {
   /** Slots forwarded to MagazineTabs (stacked + standalone overrides). */
   tabs: Omit<MagazineTabsProps, "active" | "onActiveChange">;
-  /** Props forwarded to MagazineNewsletter. */
-  newsletter: Omit<MagazineNewsletterProps, "titleOverride" | "bodyOverride">;
+  /** Props forwarded to MagazineNewsletter. titleOverride/bodyOverride
+   * provided here act as the *default* copy override (e.g. CMS-driven);
+   * the editorial-board tab takes precedence when active. */
+  newsletter: MagazineNewsletterProps;
   /** Optional auxiliary nodes rendered between tabs and newsletter. */
   betweenTabsAndNewsletter?: ReactNode;
 };
@@ -34,11 +36,16 @@ export function MagazineBody({
   const [active, setActive] = useState<MagazineTabId>("manifesto");
 
   const isEditorial = active === "editorialBoard";
-  const titleOverride = isEditorial ? tEditorial("newsletterTitle") : undefined;
-  const bodyOverride = isEditorial ? tEditorial("newsletterBody") : undefined;
+  // Editorial-board tab override wins over the CMS-supplied default.
+  const titleOverride = isEditorial
+    ? tEditorial("newsletterTitle")
+    : newsletter.titleOverride;
+  const bodyOverride = isEditorial
+    ? tEditorial("newsletterBody")
+    : newsletter.bodyOverride;
   const ctaButton = isEditorial
     ? { label: tEditorial("newsletterCta"), href: "/contribute" }
-    : undefined;
+    : newsletter.ctaButton;
 
   return (
     <>

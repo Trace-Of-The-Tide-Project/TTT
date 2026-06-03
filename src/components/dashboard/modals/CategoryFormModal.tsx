@@ -37,8 +37,12 @@ export function CategoryFormModal({
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
 
-  useEffect(() => {
-    if (!open) return;
+  // Reset form fields each time the modal opens. React 19 prefers
+  // adjusting state during render over doing it in an effect.
+  const openKey = open ? `${mode}|${initialName}|${initialSlug}` : null;
+  const [prevOpenKey, setPrevOpenKey] = useState<string | null>(null);
+  if (openKey && openKey !== prevOpenKey) {
+    setPrevOpenKey(openKey);
     if (mode === "edit") {
       setName(initialName);
       setSlug(slugWithoutSlash(initialSlug));
@@ -46,7 +50,9 @@ export function CategoryFormModal({
       setName("");
       setSlug("");
     }
-  }, [open, mode, initialName, initialSlug]);
+  } else if (!openKey && prevOpenKey !== null) {
+    setPrevOpenKey(null);
+  }
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

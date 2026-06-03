@@ -62,14 +62,19 @@ export function CreateMessageTemplateModal({ open, onClose, onCreate }: CreateMe
     };
   }, [open, handleKeyDown]);
 
-  useEffect(() => {
-    if (!open) return;
+  // Reset each time the modal opens. React 19 prefers adjusting state
+  // during render over doing it in an effect.
+  const [prevOpen, setPrevOpen] = useState(false);
+  if (open && !prevOpen) {
+    setPrevOpen(true);
     setName("");
     setCategory("onboarding");
     setCategoryOpen(false);
     setSubject("");
     setBody("");
-  }, [open]);
+  } else if (!open && prevOpen) {
+    setPrevOpen(false);
+  }
 
   useEffect(() => {
     if (!open || !categoryOpen) return;

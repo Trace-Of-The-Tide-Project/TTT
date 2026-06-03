@@ -35,6 +35,10 @@ export default function EmailSentPage() {
   const [secondsLeft, setSecondsLeft] = useState(RESEND_COOLDOWN_SEC);
   const [loading, setLoading] = useState(false);
 
+  // Initial cooldown is computed from sessionStorage (browser-only),
+  // so this must run in an effect post-hydration; the setState is the
+  // bridge. React 19's set-state-in-effect rule has no clean
+  // alternative for client-only init that reads external storage.
   useEffect(() => {
     const stored =
       typeof window !== "undefined"
@@ -45,6 +49,7 @@ export default function EmailSentPage() {
       sessionStorage.setItem("forgot-password-email-sent-at", String(Date.now()));
     }
     const elapsed = Math.floor((Date.now() - sentAt) / 1000);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSecondsLeft(Math.max(0, RESEND_COOLDOWN_SEC - elapsed));
   }, []);
 

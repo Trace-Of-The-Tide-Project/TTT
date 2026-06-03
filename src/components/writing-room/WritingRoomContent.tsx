@@ -813,10 +813,6 @@ function DictionaryCard({
 
 // ─── Discover Featured Writing ───────────────────────────────────
 
-// Card geometry for the xl carousel — a 276px-wide silk hex with an
-// 8px gap between cards.
-const CAROUSEL_CARD_WIDTH = 276;
-const CAROUSEL_GAP = 8;
 const CAROUSEL_TRANSITION_MS = 400;
 // Width of the "ghost" gradient strips overlaid on each end of the
 // carousel — these mask the next/previous hexagon as it peeks in
@@ -901,11 +897,14 @@ function FeaturedWritingRow({
   const [animate, setAnimate] = useState(true);
   const wrapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Reset state if the items list size changes under us.
-  useEffect(() => {
+  // Reset state if the items list size changes under us. Render-phase
+  // prev-value pattern instead of an effect.
+  const [prevItemCount, setPrevItemCount] = useState(itemCount);
+  if (prevItemCount !== itemCount) {
+    setPrevItemCount(itemCount);
     setPosition((p) => (p >= itemCount || p < 0 ? 0 : p));
     setActive((a) => (a >= itemCount || a < 0 ? 0 : a));
-  }, [itemCount]);
+  }
 
   // Clean up any pending wrap timer when the component unmounts so
   // we don't fire setState on a dead instance.

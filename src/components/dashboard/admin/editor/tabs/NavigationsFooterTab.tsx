@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GripVerticalIcon, PlusIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
 import { useCmsSettings } from "@/hooks/queries/cms";
@@ -58,8 +58,11 @@ export function NavigationsFooterTab() {
   const { data: settings } = useCmsSettings();
   const updateMutation = useUpdateCmsSetting();
 
-  useEffect(() => {
-    if (!settings) return;
+  // Seed form fields from the loaded CMS settings. Render-phase
+  // prev-value pattern instead of an effect.
+  const [prevSettings, setPrevSettings] = useState(settings);
+  if (settings && settings !== prevSettings) {
+    setPrevSettings(settings);
     const nav = settings.navigation as { links?: Array<{ label?: string; url?: string; order?: number; is_visible?: boolean }> } | undefined;
     if (nav?.links && nav.links.length > 0) {
       setNavLinks(
@@ -83,7 +86,7 @@ export function NavigationsFooterTab() {
       setInstagram(footer.social_links?.instagram ?? "");
       setLinkedin(footer.social_links?.linkedin ?? "");
     }
-  }, [settings]);
+  }
 
   const updateNavLink = (id: string, field: keyof NavLink, value: string | boolean) => {
     setNavLinks((prev) => prev.map((l) => (l.id === id ? { ...l, [field]: value } : l)));

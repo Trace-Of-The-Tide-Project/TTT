@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { SearchIcon } from "@/components/ui/icons";
 import { FilterDropdown } from "@/components/dashboard/admin/users/FilterDropdown";
@@ -76,24 +76,29 @@ export function NotificationsAdminContent() {
     [nt],
   );
 
+  // "Now" ticks every minute to keep relative timestamps fresh. The
+  // initial setState + interval setStates are the whole point of this
+  // effect (external clock), so the rule doesn't apply.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setNowMs(Date.now());
     const id = window.setInterval(() => setNowMs(Date.now()), 60_000);
     return () => window.clearInterval(id);
   }, []);
 
+  // Debounced search — setTimeout sets state after a delay.
   useEffect(() => {
     const timeoutId = window.setTimeout(() => setDebouncedSearch(searchInput.trim()), 400);
     return () => window.clearTimeout(timeoutId);
   }, [searchInput]);
 
-  const prevDebouncedRef = useRef(debouncedSearch);
-  useEffect(() => {
-    if (prevDebouncedRef.current !== debouncedSearch) {
-      prevDebouncedRef.current = debouncedSearch;
-      setPage(1);
-    }
-  }, [debouncedSearch]);
+  // Reset to page 1 whenever the (already-debounced) search changes.
+  // Render-phase pattern instead of an effect.
+  const [prevDebouncedSearch, setPrevDebouncedSearch] = useState(debouncedSearch);
+  if (prevDebouncedSearch !== debouncedSearch) {
+    setPrevDebouncedSearch(debouncedSearch);
+    setPage(1);
+  }
 
   const queryParams = useMemo(
     () => ({
@@ -115,22 +120,21 @@ export function NotificationsAdminContent() {
     refetch,
   } = useNotifications(queryParams, { enabled: Boolean(user?.id), silent: true });
 
-  const rows = useMemo(
-    () =>
-      user?.id && queryData?.notifications
-        ? filterNotificationsForUser(queryData.notifications, user.id)
-        : [],
-    [queryData, user?.id],
-  );
+  // Plain derivation — React Compiler handles the memoization
+  // automatically; a manual useMemo here trips its preservation check.
+  const rows =
+    user?.id && queryData?.notifications
+      ? filterNotificationsForUser(queryData.notifications, user.id)
+      : [];
   const meta: NotificationsListMeta = queryData?.meta ?? emptyMeta;
   const error = queryError ? formatApiError(queryError, nt("errors.generic")) : null;
 
+  // Clamp the current page to within the new totalPages when the
+  // query meta changes. Render-phase pattern instead of an effect.
   const totalPages = Math.max(1, meta.totalPages);
-  useEffect(() => {
-    if (meta.total > 0 && page > totalPages) {
-      setPage(totalPages);
-    }
-  }, [meta.total, page, totalPages]);
+  if (meta.total > 0 && page > totalPages) {
+    setPage(totalPages);
+  }
 
   const handleTypeChange = (value: string) => {
     setTypeFilter(value);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
@@ -95,9 +95,12 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
   const safePage = Math.min(page, totalPages);
   const pageRows = filtered.slice((safePage - 1) * ROWS_PER_PAGE, safePage * ROWS_PER_PAGE);
 
-  useEffect(() => {
+  // Reset page when search changes. Render-phase pattern.
+  const [prevSearch, setPrevSearch] = useState(search);
+  if (prevSearch !== search) {
+    setPrevSearch(search);
     setPage(1);
-  }, [search]);
+  }
 
   const fromRow = (safePage - 1) * ROWS_PER_PAGE + 1;
   const toRow = Math.min(safePage * ROWS_PER_PAGE, filtered.length);

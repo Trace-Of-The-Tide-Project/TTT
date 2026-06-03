@@ -34,9 +34,16 @@ export function ConfigureRoleModal({
 
   const [perms, setPerms] = useState<Record<ConfigurePermissionId, boolean>>(initialAllEnabled);
 
-  useEffect(() => {
-    if (open) setPerms(initialAllEnabled());
-  }, [open, resolvedRoleName]);
+  // Reset perms each time the modal opens for a (potentially different)
+  // role. React 19 prefers adjusting state during render.
+  const openKey = open ? resolvedRoleName : null;
+  const [prevOpenKey, setPrevOpenKey] = useState<string | null>(null);
+  if (openKey && openKey !== prevOpenKey) {
+    setPrevOpenKey(openKey);
+    setPerms(initialAllEnabled());
+  } else if (!openKey && prevOpenKey !== null) {
+    setPrevOpenKey(null);
+  }
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

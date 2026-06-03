@@ -72,7 +72,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [mounted, setMounted] = useState(false);
   const { data: usersResult } = useUsers({ limit: 1 });
 
+  // SSR hydration guard. setState in effect is the documented pattern.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

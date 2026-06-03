@@ -33,7 +33,7 @@
         "rejected": "تم رفض الطلب.",
         "approveError": "تعذّرت الموافقة على الطلب",
         "rejectError": "تعذّر رفض الطلب",
-        "errorBody": "الواجهة الخلفية لا تعرض بعد نقطة موافقة/رفض لطلبات الورشات. راجع وثيقة المشروع."
+        "errorBody": "يرجى المحاولة مجددًا."
       }
     },
     "encounterBookings": {
@@ -46,7 +46,7 @@
         "loading": "جارٍ تحميل الحجوزات…",
         "empty": "لا توجد حجوزات لقاءات بعد.",
         "noMatch": "لا توجد حجوزات مطابقة لهذا التصفية.",
-        "loadError": "تعذّر تحميل الحجوزات — نقطة عرض الحجوزات غير موجودة في الواجهة الخلفية بعد.",
+        "loadError": "تعذّر تحميل الحجوزات.",
         "retry": "حاول مجددًا",
         "review": "مراجعة",
         "headers": { "primary": "الضيف", "secondary": "اللقاء", "date": "التاريخ", "status": "الحالة" },
@@ -69,7 +69,7 @@
         "rejected": "تم رفض الحجز.",
         "approveError": "تعذّرت الموافقة على الحجز",
         "rejectError": "تعذّر رفض الحجز",
-        "errorBody": "الواجهة الخلفية لا تعرض بعد نقطة موافقة/رفض لحجوزات اللقاءات. راجع وثيقة المشروع."
+        "errorBody": "يرجى المحاولة مجددًا."
       }
     },
     "residency": {
@@ -183,6 +183,102 @@
         "rejected": "تم رفض المقترح.",
         "rejectError": "تعذّر رفض المقترح",
         "errorBody": "يرجى المحاولة مجددًا."
+      }
+    },
+    "magazinePageEditor": {
+      "title": "محرر صفحة المجلة",
+      "subtitle": "تحكّم في محتوى صفحة المجلة العامة — النصوص والصور وإظهار الأقسام لكل لغة.",
+      "loading": "جارٍ تحميل المحرر…",
+      "publish": "نشر الكل",
+      "publishing": "جارٍ النشر…",
+      "saveAndPublish": "حفظ ونشر",
+      "unsavedChanges": "تغييرات غير محفوظة",
+      "toast": {
+        "saved": "تم حفظ القسم.",
+        "saveError": "تعذّر حفظ القسم",
+        "published": "تم نشر صفحة المجلة.",
+        "publishError": "تعذّر نشر الصفحة",
+        "errorBody": "يرجى المحاولة مجددًا."
+      },
+      "sectionsHeading": "الأقسام",
+      "comingSoonChip": "قريبًا",
+      "comingSoonBody": "نموذج هذا القسم قادم لاحقًا. استخدم أيقونة العين لإظهاره أو إخفائه.",
+      "previewUnavailable": "ستظهر المعاينة الحيّة عند ربط النموذج.",
+      "previewHeading": "معاينة حيّة",
+      "hideSection": "إخفاء القسم",
+      "showSection": "إظهار القسم",
+      "sections": {
+        "hero": "البطل (Hero)",
+        "manifesto": "البيان",
+        "founderQuote": "اقتباس المؤسس",
+        "newsletterCopy": "نص النشرة",
+        "supportCuration": "الدعم / التعاونات"
+      },
+      "hero": {
+        "title": "Hero",
+        "subtitle": "اللافتة العلوية — العنوان والوصف وأزرار الدعوة وصورة الخلفية.",
+        "reset": "استرجاع",
+        "save": "حفظ",
+        "saving": "جارٍ الحفظ…",
+        "sharedHeading": "مشترك (لكل اللغات)",
+        "perLocaleHeading": "محتوى لكل لغة",
+        "previewHeading": "معاينة حيّة",
+        "fields": {
+          "headline": "العنوان",
+          "headlinePlaceholder": "حكايات تصنع الثقافة الحديثة.",
+          "subheadline": "العنوان الفرعي",
+          "subheadlinePlaceholder": "مجلة تستكشف تقاطع الفن والتصميم والسينما…",
+          "primaryCta": "زر الدعوة الأساسي",
+          "primaryCtaPlaceholder": "استكشف الإصدارات",
+          "secondaryCta": "زر الدعوة الثانوي",
+          "secondaryCtaPlaceholder": "أحدث عدد",
+          "artworkUrl": "رابط صورة الخلفية",
+          "primaryHref": "رابط الزر الأساسي",
+          "secondaryHref": "رابط الزر الثانوي"
+        }
+      },
+      "manifesto": {
+        "title": "البيان",
+        "subtitle": "الفلسفة والرؤية والرسالة والقيم والاقتباس الختامي.",
+        "fields": {
+          "philosophyHeading": "عنوان الفلسفة",
+          "philosophyQuote": "اقتباس الفلسفة",
+          "visionHeading": "عنوان الرؤية",
+          "visionBody": "نص الرؤية",
+          "missionHeading": "عنوان الرسالة",
+          "missionBody": "نص الرسالة",
+          "valuesHeading": "عنوان القيم",
+          "closingQuote": "الاقتباس الختامي",
+          "bannerUrl": "رابط صورة البانر"
+        }
+      },
+      "founderQuote": {
+        "title": "اقتباس المؤسس",
+        "subtitle": "اقتباس يظهر في تبويب هيئة التحرير.",
+        "sharedHeading": "مشترك (لكل اللغات)",
+        "fields": {
+          "quote": "الاقتباس",
+          "name": "الاسم",
+          "role": "الدور",
+          "avatarUrl": "رابط الصورة الشخصية"
+        }
+      },
+      "newsletterCopy": {
+        "title": "قسم النشرة",
+        "subtitle": "العنوان والنص فوق حقل البريد.",
+        "fields": {
+          "title": "العنوان",
+          "body": "النص"
+        }
+      },
+      "support": {
+        "title": "الدعم / التعاونات",
+        "subtitle": "تحرير عنوان القسم والعنوان الفرعي.",
+        "curationNote": "الكاروسيل نفسه يُغذّى من المساهمات المعتمدة. اختيار المساهمات الظاهرة سيأتي في تحديث لاحق.",
+        "fields": {
+          "heading": "العنوان",
+          "subheading": "العنوان الفرعي"
+        }
       }
     }
   }

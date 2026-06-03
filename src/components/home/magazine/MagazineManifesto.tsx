@@ -9,6 +9,24 @@ import { FirstWordGold } from "./FirstWordGold";
 const HEX_CLIP =
   "polygon(50% 5%, 90% 27%, 90% 73%, 50% 95%, 10% 73%, 10% 27%)";
 
+const DEFAULT_BANNER = "/images/home/hero-silk.png";
+
+/** Reject non-URL strings so Next/Image doesn't throw `Failed to
+ * construct URL` when admins type partial input. */
+function safeBanner(src: string | undefined): {
+  src: string;
+  unoptimized: boolean;
+} {
+  const value = src?.trim();
+  if (!value) return { src: DEFAULT_BANNER, unoptimized: false };
+  const ok =
+    value.startsWith("/") ||
+    value.startsWith("http://") ||
+    value.startsWith("https://");
+  if (!ok) return { src: DEFAULT_BANNER, unoptimized: false };
+  return { src: value, unoptimized: !value.startsWith("/") };
+}
+
 /**
  * Manifesto pane content. The Figma comp has:
  *
@@ -31,8 +49,34 @@ const HEX_CLIP =
  * dividers use the existing `--tott-card-border` token so they read
  * correctly in both light and dark themes.
  */
-export function MagazineManifesto() {
+export type MagazineManifestoProps = {
+  /** Per-locale copy overrides. Empty/whitespace falls back to i18n. */
+  philosophyHeadingOverride?: string;
+  philosophyQuoteOverride?: string;
+  visionHeadingOverride?: string;
+  visionBodyOverride?: string;
+  missionHeadingOverride?: string;
+  missionBodyOverride?: string;
+  valuesHeadingOverride?: string;
+  closingQuoteOverride?: string;
+  /** Silk banner image at the top. Empty falls back to the bundled default. */
+  bannerOverride?: string;
+};
+
+export function MagazineManifesto({
+  philosophyHeadingOverride,
+  philosophyQuoteOverride,
+  visionHeadingOverride,
+  visionBodyOverride,
+  missionHeadingOverride,
+  missionBodyOverride,
+  valuesHeadingOverride,
+  closingQuoteOverride,
+  bannerOverride,
+}: MagazineManifestoProps = {}) {
   const t = useTranslations("Home.magazine.manifesto");
+  const tr = (key: string, override?: string) =>
+    override?.trim() ? override : t(key);
 
   const values = ["value1", "value2", "value3", "value4", "value5"] as const;
 
@@ -77,12 +121,13 @@ export function MagazineManifesto() {
         aria-hidden
       >
         <Image
-          src="/images/home/hero-silk.png"
+          src={safeBanner(bannerOverride).src}
           alt=""
           fill
           className="object-cover"
           sizes="(min-width: 1280px) 1300px, 100vw"
           priority={false}
+          unoptimized={safeBanner(bannerOverride).unoptimized}
         />
       </div>
 
@@ -91,7 +136,7 @@ export function MagazineManifesto() {
           without dominating like the original "way too big" version. */}
       <section className={textIndent}>
         <h2 className={headingClass} style={headingStyle}>
-          {t("philosophyHeading")}
+          {tr("philosophyHeading", philosophyHeadingOverride)}
         </h2>
         <p
           className="mt-5 w-full leading-snug"
@@ -100,7 +145,7 @@ export function MagazineManifesto() {
             fontSize: "clamp(1.25rem, 1.5vw + 0.75rem, 2rem)",
           }}
         >
-          {t("philosophyQuote")}
+          {tr("philosophyQuote", philosophyQuoteOverride)}
         </p>
       </section>
 
@@ -109,10 +154,10 @@ export function MagazineManifesto() {
       {/* Vision */}
       <section className={textIndent}>
         <h3 className={subHeadingClass} style={headingStyle}>
-          {t("visionHeading")}
+          {tr("visionHeading", visionHeadingOverride)}
         </h3>
         <p className={`mt-4 ${bodyClass}`} style={bodyTypoStyle}>
-          {t("visionBody")}
+          {tr("visionBody", visionBodyOverride)}
         </p>
       </section>
 
@@ -121,10 +166,10 @@ export function MagazineManifesto() {
       {/* Mission */}
       <section className={textIndent}>
         <h3 className={subHeadingClass} style={headingStyle}>
-          {t("missionHeading")}
+          {tr("missionHeading", missionHeadingOverride)}
         </h3>
         <p className={`mt-4 ${bodyClass}`} style={bodyTypoStyle}>
-          {t("missionBody")}
+          {tr("missionBody", missionBodyOverride)}
         </p>
       </section>
 
@@ -134,7 +179,7 @@ export function MagazineManifesto() {
           Small" token (Inter 400 12/16, white, max-width 930px). */}
       <section className={textIndent}>
         <h3 className={subHeadingClass} style={headingStyle}>
-          {t("valuesHeading")}
+          {tr("valuesHeading", valuesHeadingOverride)}
         </h3>
         <ul className="mt-5 grid gap-3">
           {values.map((key) => (
@@ -199,7 +244,7 @@ export function MagazineManifesto() {
                 margin: 0,
               }}
             >
-              {t("closingQuote")}
+              {tr("closingQuote", closingQuoteOverride)}
             </p>
           </div>
         </div>

@@ -54,14 +54,20 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
     };
   }, [open, handleKeyDown]);
 
-  useEffect(() => {
-    if (!open || !template) return;
+  // Reload fields each time the modal opens (or the template changes
+  // while open). React 19 prefers adjusting state during render.
+  const openKey = open && template ? template.id ?? template.name : null;
+  const [prevOpenKey, setPrevOpenKey] = useState<string | null>(null);
+  if (openKey && openKey !== prevOpenKey && template) {
+    setPrevOpenKey(openKey);
     setName(template.name);
     setCategory(template.category);
     setCategoryOpen(false);
     setSubject(template.subject);
     setBody(template.body);
-  }, [open, template]);
+  } else if (!openKey && prevOpenKey !== null) {
+    setPrevOpenKey(null);
+  }
 
   useEffect(() => {
     if (!open || !categoryOpen) return;

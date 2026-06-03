@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import Image from "next/image";
 import { CloudUploadIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
 import { useCmsSettings } from "@/hooks/queries/cms";
@@ -26,24 +27,28 @@ export function BrandingTab() {
   const { data: settings } = useCmsSettings();
   const updateMutation = useUpdateCmsSetting({ silent: true });
 
-  useEffect(() => {
-    if (!settings) return;
+  // Seed the form fields once the settings query finishes loading.
+  // Render-phase prev-value pattern instead of an effect.
+  const [prevSettings, setPrevSettings] = useState(settings);
+  if (settings && settings !== prevSettings) {
+    setPrevSettings(settings);
     const branding = settings.branding as {
       primary_color?: string;
       logo?: string;
       favicon?: string;
     } | undefined;
-    if (!branding) return;
-    if (branding.primary_color) setPrimaryColor(branding.primary_color);
-    if (branding.logo) {
-      setSavedLogoUrl(branding.logo);
-      setLogoPreview(branding.logo);
+    if (branding) {
+      if (branding.primary_color) setPrimaryColor(branding.primary_color);
+      if (branding.logo) {
+        setSavedLogoUrl(branding.logo);
+        setLogoPreview(branding.logo);
+      }
+      if (branding.favicon) {
+        setSavedFaviconUrl(branding.favicon);
+        setFaviconPreview(branding.favicon);
+      }
     }
-    if (branding.favicon) {
-      setSavedFaviconUrl(branding.favicon);
-      setFaviconPreview(branding.favicon);
-    }
-  }, [settings]);
+  }
 
   const handleLogoSelect = (file: File | null) => {
     if (logoPreview && logoPreview !== savedLogoUrl) URL.revokeObjectURL(logoPreview);
@@ -140,9 +145,15 @@ export function BrandingTab() {
           >
             {logoPreview ? (
               <div className="relative w-full overflow-hidden rounded">
-                <img
+                {/* User-uploaded blob/remote URL — `unoptimized` skips
+                 *  the Next image optimizer (no remotePatterns config
+                 *  needed for arbitrary preview sources). */}
+                <Image
                   src={logoPreview}
                   alt="Logo preview"
+                  width={240}
+                  height={96}
+                  unoptimized
                   className="mx-auto max-h-24 w-auto object-contain"
                 />
                 <p className="mt-2 text-xs text-gray-400">{logoFile?.name ?? "Saved logo"}</p>
@@ -202,9 +213,12 @@ export function BrandingTab() {
           >
             {faviconPreview ? (
               <div className="relative w-full overflow-hidden rounded">
-                <img
+                <Image
                   src={faviconPreview}
                   alt="Favicon preview"
+                  width={64}
+                  height={64}
+                  unoptimized
                   className="mx-auto max-h-16 w-auto object-contain"
                 />
                 <p className="mt-2 text-xs text-gray-400">{faviconFile?.name ?? "Saved favicon"}</p>

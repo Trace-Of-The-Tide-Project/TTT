@@ -123,7 +123,12 @@ export function ContentSettings({
   const t = useTranslations("Dashboard.articles.editor.settings");
 
   const tagsQuery = useAdminTags();
-  const adminTags: AdminTagItem[] = tagsQuery.data ?? [];
+  // Memoize the fallback so downstream `useMemo`s see a stable
+  // reference between renders.
+  const adminTags: AdminTagItem[] = useMemo(
+    () => tagsQuery.data ?? [],
+    [tagsQuery.data],
+  );
   const tagsLoading = tagsQuery.isPending;
   const tagsError = tagsQuery.error ? t("tagsLoadError") : null;
   const [tagPicker, setTagPicker] = useState("");

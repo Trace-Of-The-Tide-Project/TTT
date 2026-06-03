@@ -101,64 +101,27 @@ export async function applyToWorkshop(
 }
 
 // ─── Admin: workshop applications ───────────────────────────────────
-// The backend currently exposes applications only nested inside
-// `GET /workshops/{id}`. There's no dedicated list endpoint and no
-// approve/reject route, so for now the admin screen aggregates the
-// nested arrays from `/workshops/admin` (drafts included). The
-// `updateWorkshopApplicationStatus` helper below targets the *expected*
-// endpoint name (`PATCH /workshop-applications/{id}`) so once the
-// backend adds it, no UI changes are needed.
+// Backend ships GET /workshops/applications + PATCH /workshops/
+// applications/{id} with {status}.
 
-export async function listAllWorkshopsForAdmin(): Promise<WorkshopDetail[]> {
-  const { data } = await api.get<unknown>("/workshops/admin");
-  const raw = data && typeof data === "object" && "data" in (data as object)
-    ? (data as { data?: unknown }).data
-    : data;
-  return Array.isArray(raw) ? (raw as WorkshopDetail[]) : [];
-}
-
-/**
- * Fetch every workshop's detail in parallel and flatten the embedded
- * `applications` arrays. Each entry is augmented with `workshop_title`
- * so the admin list can show which workshop the applicant chose.
- */
+/** GET /workshops/applications — admin/editor. */
 export async function listAllWorkshopApplications(): Promise<
   WorkshopApplication[]
 > {
-  const workshops = await listAllWorkshopsForAdmin();
-  const details = await Promise.all(
-    workshops.map((w) =>
-      getWorkshop(w.id).catch(() => null as WorkshopDetail | null),
-    ),
-  );
-  const out: WorkshopApplication[] = [];
-  for (const w of details) {
-    if (!w?.applications) continue;
-    for (const a of w.applications) {
-      out.push({ ...a, workshop_id: a.workshop_id ?? w.id, workshop_title: w.title });
-    }
-  }
-  // Newest first.
-  out.sort(
-    (a, b) =>
-      new Date(b.createdAt ?? 0).getTime() -
-      new Date(a.createdAt ?? 0).getTime(),
-  );
-  return out;
+  const { data } = await api.get<unknown>("/workshops/applications");
+  const raw =
+    data && typeof data === "object" && "data" in (data as object)
+      ? (data as { data?: unknown }).data
+      : data;
+  return Array.isArray(raw) ? (raw as WorkshopApplication[]) : [];
 }
 
-/**
- * Set a workshop-application status. Targets the expected backend
- * endpoint `PATCH /workshop-applications/{id}` with `{status}`. Until
- * the backend ships that route this throws (caught by the mutation,
- * surfaced as a toast) — see the project doc for the exact request
- * the backend dev needs to implement.
- */
+/** PATCH /workshops/applications/{id} — admin/editor. */
 export async function updateWorkshopApplicationStatus(
   id: string,
   status: WorkshopApplicationStatus,
 ): Promise<void> {
-  await api.patch(`/workshop-applications/${encodeURIComponent(id)}`, {
+  await api.patch(`/workshops/applications/${encodeURIComponent(id)}`, {
     status,
   });
 }

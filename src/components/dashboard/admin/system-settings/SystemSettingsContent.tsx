@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
   ContributeIcon,
@@ -33,10 +33,6 @@ import {
 } from "@/lib/dashboard/email-templates-constants";
 
 const ACCENT = "#E8DDC0";
-
-/** Chamfered row (matches Reports audit log cards). */
-const ROW_CLIP =
-  "polygon(11px 0, calc(100% - 11px) 0, 100% 11px, 100% calc(100% - 11px), calc(100% - 11px) 100%, 11px 100%, 0 calc(100% - 11px), 0 11px)";
 
 type CategoryModalState =
   | { type: "closed" }
@@ -75,10 +71,14 @@ export function SystemSettingsContent() {
   const [communityGuidelines, setCommunityGuidelines] = useState("");
   const [contentPolicy, setContentPolicy] = useState("");
 
-  useEffect(() => {
+  // Refresh sample copy whenever the locale changes. Render-phase
+  // pattern instead of an effect.
+  const [prevLocale, setPrevLocale] = useState(locale);
+  if (prevLocale !== locale) {
+    setPrevLocale(locale);
     setCommunityGuidelines(tSettings("guidelines.sampleCommunity"));
     setContentPolicy(tSettings("guidelines.sampleContentPolicy"));
-  }, [locale, tSettings]);
+  }
 
   const handleCategorySave = (payload: { id?: string; name: string; slug: string }) => {
     if (categoryModal.type === "add") {

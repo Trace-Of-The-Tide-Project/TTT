@@ -97,9 +97,12 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
   }, []);
 
   // After flipping mounts the overlay at rotateY 0, push it to ±180
-  // on the next animation frame so the CSS transition runs.
+  // on the next animation frame so the CSS transition runs. setState
+  // is the whole point of this effect — it drives the animation
+  // state machine. React 19's set-state-in-effect rule doesn't fit.
   useEffect(() => {
     if (!flipping) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFlipPhase("start");
     const raf = requestAnimationFrame(() => {
       requestAnimationFrame(() => setFlipPhase("end"));

@@ -150,12 +150,16 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
   const [flipPhase, setFlipPhase] = useState<"start" | "end">("start");
   const flipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // When the user changes filter/search and the issue itself changes,
-  // reset the page indicator so we don't show e.g. "page 16/24" on a
-  // different shorter issue.
-  useEffect(() => {
+  // Reset the page indicator when the user changes filter/search and
+  // the underlying issue changes. Render-phase prev-value pattern
+  // instead of an effect.
+  const [prevIssueId, setPrevIssueId] = useState<string | undefined>(
+    currentIssue?.id,
+  );
+  if (prevIssueId !== currentIssue?.id) {
+    setPrevIssueId(currentIssue?.id);
     setCurrentPage(DEMO_INITIAL_PAGE);
-  }, [currentIssue?.id]);
+  }
 
   useEffect(() => {
     return () => {
@@ -164,9 +168,11 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
   }, []);
 
   // After flipping mounts the overlay at rotation 0, push it to ±180 on
-  // the next animation frame so the CSS transition runs.
+  // the next animation frame so the CSS transition runs. setState
+  // drives the animation state machine here.
   useEffect(() => {
     if (!flipping) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFlipPhase("start");
     const raf = requestAnimationFrame(() => {
       requestAnimationFrame(() => setFlipPhase("end"));

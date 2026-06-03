@@ -11,7 +11,5 @@ export function useEncounterBookings() {
     queryKey: encountersAdminKeys.bookings(),
     queryFn: listAllEncounterBookings,
     placeholderData: (prev) => prev,
-    // Backend endpoint doesn't exist yet — don't retry the 404 storm.
-    retry: false,
   });
 }

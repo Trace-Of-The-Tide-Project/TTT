@@ -44,7 +44,6 @@ const TEXT_DIM = "var(--tott-home-text-muted)";
 const EYEBROW = "var(--tott-home-eyebrow)";
 const FRAME = "var(--tott-card-border)";
 const ICON_TINT = "var(--tott-stat-icon)";
-const PANEL_BG = "var(--tott-elevated)";
 
 const SECTION_GAP = 48;
 
