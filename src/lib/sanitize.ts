@@ -1,13 +1,13 @@
-import DOMPurify from "dompurify";
+import DOMPurify from "isomorphic-dompurify";
 
 /**
  * Central, isomorphic HTML sanitizer for all rich-text rendered via
  * dangerouslySetInnerHTML. One allowlist, used on both server (SSR) and
  * client so the markup matches and hydration never diverges.
  *
- * `dompurify` v3 runs in Node 20+ using the built-in DOM-less path; in the
- * browser it uses the real window. We don't pass a custom window — the
- * library picks the right environment automatically.
+ * `isomorphic-dompurify` provides one purifier that works on both the server
+ * (bundled jsdom) and the browser (real window), so SSR and client output
+ * match.
  */
 
 /** Tags the rich editor can emit and we allow through. */
