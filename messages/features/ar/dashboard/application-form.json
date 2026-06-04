@@ -51,6 +51,10 @@
         "fileTypesLine": "الصيغ المدعومة: {types} (حد أقصى {maxFiles} ملفات، {maxSizeMb} ميجابايت لكل ملف)",
         "removeFileAria": "إزالة الملف",
         "submit": "إرسال",
+        "submitting": "جارٍ الإرسال…",
+        "successTitle": "تم إرسال الطلب",
+        "successBody": "شكرًا لك — لقد استلمنا طلبك وسنتواصل معك.",
+        "errorGeneric": "حدث خطأ ما. يُرجى المحاولة مرة أخرى.",
         "homeBack": "العودة إلى",
         "homePage": "الصفحة الرئيسية"
       },

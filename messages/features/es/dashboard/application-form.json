@@ -51,6 +51,10 @@
         "fileTypesLine": "Compatible con: {types} (Máx. {maxFiles} archivos, {maxSizeMb} MB cada uno)",
         "removeFileAria": "Eliminar archivo",
         "submit": "Enviar",
+        "submitting": "Enviando…",
+        "successTitle": "Solicitud enviada",
+        "successBody": "Gracias — hemos recibido tu solicitud y nos pondremos en contacto.",
+        "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
         "homeBack": "Volver a",
         "homePage": "Página principal"
       },

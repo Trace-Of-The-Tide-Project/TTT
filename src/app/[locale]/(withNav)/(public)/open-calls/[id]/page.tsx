@@ -142,7 +142,7 @@ export default function OpenCallByIdPage() {
                   color: theme.panelForeground,
                 }}
               >
-                <DynamicOpenCallForm fields={formFields} />
+                <DynamicOpenCallForm fields={formFields} openCallId={openCall.id} />
               </div>
             )}
 
