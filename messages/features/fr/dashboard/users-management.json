@@ -56,6 +56,57 @@
       "toasts": {
         "verified": "Utilisateur vérifié",
         "suspended": "Utilisateur suspendu"
+      },
+      "modals": {
+        "common": {
+          "cancel": "Annuler",
+          "save": "Enregistrer",
+          "done": "Terminé"
+        },
+        "fields": {
+          "fullName": "Nom complet",
+          "username": "Nom d’utilisateur",
+          "email": "E-mail",
+          "status": "Statut",
+          "roles": "Rôles",
+          "joined": "Inscription",
+          "lastActive": "Dernière activité",
+          "contributions": "Contributions"
+        },
+        "view": {
+          "title": "Profil de l’utilisateur"
+        },
+        "edit": {
+          "title": "Modifier l’utilisateur",
+          "saving": "Enregistrement…",
+          "toasts": {
+            "saved": "Utilisateur mis à jour"
+          },
+          "errors": {
+            "emailRequired": "L’e-mail est obligatoire.",
+            "usernameRequired": "Le nom d’utilisateur est obligatoire.",
+            "saveFailed": "Échec de la mise à jour de l’utilisateur"
+          }
+        },
+        "role": {
+          "title": "Changer le rôle",
+          "currentRoles": "Rôles actuels",
+          "noRoles": "Cet utilisateur n’a aucun rôle attribué.",
+          "addRole": "Ajouter un rôle",
+          "selectRole": "Sélectionner un rôle…",
+          "assign": "Attribuer",
+          "revoke": "Retirer",
+          "revokeAria": "Retirer le rôle {role}",
+          "allAssigned": "Tous les rôles disponibles sont déjà attribués.",
+          "toasts": {
+            "assigned": "{role} attribué",
+            "revoked": "{role} retiré"
+          },
+          "errors": {
+            "assignFailed": "Échec de l’attribution du rôle",
+            "revokeFailed": "Échec du retrait du rôle"
+          }
+        }
       }
     }
   }

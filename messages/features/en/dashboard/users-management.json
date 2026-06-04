@@ -56,6 +56,57 @@
       "toasts": {
         "verified": "User verified",
         "suspended": "User suspended"
+      },
+      "modals": {
+        "common": {
+          "cancel": "Cancel",
+          "save": "Save",
+          "done": "Done"
+        },
+        "fields": {
+          "fullName": "Full name",
+          "username": "Username",
+          "email": "Email",
+          "status": "Status",
+          "roles": "Roles",
+          "joined": "Joined",
+          "lastActive": "Last active",
+          "contributions": "Contributions"
+        },
+        "view": {
+          "title": "User profile"
+        },
+        "edit": {
+          "title": "Edit user",
+          "saving": "Saving…",
+          "toasts": {
+            "saved": "User updated"
+          },
+          "errors": {
+            "emailRequired": "Email is required.",
+            "usernameRequired": "Username is required.",
+            "saveFailed": "Failed to update user"
+          }
+        },
+        "role": {
+          "title": "Change role",
+          "currentRoles": "Current roles",
+          "noRoles": "This user has no roles assigned.",
+          "addRole": "Add a role",
+          "selectRole": "Select a role…",
+          "assign": "Assign",
+          "revoke": "Remove",
+          "revokeAria": "Remove {role} role",
+          "allAssigned": "All available roles are already assigned.",
+          "toasts": {
+            "assigned": "Assigned {role}",
+            "revoked": "Removed {role}"
+          },
+          "errors": {
+            "assignFailed": "Failed to assign role",
+            "revokeFailed": "Failed to remove role"
+          }
+        }
       }
     }
   }

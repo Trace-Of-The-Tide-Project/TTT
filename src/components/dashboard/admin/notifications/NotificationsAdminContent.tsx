@@ -9,10 +9,7 @@ import { formatUserLastActiveRelativeLocalized } from "@/lib/dashboard/user-tabl
 import { useAuthUser } from "@/components/providers/AuthProvider";
 import { useNotifications } from "@/hooks/queries/notifications";
 import { formatApiError } from "@/lib/api/error-message";
-import {
-  filterNotificationsForUser,
-  type NotificationsListMeta,
-} from "@/services/notifications.service";
+import { type NotificationsListMeta } from "@/services/notifications.service";
 
 const PAGE_LIMIT = 20;
 
@@ -120,12 +117,10 @@ export function NotificationsAdminContent() {
     refetch,
   } = useNotifications(queryParams, { enabled: Boolean(user?.id), silent: true });
 
-  // Plain derivation — React Compiler handles the memoization
-  // automatically; a manual useMemo here trips its preservation check.
-  const rows =
-    user?.id && queryData?.notifications
-      ? filterNotificationsForUser(queryData.notifications, user.id)
-      : [];
+  // The backend scopes `GET /notifications` to the authenticated user, so the
+  // rows are already the caller's and `meta.total` is the per-user count — no
+  // client-side ownership filter needed (that was the cause of the "0 of N").
+  const rows = queryData?.notifications ?? [];
   const meta: NotificationsListMeta = queryData?.meta ?? emptyMeta;
   const error = queryError ? formatApiError(queryError, nt("errors.generic")) : null;
 

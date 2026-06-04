@@ -56,6 +56,57 @@
       "toasts": {
         "verified": "تم توثيق المستخدم",
         "suspended": "تم إيقاف المستخدم"
+      },
+      "modals": {
+        "common": {
+          "cancel": "إلغاء",
+          "save": "حفظ",
+          "done": "تم"
+        },
+        "fields": {
+          "fullName": "الاسم الكامل",
+          "username": "اسم المستخدم",
+          "email": "البريد الإلكتروني",
+          "status": "الحالة",
+          "roles": "الأدوار",
+          "joined": "تاريخ الانضمام",
+          "lastActive": "آخر نشاط",
+          "contributions": "المساهمات"
+        },
+        "view": {
+          "title": "ملف المستخدم"
+        },
+        "edit": {
+          "title": "تعديل المستخدم",
+          "saving": "جاري الحفظ…",
+          "toasts": {
+            "saved": "تم تحديث المستخدم"
+          },
+          "errors": {
+            "emailRequired": "البريد الإلكتروني مطلوب.",
+            "usernameRequired": "اسم المستخدم مطلوب.",
+            "saveFailed": "تعذّر تحديث المستخدم"
+          }
+        },
+        "role": {
+          "title": "تغيير الدور",
+          "currentRoles": "الأدوار الحالية",
+          "noRoles": "لا توجد أدوار معيّنة لهذا المستخدم.",
+          "addRole": "إضافة دور",
+          "selectRole": "اختر دورًا…",
+          "assign": "تعيين",
+          "revoke": "إزالة",
+          "revokeAria": "إزالة دور {role}",
+          "allAssigned": "تم تعيين جميع الأدوار المتاحة بالفعل.",
+          "toasts": {
+            "assigned": "تم تعيين {role}",
+            "revoked": "تمت إزالة {role}"
+          },
+          "errors": {
+            "assignFailed": "تعذّر تعيين الدور",
+            "revokeFailed": "تعذّر إزالة الدور"
+          }
+        }
       }
     }
   }

@@ -4,12 +4,16 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "@/i18n/navigation";
 import { BellIcon } from "@/components/ui/icons";
 import { useTheme } from "@/components/providers/ThemeProvider";
-import { useNotifications } from "@/hooks/queries/notifications";
+import {
+  useNotifications,
+  useUnreadNotificationCount,
+} from "@/hooks/queries/notifications";
 import {
   useMarkAllNotificationsRead,
   useMarkNotificationRead,
 } from "@/hooks/mutations/notifications";
 import type { NotificationListItem } from "@/services/notifications.service";
+import { useAuthUser } from "@/components/providers/AuthProvider";
 import { theme } from "@/lib/theme";
 
 
@@ -115,14 +119,17 @@ export function NotificationDropdown() {
     ? "hover:opacity-80"
     : "hover:opacity-80";
 
-  const { data: unreadData } = useNotifications({ limit: 1, status: "unread" });
+  const user = useAuthUser();
+  const { data: unreadCountData } = useUnreadNotificationCount(user?.id, {
+    silent: true,
+  });
   const { data: listData, isFetching: loading } = useNotifications(
     { limit: 8, sortBy: "created_at", order: "DESC" },
     { enabled: open },
   );
 
   const items: NotificationListItem[] = listData?.notifications ?? [];
-  const unreadCount = unreadData?.meta.total ?? 0;
+  const unreadCount = unreadCountData ?? 0;
 
   const markReadMutation = useMarkNotificationRead();
   const markAllMutation = useMarkAllNotificationsRead();

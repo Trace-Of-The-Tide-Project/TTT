@@ -177,3 +177,53 @@ export async function createOpenCall(payload: CreateOpenCallPayload): Promise<Cr
   const { data } = await api.post<CreateOpenCallResponse>("/open-calls", payload);
   return data;
 }
+
+export type ApplyToOpenCallInput = {
+  /** Dynamic form answers keyed by application_form field `name`. */
+  answers: Record<string, string>;
+  /** Whether the participant agreed to the terms (the `terms_agreement` checkbox). */
+  termsAgreement: boolean;
+  /** Files keyed by their application_form field `name` (uploaded under the `files` part). */
+  files?: File[];
+};
+
+export type ApplyToOpenCallResponse = {
+  id?: string;
+  data?: { id?: string };
+};
+
+/**
+ * Submit an application to an open call (POST /open-calls/:id/apply).
+ *
+ * Sent as multipart/form-data: `answers` is a JSON string (the backend parses it
+ * back into an object), `terms_agreement` is a stringified boolean, and every file
+ * is appended under the `files` part. Do not set Content-Type — Axios adds the
+ * multipart boundary itself.
+ */
+export async function applyToOpenCall(
+  id: string,
+  input: ApplyToOpenCallInput,
+): Promise<ApplyToOpenCallResponse> {
+  const fd = new FormData();
+  fd.append("answers", JSON.stringify(input.answers));
+  fd.append("terms_agreement", String(input.termsAgreement));
+  for (const file of input.files ?? []) {
+    fd.append("files", file, file.name);
+  }
+
+  const { data } = await api.post<ApplyToOpenCallResponse>(
+    `/open-calls/${encodeURIComponent(id)}/apply`,
+    fd,
+    {
+      transformRequest: [
+        (body, headers) => {
+          if (body instanceof FormData) {
+            delete headers["Content-Type"];
+          }
+          return body;
+        },
+      ],
+    },
+  );
+  return data;
+}
