@@ -16,25 +16,19 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { formatApiError } from "@/lib/api/error-message";
-import {
-  EyeIcon,
-  RefreshCwIcon,
-} from "@/components/ui/icons";
+import { EyeIcon, RefreshCwIcon } from "@/components/ui/icons";
 import { MagazineHero } from "@/components/home/magazine/MagazineHero";
 import { MagazineManifesto } from "@/components/home/magazine/MagazineManifesto";
-import {
-  MagazineEditorialBoard,
-} from "@/components/home/magazine/MagazineEditorialBoard";
+import { MagazineEditorialBoard } from "@/components/home/magazine/MagazineEditorialBoard";
 import { MagazineNewsletter } from "@/components/home/magazine/MagazineNewsletter";
 import { MagazineSupport } from "@/components/home/magazine/MagazineSupport";
 import {
-  useEnsureMagazinePage,
-} from "@/hooks/queries/cms";
-import {
-  usePublishCmsPage,
-  useToggleCmsSection,
-  useUpdateCmsSection,
-} from "@/hooks/mutations/cms";
+  RichTextEditor,
+  EditorToolbar as RichTextToolbar,
+  EditorRegistryProvider,
+} from "@/components/ui/rich-text";
+import { useEnsureMagazinePage } from "@/hooks/queries/cms";
+import { usePublishCmsPage, useToggleCmsSection, useUpdateCmsSection } from "@/hooks/mutations/cms";
 import {
   MAGAZINE_SECTION_TYPES,
   SUPPORTED_LOCALES,
@@ -89,8 +83,7 @@ export function MagazinePageEditorContent() {
   const toggleSection = useToggleCmsSection();
   const publishPage = usePublishCmsPage();
 
-  const [activeSection, setActiveSection] =
-    useState<MagazineSectionKey>("hero");
+  const [activeSection, setActiveSection] = useState<MagazineSectionKey>("hero");
 
   // The active editor reports its dirty state + a save closure up
   // here so the global Publish button can save unsaved work before
@@ -106,9 +99,7 @@ export function MagazinePageEditorContent() {
     const map = new Map<MagazineSectionKey, CmsSection>();
     if (!page) return map;
     for (const row of SECTION_ROWS) {
-      const found = page.sections.find(
-        (s) => s.section_type === MAGAZINE_SECTION_TYPES[row.key],
-      );
+      const found = page.sections.find((s) => s.section_type === MAGAZINE_SECTION_TYPES[row.key]);
       if (found) map.set(row.key, found);
     }
     return map;
@@ -126,9 +117,7 @@ export function MagazinePageEditorContent() {
     <div className="space-y-6">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold text-foreground">
-            {t("title")}
-          </h1>
+          <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
           <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
         </div>
         <div className="flex items-center gap-3">
@@ -191,9 +180,7 @@ export function MagazinePageEditorContent() {
                   ) : null}
                   <div
                     className={`flex items-center gap-2 rounded-md pl-3 pr-2 py-2 transition-colors ${
-                      isActive
-                        ? "bg-[#C9A96E]/8"
-                        : "hover:bg-[var(--tott-dash-control-hover)]"
+                      isActive ? "bg-[#C9A96E]/8" : "hover:bg-[var(--tott-dash-control-hover)]"
                     }`}
                   >
                     <button
@@ -214,9 +201,7 @@ export function MagazinePageEditorContent() {
                           sectionId: section.id,
                         })
                       }
-                      aria-label={
-                        visible ? t("hideSection") : t("showSection")
-                      }
+                      aria-label={visible ? t("hideSection") : t("showSection")}
                       className={`shrink-0 rounded p-1 transition-opacity hover:opacity-80 ${
                         visible ? "text-gray-400" : "text-gray-600 opacity-40"
                       }`}
@@ -293,17 +278,10 @@ type EditorProps = {
   isSaving: boolean;
   /** Reports the active editor's dirty + save closure to the parent so
    * the global Publish button can save unsaved work first. */
-  registerDraftState: (
-    state: { isDirty: boolean; save: () => Promise<void> } | null,
-  ) => void;
+  registerDraftState: (state: { isDirty: boolean; save: () => Promise<void> } | null) => void;
 };
 
-function HeroEditor({
-  section,
-  onSave,
-  isSaving,
-  registerDraftState,
-}: EditorProps) {
+function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.hero");
 
   const {
@@ -319,10 +297,8 @@ function HeroEditor({
   useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
 
   const isRtl = RTL_LOCALES.has(activeLocale);
-  const setSharedField = (
-    key: "artwork" | "primaryHref" | "secondaryHref",
-    value: string,
-  ) => setDraft((prev) => ({ ...prev, [key]: value || undefined }));
+  const setSharedField = (key: "artwork" | "primaryHref" | "secondaryHref", value: string) =>
+    setDraft((prev) => ({ ...prev, [key]: value || undefined }));
 
   return (
     <>
@@ -337,73 +313,75 @@ function HeroEditor({
         onSave={() => onSave(JSON.stringify(draft))}
       />
 
-      <FormCard>
-        <div className="space-y-6">
-          <FieldGroup label={t("perLocaleHeading")}>
-            <Field label={t("fields.headline")}>
-              <TextInput
-                value={localeFields.title ?? ""}
-                onChange={(v) => setLocaleField("title", v)}
-                placeholder={t("fields.headlinePlaceholder")}
-                rtl={isRtl}
-              />
-            </Field>
-            <Field label={t("fields.subheadline")}>
-              <TextArea
-                rows={3}
+      <EditorRegistryProvider>
+        <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+          <RichTextToolbar />
+        </div>
+        <FormCard>
+          <div className="space-y-6">
+            <FieldGroup label={t("perLocaleHeading")}>
+              <Field label={t("fields.headline")}>
+                <TextInput
+                  value={localeFields.title ?? ""}
+                  onChange={(v) => setLocaleField("title", v)}
+                  placeholder={t("fields.headlinePlaceholder")}
+                  rtl={isRtl}
+                />
+              </Field>
+              <RichField
+                label={t("fields.subheadline")}
                 value={localeFields.subtitle ?? ""}
                 onChange={(v) => setLocaleField("subtitle", v)}
-                placeholder={t("fields.subheadlinePlaceholder")}
                 rtl={isRtl}
               />
-            </Field>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label={t("fields.primaryCta")}>
-                <TextInput
-                  value={localeFields.primaryCtaLabel ?? ""}
-                  onChange={(v) => setLocaleField("primaryCtaLabel", v)}
-                  placeholder={t("fields.primaryCtaPlaceholder")}
-                  rtl={isRtl}
-                />
-              </Field>
-              <Field label={t("fields.secondaryCta")}>
-                <TextInput
-                  value={localeFields.secondaryCtaLabel ?? ""}
-                  onChange={(v) => setLocaleField("secondaryCtaLabel", v)}
-                  placeholder={t("fields.secondaryCtaPlaceholder")}
-                  rtl={isRtl}
-                />
-              </Field>
-            </div>
-          </FieldGroup>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field label={t("fields.primaryCta")}>
+                  <TextInput
+                    value={localeFields.primaryCtaLabel ?? ""}
+                    onChange={(v) => setLocaleField("primaryCtaLabel", v)}
+                    placeholder={t("fields.primaryCtaPlaceholder")}
+                    rtl={isRtl}
+                  />
+                </Field>
+                <Field label={t("fields.secondaryCta")}>
+                  <TextInput
+                    value={localeFields.secondaryCtaLabel ?? ""}
+                    onChange={(v) => setLocaleField("secondaryCtaLabel", v)}
+                    placeholder={t("fields.secondaryCtaPlaceholder")}
+                    rtl={isRtl}
+                  />
+                </Field>
+              </div>
+            </FieldGroup>
 
-          <FieldGroup label={t("sharedHeading")}>
-            <Field label={t("fields.artworkUrl")}>
-              <TextInput
-                value={draft.artwork ?? ""}
-                onChange={(v) => setSharedField("artwork", v)}
-                placeholder="/images/home/magazine-thumbnail.svg"
-              />
-            </Field>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label={t("fields.primaryHref")}>
+            <FieldGroup label={t("sharedHeading")}>
+              <Field label={t("fields.artworkUrl")}>
                 <TextInput
-                  value={draft.primaryHref ?? ""}
-                  onChange={(v) => setSharedField("primaryHref", v)}
-                  placeholder="/magazine#magazine-content"
+                  value={draft.artwork ?? ""}
+                  onChange={(v) => setSharedField("artwork", v)}
+                  placeholder="/images/home/magazine-thumbnail.svg"
                 />
               </Field>
-              <Field label={t("fields.secondaryHref")}>
-                <TextInput
-                  value={draft.secondaryHref ?? ""}
-                  onChange={(v) => setSharedField("secondaryHref", v)}
-                  placeholder="/magazine#newsletter-heading"
-                />
-              </Field>
-            </div>
-          </FieldGroup>
-        </div>
-      </FormCard>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field label={t("fields.primaryHref")}>
+                  <TextInput
+                    value={draft.primaryHref ?? ""}
+                    onChange={(v) => setSharedField("primaryHref", v)}
+                    placeholder="/magazine#magazine-content"
+                  />
+                </Field>
+                <Field label={t("fields.secondaryHref")}>
+                  <TextInput
+                    value={draft.secondaryHref ?? ""}
+                    onChange={(v) => setSharedField("secondaryHref", v)}
+                    placeholder="/magazine#newsletter-heading"
+                  />
+                </Field>
+              </div>
+            </FieldGroup>
+          </div>
+        </FormCard>
+      </EditorRegistryProvider>
 
       <PreviewFrame locale={activeLocale}>
         <MagazineHero
@@ -420,18 +398,10 @@ function HeroEditor({
   );
 }
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="mb-1.5 block text-xs font-medium text-gray-400">
-        {label}
-      </label>
+      <label className="mb-1.5 block text-xs font-medium text-gray-400">{label}</label>
       {children}
     </div>
   );
@@ -465,28 +435,26 @@ function TextInput({
   );
 }
 
-function TextArea({
+/** Long-form field backed by the shared rich-text editor. The section's
+ *  EditorRegistryProvider + RichTextToolbar (mounted by the section editor)
+ *  drive whichever RichField is focused. */
+function RichField({
+  label,
   value,
   onChange,
-  placeholder,
   rtl,
-  rows = 3,
 }: {
+  label: string;
   value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
+  onChange: (html: string) => void;
   rtl?: boolean;
-  rows?: number;
 }) {
   return (
-    <textarea
-      rows={rows}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      dir={rtl ? "rtl" : "ltr"}
-      className={`${INPUT_CLASS} resize-none`}
-    />
+    <Field label={label}>
+      <div className="overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
+        <RichTextEditor value={value} onChange={onChange} dir={rtl ? "rtl" : "ltr"} />
+      </div>
+    </Field>
   );
 }
 
@@ -518,9 +486,7 @@ function EditorToolbar({
     <div className="sticky top-2 z-20 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] p-4 backdrop-blur">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-base font-semibold text-foreground">
-            {title}
-          </h3>
+          <h3 className="truncate text-base font-semibold text-foreground">{title}</h3>
           <p className="mt-0.5 truncate text-xs text-gray-500">{subtitle}</p>
         </div>
         <div className="flex items-center gap-2">
@@ -576,13 +542,7 @@ function EditorToolbar({
  * body height = measuredContentHeight × scale so the entire component
  * is always visible regardless of how much copy admins type.
  */
-function PreviewFrame({
-  locale,
-  children,
-}: {
-  locale: MagazineLocale;
-  children: React.ReactNode;
-}) {
+function PreviewFrame({ locale, children }: { locale: MagazineLocale; children: React.ReactNode }) {
   const t = useTranslations("Dashboard.magazinePageEditor.hero");
   const frameRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -688,13 +648,7 @@ function FormCard({ children }: { children: React.ReactNode }) {
   );
 }
 
-function FieldGroup({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function FieldGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
       <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500">
@@ -715,7 +669,7 @@ function useRegisterDraftState(
   register: EditorProps["registerDraftState"],
   isDirty: boolean,
   draft: unknown,
-  onSave: (configJson: string) => Promise<void>,
+  onSave: (configJson: string) => Promise<void>
 ) {
   // Latest values held in refs so the registered save closure always
   // sees the current draft without re-registering on every keystroke.
@@ -743,7 +697,7 @@ function useRegisterDraftState(
 
 function useLocalizedDraft<T extends object, C extends { copy: Record<string, T> }>(
   section: CmsSection,
-  parse: (s: CmsSection) => C,
+  parse: (s: CmsSection) => C
 ) {
   const initial = useMemo(() => parse(section), [parse, section]);
   const [draft, setDraft] = useState<C>(initial);
@@ -767,7 +721,7 @@ function useLocalizedDraft<T extends object, C extends { copy: Record<string, T>
             ...prev.copy,
             [activeLocale]: { ...(prev.copy[activeLocale] ?? {}), [key]: value },
           },
-        }) as C,
+        }) as C
     );
   };
 
@@ -789,12 +743,7 @@ function useLocalizedDraft<T extends object, C extends { copy: Record<string, T>
 
 // ─── Manifesto editor ──────────────────────────────────────────────
 
-function ManifestoEditor({
-  section,
-  onSave,
-  isSaving,
-  registerDraftState,
-}: EditorProps) {
+function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.manifesto");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
   const {
@@ -806,10 +755,7 @@ function ManifestoEditor({
     setLocaleField,
     isDirty,
     reset,
-  } = useLocalizedDraft<ManifestoLocaleFields, ManifestoConfig>(
-    section,
-    parseManifestoConfig,
-  );
+  } = useLocalizedDraft<ManifestoLocaleFields, ManifestoConfig>(section, parseManifestoConfig);
   useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
   const isRtl = RTL_LOCALES.has(activeLocale);
 
@@ -826,87 +772,82 @@ function ManifestoEditor({
         onSave={() => onSave(JSON.stringify(draft))}
       />
 
-      <FormCard>
-        <div className="space-y-6">
-          <FieldGroup label={tShared("perLocaleHeading")}>
-            <Field label={t("fields.philosophyHeading")}>
-              <TextInput
-                value={localeFields.philosophyHeading ?? ""}
-                onChange={(v) => setLocaleField("philosophyHeading", v)}
-                rtl={isRtl}
-              />
-            </Field>
-            <Field label={t("fields.philosophyQuote")}>
-              <TextArea
-                rows={3}
+      <EditorRegistryProvider>
+        <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+          <RichTextToolbar />
+        </div>
+        <FormCard>
+          <div className="space-y-6">
+            <FieldGroup label={tShared("perLocaleHeading")}>
+              <Field label={t("fields.philosophyHeading")}>
+                <TextInput
+                  value={localeFields.philosophyHeading ?? ""}
+                  onChange={(v) => setLocaleField("philosophyHeading", v)}
+                  rtl={isRtl}
+                />
+              </Field>
+              <RichField
+                label={t("fields.philosophyQuote")}
                 value={localeFields.philosophyQuote ?? ""}
                 onChange={(v) => setLocaleField("philosophyQuote", v)}
                 rtl={isRtl}
               />
-            </Field>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label={t("fields.visionHeading")}>
-                <TextInput
-                  value={localeFields.visionHeading ?? ""}
-                  onChange={(v) => setLocaleField("visionHeading", v)}
-                  rtl={isRtl}
-                />
-              </Field>
-              <Field label={t("fields.missionHeading")}>
-                <TextInput
-                  value={localeFields.missionHeading ?? ""}
-                  onChange={(v) => setLocaleField("missionHeading", v)}
-                  rtl={isRtl}
-                />
-              </Field>
-              <Field label={t("fields.visionBody")}>
-                <TextArea
-                  rows={4}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field label={t("fields.visionHeading")}>
+                  <TextInput
+                    value={localeFields.visionHeading ?? ""}
+                    onChange={(v) => setLocaleField("visionHeading", v)}
+                    rtl={isRtl}
+                  />
+                </Field>
+                <Field label={t("fields.missionHeading")}>
+                  <TextInput
+                    value={localeFields.missionHeading ?? ""}
+                    onChange={(v) => setLocaleField("missionHeading", v)}
+                    rtl={isRtl}
+                  />
+                </Field>
+                <RichField
+                  label={t("fields.visionBody")}
                   value={localeFields.visionBody ?? ""}
                   onChange={(v) => setLocaleField("visionBody", v)}
                   rtl={isRtl}
                 />
-              </Field>
-              <Field label={t("fields.missionBody")}>
-                <TextArea
-                  rows={4}
+                <RichField
+                  label={t("fields.missionBody")}
                   value={localeFields.missionBody ?? ""}
                   onChange={(v) => setLocaleField("missionBody", v)}
                   rtl={isRtl}
                 />
+              </div>
+              <Field label={t("fields.valuesHeading")}>
+                <TextInput
+                  value={localeFields.valuesHeading ?? ""}
+                  onChange={(v) => setLocaleField("valuesHeading", v)}
+                  rtl={isRtl}
+                />
               </Field>
-            </div>
-            <Field label={t("fields.valuesHeading")}>
-              <TextInput
-                value={localeFields.valuesHeading ?? ""}
-                onChange={(v) => setLocaleField("valuesHeading", v)}
-                rtl={isRtl}
-              />
-            </Field>
-            <Field label={t("fields.closingQuote")}>
-              <TextArea
-                rows={3}
+              <RichField
+                label={t("fields.closingQuote")}
                 value={localeFields.closingQuote ?? ""}
                 onChange={(v) => setLocaleField("closingQuote", v)}
                 rtl={isRtl}
               />
-            </Field>
-          </FieldGroup>
+            </FieldGroup>
 
-          <FieldGroup label={tShared("sharedHeading")}>
-            <Field label={t("fields.bannerUrl")}>
-              <TextInput
-                type="url"
-                value={draft.banner ?? ""}
-                onChange={(v) =>
-                  setDraft((prev) => ({ ...prev, banner: v || undefined }))
-                }
-                placeholder="/images/home/hero-silk.png"
-              />
-            </Field>
-          </FieldGroup>
-        </div>
-      </FormCard>
+            <FieldGroup label={tShared("sharedHeading")}>
+              <Field label={t("fields.bannerUrl")}>
+                <TextInput
+                  type="url"
+                  value={draft.banner ?? ""}
+                  onChange={(v) => setDraft((prev) => ({ ...prev, banner: v || undefined }))}
+                  placeholder="/images/home/hero-silk.png"
+                />
+              </Field>
+            </FieldGroup>
+          </div>
+        </FormCard>
+      </EditorRegistryProvider>
 
       <PreviewFrame locale={activeLocale}>
         <MagazineManifesto
@@ -927,12 +868,7 @@ function ManifestoEditor({
 
 // ─── Founder quote editor ──────────────────────────────────────────
 
-function FounderQuoteEditor({
-  section,
-  onSave,
-  isSaving,
-  registerDraftState,
-}: EditorProps) {
+function FounderQuoteEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.founderQuote");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
   const {
@@ -944,10 +880,7 @@ function FounderQuoteEditor({
     setLocaleField,
     isDirty,
     reset,
-  } = useLocalizedDraft<FounderQuoteLocaleFields, FounderQuoteConfig>(
-    section,
-    parseFounderConfig,
-  );
+  } = useLocalizedDraft<FounderQuoteLocaleFields, FounderQuoteConfig>(section, parseFounderConfig);
   useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
   const isRtl = RTL_LOCALES.has(activeLocale);
 
@@ -964,48 +897,49 @@ function FounderQuoteEditor({
         onSave={() => onSave(JSON.stringify(draft))}
       />
 
-      <FormCard>
-        <div className="space-y-6">
-          <FieldGroup label={tShared("perLocaleHeading")}>
-            <Field label={t("fields.quote")}>
-              <TextArea
-                rows={4}
+      <EditorRegistryProvider>
+        <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+          <RichTextToolbar />
+        </div>
+        <FormCard>
+          <div className="space-y-6">
+            <FieldGroup label={tShared("perLocaleHeading")}>
+              <RichField
+                label={t("fields.quote")}
                 value={localeFields.quote ?? ""}
                 onChange={(v) => setLocaleField("quote", v)}
                 rtl={isRtl}
               />
-            </Field>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label={t("fields.name")}>
-                <TextInput
-                  value={localeFields.name ?? ""}
-                  onChange={(v) => setLocaleField("name", v)}
-                  rtl={isRtl}
-                />
-              </Field>
-              <Field label={t("fields.role")}>
-                <TextInput
-                  value={localeFields.role ?? ""}
-                  onChange={(v) => setLocaleField("role", v)}
-                  rtl={isRtl}
-                />
-              </Field>
-            </div>
-          </FieldGroup>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field label={t("fields.name")}>
+                  <TextInput
+                    value={localeFields.name ?? ""}
+                    onChange={(v) => setLocaleField("name", v)}
+                    rtl={isRtl}
+                  />
+                </Field>
+                <Field label={t("fields.role")}>
+                  <TextInput
+                    value={localeFields.role ?? ""}
+                    onChange={(v) => setLocaleField("role", v)}
+                    rtl={isRtl}
+                  />
+                </Field>
+              </div>
+            </FieldGroup>
 
-          <FieldGroup label={t("sharedHeading")}>
-            <Field label={t("fields.avatarUrl")}>
-              <TextInput
-                type="url"
-                value={draft.avatar ?? ""}
-                onChange={(v) =>
-                  setDraft((prev) => ({ ...prev, avatar: v || undefined }))
-                }
-              />
-            </Field>
-          </FieldGroup>
-        </div>
-      </FormCard>
+            <FieldGroup label={t("sharedHeading")}>
+              <Field label={t("fields.avatarUrl")}>
+                <TextInput
+                  type="url"
+                  value={draft.avatar ?? ""}
+                  onChange={(v) => setDraft((prev) => ({ ...prev, avatar: v || undefined }))}
+                />
+              </Field>
+            </FieldGroup>
+          </div>
+        </FormCard>
+      </EditorRegistryProvider>
 
       <PreviewFrame locale={activeLocale}>
         <MagazineEditorialBoard
@@ -1023,26 +957,14 @@ function FounderQuoteEditor({
 
 // ─── Newsletter copy editor ────────────────────────────────────────
 
-function NewsletterCopyEditor({
-  section,
-  onSave,
-  isSaving,
-  registerDraftState,
-}: EditorProps) {
+function NewsletterCopyEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.newsletterCopy");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
-  const {
-    draft,
-    activeLocale,
-    setActiveLocale,
-    localeFields,
-    setLocaleField,
-    isDirty,
-    reset,
-  } = useLocalizedDraft<NewsletterCopyLocaleFields, NewsletterCopyConfig>(
-    section,
-    parseNewsletterConfig,
-  );
+  const { draft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
+    useLocalizedDraft<NewsletterCopyLocaleFields, NewsletterCopyConfig>(
+      section,
+      parseNewsletterConfig
+    );
   useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
   const isRtl = RTL_LOCALES.has(activeLocale);
 
@@ -1058,31 +980,31 @@ function NewsletterCopyEditor({
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
       />
-      <FormCard>
-        <FieldGroup label={tShared("perLocaleHeading")}>
-          <Field label={t("fields.title")}>
-            <TextInput
-              value={localeFields.title ?? ""}
-              onChange={(v) => setLocaleField("title", v)}
-              rtl={isRtl}
-            />
-          </Field>
-          <Field label={t("fields.body")}>
-            <TextArea
-              rows={4}
+      <EditorRegistryProvider>
+        <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+          <RichTextToolbar />
+        </div>
+        <FormCard>
+          <FieldGroup label={tShared("perLocaleHeading")}>
+            <Field label={t("fields.title")}>
+              <TextInput
+                value={localeFields.title ?? ""}
+                onChange={(v) => setLocaleField("title", v)}
+                rtl={isRtl}
+              />
+            </Field>
+            <RichField
+              label={t("fields.body")}
               value={localeFields.body ?? ""}
               onChange={(v) => setLocaleField("body", v)}
               rtl={isRtl}
             />
-          </Field>
-        </FieldGroup>
-      </FormCard>
+          </FieldGroup>
+        </FormCard>
+      </EditorRegistryProvider>
 
       <PreviewFrame locale={activeLocale}>
-        <MagazineNewsletter
-          titleOverride={localeFields.title}
-          bodyOverride={localeFields.body}
-        />
+        <MagazineNewsletter titleOverride={localeFields.title} bodyOverride={localeFields.body} />
       </PreviewFrame>
     </>
   );
@@ -1110,26 +1032,11 @@ const PREVIEW_COLLABS_PLACEHOLDER = [
   },
 ];
 
-function SupportEditor({
-  section,
-  onSave,
-  isSaving,
-  registerDraftState,
-}: EditorProps) {
+function SupportEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.support");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
-  const {
-    draft,
-    activeLocale,
-    setActiveLocale,
-    localeFields,
-    setLocaleField,
-    isDirty,
-    reset,
-  } = useLocalizedDraft<SupportLocaleFields, SupportConfig>(
-    section,
-    parseSupportConfig,
-  );
+  const { draft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
+    useLocalizedDraft<SupportLocaleFields, SupportConfig>(section, parseSupportConfig);
   useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
   const isRtl = RTL_LOCALES.has(activeLocale);
 
@@ -1145,30 +1052,33 @@ function SupportEditor({
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
       />
-      <FormCard>
-        <div className="space-y-6">
-          <FieldGroup label={tShared("perLocaleHeading")}>
-            <Field label={t("fields.heading")}>
-              <TextInput
-                value={localeFields.heading ?? ""}
-                onChange={(v) => setLocaleField("heading", v)}
-                rtl={isRtl}
-              />
-            </Field>
-            <Field label={t("fields.subheading")}>
-              <TextArea
-                rows={2}
+      <EditorRegistryProvider>
+        <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+          <RichTextToolbar />
+        </div>
+        <FormCard>
+          <div className="space-y-6">
+            <FieldGroup label={tShared("perLocaleHeading")}>
+              <Field label={t("fields.heading")}>
+                <TextInput
+                  value={localeFields.heading ?? ""}
+                  onChange={(v) => setLocaleField("heading", v)}
+                  rtl={isRtl}
+                />
+              </Field>
+              <RichField
+                label={t("fields.subheading")}
                 value={localeFields.subheading ?? ""}
                 onChange={(v) => setLocaleField("subheading", v)}
                 rtl={isRtl}
               />
-            </Field>
-          </FieldGroup>
-          <div className="rounded-lg border border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-gray-500">
-            {t("curationNote")}
+            </FieldGroup>
+            <div className="rounded-lg border border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-gray-500">
+              {t("curationNote")}
+            </div>
           </div>
-        </div>
-      </FormCard>
+        </FormCard>
+      </EditorRegistryProvider>
 
       <PreviewFrame locale={activeLocale}>
         <MagazineSupport
