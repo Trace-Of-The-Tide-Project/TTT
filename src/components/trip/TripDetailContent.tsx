@@ -239,13 +239,17 @@ export function TripDetailContent({ tripId }: TripDetailContentProps) {
             <TripDetailsBar items={detailItems} />
             <div>
               <h2 className="mb-4 text-lg font-semibold text-foreground">About this trip</h2>
-              <p className="text-sm leading-relaxed text-gray-400">
-                {trip.description.trim() ? (
-                  <RichContent html={trip.description} variant="block" />
-                ) : (
-                  "No description provided."
-                )}
-              </p>
+              {trip.description.trim() ? (
+                <RichContent
+                  html={trip.description}
+                  variant="block"
+                  className="text-sm leading-relaxed text-gray-400"
+                />
+              ) : (
+                <p className="text-sm leading-relaxed text-gray-400">
+                  No description provided.
+                </p>
+              )}
             </div>
             {highlights.length > 0 ? <TripHighlights highlights={highlights} /> : null}
             {stops.length > 0 ? (
