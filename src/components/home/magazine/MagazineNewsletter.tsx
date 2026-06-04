@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
 import { useSubscribeNewsletter } from "@/hooks/mutations/newsletter";
 import { formatApiError } from "@/lib/api/error-message";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { FirstWordGold } from "./FirstWordGold";
 import { HexPatternBackdrop } from "./HexPatternBackdrop";
 
@@ -147,7 +148,7 @@ export function MagazineNewsletter({
             maxWidth: 529,
           }}
         >
-          {bodyOverride ?? t("body")}
+          <RichContent html={bodyOverride ?? t("body")} variant="inline" />
         </p>
 
         {ctaButton ? (

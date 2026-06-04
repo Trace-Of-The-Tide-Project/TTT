@@ -9,6 +9,7 @@ import { TripDetailsBar, DEFAULT_TRIP_ICONS } from "@/components/trip/TripDetail
 import { TripBookingForm } from "@/components/trip/TripBookingForm";
 import { TripHighlights } from "@/components/trip/TripHighlights";
 import { TripTimeline } from "@/components/trip/TripTimeline";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { resolveTripCoverImage } from "@/lib/trip-cover-image";
 import { theme } from "@/lib/theme";
 import {
@@ -238,9 +239,17 @@ export function TripDetailContent({ tripId }: TripDetailContentProps) {
             <TripDetailsBar items={detailItems} />
             <div>
               <h2 className="mb-4 text-lg font-semibold text-foreground">About this trip</h2>
-              <p className="text-sm leading-relaxed text-gray-400">
-                {trip.description.trim() || "No description provided."}
-              </p>
+              {trip.description.trim() ? (
+                <RichContent
+                  html={trip.description}
+                  variant="block"
+                  className="text-sm leading-relaxed text-gray-400"
+                />
+              ) : (
+                <p className="text-sm leading-relaxed text-gray-400">
+                  No description provided.
+                </p>
+              )}
             </div>
             {highlights.length > 0 ? <TripHighlights highlights={highlights} /> : null}
             {stops.length > 0 ? (

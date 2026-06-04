@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { FirstWordGold } from "./FirstWordGold";
 
 // Pre-rendered twin-hex header (Author + Contributor hexes connected
@@ -437,7 +438,7 @@ function CollabCard({
             margin: 0,
           }}
         >
-          {collab.description}
+          <RichContent html={collab.description} variant="inline" />
         </p>
       </div>
 

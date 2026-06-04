@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type FC,
-} from "react";
+import { useCallback, useId, useMemo, useRef, useState, type ChangeEvent, type FC } from "react";
 import { useTranslations } from "next-intl";
 import {
   CameraIcon,
@@ -19,6 +11,7 @@ import {
   TrashIcon,
   TwitterXIcon,
 } from "@/components/ui/icons";
+import { RichTextEditor, EditorToolbar, EditorRegistryProvider } from "@/components/ui/rich-text";
 import { theme } from "@/lib/theme";
 
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
@@ -61,7 +54,7 @@ export function AdminProfileInformation() {
   const [location, setLocation] = useState("Gaza, Palestine State of");
   const [externalLink, setExternalLink] = useState("about.me/fadi-b");
   const [biography, setBiography] = useState(
-    "Senior Frontend Developer with 8+ years of experience in React and TypeScript.",
+    "Senior Frontend Developer with 8+ years of experience in React and TypeScript."
   );
   const [presetUrls, setPresetUrls] = useState<Record<PresetKey, string>>({
     facebook: "",
@@ -105,7 +98,7 @@ export function AdminProfileInformation() {
       objectUrlRef.current = url;
       setAvatarPreview(url);
     },
-    [revokePreview, t],
+    [revokePreview, t]
   );
 
   const clearPreset = useCallback((key: PresetKey) => {
@@ -131,7 +124,9 @@ export function AdminProfileInformation() {
         className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]/50 p-6 sm:p-8"
         style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.04) inset" }}
       >
-        <h1 className="text-xs font-medium uppercase tracking-wide text-gray-500">{t("pageTitle")}</h1>
+        <h1 className="text-xs font-medium uppercase tracking-wide text-gray-500">
+          {t("pageTitle")}
+        </h1>
 
         <div className="mt-6 flex flex-col gap-4 border-b border-[var(--tott-card-border)] pb-8 sm:flex-row sm:items-center">
           <div
@@ -164,9 +159,7 @@ export function AdminProfileInformation() {
             </div>
             <p className="text-xs text-gray-500 sm:max-w-xs">
               {t("photoHint")}
-              {photoError ? (
-                <span className="mt-1 block text-red-400">{photoError}</span>
-              ) : null}
+              {photoError ? <span className="mt-1 block text-red-400">{photoError}</span> : null}
             </p>
           </div>
         </div>
@@ -192,7 +185,12 @@ export function AdminProfileInformation() {
           </div>
           <div>
             <label className="mb-1.5 block text-xs text-gray-500">{t("role")}</label>
-            <input type="text" value={role} onChange={(e) => setRole(e.target.value)} className={inputClass} />
+            <input
+              type="text"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className={inputClass}
+            />
           </div>
           <div>
             <label className="mb-1.5 block text-xs text-gray-500">{t("company")}</label>
@@ -226,16 +224,20 @@ export function AdminProfileInformation() {
 
         <div className="mt-8 border-b border-[var(--tott-card-border)] pb-8">
           <label className="mb-1.5 block text-xs text-gray-500">{t("biography")}</label>
-          <textarea
-            value={biography}
-            onChange={(e) => setBiography(e.target.value)}
-            rows={5}
-            className={`${inputClass} resize-y`}
-          />
+          <EditorRegistryProvider>
+            <div className="mb-2 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+              <EditorToolbar />
+            </div>
+            <div className="overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+              <RichTextEditor value={biography} onChange={setBiography} />
+            </div>
+          </EditorRegistryProvider>
         </div>
 
         <div className="mt-8">
-          <h2 className="mb-4 text-xs font-medium uppercase tracking-wide text-gray-500">{t("socialLinks")}</h2>
+          <h2 className="mb-4 text-xs font-medium uppercase tracking-wide text-gray-500">
+            {t("socialLinks")}
+          </h2>
           <ul className="flex flex-col gap-3">
             {PRESETS.map(({ key, Icon }) => (
               <li
@@ -297,7 +299,7 @@ export function AdminProfileInformation() {
                   value={row.url}
                   onChange={(e) =>
                     setExtraLinks((list) =>
-                      list.map((x) => (x.id === row.id ? { ...x, url: e.target.value } : x)),
+                      list.map((x) => (x.id === row.id ? { ...x, url: e.target.value } : x))
                     )
                   }
                   placeholder={t("additionalLinkPlaceholder")}

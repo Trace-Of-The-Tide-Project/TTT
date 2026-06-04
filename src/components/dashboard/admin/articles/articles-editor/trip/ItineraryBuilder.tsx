@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
+import { RichTextEditor, EditorToolbar, EditorRegistryProvider } from "@/components/ui/rich-text";
 import type { TripStop } from "@/services/trips.service";
 
 const LocationMapPicker = dynamic(() => import("./LocationMapPicker"), { ssr: false });
@@ -202,13 +203,13 @@ function StopEntry({ stop, index, onChange, onRemove }: StopEntryProps) {
             <label className="mb-1.5 block text-sm font-medium text-foreground">
               {t("detailsLabel")}
             </label>
-            <textarea
-              value={stop.description}
-              onChange={(e) => onChange({ description: e.target.value })}
-              placeholder={t("descriptionPlaceholder")}
-              rows={3}
-              className={inputClass}
-            />
+            <div className="overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
+              <RichTextEditor
+                value={stop.description}
+                onChange={(html) => onChange({ description: html })}
+                placeholder={t("descriptionPlaceholder")}
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -301,14 +302,14 @@ export function ItineraryBuilder({ stops, onChange }: ItineraryBuilderProps) {
     (idx: number) => {
       onChange(stops.filter((_, i) => i !== idx));
     },
-    [stops, onChange],
+    [stops, onChange]
   );
 
   const updateStop = useCallback(
     (idx: number, patch: Partial<EditorStop>) => {
       onChange(stops.map((s, i) => (i === idx ? { ...s, ...patch } : s)));
     },
-    [stops, onChange],
+    [stops, onChange]
   );
 
   return (
@@ -320,43 +321,48 @@ export function ItineraryBuilder({ stops, onChange }: ItineraryBuilderProps) {
         {t("heading")}
       </h3>
 
-      <div className="space-y-4">
-        {stops.map((stop, i) => (
-          <StopEntry
-            key={i}
-            stop={stop}
-            index={i}
-            onChange={(patch) => updateStop(i, patch)}
-            onRemove={() => removeStop(i)}
-          />
-        ))}
-
-        {/* Match the stop-card's column width (not the full outer panel) by
-            sitting in the same grid track that StopEntry uses. */}
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
-          <button
-            type="button"
-            onClick={addStop}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-3 text-sm text-gray-300 transition-colors hover:bg-[var(--tott-dash-control-bg)] hover:text-foreground"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-            >
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            {t("addLocation")}
-          </button>
+      <EditorRegistryProvider>
+        <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+          <EditorToolbar />
         </div>
-      </div>
+        <div className="space-y-4">
+          {stops.map((stop, i) => (
+            <StopEntry
+              key={i}
+              stop={stop}
+              index={i}
+              onChange={(patch) => updateStop(i, patch)}
+              onRemove={() => removeStop(i)}
+            />
+          ))}
+
+          {/* Match the stop-card's column width (not the full outer panel) by
+              sitting in the same grid track that StopEntry uses. */}
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
+            <button
+              type="button"
+              onClick={addStop}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-3 text-sm text-gray-300 transition-colors hover:bg-[var(--tott-dash-control-bg)] hover:text-foreground"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              {t("addLocation")}
+            </button>
+          </div>
+        </div>
+      </EditorRegistryProvider>
     </ChamferedPanel>
   );
 }

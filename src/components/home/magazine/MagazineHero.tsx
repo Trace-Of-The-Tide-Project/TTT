@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 
 type MagazineHeroProps = {
   /** Path to the hero artwork — defaults to the design SVG bundled in /public. */
@@ -187,7 +188,7 @@ function HeroCopy({
         className="mt-3 max-w-[60ch] text-[clamp(0.95rem,1.4vw,1.125rem)] leading-relaxed sm:mt-4"
         style={subtitleStyle}
       >
-        {subtitle?.trim() || t("subtitle")}
+        <RichContent html={subtitle?.trim() || t("subtitle")} variant="inline" />
       </p>
       <div className="mt-5 flex flex-wrap items-center gap-3 sm:mt-6 sm:gap-3.5">
         <Link

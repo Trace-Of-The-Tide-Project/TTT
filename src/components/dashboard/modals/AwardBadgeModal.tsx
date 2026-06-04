@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { XIcon } from "@/components/ui/icons";
+import { RichTextEditor, EditorToolbar, EditorRegistryProvider } from "@/components/ui/rich-text";
 import { theme } from "@/lib/theme";
 import type { Badge } from "@/lib/dashboard/engagements-constants";
 
@@ -10,7 +11,12 @@ type AwardBadgeModalProps = {
   open: boolean;
   badge: Badge | null;
   onClose: () => void;
-  onAward: (payload: { badgeId: string; userQuery: string; description: string; criteria: string }) => void;
+  onAward: (payload: {
+    badgeId: string;
+    userQuery: string;
+    description: string;
+    criteria: string;
+  }) => void;
 };
 
 export function AwardBadgeModal({ open, badge, onClose, onAward }: AwardBadgeModalProps) {
@@ -21,14 +27,14 @@ export function AwardBadgeModal({ open, badge, onClose, onAward }: AwardBadgeMod
 
   const canSubmit = useMemo(
     () => Boolean(badge) && userQuery.trim().length > 0,
-    [badge, userQuery],
+    [badge, userQuery]
   );
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     },
-    [onClose],
+    [onClose]
   );
 
   useEffect(() => {
@@ -69,7 +75,9 @@ export function AwardBadgeModal({ open, badge, onClose, onAward }: AwardBadgeMod
       <div className="relative mx-4 w-full max-w-lg rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6">
         <div className="mb-5 flex items-start justify-between border-b border-[var(--tott-card-border)] pb-5">
           <div>
-            <h2 className="text-lg font-bold text-foreground">{ta("title", { name: badge.name })}</h2>
+            <h2 className="text-lg font-bold text-foreground">
+              {ta("title", { name: badge.name })}
+            </h2>
             <p className="mt-1 text-sm text-gray-500">{badge.description}</p>
           </div>
           <button
@@ -97,7 +105,9 @@ export function AwardBadgeModal({ open, badge, onClose, onAward }: AwardBadgeMod
           }}
         >
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">{ta("searchUser")}</label>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
+              {ta("searchUser")}
+            </label>
             <input
               type="text"
               value={userQuery}
@@ -108,29 +118,37 @@ export function AwardBadgeModal({ open, badge, onClose, onAward }: AwardBadgeMod
             />
           </div>
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">{ta("description")}</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder={ta("descriptionPlaceholder")}
-              rows={4}
-              className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
-              style={{ color: "#e5e7eb" }}
-            />
-          </div>
+          <EditorRegistryProvider>
+            <div className="rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+              <EditorToolbar />
+            </div>
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">{ta("criteria")}</label>
-            <textarea
-              value={criteria}
-              onChange={(e) => setCriteria(e.target.value)}
-              placeholder={ta("criteriaPlaceholder")}
-              rows={4}
-              className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
-              style={{ color: "#e5e7eb" }}
-            />
-          </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">
+                {ta("description")}
+              </label>
+              <div className="overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
+                <RichTextEditor
+                  value={description}
+                  onChange={setDescription}
+                  placeholder={ta("descriptionPlaceholder")}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">
+                {ta("criteria")}
+              </label>
+              <div className="overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
+                <RichTextEditor
+                  value={criteria}
+                  onChange={setCriteria}
+                  placeholder={ta("criteriaPlaceholder")}
+                />
+              </div>
+            </div>
+          </EditorRegistryProvider>
 
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
@@ -154,4 +172,3 @@ export function AwardBadgeModal({ open, badge, onClose, onAward }: AwardBadgeMod
     </div>
   );
 }
-

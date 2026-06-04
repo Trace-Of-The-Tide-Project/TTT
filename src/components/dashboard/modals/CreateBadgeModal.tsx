@@ -11,6 +11,7 @@ import {
   ThreadIcon,
   XIcon,
 } from "@/components/ui/icons";
+import { RichTextEditor, EditorToolbar, EditorRegistryProvider } from "@/components/ui/rich-text";
 import { theme } from "@/lib/theme";
 import type { Badge } from "@/lib/dashboard/engagements-constants";
 
@@ -52,7 +53,7 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
         else onClose();
       }
     },
-    [onClose, roleMenuOpen],
+    [onClose, roleMenuOpen]
   );
 
   useEffect(() => {
@@ -149,7 +150,9 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
                     borderColor:
                       selectedIcon === opt.id ? theme.accentGoldFocus : "var(--tott-card-border)",
                     color:
-                      selectedIcon === opt.id ? theme.accentGoldFocus : "var(--tott-dash-control-fg)",
+                      selectedIcon === opt.id
+                        ? theme.accentGoldFocus
+                        : "var(--tott-dash-control-fg)",
                   }}
                   aria-label={(tc as (key: string) => string)(`iconAria.${opt.id}`)}
                 >
@@ -160,7 +163,9 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">{tc("badgeName")}</label>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
+              {tc("badgeName")}
+            </label>
             <input
               type="text"
               value={name}
@@ -172,7 +177,9 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">{tc("roleLabel")}</label>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
+              {tc("roleLabel")}
+            </label>
             <div className="relative">
               <button
                 ref={roleButtonRef}
@@ -228,17 +235,20 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-foreground">
-              {tc("reasonLabel")}{" "}
-              <span className="text-gray-500">{tc("optional")}</span>
+              {tc("reasonLabel")} <span className="text-gray-500">{tc("optional")}</span>
             </label>
-            <textarea
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              placeholder={tc("reasonPlaceholder")}
-              rows={4}
-              className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
-              style={{ color: "#e5e7eb" }}
-            />
+            <EditorRegistryProvider>
+              <div className="mb-2 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+                <EditorToolbar />
+              </div>
+              <div className="overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
+                <RichTextEditor
+                  value={reason}
+                  onChange={setReason}
+                  placeholder={tc("reasonPlaceholder")}
+                />
+              </div>
+            </EditorRegistryProvider>
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-2">
@@ -263,4 +273,3 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
     </div>
   );
 }
-

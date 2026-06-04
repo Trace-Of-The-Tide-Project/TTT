@@ -31,6 +31,7 @@ import {
   sampleEmailTemplates,
   type EmailTemplateListItem,
 } from "@/lib/dashboard/email-templates-constants";
+import { RichTextEditor, EditorToolbar, EditorRegistryProvider } from "@/components/ui/rich-text";
 
 const ACCENT = "#E8DDC0";
 
@@ -39,10 +40,7 @@ type CategoryModalState =
   | { type: "add" }
   | { type: "edit"; category: ContentCategoryRow };
 
-type TagModalState =
-  | { type: "closed" }
-  | { type: "add" }
-  | { type: "edit"; tag: ContentTagRow };
+type TagModalState = { type: "closed" } | { type: "add" } | { type: "edit"; tag: ContentTagRow };
 
 type BadgeModalState =
   | { type: "closed" }
@@ -53,7 +51,9 @@ export function SystemSettingsContent() {
   const locale = useLocale();
   const tSettings = useTranslations("Dashboard.systemSettings");
   const [activeTab, setActiveTab] = useState<SystemSettingsTabId>("categories");
-  const [categories, setCategories] = useState<ContentCategoryRow[]>(() => [...sampleContentCategories]);
+  const [categories, setCategories] = useState<ContentCategoryRow[]>(() => [
+    ...sampleContentCategories,
+  ]);
   const [categoryModal, setCategoryModal] = useState<CategoryModalState>({ type: "closed" });
   const [tags, setTags] = useState<ContentTagRow[]>(() => [...sampleContentTags]);
   const [tagModal, setTagModal] = useState<TagModalState>({ type: "closed" });
@@ -438,7 +438,9 @@ export function SystemSettingsContent() {
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-foreground">{tSettings("localisation.timezone")}</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {tSettings("localisation.timezone")}
+                </p>
                 <select
                   value={timezone}
                   onChange={(e) =>
@@ -454,7 +456,9 @@ export function SystemSettingsContent() {
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-foreground">{tSettings("localisation.dateFormat")}</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {tSettings("localisation.dateFormat")}
+                </p>
                 <select
                   value={dateFormat}
                   onChange={(e) => setDateFormat(e.target.value as "mdy" | "dmy" | "ymd")}
@@ -471,7 +475,9 @@ export function SystemSettingsContent() {
                   <p className="text-sm font-semibold text-foreground">
                     {tSettings("localisation.multiLanguage")}
                   </p>
-                  <p className="mt-1 text-sm text-gray-500">{tSettings("localisation.multiLanguageHint")}</p>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {tSettings("localisation.multiLanguageHint")}
+                  </p>
                 </div>
                 <button
                   type="button"
@@ -484,7 +490,9 @@ export function SystemSettingsContent() {
                 >
                   <span
                     className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full transition-all ${
-                      multiLanguageEnabled ? "left-6 bg-[var(--tott-dash-surface-2)]" : "left-1 bg-[var(--tott-dash-surface-2)]"
+                      multiLanguageEnabled
+                        ? "left-6 bg-[var(--tott-dash-surface-2)]"
+                        : "left-1 bg-[var(--tott-dash-surface-2)]"
                     }`}
                   />
                 </button>
@@ -524,34 +532,38 @@ export function SystemSettingsContent() {
             <p className="mt-1 text-sm text-gray-500">{tSettings("guidelines.subtitle")}</p>
 
             <div className="mt-6 space-y-6">
-              <div>
-                <p className="text-sm font-semibold text-foreground">{tSettings("guidelines.communityLabel")}</p>
-                <textarea
-                  value={communityGuidelines}
-                  onChange={(e) => setCommunityGuidelines(e.target.value)}
-                  rows={4}
-                  className={`${inputShell} resize-y`}
-                />
-              </div>
+              <EditorRegistryProvider>
+                <div className="rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+                  <EditorToolbar />
+                </div>
 
-              <div>
-                <p className="text-sm font-semibold text-foreground">
-                  {tSettings("guidelines.contentPolicyLabel")}
-                </p>
-                <textarea
-                  value={contentPolicy}
-                  onChange={(e) => setContentPolicy(e.target.value)}
-                  rows={4}
-                  className={`${inputShell} resize-y`}
-                />
-              </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    {tSettings("guidelines.communityLabel")}
+                  </p>
+                  <div className="mt-2 overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]">
+                    <RichTextEditor value={communityGuidelines} onChange={setCommunityGuidelines} />
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    {tSettings("guidelines.contentPolicyLabel")}
+                  </p>
+                  <div className="mt-2 overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]">
+                    <RichTextEditor value={contentPolicy} onChange={setContentPolicy} />
+                  </div>
+                </div>
+              </EditorRegistryProvider>
 
               <div className="flex items-center justify-between gap-6">
                 <div>
                   <p className="text-sm font-semibold text-foreground">
                     {tSettings("localisation.multiLanguage")}
                   </p>
-                  <p className="mt-1 text-sm text-gray-500">{tSettings("localisation.multiLanguageHint")}</p>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {tSettings("localisation.multiLanguageHint")}
+                  </p>
                 </div>
                 <button
                   type="button"
@@ -564,7 +576,9 @@ export function SystemSettingsContent() {
                 >
                   <span
                     className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full transition-all ${
-                      multiLanguageEnabled ? "left-6 bg-[var(--tott-dash-surface-2)]" : "left-1 bg-[var(--tott-dash-surface-2)]"
+                      multiLanguageEnabled
+                        ? "left-6 bg-[var(--tott-dash-surface-2)]"
+                        : "left-1 bg-[var(--tott-dash-surface-2)]"
                     }`}
                   />
                 </button>
@@ -597,7 +611,6 @@ export function SystemSettingsContent() {
             </div>
           </div>
         )}
-
       </div>
 
       <CategoryFormModal

@@ -4,6 +4,7 @@ import { useEffect, useId } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 
 type Props = {
   open: boolean;
@@ -257,7 +258,7 @@ export function WorkshopModal({
                 margin: 0,
               }}
             >
-              {body}
+              <RichContent html={body} variant="inline" />
             </p>
           </Section>
 
