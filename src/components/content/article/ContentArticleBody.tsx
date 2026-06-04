@@ -3,6 +3,7 @@ import { isLikelyAudioUrl, isLikelyVideoUrl } from "@/lib/content/media-url";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { ArticleBodyVideo } from "@/components/content/article/ArticleBodyVideo";
 import { ArticleBodyAudio } from "@/components/content/article/ArticleBodyAudio";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 
 export type ContentArticleCallout = string | { title: string; body: string };
 
@@ -37,7 +38,7 @@ export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
 
           {section.paragraphs.map((p, j) => (
             <p key={j} className="text-sm leading-relaxed text-foreground">
-              {p}
+              <RichContent html={p} variant="inline" />
             </p>
           ))}
 
@@ -88,13 +89,13 @@ export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
                   ) : null}
                   {section.callout.body ? (
                     <p className="m-0 text-lg font-normal leading-relaxed text-foreground/80">
-                      {section.callout.body}
+                      <RichContent html={section.callout.body} variant="inline" />
                     </p>
                   ) : null}
                 </div>
               ) : (
                 <p className="m-0 text-lg font-normal leading-relaxed text-foreground/80">
-                  {section.callout}
+                  <RichContent html={section.callout} variant="inline" />
                 </p>
               )}
             </aside>
@@ -131,7 +132,7 @@ export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
               className="rounded-r-lg border-l-2 px-6 py-4 text-sm font-medium leading-relaxed text-foreground"
               style={{ borderColor: "var(--tott-content-quote-border)", backgroundColor: "var(--tott-elevated)" }}
             >
-              {section.quote}
+              <RichContent html={section.quote} variant="inline" />
             </blockquote>
           )}
         </div>
