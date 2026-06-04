@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import { ApplyResidencyModal } from "@/components/residency/ApplyResidencyModal";
@@ -133,7 +134,7 @@ export function ResidencyContent() {
                 margin: 0,
               }}
             >
-              {t("heroBody")}
+              <RichContent html={t("heroBody")} variant="inline" />
             </p>
           </div>
         </header>
@@ -220,7 +221,7 @@ export function ResidencyContent() {
               margin: 0,
             }}
           >
-            {t("readyBody")}
+            <RichContent html={t("readyBody")} variant="inline" />
           </p>
           <button
             type="button"
