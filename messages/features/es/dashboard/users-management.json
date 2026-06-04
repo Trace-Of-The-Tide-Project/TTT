@@ -56,6 +56,57 @@
       "toasts": {
         "verified": "Usuario verificado",
         "suspended": "Usuario suspendido"
+      },
+      "modals": {
+        "common": {
+          "cancel": "Cancelar",
+          "save": "Guardar",
+          "done": "Listo"
+        },
+        "fields": {
+          "fullName": "Nombre completo",
+          "username": "Nombre de usuario",
+          "email": "Correo electrónico",
+          "status": "Estado",
+          "roles": "Roles",
+          "joined": "Registro",
+          "lastActive": "Última actividad",
+          "contributions": "Contribuciones"
+        },
+        "view": {
+          "title": "Perfil del usuario"
+        },
+        "edit": {
+          "title": "Editar usuario",
+          "saving": "Guardando…",
+          "toasts": {
+            "saved": "Usuario actualizado"
+          },
+          "errors": {
+            "emailRequired": "El correo electrónico es obligatorio.",
+            "usernameRequired": "El nombre de usuario es obligatorio.",
+            "saveFailed": "No se pudo actualizar el usuario"
+          }
+        },
+        "role": {
+          "title": "Cambiar rol",
+          "currentRoles": "Roles actuales",
+          "noRoles": "Este usuario no tiene roles asignados.",
+          "addRole": "Agregar un rol",
+          "selectRole": "Selecciona un rol…",
+          "assign": "Asignar",
+          "revoke": "Quitar",
+          "revokeAria": "Quitar el rol {role}",
+          "allAssigned": "Todos los roles disponibles ya están asignados.",
+          "toasts": {
+            "assigned": "{role} asignado",
+            "revoked": "{role} quitado"
+          },
+          "errors": {
+            "assignFailed": "No se pudo asignar el rol",
+            "revokeFailed": "No se pudo quitar el rol"
+          }
+        }
       }
     }
   }

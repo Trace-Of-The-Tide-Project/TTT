@@ -8,8 +8,10 @@ export type AdminUserListItem = {
   full_name: string;
   email: string;
   status: string;
-  /** Display slug from API (`role`, nested `role.name`, or `user_role`). Defaults to `user`. */
+  /** Primary role slug for display. Derived from the API `userRoles[].role.name` (falls back to legacy `role` / `user_role`). Defaults to `user`. */
   role: string;
+  /** Every role slug assigned to the user (from `userRoles[].role.name`). Used by the Change Role UI. */
+  roles: string[];
   /** ISO date string when available (`joined_at`, `created_at`, etc.). */
   joined_at: string | null;
   /** ISO date string for last activity (`last_active_at`, `last_login_at`, etc.). */
@@ -68,31 +70,91 @@ function firstIntField(o: Record<string, unknown>, keys: readonly string[]): num
   return 0;
 }
 
-function extractRoleFromPayload(o: Record<string, unknown>): string {
-  const r = o.role;
+function roleNameFromObject(r: unknown): string {
   if (typeof r === "string" && r.trim()) return r.trim();
   if (r && typeof r === "object") {
     const ro = r as Record<string, unknown>;
     if (typeof ro.name === "string" && ro.name.trim()) return ro.name.trim();
     if (typeof ro.slug === "string" && ro.slug.trim()) return ro.slug.trim();
   }
-  const ur = o.user_role;
-  if (typeof ur === "string" && ur.trim()) return ur.trim();
   return "";
+}
+
+/**
+ * Extracts every role slug assigned to a user. The admin API (`GET /users`)
+ * returns roles via the Sequelize association `userRoles: [{ role: { name } }]`,
+ * so that is the primary source. Legacy single-value shapes (`role`,
+ * `user_role`) are still honoured as a fallback.
+ */
+function extractRolesFromPayload(o: Record<string, unknown>): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  const push = (name: string) => {
+    const slug = name.trim();
+    if (!slug) return;
+    const key = slug.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push(slug);
+  };
+
+  const userRoles = o.userRoles ?? o.user_roles;
+  if (Array.isArray(userRoles)) {
+    for (const ur of userRoles) {
+      if (ur && typeof ur === "object") {
+        push(roleNameFromObject((ur as Record<string, unknown>).role));
+      } else {
+        push(roleNameFromObject(ur));
+      }
+    }
+  }
+
+  // Legacy / alternate single-value fallbacks.
+  push(roleNameFromObject(o.role));
+  push(roleNameFromObject(o.user_role));
+
+  return out;
+}
+
+// Higher number = higher privilege. The display column shows the user's
+// highest-privilege role so an admin who also carries `user` isn't mislabelled.
+const ROLE_PRIORITY: Record<string, number> = {
+  admin: 60,
+  manager: 50,
+  moderator: 40,
+  editor: 30,
+  author: 20,
+  artist: 15,
+  contributor: 10,
+  user: 1,
+};
+
+function primaryRole(roles: string[]): string {
+  let best = "";
+  let bestScore = -1;
+  for (const r of roles) {
+    const score = ROLE_PRIORITY[r.trim().toLowerCase()] ?? 5;
+    if (score > bestScore) {
+      bestScore = score;
+      best = r.trim();
+    }
+  }
+  return best;
 }
 
 function normalizeUserRow(raw: unknown): AdminUserListItem | null {
   if (!raw || typeof raw !== "object") return null;
   const o = raw as Record<string, unknown>;
   if (typeof o.id !== "string" || typeof o.email !== "string") return null;
-  const roleRaw = extractRoleFromPayload(o);
+  const roles = extractRolesFromPayload(o);
   return {
     id: o.id,
     username: String(o.username ?? ""),
     full_name: String(o.full_name ?? ""),
     email: o.email,
     status: String(o.status ?? "inactive"),
-    role: roleRaw || "user",
+    role: primaryRole(roles) || "user",
+    roles,
     joined_at: firstParsableDateString(o, [
       "joined_at",
       "created_at",
@@ -189,6 +251,16 @@ export async function updateUser(id: string, payload: UpdateUserPayload): Promis
 
 export async function updateUserStatus(id: string, status: AdminUserStatus): Promise<void> {
   await api.patch(`/users/${id}/status`, { status });
+}
+
+/** Assigns a role to a user. Backend: PATCH /roles/assign/:userId  body: { role } */
+export async function assignUserRole(userId: string, role: string): Promise<void> {
+  await api.patch(`/roles/assign/${userId}`, { role });
+}
+
+/** Revokes a role from a user. Backend: PATCH /roles/revoke/:userId  body: { role } */
+export async function revokeUserRole(userId: string, role: string): Promise<void> {
+  await api.patch(`/roles/revoke/${userId}`, { role });
 }
 
 const EXPORT_PAGE_LIMIT = 100;

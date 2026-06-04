@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { SearchIcon } from "@/components/ui/icons";
 import { FilterDropdown } from "./FilterDropdown";
 import { UserActionsDropdown } from "./UserActionsDropdown";
+import { ViewProfileModal, EditUserModal, ChangeRoleModal } from "./UserModals";
 import { theme } from "@/lib/theme";
 import {
   formatContributionsCount,
@@ -12,7 +13,7 @@ import {
   formatUserRoleLabel,
   formatUserStatusLabel,
 } from "@/lib/dashboard/user-table-formatters";
-import { USER_STATUS_COLORS } from "@/lib/dashboard/users-management-constants";
+import { USER_STATUS_COLORS, KNOWN_ROLE_SLUGS as KNOWN_ROLE_SLUG_LIST } from "@/lib/dashboard/users-management-constants";
 import { USERS_CSV_EXPORT_EVENT } from "@/lib/dashboard/users-export-events";
 import { downloadUsersCsv } from "@/lib/export/users-csv";
 import {
@@ -22,7 +23,6 @@ import {
 } from "@/services/users.service";
 import { useUsers } from "@/hooks/queries/users";
 import { useUpdateUserStatus } from "@/hooks/mutations/users";
-import { useRouter } from "@/i18n/navigation";
 import { formatApiError } from "@/lib/api/error-message";
 import { toast } from "sonner";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
@@ -74,16 +74,7 @@ function displayUserStatus(status: string, t: (key: string) => string): string {
   return formatUserStatusLabel(status);
 }
 
-const KNOWN_ROLE_SLUGS = new Set([
-  "user",
-  "contributor",
-  "author",
-  "editor",
-  "admin",
-  "moderator",
-  "manager",
-  "artist",
-]);
+const KNOWN_ROLE_SLUGS = new Set<string>(KNOWN_ROLE_SLUG_LIST);
 
 function displayRoleLabel(role: string, tRoles: (key: string) => string): string {
   const slug = role.trim().toLowerCase().replace(/[\s-]+/g, "_");
@@ -97,9 +88,12 @@ function displayRoleLabel(role: string, tRoles: (key: string) => string): string
 export function UsersManagementContent() {
   const t = useTranslations("Dashboard.usersManagement");
   const tRoles = useTranslations("Dashboard.adminHome.usersByRole.roles");
-  const router = useRouter();
   const updateUserStatusMutation = useUpdateUserStatus();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [activeModal, setActiveModal] = useState<null | {
+    kind: "view" | "edit" | "role";
+    userId: string;
+  }>(null);
   const loadFailedMessage = t("errors.loadFailed");
 
   const statusOptions = useMemo(
@@ -209,6 +203,13 @@ export function UsersManagementContent() {
   const loading = usersQuery.isPending;
   const error = usersQuery.error ? formatApiError(usersQuery.error, loadFailedMessage) : null;
 
+  // Resolve the modal's target from the freshest list so the Change Role /
+  // Edit modals reflect updates after a mutation invalidates the query.
+  const selectedUser = useMemo(
+    () => (activeModal ? allUsers.find((u) => u.id === activeModal.userId) ?? null : null),
+    [activeModal, allUsers],
+  );
+
   const totalPages = Math.max(1, meta.totalPages);
   useEffect(() => {
     if (meta.total > 0 && page > totalPages) {
@@ -260,13 +261,13 @@ export function UsersManagementContent() {
       setActionError(null);
       switch (actionId) {
         case "view":
-          router.push(`/admin/users/${userId}`);
+          setActiveModal({ kind: "view", userId });
           return;
         case "edit":
-          router.push(`/admin/users/${userId}/edit`);
+          setActiveModal({ kind: "edit", userId });
           return;
         case "role":
-          router.push(`/admin/users/${userId}/role`);
+          setActiveModal({ kind: "role", userId });
           return;
         case "verify":
           updateUserStatusMutation.mutate(
@@ -288,7 +289,7 @@ export function UsersManagementContent() {
           return;
       }
     },
-    [router, updateUserStatusMutation, loadFailedMessage, t],
+    [updateUserStatusMutation, loadFailedMessage, t],
   );
 
   const locale = useLocale();
@@ -526,6 +527,19 @@ export function UsersManagementContent() {
         </div>
       </div>
       </ChamferedPanel>
+
+      <ViewProfileModal
+        user={activeModal?.kind === "view" ? selectedUser : null}
+        onClose={() => setActiveModal(null)}
+      />
+      <EditUserModal
+        user={activeModal?.kind === "edit" ? selectedUser : null}
+        onClose={() => setActiveModal(null)}
+      />
+      <ChangeRoleModal
+        user={activeModal?.kind === "role" ? selectedUser : null}
+        onClose={() => setActiveModal(null)}
+      />
     </div>
   );
 }
