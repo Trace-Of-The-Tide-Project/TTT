@@ -8,6 +8,7 @@ import {
   FolderIcon,
   BookIcon,
 } from "@/components/ui/icons";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { FirstWordGold } from "./FirstWordGold";
 import { HexPatternBackdrop } from "./HexPatternBackdrop";
 
@@ -284,7 +285,7 @@ export function MagazineEditorialBoard({
               margin: 0,
             }}
           >
-            {founderQuote}
+            <RichContent html={founderQuote} variant="inline" />
           </p>
           <footer
             style={{
