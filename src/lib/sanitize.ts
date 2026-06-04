@@ -75,8 +75,9 @@ export function sanitizeHtml(dirty: string): string {
   return DOMPurify.sanitize(dirty, {
     ALLOWED_TAGS,
     ALLOWED_ATTR,
-    // Only allow http(s), relative, mailto, and data:image URIs.
+    // Only allow http(s), relative, mailto, and raster data:image URIs.
+    // `svg+xml` is deliberately excluded — SVG can carry script.
     ALLOWED_URI_REGEXP:
-      /^(?:(?:https?|mailto):|[^a-z]|[a-z+.-]+(?:[^a-z+.:-]|$)|data:image\/)/i,
+      /^(?:(?:https?|mailto):|[^a-z]|[a-z+.-]+(?:[^a-z+.:-]|$)|data:image\/(?:png|jpe?g|gif|webp);)/i,
   });
 }
