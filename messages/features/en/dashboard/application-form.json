@@ -51,6 +51,10 @@
         "fileTypesLine": "Supported: {types} (Max {maxFiles} files, {maxSizeMb} MB each)",
         "removeFileAria": "Remove file",
         "submit": "Submit",
+        "submitting": "Submitting…",
+        "successTitle": "Application submitted",
+        "successBody": "Thank you — we've received your application and will be in touch.",
+        "errorGeneric": "Something went wrong. Please try again.",
         "homeBack": "Go back to",
         "homePage": "Home page"
       },

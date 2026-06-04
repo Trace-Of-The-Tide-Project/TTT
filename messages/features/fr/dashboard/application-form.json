@@ -51,6 +51,10 @@
         "fileTypesLine": "Formats pris en charge : {types} (max {maxFiles} fichiers, {maxSizeMb} Mo chacun)",
         "removeFileAria": "Supprimer le fichier",
         "submit": "Soumettre",
+        "submitting": "Envoi en cours…",
+        "successTitle": "Candidature envoyée",
+        "successBody": "Merci — nous avons bien reçu votre candidature et vous recontacterons.",
+        "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
         "homeBack": "Retourner à",
         "homePage": "la page d'accueil"
       },

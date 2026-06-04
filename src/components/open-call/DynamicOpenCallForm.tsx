@@ -2,7 +2,9 @@
 
 import { useState, useCallback, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
+import { isAxiosError } from "axios";
 import { Link } from "@/i18n/navigation";
+import { useApplyToOpenCall } from "@/hooks/mutations/open-calls";
 import {
   PersonIcon,
   EmailIcon,
@@ -167,10 +169,17 @@ function CheckboxField({
   );
 }
 
-function FileField({ field }: { field: ApplicationFormField & { type: "file_multiple" } }) {
+function FileField({
+  field,
+  files,
+  onFilesChange,
+}: {
+  field: ApplicationFormField & { type: "file_multiple" };
+  files: UploadedFile[];
+  onFilesChange: (next: UploadedFile[]) => void;
+}) {
   const t = useTranslations("Dashboard.applicationForm");
   const label = resolveFieldParticipantLabel(field, t);
-  const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
   const addFiles = useCallback(
@@ -181,14 +190,17 @@ function FileField({ field }: { field: ApplicationFormField & { type: "file_mult
         file,
         sizeLabel: formatFileSize(file.size),
       }));
-      setFiles((prev) => [...prev, ...newFiles].slice(0, field.max_files));
+      onFilesChange([...files, ...newFiles].slice(0, field.max_files));
     },
-    [field.max_files],
+    [field.max_files, files, onFilesChange],
   );
 
-  const removeFile = useCallback((id: string) => {
-    setFiles((prev) => prev.filter((f) => f.id !== id));
-  }, []);
+  const removeFile = useCallback(
+    (id: string) => {
+      onFilesChange(files.filter((f) => f.id !== id));
+    },
+    [files, onFilesChange],
+  );
 
   const inputId = `file-${field.name}`;
   const typesUpper = field.allowed_types.join(", ").toUpperCase();
@@ -275,14 +287,20 @@ function FileField({ field }: { field: ApplicationFormField & { type: "file_mult
 
 type DynamicOpenCallFormProps = {
   fields: ApplicationFormField[];
+  /** Open call ID to submit the application to. When omitted, the form is preview-only (no POST). */
+  openCallId?: string;
   submitLabel?: string;
   showHomeLink?: boolean;
   beforeSubmitSlot?: ReactNode;
   afterSubmitSlot?: ReactNode;
 };
 
+/** The checkbox field representing terms agreement (sent separately from `answers`). */
+const TERMS_FIELD_NAME = "terms_agreement";
+
 export function DynamicOpenCallForm({
   fields,
+  openCallId,
   submitLabel,
   showHomeLink = true,
   beforeSubmitSlot,
@@ -291,13 +309,76 @@ export function DynamicOpenCallForm({
   const t = useTranslations("Dashboard.applicationForm");
   const resolvedSubmit = submitLabel ?? t("dynamic.submit");
   const [checkboxes, setCheckboxes] = useState<Record<string, boolean>>({});
+  const [filesByField, setFilesByField] = useState<Record<string, UploadedFile[]>>({});
+
+  const apply = useApplyToOpenCall(openCallId ?? "");
+  const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const allRequiredCheckboxesChecked = fields
     .filter((f) => f.type === "checkbox" && f.required)
     .every((f) => checkboxes[f.name]);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const setFieldFiles = useCallback((name: string, next: UploadedFile[]) => {
+    setFilesByField((prev) => ({ ...prev, [name]: next }));
+  }, []);
+
+  function translateError(e: unknown): string {
+    if (isAxiosError(e)) {
+      const d = e.response?.data;
+      if (typeof d === "string" && d.trim()) return d;
+      if (d && typeof d === "object") {
+        const o = d as Record<string, unknown>;
+        if (typeof o.message === "string") return o.message;
+        if (Array.isArray(o.message)) return o.message.map(String).join("; ");
+        if (typeof o.error === "string") return o.error;
+      }
+    }
+    return t("dynamic.errorGeneric");
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!openCallId || apply.isPending) return;
+    setErrorMessage(null);
+
+    // Collect text/email/phone/textarea/select answers from the native inputs by `name`.
+    const formEl = e.currentTarget;
+    const fd = new FormData(formEl);
+    const answers: Record<string, string> = {};
+    for (const field of fields) {
+      if (field.type === "file_multiple" || field.name === TERMS_FIELD_NAME) continue;
+      if (field.type === "checkbox") {
+        answers[field.name] = checkboxes[field.name] ? "true" : "false";
+        continue;
+      }
+      const v = fd.get(field.name);
+      answers[field.name] = typeof v === "string" ? v : "";
+    }
+
+    const files = Object.values(filesByField).flatMap((list) => list.map((u) => u.file));
+
+    try {
+      await apply.mutateAsync({
+        answers,
+        termsAgreement: !!checkboxes[TERMS_FIELD_NAME],
+        files,
+      });
+      setSubmitted(true);
+    } catch (err) {
+      setErrorMessage(translateError(err));
+    }
+  }
+
+  if (submitted) {
+    return (
+      <div className="w-full space-y-2 text-center">
+        <h3 className="text-lg font-semibold text-[color:var(--tott-panel-text)]">
+          {t("dynamic.successTitle")}
+        </h3>
+        <p className="text-sm text-gray-400">{t("dynamic.successBody")}</p>
+      </div>
+    );
   }
 
   return (
@@ -323,16 +404,29 @@ export function DynamicOpenCallForm({
           );
         }
         if (field.type === "file_multiple") {
-          return <FileField key={i} field={field} />;
+          return (
+            <FileField
+              key={i}
+              field={field}
+              files={filesByField[field.name] ?? []}
+              onFilesChange={(next) => setFieldFiles(field.name, next)}
+            />
+          );
         }
         return null;
       })}
 
       {beforeSubmitSlot}
 
+      {errorMessage ? (
+        <p className="rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-400" role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
+
       <button
         type="submit"
-        disabled={!allRequiredCheckboxesChecked}
+        disabled={!allRequiredCheckboxesChecked || apply.isPending}
         className="w-full cursor-pointer rounded-lg py-3.5 text-base font-semibold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background)]"
         style={{
           backgroundColor: theme.accentGold,
@@ -340,7 +434,7 @@ export function DynamicOpenCallForm({
           color: theme.bgDark,
         }}
       >
-        {resolvedSubmit}
+        {apply.isPending ? t("dynamic.submitting") : resolvedSubmit}
       </button>
 
       {afterSubmitSlot}

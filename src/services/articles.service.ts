@@ -63,7 +63,7 @@ function toCreateArticleBody(payload: CreateArticlePayload): Record<string, unkn
         block_order: block.block_order,
         block_type: block.block_type,
       };
-      if (block.block_type !== "divider") {
+      if (block.content != null) {
         row.content = block.content;
       }
       if (block.metadata != null && block.metadata !== "") {
@@ -85,7 +85,7 @@ function toCreateArticleBody(payload: CreateArticlePayload): Record<string, unkn
   if (payload.media_url) body.media_url = payload.media_url;
   if (payload.media_duration != null) body.media_duration = payload.media_duration;
   if (payload.edition) body.edition = payload.edition;
-  if (payload.scheduled_at !== undefined) body.scheduled_at = payload.scheduled_at;
+  if (payload.scheduled_at != null) body.scheduled_at = payload.scheduled_at;
   if (payload.open_call_id) body.open_call_id = payload.open_call_id;
 
   return body;
