@@ -27,11 +27,21 @@ export function BrandingTab() {
   const { data: settings } = useCmsSettings();
   const updateMutation = useUpdateCmsSetting({ silent: true });
 
-  // Seed the form fields once the settings query finishes loading.
-  // Render-phase prev-value pattern instead of an effect.
-  const [prevSettings, setPrevSettings] = useState(settings);
-  if (settings && settings !== prevSettings) {
-    setPrevSettings(settings);
+  // Seed the form fields from the settings query. Render-phase
+  // prev-value pattern instead of an effect.
+  //
+  // Track a *content* signal (serialized branding) rather than the query
+  // object's identity. On remount React Query returns the same cached
+  // object, so an identity guard (`settings !== prev`) would be false on
+  // first render and the seed would be skipped, leaving the form blank
+  // over real data. A content signal starts as null (never seeded) and
+  // only changes when the server data actually changes.
+  const seedSignal = settings
+    ? JSON.stringify({ branding: settings.branding ?? null })
+    : null;
+  const [seededSignal, setSeededSignal] = useState<string | null>(null);
+  if (settings && seedSignal !== null && seedSignal !== seededSignal) {
+    setSeededSignal(seedSignal);
     const branding = settings.branding as {
       primary_color?: string;
       logo?: string;

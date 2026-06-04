@@ -23,8 +23,28 @@ type HeroConfig = {
   secondary_cta: string;
 };
 
+/**
+ * The CMS API returns section `config` as a JSON-encoded **string**
+ * (see UpdatePageSectionDto on the backend). Older paths sometimes hand
+ * back a pre-parsed object. Tolerate both, returning empty on malformed
+ * input rather than throwing.
+ */
+function unwrapConfig(section: CmsSection | undefined): Record<string, unknown> {
+  const raw = section?.config as unknown;
+  if (raw == null) return {};
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : {};
+    } catch {
+      return {};
+    }
+  }
+  return raw as Record<string, unknown>;
+}
+
 function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
-  const cfg = section?.config ?? {};
+  const cfg = unwrapConfig(section);
   return {
     headline: (cfg.headline as string) ?? "",
     subheadline: (cfg.subheadline as string) ?? "",
@@ -62,11 +82,26 @@ export function HomePageTab() {
     secondary_cta: "",
   });
 
-  // Seed selection + hero config once the homepage query loads.
+  // Seed selection + hero config from the homepage query.
   // Render-phase prev-value pattern instead of an effect.
-  const [prevHomepage, setPrevHomepage] = useState(homepage);
-  if (homepage && homepage !== prevHomepage) {
-    setPrevHomepage(homepage);
+  //
+  // Track a *content* signal (hero id + serialized config) rather than the
+  // query object's identity. On remount React Query hands back the same
+  // cached object, so an identity guard (`homepage !== prev`) would be
+  // false on first render and the seed would be skipped, leaving the form
+  // blank over real data. A content signal starts as null (never seeded)
+  // and only changes when the server data actually changes.
+  const heroForSeed = homepage
+    ? [...homepage.sections]
+        .sort((a, b) => a.section_order - b.section_order)
+        .find((s) => s.section_type === "hero")
+    : undefined;
+  const seedSignal = homepage
+    ? `${heroForSeed?.id ?? "none"}:${JSON.stringify(heroForSeed?.config ?? null)}`
+    : null;
+  const [seededSignal, setSeededSignal] = useState<string | null>(null);
+  if (homepage && seedSignal !== null && seedSignal !== seededSignal) {
+    setSeededSignal(seedSignal);
     const sorted = [...homepage.sections].sort((a, b) => a.section_order - b.section_order);
     const heroSection = sorted.find((s) => s.section_type === "hero");
     if (heroSection) {

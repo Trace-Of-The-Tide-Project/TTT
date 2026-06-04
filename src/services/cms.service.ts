@@ -27,7 +27,9 @@ function unwrap<T>(body: unknown): T {
 }
 
 export async function getCmsHomepage(): Promise<CmsPage> {
-  return getCmsPageBySlug("homepage");
+  // The homepage is seeded under the slug "home" (page_type "homepage").
+  // Querying "homepage" 404s — see seeders/seedCms.ts.
+  return getCmsPageBySlug("home");
 }
 
 export async function getCmsPageBySlug(slug: string): Promise<CmsPage> {
