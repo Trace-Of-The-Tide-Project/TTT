@@ -279,6 +279,13 @@
           "heading": "Heading",
           "subheading": "Subheading"
         }
+      },
+      "richEditor": {
+        "richTextLabel": "Rich text",
+        "uploadImage": "Upload image",
+        "pasteImageUrl": "…or paste an image URL",
+        "linkPlaceholder": "https://example.com",
+        "removeLink": "Remove link"
       }
     }
   }

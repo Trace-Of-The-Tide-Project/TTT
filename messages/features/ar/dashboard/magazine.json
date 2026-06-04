@@ -279,6 +279,13 @@
           "heading": "العنوان",
           "subheading": "العنوان الفرعي"
         }
+      },
+      "richEditor": {
+        "richTextLabel": "نص منسّق",
+        "uploadImage": "رفع صورة",
+        "pasteImageUrl": "…أو الصق رابط الصورة",
+        "linkPlaceholder": "https://example.com",
+        "removeLink": "إزالة الرابط"
       }
     }
   }

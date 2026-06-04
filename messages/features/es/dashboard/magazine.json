@@ -279,6 +279,13 @@
           "heading": "Título",
           "subheading": "Subtítulo"
         }
+      },
+      "richEditor": {
+        "richTextLabel": "Texto enriquecido",
+        "uploadImage": "Subir imagen",
+        "pasteImageUrl": "…o pega la URL de una imagen",
+        "linkPlaceholder": "https://example.com",
+        "removeLink": "Quitar enlace"
       }
     }
   }
