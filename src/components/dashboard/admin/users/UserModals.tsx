@@ -16,6 +16,7 @@ import {
   useAssignUserRole,
   useRevokeUserRole,
   useUpdateUser,
+  useUpdateUserStatus,
 } from "@/hooks/mutations/users";
 import type { AdminUserListItem, AdminUserStatus } from "@/services/users.service";
 
@@ -128,6 +129,7 @@ export function EditUserModal({
   const t = useTranslations("Dashboard.usersManagement.modals");
   const tStatus = useTranslations("Dashboard.usersManagement.statusLabels");
   const updateUser = useUpdateUser();
+  const updateUserStatus = useUpdateUserStatus();
   const [error, setError] = useState<string | null>(null);
 
   // Local form state, re-seeded each time a different user opens the modal.
@@ -154,9 +156,9 @@ export function EditUserModal({
     [tStatus],
   );
 
-  const busy = updateUser.isPending;
+  const busy = updateUser.isPending || updateUserStatus.isPending;
 
-  const submit = () => {
+  const submit = async () => {
     if (!user) return;
     setError(null);
     const trimmedEmail = email.trim();
@@ -170,28 +172,33 @@ export function EditUserModal({
       return;
     }
 
-    // Send only the fields that actually changed.
-    const payload: Record<string, string> = {};
-    if (fullName.trim() !== (user.full_name ?? "")) payload.full_name = fullName.trim();
-    if (trimmedUsername !== user.username) payload.username = trimmedUsername;
-    if (trimmedEmail !== user.email) payload.email = trimmedEmail;
-    if (status !== user.status.trim().toLowerCase()) payload.status = status;
+    // Profile fields go to PATCH /users/:id. `status` is NOT part of that
+    // endpoint's DTO (it would 400 "property status should not exist") — it has
+    // its own endpoint PATCH /users/:id/status, so it is sent separately.
+    const profilePayload: Record<string, string> = {};
+    if (fullName.trim() !== (user.full_name ?? "")) profilePayload.full_name = fullName.trim();
+    if (trimmedUsername !== user.username) profilePayload.username = trimmedUsername;
+    if (trimmedEmail !== user.email) profilePayload.email = trimmedEmail;
 
-    if (Object.keys(payload).length === 0) {
+    const statusChanged = status !== user.status.trim().toLowerCase();
+
+    if (Object.keys(profilePayload).length === 0 && !statusChanged) {
       onClose();
       return;
     }
 
-    updateUser.mutate(
-      { id: user.id, payload },
-      {
-        onSuccess: () => {
-          toast.success(t("edit.toasts.saved"));
-          onClose();
-        },
-        onError: (e) => setError(formatApiError(e, t("edit.errors.saveFailed"))),
-      },
-    );
+    try {
+      if (Object.keys(profilePayload).length > 0) {
+        await updateUser.mutateAsync({ id: user.id, payload: profilePayload });
+      }
+      if (statusChanged) {
+        await updateUserStatus.mutateAsync({ id: user.id, status });
+      }
+      toast.success(t("edit.toasts.saved"));
+      onClose();
+    } catch (e) {
+      setError(formatApiError(e, t("edit.errors.saveFailed")));
+    }
   };
 
   return (
@@ -213,7 +220,7 @@ export function EditUserModal({
           <button
             type="button"
             disabled={busy}
-            onClick={submit}
+            onClick={() => void submit()}
             className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {busy ? t("edit.saving") : t("common.save")}
@@ -225,7 +232,7 @@ export function EditUserModal({
         className="flex flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault();
-          submit();
+          void submit();
         }}
       >
         <label className="flex flex-col gap-1.5">

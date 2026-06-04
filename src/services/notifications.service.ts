@@ -183,6 +183,18 @@ export async function getNotifications(params?: GetNotificationsParams): Promise
   return normalizeNotificationsPayload(data);
 }
 
+/**
+ * GET /notifications/user/:userId/unread-count — unread count for one user.
+ * Cheaper and more accurate than fetching a list just to read `meta.total`.
+ */
+export async function getUnreadNotificationCount(userId: string): Promise<number> {
+  const { data } = await api.get<{ unreadCount?: number }>(
+    `/notifications/user/${encodeURIComponent(userId)}/unread-count`,
+  );
+  const n = Number(data?.unreadCount);
+  return Number.isFinite(n) && n >= 0 ? n : 0;
+}
+
 /** PATCH /notifications/:id/read — mark a single notification as read. */
 export async function markNotificationRead(id: string): Promise<void> {
   await api.patch(`/notifications/${encodeURIComponent(id)}/read`);
@@ -193,13 +205,4 @@ export async function markAllNotificationsRead(userId: string): Promise<void> {
   await api.patch(
     `/notifications/user/${encodeURIComponent(userId)}/read-all`,
   );
-}
-
-/** Keep only notifications owned by the given user (safety check on top of API). */
-export function filterNotificationsForUser(
-  items: NotificationListItem[],
-  userId: string | null | undefined,
-): NotificationListItem[] {
-  if (!userId?.trim()) return [];
-  return items.filter((n) => n.user_id === userId);
 }
