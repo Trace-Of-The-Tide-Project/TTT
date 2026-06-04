@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
+import { RichTextEditor, EditorToolbar, EditorRegistryProvider } from "@/components/ui/rich-text";
 
 const inputClass =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500";
@@ -37,97 +38,108 @@ export function TripBasicInfo({
     (idx: number, value: string) => {
       onHighlightsChange(highlights.map((h, i) => (i === idx ? value : h)));
     },
-    [highlights, onHighlightsChange],
+    [highlights, onHighlightsChange]
   );
 
   const removeHighlight = useCallback(
     (idx: number) => {
       onHighlightsChange(highlights.filter((_, i) => i !== idx));
     },
-    [highlights, onHighlightsChange],
+    [highlights, onHighlightsChange]
   );
 
   return (
     <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-5">
       <h3 className="mb-4 text-sm font-bold text-foreground">{t("heading")}</h3>
       <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-gray-400">
+              {t("tripTitle")}
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => onTitleChange(e.target.value)}
+              placeholder={t("tripTitlePlaceholder")}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-gray-400">
+              {t("moderatorName")}
+            </label>
+            <input
+              type="text"
+              value={moderatorName}
+              onChange={(e) => onModeratorNameChange(e.target.value)}
+              placeholder={t("moderatorPlaceholder")}
+              className={inputClass}
+            />
+          </div>
+        </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label className="mb-1.5 block text-xs font-medium text-gray-400">
-            {t("tripTitle")}
+            {t("description")}
           </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => onTitleChange(e.target.value)}
-            placeholder={t("tripTitlePlaceholder")}
-            className={inputClass}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-xs font-medium text-gray-400">
-            {t("moderatorName")}
-          </label>
-          <input
-            type="text"
-            value={moderatorName}
-            onChange={(e) => onModeratorNameChange(e.target.value)}
-            placeholder={t("moderatorPlaceholder")}
-            className={inputClass}
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="mb-1.5 block text-xs font-medium text-gray-400">
-          {t("description")}
-        </label>
-        <textarea
-          value={description}
-          onChange={(e) => onDescriptionChange(e.target.value)}
-          placeholder={t("descriptionPlaceholder")}
-          rows={4}
-          className={inputClass}
-        />
-      </div>
-
-      <div>
-        <label className="mb-1.5 block text-xs font-medium text-gray-400">
-          {t("highlights")}
-        </label>
-        <div className="space-y-2">
-          {highlights.map((h, idx) => (
-            <div key={idx} className="flex items-center gap-2">
-              <input
-                type="text"
-                value={h}
-                onChange={(e) => updateHighlight(idx, e.target.value)}
-                placeholder={t("highlightPlaceholder", { number: idx + 1 })}
-                className={inputClass}
-              />
-              <button
-                type="button"
-                onClick={() => removeHighlight(idx)}
-                className="shrink-0 text-gray-500 hover:text-foreground"
-                aria-label={t("removeHighlightAria", { number: idx + 1 })}
-              >
-                <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
+          <EditorRegistryProvider>
+            <div className="mb-2 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
+              <EditorToolbar />
             </div>
-          ))}
+            <div className="overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
+              <RichTextEditor
+                value={description}
+                onChange={onDescriptionChange}
+                placeholder={t("descriptionPlaceholder")}
+              />
+            </div>
+          </EditorRegistryProvider>
         </div>
-        <button
-          type="button"
-          onClick={addHighlight}
-          className="mt-2 w-full rounded-lg border border-dashed border-[var(--tott-card-border)] py-2 text-sm text-gray-400 hover:border-gray-400 hover:text-foreground"
-        >
-          {t("addHighlight")}
-        </button>
-      </div>
+
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-gray-400">
+            {t("highlights")}
+          </label>
+          <div className="space-y-2">
+            {highlights.map((h, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={h}
+                  onChange={(e) => updateHighlight(idx, e.target.value)}
+                  placeholder={t("highlightPlaceholder", { number: idx + 1 })}
+                  className={inputClass}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeHighlight(idx)}
+                  className="shrink-0 text-gray-500 hover:text-foreground"
+                  aria-label={t("removeHighlightAria", { number: idx + 1 })}
+                >
+                  <svg
+                    width={16}
+                    height={16}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={addHighlight}
+            className="mt-2 w-full rounded-lg border border-dashed border-[var(--tott-card-border)] py-2 text-sm text-gray-400 hover:border-gray-400 hover:text-foreground"
+          >
+            {t("addHighlight")}
+          </button>
+        </div>
       </div>
     </ChamferedPanel>
   );

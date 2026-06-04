@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { PenLineIcon, BookIcon } from "@/components/ui/icons";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { FirstWordGold } from "./FirstWordGold";
 
 const HEX_CLIP =
@@ -145,7 +146,10 @@ export function MagazineManifesto({
             fontSize: "clamp(1.25rem, 1.5vw + 0.75rem, 2rem)",
           }}
         >
-          {tr("philosophyQuote", philosophyQuoteOverride)}
+          <RichContent
+            html={tr("philosophyQuote", philosophyQuoteOverride)}
+            variant="inline"
+          />
         </p>
       </section>
 
@@ -157,7 +161,10 @@ export function MagazineManifesto({
           {tr("visionHeading", visionHeadingOverride)}
         </h3>
         <p className={`mt-4 ${bodyClass}`} style={bodyTypoStyle}>
-          {tr("visionBody", visionBodyOverride)}
+          <RichContent
+            html={tr("visionBody", visionBodyOverride)}
+            variant="inline"
+          />
         </p>
       </section>
 
@@ -169,7 +176,10 @@ export function MagazineManifesto({
           {tr("missionHeading", missionHeadingOverride)}
         </h3>
         <p className={`mt-4 ${bodyClass}`} style={bodyTypoStyle}>
-          {tr("missionBody", missionBodyOverride)}
+          <RichContent
+            html={tr("missionBody", missionBodyOverride)}
+            variant="inline"
+          />
         </p>
       </section>
 
@@ -244,7 +254,10 @@ export function MagazineManifesto({
                 margin: 0,
               }}
             >
-              {tr("closingQuote", closingQuoteOverride)}
+              <RichContent
+                html={tr("closingQuote", closingQuoteOverride)}
+                variant="inline"
+              />
             </p>
           </div>
         </div>

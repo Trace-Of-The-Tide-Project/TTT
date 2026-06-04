@@ -392,7 +392,16 @@ export function HeadsetIcon() {
 
 export function SquareCheckIcon() {
   return (
-    <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width={18}
+      height={18}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <rect x="3" y="3" width="18" height="18" rx="2" />
       <polyline points="9 12 11 14 15 10" />
     </svg>
@@ -748,7 +757,16 @@ export function HelpCircleIcon() {
 
 export function ChevronDownSmallIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="6 9 12 15 18 9" />
     </svg>
   );
@@ -891,7 +909,16 @@ export function FilterIcon() {
 
 export function ListIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <line x1="8" y1="6" x2="21" y2="6" />
       <line x1="8" y1="12" x2="21" y2="12" />
       <line x1="8" y1="18" x2="21" y2="18" />
@@ -904,7 +931,16 @@ export function ListIcon() {
 
 export function ZoomInIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="11" cy="11" r="8" />
       <line x1="21" y1="21" x2="16.65" y2="16.65" />
       <line x1="11" y1="8" x2="11" y2="14" />
@@ -915,7 +951,16 @@ export function ZoomInIcon() {
 
 export function ZoomOutIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="11" cy="11" r="8" />
       <line x1="21" y1="21" x2="16.65" y2="16.65" />
       <line x1="8" y1="11" x2="14" y2="11" />
@@ -926,7 +971,16 @@ export function ZoomOutIcon() {
 /** Chevron-left at 24×24 (matches the larger size used in book-reader chrome). */
 export function ChevronLeftLargeIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="15 18 9 12 15 6" />
     </svg>
   );
@@ -935,7 +989,16 @@ export function ChevronLeftLargeIcon() {
 /** Chevron-right at 24×24 (matches the larger size used in book-reader chrome). */
 export function ChevronRightLargeIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="9 18 15 12 9 6" />
     </svg>
   );
@@ -954,3 +1017,69 @@ export function GripVerticalIcon() {
   );
 }
 
+export function HeadingIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M6 4v16" />
+      <path d="M18 4v16" />
+      <path d="M6 12h12" />
+    </svg>
+  );
+}
+
+export function QuoteIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M7 7h4v4c0 2-1 3-3 3" />
+      <path d="M15 7h4v4c0 2-1 3-3 3" />
+    </svg>
+  );
+}
+
+export function CodeBlockIcon() {
+  return (
+    <svg {...iconProps}>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M9 9l-2 3 2 3" />
+      <path d="M15 9l2 3-2 3" />
+    </svg>
+  );
+}
+
+export function LinkInsertIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M10 13a5 5 0 0 0 7 0l1-1a5 5 0 0 0-7-7l-1 1" />
+      <path d="M14 11a5 5 0 0 0-7 0l-1 1a5 5 0 0 0 7 7l1-1" />
+    </svg>
+  );
+}
+
+export function ImageInsertIcon() {
+  return (
+    <svg {...iconProps}>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <circle cx="9" cy="10" r="1.5" />
+      <path d="M21 16l-5-5-7 7" />
+    </svg>
+  );
+}
+
+export function HorizontalRuleIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M4 12h16" />
+    </svg>
+  );
+}
+
+export function FontSizeIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M4 7V5h9v2" />
+      <path d="M8.5 5v14" />
+      <path d="M15 13v-1h6v1" />
+      <path d="M18 12v7" />
+    </svg>
+  );
+}

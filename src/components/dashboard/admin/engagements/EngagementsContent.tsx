@@ -6,6 +6,7 @@ import { theme } from "@/lib/theme";
 import { CreateBadgeModal } from "@/components/dashboard/modals/CreateBadgeModal";
 import { AwardBadgeModal } from "@/components/dashboard/modals/AwardBadgeModal";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 import {
   EyeIcon,
   GiftIcon,
@@ -68,19 +69,13 @@ function CommentCard({ comment }: { comment: Comment }) {
         <p className="mt-1 text-sm text-gray-400 line-clamp-2">{comment.content}</p>
         <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-gray-500">
           <span className="flex items-center gap-1.5">
-            <span
-              className="[&_svg]:h-4 [&_svg]:w-4"
-              style={{ color: "#E8DDC0" }}
-            >
+            <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
               <HeartIcon />
             </span>
             {comment.likes}
           </span>
           <span className="flex items-center gap-1.5">
-            <span
-              className="[&_svg]:h-4 [&_svg]:w-4"
-              style={{ color: "#E8DDC0" }}
-            >
+            <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
               <MessageSquareIcon />
             </span>
             {t("replies", { count: comment.replies })}
@@ -149,19 +144,13 @@ function TrendingDiscussionCard({
           <p className="truncate text-sm font-medium text-foreground">{discussion.title}</p>
           <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-500">
             <span className="inline-flex items-center gap-1.5">
-              <span
-                className="[&_svg]:h-4 [&_svg]:w-4"
-                style={{ color: "#E8DDC0" }}
-              >
+              <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
                 <MessageSquareIcon />
               </span>
               {t("commentsCount", { count: discussion.comments })}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span
-                className="[&_svg]:h-4 [&_svg]:w-4"
-                style={{ color: "#E8DDC0" }}
-              >
+              <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
                 <UsersIcon />
               </span>
               {t("participantsCount", { count: discussion.participants })}
@@ -193,13 +182,7 @@ function TrendingDiscussionCard({
   );
 }
 
-function BadgeCard({
-  badge,
-  onAward,
-}: {
-  badge: Badge;
-  onAward: () => void;
-}) {
+function BadgeCard({ badge, onAward }: { badge: Badge; onAward: () => void }) {
   const t = useTranslations("Dashboard.engagementsPage.badges");
   const icon =
     badge.icon === "award" ? (
@@ -226,11 +209,15 @@ function BadgeCard({
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-base font-semibold text-foreground">{badge.name}</p>
-          <p className="mt-1 text-sm text-gray-500">{t("recipients", { count: badge.recipients })}</p>
+          <p className="mt-1 text-sm text-gray-500">
+            {t("recipients", { count: badge.recipients })}
+          </p>
         </div>
       </div>
 
-      <p className="mt-4 line-clamp-2 text-sm text-gray-500">{badge.description}</p>
+      <p className="mt-4 line-clamp-2 text-sm text-gray-500">
+        <RichContent html={badge.description} variant="inline" />
+      </p>
 
       <button
         type="button"

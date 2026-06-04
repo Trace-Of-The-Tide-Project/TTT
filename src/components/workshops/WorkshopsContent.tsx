@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import { WorkshopModal } from "@/components/workshops/WorkshopModal";
 import { JoinWorkshopModal } from "@/components/workshops/JoinWorkshopModal";
@@ -197,7 +198,7 @@ export function WorkshopsContent({
                 margin: 0,
               }}
             >
-              {t("heroBody")}
+              <RichContent html={t("heroBody")} variant="inline" />
             </p>
           </div>
         </header>
@@ -564,7 +565,7 @@ export function WorkshopsContent({
                 maxWidth: "clamp(320px, 36vw, 1200px)",
               }}
             >
-              {t("joinBody")}
+              <RichContent html={t("joinBody")} variant="inline" />
             </p>
             <div
               className="mt-2 flex flex-wrap items-center justify-center"
@@ -691,7 +692,7 @@ function WorkshopCard({
             margin: 0,
           }}
         >
-          {body}
+          <RichContent html={body} variant="inline" />
         </p>
       </div>
 

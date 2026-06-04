@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { RichContent } from "@/components/ui/rich-text/RichContent";
 
 type TimelineEntry = {
   title: string;
@@ -20,7 +21,16 @@ type TripTimelineProps = {
 
 function CalendarSmall() {
   return (
-    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width={14}
+      height={14}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
       <line x1="16" y1="2" x2="16" y2="6" />
       <line x1="8" y1="2" x2="8" y2="6" />
@@ -31,7 +41,16 @@ function CalendarSmall() {
 
 function ClockSmall() {
   return (
-    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width={14}
+      height={14}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="12" cy="12" r="10" />
       <polyline points="12 6 12 12 16 14" />
     </svg>
@@ -40,7 +59,16 @@ function ClockSmall() {
 
 function PinSmall() {
   return (
-    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width={14}
+      height={14}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="12" cy="10" r="3" />
       <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z" />
     </svg>
@@ -114,9 +142,7 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
               {/* Content */}
               <div className="min-w-0 flex-1 pb-4" style={{ paddingTop: i === 0 ? "0" : "3rem" }}>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                  <h3 className="text-base font-semibold text-foreground">
-                    {entry.title}
-                  </h3>
+                  <h3 className="text-base font-semibold text-foreground">{entry.title}</h3>
                   <div className="flex items-center gap-3 text-xs text-gray-500">
                     <span className="flex items-center gap-1">
                       <CalendarSmall />
@@ -130,7 +156,7 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
                 </div>
 
                 <p className="mt-2 text-sm leading-relaxed text-gray-400">
-                  {entry.description}
+                  <RichContent html={entry.description} variant="inline" />
                 </p>
 
                 {entry.imageUrl?.trim() ? (
@@ -186,19 +212,47 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
                   fill="none"
                 />
                 <circle cx="600" cy="160" r="14" fill="#CBA158" />
-                <text x="600" y="165" textAnchor="middle" fill="#1a1a1a" fontSize="14" fontWeight="600">
+                <text
+                  x="600"
+                  y="165"
+                  textAnchor="middle"
+                  fill="#1a1a1a"
+                  fontSize="14"
+                  fontWeight="600"
+                >
                   1
                 </text>
                 <circle cx="420" cy="205" r="14" fill="#CBA158" />
-                <text x="420" y="210" textAnchor="middle" fill="#1a1a1a" fontSize="14" fontWeight="600">
+                <text
+                  x="420"
+                  y="210"
+                  textAnchor="middle"
+                  fill="#1a1a1a"
+                  fontSize="14"
+                  fontWeight="600"
+                >
                   2
                 </text>
                 <circle cx="280" cy="180" r="14" fill="#CBA158" />
-                <text x="280" y="185" textAnchor="middle" fill="#1a1a1a" fontSize="14" fontWeight="600">
+                <text
+                  x="280"
+                  y="185"
+                  textAnchor="middle"
+                  fill="#1a1a1a"
+                  fontSize="14"
+                  fontWeight="600"
+                >
                   3
                 </text>
                 <circle cx="180" cy="130" r="14" fill="#CBA158" />
-                <text x="180" y="135" textAnchor="middle" fill="#1a1a1a" fontSize="14" fontWeight="600">
+                <text
+                  x="180"
+                  y="135"
+                  textAnchor="middle"
+                  fill="#1a1a1a"
+                  fontSize="14"
+                  fontWeight="600"
+                >
                   4
                 </text>
               </svg>

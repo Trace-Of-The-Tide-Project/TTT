@@ -7,27 +7,17 @@ import HexBackground from "@/components/ui/HexBackground";
 import { HexImageGrid } from "@/components/ui/HexImageGrid";
 import { DynamicOpenCallForm } from "@/components/open-call/DynamicOpenCallForm";
 import { ContributeIcon } from "@/components/ui/icons";
+import { ContentArticleBody } from "@/components/content/article/ContentArticleBody";
+import { articleBlocksToSections } from "@/lib/content/article-blocks-to-sections";
 import { theme } from "@/lib/theme";
 import { useOpenCall } from "@/hooks/queries/open-calls";
-import type {
-  OpenCallDetail,
-  ApplicationFormField,
-} from "@/services/open-calls.service";
+import type { OpenCallDetail, ApplicationFormField } from "@/services/open-calls.service";
 
 function formatDate(iso: string | null | undefined, locale: string): string {
   if (!iso) return "";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
   return d.toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" });
-}
-
-function firstParagraphFromBlocks(blocks: OpenCallDetail["content_blocks"]): string | null {
-  for (const b of blocks) {
-    if (b.type === "paragraph" && typeof b.value === "string" && b.value.trim()) {
-      return b.value.trim();
-    }
-  }
-  return null;
 }
 
 export default function OpenCallByIdPage() {
@@ -81,7 +71,14 @@ export default function OpenCallByIdPage() {
   const formFields: ApplicationFormField[] = openCall.application_form?.fields?.length
     ? openCall.application_form.fields
     : [];
-  const firstParagraph = firstParagraphFromBlocks(openCall.content_blocks);
+  const bodySections = articleBlocksToSections(
+    (openCall.content_blocks ?? []).map((b) => ({
+      block_order: b.order,
+      block_type: b.type,
+      content: Array.isArray(b.value) ? b.value.join("\n") : (b.value ?? null),
+      metadata: null,
+    }))
+  );
 
   return (
     <div className="relative min-h-screen w-full" style={{ backgroundColor: theme.pageBackground }}>
@@ -120,7 +117,10 @@ export default function OpenCallByIdPage() {
                       className="inline-block h-1.5 w-1.5 rounded-full"
                       style={{ backgroundColor: theme.accentGold }}
                     />
-                    {formatDate(openCall.createdAt ?? openCall.created_at ?? openCall.published_at, locale)}
+                    {formatDate(
+                      openCall.createdAt ?? openCall.created_at ?? openCall.published_at,
+                      locale
+                    )}
                   </span>
                 )}
               </div>
@@ -129,11 +129,7 @@ export default function OpenCallByIdPage() {
                 {openCall.title}
               </h1>
 
-              {firstParagraph && (
-                <p className="text-sm leading-relaxed text-gray-400">
-                  {firstParagraph}
-                </p>
-              )}
+              <ContentArticleBody sections={bodySections} />
             </div>
 
             {/* Application form from open call fields */}
@@ -171,7 +167,9 @@ export default function OpenCallByIdPage() {
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-semibold text-foreground">{t("supportTitle")}</h3>
-                <p className="mt-0.5 text-xs leading-relaxed text-gray-400">{t("supportDescription")}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-gray-400">
+                  {t("supportDescription")}
+                </p>
               </div>
               <Link
                 href="/contribute"

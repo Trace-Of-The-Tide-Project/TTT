@@ -50,7 +50,14 @@ function formatFileSize(bytes: number): string {
   const sizes = ["B", "KB", "MB", "GB"] as const;
   const i = Math.min(Math.floor(Math.log(bytes) / Math.log(k)), sizes.length - 1);
   const n = bytes / k ** i;
-  const shown = i === 0 ? String(Math.round(n)) : n >= 100 ? String(Math.round(n)) : n >= 10 ? n.toFixed(1) : n.toFixed(1);
+  const shown =
+    i === 0
+      ? String(Math.round(n))
+      : n >= 100
+        ? String(Math.round(n))
+        : n >= 10
+          ? n.toFixed(1)
+          : n.toFixed(1);
   return `${shown} ${sizes[i]}`;
 }
 
@@ -60,7 +67,14 @@ function FileKindGlyph({ file }: { file: File }) {
   const t = (file.type || "").toLowerCase();
   if (t.startsWith("video/")) {
     return (
-      <svg className={fileRowGlyphClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <svg
+        className={fileRowGlyphClass}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        aria-hidden
+      >
         <rect x="2" y="4" width="20" height="16" rx="2" />
         <polygon points="10 9 16 12 10 15 10 9" fill="currentColor" stroke="none" />
       </svg>
@@ -68,7 +82,14 @@ function FileKindGlyph({ file }: { file: File }) {
   }
   if (t.startsWith("audio/")) {
     return (
-      <svg className={fileRowGlyphClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <svg
+        className={fileRowGlyphClass}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        aria-hidden
+      >
         <path d="M9 18V5l12-2v13" />
         <circle cx="6" cy="18" r="3" />
         <circle cx="18" cy="16" r="3" />
@@ -89,13 +110,7 @@ function FileKindGlyph({ file }: { file: File }) {
   );
 }
 
-function SelectedFileRow({
-  file,
-  onRemove,
-}: {
-  file: File;
-  onRemove: () => void;
-}) {
+function SelectedFileRow({ file, onRemove }: { file: File; onRemove: () => void }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-3 py-2.5">
       <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -247,7 +262,7 @@ function BlockActions({
 
 function blockActionsModeFor(
   block: ContentBlock,
-  firstImageBlockId: string | undefined,
+  firstImageBlockId: string | undefined
 ): BlockActionsMode {
   if (block.type === "author-note") {
     return "delete-only";
@@ -278,7 +293,13 @@ type BlockRendererProps = {
   onChange: (patch: Partial<ContentBlock>) => void;
 };
 
-function BlockRenderer({ block, labels, isCoverImageBlock, heroCopy, onChange }: BlockRendererProps) {
+function BlockRenderer({
+  block,
+  labels,
+  isCoverImageBlock,
+  heroCopy,
+  onChange,
+}: BlockRendererProps) {
   const l = { ...DEFAULT_LABELS, ...labels };
   switch (block.type) {
     case "paragraph":
@@ -391,13 +412,13 @@ function BlockRenderer({ block, labels, isCoverImageBlock, heroCopy, onChange }:
               <p className="mb-1 text-xs text-gray-500">
                 Caption (optional, shown under this media on the public page)
               </p>
-              <textarea
-                value={block.imageCaption ?? ""}
-                onChange={(e) => onChange({ imageCaption: e.target.value })}
-                placeholder="e.g. Modern renewable energy infrastructure…"
-                rows={2}
-                className={`${inputClass} resize-y text-sm`}
-              />
+              <div className={fieldShell}>
+                <RichTextEditor
+                  value={block.imageCaption ?? ""}
+                  onChange={(html) => onChange({ imageCaption: html })}
+                  placeholder="e.g. Modern renewable energy infrastructure…"
+                />
+              </div>
             </div>
           ) : null}
         </div>
@@ -480,12 +501,10 @@ function BlockRenderer({ block, labels, isCoverImageBlock, heroCopy, onChange }:
     case "author-note":
       return (
         <div className={fieldShell}>
-          <textarea
+          <RichTextEditor
             value={block.content ?? ""}
-            onChange={(e) => onChange({ content: e.target.value })}
+            onChange={(html) => onChange({ content: html })}
             placeholder={l["author-note"] ?? "Author note"}
-            rows={1}
-            className={`${fieldInput} resize-y`}
           />
         </div>
       );
@@ -546,7 +565,7 @@ export function ContentBlocks({
 }: ContentBlocksProps) {
   const heroCopy = useMemo(
     () => mainMediaCopy ?? mainMediaEditorCopy(config.contentType),
-    [config.contentType, mainMediaCopy],
+    [config.contentType, mainMediaCopy]
   );
   // Article-style editors disable the "first image is the cover" rule and
   // never prompt for a missing hero — every image block is a plain upload.
@@ -586,7 +605,7 @@ export function ContentBlocks({
       setDraggingId(null);
       setDragOverId(null);
     },
-    [onReorderBlock],
+    [onReorderBlock]
   );
 
   return (
@@ -651,10 +670,7 @@ export function ContentBlocks({
                   // Prefer rich clipboard so paste into Word / Google Docs / email
                   // preserves bold, italic, lists, color, etc. Fall back to
                   // plain text if the browser doesn't support ClipboardItem.
-                  if (
-                    typeof ClipboardItem !== "undefined" &&
-                    navigator.clipboard?.write
-                  ) {
+                  if (typeof ClipboardItem !== "undefined" && navigator.clipboard?.write) {
                     void navigator.clipboard.write([
                       new ClipboardItem({
                         "text/html": new Blob([html], { type: "text/html" }),
