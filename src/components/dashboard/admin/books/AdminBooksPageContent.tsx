@@ -77,7 +77,7 @@ export function AdminBooksPageContent() {
         </div>
         <Link
           href="/admin/books/create"
-          className="flex items-center gap-1.5 rounded-lg bg-[var(--tott-gold)] px-3 py-1.5 text-xs font-medium text-black hover:opacity-90"
+          className="flex items-center gap-1.5 rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-3 py-1.5 text-xs font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 transition-colors"
         >
           <PlusIcon />
           {t("addNew")}
