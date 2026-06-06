@@ -69,6 +69,9 @@ export default function OpenCallByIdPage() {
   const formFields: ApplicationFormField[] = openCall.application_form?.fields?.length
     ? openCall.application_form.fields
     : [];
+  // Drop inline image figures from the body: the open call's imagery is already
+  // shown through the hex mosaic (from main_media), so rendering it again in the
+  // article body would duplicate it. Non-image content in each section is kept.
   const bodySections = articleBlocksToSections(
     (openCall.content_blocks ?? []).map((b) => ({
       block_order: b.order,
@@ -76,7 +79,7 @@ export default function OpenCallByIdPage() {
       content: Array.isArray(b.value) ? b.value.join("\n") : (b.value ?? null),
       metadata: null,
     }))
-  );
+  ).map(({ images: _images, ...section }) => section);
 
   // Article header — data-driven meta row (category tag · author · date), the
   // open call title, and the rendered article body. Passed to the shared
