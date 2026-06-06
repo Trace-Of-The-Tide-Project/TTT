@@ -10,7 +10,7 @@ export type Book = {
   id: string;
   title: string;
   author?: string | null;
-  co_authors?: string | null;
+  co_authors?: string[] | null;
   publisher?: string | null;
   published_date?: string | null;
   year?: number | string | null;
@@ -153,7 +153,7 @@ export async function submitBookReview(
 export type BookPayload = {
   title: string;
   author?: string | null;
-  co_authors?: string | null;
+  co_authors?: string[] | null;
   publisher?: string | null;
   published_date?: string | null;
   year?: number | null;
@@ -166,6 +166,7 @@ export type BookPayload = {
   price?: number | null;
   currency?: string | null;
   magazine_id?: string | null;
+  created_by?: string | null;
 };
 
 /** POST /knowledge/books — requires JWT + admin role. */

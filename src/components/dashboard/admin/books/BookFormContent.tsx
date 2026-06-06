@@ -4,6 +4,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
+import { useAuthUser } from "@/components/providers/AuthProvider";
 import { useBook } from "@/hooks/queries/books";
 import { useCreateBook, useUpdateBook } from "@/hooks/mutations/books";
 import { uploadFileToUrl } from "@/services/uploads.service";
@@ -236,6 +237,7 @@ export function BookFormContent({ bookId }: Props) {
   const t = useTranslations("Dashboard.books.form");
   const router = useRouter();
   const isEdit = Boolean(bookId);
+  const currentUser = useAuthUser();
 
   const bookQuery = useBook(bookId);
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -259,7 +261,7 @@ export function BookFormContent({ bookId }: Props) {
     setForm({
       title: b.title ?? "",
       author: b.author ?? "",
-      co_authors: b.co_authors ?? "",
+      co_authors: Array.isArray(b.co_authors) ? b.co_authors.join(", ") : (b.co_authors ?? ""),
       publisher: b.publisher ?? "",
       published_date: b.published_date ? b.published_date.slice(0, 10) : "",
       year: b.year != null ? String(b.year) : "",
@@ -320,7 +322,9 @@ export function BookFormContent({ bookId }: Props) {
   const buildPayload = (): BookPayload => ({
     title: form.title,
     author: form.author || null,
-    co_authors: form.co_authors || null,
+    co_authors: form.co_authors
+      ? form.co_authors.split(",").map((s) => s.trim()).filter(Boolean)
+      : null,
     publisher: form.publisher || null,
     published_date: form.published_date || null,
     year: form.year ? parseInt(form.year, 10) : null,
@@ -333,6 +337,7 @@ export function BookFormContent({ bookId }: Props) {
     price: form.price ? parseFloat(form.price) : null,
     currency: form.currency || null,
     magazine_id: form.magazine_id || null,
+    created_by: currentUser?.id ?? null,
   });
 
   const handleSubmit = useCallback(
