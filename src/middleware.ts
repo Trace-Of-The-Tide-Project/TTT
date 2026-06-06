@@ -1,5 +1,5 @@
 import createMiddleware from "next-intl/middleware";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
@@ -38,17 +38,25 @@ export default function middleware(request: NextRequest) {
   // Only the magazine subdomain rewrites its root to the magazine page.
   // Deeper paths (e.g. /en/books) are served normally on every host.
   if (MAGAZINE_HOSTS.has(host) && isLocaleRoot(request.nextUrl.pathname)) {
-    const url = request.nextUrl.clone();
+    // Mutate request.nextUrl in place rather than building a fresh
+    // NextRequest. Next.js derives the internal rewrite target from
+    // request.nextUrl; cloning into `new NextRequest(url, request)`
+    // copies the original request's internal routing headers (which
+    // still point at the un-rewritten path), so next-intl's pass-through
+    // rewrite for an already-localized path like /ar lands back on
+    // /[locale] instead of /[locale]/magazine.
+    //
     // Keep the locale prefix when present (/ar → /ar/magazine, a clean
-    // rewrite); for a bare "/" hand "/magazine" to next-intl and let it
-    // add the default-locale prefix.
-    url.pathname =
-      url.pathname === "/" ? "/magazine" : `${url.pathname}/magazine`;
-    // Re-run next-intl on the rewritten URL so locale detection /
-    // prefixing still applies on top of the magazine path.
-    return intlMiddleware(new NextRequest(url, request)) as NextResponse;
+    // rewrite); for a bare "/" set "/magazine" and let next-intl add the
+    // default-locale prefix via redirect.
+    request.nextUrl.pathname =
+      request.nextUrl.pathname === "/"
+        ? "/magazine"
+        : `${request.nextUrl.pathname}/magazine`;
   }
 
+  // next-intl applies locale detection / prefixing on top of whatever
+  // path we hand it (rewritten for the magazine host, untouched otherwise).
   return intlMiddleware(request);
 }
 
