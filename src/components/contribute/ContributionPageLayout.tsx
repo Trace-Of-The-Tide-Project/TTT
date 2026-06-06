@@ -37,6 +37,9 @@ type ContributionPageLayoutProps = {
   /** Content-column max width in px. Defaults to 552 (Start an Issue); Open Call
    *  passes a wider value to keep its article intro readable. */
   contentMaxWidth?: number;
+  /** Image revealed through the hex mosaic. Defaults to the HexImageGrid default
+   *  when omitted; the open-call detail page passes its `main_media` image. */
+  hexGridSrc?: string;
 };
 
 /**
@@ -49,6 +52,7 @@ export function ContributionPageLayout({
   children,
   support,
   contentMaxWidth = 552,
+  hexGridSrc,
 }: ContributionPageLayoutProps) {
   return (
     <main
@@ -68,7 +72,7 @@ export function ContributionPageLayout({
         style={{ maxWidth: "min(92vw, 1600px)" }}
       >
         <section className="relative flex flex-col items-start gap-8 lg:flex-row lg:gap-12">
-          <HexImageGrid className="pt-2" />
+          <HexImageGrid className="pt-2" src={hexGridSrc} />
 
           <div
             className="relative flex w-full min-w-0 flex-col items-start"

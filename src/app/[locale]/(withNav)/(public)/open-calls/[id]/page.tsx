@@ -129,6 +129,7 @@ export default function OpenCallByIdPage() {
     <ContributionPageLayout
       titleBlock={titleBlock}
       contentMaxWidth={720}
+      hexGridSrc={openCall.main_media?.type === "image" ? openCall.main_media.url : undefined}
       support={{
         title: t("supportTitle"),
         description: t("supportDescription"),
