@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
+import { BookHexCover } from "@/components/books/BookHexCover";
 import { StarIcon, ChevronDownIcon } from "@/components/ui/icons";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 
@@ -15,10 +16,6 @@ import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 const VIEW_ICON = "/images/books/leading-icon.svg";
 
 const SHARE_HEX = "/images/home/Icon-5.svg";
-
-// Pre-rendered silk hex card frame (193×288, hex shape + silk fill
-// baked in). Same brand visual the Latest Published row uses.
-const BOOK_HEX = "/images/home/Book Cover.png";
 
 export type BookItem = {
   id: string;
@@ -578,31 +575,10 @@ function BookCard({
       className="flex w-full flex-col items-stretch"
       style={{ maxWidth: "192px", margin: "0 auto" }}
     >
-      {/* Cover — pre-rendered silk hex frame (Book Cover.png, hex
-          shape baked in). When the article has a real cover image
-          we layer it behind the silk so the cover fills the visible
-          hex; otherwise the silk shows on its own. */}
-      <div
-        className="relative w-full"
-        style={{ aspectRatio: "193 / 288" }}
-      >
-        {book.coverImage ? (
-          <Image
-            src={book.coverImage}
-            alt=""
-            fill
-            className="absolute inset-0 object-cover opacity-70 mix-blend-luminosity"
-            sizes="192px"
-          />
-        ) : null}
-        <Image
-          src={BOOK_HEX}
-          alt=""
-          fill
-          className="object-contain"
-          sizes="192px"
-        />
-      </div>
+      {/* Cover — real uploaded image clipped to the elongated hex
+          silhouette (full color). Falls back to the silk hex
+          placeholder when the book has no cover image. */}
+      <BookHexCover src={book.coverImage} alt={book.title} />
 
       {/* Body — 16px horizontal padding, gap 16, no outer card. */}
       <div
@@ -624,6 +600,8 @@ function BookCard({
               letterSpacing: "-0.01em",
               color: "var(--tott-home-text-strong)",
               margin: 0,
+              overflowWrap: "anywhere",
+              wordBreak: "break-word",
             }}
           >
             {book.title}
