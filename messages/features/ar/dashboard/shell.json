@@ -56,7 +56,10 @@
       "notifications": "الإشعارات",
       "privacy": "الخصوصية",
       "password": "كلمة المرور",
-      "account": "الحساب"
+      "account": "الحساب",
+      "books": "الكتب",
+      "allBooks": "كل الكتب",
+      "createBook": "إضافة كتاب"
     },
     "systemSettings": {
       "tabs": {

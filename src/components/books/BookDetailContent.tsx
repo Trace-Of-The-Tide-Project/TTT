@@ -10,13 +10,13 @@ import { formatApiError } from "@/lib/api/error-message";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
+import { BookHexCover } from "@/components/books/BookHexCover";
 import { MessageBubbleIcon } from "@/components/ui/icons";
 import {
   DownloadIcon,
   ChevronRightIcon,
 } from "@/components/ui/icons";
 
-const BOOK_HEX = "/images/home/Book Cover.png";
 const SHARE_HEX = "/images/home/Icon-5.svg";
 // Custom Figma icons used in the book detail action buttons.
 const BUY_ICON = "/images/books/buy-icon.svg";
@@ -179,29 +179,7 @@ export function BookDetailContent({
             className="mx-auto flex w-full flex-col md:mx-0"
             style={{ maxWidth: "360px", gap: "12px" }}
           >
-            <div
-              className="relative w-full"
-              style={{ aspectRatio: "193 / 288" }}
-            >
-              {book.coverImage ? (
-                <Image
-                  src={book.coverImage}
-                  alt=""
-                  fill
-                  className="absolute inset-0 object-cover opacity-70 mix-blend-luminosity"
-                  sizes="260px"
-                  priority
-                />
-              ) : null}
-              <Image
-                src={BOOK_HEX}
-                alt=""
-                fill
-                className="object-contain"
-                sizes="260px"
-                priority
-              />
-            </div>
+            <BookHexCover src={book.coverImage} alt={book.title} />
 
             {/* Buy Now — Figma "Button" spec: 360×40, gold bg with
                 an inset white-40% top highlight, 8px radius. */}
@@ -282,8 +260,10 @@ export function BookDetailContent({
             </Link>
           </div>
 
-          {/* Info column */}
-          <div className="flex flex-col" style={{ padding: "0 8px", gap: "24px" }}>
+          {/* Info column — min-w-0 lets this grid child shrink below
+              its content width so long unbroken strings wrap instead
+              of forcing the column (and the page) wider. */}
+          <div className="flex min-w-0 flex-col" style={{ padding: "0 8px", gap: "24px" }}>
             <h1
               className="min-[1600px]:text-[44px]! min-[1920px]:text-[56px]!"
               style={{
@@ -293,6 +273,8 @@ export function BookDetailContent({
                 lineHeight: "1.25",
                 color: "var(--tott-home-text-strong)",
                 margin: 0,
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
               }}
             >
               {book.title}
@@ -463,6 +445,11 @@ export function BookDetailContent({
                     color: "var(--tott-home-text-strong)",
                     textShadow: "var(--tott-home-text-shadow)",
                     margin: 0,
+                    // Break long unbroken strings (e.g. pasted URLs or
+                    // gibberish with no spaces) so the description wraps
+                    // inside the column instead of overflowing the page.
+                    overflowWrap: "anywhere",
+                    wordBreak: "break-word",
                   }}
                 >
                   {book.excerpt}

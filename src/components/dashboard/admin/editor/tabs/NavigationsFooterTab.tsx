@@ -60,9 +60,19 @@ export function NavigationsFooterTab() {
 
   // Seed form fields from the loaded CMS settings. Render-phase
   // prev-value pattern instead of an effect.
-  const [prevSettings, setPrevSettings] = useState(settings);
-  if (settings && settings !== prevSettings) {
-    setPrevSettings(settings);
+  //
+  // Track a *content* signal (serialized nav + footer) rather than the
+  // query object's identity. On remount React Query returns the same
+  // cached object, so an identity guard (`settings !== prev`) would be
+  // false on first render and the seed would be skipped, leaving the form
+  // blank over real data. A content signal starts as null (never seeded)
+  // and only changes when the server data actually changes.
+  const seedSignal = settings
+    ? JSON.stringify({ nav: settings.navigation ?? null, footer: settings.footer ?? null })
+    : null;
+  const [seededSignal, setSeededSignal] = useState<string | null>(null);
+  if (settings && seedSignal !== null && seedSignal !== seededSignal) {
+    setSeededSignal(seedSignal);
     const nav = settings.navigation as { links?: Array<{ label?: string; url?: string; order?: number; is_visible?: boolean }> } | undefined;
     if (nav?.links && nav.links.length > 0) {
       setNavLinks(

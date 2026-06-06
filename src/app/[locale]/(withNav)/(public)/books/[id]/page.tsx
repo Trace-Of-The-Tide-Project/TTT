@@ -75,7 +75,7 @@ export default async function BookDetailPage({ params }: PageProps) {
     coverImage: cover,
     category: (book.genre ?? "").trim().toLowerCase(),
     author: book.author?.trim() || "Author",
-    coAuthors: book.co_authors?.trim() || "",
+    coAuthors: Array.isArray(book.co_authors) ? book.co_authors.join(", ") : "",
     publisher: book.publisher?.trim() || null,
     year:
       (book.year != null && String(book.year).trim()) ||

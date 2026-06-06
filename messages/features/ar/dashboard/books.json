@@ -1,0 +1,97 @@
+{
+  "Dashboard": {
+    "books": {
+      "list": {
+        "pageTitle": "الكتب",
+        "pageSubtitle": "إدارة كتب المكتبة المعرفية.",
+        "loading": "جارٍ تحميل الكتب…",
+        "addNew": "إضافة كتاب",
+        "searchPlaceholder": "ابحث بالعنوان أو المؤلف…",
+        "errors": {
+          "loadFailed": "فشل تحميل الكتب",
+          "deleteFailed": "فشل الحذف"
+        },
+        "headers": {
+          "title": "العنوان",
+          "author": "المؤلف",
+          "language": "اللغة",
+          "price": "السعر",
+          "actions": "الإجراءات"
+        },
+        "empty": {
+          "none": "لا توجد كتب بعد.",
+          "noMatch": "لا توجد كتب تطابق بحثك."
+        },
+        "price": {
+          "free": "مجاني"
+        },
+        "delete": {
+          "title": "حذف الكتاب",
+          "description": "هل أنت متأكد من حذف \"{title}\" نهائياً؟ لا يمكن التراجع عن هذا الإجراء.",
+          "confirm": "حذف",
+          "confirmBusy": "جارٍ الحذف…",
+          "cancel": "إلغاء"
+        }
+      },
+      "form": {
+        "createTitle": "إضافة كتاب جديد",
+        "editTitle": "تعديل الكتاب",
+        "saving": "جارٍ الحفظ…",
+        "save": "حفظ",
+        "create": "إضافة كتاب",
+        "creating": "جارٍ الإضافة…",
+        "cancel": "إلغاء",
+        "backToList": "العودة إلى الكتب",
+        "errors": {
+          "saveFailed": "فشل الحفظ",
+          "loadFailed": "فشل تحميل الكتاب",
+          "titleRequired": "العنوان مطلوب"
+        },
+        "fields": {
+          "title": "العنوان",
+          "titlePlaceholder": "عنوان الكتاب",
+          "author": "المؤلف",
+          "authorPlaceholder": "المؤلف الرئيسي",
+          "co_authors": "المؤلفون المشاركون",
+          "co_authorsPlaceholder": "مساهمون إضافيون",
+          "publisher": "الناشر",
+          "publisherPlaceholder": "اسم الناشر",
+          "published_date": "تاريخ النشر",
+          "year": "السنة",
+          "yearPlaceholder": "مثال: 2024",
+          "summary": "الملخص",
+          "summaryPlaceholder": "وصف مختصر للكتاب",
+          "cover_image": "رابط صورة الغلاف",
+          "cover_imagePlaceholder": "https://…",
+          "pdf_url": "رابط PDF",
+          "pdf_urlPlaceholder": "https://…",
+          "genre": "النوع",
+          "genrePlaceholder": "مثال: روايات، تاريخ",
+          "language": "اللغة",
+          "page_count": "عدد الصفحات",
+          "page_countPlaceholder": "عدد الصفحات",
+          "price": "السعر (اتركه فارغاً للمجاني)",
+          "pricePlaceholder": "مثال: 9.99",
+          "currency": "العملة",
+          "currencyPlaceholder": "مثال: USD",
+          "magazine_id": "معرّف المجلة (اختياري)",
+          "magazine_idPlaceholder": "اتركه فارغاً إذا لم يكن مرتبطاً بمجلة"
+        },
+        "languages": {
+          "en": "الإنجليزية",
+          "ar": "العربية",
+          "es": "الإسبانية",
+          "fr": "الفرنسية",
+          "de": "الألمانية"
+        },
+        "upload": {
+          "coverUpload": "رفع صورة الغلاف",
+          "coverUploading": "جارٍ الرفع…",
+          "pdfUpload": "رفع PDF",
+          "pdfUploading": "جارٍ الرفع…",
+          "pdfUploaded": "تم رفع PDF ✓"
+        }
+      }
+    }
+  }
+}

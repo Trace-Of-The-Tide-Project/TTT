@@ -18,7 +18,8 @@ function priceNumber(p: Book["price"]): number {
 }
 
 function authorOf(b: Book): string {
-  return (b.author?.trim() || b.co_authors?.trim() || "").trim() || "Author";
+  const coAuthorStr = Array.isArray(b.co_authors) ? b.co_authors[0] : (b.co_authors ?? "");
+  return (b.author?.trim() || coAuthorStr.trim() || "").trim() || "Author";
 }
 
 /** Server component — fetches the real /knowledge/books catalogue

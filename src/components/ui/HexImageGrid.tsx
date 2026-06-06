@@ -82,6 +82,11 @@ export function HexImageGrid({
       <div className="relative" style={{ width: gridW, height: gridH }}>
         {grid.map(({ row, col }, i) => {
           const pos = hexPosition(row, col, hexSize, gapX, gapY, offsetEven);
+          // Each hexagon is a window onto ONE continuous image lying behind the
+          // whole grid: the image is sized to the full grid (gridW × gridH) and
+          // shifted by the negative of this cell's offset, so every hex reveals
+          // its own slice of the same picture underneath. Gaps stay dark — the
+          // image only shows where a hex clips it.
           return (
             <div
               key={i}
@@ -96,14 +101,23 @@ export function HexImageGrid({
             >
               <IdlePulse
                 phaseOffset={i * 0.3}
-                style={{ position: "relative", width: "100%", height: "100%" }}
+                style={{ position: "absolute", inset: 0 }}
               >
                 <Image
                   src={src}
                   alt=""
-                  fill
-                  className="object-cover"
-                  sizes={`${hexSize}px`}
+                  width={Math.ceil(gridW)}
+                  height={Math.ceil(gridH)}
+                  className="max-w-none object-cover"
+                  style={{
+                    position: "absolute",
+                    top: -pos.top,
+                    left: -pos.left,
+                    width: gridW,
+                    height: gridH,
+                  }}
+                  sizes={`${Math.ceil(gridW)}px`}
+                  priority={i === 0}
                 />
               </IdlePulse>
             </div>

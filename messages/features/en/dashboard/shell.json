@@ -56,7 +56,10 @@
       "notifications": "Notifications",
       "privacy": "Privacy",
       "password": "Password",
-      "account": "Account"
+      "account": "Account",
+      "books": "Books",
+      "allBooks": "All Books",
+      "createBook": "Add Book"
     },
     "systemSettings": {
       "tabs": {

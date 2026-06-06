@@ -5,21 +5,30 @@ import { useTranslations } from "next-intl";
 import { isAxiosError } from "axios";
 import { Link } from "@/i18n/navigation";
 import { useApplyToOpenCall } from "@/hooks/mutations/open-calls";
+import { CloudUploadIcon, FileTextIcon, TrashIcon } from "@/components/ui/icons";
 import {
-  PersonIcon,
-  EmailIcon,
-  CloudUploadIcon,
-  ChevronDownIcon,
-  FileTextIcon,
-  TrashIcon,
-} from "@/components/ui/icons";
-import { theme } from "@/lib/theme";
-import { CONTRIBUTION_FORM_INPUT_BASE as inputBase } from "@/lib/constants";
+  Field,
+  FieldInput,
+  FieldSelect,
+  FieldTextarea,
+  UserIcon,
+  MailIcon,
+  PhoneIcon,
+  FIELD_BG,
+  FIELD_BORDER,
+  FIELD_RADIUS,
+  LABEL_COLOR,
+  HELPER_COLOR,
+  ACCENT,
+  ACCENT_TEXT,
+} from "@/components/contribute/ContributionFormFields";
 import type { ApplicationFormField } from "@/services/open-calls.service";
 import {
   resolveFieldParticipantLabel,
   resolveSelectOptionLabel,
 } from "@/lib/application-form-labels";
+
+const SANS = "'Inter', var(--font-sans, sans-serif)";
 
 type UploadedFile = { id: string; file: File; sizeLabel: string };
 
@@ -32,24 +41,11 @@ function formatFileSize(bytes: number): string {
 function iconForType(type: ApplicationFormField["type"]) {
   switch (type) {
     case "email":
-      return <EmailIcon />;
+      return <MailIcon />;
     case "phone":
-      return (
-        <svg
-          width={18}
-          height={18}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-        </svg>
-      );
+      return <PhoneIcon />;
     default:
-      return <PersonIcon />;
+      return <UserIcon />;
   }
 }
 
@@ -61,25 +57,15 @@ function TextField({
   const t = useTranslations("Dashboard.applicationForm");
   const label = resolveFieldParticipantLabel(field, t);
   return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">
-        {label}
-        {field.required && <span className="ml-0.5 text-[#C9A96E]">*</span>}
-      </label>
-      <div
-        className="flex items-center gap-3 rounded-lg border px-3 py-2 sm:px-4 sm:py-3"
-        style={{ borderColor: theme.inputBorder, backgroundColor: theme.panelWellBackground }}
-      >
-        <span className="shrink-0 text-gray-500">{iconForType(field.type)}</span>
-        <input
-          name={field.name}
-          type={field.type === "email" ? "email" : field.type === "phone" ? "tel" : "text"}
-          placeholder={t("dynamic.enterField", { label })}
-          required={field.required}
-          className="w-full bg-transparent text-sm text-[color:var(--tott-panel-text)] placeholder:text-gray-500 focus:outline-none sm:text-base"
-        />
-      </div>
-    </div>
+    <Field label={label}>
+      <FieldInput
+        name={field.name}
+        type={field.type === "email" ? "email" : field.type === "phone" ? "tel" : "text"}
+        placeholder={t("dynamic.enterField", { label })}
+        required={field.required}
+        icon={iconForType(field.type)}
+      />
+    </Field>
   );
 }
 
@@ -87,20 +73,14 @@ function TextareaField({ field }: { field: ApplicationFormField & { type: "texta
   const t = useTranslations("Dashboard.applicationForm");
   const label = resolveFieldParticipantLabel(field, t);
   return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">
-        {label}
-        {field.required && <span className="ml-0.5 text-[#C9A96E]">*</span>}
-      </label>
-      <textarea
+    <Field label={label}>
+      <FieldTextarea
         name={field.name}
         rows={4}
         placeholder={t("dynamic.enterField", { label })}
         required={field.required}
-        className={inputBase}
-        style={{ borderColor: theme.inputBorder }}
       />
-    </div>
+    </Field>
   );
 }
 
@@ -108,38 +88,24 @@ function SelectField({ field }: { field: ApplicationFormField & { type: "select"
   const t = useTranslations("Dashboard.applicationForm");
   const label = resolveFieldParticipantLabel(field, t);
   return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">
-        {label}
-        {field.required && <span className="ml-0.5 text-[#C9A96E]">*</span>}
-      </label>
-      <div
-        className="flex items-center gap-3 rounded-lg border px-3 py-2 sm:px-4 sm:py-3"
-        style={{ borderColor: theme.inputBorder, backgroundColor: theme.panelWellBackground }}
+    <Field label={label}>
+      <FieldSelect
+        name={field.name}
+        required={field.required}
+        defaultValue=""
+        placeholder={t("dynamic.selectPlaceholder")}
       >
-        <select
-          name={field.name}
-          required={field.required}
-          className="w-full appearance-none bg-transparent text-sm text-[color:var(--tott-panel-text)] placeholder:text-gray-500 focus:outline-none sm:text-base"
-        >
-          <option value="" className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]">
-            {t("dynamic.selectPlaceholder")}
+        {field.options.map((opt) => (
+          <option
+            key={opt}
+            value={opt}
+            style={{ backgroundColor: FIELD_BG, color: LABEL_COLOR }}
+          >
+            {resolveSelectOptionLabel(opt, t)}
           </option>
-          {field.options.map((opt) => (
-            <option
-              key={opt}
-              value={opt}
-              className="bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]"
-            >
-              {resolveSelectOptionLabel(opt, t)}
-            </option>
-          ))}
-        </select>
-        <span className="pointer-events-none shrink-0 text-gray-500">
-          <ChevronDownIcon />
-        </span>
-      </div>
-    </div>
+        ))}
+      </FieldSelect>
+    </Field>
   );
 }
 
@@ -155,16 +121,40 @@ function CheckboxField({
   const t = useTranslations("Dashboard.applicationForm");
   const label = resolveFieldParticipantLabel(field, t);
   return (
-    <label className="flex cursor-pointer items-center gap-3">
-      <input
-        type="checkbox"
-        name={field.name}
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        required={field.required}
-        className="h-4 w-4 rounded border-gray-600 bg-transparent accent-[#C9A96E] focus:ring-[#C9A96E]"
-      />
-      <span className="text-sm text-gray-500">{label}</span>
+    <label className="flex cursor-pointer flex-row items-center" style={{ gap: "8px" }}>
+      <span className="relative inline-block" style={{ width: "20px", height: "20px" }}>
+        <input
+          type="checkbox"
+          name={field.name}
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          required={field.required}
+          className="peer absolute inset-0 cursor-pointer opacity-0"
+          style={{ width: "20px", height: "20px" }}
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute"
+          style={{ left: "2px", top: "2px", width: "16px", height: "16px", backgroundColor: FIELD_BORDER, borderRadius: "4px" }}
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute"
+          style={{ left: "3.5px", top: "3.5px", width: "13px", height: "13px", backgroundColor: "var(--tott-home-surface)", borderRadius: "2.5px" }}
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute opacity-0 peer-checked:opacity-100"
+          style={{ left: "4px", top: "4px", width: "12px", height: "12px", color: ACCENT }}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" width="12" height="12">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </span>
+      </span>
+      <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: "14px", lineHeight: "20px", letterSpacing: "-0.005em", color: LABEL_COLOR }}>
+        {label}
+      </span>
     </label>
   );
 }
@@ -206,11 +196,20 @@ function FileField({
   const typesUpper = field.allowed_types.join(", ").toUpperCase();
 
   return (
-    <div>
-      <label className="mb-1.5 block text-sm font-medium text-[color:var(--tott-panel-text)]">
+    <div className="flex w-full flex-col" style={{ gap: "8px" }}>
+      <span
+        style={{
+          fontFamily: SANS,
+          fontWeight: 500,
+          fontSize: "14px",
+          lineHeight: "20px",
+          letterSpacing: "-0.005em",
+          color: LABEL_COLOR,
+        }}
+      >
         {label}
-        {field.required && <span className="ml-0.5 text-[#C9A96E]">*</span>}
-      </label>
+      </span>
+
       <div
         onDrop={(e) => {
           e.preventDefault();
@@ -225,9 +224,14 @@ function FileField({
           e.preventDefault();
           setIsDragging(false);
         }}
-        className={`flex flex-col items-center justify-center rounded-lg border-2 border-dashed px-4 py-8 transition-colors ${
-          isDragging ? "border-[#C9A96E] bg-[#C9A96E]/10" : "border-gray-600 bg-[var(--tott-well-bg)]"
-        }`}
+        className="flex flex-col items-center justify-center transition-colors"
+        style={{
+          padding: "24px",
+          gap: "8px",
+          backgroundColor: FIELD_BG,
+          border: `1px dashed ${isDragging ? ACCENT : FIELD_BORDER}`,
+          borderRadius: `${FIELD_RADIUS}px`,
+        }}
       >
         <input
           type="file"
@@ -237,15 +241,16 @@ function FileField({
           accept={field.allowed_types.map((ty) => `.${ty}`).join(",")}
           onChange={(e) => addFiles(e.target.files)}
         />
-        <label
-          htmlFor={inputId}
-          className="flex cursor-pointer flex-col items-center gap-2 text-gray-400"
-        >
-          <span style={{ color: theme.accentGoldFocus }}>
+        <label htmlFor={inputId} className="flex cursor-pointer flex-col items-center" style={{ gap: "4px" }}>
+          <span style={{ color: HELPER_COLOR }}>
             <CloudUploadIcon />
           </span>
-          <span className="text-center text-sm">{t("dynamic.fileDragBrowse")}</span>
-          <span className="text-xs text-gray-500">
+          <span
+            style={{ fontFamily: SANS, fontWeight: 500, fontSize: "14px", lineHeight: "20px", letterSpacing: "-0.005em", color: LABEL_COLOR, textAlign: "center" }}
+          >
+            {t("dynamic.fileDragBrowse")}
+          </span>
+          <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: "12px", lineHeight: "16px", color: HELPER_COLOR, textAlign: "center" }}>
             {t("dynamic.fileTypesLine", {
               types: typesUpper,
               maxFiles: field.max_files,
@@ -254,25 +259,43 @@ function FileField({
           </span>
         </label>
       </div>
+
       {files.length > 0 && (
-        <ul className="mt-3 space-y-2">
+        <ul className="flex flex-col" style={{ gap: "8px", marginTop: "8px" }}>
           {files.map(({ id, file, sizeLabel }) => (
             <li
               key={id}
-              className="flex items-center gap-3 rounded-lg border border-gray-700 px-4 py-3"
-              style={{ backgroundColor: theme.panelWellBackground }}
+              className="flex flex-row items-center"
+              style={{
+                padding: "12px",
+                gap: "12px",
+                backgroundColor: FIELD_BG,
+                border: `1px solid ${FIELD_BORDER}`,
+                borderRadius: `${FIELD_RADIUS}px`,
+              }}
             >
-              <span className="text-gray-500">
+              <span
+                className="flex shrink-0 items-center justify-center"
+                style={{ width: "40px", height: "40px", border: `1px solid ${FIELD_BORDER}`, borderRadius: "4px", color: HELPER_COLOR }}
+              >
                 <FileTextIcon />
               </span>
-              <span className="min-w-0 flex-1 truncate text-sm text-[color:var(--tott-panel-text)]">
-                {file.name}
+              <span className="flex min-w-0 flex-1 flex-col" style={{ gap: "4px" }}>
+                <span
+                  className="truncate"
+                  style={{ fontFamily: SANS, fontWeight: 500, fontSize: "14px", lineHeight: "20px", letterSpacing: "-0.005em", color: "rgba(255,255,255,0.72)" }}
+                >
+                  {file.name}
+                </span>
+                <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: "12px", lineHeight: "16px", color: "rgba(255,255,255,0.48)" }}>
+                  {sizeLabel}
+                </span>
               </span>
-              <span className="text-xs text-gray-500">{sizeLabel}</span>
               <button
                 type="button"
                 onClick={() => removeFile(id)}
-                className="rounded p-1 text-gray-500 hover:bg-black/10 hover:text-[color:var(--tott-panel-text)]"
+                className="shrink-0 transition-opacity hover:opacity-70 focus:outline-none"
+                style={{ padding: "4px", borderRadius: "6px", color: HELPER_COLOR }}
                 aria-label={t("dynamic.removeFileAria")}
               >
                 <TrashIcon />
@@ -373,16 +396,22 @@ export function DynamicOpenCallForm({
   if (submitted) {
     return (
       <div className="w-full space-y-2 text-center">
-        <h3 className="text-lg font-semibold text-[color:var(--tott-panel-text)]">
+        <h3 className="text-lg font-semibold" style={{ color: LABEL_COLOR }}>
           {t("dynamic.successTitle")}
         </h3>
-        <p className="text-sm text-gray-400">{t("dynamic.successBody")}</p>
+        <p className="text-sm" style={{ color: HELPER_COLOR }}>
+          {t("dynamic.successBody")}
+        </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full select-none space-y-5">
+    <form
+      onSubmit={handleSubmit}
+      className="flex w-full select-none flex-col items-stretch"
+      style={{ gap: "24px" }}
+    >
       {fields.map((field, i) => {
         if (field.type === "text" || field.type === "email" || field.type === "phone") {
           return <TextField key={i} field={field} />;
@@ -427,11 +456,21 @@ export function DynamicOpenCallForm({
       <button
         type="submit"
         disabled={!allRequiredCheckboxesChecked || apply.isPending}
-        className="w-full cursor-pointer rounded-lg py-3.5 text-base font-semibold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background)]"
+        className="w-full transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         style={{
-          backgroundColor: theme.accentGold,
-          boxShadow: `0 0 0 1px ${theme.accentGold}`,
-          color: theme.bgDark,
+          height: "40px",
+          padding: "8px 16px",
+          borderRadius: `${FIELD_RADIUS}px`,
+          backgroundColor: ACCENT,
+          boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
+          color: ACCENT_TEXT,
+          fontFamily: SANS,
+          fontWeight: 500,
+          fontSize: "14px",
+          lineHeight: "20px",
+          letterSpacing: "-0.005em",
+          textAlign: "center",
+          border: "none",
         }}
       >
         {apply.isPending ? t("dynamic.submitting") : resolvedSubmit}
@@ -440,12 +479,18 @@ export function DynamicOpenCallForm({
       {afterSubmitSlot}
 
       {showHomeLink ? (
-        <p className="text-center text-sm text-gray-400">
-          {t("dynamic.homeBack")}{" "}
-          <Link href="/" className="hover:underline" style={{ color: theme.accentGold }}>
+        <div className="flex flex-row items-end justify-center" style={{ gap: "4px" }}>
+          <span style={{ fontFamily: SANS, fontWeight: 400, fontSize: "14px", lineHeight: "20px", letterSpacing: "-0.005em", color: HELPER_COLOR }}>
+            {t("dynamic.homeBack")}
+          </span>
+          <Link
+            href="/"
+            className="hover:underline"
+            style={{ fontFamily: SANS, fontWeight: 400, fontSize: "14px", lineHeight: "20px", letterSpacing: "-0.005em", color: ACCENT }}
+          >
             {t("dynamic.homePage")}
           </Link>
-        </p>
+        </div>
       ) : null}
     </form>
   );
