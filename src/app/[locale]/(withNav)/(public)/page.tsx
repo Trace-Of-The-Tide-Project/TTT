@@ -1,14 +1,19 @@
 /**
- * Root home page is the magazine landing.
+ * Root `/` renders the "Hex grid" homepage.
  *
- * The previous "Hex grid" home page (HomeHexGrid + ShareYourStory)
- * has been moved to `/home` so it's still reachable, but `/` now
- * renders the magazine page so visitors land on the editorial
- * experience first.
+ * Host-based routing splits the two public faces of the site:
+ *   - Apex (traceofthetide.org)      → `/`         → this homepage
+ *   - Subdomain (magazine.…)         → `/magazine` → the editorial magazine
+ *
+ * The subdomain rewrite lives in `src/middleware.ts`, which maps the
+ * subdomain's `/[locale]` to `/[locale]/magazine`. The magazine page
+ * itself still lives at `./magazine/page` and is reachable at
+ * `/magazine` on the apex too.
  *
  * We re-export the default but redeclare `dynamic` literally —
  * Next.js's compile-time static analysis won't follow re-exported
- * route segment config.
+ * route segment config, and the homepage fetches articles at request
+ * time so it must not be statically prerendered.
  */
 export const dynamic = "force-dynamic";
-export { default } from "./magazine/page";
+export { default } from "./home/page";
