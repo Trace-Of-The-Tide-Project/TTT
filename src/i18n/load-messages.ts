@@ -25,6 +25,7 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/change-password.json`),
     /** Large shared surfaces (content library, CMS editor, roles UI). */
     import(`../../messages/features/${locale}/dashboard/admin-surfaces.json`),
+    import(`../../messages/features/${locale}/dashboard/books.json`),
     /**
      * Shell merged last so `Dashboard.sidebar` (system settings, profile, etc.),
      * layout, topbar, and shared placeholders are never overwritten by other slices.

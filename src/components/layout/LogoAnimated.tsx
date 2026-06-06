@@ -13,6 +13,10 @@ export function LogoAnimated({ className = "h-6 w-auto" }: Props) {
   const g1 = `logo-g1-${id}`;
   const g2 = `logo-g2-${id}`;
 
+  // Portrait paths are 28w × 57h. To display horizontally (57w × 28h):
+  // rotate 90° around origin, then translate right by 57 to bring back into view.
+  // transform="rotate(90) translate(0,-28)" maps (x,y) → (y, 28-x) fitting into 57×28.
+
   return (
     <svg
       width="57"
@@ -24,22 +28,21 @@ export function LogoAnimated({ className = "h-6 w-auto" }: Props) {
       aria-hidden="true"
     >
       <defs>
-        <radialGradient id={g0} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(28.5 14) rotate(0) scale(28.5 14)">
+        <radialGradient id={g0} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(28.5 14) scale(28.5 14)">
           <stop stopColor="#C9A96E" />
           <stop offset="1" stopColor="#C9A96E" stopOpacity="0" />
         </radialGradient>
-        <radialGradient id={g1} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(28.5 14) rotate(0) scale(28.5 14)">
+        <radialGradient id={g1} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(28.5 14) scale(28.5 14)">
           <stop stopColor="#C9A96E" />
           <stop offset="1" stopColor="#C9A96E" stopOpacity="0" />
         </radialGradient>
-        <radialGradient id={g2} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(28.5 14) rotate(0) scale(28.5 14)">
+        <radialGradient id={g2} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(28.5 14) scale(28.5 14)">
           <stop stopColor="#C9A96E" />
           <stop offset="1" stopColor="#C9A96E" stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      {/* Rotate the portrait paths -90° to lay them horizontally */}
-      <g transform="translate(0,57) rotate(-90)">
+      <g transform="rotate(90) translate(0,-28)">
 
         {/* Arrow 1 */}
         <motion.g
