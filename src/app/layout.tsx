@@ -29,6 +29,9 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Trace of The Tide",
   description: "Trace of The Tide",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 function resolveRootLocale(requested: string | undefined): string {

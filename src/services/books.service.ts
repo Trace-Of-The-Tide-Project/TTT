@@ -149,3 +149,48 @@ export async function submitBookReview(
   );
   return unwrapItem<BookReview>(data);
 }
+
+export type BookPayload = {
+  title: string;
+  author?: string | null;
+  co_authors?: string | null;
+  publisher?: string | null;
+  published_date?: string | null;
+  year?: number | null;
+  summary?: string | null;
+  cover_image?: string | null;
+  pdf_url?: string | null;
+  genre?: string | null;
+  language?: "en" | "ar" | "es" | "fr" | "de" | null;
+  page_count?: number | null;
+  price?: number | null;
+  currency?: string | null;
+  magazine_id?: string | null;
+};
+
+/** POST /knowledge/books — requires JWT + admin role. */
+export async function createBook(payload: BookPayload): Promise<Book> {
+  const { data } = await api.post<unknown>("/knowledge/books", payload);
+  const item = unwrapItem<Book>(data);
+  if (!item) throw new Error("Invalid response from create book");
+  return item;
+}
+
+/** PATCH /knowledge/books/:id */
+export async function updateBook(
+  id: string,
+  payload: Partial<BookPayload>,
+): Promise<Book> {
+  const { data } = await api.patch<unknown>(
+    `/knowledge/books/${encodeURIComponent(id)}`,
+    payload,
+  );
+  const item = unwrapItem<Book>(data);
+  if (!item) throw new Error("Invalid response from update book");
+  return item;
+}
+
+/** DELETE /knowledge/books/:id */
+export async function deleteBook(id: string): Promise<void> {
+  await api.delete(`/knowledge/books/${encodeURIComponent(id)}`);
+}

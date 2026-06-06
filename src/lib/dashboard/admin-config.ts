@@ -18,6 +18,7 @@ import {
   EyeIcon,
   BellIcon,
   UserCheckIcon,
+  PlusIcon,
 } from "@/components/ui/icons";
 import type { DashboardConfig } from "./types";
 
@@ -152,6 +153,27 @@ export const adminConfig: DashboardConfig = {
               labelKey: "sidebar.encounterBookings",
               href: "/admin/encounters",
               icon: PenLineIcon,
+            },
+          ],
+        },
+        {
+          kind: "group",
+          groupId: "knowledge",
+          labelKey: "sidebar.books",
+          icon: BookIcon,
+          defaultOpen: true,
+          items: [
+            {
+              kind: "item",
+              labelKey: "sidebar.createBook",
+              href: "/admin/books/create",
+              icon: PlusIcon,
+            },
+            {
+              kind: "item",
+              labelKey: "sidebar.allBooks",
+              href: "/admin/books",
+              icon: BookIcon,
             },
           ],
         },

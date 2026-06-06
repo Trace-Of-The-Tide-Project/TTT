@@ -1,0 +1,97 @@
+{
+  "Dashboard": {
+    "books": {
+      "list": {
+        "pageTitle": "Livres",
+        "pageSubtitle": "Gérer les livres de la bibliothèque de connaissances.",
+        "loading": "Chargement des livres…",
+        "addNew": "Ajouter un livre",
+        "searchPlaceholder": "Rechercher par titre ou auteur…",
+        "errors": {
+          "loadFailed": "Échec du chargement des livres",
+          "deleteFailed": "Échec de la suppression"
+        },
+        "headers": {
+          "title": "Titre",
+          "author": "Auteur",
+          "language": "Langue",
+          "price": "Prix",
+          "actions": "Actions"
+        },
+        "empty": {
+          "none": "Aucun livre pour l'instant.",
+          "noMatch": "Aucun livre ne correspond à votre recherche."
+        },
+        "price": {
+          "free": "Gratuit"
+        },
+        "delete": {
+          "title": "Supprimer le livre",
+          "description": "Êtes-vous sûr de vouloir supprimer définitivement \"{title}\" ? Cette action est irréversible.",
+          "confirm": "Supprimer",
+          "confirmBusy": "Suppression…",
+          "cancel": "Annuler"
+        }
+      },
+      "form": {
+        "createTitle": "Ajouter un nouveau livre",
+        "editTitle": "Modifier le livre",
+        "saving": "Enregistrement…",
+        "save": "Enregistrer",
+        "create": "Ajouter le livre",
+        "creating": "Ajout…",
+        "cancel": "Annuler",
+        "backToList": "Retour aux livres",
+        "errors": {
+          "saveFailed": "Échec de l'enregistrement",
+          "loadFailed": "Échec du chargement du livre",
+          "titleRequired": "Le titre est requis"
+        },
+        "fields": {
+          "title": "Titre",
+          "titlePlaceholder": "Titre du livre",
+          "author": "Auteur",
+          "authorPlaceholder": "Auteur principal",
+          "co_authors": "Co-auteurs",
+          "co_authorsPlaceholder": "Contributeurs supplémentaires",
+          "publisher": "Éditeur",
+          "publisherPlaceholder": "Nom de l'éditeur",
+          "published_date": "Date de publication",
+          "year": "Année",
+          "yearPlaceholder": "ex. 2024",
+          "summary": "Résumé",
+          "summaryPlaceholder": "Brève description du livre",
+          "cover_image": "URL de l'image de couverture",
+          "cover_imagePlaceholder": "https://…",
+          "pdf_url": "URL du PDF",
+          "pdf_urlPlaceholder": "https://…",
+          "genre": "Genre",
+          "genrePlaceholder": "ex. Fiction, Histoire",
+          "language": "Langue",
+          "page_count": "Nombre de pages",
+          "page_countPlaceholder": "Nombre de pages",
+          "price": "Prix (laisser vide pour gratuit)",
+          "pricePlaceholder": "ex. 9.99",
+          "currency": "Devise",
+          "currencyPlaceholder": "ex. USD",
+          "magazine_id": "ID du magazine (optionnel)",
+          "magazine_idPlaceholder": "Laisser vide si non lié à un magazine"
+        },
+        "languages": {
+          "en": "Anglais",
+          "ar": "Arabe",
+          "es": "Espagnol",
+          "fr": "Français",
+          "de": "Allemand"
+        },
+        "upload": {
+          "coverUpload": "Télécharger l'image de couverture",
+          "coverUploading": "Téléchargement…",
+          "pdfUpload": "Télécharger le PDF",
+          "pdfUploading": "Téléchargement…",
+          "pdfUploaded": "PDF téléchargé ✓"
+        }
+      }
+    }
+  }
+}
