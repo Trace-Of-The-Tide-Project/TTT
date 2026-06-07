@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useTranslations as useIntl } from "next-intl";
+import { useLocale } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { useTranslations } from "@/hooks/queries/translations";
 import {
@@ -32,6 +33,7 @@ export function TranslationsPanel({
   createBasePath = DEFAULT_CREATE_PATH,
 }: TranslationsPanelProps) {
   const t = useIntl("Dashboard.translations");
+  const locale = useLocale();
   const { data } = useTranslations(contentType, contentId);
 
   const byLanguage = useMemo(() => {
@@ -45,7 +47,7 @@ export function TranslationsPanel({
   );
 
   function createHref(loc: string) {
-    return `${createBasePath}?language=${loc}&translation_of=${encodeURIComponent(contentId)}`;
+    return `/${locale}${createBasePath}?language=${loc}&translation_of=${encodeURIComponent(contentId)}`;
   }
 
   function handleAddAll() {
@@ -81,7 +83,7 @@ export function TranslationsPanel({
             return (
               <a
                 key={loc}
-                href={`/admin/articles/edit/${version.id}`}
+                href={`/${locale}/admin/articles/edit/${version.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`${base} text-[var(--tott-tab-inactive)] hover:text-foreground`}
