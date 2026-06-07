@@ -215,6 +215,12 @@
             "label": "Catégorie",
             "placeholder": "Ex. : Documentaire, Art"
           },
+          "cover": {
+            "label": "Image de couverture",
+            "choose": "Choisir une image",
+            "replace": "Remplacer l’image",
+            "remove": "Retirer"
+          },
           "collection": {
             "label": "Collection (facultatif)",
             "none": "Aucune collection",

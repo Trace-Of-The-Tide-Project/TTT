@@ -22,6 +22,7 @@ import {
 import { ContentEditorFooter } from "@/components/dashboard/admin/articles/articles-editor/ContentEditorFooter";
 import { ScheduleArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ScheduleArticleModal";
 import { buildArticleBlocksFromEditor } from "@/components/dashboard/admin/articles/articles-editor/lib/build-api-blocks";
+import { uploadArticleAsset } from "@/services/uploads.service";
 import { articleDetailBlocksToContentBlocks } from "@/components/dashboard/admin/articles/articles-editor/lib/api-blocks-to-content-blocks";
 import {
   articleConfig,
@@ -54,6 +55,7 @@ function editPatchFromPayload(payload: CreateArticlePayload) {
     title: payload.title || undefined,
     category: payload.category || undefined,
     collection_id: payload.collection_id?.trim() ? payload.collection_id.trim() : null,
+    cover_image: payload.cover_image ?? null,
     blocks: payload.blocks,
     tag_ids: payload.tag_ids,
   };
@@ -128,6 +130,10 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
   const [metaDescription, setMetaDescription] = useState("");
   const [collectionId, setCollectionId] = useState("");
   const [tagIds, setTagIds] = useState<string[]>([]);
+  // Cover image: existing URL loaded on edit, or a freshly-picked File whose
+  // upload is deferred until save (mirrors how image blocks defer upload).
+  const [coverImage, setCoverImage] = useState<string | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -176,6 +182,8 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     setSeoTitle(a.seo_title?.trim() ?? "");
     setMetaDescription(a.meta_description?.trim() ?? "");
     setCollectionId(a.collection_id?.trim() ?? "");
+    setCoverImage(a.cover_image ?? null);
+    setCoverFile(null);
     setTagIds(
       Array.isArray(a.tags)
         ? a.tags.map((tagItem) => tagItem.id).filter((id): id is string => typeof id === "string")
@@ -255,6 +263,19 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     const apiBlocks = await buildArticleBlocksFromEditor(blocks, {
       onUploading: setMediaUploading,
     });
+    // Resolve the cover: upload a freshly-picked file (deferred until now),
+    // otherwise reuse the already-stored URL.
+    let resolvedCover = coverImage;
+    if (coverFile) {
+      setMediaUploading(true);
+      try {
+        resolvedCover = await uploadArticleAsset(coverFile);
+        setCoverImage(resolvedCover);
+        setCoverFile(null);
+      } finally {
+        setMediaUploading(false);
+      }
+    }
     const cid = collectionId.trim();
     return {
       title: title.trim(),
@@ -266,6 +287,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
       meta_description: metaDescription.trim() || undefined,
       collection_id: cid || undefined,
       tag_ids: tagIds.length ? tagIds : undefined,
+      cover_image: resolvedCover || undefined,
       blocks: apiBlocks,
     };
   }, [
@@ -279,6 +301,8 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     metaDescription,
     collectionId,
     tagIds,
+    coverImage,
+    coverFile,
   ]);
 
   const handleSaveDraft = useCallback(async () => {
@@ -608,6 +632,15 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
             onCollectionIdChange={setCollectionId}
             tagIds={tagIds}
             onTagIdsChange={setTagIds}
+            coverImage={coverImage}
+            onCoverFileSelect={(file) => {
+              setCoverFile(file);
+              setCoverImage(URL.createObjectURL(file));
+            }}
+            onCoverRemove={() => {
+              setCoverFile(null);
+              setCoverImage(null);
+            }}
           />
         </aside>
       </div>

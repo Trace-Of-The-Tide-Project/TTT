@@ -4,9 +4,11 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { FirstWordGold } from "./FirstWordGold";
+import { BookCover } from "./BookCover";
 
 // Pre-rendered hex card image (193×288, transparent background outside
-// the hex). Silk fill + border baked in.
+// the hex). Silk fill + border baked in — used as the fallback when an
+// article has no cover image of its own.
 const CARD_IMAGE = "/images/home/Book Cover.png";
 
 // Octagonal chamfer for the category chip — 6px corner cuts.
@@ -88,30 +90,25 @@ export function MagazineLatestPublished({
             className="flex basis-[calc(50%-0.5rem)] flex-col items-stretch sm:basis-[170px] sm:max-w-[192px]"
           >
             <PublishedCardLink id={item.id}>
-            <div
-              className="relative w-full"
-              style={{ aspectRatio: "193 / 288" }}
-            >
-              {/* Cover image (when present) — sits behind the silk
-                  hex; silk hex carries the shape + edge so the cover
-                  reads as if framed inside the silhouette. */}
-              {item.coverImage ? (
+            {item.coverImage ? (
+              // Real cover fills the hex at full opacity/colour; the hex
+              // path itself provides the shape + 1px sheen border.
+              <BookCover src={item.coverImage} alt={item.title} grayscale={false} />
+            ) : (
+              // No cover — fall back to the baked-in silk hex graphic.
+              <div
+                className="relative w-full"
+                style={{ aspectRatio: "193 / 288" }}
+              >
                 <Image
-                  src={item.coverImage}
+                  src={CARD_IMAGE}
                   alt=""
                   fill
-                  className="absolute inset-0 object-cover opacity-70 mix-blend-luminosity"
+                  className="object-contain"
                   sizes="(min-width: 1024px) 192px, (min-width: 640px) 25vw, 45vw"
                 />
-              ) : null}
-              <Image
-                src={CARD_IMAGE}
-                alt=""
-                fill
-                className="object-contain"
-                sizes="(min-width: 1024px) 192px, (min-width: 640px) 25vw, 45vw"
-              />
-            </div>
+              </div>
+            )}
             <div className="mt-3 flex flex-col items-center text-center">
               <span
                 style={{

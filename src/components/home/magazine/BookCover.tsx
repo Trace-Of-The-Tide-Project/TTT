@@ -21,6 +21,10 @@ const BOOK_STROKE_PATH =
 export type BookCoverProps = {
   src: string;
   alt: string;
+  /** Apply the grayscale treatment to the image. Defaults to true to
+   * preserve the Publications-tab look; pass false to surface a
+   * full-color cover. */
+  grayscale?: boolean;
 };
 
 /**
@@ -30,7 +34,7 @@ export type BookCoverProps = {
  * grayscale cover, with the category / title / date stacked below
  * the image rather than overlaid on it).
  */
-export function BookCover({ src, alt }: BookCoverProps) {
+export function BookCover({ src, alt, grayscale = true }: BookCoverProps) {
   const rawId = useId();
   const uid = rawId.replace(/:/g, "");
   const maskId = `book-mask-${uid}`;
@@ -61,7 +65,7 @@ export function BookCover({ src, alt }: BookCoverProps) {
             width={BOOK_VIEW_W}
             height={BOOK_VIEW_H}
             preserveAspectRatio="xMidYMid slice"
-            style={{ filter: "grayscale(1)" }}
+            style={grayscale ? { filter: "grayscale(1)" } : undefined}
           />
         </g>
 

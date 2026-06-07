@@ -215,6 +215,12 @@
             "label": "Categoría",
             "placeholder": "p. ej., Documental, Arte"
           },
+          "cover": {
+            "label": "Imagen de portada",
+            "choose": "Elegir imagen",
+            "replace": "Reemplazar imagen",
+            "remove": "Quitar"
+          },
           "collection": {
             "label": "Colección (opcional)",
             "none": "Sin colección",
