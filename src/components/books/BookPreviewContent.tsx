@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { getBookPreview, type BookPreviewMeta } from "@/services/books.service";
 import HexBackground from "@/components/ui/HexBackground";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import {
@@ -82,13 +83,45 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
   // Gated previews start at page 1 so the reader can actually reach
   // the lock; the cosmetic demo starts mid-book.
   const initialPage = gated ? 1 : Math.min(DEFAULT_INITIAL_PAGE, totalPages);
-  const displayTotal = gated ? previewLimit : totalPages;
 
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [locked, setLocked] = useState(false);
   const [flipping, setFlipping] = useState<"next" | "prev" | null>(null);
   const [flipPhase, setFlipPhase] = useState<"start" | "end">("start");
   const flipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Preview pages from GET /knowledge/books/:id/preview
+  const [previewPages, setPreviewPages] = useState<string[]>([]);
+  const [previewMeta, setPreviewMeta] = useState<BookPreviewMeta | null>(null);
+
+  const displayTotal = previewMeta
+    ? previewMeta.free_preview_limit
+    : gated
+      ? previewLimit
+      : totalPages;
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  const fetchPreviewPage = useCallback(
+    async (page: number) => {
+      if (!showReader) return;
+      setPreviewLoading(true);
+      try {
+        const res = await getBookPreview(book.id, { page, limit: 2 });
+        if (res) {
+          setPreviewPages(res.rows);
+          setPreviewMeta(res.meta);
+        }
+      } finally {
+        setPreviewLoading(false);
+      }
+    },
+    [book.id, showReader],
+  );
+
+  useEffect(() => {
+    fetchPreviewPage(currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [book.id]);
 
   useEffect(() => {
     return () => {
@@ -112,8 +145,6 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
 
   const goNext = () => {
     if (flipping || locked) return;
-    // Past the preview limit a paid book reveals the buy gate instead
-    // of more pages.
     if (gated && currentPage + 2 > previewLimit) {
       setLocked(true);
       return;
@@ -121,15 +152,16 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
     if (currentPage + 2 > previewLimit) return;
     setFlipping("next");
     flipTimer.current = setTimeout(() => {
-      setCurrentPage((p) => Math.min(p + 2, previewLimit));
+      const next = Math.min(currentPage + 2, previewLimit);
+      setCurrentPage(next);
       setFlipping(null);
       setFlipPhase("start");
+      fetchPreviewPage(next);
     }, FLIP_MS);
   };
 
   const goPrev = () => {
     if (flipping) return;
-    // Backing out of the lock returns to the last preview spread.
     if (locked) {
       setLocked(false);
       return;
@@ -137,9 +169,11 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
     if (currentPage - 2 < 1) return;
     setFlipping("prev");
     flipTimer.current = setTimeout(() => {
-      setCurrentPage((p) => Math.max(p - 2, 1));
+      const prev = Math.max(currentPage - 2, 1);
+      setCurrentPage(prev);
       setFlipping(null);
       setFlipPhase("start");
+      fetchPreviewPage(prev);
     }, FLIP_MS);
   };
 
@@ -367,15 +401,33 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
                 />
               ) : (
                 <>
-                  <Image
-                    src={BOOK_IMAGE}
-                    alt=""
-                    fill
-                    priority
-                    sizes="(min-width: 1280px) 1100px, 100vw"
-                    className="select-none object-contain"
-                    draggable={false}
-                  />
+                  {previewPages.length > 0 ? (
+                    <div className="absolute inset-0 flex">
+                      {previewPages.map((src, i) => (
+                        <div key={src} className="relative flex-1 h-full">
+                          <Image
+                            src={src}
+                            alt={`Page ${currentPage + i}`}
+                            fill
+                            priority={i === 0}
+                            sizes="(min-width: 1280px) 550px, 50vw"
+                            className={`select-none object-contain transition-opacity duration-300 ${previewLoading ? "opacity-50" : "opacity-100"}`}
+                            draggable={false}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <Image
+                      src={BOOK_IMAGE}
+                      alt=""
+                      fill
+                      priority
+                      sizes="(min-width: 1280px) 1100px, 100vw"
+                      className="select-none object-contain"
+                      draggable={false}
+                    />
+                  )}
 
                   {flipping !== null && (() => {
                     const target = flipping === "next" ? -180 : 180;

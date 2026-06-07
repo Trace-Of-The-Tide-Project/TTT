@@ -51,12 +51,27 @@ export type GetBooksParams = {
   search?: string;
   page?: number;
   limit?: number;
-  /** Free / paid filter is applied client-side; the backend doesn't
-   * document a canonical filter today. */
   language?: string;
   genre?: string;
-  /** Server may accept these — they map straight to fields. */
   magazine_id?: string;
+  price_type?: "free" | "paid";
+  min_price?: number;
+  max_price?: number;
+  min_rating?: number;
+};
+
+export type BookPreviewMeta = {
+  total: number;
+  total_pages_in_book: number;
+  free_preview_limit: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
+export type BookPreviewResponse = {
+  rows: string[];
+  meta: BookPreviewMeta;
 };
 
 type Envelope<T> = { data?: T[]; meta?: unknown };
@@ -194,4 +209,35 @@ export async function updateBook(
 /** DELETE /knowledge/books/:id */
 export async function deleteBook(id: string): Promise<void> {
   await api.delete(`/knowledge/books/${encodeURIComponent(id)}`);
+}
+
+/** GET /knowledge/books/:id/preview — public, paginated page images for the flipbook reader. */
+export async function getBookPreview(
+  bookId: string,
+  params?: { page?: number; limit?: number },
+): Promise<BookPreviewResponse | null> {
+  const path = `/knowledge/books/${encodeURIComponent(bookId)}/preview`;
+  try {
+    if (typeof window === "undefined") {
+      const raw = await serverGet<unknown>(path, params);
+      return extractPreview(raw);
+    }
+    const { data } = await api.get<unknown>(path, { params });
+    return extractPreview(data);
+  } catch {
+    return null;
+  }
+}
+
+function extractPreview(raw: unknown): BookPreviewResponse | null {
+  if (!raw || typeof raw !== "object") return null;
+  const o = raw as Record<string, unknown>;
+  // ResponseInterceptor wraps as { data: rows[], meta: {...} }
+  // but getBookPreview returns { rows: [], meta: {} } directly inside data
+  const inner = (o.data ?? o) as Record<string, unknown>;
+  if (!inner || typeof inner !== "object") return null;
+  const rows = Array.isArray(inner.rows) ? (inner.rows as string[]) : [];
+  const meta = inner.meta as BookPreviewMeta | undefined;
+  if (!meta) return null;
+  return { rows, meta };
 }
