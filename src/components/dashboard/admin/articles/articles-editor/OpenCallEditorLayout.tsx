@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { isAxiosError } from "axios";
@@ -39,6 +39,30 @@ import { formatApplicationFormValidationIssue } from "@/lib/application-form-val
 
 const titleClass =
   "w-full border-0 bg-transparent px-0 py-2 text-lg text-foreground placeholder:text-foreground outline-none";
+
+/**
+ * When adding a translation of an existing open call, we must reuse the
+ * original open call's id rather than creating a new one. The ref is populated
+ * at mount; if the fetch hasn't resolved by the time the user saves, we fetch
+ * inline here so the save path is always correct.
+ */
+async function resolveOpenCallId(
+  translationOf: string | undefined,
+  ref: React.MutableRefObject<string | null | undefined>,
+  ocPayload: Parameters<typeof createOpenCall>[0],
+): Promise<string | undefined> {
+  if (translationOf) {
+    // Use cached value if already resolved.
+    if (ref.current !== undefined) return ref.current ?? undefined;
+    // Fetch inline if mount effect hasn't completed yet.
+    const original = await getArticleById(translationOf);
+    const id = original?.open_call_id ?? null;
+    ref.current = id;
+    return id ?? undefined;
+  }
+  // Not a translation — create a new open call as usual.
+  return extractOpenCallId(await createOpenCall(ocPayload)) ?? undefined;
+}
 
 const ADMIN_ARTICLES_PATH = "/admin/articles";
 
@@ -102,13 +126,13 @@ export function OpenCallEditorLayout({
   const [category, setCategory] = useState("");
   const [translationOf] = useState(initialTranslationOf);
   const [language, setLanguage] = useState(initialLanguage ?? "en");
-  // When adding a translation, hold the existing open call id so we don't create a new one.
-  const [existingOpenCallId, setExistingOpenCallId] = useState<string | undefined>(undefined);
+  // Resolved at mount; also re-fetched inline at save time if still null.
+  const existingOpenCallIdRef = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {
     if (!translationOf) return;
     getArticleById(translationOf).then((a) => {
-      if (a?.open_call_id) setExistingOpenCallId(a.open_call_id);
+      existingOpenCallIdRef.current = a?.open_call_id ?? null;
     });
   }, [translationOf]);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
@@ -279,7 +303,7 @@ export function OpenCallEditorLayout({
         setError(tLayout("validationOpenCallBlocksDraft"));
         return;
       }
-      const ocId = existingOpenCallId ?? extractOpenCallId(await createOpenCall(openCall)) ?? undefined;
+      const ocId = await resolveOpenCallId(translationOf, existingOpenCallIdRef, openCall);
       await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
       invalidateAdminArticlesListCache();
       router.push(ADMIN_ARTICLES_PATH);
@@ -288,7 +312,7 @@ export function OpenCallEditorLayout({
     } finally {
       setBusy(false);
     }
-  }, [validateBeforeSubmit, buildPayloads, createArticleFromBlocks, router, translateErr, tLayout, existingOpenCallId]);
+  }, [validateBeforeSubmit, buildPayloads, createArticleFromBlocks, router, translateErr, tLayout, translationOf, existingOpenCallIdRef]);
 
   const handlePublish = useCallback(async () => {
     if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
@@ -309,7 +333,7 @@ export function OpenCallEditorLayout({
         setError(tLayout("validationOpenCallBlocksPublish"));
         return;
       }
-      const ocId = existingOpenCallId ?? extractOpenCallId(await createOpenCall(openCall)) ?? undefined;
+      const ocId = await resolveOpenCallId(translationOf, existingOpenCallIdRef, openCall);
       await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
       invalidateAdminArticlesListCache();
       router.push(ADMIN_ARTICLES_PATH);
@@ -326,7 +350,8 @@ export function OpenCallEditorLayout({
     router,
     translateErr,
     tLayout,
-    existingOpenCallId,
+    translationOf,
+    existingOpenCallIdRef,
   ]);
 
   const handleScheduleConfirm = useCallback(
@@ -351,7 +376,7 @@ export function OpenCallEditorLayout({
           setScheduleModalOpen(false);
           return;
         }
-        const ocId = existingOpenCallId ?? extractOpenCallId(await createOpenCall(openCall)) ?? undefined;
+        const ocId = await resolveOpenCallId(translationOf, existingOpenCallIdRef, openCall);
         await createArticleFromBlocks(articleBlocks, {
           openCallId: ocId,
           coverImage,
@@ -376,6 +401,8 @@ export function OpenCallEditorLayout({
       router,
       translateErr,
       tLayout,
+      translationOf,
+      existingOpenCallIdRef,
     ],
   );
 

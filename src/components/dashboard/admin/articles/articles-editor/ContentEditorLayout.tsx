@@ -580,26 +580,36 @@ export function ContentEditorLayout({
         </div>
       ) : null}
 
+      {/* Edit-mode top bar: breadcrumb + translations chip row + preview link */}
+      {isEditMode && articleId ? (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4 shrink-0">
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <Link href={ADMIN_ARTICLES_PATH} className="text-[#C9A96E] hover:underline">
+              {tLayout("backToArticles")}
+            </Link>
+            <span className="text-gray-500">{tLayout("editArticle")}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <TranslationsPanel
+              contentType="article"
+              contentId={articleId}
+              currentLanguage={language}
+              createBasePath={`/admin/articles/create/${config.contentType}`}
+            />
+            <Link
+              href={previewHrefForContentType(config.contentType, articleId)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[#C9A96E]/50 hover:bg-[#252525]"
+            >
+              {tLayout("preview")}
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
       <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
         <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
-          {isEditMode && articleId ? (
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4">
-              <div className="flex flex-wrap items-center gap-3 text-sm">
-                <Link href={ADMIN_ARTICLES_PATH} className="text-[#C9A96E] hover:underline">
-                  {tLayout("backToArticles")}
-                </Link>
-                <span className="text-gray-500">{tLayout("editArticle")}</span>
-              </div>
-              <Link
-                href={previewHrefForContentType(config.contentType, articleId)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[#C9A96E]/50 hover:bg-[#252525]"
-              >
-                {tLayout("preview")}
-              </Link>
-            </div>
-          ) : null}
           <input
             type="text"
             value={title}
@@ -660,17 +670,6 @@ export function ContentEditorLayout({
               setCoverImage(null);
             }}
           />
-          {/* Edit mode only: manage the language versions of this piece. New
-              translations are created via the create route for the same
-              content type, pre-linked to this article's translation group. */}
-          {isEditMode && articleId ? (
-            <TranslationsPanel
-              contentType="article"
-              contentId={articleId}
-              currentLanguage={language}
-              createBasePath={`/admin/articles/create/${config.contentType}`}
-            />
-          ) : null}
         </aside>
       </div>
 
