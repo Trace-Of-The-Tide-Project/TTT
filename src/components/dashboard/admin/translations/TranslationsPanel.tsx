@@ -12,30 +12,14 @@ import {
 } from "@/services/translations.service";
 
 type TranslationsPanelProps = {
-  /** Which content type this panel manages versions for. */
   contentType: TranslatableType;
-  /** Any id within the translation group (usually the item being edited). */
   contentId: string;
-  /** Language of the item currently open, so it can be marked "Current". */
   currentLanguage?: string;
-  /**
-   * Where "Add translation" sends the author. The target language is appended
-   * as `?language=<loc>&translation_of=<contentId>`. Defaults to the article
-   * create route since articles are the primary translatable type.
-   */
   createBasePath?: string;
 };
 
 const DEFAULT_CREATE_PATH = "/admin/articles/create/article";
 
-/**
- * Generic "Translations" panel shown in a content editor/detail view. Lists all
- * four locales, marking which language versions exist (with a link to open them
- * and their status) and which are missing (with an "Add translation" button that
- * opens the editor pre-linked to this translation group).
- *
- * Driven by `routing.locales`, so adding a fifth locale needs no change here.
- */
 export function TranslationsPanel({
   contentType,
   contentId,
@@ -52,63 +36,65 @@ export function TranslationsPanel({
   }, [data]);
 
   return (
-    <ChamferedPanel className="p-4">
-      <div className="mb-3">
-        <h3 className="text-sm font-semibold text-foreground">{t("panelTitle")}</h3>
-        <p className="mt-0.5 text-xs text-gray-400">{t("panelSubtitle")}</p>
-      </div>
+    <ChamferedPanel className="p-3">
+      <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-gray-500">
+        {t("panelTitle")}
+      </p>
 
-      <ul className="space-y-2">
+      <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
         {routing.locales.map((loc) => {
           const version = byLanguage.get(loc);
           const isCurrent = loc === currentLanguage;
-          return (
-            <li
-              key={loc}
-              className="flex items-center justify-between gap-3 rounded-[7.5px] border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2"
-            >
-              <span className="flex items-center gap-2 text-sm text-foreground">
-                {t(`languages.${loc}`)}
-                {isCurrent ? (
-                  <span className="rounded-full bg-gray-700 px-2 py-0.5 text-[10px] uppercase tracking-wide text-gray-200">
-                    {t("currentBadge")}
-                  </span>
-                ) : null}
-              </span>
 
-              {version ? (
-                <span className="flex items-center gap-2">
-                  {version.status ? (
-                    <span className="text-xs text-gray-400">
-                      {t.has(`status.${version.status}`)
-                        ? t(`status.${version.status}`)
-                        : version.status}
-                    </span>
-                  ) : null}
-                  {!isCurrent ? (
-                    <Link
-                      href={`/admin/articles/edit/${version.id}`}
-                      className="text-xs font-medium text-blue-400 hover:underline"
-                    >
-                      {t("openVersion")}
-                    </Link>
-                  ) : null}
-                </span>
-              ) : (
-                <Link
-                  href={`${createBasePath}?language=${loc}&translation_of=${encodeURIComponent(
-                    contentId,
-                  )}`}
-                  className="rounded-[6px] border border-[var(--tott-card-border)] px-2.5 py-1 text-xs font-medium text-foreground hover:border-gray-400"
-                  aria-disabled={isPending}
-                >
-                  {t("addTranslation")}
-                </Link>
-              )}
-            </li>
+          const chipClass = `relative rounded-md px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider transition-colors ${
+            isCurrent
+              ? "bg-[var(--tott-dash-surface-inset)] text-foreground shadow-sm"
+              : version
+                ? "text-[var(--tott-tab-inactive)] hover:text-foreground"
+                : "text-gray-600 hover:text-gray-400"
+          }`;
+
+          if (isCurrent) {
+            return (
+              <span key={loc} className={chipClass} title={t("currentBadge")}>
+                {loc}
+              </span>
+            );
+          }
+
+          if (version) {
+            return (
+              <Link
+                key={loc}
+                href={`/admin/articles/edit/${version.id}`}
+                className={chipClass}
+                title={
+                  version.status
+                    ? t.has(`status.${version.status}`)
+                      ? t(`status.${version.status}`)
+                      : version.status
+                    : t("openVersion")
+                }
+              >
+                {loc}
+              </Link>
+            );
+          }
+
+          return (
+            <Link
+              key={loc}
+              href={`${createBasePath}?language=${loc}&translation_of=${encodeURIComponent(contentId)}`}
+              className={chipClass}
+              aria-disabled={isPending}
+              title={t("addTranslation")}
+            >
+              {loc}
+              <span className="ml-0.5 text-[9px] leading-none text-gray-500">+</span>
+            </Link>
           );
         })}
-      </ul>
+      </div>
     </ChamferedPanel>
   );
 }

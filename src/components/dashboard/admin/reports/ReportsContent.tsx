@@ -1,27 +1,22 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   AlertTriangleIcon,
-  ClockIcon,
-  EyeIcon,
   FlagIcon,
-  MessageSquareIcon,
   SearchIcon,
   ShieldIcon,
 } from "@/components/ui/icons";
 import {
-  sampleAuditLog,
-  sampleReportedUsers,
-  sampleReports,
-  type AuditLogEntry,
-  type ReportItem,
-  type ReportedUserItem,
-} from "@/lib/dashboard/reports-constants";
-import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
-
-const AVATAR_GOLD = "#E8DDC0";
+  useModerationAuditLog,
+  useModerationReports,
+  useModerationStats,
+} from "@/hooks/queries/dashboard";
+import type {
+  ModerationAuditRow,
+  ModerationReportRow,
+} from "@/services/dashboard.service";
 
 const REPORT_TAB_IDS = ["content", "users", "audit"] as const;
 type ReportTabId = (typeof REPORT_TAB_IDS)[number];
@@ -29,11 +24,11 @@ type ReportTabId = (typeof REPORT_TAB_IDS)[number];
 const FILTER_IDS = ["all", "pending", "underReview"] as const;
 type FilterId = (typeof FILTER_IDS)[number];
 
-function reportStatusKey(status: ReportItem["status"] | ReportedUserItem["status"]): "pending" | "underReview" {
+function reportStatusKey(status: ModerationReportRow["status"]): "pending" | "underReview" {
   return status === "Pending" ? "pending" : "underReview";
 }
 
-function reportTypeKey(label: ReportItem["typeLabel"]): "comment" | "content" {
+function reportTypeKey(label: ModerationReportRow["typeLabel"]): "comment" | "content" {
   return label === "Comment" ? "comment" : "content";
 }
 
@@ -44,20 +39,24 @@ export function ReportsContent() {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const filteredReports = useMemo(() => {
-    return sampleReports.filter((r) => {
-      const q = query.trim().toLowerCase();
-      const matchesQuery =
-        !q ||
-        r.title.toLowerCase().includes(q) ||
-        r.reporter.toLowerCase().includes(q);
-      const matchesFilter =
-        filter === "all" ||
-        (filter === "pending" && r.status === "Pending") ||
-        (filter === "underReview" && r.status === "Under review");
-      return matchesQuery && matchesFilter;
-    });
-  }, [query, filter]);
+  const stats = useModerationStats();
+  // Backend ModerationLog.action supports flagged|approved|rejected. The
+  // "pending"/"underReview" UI filters map onto flagged (open) reports;
+  // "underReview" further narrows client-side to escalated/resolved rows.
+  const reportsQuery = useModerationReports({
+    status: filter === "all" ? undefined : "flagged",
+    search: query.trim() || undefined,
+  });
+  const auditQuery = useModerationAuditLog();
+
+  const allReports = reportsQuery.data?.reports ?? [];
+  const filteredReports =
+    filter === "underReview"
+      ? allReports.filter((r) => r.status === "Under review")
+      : allReports;
+
+  const reportsCount = stats.data?.pendingReports ?? allReports.length;
+  const auditEntries = auditQuery.data?.entries ?? [];
 
   const selected = filteredReports.find((r) => r.id === selectedId) ?? null;
 
@@ -68,9 +67,9 @@ export function ReportsContent() {
           {REPORT_TAB_IDS.map((tabId) => {
             const label =
               tabId === "content"
-                ? t("tabs.content", { count: sampleReports.length })
+                ? t("tabs.content", { count: reportsCount })
                 : tabId === "users"
-                  ? t("tabs.users", { count: sampleReportedUsers.length })
+                  ? t("tabs.users", { count: 0 })
                   : t("tabs.audit");
             return (
               <button
@@ -132,7 +131,10 @@ export function ReportsContent() {
                     onSelect={() => setSelectedId(report.id)}
                   />
                 ))}
-                {filteredReports.length === 0 && (
+                {reportsQuery.isLoading && (
+                  <p className="py-8 text-center text-sm text-gray-500">{t("loading")}</p>
+                )}
+                {!reportsQuery.isLoading && filteredReports.length === 0 && (
                   <p className="py-8 text-center text-sm text-gray-500">{t("emptyFiltered")}</p>
                 )}
               </div>
@@ -172,13 +174,17 @@ export function ReportsContent() {
             </div>
           </>
         ) : activeTab === "users" ? (
-          <div className="mt-6 space-y-3">
-            {sampleReportedUsers.map((user) => (
-              <ReportedUserCard key={user.id} user={user} />
-            ))}
+          // Reported-users is not yet a backend feature — there is no user-reports
+          // table or endpoint (moderation stats return usersReported: 0). Show an
+          // honest empty state instead of fabricated sample data.
+          <div className="mt-6 flex min-h-[200px] flex-col items-center justify-center rounded-2xl border border-[var(--tott-card-border)] bg-[#0f0f0f] px-6 py-12 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[#E8DDC0]">
+              <FlagIcon />
+            </div>
+            <p className="mt-4 text-sm text-gray-500">{t("users.empty")}</p>
           </div>
         ) : (
-          <AuditLogSection entries={sampleAuditLog} />
+          <AuditLogSection entries={auditEntries} loading={auditQuery.isLoading} />
         )}
       </div>
     </div>
@@ -189,7 +195,13 @@ export function ReportsContent() {
 const AUDIT_CARD_CLIP =
   "polygon(11px 0, calc(100% - 11px) 0, 100% 11px, 100% calc(100% - 11px), calc(100% - 11px) 100%, 11px 100%, 0 calc(100% - 11px), 0 11px)";
 
-function AuditLogSection({ entries }: { entries: AuditLogEntry[] }) {
+function AuditLogSection({
+  entries,
+  loading,
+}: {
+  entries: ModerationAuditRow[];
+  loading?: boolean;
+}) {
   const t = useTranslations("Dashboard.reportsPage.audit");
   return (
     <div className="mt-6">
@@ -199,12 +211,18 @@ function AuditLogSection({ entries }: { entries: AuditLogEntry[] }) {
         {entries.map((entry) => (
           <AuditLogCard key={entry.id} entry={entry} />
         ))}
+        {loading && (
+          <p className="py-8 text-center text-sm text-gray-500">{t("loading")}</p>
+        )}
+        {!loading && entries.length === 0 && (
+          <p className="py-8 text-center text-sm text-gray-500">{t("empty")}</p>
+        )}
       </div>
     </div>
   );
 }
 
-function AuditLogCard({ entry }: { entry: AuditLogEntry }) {
+function AuditLogCard({ entry }: { entry: ModerationAuditRow }) {
   return (
     <div
       className="flex items-center gap-4 px-4 py-4 sm:gap-5 sm:px-5 sm:py-4"
@@ -231,81 +249,12 @@ function AuditLogCard({ entry }: { entry: AuditLogEntry }) {
   );
 }
 
-function ReportedUserCard({ user }: { user: ReportedUserItem }) {
-  const t = useTranslations("Dashboard.reportsPage");
-  const tu = useTranslations("Dashboard.reportsPage.users");
-  return (
-    <div className="relative flex flex-col gap-4 p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
-      <ChamferedFrame />
-      <div className="flex min-w-0 gap-4">
-        <div
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-bold text-[#111]"
-          style={{ backgroundColor: AVATAR_GOLD }}
-        >
-          {user.avatarInitial}
-        </div>
-        <div className="min-w-0">
-          <p className="font-semibold text-foreground">{user.displayName}</p>
-          <p className="text-sm text-gray-500">{user.email}</p>
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="text-[#E8DDC0] [&_svg]:h-3.5 [&_svg]:w-3.5">
-                <FlagIcon />
-              </span>
-              {tu("reportsCount", { count: user.reportCount })}
-            </span>
-            <span className="hidden text-gray-600 sm:inline">·</span>
-            <span>{user.reasonSummary}</span>
-            <span className="hidden text-gray-600 sm:inline">·</span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="text-[#E8DDC0] [&_svg]:h-3.5 [&_svg]:w-3.5">
-                <ClockIcon />
-              </span>
-              {user.timeAgo}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2 lg:shrink-0 lg:justify-end">
-        <span className="rounded-full border border-amber-500/35 bg-[var(--tott-dash-input-bg)] px-3 py-1 text-xs font-medium text-amber-400">
-          {t(`statusLabels.${reportStatusKey(user.status)}`)}
-        </span>
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-surface-inset)]"
-        >
-          <span className="text-[#E8DDC0] [&_svg]:h-4 [&_svg]:w-4">
-            <EyeIcon />
-          </span>
-          {tu("viewProfile")}
-        </button>
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-surface-inset)]"
-        >
-          <span className="text-[#E8DDC0] [&_svg]:h-4 [&_svg]:w-4">
-            <MessageSquareIcon />
-          </span>
-          {tu("warn")}
-        </button>
-        <button
-          type="button"
-          className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-3 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-[var(--tott-dash-surface-inset)]"
-        >
-          {tu("suspend")}
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function ReportListCard({
   report,
   selected,
   onSelect,
 }: {
-  report: ReportItem;
+  report: ModerationReportRow;
   selected: boolean;
   onSelect: () => void;
 }) {

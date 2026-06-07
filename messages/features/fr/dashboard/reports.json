@@ -12,6 +12,7 @@
         "underReview": "En cours d'examen"
       },
       "searchPlaceholder": "Rechercher des rapports…",
+      "loading": "Chargement des rapports…",
       "emptyFiltered": "Aucun rapport ne correspond à vos filtres.",
       "selectPrompt": "Sélectionnez un rapport à examiner",
       "reportedBy": "Signalé par :",
@@ -27,11 +28,14 @@
         "reportsCount": "{count, plural, one {# signalement} other {# signalements}}",
         "viewProfile": "Voir le profil",
         "warn": "Avertir",
-        "suspend": "Suspendre"
+        "suspend": "Suspendre",
+        "empty": "Le signalement d'utilisateurs n'est pas encore disponible."
       },
       "audit": {
         "title": "Journal d'audit",
-        "subtitle": "Suivre toutes les actions de modération"
+        "subtitle": "Suivre toutes les actions de modération",
+        "loading": "Chargement du journal d'audit…",
+        "empty": "Aucune entrée d'audit pour le moment."
       }
     }
   }

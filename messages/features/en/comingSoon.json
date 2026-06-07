@@ -1,0 +1,27 @@
+{
+  "ComingSoon": {
+    "shared": {
+      "badge": "Coming soon",
+      "ctaLabel": "Explore the magazine meanwhile",
+      "homeLabel": "Back to home"
+    },
+    "features": {
+      "fields": {
+        "title": "Fields are being mapped",
+        "description": "Soon you'll wander our trails — harbour, courtyard, and hill — each a path through culture, knowledge, and the arts. We're laying the stones now. Come walk them with us shortly."
+      },
+      "beANeighbor": {
+        "title": "A place for neighbors is taking shape",
+        "description": "Becoming a neighbor means joining the community that keeps these stories alive. We're building a warm way for you to step in, lend a hand, and belong. Your seat at the table is almost ready."
+      },
+      "giftATrace": {
+        "title": "Gifting a trace is almost here",
+        "description": "Soon you'll be able to give a trace — a contribution offered in someone's name, a small act that helps preserve our shared memory. We're wrapping it up with care. Thank you for your patience."
+      },
+      "traceAStory": {
+        "title": "Your story is worth the wait",
+        "description": "The space to trace your own story — to share a memory, a testimony, or a piece of art — is being polished to do it justice. Hold onto your words; we can't wait to hear them very soon."
+      }
+    }
+  }
+}

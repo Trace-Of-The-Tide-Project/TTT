@@ -25,7 +25,7 @@ import { ApplicationFormBuilder } from "./open-call/ApplicationFormBuilder";
 import { ApplicationFormPreview } from "./open-call/ApplicationFormPreview";
 import { invalidateAdminArticlesListCache } from "@/lib/dashboard/admin-articles-list-cache";
 import { useAdminTags } from "@/hooks/queries/admin-tags";
-import { createArticle } from "@/services/articles.service";
+import { createArticle, getArticleById } from "@/services/articles.service";
 import {
   createOpenCall,
   extractOpenCallId,
@@ -42,11 +42,23 @@ const titleClass =
 
 const ADMIN_ARTICLES_PATH = "/admin/articles";
 
-function apiLanguage(lang: string): "en" | "ar" {
-  return lang.trim().toLowerCase() === "ar" ? "ar" : "en";
+function apiLanguage(lang: string): "en" | "ar" | "es" | "fr" {
+  const l = lang.trim().toLowerCase();
+  if (l === "ar") return "ar";
+  if (l === "es") return "es";
+  if (l === "fr") return "fr";
+  return "en";
 }
 
-export function OpenCallEditorLayout() {
+type OpenCallEditorLayoutProps = {
+  initialTranslationOf?: string;
+  initialLanguage?: string;
+};
+
+export function OpenCallEditorLayout({
+  initialTranslationOf,
+  initialLanguage,
+}: OpenCallEditorLayoutProps = {}) {
   const router = useRouter();
   const t = useTranslations("Dashboard.articles.editor");
   const tLayout = useTranslations("Dashboard.articles.editor.layout");
@@ -88,7 +100,17 @@ export function OpenCallEditorLayout() {
   const [workflowStatus, setWorkflowStatus] = useState<ArticleWorkflowStatus>("draft");
   const [scheduledAt, setScheduledAt] = useState<string | null>(null);
   const [category, setCategory] = useState("");
-  const [language, setLanguage] = useState("en");
+  const [translationOf] = useState(initialTranslationOf);
+  const [language, setLanguage] = useState(initialLanguage ?? "en");
+  // When adding a translation, hold the existing open call id so we don't create a new one.
+  const [existingOpenCallId, setExistingOpenCallId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!translationOf) return;
+    getArticleById(translationOf).then((a) => {
+      if (a?.open_call_id) setExistingOpenCallId(a.open_call_id);
+    });
+  }, [translationOf]);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [seoTitle, setSeoTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
@@ -181,6 +203,7 @@ export function OpenCallEditorLayout() {
           tags,
           language: apiLanguage(language),
           visibility,
+          ...(translationOf ? { translation_of: translationOf } : {}),
         },
         seo: {
           title: seoTitle.trim() || title.trim(),
@@ -192,7 +215,7 @@ export function OpenCallEditorLayout() {
 
       return { openCall, articleBlocks, coverImage, excerpt };
     },
-    [blocks, title, applicationFields, category, language, visibility, seoTitle, metaDescription, tagIds, adminTagsData],
+    [blocks, title, applicationFields, category, language, visibility, seoTitle, metaDescription, tagIds, adminTagsData, translationOf],
   );
 
   const createArticleFromBlocks = useCallback(
@@ -220,9 +243,10 @@ export function OpenCallEditorLayout() {
         cover_image: extra.coverImage,
         excerpt: extra.excerpt,
         scheduled_at: extra.scheduledAt,
+        translation_of: translationOf || undefined,
       });
     },
-    [title, category, language, visibility, seoTitle, metaDescription, collectionId, tagIds],
+    [title, category, language, visibility, seoTitle, metaDescription, collectionId, tagIds, translationOf],
   );
 
   const validateBeforeSubmit = useCallback(() => {
@@ -255,8 +279,7 @@ export function OpenCallEditorLayout() {
         setError(tLayout("validationOpenCallBlocksDraft"));
         return;
       }
-      const ocRes = await createOpenCall(openCall);
-      const ocId = extractOpenCallId(ocRes) ?? undefined;
+      const ocId = existingOpenCallId ?? extractOpenCallId(await createOpenCall(openCall)) ?? undefined;
       await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
       invalidateAdminArticlesListCache();
       router.push(ADMIN_ARTICLES_PATH);
@@ -265,7 +288,7 @@ export function OpenCallEditorLayout() {
     } finally {
       setBusy(false);
     }
-  }, [validateBeforeSubmit, buildPayloads, createArticleFromBlocks, router, translateErr, tLayout]);
+  }, [validateBeforeSubmit, buildPayloads, createArticleFromBlocks, router, translateErr, tLayout, existingOpenCallId]);
 
   const handlePublish = useCallback(async () => {
     if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
@@ -286,8 +309,7 @@ export function OpenCallEditorLayout() {
         setError(tLayout("validationOpenCallBlocksPublish"));
         return;
       }
-      const ocRes = await createOpenCall(openCall);
-      const ocId = extractOpenCallId(ocRes) ?? undefined;
+      const ocId = existingOpenCallId ?? extractOpenCallId(await createOpenCall(openCall)) ?? undefined;
       await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
       invalidateAdminArticlesListCache();
       router.push(ADMIN_ARTICLES_PATH);
@@ -304,6 +326,7 @@ export function OpenCallEditorLayout() {
     router,
     translateErr,
     tLayout,
+    existingOpenCallId,
   ]);
 
   const handleScheduleConfirm = useCallback(
@@ -328,8 +351,7 @@ export function OpenCallEditorLayout() {
           setScheduleModalOpen(false);
           return;
         }
-        const ocRes = await createOpenCall(openCall);
-        const ocId = extractOpenCallId(ocRes) ?? undefined;
+        const ocId = existingOpenCallId ?? extractOpenCallId(await createOpenCall(openCall)) ?? undefined;
         await createArticleFromBlocks(articleBlocks, {
           openCallId: ocId,
           coverImage,

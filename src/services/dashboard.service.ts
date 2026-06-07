@@ -43,6 +43,18 @@ export async function getDashboardAlerts(): Promise<AlertsResponse> {
   return unwrap<AlertsResponse>(res.data);
 }
 
+/** The dismissable, count-driven alert types (matches backend DismissAlertDto). */
+export type DismissableAlertType = "flagged" | "pending_review" | "editor_application";
+
+/**
+ * Persist the current admin's dismissal of one alert at its present count.
+ * The server hides it until the underlying count rises above that value, then
+ * the alert re-surfaces — so subsequent GET /dashboard/alerts already excludes it.
+ */
+export async function dismissDashboardAlert(type: DismissableAlertType): Promise<void> {
+  await api.post("/dashboard/alerts/dismiss", { type });
+}
+
 // ──────────────────────────────────────────────────────────────
 // Editor Applications
 // ──────────────────────────────────────────────────────────────
@@ -257,4 +269,127 @@ export async function getDashboardRecentActivity(limit = 10): Promise<ActivityEn
   const res = await api.get("/dashboard/recent-activity", { params: { limit } });
   const body = unwrap<{ activities?: ActivityEntry[] }>(res.data);
   return body.activities ?? [];
+}
+
+// ──────────────────────────────────────────────────────────────
+// Moderation — Reports, Audit log, Stats (admin Reports page)
+// Backed by GET /dashboard/moderation/{reports,audit-log,stats}.
+// View shapes mirror the ones the Reports page already renders.
+// ──────────────────────────────────────────────────────────────
+
+export interface ModerationStats {
+  pendingReports: number;
+  contentFlagged: number;
+  usersReported: number;
+  resolvedToday: number;
+}
+
+export interface ModerationReportRow {
+  id: string;
+  title: string;
+  timeAgo: string;
+  reporter: string;
+  /** Display key for the type chip. */
+  typeLabel: "Comment" | "Content";
+  /** Pending = flagged/unresolved; Under review = escalated/resolved. */
+  status: "Pending" | "Under review";
+}
+
+export interface ModerationAuditRow {
+  id: string;
+  title: string;
+  /** e.g. "by Super Admin · Flagged Article" */
+  meta: string;
+  timeAgo: string;
+}
+
+export type ModerationReportFilter = {
+  /** Backend ModerationLog.action filter. */
+  status?: "flagged" | "approved" | "rejected";
+  search?: string;
+  page?: number;
+  limit?: number;
+};
+
+function personName(u: unknown): string {
+  if (!u || typeof u !== "object") return "Unknown";
+  const o = u as { full_name?: string; username?: string };
+  return o.full_name || o.username || "Unknown";
+}
+
+function mapModerationReportRow(row: unknown): ModerationReportRow {
+  const r = row as {
+    id: string;
+    action?: string;
+    status?: string;
+    created_at?: string;
+    contribution?: { title?: string; user?: unknown };
+    reviewer?: unknown;
+  };
+  const reporter = r.reviewer ? personName(r.reviewer) : personName(r.contribution?.user);
+  return {
+    id: r.id,
+    title: r.contribution?.title || "Untitled content",
+    timeAgo: r.created_at ? relativeTime(r.created_at) : "",
+    reporter,
+    typeLabel: "Content",
+    status: r.status === "pending" || r.action === "flagged" ? "Pending" : "Under review",
+  };
+}
+
+export async function getModerationReports(
+  filters: ModerationReportFilter = {},
+): Promise<{ reports: ModerationReportRow[]; total: number }> {
+  const params: Record<string, string | number> = {};
+  if (filters.status) params.status = filters.status;
+  if (filters.search?.trim()) params.search = filters.search.trim();
+  params.page = filters.page ?? 1;
+  params.limit = filters.limit ?? 20;
+  const res = await api.get("/dashboard/moderation/reports", { params });
+  const body = unwrap<{ data?: unknown[]; total?: number }>(res.data);
+  return {
+    reports: asArray(body).map(mapModerationReportRow),
+    total: typeof body.total === "number" ? body.total : 0,
+  };
+}
+
+function mapModerationAuditRow(row: unknown): ModerationAuditRow {
+  const r = row as {
+    id: string;
+    action?: string;
+    entity_type?: string;
+    timestamp?: string;
+    user?: unknown;
+  };
+  const who = personName(r.user);
+  const entity = r.entity_type ? ` · ${r.entity_type}` : "";
+  return {
+    id: r.id,
+    title: r.action || "Action",
+    meta: `by ${who}${entity}`,
+    timeAgo: r.timestamp ? relativeTime(r.timestamp) : "",
+  };
+}
+
+export async function getModerationAuditLog(
+  page = 1,
+  limit = 20,
+): Promise<{ entries: ModerationAuditRow[]; total: number }> {
+  const res = await api.get("/dashboard/moderation/audit-log", { params: { page, limit } });
+  const body = unwrap<{ data?: unknown[]; total?: number }>(res.data);
+  return {
+    entries: asArray(body).map(mapModerationAuditRow),
+    total: typeof body.total === "number" ? body.total : 0,
+  };
+}
+
+export async function getModerationStats(): Promise<ModerationStats> {
+  const res = await api.get("/dashboard/moderation/stats");
+  const body = unwrap<Partial<ModerationStats>>(res.data);
+  return {
+    pendingReports: body.pendingReports ?? 0,
+    contentFlagged: body.contentFlagged ?? 0,
+    usersReported: body.usersReported ?? 0,
+    resolvedToday: body.resolvedToday ?? 0,
+  };
 }

@@ -12,6 +12,7 @@
         "underReview": "Under review"
       },
       "searchPlaceholder": "Search reports…",
+      "loading": "Loading reports…",
       "emptyFiltered": "No reports match your filters.",
       "selectPrompt": "Select a report to review",
       "reportedBy": "Reported by:",
@@ -27,11 +28,14 @@
         "reportsCount": "{count, plural, one {# report} other {# reports}}",
         "viewProfile": "View profile",
         "warn": "Warn",
-        "suspend": "Suspend"
+        "suspend": "Suspend",
+        "empty": "User reporting is not available yet."
       },
       "audit": {
         "title": "Audit Log",
-        "subtitle": "Track all moderation actions"
+        "subtitle": "Track all moderation actions",
+        "loading": "Loading audit log…",
+        "empty": "No audit entries yet."
       }
     }
   }
