@@ -44,6 +44,7 @@ import {
   type CreateArticlePayload,
 } from "@/services/articles.service";
 import { useArticle } from "@/hooks/queries/articles";
+import { TranslationsPanel } from "@/components/dashboard/admin/translations/TranslationsPanel";
 import { isAxiosError } from "axios";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 
@@ -66,13 +67,25 @@ export type ContentEditorLayoutProps = {
   config?: ContentFormConfig;
   /** Edit mode — same editor UI, loads article into the form */
   articleId?: string;
+  /**
+   * Create-translation mode: the new article links to this original's
+   * translation group on save (set from the create route's ?translation_of=).
+   */
+  initialTranslationOf?: string;
+  /** Pre-selected language when adding a translation (?language=). */
+  initialLanguage?: string;
 };
 
 const ADMIN_ARTICLES_PATH = "/admin/articles";
 
 const SUCCESS_TOAST_MS = 3200;
 
-export function ContentEditorLayout({ config: configFromProps, articleId }: ContentEditorLayoutProps) {
+export function ContentEditorLayout({
+  config: configFromProps,
+  articleId,
+  initialTranslationOf,
+  initialLanguage,
+}: ContentEditorLayoutProps) {
   const t = useTranslations("Dashboard.articles.editor");
   const tLayout = useTranslations("Dashboard.articles.editor.layout");
 
@@ -124,7 +137,10 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
   const [workflowStatus, setWorkflowStatus] = useState<ArticleWorkflowStatus>("draft");
   const [scheduledAt, setScheduledAt] = useState<string | null>(null);
   const [category, setCategory] = useState("");
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState(initialLanguage || "en");
+  // When set, this content is created as a translation of the given original and
+  // inherits its translation group on save. Stays fixed for the editor session.
+  const [translationOf] = useState<string | undefined>(initialTranslationOf);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [seoTitle, setSeoTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
@@ -289,6 +305,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
       tag_ids: tagIds.length ? tagIds : undefined,
       cover_image: resolvedCover || undefined,
       blocks: apiBlocks,
+      translation_of: translationOf || undefined,
     };
   }, [
     blocks,
@@ -303,6 +320,7 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     tagIds,
     coverImage,
     coverFile,
+    translationOf,
   ]);
 
   const handleSaveDraft = useCallback(async () => {
@@ -642,6 +660,17 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
               setCoverImage(null);
             }}
           />
+          {/* Edit mode only: manage the language versions of this piece. New
+              translations are created via the create route for the same
+              content type, pre-linked to this article's translation group. */}
+          {isEditMode && articleId ? (
+            <TranslationsPanel
+              contentType="article"
+              contentId={articleId}
+              currentLanguage={language}
+              createBasePath={`/admin/articles/create/${config.contentType}`}
+            />
+          ) : null}
         </aside>
       </div>
 

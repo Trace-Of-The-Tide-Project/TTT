@@ -5,6 +5,7 @@ import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { ContentBreadcrumb } from "./related/ContentBreadcrumb";
 import { ContentMediaPlayer } from "./media/ContentMediaPlayer";
 import { ContentArticleHeader } from "./article/ContentArticleHeader";
+import { AvailableLanguagesBadge } from "./AvailableLanguagesBadge";
 import { ContentArticleBody, type ContentArticleSection } from "./article/ContentArticleBody";
 import { ContentAuthorCard } from "./sidebar/ContentAuthorCard";
 import { ContentContributors } from "./sidebar/ContentContributors";
@@ -43,6 +44,8 @@ export type ContentPageLayoutProps = {
     readingTime?: string;
     /** Shown in article header (e.g. after POST /articles/:id/view). */
     viewCount?: number;
+    /** Language this version is written in — drives the available-languages badge. */
+    language?: string;
     sections: ContentArticleSection[];
   };
   author: {
@@ -151,6 +154,17 @@ export function ContentPageLayout({
             readingTime={article.readingTime}
             viewCount={article.viewCount}
           />
+          {/* Show which languages this piece is available in; lets the reader
+              switch versions. Renders nothing when only one language exists. */}
+          {articleId && !isOpenCall ? (
+            <AvailableLanguagesBadge
+              contentType="article"
+              contentId={articleId}
+              currentLanguage={article.language}
+              viewBasePath="/content/article"
+              className="mt-3"
+            />
+          ) : null}
         </div>
       </div>
 

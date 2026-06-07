@@ -156,6 +156,7 @@ export function buildArticleContentPageProps(article: ArticleDetail): ContentPag
         typeof article.view_count === "number" && Number.isFinite(article.view_count)
           ? article.view_count
           : undefined,
+      language: article.language,
       sections: articleBlocksToSections(article.blocks, {
         omitCoverSrc: firstCover?.src ?? undefined,
       }),

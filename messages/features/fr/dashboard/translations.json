@@ -1,0 +1,25 @@
+{
+  "Dashboard": {
+    "translations": {
+      "panelTitle": "Traductions",
+      "panelSubtitle": "Ajoutez ce contenu dans d'autres langues. Chaque version est modifiée et publiée séparément.",
+      "addTranslation": "Ajouter une traduction",
+      "openVersion": "Ouvrir",
+      "currentBadge": "Actuelle",
+      "missing": "Pas encore ajoutée",
+      "status": {
+        "draft": "Brouillon",
+        "published": "Publié",
+        "scheduled": "Programmé",
+        "pending_review": "En révision",
+        "archived": "Archivé"
+      },
+      "languages": {
+        "en": "Anglais",
+        "ar": "Arabe",
+        "es": "Espagnol",
+        "fr": "Français"
+      }
+    }
+  }
+}

@@ -240,7 +240,8 @@
             "label": "Idioma",
             "en": "Inglés",
             "ar": "Árabe",
-            "he": "Hebreo"
+            "es": "Español",
+            "fr": "Francés"
           },
           "visibility": {
             "label": "Visibilidad",

@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState, type ReactNode, type SelectHTMLAttributes } from "react";
 import { useTranslations } from "next-intl";
+import { routing } from "@/i18n/routing";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import type { AdminTagItem } from "@/services/admin-tags.service";
 import { useAdminTags } from "@/hooks/queries/admin-tags";
@@ -321,9 +322,11 @@ export function ContentSettings({
         <div>
           <SectionLabel icon={<GlobeIcon />}>{t("language.label")}</SectionLabel>
           <FieldSelect value={language} onChange={(e) => onLanguageChange(e.target.value)}>
-            <option value="en">{t("language.en")}</option>
-            <option value="ar">{t("language.ar")}</option>
-            <option value="he">{t("language.he")}</option>
+            {routing.locales.map((loc) => (
+              <option key={loc} value={loc}>
+                {t(`language.${loc}`)}
+              </option>
+            ))}
           </FieldSelect>
         </div>
 

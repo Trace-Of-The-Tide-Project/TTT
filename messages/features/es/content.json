@@ -17,6 +17,15 @@
     "published": "Publicado",
     "shareTitle": "Comparte tu historia",
     "shareBody": "Cada historia importa. Ayúdanos a preservar la memoria colectiva contribuyendo con tus experiencias personales, testimonios o conocimientos sobre eventos históricos.",
-    "shareCta": "Contribuir ahora"
+    "shareCta": "Contribuir ahora",
+    "availableLanguages": {
+      "label": "También disponible en",
+      "languages": {
+        "en": "Inglés",
+        "ar": "Árabe",
+        "es": "Español",
+        "fr": "Francés"
+      }
+    }
   }
 }
