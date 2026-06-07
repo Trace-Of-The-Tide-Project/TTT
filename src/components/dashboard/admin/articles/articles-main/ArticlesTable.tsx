@@ -26,6 +26,8 @@ export type ArticleRow = {
   slug: string;
   title: string;
   content_type: string;
+  /** BCP-47 language code, e.g. "en", "ar", "es", "fr" */
+  language: string;
   /** Normalized lifecycle key for filtering and i18n labels */
   status: "draft" | "published" | "scheduled";
   statusColor: string;
@@ -313,7 +315,14 @@ export function ArticlesTable({
             headerClassName: headerCellClass,
             cellClassName: bodyCellBase,
             cell: (row) => (
-              <span style={{ color: "var(--tott-dash-gold-text)" }}>{row.title}</span>
+              <span className="flex items-center gap-2">
+                <span style={{ color: "var(--tott-dash-gold-text)" }}>{row.title}</span>
+                {row.language && row.language !== "en" ? (
+                  <span className="shrink-0 rounded bg-[var(--tott-elevated)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                    {row.language}
+                  </span>
+                ) : null}
+              </span>
             ),
           },
           {
