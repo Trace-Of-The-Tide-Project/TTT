@@ -38,6 +38,8 @@ export type CreateArticlePayload = {
   edition?: string;
   scheduled_at?: string | null;
   open_call_id?: string;
+  /** When set, links this article as a translation of the given article. */
+  translation_of?: string;
 };
 
 export type ArticleCreateResponse = {
@@ -87,6 +89,7 @@ function toCreateArticleBody(payload: CreateArticlePayload): Record<string, unkn
   if (payload.edition) body.edition = payload.edition;
   if (payload.scheduled_at != null) body.scheduled_at = payload.scheduled_at;
   if (payload.open_call_id) body.open_call_id = payload.open_call_id;
+  if (payload.translation_of) body.translation_of = payload.translation_of;
 
   return body;
 }
@@ -281,6 +284,8 @@ export type ArticleDetail = {
   view_count?: number;
   createdAt?: string;
   open_call_id?: string | null;
+  translation_of?: string | null;
+  translation_group_id?: string | null;
 };
 
 function unwrapArticleDetailPayload(raw: unknown): ArticleDetail | null {
@@ -394,6 +399,8 @@ export type UpdateArticlePayload = {
   status?: ArticleLifecycleStatus;
   category?: string;
   collection_id?: string | null;
+  /** Stable storage key (e.g. `images/123.png`) or null to clear. */
+  cover_image?: string | null;
   /** When sent, backend replaces blocks (same shape as create). */
   blocks?: CreateArticleBlock[];
   tag_ids?: string[];

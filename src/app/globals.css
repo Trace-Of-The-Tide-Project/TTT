@@ -606,6 +606,38 @@ a,
 .prose-inline p { margin: 0; display: inline; }
 .prose-inline br { display: block; }
 
+/* ── Dark-mode authored-color guard ─────────────────────────────────
+   CMS rich text often bakes a literal text color into the saved HTML
+   (the editor captures `color: rgb(40,40,40)` while authoring in light
+   mode). Those colors survive sanitization and render dark-on-dark in
+   dark mode, making manifesto/article body copy unreadable. In dark
+   mode ONLY, force authored text back to the theme-aware token with
+   `!important` so it beats the inline style and stays legible; light
+   mode is never targeted, so the author's chosen colors win there.
+   Links and highlight marks are exempt so intentional accents survive.
+
+   Dark mode is keyed two ways, mirroring the token setup above:
+     • explicit manual override: html[data-theme="dark"]
+     • no manual override + OS prefers dark: html:not([data-theme])
+       inside @media (prefers-color-scheme: dark). */
+/* (1) Explicit manual dark override — always dark regardless of OS. */
+html[data-theme="dark"] .prose [style*="color"]:not(a):not(mark),
+html[data-theme="dark"] .prose-inline [style*="color"]:not(a):not(mark) {
+  color: var(--tott-home-text-strong) !important;
+}
+
+/* (2) No manual override + OS prefers dark (the default surface). We
+   gate on the media query so light mode is never targeted — there, no
+   rule applies and the authored inline color simply wins, no revert
+   needed. The default `:root` is also dark when the OS expresses no
+   preference, so `no-preference` is included alongside `dark`. */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) .prose [style*="color"]:not(a):not(mark),
+  html:not([data-theme]) .prose-inline [style*="color"]:not(a):not(mark) {
+    color: var(--tott-home-text-strong) !important;
+  }
+}
+
 /* Submit-a-Note modal inputs — placeholder color can't be applied
    via inline `style`, so we target it through a class. */
 .tott-submit-note-input::placeholder,

@@ -10,9 +10,15 @@ export type HexCard = {
   href: string;
 };
 
-async function fetchHexCards(): Promise<HexCard[]> {
+async function fetchHexCards(locale: string): Promise<HexCard[]> {
   try {
-    const { data: articles } = await getArticles({ limit: 100 });
+    // dedupe=group → one card per translation group; viewer_lang picks the
+    // reader's-language version when a piece exists in several languages.
+    const { data: articles } = await getArticles({
+      limit: 100,
+      dedupe: "group",
+      viewer_lang: locale,
+    });
     return articles.map((a) => ({
       id: a.id,
       title: a.title,
@@ -27,8 +33,13 @@ async function fetchHexCards(): Promise<HexCard[]> {
   }
 }
 
-export default async function Home() {
-  const cards = await fetchHexCards();
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const cards = await fetchHexCards(locale);
   return (
     <main className="min-h-0">
       {/* Full-width: HomeHexGrid + ShareYourStory scale with viewport so wide screens don't show empty side strips.

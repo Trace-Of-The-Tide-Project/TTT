@@ -1,0 +1,26 @@
+{
+  "Dashboard": {
+    "translations": {
+      "panelTitle": "الترجمات",
+      "panelSubtitle": "أضف هذا المحتوى بلغات أخرى. كل نسخة تُحرَّر وتُنشَر على حدة.",
+      "addTranslation": "إضافة ترجمة",
+      "addAll": "إضافة الكل",
+      "openVersion": "فتح",
+      "currentBadge": "الحالية",
+      "missing": "لم تُضَف بعد",
+      "status": {
+        "draft": "مسودة",
+        "published": "منشور",
+        "scheduled": "مجدول",
+        "pending_review": "قيد المراجعة",
+        "archived": "مؤرشف"
+      },
+      "languages": {
+        "en": "الإنجليزية",
+        "ar": "العربية",
+        "es": "الإسبانية",
+        "fr": "الفرنسية"
+      }
+    }
+  }
+}

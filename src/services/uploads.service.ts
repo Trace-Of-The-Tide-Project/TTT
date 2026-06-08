@@ -124,6 +124,20 @@ export async function uploadArticleAsset(file: File): Promise<string> {
 export const uploadFileToUrl = uploadArticleAsset;
 
 /**
+ * POST /upload — returns the **stable relative storage key** (`data.path`, e.g.
+ * `images/123.png`) rather than the signed `url`. Signed GCS URLs expire, so
+ * persisting them on a record (e.g. an article `cover_image`) makes the image
+ * vanish once the signature lapses. The relative path resolves to a permanent
+ * public-bucket URL at display time (see `resolveArticleMediaSrc`).
+ */
+export async function uploadArticleAssetPath(file: File): Promise<string> {
+  const data = await postUploadFile(file);
+  const key = pickStorageReferenceForContribution(data);
+  if (key) return key;
+  throw new Error("Upload response did not include a path or URL.");
+}
+
+/**
  * Same POST /upload as {@link uploadArticleAsset}; returns the **storage key** (`data.path`) for
  * contribution multipart `files` filenames (not the signed URL — avoids backend "invalid query"),
  * plus optional `mimeType` from the envelope. Display URLs match articles via signed `url` when present.

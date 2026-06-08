@@ -17,6 +17,15 @@
     "published": "Published",
     "shareTitle": "Share your story",
     "shareBody": "Every story matters. Help us preserve the collective memory by contributing your personal experiences, testimonies, or knowledge of historical events.",
-    "shareCta": "Contribute Now"
+    "shareCta": "Contribute Now",
+    "availableLanguages": {
+      "label": "Also available in",
+      "languages": {
+        "en": "English",
+        "ar": "Arabic",
+        "es": "Spanish",
+        "fr": "French"
+      }
+    }
   }
 }

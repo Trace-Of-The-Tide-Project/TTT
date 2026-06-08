@@ -131,6 +131,7 @@ export function mapArticleListItemToTableRow(a: ArticleListItem): ArticleRow {
     slug: a.slug?.trim() || a.id,
     title: articleListItemDisplayTitle(a),
     content_type: a.content_type || "article",
+    language: a.language || "en",
     status,
     statusColor,
     updatedAtIso: a.updatedAt,

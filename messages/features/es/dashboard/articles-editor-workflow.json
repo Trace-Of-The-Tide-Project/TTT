@@ -215,6 +215,12 @@
             "label": "Categoría",
             "placeholder": "p. ej., Documental, Arte"
           },
+          "cover": {
+            "label": "Imagen de portada",
+            "choose": "Elegir imagen",
+            "replace": "Reemplazar imagen",
+            "remove": "Quitar"
+          },
           "collection": {
             "label": "Colección (opcional)",
             "none": "Sin colección",
@@ -234,7 +240,8 @@
             "label": "Idioma",
             "en": "Inglés",
             "ar": "Árabe",
-            "he": "Hebreo"
+            "es": "Español",
+            "fr": "Francés"
           },
           "visibility": {
             "label": "Visibilidad",

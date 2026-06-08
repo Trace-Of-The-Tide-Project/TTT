@@ -18,6 +18,10 @@ import {
   type ChamferedTableColumn,
 } from "@/components/ui/ChamferedTable";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import {
+  CreatePageFilters,
+  type FilterOption,
+} from "@/components/dashboard/admin/articles/articles-create/CreatePageFilters";
 
 type Tab = { id: string; labelKey: string };
 
@@ -26,6 +30,8 @@ export type ArticleRow = {
   slug: string;
   title: string;
   content_type: string;
+  /** BCP-47 language code, e.g. "en", "ar", "es", "fr" */
+  language: string;
   /** Normalized lifecycle key for filtering and i18n labels */
   status: "draft" | "published" | "scheduled";
   statusColor: string;
@@ -56,6 +62,52 @@ const TAB_TO_STATUS: Record<string, ArticleRow["status"] | null> = {
   scheduled: "scheduled",
 };
 
+// Canonical type-filter ids in display order. Unknown types are appended after.
+const TYPE_FILTER_ORDER = [
+  "article",
+  "video",
+  "audio",
+  "thread",
+  "artwork",
+  "open-call",
+] as const;
+
+// Filter id -> `create.templates.<key>` label key. (open-call uses a camelCase key.)
+const FILTER_ID_TO_TEMPLATE_KEY: Record<string, string> = {
+  article: "article",
+  video: "video",
+  audio: "audio",
+  thread: "thread",
+  artwork: "artwork",
+  "open-call": "openCall",
+};
+
+/**
+ * Normalize a raw API `content_type` to a stable filter id. Mirrors the
+ * normalizer in content-form-config.ts (`contentFormConfigForType`): lowercase
+ * and treat dashes/underscores the same. Keeps `open-call` kebab so it matches
+ * TYPE_FILTER_ORDER; FILTER_ID_TO_TEMPLATE_KEY bridges to the `openCall` key.
+ */
+function contentTypeToFilterId(raw: string | undefined): string {
+  const t = (raw || "article").toLowerCase().replace(/-/g, "_");
+  if (t === "video") return "video";
+  if (t === "audio") return "audio";
+  if (t === "thread") return "thread";
+  if (t === "artwork") return "artwork";
+  if (t === "open_call" || t === "opencall") return "open-call";
+  if (t === "article") return "article";
+  // Unknown type: keep a stable kebab id derived from the raw value.
+  return t.replace(/_/g, "-");
+}
+
+/** Title-cased fallback label for an unknown type that has no template key. */
+function fallbackTypeLabel(filterId: string): string {
+  return filterId
+    .split("-")
+    .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
+    .join(" ");
+}
+
 const ARTICLE_MENU_WIDTH_PX = 160;
 
 function menuCoordsFromAnchor(anchor: HTMLElement) {
@@ -74,12 +126,14 @@ export function ArticlesTable({
   onArticleDeleted,
 }: ArticlesTableProps) {
   const t = useTranslations("Dashboard.articles.list");
+  const tType = useTranslations("Dashboard.articles.create.templates");
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const defaultTab = tabs[0]?.id ?? "all";
   const [activeTab, setActiveTab] = useState(defaultTab);
+  const [activeType, setActiveType] = useState("all");
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ArticleRow | null>(null);
@@ -114,11 +168,70 @@ export function ArticlesTable({
     [defaultTab, pathname, router, searchParams]
   );
 
+  // Type-filter chips, derived from the content types actually present in the
+  // rows. "All" first, then canonical-ordered known types, then any unknown
+  // types in first-seen order. Empty filters never appear.
+  const typeOptions = useMemo<FilterOption[]>(() => {
+    const present = new Set<string>();
+    for (const r of rows) present.add(contentTypeToFilterId(r.content_type));
+    const ordered: string[] = TYPE_FILTER_ORDER.filter((id) => present.has(id));
+    for (const r of rows) {
+      const id = contentTypeToFilterId(r.content_type);
+      if (
+        !TYPE_FILTER_ORDER.includes(id as (typeof TYPE_FILTER_ORDER)[number]) &&
+        !ordered.includes(id)
+      ) {
+        ordered.push(id);
+      }
+    }
+    const labelFor = (id: string): string => {
+      const key = FILTER_ID_TO_TEMPLATE_KEY[id];
+      return key ? tType(`${key}.title`) : fallbackTypeLabel(id);
+    };
+    return [
+      { id: "all", label: t("tabs.all") },
+      ...ordered.map((id) => ({ id, label: labelFor(id) })),
+    ];
+  }, [rows, t, tType]);
+
+  // Sync the active type to the `?type=` query param. Render-phase prev-value
+  // pattern (mirrors the `?tab=` sync). Validated against the derived options
+  // so an invalid deep-link is ignored.
+  const urlType = searchParams.get("type");
+  const [prevUrlType, setPrevUrlType] = useState(urlType);
+  if (urlType !== prevUrlType) {
+    setPrevUrlType(urlType);
+    if (urlType && typeOptions.some((o) => o.id === urlType)) {
+      setActiveType(urlType);
+    }
+  }
+
+  const selectType = useCallback(
+    (typeId: string) => {
+      setActiveType(typeId);
+      const params = new URLSearchParams(searchParams.toString());
+      if (typeId === "all") {
+        params.delete("type");
+      } else {
+        params.set("type", typeId);
+      }
+      const q = params.toString();
+      const base = normalizeAppPathname(pathname) ?? pathname ?? "/admin/articles";
+      router.replace(q ? `${base}?${q}` : base, { scroll: false });
+    },
+    [pathname, router, searchParams]
+  );
+
   const filteredRows = useMemo(() => {
-    const want = TAB_TO_STATUS[activeTab];
-    if (!want) return rows;
-    return rows.filter((r) => r.status === want);
-  }, [rows, activeTab]);
+    const wantStatus = TAB_TO_STATUS[activeTab];
+    return rows.filter((r) => {
+      if (wantStatus && r.status !== wantStatus) return false;
+      if (activeType !== "all" && contentTypeToFilterId(r.content_type) !== activeType) {
+        return false;
+      }
+      return true;
+    });
+  }, [rows, activeTab, activeType]);
 
   const rowsWithRelativeTime = useMemo(
     () =>
@@ -288,6 +401,16 @@ export function ArticlesTable({
         onChange={selectTab}
       />
 
+      {/* Type filter chips — only shown when there are 2+ real types. */}
+      {typeOptions.length > 2 ? (
+        <CreatePageFilters
+          options={typeOptions}
+          selectedId={activeType}
+          onSelect={selectType}
+          variant="outlined"
+        />
+      ) : null}
+
       <div className="mt-4 flex w-full">
         <Link
           href={addNewHref}
@@ -313,7 +436,14 @@ export function ArticlesTable({
             headerClassName: headerCellClass,
             cellClassName: bodyCellBase,
             cell: (row) => (
-              <span style={{ color: "var(--tott-dash-gold-text)" }}>{row.title}</span>
+              <span className="flex items-center gap-2">
+                <span style={{ color: "var(--tott-dash-gold-text)" }}>{row.title}</span>
+                {row.language && row.language !== "en" ? (
+                  <span className="shrink-0 rounded bg-[var(--tott-elevated)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                    {row.language}
+                  </span>
+                ) : null}
+              </span>
             ),
           },
           {

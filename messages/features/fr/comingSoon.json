@@ -1,0 +1,27 @@
+{
+  "ComingSoon": {
+    "shared": {
+      "badge": "Bientôt disponible",
+      "ctaLabel": "Explorez le magazine en attendant",
+      "homeLabel": "Retour à l'accueil"
+    },
+    "features": {
+      "fields": {
+        "title": "Les champs se dessinent",
+        "description": "Bientôt vous parcourrez nos sentiers — du port, de la cour et de la colline —, chacun un chemin à travers la culture, le savoir et les arts. Nous posons les pierres en ce moment. Venez les arpenter avec nous très bientôt."
+      },
+      "beANeighbor": {
+        "title": "Un lieu pour les voisins prend forme",
+        "description": "Devenir voisin, c'est rejoindre la communauté qui garde ces histoires vivantes. Nous bâtissons une façon chaleureuse de vous engager, de donner un coup de main et d'appartenir. Votre place à la table est presque prête."
+      },
+      "giftATrace": {
+        "title": "Offrir une trace arrive bientôt",
+        "description": "Bientôt vous pourrez offrir une trace : une contribution faite au nom de quelqu'un, un petit geste qui aide à préserver notre mémoire commune. Nous la peaufinons avec soin. Merci de votre patience."
+      },
+      "traceAStory": {
+        "title": "Votre histoire vaut l'attente",
+        "description": "L'espace pour laisser votre propre trace — partager un souvenir, un témoignage ou une œuvre d'art — est en cours de finition pour lui rendre justice. Gardez vos mots ; nous avons hâte de les entendre très bientôt."
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "Dashboard": {
+    "translations": {
+      "panelTitle": "Traducciones",
+      "panelSubtitle": "Añade este contenido en otros idiomas. Cada versión se edita y publica por separado.",
+      "addTranslation": "Añadir traducción",
+      "addAll": "Añadir todas",
+      "openVersion": "Abrir",
+      "currentBadge": "Actual",
+      "missing": "Aún no añadida",
+      "status": {
+        "draft": "Borrador",
+        "published": "Publicado",
+        "scheduled": "Programado",
+        "pending_review": "En revisión",
+        "archived": "Archivado"
+      },
+      "languages": {
+        "en": "Inglés",
+        "ar": "Árabe",
+        "es": "Español",
+        "fr": "Francés"
+      }
+    }
+  }
+}

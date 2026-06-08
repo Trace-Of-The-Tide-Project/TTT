@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  dismissDashboardAlert,
   getDashboardAlerts,
   getDashboardContentOverview,
   getDashboardEditorApplications,
@@ -8,6 +9,11 @@ import {
   getDashboardStats,
   getDashboardUsersByRole,
   getEditorApplicationsFull,
+  getModerationAuditLog,
+  getModerationReports,
+  getModerationStats,
+  type DismissableAlertType,
+  type ModerationReportFilter,
 } from "@/services/dashboard.service";
 
 export const dashboardKeys = {
@@ -21,6 +27,11 @@ export const dashboardKeys = {
   usersByRole: () => ["dashboard", "users-by-role"] as const,
   financeSnapshot: () => ["dashboard", "finance-snapshot"] as const,
   recentActivity: (limit: number) => ["dashboard", "recent-activity", limit] as const,
+  moderationReports: (filters?: ModerationReportFilter) =>
+    ["dashboard", "moderation-reports", filters ?? {}] as const,
+  moderationAuditLog: (page: number, limit: number) =>
+    ["dashboard", "moderation-audit-log", page, limit] as const,
+  moderationStats: () => ["dashboard", "moderation-stats"] as const,
 };
 
 export function useDashboardStats(period?: string) {
@@ -76,5 +87,39 @@ export function useDashboardRecentActivity(limit = 10) {
   return useQuery({
     queryKey: dashboardKeys.recentActivity(limit),
     queryFn: () => getDashboardRecentActivity(limit),
+  });
+}
+
+/**
+ * Dismiss a dashboard alert for the current admin (persisted server-side).
+ * On success the alerts query is invalidated so the card disappears and stays
+ * gone across refreshes until its underlying count rises again.
+ */
+export function useDismissDashboardAlert() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (type: DismissableAlertType) => dismissDashboardAlert(type),
+    onSuccess: () => qc.invalidateQueries({ queryKey: dashboardKeys.alerts() }),
+  });
+}
+
+export function useModerationReports(filters?: ModerationReportFilter) {
+  return useQuery({
+    queryKey: dashboardKeys.moderationReports(filters),
+    queryFn: () => getModerationReports(filters ?? {}),
+  });
+}
+
+export function useModerationAuditLog(page = 1, limit = 20) {
+  return useQuery({
+    queryKey: dashboardKeys.moderationAuditLog(page, limit),
+    queryFn: () => getModerationAuditLog(page, limit),
+  });
+}
+
+export function useModerationStats() {
+  return useQuery({
+    queryKey: dashboardKeys.moderationStats(),
+    queryFn: getModerationStats,
   });
 }

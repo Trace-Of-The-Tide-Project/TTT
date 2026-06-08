@@ -10,12 +10,18 @@ import {
   type UpdateArticlePayload,
 } from "@/services/articles.service";
 import { articlesKeys } from "@/hooks/queries/articles";
+import { translationKeys } from "@/hooks/queries/translations";
 
 export function useCreateArticle() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (payload: CreateArticlePayload) => createArticle(payload),
-    onSuccess: () => qc.invalidateQueries({ queryKey: articlesKeys.all }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: articlesKeys.all });
+      // A newly created translation joins an existing group — refresh any open
+      // translation panels/badges so the new language version shows up.
+      qc.invalidateQueries({ queryKey: translationKeys.all });
+    },
   });
 }
 

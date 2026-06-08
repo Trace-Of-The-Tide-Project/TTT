@@ -12,6 +12,7 @@
         "underReview": "En revisión"
       },
       "searchPlaceholder": "Buscar informes…",
+      "loading": "Cargando informes…",
       "emptyFiltered": "Ningún informe coincide con tus filtros.",
       "selectPrompt": "Selecciona un informe para revisar",
       "reportedBy": "Reportado por:",
@@ -27,11 +28,14 @@
         "reportsCount": "{count, plural, one {# informe} other {# informes}}",
         "viewProfile": "Ver perfil",
         "warn": "Advertir",
-        "suspend": "Suspender"
+        "suspend": "Suspender",
+        "empty": "Los informes de usuarios aún no están disponibles."
       },
       "audit": {
         "title": "Registro de auditoría",
-        "subtitle": "Seguimiento de todas las acciones de moderación"
+        "subtitle": "Seguimiento de todas las acciones de moderación",
+        "loading": "Cargando registro de auditoría…",
+        "empty": "Aún no hay entradas de auditoría."
       }
     }
   }

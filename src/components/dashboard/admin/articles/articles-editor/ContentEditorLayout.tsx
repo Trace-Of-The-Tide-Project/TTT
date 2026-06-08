@@ -22,6 +22,7 @@ import {
 import { ContentEditorFooter } from "@/components/dashboard/admin/articles/articles-editor/ContentEditorFooter";
 import { ScheduleArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ScheduleArticleModal";
 import { buildArticleBlocksFromEditor } from "@/components/dashboard/admin/articles/articles-editor/lib/build-api-blocks";
+import { uploadArticleAssetPath } from "@/services/uploads.service";
 import { articleDetailBlocksToContentBlocks } from "@/components/dashboard/admin/articles/articles-editor/lib/api-blocks-to-content-blocks";
 import {
   articleConfig,
@@ -35,6 +36,7 @@ import {
 import { invalidateAdminArticlesListCache } from "@/lib/dashboard/admin-articles-list-cache";
 import {
   createArticle,
+  getArticleById,
   getArticleIdFromCreateResponse,
   publishArticle,
   scheduleArticle,
@@ -43,6 +45,7 @@ import {
   type CreateArticlePayload,
 } from "@/services/articles.service";
 import { useArticle } from "@/hooks/queries/articles";
+import { TranslationsPanel } from "@/components/dashboard/admin/translations/TranslationsPanel";
 import { isAxiosError } from "axios";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 
@@ -54,6 +57,7 @@ function editPatchFromPayload(payload: CreateArticlePayload) {
     title: payload.title || undefined,
     category: payload.category || undefined,
     collection_id: payload.collection_id?.trim() ? payload.collection_id.trim() : null,
+    cover_image: payload.cover_image ?? null,
     blocks: payload.blocks,
     tag_ids: payload.tag_ids,
   };
@@ -64,13 +68,25 @@ export type ContentEditorLayoutProps = {
   config?: ContentFormConfig;
   /** Edit mode — same editor UI, loads article into the form */
   articleId?: string;
+  /**
+   * Create-translation mode: the new article links to this original's
+   * translation group on save (set from the create route's ?translation_of=).
+   */
+  initialTranslationOf?: string;
+  /** Pre-selected language when adding a translation (?language=). */
+  initialLanguage?: string;
 };
 
 const ADMIN_ARTICLES_PATH = "/admin/articles";
 
 const SUCCESS_TOAST_MS = 3200;
 
-export function ContentEditorLayout({ config: configFromProps, articleId }: ContentEditorLayoutProps) {
+export function ContentEditorLayout({
+  config: configFromProps,
+  articleId,
+  initialTranslationOf,
+  initialLanguage,
+}: ContentEditorLayoutProps) {
   const t = useTranslations("Dashboard.articles.editor");
   const tLayout = useTranslations("Dashboard.articles.editor.layout");
 
@@ -122,12 +138,20 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
   const [workflowStatus, setWorkflowStatus] = useState<ArticleWorkflowStatus>("draft");
   const [scheduledAt, setScheduledAt] = useState<string | null>(null);
   const [category, setCategory] = useState("");
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState(initialLanguage || "en");
+  // When set, this content is created as a translation of the given original and
+  // inherits its translation group on save. Stays fixed for the editor session.
+  const [translationOf] = useState<string | undefined>(initialTranslationOf);
+  const [originalTitle, setOriginalTitle] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [seoTitle, setSeoTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [collectionId, setCollectionId] = useState("");
   const [tagIds, setTagIds] = useState<string[]>([]);
+  // Cover image: existing URL loaded on edit, or a freshly-picked File whose
+  // upload is deferred until save (mirrors how image blocks defer upload).
+  const [coverImage, setCoverImage] = useState<string | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -176,6 +200,8 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     setSeoTitle(a.seo_title?.trim() ?? "");
     setMetaDescription(a.meta_description?.trim() ?? "");
     setCollectionId(a.collection_id?.trim() ?? "");
+    setCoverImage(a.cover_image ?? null);
+    setCoverFile(null);
     setTagIds(
       Array.isArray(a.tags)
         ? a.tags.map((tagItem) => tagItem.id).filter((id): id is string => typeof id === "string")
@@ -188,6 +214,24 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
         : [{ id: crypto.randomUUID(), type: "paragraph", content: "" }],
     );
   }, [articleQuery.data, loadKey]);
+
+  // Translation create mode: pre-fill form fields from the original so the
+  // translator starts with content rather than a blank page.
+  useEffect(() => {
+    if (!translationOf || articleId) return;
+    getArticleById(translationOf).then((a) => {
+      if (!a) return;
+      setOriginalTitle(a.title ?? null);
+      setTitle(a.title ?? "");
+      setCategory(a.category ?? "");
+      setSeoTitle(a.seo_title?.trim() ?? "");
+      setMetaDescription(a.meta_description?.trim() ?? "");
+      setCoverImage(a.cover_image ?? null);
+      const mapped = articleDetailBlocksToContentBlocks(a.blocks);
+      if (mapped.length) setBlocks(mapped);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!successToast) {
@@ -255,6 +299,22 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     const apiBlocks = await buildArticleBlocksFromEditor(blocks, {
       onUploading: setMediaUploading,
     });
+    // Resolve the cover to persist: upload a freshly-picked file (deferred until
+    // now) and store its stable object key, otherwise reuse the already-loaded
+    // value. We keep `coverImage` as-is for the on-screen preview (a local
+    // object-URL for fresh picks, or the backend-signed URL when editing) — the
+    // bare storage key isn't directly renderable (private bucket), so it only
+    // goes into the payload, never into the preview state.
+    let resolvedCover = coverImage;
+    if (coverFile) {
+      setMediaUploading(true);
+      try {
+        resolvedCover = await uploadArticleAssetPath(coverFile);
+        setCoverFile(null);
+      } finally {
+        setMediaUploading(false);
+      }
+    }
     const cid = collectionId.trim();
     return {
       title: title.trim(),
@@ -266,7 +326,9 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
       meta_description: metaDescription.trim() || undefined,
       collection_id: cid || undefined,
       tag_ids: tagIds.length ? tagIds : undefined,
+      cover_image: resolvedCover || undefined,
       blocks: apiBlocks,
+      translation_of: translationOf || undefined,
     };
   }, [
     blocks,
@@ -279,6 +341,9 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
     metaDescription,
     collectionId,
     tagIds,
+    coverImage,
+    coverFile,
+    translationOf,
   ]);
 
   const handleSaveDraft = useCallback(async () => {
@@ -538,23 +603,46 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
         </div>
       ) : null}
 
+      {/* Edit-mode top bar: breadcrumb + translations chip row + preview link */}
+      {isEditMode && articleId ? (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4 shrink-0">
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <Link href={ADMIN_ARTICLES_PATH} className="text-[#C9A96E] hover:underline">
+              {tLayout("backToArticles")}
+            </Link>
+            <span className="text-gray-500">{tLayout("editArticle")}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <TranslationsPanel
+              contentType="article"
+              contentId={articleId}
+              currentLanguage={language}
+              createBasePath={`/admin/articles/create/${config.contentType}`}
+            />
+            <Link
+              href={previewHrefForContentType(config.contentType, articleId)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[#C9A96E]/50 hover:bg-[#252525]"
+            >
+              {tLayout("preview")}
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
       <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
         <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
-          {isEditMode && articleId ? (
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4">
-              <div className="flex flex-wrap items-center gap-3 text-sm">
-                <Link href={ADMIN_ARTICLES_PATH} className="text-[#C9A96E] hover:underline">
-                  {tLayout("backToArticles")}
-                </Link>
-                <span className="text-gray-500">{tLayout("editArticle")}</span>
-              </div>
+          {translationOf && originalTitle ? (
+            <div className="flex items-center gap-2 rounded-lg border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-3 py-2 text-xs text-gray-400">
+              <span>Translating from:</span>
+              <span className="font-medium text-[#C9A96E]">{originalTitle}</span>
+              <span className="text-gray-600">·</span>
               <Link
-                href={previewHrefForContentType(config.contentType, articleId)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[#C9A96E]/50 hover:bg-[#252525]"
+                href={`/admin/articles/edit/${translationOf}`}
+                className="text-blue-400 hover:underline"
               >
-                {tLayout("preview")}
+                View original →
               </Link>
             </div>
           ) : null}
@@ -608,6 +696,15 @@ export function ContentEditorLayout({ config: configFromProps, articleId }: Cont
             onCollectionIdChange={setCollectionId}
             tagIds={tagIds}
             onTagIdsChange={setTagIds}
+            coverImage={coverImage}
+            onCoverFileSelect={(file) => {
+              setCoverFile(file);
+              setCoverImage(URL.createObjectURL(file));
+            }}
+            onCoverRemove={() => {
+              setCoverFile(null);
+              setCoverImage(null);
+            }}
           />
         </aside>
       </div>

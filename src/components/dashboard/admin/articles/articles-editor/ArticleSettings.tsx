@@ -2,9 +2,22 @@
 
 import { useCallback, useMemo, useState, type ReactNode, type SelectHTMLAttributes } from "react";
 import { useTranslations } from "next-intl";
+import { routing } from "@/i18n/routing";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import type { AdminTagItem } from "@/services/admin-tags.service";
 import { useAdminTags } from "@/hooks/queries/admin-tags";
+import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+
+/**
+ * Resolve the cover value for the `<img>` preview. Fresh picks are local
+ * object-/data-URLs and must pass through untouched; persisted covers are
+ * relative storage keys (e.g. `images/123.png`) that resolve to the permanent
+ * public-bucket URL. Legacy absolute http(s) URLs are returned as-is.
+ */
+function coverPreviewSrc(value: string): string {
+  if (/^(blob:|data:)/i.test(value)) return value;
+  return resolveArticleMediaSrc(value);
+}
 import {
   StatusFieldIcon,
   CategoryFieldIcon,
@@ -12,6 +25,7 @@ import {
   GlobeIcon,
   EyeIcon,
   SettingsIcon,
+  ImageIcon,
 } from "./ArticleEditorIcons";
 
 // Field tokens are pulled straight from the Figma source SVG so the dark
@@ -87,6 +101,12 @@ type ContentSettingsProps = {
   onCollectionIdChange: (v: string) => void;
   tagIds: string[];
   onTagIdsChange: (ids: string[]) => void;
+  /** Current cover image URL (existing remote URL or a local object-URL preview). */
+  coverImage?: string | null;
+  /** Called with a freshly-picked file; upload is deferred until save. */
+  onCoverFileSelect?: (file: File) => void;
+  /** Clears the cover image. */
+  onCoverRemove?: () => void;
 };
 
 function formatScheduledAtHint(iso: string | null | undefined): string {
@@ -119,6 +139,9 @@ export function ContentSettings({
   onMetaDescriptionChange,
   tagIds,
   onTagIdsChange,
+  coverImage,
+  onCoverFileSelect,
+  onCoverRemove,
 }: ContentSettingsProps) {
   const t = useTranslations("Dashboard.articles.editor.settings");
 
@@ -205,6 +228,46 @@ export function ContentSettings({
         </div>
 
         <div>
+          <SectionLabel icon={<ImageIcon />}>{t("cover.label")}</SectionLabel>
+          {coverImage ? (
+            <div className="mb-2 overflow-hidden rounded-[7.5px] border border-[var(--tott-card-border)]">
+              {/* Cover preview — plain <img> (object-URL or remote URL, both fine). */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={coverPreviewSrc(coverImage)}
+                alt=""
+                className="block max-h-40 w-full object-cover"
+              />
+            </div>
+          ) : null}
+          <div className="flex items-center gap-2">
+            <label className={`${FIELD_BASE} flex cursor-pointer items-center justify-center text-center text-gray-300 hover:border-gray-400`}>
+              {coverImage ? t("cover.replace") : t("cover.choose")}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) onCoverFileSelect?.(file);
+                  // Reset so picking the same file again still fires change.
+                  e.target.value = "";
+                }}
+              />
+            </label>
+            {coverImage ? (
+              <button
+                type="button"
+                onClick={() => onCoverRemove?.()}
+                className="shrink-0 rounded-[7.5px] border border-[var(--tott-card-border)] px-3 py-2.5 text-sm text-gray-400 transition-colors hover:border-gray-400 hover:text-foreground"
+              >
+                {t("cover.remove")}
+              </button>
+            ) : null}
+          </div>
+        </div>
+
+        <div>
           <SectionLabel icon={<TagFieldIcon />}>{t("tags.label")}</SectionLabel>
           {tagIds.length > 0 ? (
             <div className="mb-2 flex flex-wrap gap-1.5">
@@ -271,9 +334,11 @@ export function ContentSettings({
         <div>
           <SectionLabel icon={<GlobeIcon />}>{t("language.label")}</SectionLabel>
           <FieldSelect value={language} onChange={(e) => onLanguageChange(e.target.value)}>
-            <option value="en">{t("language.en")}</option>
-            <option value="ar">{t("language.ar")}</option>
-            <option value="he">{t("language.he")}</option>
+            {routing.locales.map((loc) => (
+              <option key={loc} value={loc}>
+                {t(`language.${loc}`)}
+              </option>
+            ))}
           </FieldSelect>
         </div>
 

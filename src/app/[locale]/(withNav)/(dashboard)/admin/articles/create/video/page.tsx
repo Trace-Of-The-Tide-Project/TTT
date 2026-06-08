@@ -1,8 +1,8 @@
 "use client";
 
-import { ContentEditorLayout } from "@/components/dashboard/admin/articles/articles-editor/ContentEditorLayout";
+import { CreateContentEditor } from "@/components/dashboard/admin/articles/articles-editor/CreateContentEditor";
 import { videoConfig } from "@/components/dashboard/admin/articles/articles-editor/content-form-config";
 
 export default function VideoEditorPage() {
-  return <ContentEditorLayout config={videoConfig} />;
+  return <CreateContentEditor config={videoConfig} />;
 }

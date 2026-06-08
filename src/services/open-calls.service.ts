@@ -43,8 +43,9 @@ export type OpenCallSettings = {
   status: "draft" | "published" | "scheduled";
   category: string;
   tags: string[];
-  language: "en" | "ar";
+  language: "en" | "ar" | "es" | "fr";
   visibility: "public" | "private";
+  translation_of?: string;
 };
 
 export type OpenCallSeo = {

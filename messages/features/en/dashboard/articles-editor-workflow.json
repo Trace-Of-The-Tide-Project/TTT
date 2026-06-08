@@ -215,6 +215,12 @@
             "label": "Category",
             "placeholder": "e.g., Documentary, Art"
           },
+          "cover": {
+            "label": "Cover image",
+            "choose": "Choose image",
+            "replace": "Replace image",
+            "remove": "Remove"
+          },
           "collection": {
             "label": "Collection (optional)",
             "none": "No collection",
@@ -234,7 +240,8 @@
             "label": "Language",
             "en": "English",
             "ar": "Arabic",
-            "he": "Hebrew"
+            "es": "Spanish",
+            "fr": "French"
           },
           "visibility": {
             "label": "Visibility",

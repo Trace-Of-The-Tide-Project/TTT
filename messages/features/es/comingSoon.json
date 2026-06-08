@@ -1,0 +1,27 @@
+{
+  "ComingSoon": {
+    "shared": {
+      "badge": "Próximamente",
+      "ctaLabel": "Explora la revista mientras tanto",
+      "homeLabel": "Volver al inicio"
+    },
+    "features": {
+      "fields": {
+        "title": "Estamos trazando los campos",
+        "description": "Pronto podrás recorrer nuestros senderos —del puerto, del patio y de la colina—, cada uno un camino a través de la cultura, el conocimiento y las artes. Ahora estamos colocando las piedras. Ven a recorrerlos con nosotros muy pronto."
+      },
+      "beANeighbor": {
+        "title": "Un lugar para vecinos está tomando forma",
+        "description": "Ser vecino significa unirte a la comunidad que mantiene vivas estas historias. Estamos construyendo una manera cálida para que des un paso al frente, eches una mano y pertenezcas. Tu lugar en la mesa está casi listo."
+      },
+      "giftATrace": {
+        "title": "Regalar una huella está por llegar",
+        "description": "Pronto podrás regalar una huella: una contribución ofrecida en nombre de alguien, un pequeño gesto que ayuda a preservar nuestra memoria compartida. La estamos preparando con cuidado. Gracias por tu paciencia."
+      },
+      "traceAStory": {
+        "title": "Tu historia vale la espera",
+        "description": "El espacio para dejar tu propia huella —compartir un recuerdo, un testimonio o una obra de arte— se está puliendo para hacerle justicia. Guarda tus palabras; estamos deseando escucharlas muy pronto."
+      }
+    }
+  }
+}
