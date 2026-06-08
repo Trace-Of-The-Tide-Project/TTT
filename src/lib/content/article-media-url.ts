@@ -51,7 +51,7 @@ export function isUsableArticleMediaRef(raw: string | null | undefined): raw is 
 
 /**
  * Absolute URL for `<video>` / `<audio>` / `<img>`:
- * - Full `https://` refs (e.g. signed GCS URLs from the editor) are returned as-is.
+ * - Full `https://` refs (e.g. signed GCS URLs the backend re-signs on read) are returned as-is.
  * - `images/…` (upload) and `contributions/…` (saved on contributions) use the same bucket / env base.
  * - `uploads/…`, `videos/…`, `audio/…` (and leading `/` forms) use the API host.
  */

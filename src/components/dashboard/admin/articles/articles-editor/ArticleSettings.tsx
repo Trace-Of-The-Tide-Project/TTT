@@ -6,6 +6,18 @@ import { routing } from "@/i18n/routing";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import type { AdminTagItem } from "@/services/admin-tags.service";
 import { useAdminTags } from "@/hooks/queries/admin-tags";
+import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+
+/**
+ * Resolve the cover value for the `<img>` preview. Fresh picks are local
+ * object-/data-URLs and must pass through untouched; persisted covers are
+ * relative storage keys (e.g. `images/123.png`) that resolve to the permanent
+ * public-bucket URL. Legacy absolute http(s) URLs are returned as-is.
+ */
+function coverPreviewSrc(value: string): string {
+  if (/^(blob:|data:)/i.test(value)) return value;
+  return resolveArticleMediaSrc(value);
+}
 import {
   StatusFieldIcon,
   CategoryFieldIcon,
@@ -222,7 +234,7 @@ export function ContentSettings({
               {/* Cover preview — plain <img> (object-URL or remote URL, both fine). */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={coverImage}
+                src={coverPreviewSrc(coverImage)}
                 alt=""
                 className="block max-h-40 w-full object-cover"
               />

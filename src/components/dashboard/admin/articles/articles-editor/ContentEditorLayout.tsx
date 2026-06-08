@@ -22,7 +22,7 @@ import {
 import { ContentEditorFooter } from "@/components/dashboard/admin/articles/articles-editor/ContentEditorFooter";
 import { ScheduleArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ScheduleArticleModal";
 import { buildArticleBlocksFromEditor } from "@/components/dashboard/admin/articles/articles-editor/lib/build-api-blocks";
-import { uploadArticleAsset } from "@/services/uploads.service";
+import { uploadArticleAssetPath } from "@/services/uploads.service";
 import { articleDetailBlocksToContentBlocks } from "@/components/dashboard/admin/articles/articles-editor/lib/api-blocks-to-content-blocks";
 import {
   articleConfig,
@@ -299,14 +299,17 @@ export function ContentEditorLayout({
     const apiBlocks = await buildArticleBlocksFromEditor(blocks, {
       onUploading: setMediaUploading,
     });
-    // Resolve the cover: upload a freshly-picked file (deferred until now),
-    // otherwise reuse the already-stored URL.
+    // Resolve the cover to persist: upload a freshly-picked file (deferred until
+    // now) and store its stable object key, otherwise reuse the already-loaded
+    // value. We keep `coverImage` as-is for the on-screen preview (a local
+    // object-URL for fresh picks, or the backend-signed URL when editing) — the
+    // bare storage key isn't directly renderable (private bucket), so it only
+    // goes into the payload, never into the preview state.
     let resolvedCover = coverImage;
     if (coverFile) {
       setMediaUploading(true);
       try {
-        resolvedCover = await uploadArticleAsset(coverFile);
-        setCoverImage(resolvedCover);
+        resolvedCover = await uploadArticleAssetPath(coverFile);
         setCoverFile(null);
       } finally {
         setMediaUploading(false);
@@ -637,8 +640,6 @@ export function ContentEditorLayout({
               <span className="text-gray-600">·</span>
               <Link
                 href={`/admin/articles/edit/${translationOf}`}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="text-blue-400 hover:underline"
               >
                 View original →

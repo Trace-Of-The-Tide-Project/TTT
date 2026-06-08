@@ -399,6 +399,8 @@ export type UpdateArticlePayload = {
   status?: ArticleLifecycleStatus;
   category?: string;
   collection_id?: string | null;
+  /** Stable storage key (e.g. `images/123.png`) or null to clear. */
+  cover_image?: string | null;
   /** When sent, backend replaces blocks (same shape as create). */
   blocks?: CreateArticleBlock[];
   tag_ids?: string[];

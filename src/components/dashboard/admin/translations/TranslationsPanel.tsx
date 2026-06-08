@@ -22,9 +22,9 @@ const DEFAULT_CREATE_PATH = "/admin/articles/create/article";
 /**
  * Compact language-switcher chip row for the editor toolbar.
  * - Current language: highlighted, not a link.
- * - Existing other version: link to that version's editor (new tab).
- * - Missing version: dimmed chip with "+", opens create route in new tab.
- * - "Add all" button: opens every missing language in new tabs at once.
+ * - Existing other version: link to that version's editor (same tab).
+ * - Missing version: dimmed chip with "+", opens create route (same tab).
+ * - "Add all" button: opens the first missing language; the rest stay as chips.
  */
 export function TranslationsPanel({
   contentType,
@@ -51,9 +51,10 @@ export function TranslationsPanel({
   }
 
   function handleAddAll() {
-    for (const loc of missingLocales) {
-      window.open(createHref(loc), "_blank", "noopener,noreferrer");
-    }
+    // Same-tab editing means we can only open one at a time — start with the
+    // first missing language; the others remain as "+" chips to add next.
+    const first = missingLocales[0];
+    if (first) window.location.assign(createHref(first));
   }
 
   return (
@@ -84,8 +85,6 @@ export function TranslationsPanel({
               <a
                 key={loc}
                 href={`/${locale}/admin/articles/edit/${version.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
                 className={`${base} text-[var(--tott-tab-inactive)] hover:text-foreground`}
                 title={
                   version.status
@@ -104,8 +103,6 @@ export function TranslationsPanel({
             <a
               key={loc}
               href={createHref(loc)}
-              target="_blank"
-              rel="noopener noreferrer"
               className={`${base} text-gray-600 hover:text-gray-400`}
               title={t("addTranslation")}
             >
