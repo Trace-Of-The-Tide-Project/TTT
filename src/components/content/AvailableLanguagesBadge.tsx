@@ -66,6 +66,7 @@ export function AvailableLanguagesBadge({
           <Link
             key={v.id}
             href={`${viewBasePath}?id=${encodeURIComponent(v.id)}`}
+            locale={v.language as "en" | "ar" | "es" | "fr"}
             className="rounded-full border border-[var(--tott-card-border)] px-2.5 py-0.5 text-xs font-medium text-blue-400 hover:underline"
           >
             {label}

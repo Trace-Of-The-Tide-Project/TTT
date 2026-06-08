@@ -156,7 +156,7 @@ export function ContentPageLayout({
           />
           {/* Show which languages this piece is available in; lets the reader
               switch versions. Renders nothing when only one language exists. */}
-          {articleId && !isOpenCall ? (
+          {articleId ? (
             <AvailableLanguagesBadge
               contentType="article"
               contentId={articleId}

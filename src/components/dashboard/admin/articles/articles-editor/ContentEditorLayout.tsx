@@ -36,6 +36,7 @@ import {
 import { invalidateAdminArticlesListCache } from "@/lib/dashboard/admin-articles-list-cache";
 import {
   createArticle,
+  getArticleById,
   getArticleIdFromCreateResponse,
   publishArticle,
   scheduleArticle,
@@ -141,6 +142,7 @@ export function ContentEditorLayout({
   // When set, this content is created as a translation of the given original and
   // inherits its translation group on save. Stays fixed for the editor session.
   const [translationOf] = useState<string | undefined>(initialTranslationOf);
+  const [originalTitle, setOriginalTitle] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [seoTitle, setSeoTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
@@ -212,6 +214,24 @@ export function ContentEditorLayout({
         : [{ id: crypto.randomUUID(), type: "paragraph", content: "" }],
     );
   }, [articleQuery.data, loadKey]);
+
+  // Translation create mode: pre-fill form fields from the original so the
+  // translator starts with content rather than a blank page.
+  useEffect(() => {
+    if (!translationOf || articleId) return;
+    getArticleById(translationOf).then((a) => {
+      if (!a) return;
+      setOriginalTitle(a.title ?? null);
+      setTitle(a.title ?? "");
+      setCategory(a.category ?? "");
+      setSeoTitle(a.seo_title?.trim() ?? "");
+      setMetaDescription(a.meta_description?.trim() ?? "");
+      setCoverImage(a.cover_image ?? null);
+      const mapped = articleDetailBlocksToContentBlocks(a.blocks);
+      if (mapped.length) setBlocks(mapped);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!successToast) {
@@ -610,6 +630,21 @@ export function ContentEditorLayout({
 
       <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
         <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
+          {translationOf && originalTitle ? (
+            <div className="flex items-center gap-2 rounded-lg border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-3 py-2 text-xs text-gray-400">
+              <span>Translating from:</span>
+              <span className="font-medium text-[#C9A96E]">{originalTitle}</span>
+              <span className="text-gray-600">·</span>
+              <Link
+                href={`/admin/articles/edit/${translationOf}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:underline"
+              >
+                View original →
+              </Link>
+            </div>
+          ) : null}
           <input
             type="text"
             value={title}

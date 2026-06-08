@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { stripLocalePrefixesFromPath } from "@/lib/i18n/strip-locale-from-path";
+import { getTranslations } from "@/services/translations.service";
 import { ChevronDownSmallIcon } from "@/components/ui/icons";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
@@ -21,9 +23,16 @@ interface Props {
   mode?: "dropdown" | "flat";
 }
 
+/**
+ * `usePathname()` is locale-stripped, so the article page is reachable at
+ * exactly this base. The reader's article lives in the `?id=` query param.
+ */
+const ARTICLE_BASE_PATH = "/content/article";
+
 export function LanguageSwitcher({ className, mode = "dropdown" }: Props) {
   const locale = useLocale();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { isDark } = useTheme();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -36,9 +45,32 @@ export function LanguageSwitcher({ className, mode = "dropdown" }: Props) {
     return () => document.removeEventListener("mousedown", handleOutside);
   }, [open]);
 
-  const switchTo = (next: (typeof routing.locales)[number]) => {
+  const switchTo = async (next: (typeof routing.locales)[number]) => {
     if (next === locale) { setOpen(false); return; }
     const base = stripLocalePrefixesFromPath(pathname ?? "/");
+
+    // On an article page, a plain locale swap keeps the *same* article id, which
+    // shows the original piece under a different UI language (or, worse, an
+    // unrelated article). Each language version is its own row with its own id,
+    // so resolve the sibling in the target language and point at *that* id.
+    const articleId = searchParams.get("id")?.trim();
+    if (base === ARTICLE_BASE_PATH && articleId) {
+      try {
+        const group = await getTranslations("article", articleId);
+        const sibling = group.versions.find((v) => v.language === next);
+        if (sibling) {
+          const params = new URLSearchParams(searchParams.toString());
+          params.set("id", sibling.id);
+          window.location.assign(`/${next}${base}?${params.toString()}`);
+          return;
+        }
+        // No version in the target language: fall through to a plain swap so the
+        // navbar still changes the UI language rather than doing nothing.
+      } catch {
+        // Network/lookup failure — degrade to the plain locale swap below.
+      }
+    }
+
     const target = `/${next}${base === "/" ? "" : base}`;
     // Use `.assign()` instead of mutating `location.href` so React 19's
     // immutability rule is happy. Same hard-navigation semantics.
@@ -58,7 +90,7 @@ export function LanguageSwitcher({ className, mode = "dropdown" }: Props) {
             <button
               key={code}
               type="button"
-              onClick={() => switchTo(code)}
+              onClick={() => void switchTo(code)}
               className={`rounded px-2.5 py-1 text-xs font-semibold transition-colors ${
                 code === locale
                   ? "bg-[#C9A96E]/20 text-[#C9A96E]"
@@ -103,7 +135,7 @@ export function LanguageSwitcher({ className, mode = "dropdown" }: Props) {
                 type="button"
                 role="option"
                 aria-selected={isActive}
-                onClick={() => { setOpen(false); switchTo(code); }}
+                onClick={() => { setOpen(false); void switchTo(code); }}
                 className={`flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors ${
                   isActive
                     ? "text-[#C9A96E]"
