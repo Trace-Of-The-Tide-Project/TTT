@@ -1,0 +1,25 @@
+{
+  "Dashboard": {
+    "availability": {
+      "title": "Disponibilidad",
+      "subtitle": "Define tu estado de disponibilidad y un mensaje opcional.",
+      "statusLabel": "Estado",
+      "statusAria": "Estado de disponibilidad",
+      "statusAvailable": "Disponible",
+      "statusAvailableDescription": "Abierto a nuevos trabajos y mensajes.",
+      "statusBusy": "Ocupado",
+      "statusBusyDescription": "Trabajando — las respuestas pueden tardar.",
+      "statusAway": "Ausente",
+      "statusAwayDescription": "No disponible en este momento.",
+      "messageLabel": "Mensaje de estado",
+      "messagePlaceholder": "p. ej. Vuelvo el lunes",
+      "messageHint": "Opcional. Se muestra junto a tu estado.",
+      "save": "Guardar cambios",
+      "saving": "Guardando…",
+      "saved": "Guardado",
+      "saveError": "No se pudo guardar. Inténtalo de nuevo.",
+      "loading": "Cargando…",
+      "loadError": "No se pudo cargar tu disponibilidad."
+    }
+  }
+}

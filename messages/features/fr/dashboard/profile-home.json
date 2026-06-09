@@ -37,7 +37,14 @@
       "removeLinkAria": "Supprimer le lien",
       "addNewLink": "Ajouter un nouveau lien",
       "saved": "Enregistré",
-      "saveChanges": "Enregistrer les modifications"
+      "saveChanges": "Enregistrer les modifications",
+      "loading": "Chargement…",
+      "loadError": "Impossible de charger votre profil.",
+      "saving": "Enregistrement…",
+      "saveError": "Impossible d'enregistrer. Veuillez réessayer.",
+      "emailInUse": "Cette adresse e-mail est déjà utilisée.",
+      "uploading": "Téléversement…",
+      "uploadError": "Impossible de téléverser l'image."
     },
     "adminPrivacy": {
       "pageTitle": "Paramètres de confidentialité",
@@ -59,7 +66,11 @@
       "allowFollowsDescription": "Autoriser d'autres utilisateurs à vous suivre",
       "allowFollowsAria": "Autoriser les abonnements",
       "saved": "Enregistré",
-      "saveChanges": "Enregistrer les modifications"
+      "saveChanges": "Enregistrer les modifications",
+      "saving": "Enregistrement…",
+      "loading": "Chargement…",
+      "loadError": "Impossible de charger vos paramètres de confidentialité.",
+      "saveError": "Impossible d'enregistrer. Veuillez réessayer."
     },
     "adminAccount": {
       "pageTitle": "Sécurité du compte",

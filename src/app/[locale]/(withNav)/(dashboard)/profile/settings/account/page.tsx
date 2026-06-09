@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/dashboard/shared/PlaceholderPage";
+import { AccountSettings } from "@/components/dashboard/admin/settings/account/AccountSettings";
 
 export default function AccountPage() {
-  return <PlaceholderPage pageKey="account" />;
+  return <AccountSettings />;
 }

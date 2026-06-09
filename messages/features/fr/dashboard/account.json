@@ -1,0 +1,71 @@
+{
+  "Dashboard": {
+    "account": {
+      "overview": {
+        "title": "Compte",
+        "subtitle": "Les informations et le statut de votre compte.",
+        "email": "E-mail",
+        "verified": "Vérifié",
+        "unverified": "Non vérifié",
+        "username": "Nom d'utilisateur",
+        "status": "Statut du compte",
+        "statusActive": "Actif",
+        "statusDeactivated": "Désactivé",
+        "statusSuspended": "Suspendu",
+        "statusPending": "En attente",
+        "roles": "Rôles",
+        "memberSince": "Membre depuis",
+        "loadError": "Impossible de charger les informations de votre compte."
+      },
+      "sessions": {
+        "title": "Sessions actives",
+        "subtitle": "Appareils actuellement connectés à votre compte.",
+        "currentDeviceHint": "Pour votre sécurité, nous ne pouvons pas identifier lequel de ces appareils est celui que vous utilisez actuellement.",
+        "signedIn": "Connexion le {date}",
+        "unknownDevice": "Appareil inconnu",
+        "unknownIp": "Emplacement inconnu",
+        "revoke": "Révoquer",
+        "loading": "Chargement des sessions…",
+        "loadError": "Impossible de charger vos sessions.",
+        "empty": "Aucune autre session active.",
+        "signOutEverywhere": "Se déconnecter partout",
+        "signOutEverywhereConfirm": "Cela vous déconnecte de tous les appareils, y compris celui-ci. Vous devrez vous reconnecter.",
+        "signingOut": "Déconnexion…"
+      },
+      "export": {
+        "title": "Exporter vos données",
+        "subtitle": "Téléchargez une copie de votre compte, profil, paramètres et articles au format JSON.",
+        "download": "Télécharger mes données",
+        "exporting": "Préparation…",
+        "success": "Votre téléchargement a démarré.",
+        "error": "Impossible d'exporter vos données."
+      },
+      "danger": {
+        "title": "Zone de danger",
+        "subtitle": "Ces actions affectent l'ensemble de votre compte. Procédez avec prudence.",
+        "deactivateTitle": "Désactiver le compte",
+        "deactivateDescription": "Masquez votre profil et vos articles. Vous pouvez le réactiver en vous reconnectant.",
+        "deactivateAction": "Désactiver",
+        "deactivateModalTitle": "Désactiver votre compte ?",
+        "deactivateModalDescription": "Votre profil et vos articles seront masqués. Reconnectez-vous à tout moment pour le réactiver. Saisissez votre mot de passe pour confirmer.",
+        "deactivating": "Désactivation…",
+        "deleteTitle": "Supprimer le compte",
+        "deleteDescription": "Fermez définitivement votre compte. Cette action est irréversible.",
+        "deleteAction": "Supprimer le compte",
+        "deleteModalTitle": "Supprimer définitivement votre compte ?",
+        "deleteModalDescription": "Cela ferme définitivement votre compte et vous déconnecte de tous les appareils. Cette action est irréversible. Saisissez votre mot de passe et tapez DELETE pour confirmer.",
+        "deleteConfirmPhrase": "DELETE",
+        "deleting": "Suppression…",
+        "genericError": "Une erreur s'est produite. Veuillez réessayer."
+      },
+      "modal": {
+        "cancel": "Annuler",
+        "passwordLabel": "Mot de passe",
+        "passwordPlaceholder": "Saisissez votre mot de passe",
+        "showPassword": "Afficher le mot de passe",
+        "hidePassword": "Masquer le mot de passe",
+        "typeToConfirmLabel": "Tapez {phrase} pour confirmer"
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@ import {
   getArticleById,
   getArticles,
   getCollectionArticles,
+  getMyArticles,
   getRelatedArticles,
 } from "@/services/articles.service";
 
@@ -10,6 +11,8 @@ export const articlesKeys = {
   all: ["articles"] as const,
   list: (params?: Record<string, string | number | boolean | undefined>) =>
     ["articles", "list", params ?? {}] as const,
+  myList: (params?: { status?: string; limit?: number; offset?: number }) =>
+    ["articles", "my", params ?? {}] as const,
   byId: (id: string) => ["articles", "byId", id] as const,
   related: (id: string) => ["articles", "related", id] as const,
   inCollection: (collectionId: string) =>
@@ -44,6 +47,14 @@ export function useRelatedArticles(articleId: string | null | undefined) {
     queryKey: articlesKeys.related(articleId ?? ""),
     queryFn: () => getRelatedArticles(articleId as string),
     enabled: Boolean(articleId),
+  });
+}
+
+export function useMyArticles(params?: { status?: string; limit?: number; offset?: number }) {
+  return useQuery({
+    queryKey: articlesKeys.myList(params),
+    queryFn: () => getMyArticles(params),
+    meta: { silent: true },
   });
 }
 

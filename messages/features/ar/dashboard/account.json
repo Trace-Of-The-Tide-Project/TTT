@@ -1,0 +1,71 @@
+{
+  "Dashboard": {
+    "account": {
+      "overview": {
+        "title": "الحساب",
+        "subtitle": "تفاصيل حسابك وحالته.",
+        "email": "البريد الإلكتروني",
+        "verified": "موثّق",
+        "unverified": "غير موثّق",
+        "username": "اسم المستخدم",
+        "status": "حالة الحساب",
+        "statusActive": "نشط",
+        "statusDeactivated": "معطّل",
+        "statusSuspended": "موقوف",
+        "statusPending": "قيد الانتظار",
+        "roles": "الأدوار",
+        "memberSince": "عضو منذ",
+        "loadError": "تعذّر تحميل تفاصيل حسابك."
+      },
+      "sessions": {
+        "title": "الجلسات النشطة",
+        "subtitle": "الأجهزة المسجّلة دخولها حاليًا إلى حسابك.",
+        "currentDeviceHint": "لأسباب أمنية، لا يمكننا تحديد أي من هذه الجلسات هو الجهاز الذي تستخدمه الآن.",
+        "signedIn": "تسجيل الدخول في {date}",
+        "unknownDevice": "جهاز غير معروف",
+        "unknownIp": "موقع غير معروف",
+        "revoke": "إلغاء",
+        "loading": "جارٍ تحميل الجلسات…",
+        "loadError": "تعذّر تحميل جلساتك.",
+        "empty": "لا توجد جلسات نشطة أخرى.",
+        "signOutEverywhere": "تسجيل الخروج من كل الأجهزة",
+        "signOutEverywhereConfirm": "سيؤدي ذلك إلى تسجيل خروجك من كل الأجهزة، بما فيها هذا الجهاز. ستحتاج إلى تسجيل الدخول مجددًا.",
+        "signingOut": "جارٍ تسجيل الخروج…"
+      },
+      "export": {
+        "title": "تصدير بياناتك",
+        "subtitle": "نزّل نسخة من حسابك وملفك الشخصي وإعداداتك ومقالاتك بصيغة JSON.",
+        "download": "تنزيل بياناتي",
+        "exporting": "جارٍ التحضير…",
+        "success": "بدأ التنزيل.",
+        "error": "تعذّر تصدير بياناتك."
+      },
+      "danger": {
+        "title": "منطقة الخطر",
+        "subtitle": "تؤثّر هذه الإجراءات على حسابك بالكامل. يرجى المتابعة بحذر.",
+        "deactivateTitle": "تعطيل الحساب",
+        "deactivateDescription": "إخفاء ملفك الشخصي ومقالاتك. يمكنك إعادة التفعيل بتسجيل الدخول مجددًا.",
+        "deactivateAction": "تعطيل",
+        "deactivateModalTitle": "هل تريد تعطيل حسابك؟",
+        "deactivateModalDescription": "سيتم إخفاء ملفك الشخصي ومقالاتك. سجّل الدخول مجددًا في أي وقت لإعادة التفعيل. أدخل كلمة المرور للتأكيد.",
+        "deactivating": "جارٍ التعطيل…",
+        "deleteTitle": "حذف الحساب",
+        "deleteDescription": "إغلاق حسابك نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+        "deleteAction": "حذف الحساب",
+        "deleteModalTitle": "هل تريد حذف حسابك نهائيًا؟",
+        "deleteModalDescription": "سيؤدي ذلك إلى إغلاق حسابك نهائيًا وتسجيل خروجك من كل الأجهزة. لا يمكن التراجع عن هذا الإجراء. أدخل كلمة المرور واكتب DELETE للتأكيد.",
+        "deleteConfirmPhrase": "DELETE",
+        "deleting": "جارٍ الحذف…",
+        "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+      },
+      "modal": {
+        "cancel": "إلغاء",
+        "passwordLabel": "كلمة المرور",
+        "passwordPlaceholder": "أدخل كلمة المرور",
+        "showPassword": "إظهار كلمة المرور",
+        "hidePassword": "إخفاء كلمة المرور",
+        "typeToConfirmLabel": "اكتب {phrase} للتأكيد"
+      }
+    }
+  }
+}

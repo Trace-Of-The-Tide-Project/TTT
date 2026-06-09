@@ -120,6 +120,12 @@ export interface NotificationPreferences {
   comments: boolean;
   weekly_digest: boolean;
   push_browser: boolean;
+  // Editor-specific toggles — only surfaced to editors/admins in the UI, but
+  // the backend persists them for any user.
+  new_submissions: boolean;
+  author_messages: boolean;
+  revision_updates: boolean;
+  flagged_content: boolean;
 }
 
 export async function getNotificationPreferences(): Promise<NotificationPreferences> {
@@ -131,8 +137,15 @@ export async function getNotificationPreferences(): Promise<NotificationPreferen
       comments: boolean;
       weekly_digest: boolean;
     };
+    editor_notifications?: {
+      new_submissions?: boolean;
+      author_messages?: boolean;
+      revision_updates?: boolean;
+      flagged_content?: boolean;
+    };
     push_notifications: { browser: boolean };
   }>("/author/settings/notifications");
+  const editor = data.editor_notifications ?? {};
   return {
     article_updates: data.email_notifications.article_updates,
     new_followers: data.email_notifications.new_followers,
@@ -140,6 +153,10 @@ export async function getNotificationPreferences(): Promise<NotificationPreferen
     comments: data.email_notifications.comments,
     weekly_digest: data.email_notifications.weekly_digest,
     push_browser: data.push_notifications.browser,
+    new_submissions: editor.new_submissions ?? false,
+    author_messages: editor.author_messages ?? false,
+    revision_updates: editor.revision_updates ?? false,
+    flagged_content: editor.flagged_content ?? false,
   };
 }
 
@@ -154,8 +171,15 @@ export async function updateNotificationPreferences(
       comments: boolean;
       weekly_digest: boolean;
     };
+    editor_notifications?: {
+      new_submissions?: boolean;
+      author_messages?: boolean;
+      revision_updates?: boolean;
+      flagged_content?: boolean;
+    };
     push_notifications: { browser: boolean };
   }>("/author/settings/notifications", prefs);
+  const editor = data.editor_notifications ?? {};
   return {
     article_updates: data.email_notifications.article_updates,
     new_followers: data.email_notifications.new_followers,
@@ -163,6 +187,10 @@ export async function updateNotificationPreferences(
     comments: data.email_notifications.comments,
     weekly_digest: data.email_notifications.weekly_digest,
     push_browser: data.push_notifications.browser,
+    new_submissions: editor.new_submissions ?? false,
+    author_messages: editor.author_messages ?? false,
+    revision_updates: editor.revision_updates ?? false,
+    flagged_content: editor.flagged_content ?? false,
   };
 }
 

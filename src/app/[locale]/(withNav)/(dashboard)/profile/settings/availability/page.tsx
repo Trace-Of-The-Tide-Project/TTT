@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/dashboard/shared/PlaceholderPage";
+import { AvailabilitySettings } from "@/components/dashboard/admin/settings/availability/AvailabilitySettings";
 
 export default function AvailabilityPage() {
-  return <PlaceholderPage pageKey="availabilityProfile" />;
+  return <AvailabilitySettings />;
 }

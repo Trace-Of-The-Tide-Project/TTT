@@ -1,0 +1,71 @@
+{
+  "Dashboard": {
+    "account": {
+      "overview": {
+        "title": "Account",
+        "subtitle": "Your account details and status.",
+        "email": "Email",
+        "verified": "Verified",
+        "unverified": "Unverified",
+        "username": "Username",
+        "status": "Account status",
+        "statusActive": "Active",
+        "statusDeactivated": "Deactivated",
+        "statusSuspended": "Suspended",
+        "statusPending": "Pending",
+        "roles": "Roles",
+        "memberSince": "Member since",
+        "loadError": "Could not load your account details."
+      },
+      "sessions": {
+        "title": "Active sessions",
+        "subtitle": "Devices currently signed in to your account.",
+        "currentDeviceHint": "For your security, we can't identify which of these is the device you're using right now.",
+        "signedIn": "Signed in {date}",
+        "unknownDevice": "Unknown device",
+        "unknownIp": "Unknown location",
+        "revoke": "Revoke",
+        "loading": "Loading sessions…",
+        "loadError": "Could not load your sessions.",
+        "empty": "No other active sessions.",
+        "signOutEverywhere": "Sign out everywhere",
+        "signOutEverywhereConfirm": "This signs you out of every device, including this one. You'll need to sign in again.",
+        "signingOut": "Signing out…"
+      },
+      "export": {
+        "title": "Export your data",
+        "subtitle": "Download a copy of your account, profile, settings, and articles as a JSON file.",
+        "download": "Download my data",
+        "exporting": "Preparing…",
+        "success": "Your download has started.",
+        "error": "Could not export your data."
+      },
+      "danger": {
+        "title": "Danger zone",
+        "subtitle": "These actions affect your whole account. Please proceed carefully.",
+        "deactivateTitle": "Deactivate account",
+        "deactivateDescription": "Hide your profile and articles. You can reactivate by signing in again.",
+        "deactivateAction": "Deactivate",
+        "deactivateModalTitle": "Deactivate your account?",
+        "deactivateModalDescription": "Your profile and articles will be hidden. Sign in again at any time to reactivate. Enter your password to confirm.",
+        "deactivating": "Deactivating…",
+        "deleteTitle": "Delete account",
+        "deleteDescription": "Permanently close your account. This cannot be undone.",
+        "deleteAction": "Delete account",
+        "deleteModalTitle": "Permanently delete your account?",
+        "deleteModalDescription": "This permanently closes your account and signs you out of every device. This cannot be undone. Enter your password and type DELETE to confirm.",
+        "deleteConfirmPhrase": "DELETE",
+        "deleting": "Deleting…",
+        "genericError": "Something went wrong. Please try again."
+      },
+      "modal": {
+        "cancel": "Cancel",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "Enter your password",
+        "showPassword": "Show password",
+        "hidePassword": "Hide password",
+        "typeToConfirmLabel": "Type {phrase} to confirm"
+      }
+    }
+  }
+}

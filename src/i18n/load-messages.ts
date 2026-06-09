@@ -23,6 +23,8 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/security.json`),
     import(`../../messages/features/${locale}/dashboard/notifications.json`),
     import(`../../messages/features/${locale}/dashboard/change-password.json`),
+    import(`../../messages/features/${locale}/dashboard/account.json`),
+    import(`../../messages/features/${locale}/dashboard/availability.json`),
     import(`../../messages/features/${locale}/dashboard/translations.json`),
     /** Large shared surfaces (content library, CMS editor, roles UI). */
     import(`../../messages/features/${locale}/dashboard/admin-surfaces.json`),

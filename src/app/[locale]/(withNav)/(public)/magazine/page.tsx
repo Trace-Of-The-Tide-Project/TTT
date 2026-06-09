@@ -88,6 +88,16 @@ type RawContribution = {
   files?: Array<{ url?: string | null; path?: string | null }> | null;
 };
 
+type RawBook = {
+  id: string;
+  title: string;
+  author?: string | null;
+  genre?: string | null;
+  cover_image?: string | null;
+  page_count?: number | null;
+  createdAt?: string;
+};
+
 type Envelope<T> = { data?: T[]; status?: number; results?: number };
 
 // ─── Server-side fetch helpers ──────────────────────────────────────
@@ -98,22 +108,20 @@ function unwrapList<T>(raw: Envelope<T> | T[] | null): T[] {
   return raw.data ?? [];
 }
 
-async function fetchLatestArticles(): Promise<LatestPublishedItem[]> {
-  const raw = await serverGet<Envelope<RawArticle>>("/articles", {
-    limit: 5,
-    status: "published",
-    sortBy: "published_at",
-    order: "DESC",
-  });
-  return unwrapList(raw).map((a) => ({
-    id: a.id,
-    title: a.title,
-    category: prettifyCategory(a.category),
-    author: pickAuthorName(a.author),
-    readingTime: a.reading_time ?? 0,
-    coverImage: a.cover_image ?? null,
-    publishedAt: a.published_at ?? null,
-    slug: a.slug ?? null,
+async function fetchLatestBooks(): Promise<LatestPublishedItem[]> {
+  const raw = await serverGet<{ rows?: RawBook[]; data?: RawBook[] }>(
+    "/knowledge/books",
+    { limit: 5, page: 1 },
+  );
+  const rows: RawBook[] =
+    raw?.rows ?? raw?.data ?? (Array.isArray(raw) ? raw : []);
+  return rows.map((b) => ({
+    id: b.id,
+    title: b.title,
+    category: prettifyCategory(b.genre),
+    author: b.author ?? "",
+    readingTime: b.page_count ? Math.ceil(b.page_count / 30) : 0,
+    coverImage: b.cover_image ?? null,
   }));
 }
 
@@ -330,7 +338,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
     magazineMeta,
     cmsCopy,
   ] = await Promise.all([
-    fetchLatestArticles(),
+    fetchLatestBooks(),
     fetchLessReadArticles(),
     fetchWriters(),
     fetchMagazineIssues(),

@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/dashboard/shared/PlaceholderPage";
+import { AdminNotificationPreferences } from "@/components/dashboard/admin/settings/AdminNotificationPreferences";
 
 export default function NotificationsPage() {
-  return <PlaceholderPage pageKey="notifications" />;
+  return <AdminNotificationPreferences />;
 }

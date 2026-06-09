@@ -1,5 +1,15 @@
-import { PlaceholderPage } from "@/components/dashboard/shared/PlaceholderPage";
+import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
+import { ProfileArticlesPageContent } from "@/components/dashboard/profile/articles/ProfileArticlesPageContent";
 
 export default function ArticlesPage() {
-  return <PlaceholderPage pageKey="profileArticles" />;
+  return (
+    <div>
+      <DashboardHeader
+        title="All Articles"
+        subtitle="View and manage your published articles."
+        compactPadding
+      />
+      <ProfileArticlesPageContent />
+    </div>
+  );
 }

@@ -1,0 +1,25 @@
+{
+  "Dashboard": {
+    "availability": {
+      "title": "Availability",
+      "subtitle": "Set your availability status and an optional message.",
+      "statusLabel": "Status",
+      "statusAria": "Availability status",
+      "statusAvailable": "Available",
+      "statusAvailableDescription": "Open to new work and messages.",
+      "statusBusy": "Busy",
+      "statusBusyDescription": "Working — replies may be slower.",
+      "statusAway": "Away",
+      "statusAwayDescription": "Not currently available.",
+      "messageLabel": "Status message",
+      "messagePlaceholder": "e.g. Back on Monday",
+      "messageHint": "Optional. Shown alongside your status.",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "saved": "Saved",
+      "saveError": "Could not save. Please try again.",
+      "loading": "Loading…",
+      "loadError": "Could not load your availability."
+    }
+  }
+}

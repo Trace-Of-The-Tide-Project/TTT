@@ -1,0 +1,25 @@
+{
+  "Dashboard": {
+    "availability": {
+      "title": "التوفّر",
+      "subtitle": "حدّد حالة توفّرك ورسالة اختيارية.",
+      "statusLabel": "الحالة",
+      "statusAria": "حالة التوفّر",
+      "statusAvailable": "متاح",
+      "statusAvailableDescription": "منفتح على أعمال ورسائل جديدة.",
+      "statusBusy": "مشغول",
+      "statusBusyDescription": "أعمل حاليًا — قد تتأخّر الردود.",
+      "statusAway": "غائب",
+      "statusAwayDescription": "غير متاح حاليًا.",
+      "messageLabel": "رسالة الحالة",
+      "messagePlaceholder": "مثال: أعود يوم الاثنين",
+      "messageHint": "اختياري. تُعرض بجانب حالتك.",
+      "save": "حفظ التغييرات",
+      "saving": "جارٍ الحفظ…",
+      "saved": "تم الحفظ",
+      "saveError": "تعذّر الحفظ. يرجى المحاولة مرة أخرى.",
+      "loading": "جارٍ التحميل…",
+      "loadError": "تعذّر تحميل حالة توفّرك."
+    }
+  }
+}
