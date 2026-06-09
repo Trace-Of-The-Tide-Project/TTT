@@ -114,7 +114,7 @@ async function fetchLatestBooks(): Promise<LatestPublishedItem[]> {
     { limit: 5, page: 1 },
   );
   const rows: RawBook[] =
-    (raw as any)?.rows ?? (raw as any)?.data ?? (Array.isArray(raw) ? raw : []);
+    raw?.rows ?? raw?.data ?? (Array.isArray(raw) ? raw : []);
   return rows.map((b) => ({
     id: b.id,
     title: b.title,
