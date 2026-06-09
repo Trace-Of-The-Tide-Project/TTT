@@ -37,7 +37,14 @@
       "removeLinkAria": "إزالة الرابط",
       "addNewLink": "إضافة رابط جديد",
       "saved": "تم الحفظ",
-      "saveChanges": "حفظ التغييرات"
+      "saveChanges": "حفظ التغييرات",
+      "loading": "جارٍ التحميل…",
+      "loadError": "تعذّر تحميل ملفك الشخصي.",
+      "saving": "جارٍ الحفظ…",
+      "saveError": "تعذّر الحفظ. يرجى المحاولة مرة أخرى.",
+      "emailInUse": "هذا البريد الإلكتروني مستخدم بالفعل.",
+      "uploading": "جارٍ الرفع…",
+      "uploadError": "تعذّر رفع الصورة."
     },
     "adminPrivacy": {
       "pageTitle": "إعدادات الخصوصية",
@@ -59,7 +66,11 @@
       "allowFollowsDescription": "السماح للمستخدمين الآخرين بمتابعتك",
       "allowFollowsAria": "السماح بالمتابعة",
       "saved": "تم الحفظ",
-      "saveChanges": "حفظ التغييرات"
+      "saveChanges": "حفظ التغييرات",
+      "saving": "جارٍ الحفظ…",
+      "loading": "جارٍ التحميل…",
+      "loadError": "تعذّر تحميل إعدادات الخصوصية.",
+      "saveError": "تعذّر الحفظ. يرجى المحاولة مرة أخرى."
     },
     "adminAccount": {
       "pageTitle": "أمان الحساب",

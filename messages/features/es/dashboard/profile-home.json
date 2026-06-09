@@ -37,7 +37,14 @@
       "removeLinkAria": "Eliminar enlace",
       "addNewLink": "Añadir nuevo enlace",
       "saved": "Guardado",
-      "saveChanges": "Guardar cambios"
+      "saveChanges": "Guardar cambios",
+      "loading": "Cargando…",
+      "loadError": "No se pudo cargar tu perfil.",
+      "saving": "Guardando…",
+      "saveError": "No se pudo guardar. Inténtalo de nuevo.",
+      "emailInUse": "Ese correo electrónico ya está en uso.",
+      "uploading": "Subiendo…",
+      "uploadError": "No se pudo subir la imagen."
     },
     "adminPrivacy": {
       "pageTitle": "Configuración de privacidad",
@@ -59,7 +66,11 @@
       "allowFollowsDescription": "Permite que otros usuarios te sigan",
       "allowFollowsAria": "Permitir seguidores",
       "saved": "Guardado",
-      "saveChanges": "Guardar cambios"
+      "saveChanges": "Guardar cambios",
+      "saving": "Guardando…",
+      "loading": "Cargando…",
+      "loadError": "No se pudo cargar tu configuración de privacidad.",
+      "saveError": "No se pudo guardar. Inténtalo de nuevo."
     },
     "adminAccount": {
       "pageTitle": "Seguridad de la cuenta",

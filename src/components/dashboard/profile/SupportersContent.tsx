@@ -2,96 +2,246 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageBubbleIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
+import { api } from "@/services/api";
 
-export type ContributionEntry = {
+type FilterType = "all" | "one-time" | "recurring";
+
+interface SupporterUser {
   id: string;
-  initials: string;
-  name: string;
-  timestamp: string;
-  amount: string;
-  type: "one-time" | "recurring";
-};
+  username: string;
+  full_name?: string;
+}
 
-const SAMPLE_CONTRIBUTIONS: ContributionEntry[] = [
-  { id: "1", initials: "A", name: "Ahmed Sameer", timestamp: "3 mins ago", amount: "$5", type: "one-time" },
-  { id: "2", initials: "S", name: "Salma Fathi", timestamp: "6 mins ago", amount: "$100", type: "recurring" },
-  { id: "3", initials: "M", name: "Mustafa Khaled", timestamp: "10 mins ago", amount: "$25", type: "recurring" },
-  { id: "4", initials: "L", name: "Layla Hassan", timestamp: "15 mins ago", amount: "$50", type: "recurring" },
-  { id: "5", initials: "O", name: "Omar Yusuf", timestamp: "22 mins ago", amount: "$10", type: "recurring" },
-];
+interface SupporterRow {
+  id: string;
+  amount: number;
+  type: string;
+  createdAt: string;
+  User?: SupporterUser;
+}
+
+interface SupportersResponse {
+  supporters: SupporterRow[];
+  total: number;
+  page: number;
+  total_pages: number;
+}
+
+function normalizeRow(raw: unknown): SupporterRow {
+  const o = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const user = (o.user ?? o.User);
+  const u = user && typeof user === "object" ? (user as Record<string, unknown>) : null;
+  return {
+    id: typeof o.id === "string" ? o.id : "",
+    amount: typeof o.amount === "number" ? o.amount : 0,
+    type: typeof o.type === "string" ? o.type : "one-time",
+    createdAt: typeof o.createdAt === "string" ? o.createdAt : "",
+    User: u
+      ? {
+          id: typeof u.id === "string" ? u.id : "",
+          username: typeof u.username === "string" ? u.username : "",
+          full_name: typeof u.full_name === "string" ? u.full_name : undefined,
+        }
+      : undefined,
+  };
+}
+
+function getInitials(name: string): string {
+  return name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("") || "?";
+}
+
+function formatRelativeTime(iso: string): string {
+  if (!iso) return "";
+  try {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60_000);
+    if (mins < 1) return "just now";
+    if (mins < 60) return `${mins} min${mins !== 1 ? "s" : ""} ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs} hr${hrs !== 1 ? "s" : ""} ago`;
+    const days = Math.floor(hrs / 24);
+    if (days < 30) return `${days} day${days !== 1 ? "s" : ""} ago`;
+    return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(iso));
+  } catch {
+    return "";
+  }
+}
+
+const PAGE_SIZE = 10;
 
 export function SupportersContent() {
   const t = useTranslations("Dashboard.profileSupporters");
-  const [selectedFilter, setSelectedFilter] = useState<"all" | "one-time" | "recurring">("all");
+  const qc = useQueryClient();
+  const [selectedFilter, setSelectedFilter] = useState<FilterType>("all");
+  const [page, setPage] = useState(1);
+  const [thankedIds, setThankedIds] = useState<Set<string>>(new Set());
 
   const filters = useMemo(
-    () =>
-      [
-        { id: "all" as const, label: t("filterAll") },
-        { id: "one-time" as const, label: t("filterOneTime") },
-        { id: "recurring" as const, label: t("filterRecurring") },
-      ],
+    () => [
+      { id: "all" as const, label: t("filterAll") },
+      { id: "one-time" as const, label: t("filterOneTime") },
+      { id: "recurring" as const, label: t("filterRecurring") },
+    ],
     [t],
   );
 
-  const filteredContributions = SAMPLE_CONTRIBUTIONS.filter((c) => {
-    if (selectedFilter === "all") return true;
-    return c.type === selectedFilter;
+  const queryKey = ["supporters", selectedFilter, page];
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey,
+    queryFn: async (): Promise<SupportersResponse> => {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(PAGE_SIZE),
+        ...(selectedFilter !== "all" ? { type: selectedFilter } : {}),
+      });
+      const { data: raw } = await api.get<unknown>(`/author/supporters?${params}`);
+      const o = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+      return {
+        supporters: Array.isArray(o.supporters) ? o.supporters.map(normalizeRow) : [],
+        total: typeof o.total === "number" ? o.total : 0,
+        page: typeof o.page === "number" ? o.page : 1,
+        total_pages: typeof o.total_pages === "number" ? o.total_pages : 1,
+      };
+    },
   });
 
-  const typeLabel = (type: ContributionEntry["type"]) =>
-    type === "one-time" ? t("typeOneTime") : t("typeRecurring");
+  const thankMutation = useMutation({
+    mutationFn: (donationId: string) =>
+      api.post(`/author/supporters/${donationId}/thank`),
+    onSuccess: (_res, donationId) => {
+      setThankedIds((prev) => new Set(prev).add(donationId));
+    },
+  });
+
+  function handleFilterChange(f: FilterType) {
+    setSelectedFilter(f);
+    setPage(1);
+  }
+
+  const supporters = data?.supporters ?? [];
+  const totalPages = data?.total_pages ?? 1;
+
+  const typeLabel = (type: string) =>
+    type === "recurring" ? t("typeRecurring") : t("typeOneTime");
 
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
       <SegmentedControl
         options={filters.map((opt) => ({ id: opt.id, label: opt.label }))}
         value={selectedFilter}
-        onChange={setSelectedFilter}
+        onChange={handleFilterChange}
       />
 
-      <div className="flex flex-col gap-3">
-        {filteredContributions.map((entry) => (
-          <ChamferedPanel key={entry.id} className="px-4 py-4">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      {isLoading ? (
+        <div className="flex flex-col gap-3">
+          {[...Array(4)].map((_, i) => (
+            <ChamferedPanel key={i} className="px-4 py-4 animate-pulse">
               <div className="flex items-center gap-3">
-                <span
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-medium"
-                  style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
-                >
-                  {entry.initials}
-                </span>
-                <div>
-                  <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
-                    {entry.name}
-                  </p>
-                  <p className="text-xs text-gray-500">{entry.timestamp}</p>
+                <div className="h-10 w-10 rounded-full bg-gray-800 shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 w-32 rounded bg-gray-800" />
+                  <div className="h-2 w-20 rounded bg-gray-800" />
                 </div>
               </div>
+            </ChamferedPanel>
+          ))}
+        </div>
+      ) : isError ? (
+        <div className="flex items-center justify-center py-12 text-sm text-gray-500">
+          Could not load supporters. Please try again.
+        </div>
+      ) : supporters.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 py-16">
+          <p className="text-sm text-[var(--tott-muted)]">No supporters yet.</p>
+          <p className="text-xs text-gray-600">Your supporters will appear here once they contribute.</p>
+        </div>
+      ) : (
+        <>
+          <div className="flex flex-col gap-3">
+            {supporters.map((entry) => {
+              const name = entry.User?.full_name || entry.User?.username || "Anonymous";
+              const initials = getInitials(name);
+              const isThanked = thankedIds.has(entry.id);
+              const isThanking = thankMutation.isPending && thankMutation.variables === entry.id;
 
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-                <div className="flex flex-col items-start sm:items-end">
-                  <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
-                    {entry.amount}
-                  </p>
-                  <p className="text-xs capitalize text-foreground">{typeLabel(entry.type)}</p>
-                </div>
-                <button
-                  type="button"
-                  className="flex cursor-pointer items-center justify-center gap-2 self-start rounded-lg bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
-                >
-                  <MessageBubbleIcon />
-                  {t("thankContributor")}
-                </button>
-              </div>
+              return (
+                <ChamferedPanel key={entry.id} className="px-4 py-4">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-medium"
+                        style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
+                      >
+                        {initials}
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
+                          {name}
+                        </p>
+                        <p className="text-xs text-gray-500">{formatRelativeTime(entry.createdAt)}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+                      <div className="flex flex-col items-start sm:items-end">
+                        <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
+                          ${entry.amount}
+                        </p>
+                        <p className="text-xs capitalize text-foreground">{typeLabel(entry.type)}</p>
+                      </div>
+                      <button
+                        type="button"
+                        disabled={isThanked || isThanking}
+                        onClick={() => thankMutation.mutate(entry.id)}
+                        className="flex cursor-pointer items-center justify-center gap-2 self-start rounded-lg bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] disabled:opacity-50 disabled:cursor-default"
+                      >
+                        <MessageBubbleIcon />
+                        {isThanked ? "Thanked" : isThanking ? "Sending…" : t("thankContributor")}
+                      </button>
+                    </div>
+                  </div>
+                </ChamferedPanel>
+              );
+            })}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 pt-2">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-gray-400 transition-colors hover:border-gray-500 hover:text-white disabled:opacity-30 disabled:cursor-default"
+              >
+                ← Prev
+              </button>
+              <span className="text-xs text-gray-500">
+                {page} / {totalPages}
+              </span>
+              <button
+                type="button"
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => p + 1)}
+                className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-gray-400 transition-colors hover:border-gray-500 hover:text-white disabled:opacity-30 disabled:cursor-default"
+              >
+                Next →
+              </button>
             </div>
-          </ChamferedPanel>
-        ))}
-      </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -238,6 +238,20 @@ export async function getArticles(params?: Record<string, string | number | bool
   return { status, results, data: list };
 }
 
+/** GET /articles/author/me — the authenticated author's own articles.
+ *  Backend returns `{ count, rows }` (Sequelize findAndCountAll). */
+export async function getMyArticles(params?: {
+  status?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<ArticlesListResponse> {
+  const { data } = await api.get<unknown>("/articles/author/me", { params });
+  const o = data && typeof data === "object" ? (data as Record<string, unknown>) : {};
+  // Backend shape: { count: number, rows: ArticleListItem[] }
+  const rows = Array.isArray(o.rows) ? coerceArticleListArray(o.rows) : normalizeArticlesListPayload(data);
+  return { status: 200, results: typeof o.count === "number" ? o.count : rows.length, data: rows };
+}
+
 // ——— Single article (GET public, PATCH author, DELETE admin) ———
 
 export type ArticleDetailBlock = {

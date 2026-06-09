@@ -1,5 +1,5 @@
-import { PlaceholderPage } from "@/components/dashboard/shared/PlaceholderPage";
+import { ProfileAnalytics } from "@/components/dashboard/profile/analytics/ProfileAnalytics";
 
 export default function UserAnalyticsPage() {
-  return <PlaceholderPage pageKey="profileAnalytics" />;
+  return <ProfileAnalytics />;
 }

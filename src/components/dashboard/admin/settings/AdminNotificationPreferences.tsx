@@ -7,6 +7,8 @@ import { SettingsRow, settingsCardClass, SettingsToggle } from "./SettingsPrimit
 import { useNotificationPreferences } from "@/hooks/queries/notifications";
 import { useUpdateNotificationPreferences } from "@/hooks/mutations/notifications";
 import type { NotificationPreferences } from "@/services/notifications.service";
+import { useAuthUser } from "@/components/providers/AuthProvider";
+import { canManageEditorNotifications } from "@/lib/auth/roles";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -17,10 +19,16 @@ const DEFAULTS: NotificationPreferences = {
   comments: false,
   weekly_digest: true,
   push_browser: true,
+  new_submissions: true,
+  author_messages: true,
+  revision_updates: true,
+  flagged_content: false,
 };
 
 export function AdminNotificationPreferences() {
   const t = useTranslations("Dashboard.notificationsPage.preferences");
+  const user = useAuthUser();
+  const showEditor = canManageEditorNotifications(user);
   const { data: serverPrefs, isPending: loading } = useNotificationPreferences();
   const updateMutation = useUpdateNotificationPreferences();
   const [prefs, setPrefs] = useState<NotificationPreferences>(DEFAULTS);
@@ -146,6 +154,61 @@ export function AdminNotificationPreferences() {
             />
           </div>
         </div>
+
+        {showEditor ? (
+          <div className="mt-10">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">
+              {t("editorSection")}
+            </h2>
+            <div className="mt-2">
+              <SettingsRow
+                title={t("newSubmissions")}
+                description={t("newSubmissionsDescription")}
+                control={
+                  <SettingsToggle
+                    checked={prefs.new_submissions}
+                    onChange={() => toggle("new_submissions")}
+                    aria-label={t("newSubmissionsAria")}
+                  />
+                }
+              />
+              <SettingsRow
+                title={t("authorMessages")}
+                description={t("authorMessagesDescription")}
+                control={
+                  <SettingsToggle
+                    checked={prefs.author_messages}
+                    onChange={() => toggle("author_messages")}
+                    aria-label={t("authorMessagesAria")}
+                  />
+                }
+              />
+              <SettingsRow
+                title={t("revisionUpdates")}
+                description={t("revisionUpdatesDescription")}
+                control={
+                  <SettingsToggle
+                    checked={prefs.revision_updates}
+                    onChange={() => toggle("revision_updates")}
+                    aria-label={t("revisionUpdatesAria")}
+                  />
+                }
+              />
+              <SettingsRow
+                title={t("flaggedContent")}
+                description={t("flaggedContentDescription")}
+                control={
+                  <SettingsToggle
+                    checked={prefs.flagged_content}
+                    onChange={() => toggle("flagged_content")}
+                    aria-label={t("flaggedContentAria")}
+                  />
+                }
+                showDivider={false}
+              />
+            </div>
+          </div>
+        ) : null}
 
         <div className="mt-10">
           <button

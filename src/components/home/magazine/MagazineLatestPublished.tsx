@@ -168,7 +168,7 @@ function PublishedCardLink({
   if (!id) return <>{children}</>;
   return (
     <Link
-      href={`/content/article?id=${encodeURIComponent(id)}`}
+      href={`/books/${encodeURIComponent(id)}`}
       className="flex flex-col items-stretch transition-opacity hover:opacity-90"
     >
       {children}

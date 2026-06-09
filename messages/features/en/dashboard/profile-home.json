@@ -37,7 +37,14 @@
       "removeLinkAria": "Remove link",
       "addNewLink": "Add new link",
       "saved": "Saved",
-      "saveChanges": "Save Changes"
+      "saveChanges": "Save Changes",
+      "loading": "Loading…",
+      "loadError": "Could not load your profile.",
+      "saving": "Saving…",
+      "saveError": "Could not save. Please try again.",
+      "emailInUse": "That email is already in use.",
+      "uploading": "Uploading…",
+      "uploadError": "Could not upload image."
     },
     "adminPrivacy": {
       "pageTitle": "Privacy Settings",
@@ -59,7 +66,11 @@
       "allowFollowsDescription": "Allow other users to follow you",
       "allowFollowsAria": "Allow follows",
       "saved": "Saved",
-      "saveChanges": "Save changes"
+      "saveChanges": "Save changes",
+      "saving": "Saving…",
+      "loading": "Loading…",
+      "loadError": "Could not load your privacy settings.",
+      "saveError": "Could not save. Please try again."
     },
     "adminAccount": {
       "pageTitle": "Account Security",

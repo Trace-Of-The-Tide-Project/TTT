@@ -1,0 +1,25 @@
+{
+  "Dashboard": {
+    "availability": {
+      "title": "Disponibilité",
+      "subtitle": "Définissez votre statut de disponibilité et un message facultatif.",
+      "statusLabel": "Statut",
+      "statusAria": "Statut de disponibilité",
+      "statusAvailable": "Disponible",
+      "statusAvailableDescription": "Ouvert aux nouveaux projets et messages.",
+      "statusBusy": "Occupé",
+      "statusBusyDescription": "Au travail — les réponses peuvent être plus lentes.",
+      "statusAway": "Absent",
+      "statusAwayDescription": "Indisponible pour le moment.",
+      "messageLabel": "Message de statut",
+      "messagePlaceholder": "p. ex. De retour lundi",
+      "messageHint": "Facultatif. Affiché à côté de votre statut.",
+      "save": "Enregistrer les modifications",
+      "saving": "Enregistrement…",
+      "saved": "Enregistré",
+      "saveError": "Impossible d'enregistrer. Veuillez réessayer.",
+      "loading": "Chargement…",
+      "loadError": "Impossible de charger votre disponibilité."
+    }
+  }
+}
