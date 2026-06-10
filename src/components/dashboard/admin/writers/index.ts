@@ -1,0 +1,1 @@
+export { WritersManagementContent } from "./WritersManagementContent";
