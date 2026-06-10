@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { useAuthUser } from "@/components/providers/AuthProvider";
 import { useBook } from "@/hooks/queries/books";
 import { useCreateBook, useUpdateBook } from "@/hooks/mutations/books";
+import { mutationToast } from "@/hooks/useMutationToast";
 import { uploadFileToUrl } from "@/services/uploads.service";
 import type { BookPayload } from "@/services/books.service";
 
@@ -351,18 +352,21 @@ export function BookFormContent({ bookId }: Props) {
       }
       const payload = buildPayload();
       if (isEdit && bookId) {
-        updateMutation.mutate(
-          { bookId, payload },
-          {
-            onSuccess: () => router.push("/admin/books"),
-            onError: () => setSubmitError(t("errors.saveFailed")),
-          },
-        );
+        mutationToast(() => updateMutation.mutateAsync({ bookId, payload }), {
+          loading: "Saving book…",
+          success: "Book saved",
+          error: "Failed to save book",
+        })
+          .then(() => router.push("/admin/books"))
+          .catch(() => {});
       } else {
-        createMutation.mutate(payload, {
-          onSuccess: () => router.push("/admin/books"),
-          onError: () => setSubmitError(t("errors.saveFailed")),
-        });
+        mutationToast(() => createMutation.mutateAsync(payload), {
+          loading: "Saving book…",
+          success: "Book created",
+          error: "Failed to save book",
+        })
+          .then(() => router.push("/admin/books"))
+          .catch(() => {});
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
