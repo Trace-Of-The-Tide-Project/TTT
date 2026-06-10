@@ -49,6 +49,8 @@ import {
   useApproveEditorApplication,
   useRejectEditorApplication,
 } from "@/hooks/mutations/dashboard";
+import { SkeletonStats } from "@/components/ui/SkeletonStats";
+import { SkeletonTable } from "@/components/ui/SkeletonTable";
 
 // ── Icon mapping helpers ────────────────────────────────────────
 
@@ -197,6 +199,17 @@ export default function AdminDashboardPage() {
   }));
 
   const financeCards = financeData ? buildFinanceCards(financeData) : [];
+
+  const isLoadingDashboard = !contentOverview && !userRoles && !financeData && activityItems.length === 0;
+
+  if (isLoadingDashboard) {
+    return (
+      <div className="space-y-6 p-3 sm:p-5 sm:space-y-8">
+        <SkeletonStats />
+        <SkeletonTable />
+      </div>
+    );
+  }
 
   const quickActionsWithModals = quickActions.map((item) => {
     if (item.id === "1") return { ...item, href: undefined, onClick: () => setBroadcastOpen(true) };
