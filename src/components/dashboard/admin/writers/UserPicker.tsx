@@ -4,14 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useUsers } from "@/hooks/queries/users";
 import type { AdminUserListItem } from "@/services/users.service";
-
-function initials(name: string): string {
-  const parts = name.split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) {
-    return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase() || "?";
-}
+import { nameInitials } from "./initials";
 
 export function UserPicker({
   value,
@@ -45,7 +38,7 @@ export function UserPicker({
       <div className="flex items-center justify-between gap-3 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2">
         <div className="flex min-w-0 items-center gap-3">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--tott-elevated)] text-xs font-semibold text-[var(--tott-gold)]">
-            {initials(name)}
+            {nameInitials(name)}
           </span>
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-foreground">{name}</p>
@@ -70,6 +63,9 @@ export function UserPicker({
         type="text"
         value={searchInput}
         onChange={(e) => setSearchInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.preventDefault();
+        }}
         placeholder={t("searchPlaceholder")}
         disabled={disabled}
         className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-[var(--tott-gold)]/60 transition-colors"
@@ -92,7 +88,7 @@ export function UserPicker({
               className="flex w-full items-center gap-3 border-b border-[var(--tott-card-border)] px-3 py-2 text-start last:border-b-0 hover:bg-[var(--tott-elevated)] disabled:opacity-40"
             >
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--tott-elevated)] text-xs font-semibold text-[var(--tott-gold)]">
-                {initials(name)}
+                {nameInitials(name)}
               </span>
               <span className="min-w-0">
                 <span className="block truncate text-sm text-foreground">{name}</span>

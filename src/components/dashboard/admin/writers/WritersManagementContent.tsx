@@ -21,6 +21,7 @@ import {
   type WritersListMeta,
 } from "@/services/writers.service";
 import { formatApiError } from "@/lib/api/error-message";
+import { nameInitials } from "./initials";
 
 const PAGE_LIMIT = 10;
 
@@ -40,15 +41,6 @@ function writerRowName(w: WriterProfile): string {
     writerDisplayName(w) ||
     "—"
   );
-}
-
-function writerInitials(w: WriterProfile): string {
-  const source = writerRowName(w);
-  const parts = source.split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) {
-    return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase();
-  }
-  return source.slice(0, 2).toUpperCase() || "?";
 }
 
 export function WritersManagementContent() {
@@ -161,7 +153,7 @@ export function WritersManagementContent() {
                 <span
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--tott-elevated)] text-xs font-semibold text-[var(--tott-gold)]"
                 >
-                  {writerInitials(w)}
+                  {nameInitials(writerRowName(w))}
                 </span>
               )}
               <div className="min-w-0">

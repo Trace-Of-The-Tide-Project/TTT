@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 
 /** Drag-and-drop + click-to-upload zone for the writer avatar.
@@ -18,7 +18,10 @@ export function AvatarUploadZone({
 }) {
   const id = useId();
   const [dragging, setDragging] = useState(false);
+  const [broken, setBroken] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { setBroken(false); }, [value]);
 
   const dragProps = {
     onDragOver: (e: React.DragEvent) => { e.preventDefault(); setDragging(true); },
@@ -35,7 +38,7 @@ export function AvatarUploadZone({
     },
   };
 
-  if (value && !uploading) {
+  if (value && !uploading && !broken) {
     return (
       <div className="relative mt-1 inline-block">
         {/* eslint-disable-next-line @next/next/no-img-element -- preview of arbitrary ref */}
@@ -43,7 +46,7 @@ export function AvatarUploadZone({
           src={resolveArticleMediaSrc(value)}
           alt="Avatar preview"
           className="h-24 w-24 rounded-full object-cover border border-[var(--tott-card-border)] shadow-md"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+          onError={() => setBroken(true)}
         />
         <label
           htmlFor={id}
@@ -155,7 +158,7 @@ export function ThemesInput({
         disabled={disabled}
         onChange={(e) => setDraft(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === ",") {
+          if (e.key === "Enter" || e.key === "," || e.key === "،") {
             e.preventDefault();
             addDraft();
           }
