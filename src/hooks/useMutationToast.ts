@@ -15,5 +15,5 @@ export function mutationToast<T>(
     loading: config.loading,
     success: config.success,
     error: (err) => formatApiError(err, config.error ?? "Something went wrong"),
-  }) as unknown as Promise<T>;
+  }).unwrap();
 }
