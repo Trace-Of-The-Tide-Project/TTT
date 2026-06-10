@@ -37,6 +37,8 @@ export type WriterProfile = {
   quote?: string | null;
   collaborations?: string | null;
   recognition?: string | null;
+  /** Backend DECIMAL — may arrive as a numeric string; coerce with Number()
+   * before sending back via WriterProfilePayload. */
   monthly_goal?: number | string | null;
   createdAt?: string;
   updatedAt?: string;
@@ -97,9 +99,14 @@ export async function getWriters(
 function unwrapOne(raw: unknown): WriterProfile | null {
   if (!raw || typeof raw !== "object") return null;
   if ("data" in (raw as object)) {
-    return ((raw as { data?: WriterProfile }).data ?? null);
+    const inner = (raw as { data?: unknown }).data;
+    if (inner && typeof inner === "object" && "id" in (inner as object)) {
+      return inner as WriterProfile;
+    }
+    return null;
   }
-  return raw as WriterProfile;
+  if ("id" in (raw as object)) return raw as WriterProfile;
+  return null;
 }
 
 /** GET /writers/{id} — public. Works server- or client-side. Returns
@@ -197,7 +204,9 @@ function parseWritersMeta(
   };
 }
 
-/** GET /writers with pagination meta — for the admin list (client-only). */
+/** GET /writers with pagination meta — for the admin list (client-only).
+ * Unlike the public reads above, errors propagate so the admin UI can
+ * render a retry banner — do not add a silent catch. */
 export async function getWritersAdmin(
   params?: GetWritersParams,
 ): Promise<WritersAdminResult> {
