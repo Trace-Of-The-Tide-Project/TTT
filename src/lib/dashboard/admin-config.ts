@@ -179,6 +179,27 @@ export const adminConfig: DashboardConfig = {
         },
         {
           kind: "group",
+          groupId: "writers",
+          labelKey: "sidebar.writers",
+          icon: PenLineIcon,
+          defaultOpen: true,
+          items: [
+            {
+              kind: "item",
+              labelKey: "sidebar.createWriter",
+              href: "/admin/writers/create",
+              icon: PlusIcon,
+            },
+            {
+              kind: "item",
+              labelKey: "sidebar.allWriters",
+              href: "/admin/writers",
+              icon: PenLineIcon,
+            },
+          ],
+        },
+        {
+          kind: "group",
           groupId: "community",
           labelKey: "sidebar.community",
           icon: HeartHandshakeIcon,
