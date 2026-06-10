@@ -77,7 +77,7 @@
         },
         "create": "Créer le profil",
         "creating": "Création…",
-        "save": "Enregistrer",
+        "save": "Enregistrer les modifications",
         "saving": "Enregistrement…",
         "cancel": "Annuler",
         "upload": { "uploading": "Téléversement…", "click": "Cliquez pour téléverser un avatar", "hint": "JPG, PNG, WebP — glisser-déposer pris en charge" }
