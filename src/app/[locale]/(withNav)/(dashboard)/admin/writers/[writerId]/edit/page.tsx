@@ -6,5 +6,5 @@ type PageProps = {
 
 export default async function AdminEditWriterPage({ params }: PageProps) {
   const { writerId } = await params;
-  return <WriterFormContent writerId={writerId} />;
+  return <WriterFormContent key={writerId} writerId={writerId} />;
 }

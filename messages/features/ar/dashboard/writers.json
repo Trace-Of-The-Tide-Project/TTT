@@ -22,6 +22,7 @@
         "editTitle": "تعديل ملف كاتب",
         "backToList": "العودة إلى ملفات الكتّاب",
         "loading": "جارٍ تحميل ملف الكاتب…",
+        "notFound": "لم يتم العثور على ملف الكاتب.",
         "sections": { "account": "حساب الكاتب", "identity": "الهوية", "about": "نبذة", "support": "الدعم والظهور" },
         "account": {
           "modeExisting": "مستخدم حالي",
@@ -66,6 +67,7 @@
           "featured": "إظهار في شريط الكتّاب المميّزين"
         },
         "kinds": { "none": "—", "musician": "موسيقي", "writer": "كاتب", "visual_artist": "فنان بصري", "filmmaker": "صانع أفلام" },
+        "created": { "title": "تم إنشاء ملف الكاتب", "description": "شارك بيانات الدخول هذه مع الكاتب الآن — لن تُعرض كلمة المرور المؤقتة مرة أخرى.", "continue": "الانتقال إلى ملفات الكتّاب" },
         "errors": {
           "userRequired": "اختر مستخدمًا أو أنشئ مستخدمًا جديدًا.",
           "fullNameRequired": "الاسم الكامل مطلوب.",
@@ -74,7 +76,8 @@
           "monthlyGoalInvalid": "يجب أن يكون هدف الدعم 0 أو أكثر.",
           "createUserFailed": "تعذّر إنشاء حساب المستخدم",
           "saveFailed": "تعذّر حفظ ملف الكاتب",
-          "duplicateProfile": "لدى هذا المستخدم ملف كاتب بالفعل."
+          "duplicateProfile": "لدى هذا المستخدم ملف كاتب بالفعل.",
+          "avatarUploadFailed": "تعذّر رفع الصورة الشخصية"
         },
         "create": "إنشاء الملف",
         "creating": "جارٍ الإنشاء…",

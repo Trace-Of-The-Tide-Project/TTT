@@ -11,7 +11,7 @@ import {
 import { useCreateAdminUser } from "@/hooks/mutations/users";
 import { uploadArticleAssetPath } from "@/services/uploads.service";
 import type { WriterProfilePayload } from "@/services/writers.service";
-import type { AdminUserListItem } from "@/services/users.service";
+import type { AdminUserListItem, CreatedAdminUser } from "@/services/users.service";
 import { formatApiError } from "@/lib/api/error-message";
 import { UserPicker } from "./UserPicker";
 import { AvatarUploadZone, ThemesInput } from "./form-controls";
@@ -98,6 +98,9 @@ export function WriterFormContent({ writerId }: Props) {
   const [newEmail, setNewEmail] = useState("");
   const [tempPassword, setTempPassword] = useState("");
   const [copied, setCopied] = useState(false);
+  const [summaryCopied, setSummaryCopied] = useState(false);
+  const [createdUser, setCreatedUser] = useState<CreatedAdminUser | null>(null);
+  const [createdSummary, setCreatedSummary] = useState<{ email: string; password: string } | null>(null);
 
   useEffect(() => {
     // Generate the password client-side only (avoids SSR/CSR mismatch).
@@ -159,16 +162,19 @@ export function WriterFormContent({ writerId }: Props) {
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
+      setSubmitError(null);
       setAvatarUploading(true);
       try {
         // Persist the STABLE storage key — signed URLs expire (book cover bug).
         const key = await uploadArticleAssetPath(file);
         setForm((prev) => ({ ...prev, avatar_url: key }));
+      } catch {
+        setSubmitError(t("errors.avatarUploadFailed"));
       } finally {
         setAvatarUploading(false);
       }
     },
-    [],
+    [t],
   );
 
   const buildPayload = (): WriterProfilePayload => {
@@ -244,31 +250,26 @@ export function WriterFormContent({ writerId }: Props) {
         return;
       }
 
-      // Create mode — resolve the user_id first.
-      let userId = selectedUser?.id ?? null;
-      if (userMode === "new" && !userId) {
+      // Create mode — resolve the user_id strictly per-mode.
+      let userId: string | null = null;
+      if (userMode === "existing") {
+        userId = selectedUser?.id ?? null;
+      } else if (
+        createdUser &&
+        createdUser.email?.toLowerCase() === newEmail.trim().toLowerCase()
+      ) {
+        // This account was already created by a previous attempt — reuse it
+        // so retries never duplicate the user.
+        userId = createdUser.id;
+      } else {
         try {
           const created = await createUserMutation.mutateAsync({
             full_name: newFullName.trim(),
             email: newEmail.trim(),
             password: tempPassword,
           });
+          setCreatedUser(created);
           userId = created.id;
-          // Flip to "existing" with the new user preselected so a retry
-          // after a profile-create failure never duplicates the account.
-          setSelectedUser({
-            id: created.id,
-            username: created.username ?? "",
-            full_name: created.full_name ?? newFullName.trim(),
-            email: created.email ?? newEmail.trim(),
-            status: "active",
-            role: "user",
-            roles: [],
-            joined_at: null,
-            last_active_at: null,
-            contributions_count: 0,
-          });
-          setUserMode("existing");
         } catch (err) {
           setUserError(formatApiError(err, t("errors.createUserFailed")));
           return;
@@ -284,7 +285,11 @@ export function WriterFormContent({ writerId }: Props) {
           ...buildPayload(),
           user_id: userId,
         });
-        router.push("/admin/writers");
+        if (userMode === "new") {
+          setCreatedSummary({ email: newEmail.trim(), password: tempPassword });
+        } else {
+          router.push("/admin/writers");
+        }
       } catch (err) {
         const msg = formatApiError(err, t("errors.saveFailed"));
         if (/already exists/i.test(msg)) {
@@ -308,8 +313,36 @@ export function WriterFormContent({ writerId }: Props) {
     }
   };
 
+  const copySummaryPassword = async () => {
+    if (!createdSummary) return;
+    try {
+      await navigator.clipboard.writeText(createdSummary.password);
+      setSummaryCopied(true);
+      window.setTimeout(() => setSummaryCopied(false), 2000);
+    } catch {
+      /* clipboard unavailable — user can select the text manually */
+    }
+  };
+
   if (isEdit && writerQuery.isPending) {
     return <div className="my-4 mx-10 text-sm text-gray-500">{t("loading")}</div>;
+  }
+
+  if (isEdit && !writerQuery.data) {
+    return (
+      <div className="my-4 mx-10">
+        <Link
+          href="/admin/writers"
+          className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-foreground transition-colors mb-5"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+          {t("backToList")}
+        </Link>
+        <p className="text-sm text-gray-500">{t("notFound")}</p>
+      </div>
+    );
   }
 
   const linkedUserLabel = isEdit
@@ -423,7 +456,8 @@ export function WriterFormContent({ writerId }: Props) {
                       <button
                         type="button"
                         onClick={() => setTempPassword(generateTempPassword())}
-                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-gray-300 hover:text-foreground"
+                        disabled={busy || (createdUser !== null && (createdUser.email?.toLowerCase() ?? "") === newEmail.trim().toLowerCase())}
+                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-gray-300 hover:text-foreground disabled:opacity-40"
                       >
                         {t("account.regenerate")}
                       </button>
@@ -593,6 +627,53 @@ export function WriterFormContent({ writerId }: Props) {
           </Link>
         </div>
       </form>
+
+      {createdSummary && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div
+            className="w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] p-6 shadow-xl"
+            style={{ backgroundColor: "var(--tott-dash-bg, #1a1a1a)" }}
+          >
+            <h2 className="mb-2 text-base font-semibold text-foreground">
+              {t("created.title")}
+            </h2>
+            <p className="mb-4 text-sm text-gray-400">
+              {t("created.description")}
+            </p>
+            <div className="space-y-3 mb-5">
+              <div>
+                <label className={labelClass}>{t("account.email")}</label>
+                <p className="text-sm text-foreground">{createdSummary.email}</p>
+              </div>
+              <div>
+                <label className={labelClass}>{t("account.tempPassword")}</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    className={`${inputClass} font-mono`}
+                    value={createdSummary.password}
+                  />
+                  <button
+                    type="button"
+                    onClick={copySummaryPassword}
+                    className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-gray-300 hover:text-foreground"
+                  >
+                    {summaryCopied ? t("account.copied") : t("account.copy")}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => router.push("/admin/writers")}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 transition-colors"
+            >
+              {t("created.continue")}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

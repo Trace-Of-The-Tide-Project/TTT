@@ -22,6 +22,7 @@
         "editTitle": "Editar perfil de escritor",
         "backToList": "Volver a perfiles de escritores",
         "loading": "Cargando perfil de escritor…",
+        "notFound": "Perfil de escritor no encontrado.",
         "sections": { "account": "Cuenta del escritor", "identity": "Identidad", "about": "Acerca de", "support": "Apoyo y visibilidad" },
         "account": {
           "modeExisting": "Usuario existente",
@@ -66,6 +67,7 @@
           "featured": "Mostrar en la franja de escritores destacados"
         },
         "kinds": { "none": "—", "musician": "Músico", "writer": "Escritor", "visual_artist": "Artista visual", "filmmaker": "Cineasta" },
+        "created": { "title": "Perfil de escritor creado", "description": "Comparte estos datos de acceso con el escritor ahora — la contraseña temporal no se volverá a mostrar.", "continue": "Ir a perfiles de escritores" },
         "errors": {
           "userRequired": "Selecciona un usuario o crea uno nuevo.",
           "fullNameRequired": "El nombre completo es obligatorio.",
@@ -74,7 +76,8 @@
           "monthlyGoalInvalid": "La meta mensual debe ser 0 o más.",
           "createUserFailed": "No se pudo crear la cuenta de usuario",
           "saveFailed": "No se pudo guardar el perfil de escritor",
-          "duplicateProfile": "Este usuario ya tiene un perfil de escritor."
+          "duplicateProfile": "Este usuario ya tiene un perfil de escritor.",
+          "avatarUploadFailed": "No se pudo subir el avatar"
         },
         "create": "Crear perfil",
         "creating": "Creando…",

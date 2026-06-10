@@ -22,6 +22,7 @@
         "editTitle": "Edit writer profile",
         "backToList": "Back to writer profiles",
         "loading": "Loading writer profile…",
+        "notFound": "Writer profile not found.",
         "sections": { "account": "Writer account", "identity": "Identity", "about": "About", "support": "Support & visibility" },
         "account": {
           "modeExisting": "Existing user",
@@ -66,6 +67,7 @@
           "featured": "Show on the featured writers strip"
         },
         "kinds": { "none": "—", "musician": "Musician", "writer": "Writer", "visual_artist": "Visual artist", "filmmaker": "Filmmaker" },
+        "created": { "title": "Writer profile created", "description": "Share these sign-in details with the writer now — the temporary password will not be shown again.", "continue": "Go to writer profiles" },
         "errors": {
           "userRequired": "Select a user or create a new one.",
           "fullNameRequired": "Full name is required.",
@@ -74,7 +76,8 @@
           "monthlyGoalInvalid": "Monthly goal must be 0 or more.",
           "createUserFailed": "Failed to create the user account",
           "saveFailed": "Failed to save the writer profile",
-          "duplicateProfile": "This user already has a writer profile."
+          "duplicateProfile": "This user already has a writer profile.",
+          "avatarUploadFailed": "Failed to upload the avatar"
         },
         "create": "Create profile",
         "creating": "Creating…",
