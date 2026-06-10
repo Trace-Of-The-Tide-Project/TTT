@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 
 /** Drag-and-drop + click-to-upload zone for the writer avatar.
@@ -21,7 +21,13 @@ export function AvatarUploadZone({
   const [broken, setBroken] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => { setBroken(false); }, [value]);
+  // Render-time reset (same pattern as the books admin list): a new value
+  // gets a fresh chance to load even if the previous one 404'd.
+  const [prevValue, setPrevValue] = useState(value);
+  if (prevValue !== value) {
+    setPrevValue(value);
+    setBroken(false);
+  }
 
   const dragProps = {
     onDragOver: (e: React.DragEvent) => { e.preventDefault(); setDragging(true); },
