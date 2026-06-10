@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
 import { Link, useRouter } from "@/i18n/navigation";
+import { mutationToast } from "@/hooks/useMutationToast";
 import { useWriter } from "@/hooks/queries/writers";
 import {
   useCreateWriterProfile,
@@ -246,11 +246,14 @@ export function WriterFormContent({ writerId }: Props) {
     setSubmitting(true);
     try {
       if (isEdit && writerId) {
-        await updateMutation.mutateAsync({
-          writerId,
-          payload: buildPayload(),
-        });
-        toast.success(t("toasts.updated"));
+        await mutationToast(
+          () => updateMutation.mutateAsync({ writerId, payload: buildPayload() }),
+          {
+            loading: t("saving"),
+            success: t("toasts.updated"),
+            error: t("errors.saveFailed"),
+          },
+        );
         router.push("/admin/writers");
         return;
       }
@@ -290,26 +293,28 @@ export function WriterFormContent({ writerId }: Props) {
       }
 
       try {
-        await createMutation.mutateAsync({
-          ...buildPayload(),
-          user_id: userId,
-        });
+        await mutationToast(
+          () => createMutation.mutateAsync({ ...buildPayload(), user_id: userId }),
+          {
+            loading: t("saving"),
+            success: t("toasts.created"),
+            error: t("errors.saveFailed"),
+          },
+        );
         if (userMode === "new") {
           setCreatedSummary({
             email: newEmail.trim(),
             password: handoffPassword ?? tempPassword,
           });
         } else {
-          toast.success(t("toasts.created"));
           router.push("/admin/writers");
         }
       } catch (err) {
         const msg = formatApiError(err, t("errors.saveFailed"));
         if (/already exists/i.test(msg)) {
           setUserError(t("errors.duplicateProfile"));
-        } else {
-          setSubmitError(msg);
         }
+        // Non-duplicate errors are already shown by mutationToast's error toast.
       }
     } finally {
       setSubmitting(false);
