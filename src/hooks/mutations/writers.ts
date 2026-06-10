@@ -13,6 +13,7 @@ export function useCreateWriterProfile() {
     mutationFn: (payload: WriterProfilePayload) =>
       createWriterProfile(payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: writersKeys.all }),
+    meta: { silent: true },
   });
 }
 
@@ -27,6 +28,7 @@ export function useUpdateWriterProfile() {
       qc.invalidateQueries({ queryKey: writersKeys.byId(args.writerId) });
       qc.invalidateQueries({ queryKey: writersKeys.all });
     },
+    meta: { silent: true },
   });
 }
 
@@ -35,5 +37,6 @@ export function useDeleteWriterProfile() {
   return useMutation({
     mutationFn: (writerId: string) => deleteWriterProfile(writerId),
     onSuccess: () => qc.invalidateQueries({ queryKey: writersKeys.all }),
+    meta: { silent: true },
   });
 }

@@ -17,6 +17,7 @@ export function useUpdateUser() {
     mutationFn: (args: { id: string; payload: UpdateUserPayload }) =>
       updateUser(args.id, args.payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: usersKeys.all }),
+    meta: { silent: true },
   });
 }
 
@@ -26,6 +27,7 @@ export function useUpdateUserStatus() {
     mutationFn: (args: { id: string; status: AdminUserStatus }) =>
       updateUserStatus(args.id, args.status),
     onSuccess: () => qc.invalidateQueries({ queryKey: usersKeys.all }),
+    meta: { silent: true },
   });
 }
 

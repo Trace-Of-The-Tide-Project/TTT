@@ -12,6 +12,7 @@ export function useCreateBook() {
   return useMutation({
     mutationFn: (payload: BookPayload) => createBook(payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: booksKeys.all }),
+    meta: { silent: true },
   });
 }
 
@@ -24,6 +25,7 @@ export function useUpdateBook() {
       qc.invalidateQueries({ queryKey: booksKeys.byId(args.bookId) });
       qc.invalidateQueries({ queryKey: booksKeys.all });
     },
+    meta: { silent: true },
   });
 }
 
@@ -32,5 +34,6 @@ export function useDeleteBook() {
   return useMutation({
     mutationFn: (bookId: string) => deleteBook(bookId),
     onSuccess: () => qc.invalidateQueries({ queryKey: booksKeys.all }),
+    meta: { silent: true },
   });
 }

@@ -22,6 +22,7 @@ export function useCreateArticle() {
       // translation panels/badges so the new language version shows up.
       qc.invalidateQueries({ queryKey: translationKeys.all });
     },
+    meta: { silent: true },
   });
 }
 
@@ -57,6 +58,7 @@ export function useUpdateArticle() {
       qc.invalidateQueries({ queryKey: articlesKeys.byId(args.articleId) });
       qc.invalidateQueries({ queryKey: articlesKeys.all });
     },
+    meta: { silent: true },
   });
 }
 
@@ -65,7 +67,7 @@ export function useDeleteArticle(options?: { silent?: boolean }) {
   return useMutation({
     mutationFn: (articleId: string) => deleteArticle(articleId),
     onSuccess: () => qc.invalidateQueries({ queryKey: articlesKeys.all }),
-    meta: options?.silent ? { silent: true } : undefined,
+    meta: { silent: options?.silent ?? true },
   });
 }
 
