@@ -45,13 +45,6 @@ function isValidImageUrl(url: string | null | undefined): url is string {
   }
 }
 
-const FALLBACK_CARDS: HexCard[] = Array.from({ length: 30 }, (_, i) => ({
-  id: String(i),
-  title: "Insert card title here",
-  badge: "12 articles",
-  image: null,
-  href: "/fields",
-}));
 
 /* ─────────────────────────────── grid layout ───────────────────────────────
    Matches Homepage.svg: 6 visible content rows + 1 top-peek row.
@@ -161,9 +154,8 @@ export function HomeHexGrid({ cards }: Props) {
   const narrow = vw < 480;
   const grid = useMemo(() => buildGrid(narrow), [narrow]);
 
-  // FALLBACK_CARDS only show when the articles endpoint returns nothing (typical for signed-out requests).
   const sessionPresent = hasBrowserAuthSession(status);
-  const gridCards = cards.length > 0 ? cards : FALLBACK_CARDS;
+  const gridCards = cards;
   const heroHref = sessionPresent ? "/fields" : "/auth/login";
   const hexHeight = Math.round(hexSize * (HEX_H / HEX_W));
   const colWidth = hexSize; // pointy-top: column step = full hex width
@@ -199,7 +191,7 @@ export function HomeHexGrid({ cards }: Props) {
 
   let cardIdx = 0;
   const positionedCells = grid.map((cell) => {
-    const card = cell.isTopPeek ? null : gridCards[cardIdx++ % gridCards.length];
+    const card = cell.isTopPeek || gridCards.length === 0 ? null : gridCards[cardIdx++ % gridCards.length];
     // Pixel position of the hex's bounding-box top-left corner.
     const center_x = cell.isOffset
       ? cell.col * colWidth + colWidth / 2
@@ -453,7 +445,7 @@ function CellView({
         <path d={BG_PATH} fill={TK.hexFill} stroke={TK.hexStroke} />
 
         {/* Image (clipped to inner hex) — only for cards, not the top peek */}
-        {!isTopPeek && (
+        {!isTopPeek && card && (
           <g clipPath={`url(#hex-img-${cellId})`}>
             <image
               href={isValidImageUrl(card!.image) ? card!.image! : "/images/image.png"}
@@ -483,7 +475,7 @@ function CellView({
 
         {/* Inner sheen border — exact path of the inner hex stroked at 1px
             (Card.svg's "Stroke" element). */}
-        {!isTopPeek && (
+        {!isTopPeek && card && (
           <path
             transform="translate(16.5 20.5)"
             d={IMAGE_PATH_LOCAL}
@@ -496,9 +488,9 @@ function CellView({
       </svg>
 
       {/* HTML overlay: title + badge + click target. Sits above the SVG. */}
-      {!isTopPeek && (
+      {!isTopPeek && card && (
         <Link
-          href={card!.href}
+          href={card.href}
           className="absolute"
           style={{
             inset: 0,
@@ -526,7 +518,7 @@ function CellView({
               textOverflow: "ellipsis",
             }}
           >
-            {card!.title}
+            {card.title}
           </p>
 
           <div className="flex items-stretch" style={{ height: badgeLine + 8 }}>
@@ -550,7 +542,7 @@ function CellView({
                   whiteSpace: "nowrap",
                 }}
               >
-                {card!.badge}
+                {card.badge}
               </span>
             </div>
             <ChevronCap direction="right" size={badgeLine + 8} />

@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/icons";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { getNavAccountHref } from "@/lib/auth/nav-account-href";
+import { isAdmin } from "@/lib/auth/roles";
 import { theme } from "@/lib/theme";
 
 const navLinks = [
@@ -46,7 +46,7 @@ export function Navbar() {
   const { isDark, toggleScheme } = useTheme();
   const { user, logout } = useAuth();
   const displayName = user?.full_name || user?.username || user?.email || "Username";
-  const accountHref = user ? getNavAccountHref(user) : "/profile";
+  const userIsAdmin = isAdmin(user);
 
   const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
   const handleLogout = useCallback(async () => {
@@ -162,7 +162,7 @@ export function Navbar() {
             <>
               {/* Mobile: avatar link */}
               <Link
-                href={accountHref}
+                href="/profile"
                 className="flex lg:hidden h-9 w-9 shrink-0 items-center justify-center rounded-full transition-opacity hover:opacity-90"
                 style={{ backgroundColor: theme.accentGoldFocus }}
                 aria-label={t("profile")}
@@ -200,8 +200,21 @@ export function Navbar() {
                       isDark ? "border-[#333333] bg-[#1a1a1a]" : "border-gray-200 bg-white"
                     }`}
                   >
+                    {userIsAdmin && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setIsUserDropdownOpen(false)}
+                        className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                          isDark
+                            ? "text-gray-300 hover:bg-white/5 hover:text-white"
+                            : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                        }`}
+                      >
+                        {t("dashboard")}
+                      </Link>
+                    )}
                     <Link
-                      href={accountHref}
+                      href="/profile"
                       onClick={() => setIsUserDropdownOpen(false)}
                       className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
                         isDark
@@ -352,8 +365,17 @@ export function Navbar() {
 
             {user ? (
               <>
+                {userIsAdmin && (
+                  <Link
+                    href="/admin"
+                    onClick={closeMobileMenu}
+                    className={`flex items-center gap-3 rounded-md px-4 py-3 transition-colors ${navMuted} ${navRowHover}`}
+                  >
+                    <span>{t("dashboard")}</span>
+                  </Link>
+                )}
                 <Link
-                  href={accountHref}
+                  href="/profile"
                   onClick={closeMobileMenu}
                   className={`flex items-center gap-3 rounded-md px-4 py-3 transition-colors ${navMuted} ${navRowHover}`}
                 >
