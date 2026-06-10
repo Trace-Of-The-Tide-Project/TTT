@@ -82,7 +82,7 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       {children}
       <Toaster
         dir={dir}
-        position="bottom-right"
+        position="bottom-center"
         closeButton
         theme={theme}
         toastOptions={{
