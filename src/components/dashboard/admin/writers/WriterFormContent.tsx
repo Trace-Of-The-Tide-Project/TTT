@@ -100,6 +100,9 @@ export function WriterFormContent({ writerId }: Props) {
   const [copied, setCopied] = useState(false);
   const [summaryCopied, setSummaryCopied] = useState(false);
   const [createdUser, setCreatedUser] = useState<CreatedAdminUser | null>(null);
+  /** Password the account was actually created with — the summary must show
+   * this even if tempPassword was regenerated between attempts. */
+  const [createdPassword, setCreatedPassword] = useState<string | null>(null);
   const [createdSummary, setCreatedSummary] = useState<{ email: string; password: string } | null>(null);
 
   useEffect(() => {
@@ -269,6 +272,7 @@ export function WriterFormContent({ writerId }: Props) {
             password: tempPassword,
           });
           setCreatedUser(created);
+          setCreatedPassword(tempPassword);
           userId = created.id;
         } catch (err) {
           setUserError(formatApiError(err, t("errors.createUserFailed")));
@@ -286,7 +290,12 @@ export function WriterFormContent({ writerId }: Props) {
           user_id: userId,
         });
         if (userMode === "new") {
-          setCreatedSummary({ email: newEmail.trim(), password: tempPassword });
+          // createdPassword is still null in this closure on the same submit
+          // that created the account; tempPassword is correct in that case.
+          setCreatedSummary({
+            email: newEmail.trim(),
+            password: createdPassword ?? tempPassword,
+          });
         } else {
           router.push("/admin/writers");
         }
