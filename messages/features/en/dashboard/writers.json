@@ -1,0 +1,91 @@
+{
+  "Dashboard": {
+    "writersManagement": {
+      "list": {
+        "pageTitle": "Writer profiles",
+        "addNew": "Create writer profile",
+        "edit": "Edit",
+        "searchPlaceholder": "Search pen name, headline, bio…",
+        "loading": "Loading writer profiles…",
+        "empty": { "none": "No writer profiles yet.", "noMatch": "No writer profiles match your search." },
+        "headers": { "writer": "Writer", "headline": "Headline", "kind": "Discipline", "location": "Location", "featured": "Featured" },
+        "featuredOn": "Featured — shown on the homepage strip",
+        "featuredOff": "Not featured",
+        "toasts": { "featuredOn": "Writer added to the featured strip", "featuredOff": "Writer removed from the featured strip" },
+        "errors": { "loadFailed": "Failed to load writer profiles", "updateFailed": "Failed to update writer profile", "deleteFailed": "Failed to delete writer profile" },
+        "tryAgain": "Try again",
+        "pagination": { "pageOf": "Page {page} of {totalPages}", "previous": "Previous", "next": "Next" },
+        "delete": { "title": "Delete writer profile", "description": "Delete the writer profile \"{name}\"? This cannot be undone.", "cancel": "Cancel", "confirm": "Delete", "confirmBusy": "Deleting…" }
+      },
+      "form": {
+        "createTitle": "Create writer profile",
+        "editTitle": "Edit writer profile",
+        "backToList": "Back to writer profiles",
+        "loading": "Loading writer profile…",
+        "notFound": "Writer profile not found.",
+        "sections": { "account": "Writer account", "identity": "Identity", "about": "About", "support": "Support & visibility" },
+        "account": {
+          "modeExisting": "Existing user",
+          "modeNew": "New writer",
+          "searchPlaceholder": "Search users by name or email…",
+          "searching": "Searching…",
+          "noResults": "No users found.",
+          "clear": "Change",
+          "linkedUser": "Linked user",
+          "fullName": "Full name",
+          "email": "Email",
+          "tempPassword": "Temporary password",
+          "tempPasswordHint": "Share this with the writer so they can sign in. It is only shown here.",
+          "copy": "Copy",
+          "copied": "Copied",
+          "regenerate": "Regenerate"
+        },
+        "fields": {
+          "penName": "Pen name",
+          "penNamePlaceholder": "e.g. Mahmoud Darwish",
+          "headline": "Headline",
+          "headlinePlaceholder": "e.g. Cultural critic and essayist",
+          "creatorKind": "Discipline",
+          "location": "Location",
+          "locationPlaceholder": "e.g. Gaza, Palestine",
+          "avatar": "Avatar",
+          "avatarUrlFallback": "Or paste an image URL directly",
+          "bioLong": "Biography",
+          "quote": "Pull quote",
+          "themes": "Themes & interests",
+          "themesPlaceholder": "Type a theme and press Enter",
+          "collaborations": "Collaborations",
+          "collaborationsPlaceholder": "e.g. Ólafur Arnalds, Kiasmos",
+          "recognition": "Recognition",
+          "recognitionPlaceholder": "e.g. Golden Mic for Best single, 2023",
+          "monthlyGoal": "Monthly support goal",
+          "website": "Website",
+          "twitter": "X (Twitter)",
+          "instagram": "Instagram",
+          "youtube": "YouTube",
+          "featured": "Show on the featured writers strip"
+        },
+        "kinds": { "none": "—", "musician": "Musician", "writer": "Writer", "visual_artist": "Visual artist", "filmmaker": "Filmmaker" },
+        "toasts": { "created": "Writer profile created", "updated": "Writer profile updated" },
+        "created": { "title": "Writer profile created", "description": "Share these sign-in details with the writer now — the temporary password will not be shown again.", "continue": "Go to writer profiles" },
+        "errors": {
+          "userRequired": "Select a user or create a new one.",
+          "fullNameRequired": "Full name is required.",
+          "emailRequired": "Enter a valid email address.",
+          "passwordTooShort": "Password must be at least 6 characters.",
+          "monthlyGoalInvalid": "Monthly goal must be 0 or more.",
+          "createUserFailed": "Failed to create the user account",
+          "saveFailed": "Failed to save the writer profile",
+          "duplicateProfile": "This user already has a writer profile.",
+          "avatarUploadFailed": "Failed to upload the avatar"
+        },
+        "create": "Create profile",
+        "creating": "Creating…",
+        "save": "Save changes",
+        "saving": "Saving…",
+        "cancel": "Cancel",
+        "upload": { "uploading": "Uploading…", "click": "Click to upload avatar", "hint": "JPG, PNG, WebP — drag & drop supported" }
+      }
+    }
+  }
+}

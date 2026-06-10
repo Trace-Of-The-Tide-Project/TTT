@@ -12,6 +12,7 @@ export function useCreateMagazineIssue() {
   return useMutation({
     mutationFn: (payload: MagazineIssueInput) => createMagazineIssue(payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: magazineIssuesKeys.all }),
+    meta: { silent: true },
   });
 }
 
@@ -21,6 +22,7 @@ export function useUpdateMagazineIssue() {
     mutationFn: (args: { id: string; payload: Partial<MagazineIssueInput> }) =>
       updateMagazineIssue(args.id, args.payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: magazineIssuesKeys.all }),
+    meta: { silent: true },
   });
 }
 
@@ -29,5 +31,6 @@ export function useDeleteMagazineIssue() {
   return useMutation({
     mutationFn: (id: string) => deleteMagazineIssue(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: magazineIssuesKeys.all }),
+    meta: { silent: true },
   });
 }

@@ -59,7 +59,10 @@
       "account": "Account",
       "books": "Books",
       "allBooks": "All Books",
-      "createBook": "Add Book"
+      "createBook": "Add Book",
+      "writers": "Writers",
+      "allWriters": "All Writers",
+      "createWriter": "Add Writer"
     },
     "systemSettings": {
       "tabs": {

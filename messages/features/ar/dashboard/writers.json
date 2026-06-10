@@ -1,0 +1,91 @@
+{
+  "Dashboard": {
+    "writersManagement": {
+      "list": {
+        "pageTitle": "ملفات الكتّاب",
+        "addNew": "إنشاء ملف كاتب",
+        "edit": "تعديل",
+        "searchPlaceholder": "ابحث بالاسم المستعار أو العنوان أو السيرة…",
+        "loading": "جارٍ تحميل ملفات الكتّاب…",
+        "empty": { "none": "لا توجد ملفات كتّاب بعد.", "noMatch": "لا توجد ملفات مطابقة لبحثك." },
+        "headers": { "writer": "الكاتب", "headline": "العنوان", "kind": "التخصص", "location": "الموقع", "featured": "مميّز" },
+        "featuredOn": "مميّز — يظهر في شريط الصفحة الرئيسية",
+        "featuredOff": "غير مميّز",
+        "toasts": { "featuredOn": "تمت إضافة الكاتب إلى الشريط المميّز", "featuredOff": "تمت إزالة الكاتب من الشريط المميّز" },
+        "errors": { "loadFailed": "تعذّر تحميل ملفات الكتّاب", "updateFailed": "تعذّر تحديث ملف الكاتب", "deleteFailed": "تعذّر حذف ملف الكاتب" },
+        "tryAgain": "حاول مجددًا",
+        "pagination": { "pageOf": "صفحة {page} من {totalPages}", "previous": "السابق", "next": "التالي" },
+        "delete": { "title": "حذف ملف الكاتب", "description": "هل تريد حذف ملف الكاتب \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء.", "cancel": "إلغاء", "confirm": "حذف", "confirmBusy": "جارٍ الحذف…" }
+      },
+      "form": {
+        "createTitle": "إنشاء ملف كاتب",
+        "editTitle": "تعديل ملف كاتب",
+        "backToList": "العودة إلى ملفات الكتّاب",
+        "loading": "جارٍ تحميل ملف الكاتب…",
+        "notFound": "لم يتم العثور على ملف الكاتب.",
+        "sections": { "account": "حساب الكاتب", "identity": "الهوية", "about": "نبذة", "support": "الدعم والظهور" },
+        "account": {
+          "modeExisting": "مستخدم حالي",
+          "modeNew": "كاتب جديد",
+          "searchPlaceholder": "ابحث عن المستخدمين بالاسم أو البريد…",
+          "searching": "جارٍ البحث…",
+          "noResults": "لم يتم العثور على مستخدمين.",
+          "clear": "تغيير",
+          "linkedUser": "المستخدم المرتبط",
+          "fullName": "الاسم الكامل",
+          "email": "البريد الإلكتروني",
+          "tempPassword": "كلمة مرور مؤقتة",
+          "tempPasswordHint": "شاركها مع الكاتب ليتمكن من تسجيل الدخول. تظهر هنا فقط.",
+          "copy": "نسخ",
+          "copied": "تم النسخ",
+          "regenerate": "إعادة توليد"
+        },
+        "fields": {
+          "penName": "الاسم المستعار",
+          "penNamePlaceholder": "مثال: محمود درويش",
+          "headline": "العنوان التعريفي",
+          "headlinePlaceholder": "مثال: ناقد ثقافي وكاتب مقالات",
+          "creatorKind": "التخصص",
+          "location": "الموقع",
+          "locationPlaceholder": "مثال: غزة، فلسطين",
+          "avatar": "الصورة الشخصية",
+          "avatarUrlFallback": "أو الصق رابط صورة مباشرة",
+          "bioLong": "السيرة الذاتية",
+          "quote": "اقتباس",
+          "themes": "المواضيع والاهتمامات",
+          "themesPlaceholder": "اكتب موضوعًا واضغط Enter",
+          "collaborations": "التعاونات",
+          "collaborationsPlaceholder": "مثال: أولافور أرنالدس، كياسموس",
+          "recognition": "التكريمات",
+          "recognitionPlaceholder": "مثال: جائزة الميكروفون الذهبي، 2023",
+          "monthlyGoal": "هدف الدعم الشهري",
+          "website": "الموقع الإلكتروني",
+          "twitter": "إكس (تويتر)",
+          "instagram": "إنستغرام",
+          "youtube": "يوتيوب",
+          "featured": "إظهار في شريط الكتّاب المميّزين"
+        },
+        "kinds": { "none": "—", "musician": "موسيقي", "writer": "كاتب", "visual_artist": "فنان بصري", "filmmaker": "صانع أفلام" },
+        "toasts": { "created": "تم إنشاء ملف الكاتب", "updated": "تم تحديث ملف الكاتب" },
+        "created": { "title": "تم إنشاء ملف الكاتب", "description": "شارك بيانات الدخول هذه مع الكاتب الآن — لن تُعرض كلمة المرور المؤقتة مرة أخرى.", "continue": "الانتقال إلى ملفات الكتّاب" },
+        "errors": {
+          "userRequired": "اختر مستخدمًا أو أنشئ مستخدمًا جديدًا.",
+          "fullNameRequired": "الاسم الكامل مطلوب.",
+          "emailRequired": "أدخل بريدًا إلكترونيًا صالحًا.",
+          "passwordTooShort": "يجب ألا تقل كلمة المرور عن 6 أحرف.",
+          "monthlyGoalInvalid": "يجب أن يكون هدف الدعم 0 أو أكثر.",
+          "createUserFailed": "تعذّر إنشاء حساب المستخدم",
+          "saveFailed": "تعذّر حفظ ملف الكاتب",
+          "duplicateProfile": "لدى هذا المستخدم ملف كاتب بالفعل.",
+          "avatarUploadFailed": "تعذّر رفع الصورة الشخصية"
+        },
+        "create": "إنشاء الملف",
+        "creating": "جارٍ الإنشاء…",
+        "save": "حفظ التغييرات",
+        "saving": "جارٍ الحفظ…",
+        "cancel": "إلغاء",
+        "upload": { "uploading": "جارٍ الرفع…", "click": "انقر لرفع صورة", "hint": "JPG، PNG، WebP — السحب والإفلات مدعوم" }
+      }
+    }
+  }
+}

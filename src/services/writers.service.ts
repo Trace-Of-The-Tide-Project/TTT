@@ -1,5 +1,6 @@
 import { api } from "./api";
 import { serverGet } from "@/lib/api/isomorphic-fetch";
+import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 
 /**
  * Writer profile — surface for the "Follow our Writers" row. The
@@ -7,14 +8,40 @@ import { serverGet } from "@/lib/api/isomorphic-fetch";
  * `GET /writers/featured` (the homepage strip). We type the union
  * leniently because OpenAPI doesn't declare the response shape.
  */
+export type WriterSocialLinks = {
+  website?: string;
+  twitter?: string;
+  instagram?: string;
+  youtube?: string;
+} & Record<string, string | undefined>;
+
 export type WriterProfile = {
   id: string;
   user_id?: string | null;
+  /** Legacy fields kept for the magazine homepage strip. */
   display_name?: string | null;
   bio?: string | null;
   avatar?: string | null;
   cover_image?: string | null;
   edition?: string | null;
+  /** Full profile fields (writer_profiles table). */
+  pen_name?: string | null;
+  headline?: string | null;
+  bio_long?: string | null;
+  avatar_url?: string | null;
+  featured?: boolean;
+  social_links?: WriterSocialLinks | null;
+  creator_kind?: string | null;
+  location?: string | null;
+  themes?: string[] | null;
+  quote?: string | null;
+  collaborations?: string | null;
+  recognition?: string | null;
+  /** Backend DECIMAL — may arrive as a numeric string; coerce with Number()
+   * before sending back via WriterProfilePayload. */
+  monthly_goal?: number | string | null;
+  createdAt?: string;
+  updatedAt?: string;
   /** When the backend joins the user record onto the writer profile
    * it commonly nests under `user`. */
   user?: {
@@ -72,9 +99,14 @@ export async function getWriters(
 function unwrapOne(raw: unknown): WriterProfile | null {
   if (!raw || typeof raw !== "object") return null;
   if ("data" in (raw as object)) {
-    return ((raw as { data?: WriterProfile }).data ?? null);
+    const inner = (raw as { data?: unknown }).data;
+    if (inner && typeof inner === "object" && "id" in (inner as object)) {
+      return inner as WriterProfile;
+    }
+    return null;
   }
-  return raw as WriterProfile;
+  if ("id" in (raw as object)) return raw as WriterProfile;
+  return null;
 }
 
 /** GET /writers/{id} — public. Works server- or client-side. Returns
@@ -103,11 +135,111 @@ export function writerDisplayName(w: WriterProfile): string {
   );
 }
 
-/** Pick the avatar (writer.avatar → user.profile.avatar). */
+/** Pick the avatar (writer.avatar_url → writer.avatar → user.profile.avatar)
+ * and resolve relative storage keys (e.g. `images/…`) to displayable URLs.
+ * Absolute URLs pass through unchanged. */
 export function writerAvatar(w: WriterProfile): string | null {
-  return (
+  const raw =
+    w.avatar_url?.trim() ||
     w.avatar?.trim() ||
     w.user?.profile?.avatar?.trim() ||
-    null
+    null;
+  return raw ? resolveArticleMediaSrc(raw) : null;
+}
+
+// ─── Admin CRUD ──────────────────────────────────────────────
+
+export type WriterProfilePayload = {
+  /** Required on create (admin picks the user); never sent on update. */
+  user_id?: string;
+  pen_name?: string | null;
+  headline?: string | null;
+  bio_long?: string | null;
+  avatar_url?: string | null;
+  featured?: boolean;
+  social_links?: WriterSocialLinks | null;
+  creator_kind?: string | null;
+  location?: string | null;
+  themes?: string[] | null;
+  quote?: string | null;
+  collaborations?: string | null;
+  recognition?: string | null;
+  monthly_goal?: number | null;
+};
+
+export type WritersListMeta = {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
+export type WritersAdminResult = {
+  writers: WriterProfile[];
+  meta: WritersListMeta;
+};
+
+function parseWritersMeta(
+  raw: unknown,
+  count: number,
+  params?: GetWritersParams,
+): WritersListMeta {
+  const fallback: WritersListMeta = {
+    total: count,
+    page: params?.page ?? 1,
+    limit: params?.limit ?? Math.max(count, 1),
+    totalPages: 1,
+  };
+  if (!raw || typeof raw !== "object") return fallback;
+  const m = (raw as { meta?: unknown }).meta;
+  if (!m || typeof m !== "object") return fallback;
+  const o = m as Record<string, unknown>;
+  const num = (v: unknown, d: number) =>
+    typeof v === "number" && Number.isFinite(v) ? v : d;
+  return {
+    total: num(o.total, fallback.total),
+    page: num(o.page, fallback.page),
+    limit: num(o.limit, fallback.limit),
+    totalPages: Math.max(1, num(o.totalPages, fallback.totalPages)),
+  };
+}
+
+/** GET /writers with pagination meta — for the admin list (client-only).
+ * Unlike the public reads above, errors propagate so the admin UI can
+ * render a retry banner — do not add a silent catch. */
+export async function getWritersAdmin(
+  params?: GetWritersParams,
+): Promise<WritersAdminResult> {
+  const { data } = await api.get<unknown>("/writers", { params });
+  const writers = unwrapList(data);
+  return { writers, meta: parseWritersMeta(data, writers.length, params) };
+}
+
+/** POST /writers — requires JWT + admin/editor role. */
+export async function createWriterProfile(
+  payload: WriterProfilePayload,
+): Promise<WriterProfile> {
+  const { data } = await api.post<unknown>("/writers", payload);
+  const item = unwrapOne(data);
+  if (!item) throw new Error("Invalid response from create writer profile");
+  return item;
+}
+
+/** PATCH /writers/:id */
+export async function updateWriterProfile(
+  id: string,
+  payload: Partial<WriterProfilePayload>,
+): Promise<WriterProfile> {
+  const { data } = await api.patch<unknown>(
+    `/writers/${encodeURIComponent(id)}`,
+    payload,
   );
+  const item = unwrapOne(data);
+  if (!item) throw new Error("Invalid response from update writer profile");
+  return item;
+}
+
+/** DELETE /writers/:id — admin only. */
+export async function deleteWriterProfile(id: string): Promise<void> {
+  await api.delete(`/writers/${encodeURIComponent(id)}`);
 }

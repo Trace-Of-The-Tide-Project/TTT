@@ -1,9 +1,15 @@
 import { PageTransition } from "@/components/motion/PageTransition";
+import { NavigationProgress } from "@/components/motion/NavigationProgress";
 
 export default function DashboardRootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <PageTransition>{children}</PageTransition>;
+  return (
+    <>
+      <NavigationProgress />
+      <PageTransition>{children}</PageTransition>
+    </>
+  );
 }

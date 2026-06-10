@@ -1,0 +1,91 @@
+{
+  "Dashboard": {
+    "writersManagement": {
+      "list": {
+        "pageTitle": "Perfiles de escritores",
+        "addNew": "Crear perfil de escritor",
+        "edit": "Editar",
+        "searchPlaceholder": "Buscar seudónimo, titular, biografía…",
+        "loading": "Cargando perfiles de escritores…",
+        "empty": { "none": "Aún no hay perfiles de escritores.", "noMatch": "Ningún perfil coincide con tu búsqueda." },
+        "headers": { "writer": "Escritor", "headline": "Titular", "kind": "Disciplina", "location": "Ubicación", "featured": "Destacado" },
+        "featuredOn": "Destacado — visible en la franja de inicio",
+        "featuredOff": "No destacado",
+        "toasts": { "featuredOn": "Escritor añadido a la franja destacada", "featuredOff": "Escritor retirado de la franja destacada" },
+        "errors": { "loadFailed": "No se pudieron cargar los perfiles", "updateFailed": "No se pudo actualizar el perfil", "deleteFailed": "No se pudo eliminar el perfil" },
+        "tryAgain": "Reintentar",
+        "pagination": { "pageOf": "Página {page} de {totalPages}", "previous": "Anterior", "next": "Siguiente" },
+        "delete": { "title": "Eliminar perfil de escritor", "description": "¿Eliminar el perfil \"{name}\"? Esta acción no se puede deshacer.", "cancel": "Cancelar", "confirm": "Eliminar", "confirmBusy": "Eliminando…" }
+      },
+      "form": {
+        "createTitle": "Crear perfil de escritor",
+        "editTitle": "Editar perfil de escritor",
+        "backToList": "Volver a perfiles de escritores",
+        "loading": "Cargando perfil de escritor…",
+        "notFound": "Perfil de escritor no encontrado.",
+        "sections": { "account": "Cuenta del escritor", "identity": "Identidad", "about": "Acerca de", "support": "Apoyo y visibilidad" },
+        "account": {
+          "modeExisting": "Usuario existente",
+          "modeNew": "Nuevo escritor",
+          "searchPlaceholder": "Buscar usuarios por nombre o email…",
+          "searching": "Buscando…",
+          "noResults": "No se encontraron usuarios.",
+          "clear": "Cambiar",
+          "linkedUser": "Usuario vinculado",
+          "fullName": "Nombre completo",
+          "email": "Email",
+          "tempPassword": "Contraseña temporal",
+          "tempPasswordHint": "Compártela con el escritor para que pueda iniciar sesión. Solo se muestra aquí.",
+          "copy": "Copiar",
+          "copied": "Copiado",
+          "regenerate": "Regenerar"
+        },
+        "fields": {
+          "penName": "Seudónimo",
+          "penNamePlaceholder": "p. ej. Mahmoud Darwish",
+          "headline": "Titular",
+          "headlinePlaceholder": "p. ej. Crítico cultural y ensayista",
+          "creatorKind": "Disciplina",
+          "location": "Ubicación",
+          "locationPlaceholder": "p. ej. Gaza, Palestina",
+          "avatar": "Avatar",
+          "avatarUrlFallback": "O pega una URL de imagen directamente",
+          "bioLong": "Biografía",
+          "quote": "Cita destacada",
+          "themes": "Temas e intereses",
+          "themesPlaceholder": "Escribe un tema y pulsa Enter",
+          "collaborations": "Colaboraciones",
+          "collaborationsPlaceholder": "p. ej. Ólafur Arnalds, Kiasmos",
+          "recognition": "Reconocimientos",
+          "recognitionPlaceholder": "p. ej. Micrófono de Oro al mejor sencillo, 2023",
+          "monthlyGoal": "Meta de apoyo mensual",
+          "website": "Sitio web",
+          "twitter": "X (Twitter)",
+          "instagram": "Instagram",
+          "youtube": "YouTube",
+          "featured": "Mostrar en la franja de escritores destacados"
+        },
+        "kinds": { "none": "—", "musician": "Músico", "writer": "Escritor", "visual_artist": "Artista visual", "filmmaker": "Cineasta" },
+        "toasts": { "created": "Perfil de escritor creado", "updated": "Perfil de escritor actualizado" },
+        "created": { "title": "Perfil de escritor creado", "description": "Comparte estos datos de acceso con el escritor ahora — la contraseña temporal no se volverá a mostrar.", "continue": "Ir a perfiles de escritores" },
+        "errors": {
+          "userRequired": "Selecciona un usuario o crea uno nuevo.",
+          "fullNameRequired": "El nombre completo es obligatorio.",
+          "emailRequired": "Introduce un email válido.",
+          "passwordTooShort": "La contraseña debe tener al menos 6 caracteres.",
+          "monthlyGoalInvalid": "La meta mensual debe ser 0 o más.",
+          "createUserFailed": "No se pudo crear la cuenta de usuario",
+          "saveFailed": "No se pudo guardar el perfil de escritor",
+          "duplicateProfile": "Este usuario ya tiene un perfil de escritor.",
+          "avatarUploadFailed": "No se pudo subir el avatar"
+        },
+        "create": "Crear perfil",
+        "creating": "Creando…",
+        "save": "Guardar cambios",
+        "saving": "Guardando…",
+        "cancel": "Cancelar",
+        "upload": { "uploading": "Subiendo…", "click": "Haz clic para subir un avatar", "hint": "JPG, PNG, WebP — admite arrastrar y soltar" }
+      }
+    }
+  }
+}

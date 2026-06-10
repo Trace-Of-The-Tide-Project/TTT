@@ -154,6 +154,27 @@ function unwrapOpenCallPayload(raw: unknown): OpenCallDetail | null {
   return null;
 }
 
+export type OpenCallListItem = {
+  id: string;
+  title: string;
+  category?: string;
+  cover_image?: string | null;
+  main_media?: OpenCallMainMedia | null;
+  status?: string;
+};
+
+export async function getActiveOpenCalls(params?: Record<string, string | number>): Promise<OpenCallListItem[]> {
+  try {
+    const { data } = await api.get<unknown>("/open-calls/active", { params });
+    if (!data || typeof data !== "object") return [];
+    const o = data as Record<string, unknown>;
+    const list = Array.isArray(o.data) ? o.data : Array.isArray(data) ? data : [];
+    return list as OpenCallListItem[];
+  } catch {
+    return [];
+  }
+}
+
 export async function getOpenCallById(id: string): Promise<OpenCallDetail | null> {
   try {
     const { data } = await api.get<unknown>(`/open-calls/${encodeURIComponent(id)}`);

@@ -1,13 +1,28 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
 import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
 import { HeartIcon, MessageSquareIcon, TrendingUpIcon, GiftIcon } from "@/components/ui/icons";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { fetchEngagementStats } from "@/services/engagements";
+
+function formatNumber(n: number | undefined | null): string {
+  if (n == null) return "—";
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+  return n.toLocaleString();
+}
 
 export function EngagementsPageHeader() {
   const t = useTranslations("Dashboard.headers.engagements");
   const iconColor = "var(--tott-stat-icon)";
+
+  const { data: stats } = useQuery({
+    queryKey: ["engagements", "stats"],
+    queryFn: fetchEngagementStats,
+    staleTime: 60_000,
+  });
+
   return (
     <div className="px-6 py-6 sm:px-8 sm:py-8">
       <DashboardHeader lastUpdated title={t("title")} subtitle={t("subtitle")} compactPadding />
@@ -17,7 +32,9 @@ export function EngagementsPageHeader() {
           <span style={{ color: iconColor }}>
             <MessageSquareIcon />
           </span>
-          <span className="text-2xl font-bold text-foreground">12,546</span>
+          <span className="text-2xl font-bold text-foreground">
+            {formatNumber(stats?.total_comments)}
+          </span>
           <span className="text-xs text-gray-500">{t("stats.totalComments")}</span>
         </div>
 
@@ -25,7 +42,9 @@ export function EngagementsPageHeader() {
           <span style={{ color: iconColor }}>
             <HeartIcon />
           </span>
-          <span className="text-2xl font-bold text-foreground">89.2k</span>
+          <span className="text-2xl font-bold text-foreground">
+            {formatNumber(stats?.total_likes)}
+          </span>
           <span className="text-xs text-gray-500">{t("stats.totalLikes")}</span>
         </div>
 
@@ -33,7 +52,9 @@ export function EngagementsPageHeader() {
           <span style={{ color: iconColor }}>
             <TrendingUpIcon />
           </span>
-          <span className="text-2xl font-bold text-foreground">456</span>
+          <span className="text-2xl font-bold text-foreground">
+            {formatNumber(stats?.active_discussions)}
+          </span>
           <span className="text-xs text-gray-500">{t("stats.activeDiscussions")}</span>
         </div>
 
@@ -41,7 +62,9 @@ export function EngagementsPageHeader() {
           <span style={{ color: iconColor }}>
             <GiftIcon />
           </span>
-          <span className="text-2xl font-bold text-foreground">492</span>
+          <span className="text-2xl font-bold text-foreground">
+            {formatNumber(stats?.badges_awarded)}
+          </span>
           <span className="text-xs text-gray-500">{t("stats.badgesAwarded")}</span>
         </div>
       </div>

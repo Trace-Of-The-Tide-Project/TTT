@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { theme } from "@/lib/theme";
 import { CreateBadgeModal } from "@/components/dashboard/modals/CreateBadgeModal";
 import { AwardBadgeModal } from "@/components/dashboard/modals/AwardBadgeModal";
@@ -22,17 +23,36 @@ import {
   UsersIcon,
 } from "@/components/ui/icons";
 import {
-  sampleBadges,
-  sampleComments,
-  sampleTrendingDiscussions,
-  type Badge,
   type Comment,
   type TrendingDiscussion,
+  type Badge,
 } from "@/lib/dashboard/engagements-constants";
+import {
+  fetchComments,
+  fetchDiscussions,
+  fetchBadges,
+  flagComment,
+  unflagComment,
+  deleteComment,
+  lockDiscussion,
+  unlockDiscussion,
+  createAndAwardBadge,
+  awardBadgeToUser,
+} from "@/services/engagements";
 
 const ENGAGEMENT_TAB_IDS = ["comments", "trending", "badges"] as const;
 
-function CommentCard({ comment }: { comment: Comment }) {
+function CommentCard({
+  comment,
+  onFlag,
+  onUnflag,
+  onDelete,
+}: {
+  comment: Comment;
+  onFlag: () => void;
+  onUnflag: () => void;
+  onDelete: () => void;
+}) {
   const t = useTranslations("Dashboard.engagementsPage.comments");
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -45,26 +65,26 @@ function CommentCard({ comment }: { comment: Comment }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const authorName = comment.author
+    ? comment.author.full_name || comment.author.username
+    : "Unknown";
+
   return (
     <div className="flex gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-4">
       <div
         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-foreground"
         style={{ backgroundColor: theme.accentGoldFocus }}
       >
-        {comment.author.charAt(0)}
+        {authorName.charAt(0)}
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-sm text-foreground">
-          <span className="font-medium">{comment.author}</span>
-          <span className="text-gray-400"> {t("on")} </span>
-          <span className="text-gray-400">
-            {comment.contentTitle}
-            {comment.flagged && (
-              <span className="ms-2 inline-flex rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium uppercase text-red-400">
-                {t("flaggedBadge")}
-              </span>
-            )}
-          </span>
+          <span className="font-medium">{authorName}</span>
+          {comment.is_flagged && (
+            <span className="ms-2 inline-flex rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium uppercase text-red-400">
+              {t("flaggedBadge")}
+            </span>
+          )}
         </p>
         <p className="mt-1 text-sm text-gray-400 line-clamp-2">{comment.content}</p>
         <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-gray-500">
@@ -80,7 +100,7 @@ function CommentCard({ comment }: { comment: Comment }) {
             </span>
             {t("replies", { count: comment.replies })}
           </span>
-          <span>{comment.timeAgo}</span>
+          <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
         </div>
       </div>
       <div ref={ref} className="relative shrink-0">
@@ -97,18 +117,20 @@ function CommentCard({ comment }: { comment: Comment }) {
           <div className="absolute end-0 top-full z-20 mt-1 min-w-[140px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-1 shadow-lg">
             <button
               type="button"
+              onClick={() => {
+                setIsOpen(false);
+                comment.is_flagged ? onUnflag() : onFlag();
+              }}
               className="w-full px-4 py-2 text-start text-sm text-foreground hover:bg-[var(--tott-dash-surface-inset)]"
             >
-              {t("view")}
+              {comment.is_flagged ? t("unflag") : t("flag")}
             </button>
             <button
               type="button"
-              className="w-full px-4 py-2 text-start text-sm text-foreground hover:bg-[var(--tott-dash-surface-inset)]"
-            >
-              {t("edit")}
-            </button>
-            <button
-              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                onDelete();
+              }}
               className="w-full px-4 py-2 text-start text-sm text-red-400 hover:bg-red-500/10"
             >
               {t("delete")}
@@ -147,13 +169,13 @@ function TrendingDiscussionCard({
               <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
                 <MessageSquareIcon />
               </span>
-              {t("commentsCount", { count: discussion.comments })}
+              {t("commentsCount", { count: discussion.comment_count })}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
                 <UsersIcon />
               </span>
-              {t("participantsCount", { count: discussion.participants })}
+              {t("participantsCount", { count: discussion.participant_count })}
             </span>
           </div>
         </div>
@@ -172,10 +194,10 @@ function TrendingDiscussionCard({
           type="button"
           onClick={onToggleLocked}
           className="inline-flex h-[40px] w-[120px] items-center justify-center gap-2 rounded-md border border-[#555] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] whitespace-nowrap"
-          aria-label={discussion.locked ? t("unlockDiscussionAria") : t("lockDiscussionAria")}
+          aria-label={discussion.is_locked ? t("unlockDiscussionAria") : t("lockDiscussionAria")}
         >
           <LockIcon />
-          {discussion.locked ? t("unlock") : t("lock")}
+          {discussion.is_locked ? t("unlock") : t("lock")}
         </button>
       </div>
     </div>
@@ -210,7 +232,7 @@ function BadgeCard({ badge, onAward }: { badge: Badge; onAward: () => void }) {
         <div className="min-w-0 flex-1">
           <p className="truncate text-base font-semibold text-foreground">{badge.name}</p>
           <p className="mt-1 text-sm text-gray-500">
-            {t("recipients", { count: badge.recipients })}
+            {t("recipients", { count: badge.recipient_count })}
           </p>
         </div>
       </div>
@@ -232,6 +254,8 @@ function BadgeCard({ badge, onAward }: { badge: Badge; onAward: () => void }) {
 
 export function EngagementsContent() {
   const t = useTranslations("Dashboard.engagementsPage");
+  const qc = useQueryClient();
+
   const [activeTab, setActiveTab] = useState<(typeof ENGAGEMENT_TAB_IDS)[number]>("comments");
   const [filter, setFilter] = useState<"all" | "flagged">("all");
   const [commentSearch, setCommentSearch] = useState("");
@@ -239,27 +263,82 @@ export function EngagementsContent() {
   const [createBadgeOpen, setCreateBadgeOpen] = useState(false);
   const [awardBadgeOpen, setAwardBadgeOpen] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
-  const [trendingDiscussions, setTrendingDiscussions] =
-    useState<TrendingDiscussion[]>(sampleTrendingDiscussions);
-  const [badges, setBadges] = useState<Badge[]>(sampleBadges);
 
-  const filtered = sampleComments.filter((c) => {
-    const matchesFilter = filter === "all" || c.flagged;
-    const matchesSearch =
-      !commentSearch.trim() ||
-      c.author.toLowerCase().includes(commentSearch.toLowerCase()) ||
-      c.content.toLowerCase().includes(commentSearch.toLowerCase()) ||
-      c.contentTitle.toLowerCase().includes(commentSearch.toLowerCase());
-    return matchesFilter && matchesSearch;
+  // ── Comments ──────────────────────────────────────────────
+  const commentsQuery = useQuery({
+    queryKey: ["engagements", "comments", filter, commentSearch],
+    queryFn: () => fetchComments({ filter, search: commentSearch || undefined }),
+    staleTime: 30_000,
   });
 
-  const filteredBadges = badges.filter((b) => {
-    const q = badgeSearch.trim().toLowerCase();
-    if (!q) return true;
-    return b.name.toLowerCase().includes(q) || b.description.toLowerCase().includes(q);
+  const flagMutation = useMutation({
+    mutationFn: flagComment,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["engagements", "comments"] }),
   });
 
-  const flaggedCount = sampleComments.filter((c) => c.flagged).length;
+  const unflagMutation = useMutation({
+    mutationFn: unflagComment,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["engagements", "comments"] }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteComment,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["engagements", "comments"] });
+      qc.invalidateQueries({ queryKey: ["engagements", "stats"] });
+    },
+  });
+
+  // ── Discussions ───────────────────────────────────────────
+  const discussionsQuery = useQuery({
+    queryKey: ["engagements", "discussions"],
+    queryFn: () => fetchDiscussions({}),
+    staleTime: 30_000,
+  });
+
+  const lockMutation = useMutation({
+    mutationFn: lockDiscussion,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["engagements", "discussions"] }),
+  });
+
+  const unlockMutation = useMutation({
+    mutationFn: unlockDiscussion,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["engagements", "discussions"] });
+      qc.invalidateQueries({ queryKey: ["engagements", "stats"] });
+    },
+  });
+
+  // ── Badges ────────────────────────────────────────────────
+  const badgesQuery = useQuery({
+    queryKey: ["engagements", "badges", badgeSearch],
+    queryFn: () => fetchBadges(badgeSearch || undefined),
+    staleTime: 60_000,
+  });
+
+  const createBadgeMutation = useMutation({
+    mutationFn: createAndAwardBadge,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["engagements", "badges"] });
+      qc.invalidateQueries({ queryKey: ["engagements", "stats"] });
+    },
+  });
+
+  const awardBadgeMutation = useMutation({
+    mutationFn: ({
+      badgeId,
+      dto,
+    }: {
+      badgeId: string;
+      dto: { username?: string; user_id?: string; description?: string };
+    }) => awardBadgeToUser(badgeId, dto),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["engagements", "badges"] }),
+  });
+
+  const comments = commentsQuery.data?.comments ?? [];
+  const flaggedCount = commentsQuery.data?.flagged_count ?? 0;
+  const discussions = discussionsQuery.data?.discussions ?? [];
+  const badges = badgesQuery.data?.badges ?? [];
 
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
@@ -267,24 +346,27 @@ export function EngagementsContent() {
         open={createBadgeOpen}
         onClose={() => setCreateBadgeOpen(false)}
         onCreate={(created) => {
-          setBadges((prev) => [
-            {
-              id: `b_${Date.now()}`,
-              recipients: 0,
-              ...created,
-            },
-            ...prev,
-          ]);
+          createBadgeMutation.mutate({
+            name: created.name,
+            icon: created.icon,
+            reason: created.description,
+          });
+          setCreateBadgeOpen(false);
         }}
       />
       <AwardBadgeModal
         open={awardBadgeOpen}
         badge={selectedBadge}
         onClose={() => setAwardBadgeOpen(false)}
-        onAward={() => {
-          // Placeholder: wire to API; optionally increment recipients.
+        onAward={(payload) => {
+          awardBadgeMutation.mutate({
+            badgeId: payload.badgeId,
+            dto: { username: payload.userQuery, description: payload.description },
+          });
+          setAwardBadgeOpen(false);
         }}
       />
+
       {/* Tabs */}
       <div className="flex w-fit gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
         {ENGAGEMENT_TAB_IDS.map((tabId) => (
@@ -347,12 +429,21 @@ export function EngagementsContent() {
 
           {/* Comment list */}
           <div className="space-y-4">
-            {filtered.map((comment) => (
-              <CommentCard key={comment.id} comment={comment} />
+            {commentsQuery.isLoading && (
+              <p className="py-12 text-center text-gray-500">Loading...</p>
+            )}
+            {comments.map((comment) => (
+              <CommentCard
+                key={comment.id}
+                comment={comment}
+                onFlag={() => flagMutation.mutate(comment.id)}
+                onUnflag={() => unflagMutation.mutate(comment.id)}
+                onDelete={() => deleteMutation.mutate(comment.id)}
+              />
             ))}
           </div>
 
-          {filtered.length === 0 && (
+          {!commentsQuery.isLoading && comments.length === 0 && (
             <p className="py-12 text-center text-gray-500">{t("comments.emptyFiltered")}</p>
           )}
         </>
@@ -361,23 +452,26 @@ export function EngagementsContent() {
       {activeTab === "trending" && (
         <>
           <div className="space-y-4">
-            {trendingDiscussions.map((discussion) => (
+            {discussionsQuery.isLoading && (
+              <p className="py-12 text-center text-gray-500">Loading...</p>
+            )}
+            {discussions.map((discussion) => (
               <TrendingDiscussionCard
                 key={discussion.id}
                 discussion={discussion}
-                onView={() => {
-                  // Placeholder: wire this to a detail modal / route when available.
-                }}
+                onView={() => {}}
                 onToggleLocked={() => {
-                  setTrendingDiscussions((prev) =>
-                    prev.map((d) => (d.id === discussion.id ? { ...d, locked: !d.locked } : d))
-                  );
+                  if (discussion.is_locked) {
+                    unlockMutation.mutate(discussion.id);
+                  } else {
+                    lockMutation.mutate(discussion.id);
+                  }
                 }}
               />
             ))}
           </div>
 
-          {trendingDiscussions.length === 0 && (
+          {!discussionsQuery.isLoading && discussions.length === 0 && (
             <p className="py-12 text-center text-gray-500">{t("trending.empty")}</p>
           )}
         </>
@@ -401,9 +495,7 @@ export function EngagementsContent() {
 
             <button
               type="button"
-              onClick={() => {
-                setCreateBadgeOpen(true);
-              }}
+              onClick={() => setCreateBadgeOpen(true)}
               className="inline-flex h-[42px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-[#111] whitespace-nowrap"
               style={{ backgroundColor: theme.accentGoldFocus }}
             >
@@ -413,7 +505,10 @@ export function EngagementsContent() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {filteredBadges.map((badge) => (
+            {badgesQuery.isLoading && (
+              <p className="py-12 text-center text-gray-500 col-span-2">Loading...</p>
+            )}
+            {badges.map((badge) => (
               <BadgeCard
                 key={badge.id}
                 badge={badge}
@@ -425,7 +520,7 @@ export function EngagementsContent() {
             ))}
           </div>
 
-          {filteredBadges.length === 0 && (
+          {!badgesQuery.isLoading && badges.length === 0 && (
             <p className="py-12 text-center text-gray-500">{t("badges.emptySearch")}</p>
           )}
         </>

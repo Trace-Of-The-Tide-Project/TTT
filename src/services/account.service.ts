@@ -56,7 +56,9 @@ export function accountErrorMessage(e: unknown, fallback: string): string {
 
 /** GET /auth/me (live backend) — full account fields for the overview card. */
 export async function getAccountOverview(): Promise<AccountOverview> {
-  const { data } = await api.get<Record<string, unknown>>("/auth/me");
+  const { data: envelope } = await api.get<Record<string, unknown>>("/auth/me");
+  // Backend wraps response in { status, data: { ...user } } via global interceptor
+  const data = (envelope.data ?? envelope) as Record<string, unknown>;
   return {
     id: String(data.id ?? ""),
     username: String(data.username ?? ""),

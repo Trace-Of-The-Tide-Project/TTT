@@ -4,12 +4,14 @@ import {
   BookIcon,
   PenLineIcon,
   HeartHandshakeIcon,
+  HeartIcon,
   UsersIcon,
   ShieldIcon,
   FolderIcon,
   CodeIcon,
   MessageSquareIcon,
   DollarSignIcon,
+  CreditCardIcon,
   BarChartIcon,
   AlertTriangleIcon,
   LockIcon,
@@ -19,6 +21,23 @@ import {
   BellIcon,
   UserCheckIcon,
   PlusIcon,
+  MegaphoneIcon,
+  CalendarIcon,
+  IdCardIcon,
+  GridIcon,
+  ActivityIcon,
+  EyeOffIcon,
+  HomeIcon,
+  GiftIcon,
+  TrendingUpIcon,
+  FilmIcon,
+  ListIcon,
+  StarIcon,
+  FlagIcon,
+  MicIcon,
+  PersonPlusIcon,
+  ClockIcon,
+  CompassIcon,
 } from "@/components/ui/icons";
 import type { DashboardConfig } from "./types";
 
@@ -37,14 +56,13 @@ export const adminConfig: DashboardConfig = {
           kind: "group",
           groupId: "articles",
           labelKey: "sidebar.articles",
-          icon: FileTextIcon,
-          defaultOpen: true,
+          icon: MegaphoneIcon,
           items: [
             {
               kind: "item",
               labelKey: "sidebar.createArticles",
               href: "/admin/articles/create",
-              icon: PenLineIcon,
+              icon: PlusIcon,
             },
             {
               kind: "item",
@@ -58,20 +76,19 @@ export const adminConfig: DashboardConfig = {
           kind: "group",
           groupId: "contributions",
           labelKey: "sidebar.contributions",
-          icon: HeartHandshakeIcon,
-          defaultOpen: true,
+          icon: GiftIcon,
           items: [
             {
               kind: "item",
               labelKey: "sidebar.supporters",
               href: "/admin/supporters",
-              icon: UsersIcon,
+              icon: PersonPlusIcon,
             },
             {
               kind: "item",
               labelKey: "sidebar.contributionsAnalytics",
               href: "/admin/contributions-analytics",
-              icon: BarChartIcon,
+              icon: TrendingUpIcon,
             },
           ],
         },
@@ -79,8 +96,7 @@ export const adminConfig: DashboardConfig = {
           kind: "group",
           groupId: "management",
           labelKey: "sidebar.management",
-          icon: UsersIcon,
-          defaultOpen: true,
+          icon: IdCardIcon,
           items: [
             {
               kind: "item",
@@ -100,8 +116,7 @@ export const adminConfig: DashboardConfig = {
           kind: "group",
           groupId: "content",
           labelKey: "sidebar.content",
-          icon: FolderIcon,
-          defaultOpen: true,
+          icon: GridIcon,
           items: [
             {
               kind: "item",
@@ -122,47 +137,37 @@ export const adminConfig: DashboardConfig = {
           groupId: "magazine",
           labelKey: "sidebar.magazine",
           icon: BookIcon,
-          defaultOpen: true,
           items: [
             {
               kind: "item",
               labelKey: "sidebar.magazinePageEditor",
               href: "/admin/magazine/page-editor",
-              icon: FileTextIcon,
+              icon: ClockIcon,
             },
             {
               kind: "item",
               labelKey: "sidebar.magazineIssues",
               href: "/admin/magazine-issues",
-              icon: FileTextIcon,
+              icon: FilmIcon,
             },
             {
               kind: "item",
               labelKey: "sidebar.residency",
               href: "/admin/residency",
-              icon: PenLineIcon,
+              icon: HomeIcon,
             },
             {
               kind: "item",
               labelKey: "sidebar.workshopApplications",
               href: "/admin/workshops",
-              icon: PenLineIcon,
+              icon: StarIcon,
             },
             {
               kind: "item",
               labelKey: "sidebar.encounterBookings",
               href: "/admin/encounters",
-              icon: PenLineIcon,
+              icon: CalendarIcon,
             },
-          ],
-        },
-        {
-          kind: "group",
-          groupId: "knowledge",
-          labelKey: "sidebar.books",
-          icon: BookIcon,
-          defaultOpen: true,
-          items: [
             {
               kind: "item",
               labelKey: "sidebar.createBook",
@@ -173,7 +178,27 @@ export const adminConfig: DashboardConfig = {
               kind: "item",
               labelKey: "sidebar.allBooks",
               href: "/admin/books",
-              icon: BookIcon,
+              icon: ListIcon,
+            },
+          ],
+        },
+        {
+          kind: "group",
+          groupId: "writers",
+          labelKey: "sidebar.writers",
+          icon: PenLineIcon,
+          items: [
+            {
+              kind: "item",
+              labelKey: "sidebar.createWriter",
+              href: "/admin/writers/create",
+              icon: PlusIcon,
+            },
+            {
+              kind: "item",
+              labelKey: "sidebar.allWriters",
+              href: "/admin/writers",
+              icon: MicIcon,
             },
           ],
         },
@@ -182,13 +207,12 @@ export const adminConfig: DashboardConfig = {
           groupId: "community",
           labelKey: "sidebar.community",
           icon: HeartHandshakeIcon,
-          defaultOpen: true,
           items: [
             {
               kind: "item",
               labelKey: "sidebar.engagements",
               href: "/admin/engagements",
-              icon: HeartHandshakeIcon,
+              icon: HeartIcon,
             },
             {
               kind: "item",
@@ -202,8 +226,7 @@ export const adminConfig: DashboardConfig = {
           kind: "group",
           groupId: "business",
           labelKey: "sidebar.business",
-          icon: DollarSignIcon,
-          defaultOpen: true,
+          icon: ActivityIcon,
           items: [
             {
               kind: "item",
@@ -224,7 +247,6 @@ export const adminConfig: DashboardConfig = {
           groupId: "system",
           labelKey: "sidebar.systemSettings",
           icon: SettingsIcon,
-          defaultOpen: true,
           items: [
             {
               kind: "item",
@@ -237,13 +259,13 @@ export const adminConfig: DashboardConfig = {
               kind: "item",
               labelKey: "sidebar.securityAuth",
               href: "/admin/security",
-              icon: LockIcon,
+              icon: CompassIcon,
             },
             {
               kind: "item",
               labelKey: "sidebar.systemSettingsPage",
               href: "/admin/settings",
-              icon: SettingsIcon,
+              icon: FlagIcon,
             },
           ],
         },
@@ -251,8 +273,7 @@ export const adminConfig: DashboardConfig = {
           kind: "group",
           groupId: "adminSettings",
           labelKey: "sidebar.adminSettings",
-          icon: SettingsIcon,
-          defaultOpen: true,
+          icon: UserCheckIcon,
           items: [
             {
               kind: "item",
@@ -276,7 +297,7 @@ export const adminConfig: DashboardConfig = {
               kind: "item",
               labelKey: "sidebar.privacy",
               href: "/admin/privacy",
-              icon: ShieldIcon,
+              icon: EyeOffIcon,
             },
             {
               kind: "item",
@@ -288,7 +309,7 @@ export const adminConfig: DashboardConfig = {
               kind: "item",
               labelKey: "sidebar.account",
               href: "/admin/account",
-              icon: UserCheckIcon,
+              icon: CreditCardIcon,
             },
           ],
         },

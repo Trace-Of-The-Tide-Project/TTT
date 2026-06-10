@@ -263,6 +263,39 @@ export async function revokeUserRole(userId: string, role: string): Promise<void
   await api.patch(`/roles/revoke/${userId}`, { role });
 }
 
+export type CreateAdminUserPayload = {
+  full_name: string;
+  email: string;
+  password: string;
+};
+
+export type CreatedAdminUser = {
+  id: string;
+  full_name?: string | null;
+  email?: string | null;
+  username?: string | null;
+};
+
+/** Creates a user account. Backend: POST /users (admin only).
+ * Username is auto-generated from the email prefix server-side. */
+export async function createAdminUser(
+  payload: CreateAdminUserPayload,
+): Promise<CreatedAdminUser> {
+  const { data } = await api.post<unknown>("/users", payload);
+  const inner =
+    data && typeof data === "object" && "data" in (data as object)
+      ? (data as { data?: unknown }).data
+      : data;
+  if (
+    inner &&
+    typeof inner === "object" &&
+    typeof (inner as { id?: unknown }).id === "string"
+  ) {
+    return inner as CreatedAdminUser;
+  }
+  throw new Error("Invalid response from create user");
+}
+
 const EXPORT_PAGE_LIMIT = 100;
 const EXPORT_MAX_PAGES = 500;
 

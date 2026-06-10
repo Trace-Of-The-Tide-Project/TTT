@@ -13,14 +13,13 @@ import {
 } from "@/components/ui/icons";
 import { RichTextEditor, EditorToolbar, EditorRegistryProvider } from "@/components/ui/rich-text";
 import { theme } from "@/lib/theme";
-import type { Badge } from "@/lib/dashboard/engagements-constants";
 
-type BadgeIconOption = Badge["icon"];
+type BadgeIconOption = "award" | "star" | "heart" | "check" | "spark";
 
 type CreateBadgeModalProps = {
   open: boolean;
   onClose: () => void;
-  onCreate: (badge: Omit<Badge, "id" | "recipients">) => void;
+  onCreate: (badge: { name: string; description: string; icon: string }) => void;
 };
 
 const ROLE_IDS = ["allUsers", "allAuthors", "allEditors", "allContributors"] as const;

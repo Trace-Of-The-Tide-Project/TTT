@@ -281,7 +281,11 @@
       "previewLockedTitle": "تنتهي المعاينة المجانية هنا",
       "previewLockedBody": "لقد وصلت إلى نهاية المعاينة المجانية. اشترِ هذا الكتاب لمواصلة القراءة.",
       "previewBuy": "اشترِ لقراءة الكتاب كاملًا",
-      "previewNoContent": "لا تتوفر معاينة لهذا الكتاب حتى الآن."
+      "previewNoContent": "لا تتوفر معاينة لهذا الكتاب حتى الآن.",
+      "addToCart": "أضف إلى السلة",
+      "addedToCart": "تمت الإضافة إلى السلة",
+      "readDownload": "اقرأ / نزّل",
+      "owned": "مملوك"
     },
     "writingRoom": {
       "heroTitle": "غرفة الكتابة",
@@ -526,6 +530,28 @@
         "joinDisclaimer": "بالحجز، فإنك توافق على شروطنا وأحكامنا. وستصلك رسالة تأكيد قريبًا.",
         "backToWritingRoom": "العودة إلى غرفة الكتابة"
       }
+    },
+    "Commerce": {
+      "cartTitle": "سلتك",
+      "cartEmpty": "سلتك فارغة.",
+      "browseBooks": "تصفح الكتب",
+      "remove": "إزالة",
+      "subtotal": "المجموع الفرعي",
+      "checkout": "إتمام الشراء",
+      "checkoutError": "تعذّر بدء عملية الدفع. حاول مرة أخرى.",
+      "continueShopping": "متابعة التسوق",
+      "libraryTitle": "مكتبتي",
+      "libraryEmpty": "لا تملك أي كتب بعد.",
+      "read": "اقرأ / نزّل",
+      "purchasedOn": "تم الشراء {date}",
+      "successTitle": "تم استلام الدفعة",
+      "successFinalizing": "جارٍ إنهاء عملية الشراء — لن يستغرق هذا سوى لحظة…",
+      "successReady": "كتبك جاهزة!",
+      "goToLibrary": "الذهاب إلى مكتبتي",
+      "cancelTitle": "تم إلغاء الدفع",
+      "cancelBody": "لم يتم خصم أي مبلغ. سلتك لا تزال محفوظة.",
+      "backToCart": "العودة إلى السلة",
+      "downloadError": "تعذّر فتح هذا الملف. حاول مرة أخرى."
     }
   }
 }

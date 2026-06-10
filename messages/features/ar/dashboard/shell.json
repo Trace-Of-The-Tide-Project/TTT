@@ -59,7 +59,10 @@
       "account": "الحساب",
       "books": "الكتب",
       "allBooks": "كل الكتب",
-      "createBook": "إضافة كتاب"
+      "createBook": "إضافة كتاب",
+      "writers": "الكتّاب",
+      "allWriters": "كل الكتّاب",
+      "createWriter": "إضافة كاتب"
     },
     "systemSettings": {
       "tabs": {

@@ -267,6 +267,10 @@
       "pages": "{count} pages",
       "downloadPdf": "Download PDF file",
       "buyNow": "Buy Now",
+      "addToCart": "Add to cart",
+      "addedToCart": "Added to cart",
+      "readDownload": "Read / Download",
+      "owned": "Owned",
       "preview": "Preview",
       "reviewsHeading": "Reviews",
       "seeAllReviews": "See all reviews",
@@ -526,6 +530,28 @@
         "joinDisclaimer": "By booking, you agree to our terms and conditions. You'll receive a confirmation email shortly.",
         "backToWritingRoom": "Back to Writing Room"
       }
+    },
+    "Commerce": {
+      "cartTitle": "Your Cart",
+      "cartEmpty": "Your cart is empty.",
+      "browseBooks": "Browse books",
+      "remove": "Remove",
+      "subtotal": "Subtotal",
+      "checkout": "Checkout",
+      "checkoutError": "Could not start checkout. Please try again.",
+      "continueShopping": "Continue shopping",
+      "libraryTitle": "My Library",
+      "libraryEmpty": "You don't own any books yet.",
+      "read": "Read / Download",
+      "purchasedOn": "Purchased {date}",
+      "successTitle": "Payment received",
+      "successFinalizing": "Finalizing your purchase — this only takes a moment…",
+      "successReady": "Your books are ready!",
+      "goToLibrary": "Go to My Library",
+      "cancelTitle": "Checkout canceled",
+      "cancelBody": "No payment was taken. Your cart is still saved.",
+      "backToCart": "Back to cart",
+      "downloadError": "Could not open this file. Please try again."
     }
   }
 }
