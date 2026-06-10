@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
@@ -62,13 +62,11 @@ export function WritersManagementContent() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const prevDebouncedRef = useRef(debouncedSearch);
-  useEffect(() => {
-    if (prevDebouncedRef.current !== debouncedSearch) {
-      prevDebouncedRef.current = debouncedSearch;
-      setPage(1);
-    }
-  }, [debouncedSearch]);
+  const [prevDebounced, setPrevDebounced] = useState(debouncedSearch);
+  if (prevDebounced !== debouncedSearch) {
+    setPrevDebounced(debouncedSearch);
+    setPage(1);
+  }
 
   const queryParams = useMemo(
     () => ({
@@ -124,9 +122,9 @@ export function WritersManagementContent() {
 
   const totalPages = Math.max(1, meta.totalPages);
   const effectivePage = Math.min(page, totalPages);
-  useEffect(() => {
-    if (meta.total > 0 && page > totalPages) setPage(totalPages);
-  }, [meta.total, page, totalPages]);
+  if (meta.total > 0 && page > totalPages) {
+    setPage(totalPages);
+  }
 
   const columns = useMemo<ChamferedTableColumn<WriterProfile>[]>(
     () => [

@@ -14,7 +14,7 @@ export function AvatarUploadZone({
   value: string;
   uploading: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  labels: { uploading: string; click: string; hint: string };
+  labels: { uploading: string; click: string; hint: string; change: string };
 }) {
   const id = useId();
   const [dragging, setDragging] = useState(false);
@@ -50,7 +50,7 @@ export function AvatarUploadZone({
         {/* eslint-disable-next-line @next/next/no-img-element -- preview of arbitrary ref */}
         <img
           src={resolveArticleMediaSrc(value)}
-          alt="Avatar preview"
+          alt=""
           className="h-24 w-24 rounded-full object-cover border border-[var(--tott-card-border)] shadow-md"
           onError={() => setBroken(true)}
         />
@@ -58,7 +58,7 @@ export function AvatarUploadZone({
           htmlFor={id}
           className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 hover:opacity-100 transition-opacity cursor-pointer text-xs font-medium text-white text-center px-2"
         >
-          Change
+          {labels.change}
           <input
             id={id}
             ref={inputRef}

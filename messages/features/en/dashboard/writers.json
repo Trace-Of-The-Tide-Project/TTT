@@ -8,7 +8,7 @@
         "searchPlaceholder": "Search pen name, headline, bio…",
         "loading": "Loading writer profiles…",
         "empty": { "none": "No writer profiles yet.", "noMatch": "No writer profiles match your search." },
-        "headers": { "writer": "Writer", "headline": "Headline", "kind": "Discipline", "location": "Location", "featured": "Featured", "actions": "Actions" },
+        "headers": { "writer": "Writer", "headline": "Headline", "kind": "Discipline", "location": "Location", "featured": "Featured" },
         "featuredOn": "Featured — shown on the homepage strip",
         "featuredOff": "Not featured",
         "toasts": { "featuredOn": "Writer added to the featured strip", "featuredOff": "Writer removed from the featured strip" },
@@ -30,7 +30,6 @@
           "searchPlaceholder": "Search users by name or email…",
           "searching": "Searching…",
           "noResults": "No users found.",
-          "selectedLabel": "Selected user",
           "clear": "Change",
           "linkedUser": "Linked user",
           "fullName": "Full name",
@@ -67,6 +66,7 @@
           "featured": "Show on the featured writers strip"
         },
         "kinds": { "none": "—", "musician": "Musician", "writer": "Writer", "visual_artist": "Visual artist", "filmmaker": "Filmmaker" },
+        "toasts": { "created": "Writer profile created", "updated": "Writer profile updated" },
         "created": { "title": "Writer profile created", "description": "Share these sign-in details with the writer now — the temporary password will not be shown again.", "continue": "Go to writer profiles" },
         "errors": {
           "userRequired": "Select a user or create a new one.",

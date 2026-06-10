@@ -8,7 +8,7 @@
         "searchPlaceholder": "Buscar seudónimo, titular, biografía…",
         "loading": "Cargando perfiles de escritores…",
         "empty": { "none": "Aún no hay perfiles de escritores.", "noMatch": "Ningún perfil coincide con tu búsqueda." },
-        "headers": { "writer": "Escritor", "headline": "Titular", "kind": "Disciplina", "location": "Ubicación", "featured": "Destacado", "actions": "Acciones" },
+        "headers": { "writer": "Escritor", "headline": "Titular", "kind": "Disciplina", "location": "Ubicación", "featured": "Destacado" },
         "featuredOn": "Destacado — visible en la franja de inicio",
         "featuredOff": "No destacado",
         "toasts": { "featuredOn": "Escritor añadido a la franja destacada", "featuredOff": "Escritor retirado de la franja destacada" },
@@ -30,7 +30,6 @@
           "searchPlaceholder": "Buscar usuarios por nombre o email…",
           "searching": "Buscando…",
           "noResults": "No se encontraron usuarios.",
-          "selectedLabel": "Usuario seleccionado",
           "clear": "Cambiar",
           "linkedUser": "Usuario vinculado",
           "fullName": "Nombre completo",
@@ -67,6 +66,7 @@
           "featured": "Mostrar en la franja de escritores destacados"
         },
         "kinds": { "none": "—", "musician": "Músico", "writer": "Escritor", "visual_artist": "Artista visual", "filmmaker": "Cineasta" },
+        "toasts": { "created": "Perfil de escritor creado", "updated": "Perfil de escritor actualizado" },
         "created": { "title": "Perfil de escritor creado", "description": "Comparte estos datos de acceso con el escritor ahora — la contraseña temporal no se volverá a mostrar.", "continue": "Ir a perfiles de escritores" },
         "errors": {
           "userRequired": "Selecciona un usuario o crea uno nuevo.",

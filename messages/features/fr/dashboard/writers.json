@@ -8,7 +8,7 @@
         "searchPlaceholder": "Rechercher par nom de plume, titre, biographie…",
         "loading": "Chargement des profils d'écrivains…",
         "empty": { "none": "Aucun profil d'écrivain pour le moment.", "noMatch": "Aucun profil ne correspond à votre recherche." },
-        "headers": { "writer": "Écrivain", "headline": "Titre", "kind": "Discipline", "location": "Lieu", "featured": "À la une", "actions": "Actions" },
+        "headers": { "writer": "Écrivain", "headline": "Titre", "kind": "Discipline", "location": "Lieu", "featured": "À la une" },
         "featuredOn": "À la une — visible sur le bandeau d'accueil",
         "featuredOff": "Pas à la une",
         "toasts": { "featuredOn": "Écrivain ajouté au bandeau à la une", "featuredOff": "Écrivain retiré du bandeau à la une" },
@@ -30,7 +30,6 @@
           "searchPlaceholder": "Rechercher des utilisateurs par nom ou email…",
           "searching": "Recherche…",
           "noResults": "Aucun utilisateur trouvé.",
-          "selectedLabel": "Utilisateur sélectionné",
           "clear": "Changer",
           "linkedUser": "Utilisateur lié",
           "fullName": "Nom complet",
@@ -67,6 +66,7 @@
           "featured": "Afficher dans le bandeau des écrivains à la une"
         },
         "kinds": { "none": "—", "musician": "Musicien", "writer": "Écrivain", "visual_artist": "Artiste visuel", "filmmaker": "Cinéaste" },
+        "toasts": { "created": "Profil d'écrivain créé", "updated": "Profil d'écrivain mis à jour" },
         "created": { "title": "Profil d'écrivain créé", "description": "Partagez ces identifiants avec l'écrivain maintenant — le mot de passe temporaire ne sera plus affiché.", "continue": "Aller aux profils d'écrivains" },
         "errors": {
           "userRequired": "Sélectionnez un utilisateur ou créez-en un nouveau.",

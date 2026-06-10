@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useWriter } from "@/hooks/queries/writers";
 import {
@@ -249,12 +250,14 @@ export function WriterFormContent({ writerId }: Props) {
           writerId,
           payload: buildPayload(),
         });
+        toast.success(t("toasts.updated"));
         router.push("/admin/writers");
         return;
       }
 
       // Create mode — resolve the user_id strictly per-mode.
       let userId: string | null = null;
+      let handoffPassword: string | null = null;
       if (userMode === "existing") {
         userId = selectedUser?.id ?? null;
       } else if (
@@ -264,6 +267,7 @@ export function WriterFormContent({ writerId }: Props) {
         // This account was already created by a previous attempt — reuse it
         // so retries never duplicate the user.
         userId = createdUser.id;
+        handoffPassword = createdPassword;
       } else {
         try {
           const created = await createUserMutation.mutateAsync({
@@ -274,6 +278,7 @@ export function WriterFormContent({ writerId }: Props) {
           setCreatedUser(created);
           setCreatedPassword(tempPassword);
           userId = created.id;
+          handoffPassword = tempPassword;
         } catch (err) {
           setUserError(formatApiError(err, t("errors.createUserFailed")));
           return;
@@ -290,13 +295,12 @@ export function WriterFormContent({ writerId }: Props) {
           user_id: userId,
         });
         if (userMode === "new") {
-          // createdPassword is still null in this closure on the same submit
-          // that created the account; tempPassword is correct in that case.
           setCreatedSummary({
             email: newEmail.trim(),
-            password: createdPassword ?? tempPassword,
+            password: handoffPassword ?? tempPassword,
           });
         } else {
+          toast.success(t("toasts.created"));
           router.push("/admin/writers");
         }
       } catch (err) {
@@ -521,6 +525,7 @@ export function WriterFormContent({ writerId }: Props) {
                 uploading: t("upload.uploading"),
                 click: t("upload.click"),
                 hint: t("upload.hint"),
+                change: t("account.clear"),
               }}
             />
             <input
