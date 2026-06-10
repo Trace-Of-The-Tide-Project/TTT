@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
@@ -23,6 +23,8 @@ import {
 import { formatApiError } from "@/lib/api/error-message";
 
 const PAGE_LIMIT = 10;
+
+const KNOWN_KINDS = new Set(["musician", "writer", "visual_artist", "filmmaker"]);
 
 const emptyMeta: WritersListMeta = {
   total: 0,
@@ -97,19 +99,27 @@ export function WritersManagementContent() {
   const deleteMutation = useDeleteWriterProfile();
   const deleteBusy = deleteMutation.isPending;
 
-  const toggleFeatured = (w: WriterProfile) => {
-    setActionError(null);
-    const next = !w.featured;
-    updateMutation.mutate(
-      { writerId: w.id, payload: { featured: next } },
-      {
-        onSuccess: () =>
-          toast.success(next ? t("toasts.featuredOn") : t("toasts.featuredOff")),
-        onError: (e) =>
-          setActionError(formatApiError(e, t("errors.updateFailed"))),
-      },
-    );
-  };
+  const toggleFeatured = useCallback(
+    (w: WriterProfile) => {
+      setActionError(null);
+      const next = !w.featured;
+      updateMutation.mutate(
+        { writerId: w.id, payload: { featured: next } },
+        {
+          onSuccess: () =>
+            toast.success(next ? t("toasts.featuredOn") : t("toasts.featuredOff")),
+          onError: (e) =>
+            setActionError(formatApiError(e, t("errors.updateFailed"))),
+        },
+      );
+    },
+    [updateMutation, t],
+  );
+
+  const openDelete = useCallback((w: WriterProfile) => {
+    setDeleteError(null);
+    setDeleteTarget(w);
+  }, []);
 
   const confirmDelete = () => {
     if (!deleteTarget) return;
@@ -184,7 +194,9 @@ export function WritersManagementContent() {
           w.creator_kind ? (
             <span className="inline-flex max-w-full rounded-full bg-[var(--tott-elevated)] px-2.5 py-1 text-xs font-medium text-foreground">
               <span className="truncate">
-                {tKinds(w.creator_kind as "musician")}
+                {KNOWN_KINDS.has(w.creator_kind)
+                  ? tKinds(w.creator_kind as "musician")
+                  : w.creator_kind}
               </span>
             </span>
           ) : (
@@ -241,16 +253,13 @@ export function WritersManagementContent() {
             <Link
               href={`/admin/writers/${w.id}/edit`}
               className="rounded p-1 text-gray-400 hover:text-foreground"
-              title={t("headers.actions")}
+              title={t("edit")}
             >
               <PenLineIcon />
             </Link>
             <button
               type="button"
-              onClick={() => {
-                setDeleteError(null);
-                setDeleteTarget(w);
-              }}
+              onClick={() => openDelete(w)}
               className="rounded p-1 text-gray-400 hover:text-red-400"
               title={t("delete.confirm")}
             >
@@ -260,8 +269,7 @@ export function WritersManagementContent() {
         ),
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [t, tKinds, updateMutation.isPending],
+    [t, tKinds, toggleFeatured, openDelete, updateMutation.isPending],
   );
 
   return (

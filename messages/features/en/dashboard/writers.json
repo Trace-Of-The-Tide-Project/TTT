@@ -4,6 +4,7 @@
       "list": {
         "pageTitle": "Writer profiles",
         "addNew": "Create writer profile",
+        "edit": "Edit",
         "searchPlaceholder": "Search pen name, headline, bio…",
         "loading": "Loading writer profiles…",
         "empty": { "none": "No writer profiles yet.", "noMatch": "No writer profiles match your search." },

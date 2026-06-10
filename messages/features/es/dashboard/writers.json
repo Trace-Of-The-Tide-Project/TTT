@@ -4,6 +4,7 @@
       "list": {
         "pageTitle": "Perfiles de escritores",
         "addNew": "Crear perfil de escritor",
+        "edit": "Editar",
         "searchPlaceholder": "Buscar seudónimo, titular, biografía…",
         "loading": "Cargando perfiles de escritores…",
         "empty": { "none": "Aún no hay perfiles de escritores.", "noMatch": "Ningún perfil coincide con tu búsqueda." },

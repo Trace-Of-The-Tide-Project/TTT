@@ -4,6 +4,7 @@
       "list": {
         "pageTitle": "Profils d'écrivains",
         "addNew": "Créer un profil d'écrivain",
+        "edit": "Modifier",
         "searchPlaceholder": "Rechercher par nom de plume, titre, biographie…",
         "loading": "Chargement des profils d'écrivains…",
         "empty": { "none": "Aucun profil d'écrivain pour le moment.", "noMatch": "Aucun profil ne correspond à votre recherche." },
