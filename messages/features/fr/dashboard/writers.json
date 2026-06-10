@@ -1,0 +1,87 @@
+{
+  "Dashboard": {
+    "writersManagement": {
+      "list": {
+        "pageTitle": "Profils d'écrivains",
+        "addNew": "Créer un profil d'écrivain",
+        "searchPlaceholder": "Rechercher par nom de plume, titre, biographie…",
+        "loading": "Chargement des profils d'écrivains…",
+        "empty": { "none": "Aucun profil d'écrivain pour le moment.", "noMatch": "Aucun profil ne correspond à votre recherche." },
+        "headers": { "writer": "Écrivain", "headline": "Titre", "kind": "Discipline", "location": "Lieu", "featured": "À la une", "actions": "Actions" },
+        "featuredOn": "À la une — visible sur le bandeau d'accueil",
+        "featuredOff": "Pas à la une",
+        "toasts": { "featuredOn": "Écrivain ajouté au bandeau à la une", "featuredOff": "Écrivain retiré du bandeau à la une" },
+        "errors": { "loadFailed": "Échec du chargement des profils", "updateFailed": "Échec de la mise à jour du profil", "deleteFailed": "Échec de la suppression du profil" },
+        "tryAgain": "Réessayer",
+        "pagination": { "pageOf": "Page {page} sur {totalPages}", "previous": "Précédent", "next": "Suivant" },
+        "delete": { "title": "Supprimer le profil d'écrivain", "description": "Supprimer le profil \"{name}\" ? Cette action est irréversible.", "cancel": "Annuler", "confirm": "Supprimer", "confirmBusy": "Suppression…" }
+      },
+      "form": {
+        "createTitle": "Créer un profil d'écrivain",
+        "editTitle": "Modifier le profil d'écrivain",
+        "backToList": "Retour aux profils d'écrivains",
+        "loading": "Chargement du profil d'écrivain…",
+        "sections": { "account": "Compte de l'écrivain", "identity": "Identité", "about": "À propos", "support": "Soutien et visibilité" },
+        "account": {
+          "modeExisting": "Utilisateur existant",
+          "modeNew": "Nouvel écrivain",
+          "searchPlaceholder": "Rechercher des utilisateurs par nom ou email…",
+          "searching": "Recherche…",
+          "noResults": "Aucun utilisateur trouvé.",
+          "selectedLabel": "Utilisateur sélectionné",
+          "clear": "Changer",
+          "linkedUser": "Utilisateur lié",
+          "fullName": "Nom complet",
+          "email": "Email",
+          "tempPassword": "Mot de passe temporaire",
+          "tempPasswordHint": "Partagez-le avec l'écrivain pour qu'il puisse se connecter. Il n'est affiché qu'ici.",
+          "copy": "Copier",
+          "copied": "Copié",
+          "regenerate": "Régénérer"
+        },
+        "fields": {
+          "penName": "Nom de plume",
+          "penNamePlaceholder": "p. ex. Mahmoud Darwish",
+          "headline": "Titre",
+          "headlinePlaceholder": "p. ex. Critique culturel et essayiste",
+          "creatorKind": "Discipline",
+          "location": "Lieu",
+          "locationPlaceholder": "p. ex. Gaza, Palestine",
+          "avatar": "Avatar",
+          "avatarUrlFallback": "Ou collez directement une URL d'image",
+          "bioLong": "Biographie",
+          "quote": "Citation",
+          "themes": "Thèmes et centres d'intérêt",
+          "themesPlaceholder": "Saisissez un thème puis appuyez sur Entrée",
+          "collaborations": "Collaborations",
+          "collaborationsPlaceholder": "p. ex. Ólafur Arnalds, Kiasmos",
+          "recognition": "Distinctions",
+          "recognitionPlaceholder": "p. ex. Micro d'or du meilleur single, 2023",
+          "monthlyGoal": "Objectif de soutien mensuel",
+          "website": "Site web",
+          "twitter": "X (Twitter)",
+          "instagram": "Instagram",
+          "youtube": "YouTube",
+          "featured": "Afficher dans le bandeau des écrivains à la une"
+        },
+        "kinds": { "none": "—", "musician": "Musicien", "writer": "Écrivain", "visual_artist": "Artiste visuel", "filmmaker": "Cinéaste" },
+        "errors": {
+          "userRequired": "Sélectionnez un utilisateur ou créez-en un nouveau.",
+          "fullNameRequired": "Le nom complet est requis.",
+          "emailRequired": "Saisissez une adresse email valide.",
+          "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères.",
+          "monthlyGoalInvalid": "L'objectif mensuel doit être supérieur ou égal à 0.",
+          "createUserFailed": "Échec de la création du compte utilisateur",
+          "saveFailed": "Échec de l'enregistrement du profil",
+          "duplicateProfile": "Cet utilisateur a déjà un profil d'écrivain."
+        },
+        "create": "Créer le profil",
+        "creating": "Création…",
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "cancel": "Annuler",
+        "upload": { "uploading": "Téléversement…", "click": "Cliquez pour téléverser un avatar", "hint": "JPG, PNG, WebP — glisser-déposer pris en charge" }
+      }
+    }
+  }
+}
