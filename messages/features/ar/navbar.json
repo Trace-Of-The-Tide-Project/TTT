@@ -11,15 +11,33 @@
     },
     "palestineHeading": "فلسطين (هندسة القصص)",
     "palestine": {
-      "stone": { "title": "حجر", "description": "شاهد على الحياة" },
-      "salt": { "title": "ملح", "description": "أثر الزمن" },
-      "compass": { "title": "بوصلة", "description": "أثر المكان" }
+      "stone": {
+        "title": "حجر",
+        "description": "شاهد على الحياة"
+      },
+      "salt": {
+        "title": "ملح",
+        "description": "أثر الزمن"
+      },
+      "compass": {
+        "title": "بوصلة",
+        "description": "أثر المكان"
+      }
     },
     "fieldsHeading": "المجالات (فسيفساء دروب بالي)",
     "fields": {
-      "harbour": { "title": "دروب المرفأ", "description": "مجاورة مع الثقافة" },
-      "courtyard": { "title": "دروب الفناء", "description": "مجاورة مع المعرفة" },
-      "hill": { "title": "دروب التل", "description": "مجاورة مع الفنون" }
+      "harbour": {
+        "title": "دروب المرفأ",
+        "description": "مجاورة مع الثقافة"
+      },
+      "courtyard": {
+        "title": "دروب الفناء",
+        "description": "مجاورة مع المعرفة"
+      },
+      "hill": {
+        "title": "دروب التل",
+        "description": "مجاورة مع الفنون"
+      }
     },
     "contactHeading": "التواصل",
     "contactLocation": "في كل مكان",
@@ -46,6 +64,8 @@
     "closeMenu": "إغلاق القائمة",
     "switchToLight": "التبديل إلى الوضع الفاتح",
     "switchToDark": "التبديل إلى الوضع الداكن",
-    "profile": "الملف الشخصي"
+    "profile": "الملف الشخصي",
+    "myLibrary": "مكتبتي",
+    "cart": "السلة"
   }
 }

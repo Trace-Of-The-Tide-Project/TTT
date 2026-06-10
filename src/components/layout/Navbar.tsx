@@ -211,6 +211,28 @@ export function Navbar() {
                     >
                       {t("profile")}
                     </Link>
+                    <Link
+                      href="/books/library"
+                      onClick={() => setIsUserDropdownOpen(false)}
+                      className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                        isDark
+                          ? "text-gray-300 hover:bg-white/5 hover:text-white"
+                          : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                      }`}
+                    >
+                      {t("myLibrary")}
+                    </Link>
+                    <Link
+                      href="/books/cart"
+                      onClick={() => setIsUserDropdownOpen(false)}
+                      className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                        isDark
+                          ? "text-gray-300 hover:bg-white/5 hover:text-white"
+                          : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                      }`}
+                    >
+                      {t("cart")}
+                    </Link>
                     <button
                       type="button"
                       onClick={handleLogout}
@@ -342,6 +364,20 @@ export function Navbar() {
                     {getInitial(user.full_name || user.username, user.email)}
                   </span>
                   <span>{displayName}</span>
+                </Link>
+                <Link
+                  href="/books/library"
+                  onClick={closeMobileMenu}
+                  className={`flex items-center gap-3 rounded-md px-4 py-3 transition-colors ${navMuted} ${navRowHover}`}
+                >
+                  <span>{t("myLibrary")}</span>
+                </Link>
+                <Link
+                  href="/books/cart"
+                  onClick={closeMobileMenu}
+                  className={`flex items-center gap-3 rounded-md px-4 py-3 transition-colors ${navMuted} ${navRowHover}`}
+                >
+                  <span>{t("cart")}</span>
                 </Link>
                 <button
                   type="button"

@@ -11,15 +11,15 @@ import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import { BookHexCover } from "@/components/books/BookHexCover";
-import { MessageBubbleIcon } from "@/components/ui/icons";
 import {
-  DownloadIcon,
-  ChevronRightIcon,
-} from "@/components/ui/icons";
+  BookActionButtons,
+  BookDownloadLink,
+} from "@/components/books/BookPurchaseActions";
+import { MessageBubbleIcon } from "@/components/ui/icons";
+import { ChevronRightIcon } from "@/components/ui/icons";
 
 const SHARE_HEX = "/images/home/Icon-5.svg";
-// Custom Figma icons used in the book detail action buttons.
-const BUY_ICON = "/images/books/buy-icon.svg";
+// Custom Figma icon used in the preview action button.
 const PREVIEW_ICON = "/images/books/preview-icon.svg";
 
 const CHIP_CHAMFER =
@@ -57,6 +57,10 @@ export type BookDetail = {
   price: number | null;
   /** Currency code, used for formatting price. */
   currency: string;
+  /** True when the book is free (open to all). */
+  isFree: boolean;
+  /** True when the current user already owns this paid book (SSR initial). */
+  isOwned: boolean;
 };
 
 export type BookReviewItem = {
@@ -181,43 +185,16 @@ export function BookDetailContent({
           >
             <BookHexCover src={book.coverImage} alt={book.title} />
 
-            {/* Buy Now — Figma "Button" spec: 360×40, gold bg with
-                an inset white-40% top highlight, 8px radius. */}
-            <button
-              type="button"
-              className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90 min-[1600px]:h-14! min-[1600px]:text-base!"
-              style={{
-                height: "40px",
-                padding: "8px",
-                gap: "8px",
-                borderRadius: "8px",
-                backgroundColor: "var(--tott-magazine-btn-bg)",
-                boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
-                color: "var(--tott-auth-btn-text)",
-                fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                fontWeight: 500,
-                fontSize: "14px",
-                lineHeight: "20px",
-                letterSpacing: "-0.005em",
-                border: "none",
-              }}
-            >
-              <span
-                aria-hidden
-                className="relative h-6"
-                style={{ width: "28px" }}
-              >
-                <Image
-                  src={BUY_ICON}
-                  alt=""
-                  fill
-                  sizes="28px"
-                  className="select-none"
-                  draggable={false}
-                />
-              </span>
-              {t("buyNow")}
-            </button>
+            {/* Buy Now / Add to cart / Read-Download — state-driven actions.
+                Free or owned books show Read/Download; paid books that the
+                user doesn't own show Buy now + Add to cart. */}
+            <BookActionButtons
+              bookId={book.id}
+              price={book.price}
+              currency={book.currency}
+              isFree={book.isFree}
+              isOwnedInitial={book.isOwned}
+            />
             {/* Preview — Figma "Button" spec: 360×40, #333333 bg
                 (theme-aware via --tott-card-border), inset white-8%
                 top highlight, 8px radius, Inter 400 14/20 white
@@ -389,31 +366,9 @@ export function BookDetailContent({
                   </span>
                 </DataRow>
               ) : null}
-              {book.pdfUrl ? (
+              {book.isFree || book.isOwned ? (
                 <DataRow label={t("metaContents")}>
-                  <a
-                    href={book.pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download
-                    className="inline-flex items-center transition-opacity hover:opacity-90"
-                    style={{
-                      gap: "6px",
-                      color: "var(--tott-dash-gold-label)",
-                      fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                      fontWeight: 500,
-                      fontSize: "12px",
-                      lineHeight: "16px",
-                    }}
-                  >
-                    <span
-                      aria-hidden
-                      className="[&>svg]:h-4 [&>svg]:w-4"
-                    >
-                      <DownloadIcon />
-                    </span>
-                    {t("downloadPdf")}
-                  </a>
+                  <BookDownloadLink bookId={book.id} label={t("downloadPdf")} />
                 </DataRow>
               ) : null}
             </div>

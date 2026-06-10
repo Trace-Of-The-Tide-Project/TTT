@@ -28,6 +28,10 @@ export type Book = {
   created_by?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  /** True when the book is free (price null/0). Computed by the backend. */
+  is_free?: boolean;
+  /** True when the current (authenticated) caller owns this paid book. */
+  is_owned?: boolean;
 };
 
 export type BookReview = {
@@ -125,6 +129,22 @@ export async function getBookById(id: string): Promise<Book | null> {
   } catch {
     return null;
   }
+}
+
+/**
+ * GET /knowledge/books/{id}/download — owners/free/admin only.
+ * Returns a fresh short-lived signed URL for the full PDF. Client-only
+ * (requires the auth cookie to be forwarded by the proxy).
+ */
+export async function getBookDownloadUrl(id: string): Promise<string | null> {
+  const { data } = await api.get<unknown>(
+    `/knowledge/books/${encodeURIComponent(id)}/download`,
+  );
+  const inner =
+    data && typeof data === "object" && "data" in (data as object)
+      ? (data as { data?: { url?: string } }).data
+      : (data as { url?: string });
+  return inner?.url ?? null;
 }
 
 /** GET /knowledge/books/{id}/reviews */

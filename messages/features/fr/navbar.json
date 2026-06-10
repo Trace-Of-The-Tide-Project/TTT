@@ -11,15 +11,33 @@
     },
     "palestineHeading": "Palestine (Architecture des histoires)",
     "palestine": {
-      "stone": { "title": "Pierre", "description": "Témoin de vie" },
-      "salt": { "title": "Sel", "description": "Trace du temps" },
-      "compass": { "title": "Boussole", "description": "Trace du lieu" }
+      "stone": {
+        "title": "Pierre",
+        "description": "Témoin de vie"
+      },
+      "salt": {
+        "title": "Sel",
+        "description": "Trace du temps"
+      },
+      "compass": {
+        "title": "Boussole",
+        "description": "Trace du lieu"
+      }
     },
     "fieldsHeading": "Champs (Mosaïque des sentiers de Bali)",
     "fields": {
-      "harbour": { "title": "Sentiers du port", "description": "Mujaawarah avec la Culture" },
-      "courtyard": { "title": "Sentiers de la cour", "description": "Mujaawarah avec la Connaissance" },
-      "hill": { "title": "Sentiers de la colline", "description": "Mujaawarah avec les Arts" }
+      "harbour": {
+        "title": "Sentiers du port",
+        "description": "Mujaawarah avec la Culture"
+      },
+      "courtyard": {
+        "title": "Sentiers de la cour",
+        "description": "Mujaawarah avec la Connaissance"
+      },
+      "hill": {
+        "title": "Sentiers de la colline",
+        "description": "Mujaawarah avec les Arts"
+      }
     },
     "contactHeading": "Contact",
     "contactLocation": "Partout",
@@ -46,6 +64,8 @@
     "closeMenu": "Fermer le menu",
     "switchToLight": "Passer au thème clair",
     "switchToDark": "Passer au thème sombre",
-    "profile": "Profil"
+    "profile": "Profil",
+    "myLibrary": "Ma bibliothèque",
+    "cart": "Panier"
   }
 }

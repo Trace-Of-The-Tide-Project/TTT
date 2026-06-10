@@ -11,15 +11,33 @@
     },
     "palestineHeading": "Palestine (Architecture of stories)",
     "palestine": {
-      "stone": { "title": "Stone", "description": "Witness of life" },
-      "salt": { "title": "Salt", "description": "Trace of time" },
-      "compass": { "title": "Compass", "description": "Trace of place" }
+      "stone": {
+        "title": "Stone",
+        "description": "Witness of life"
+      },
+      "salt": {
+        "title": "Salt",
+        "description": "Trace of time"
+      },
+      "compass": {
+        "title": "Compass",
+        "description": "Trace of place"
+      }
     },
     "fieldsHeading": "Fields (Mosaic of Bali trails)",
     "fields": {
-      "harbour": { "title": "Harbour trails", "description": "Mujaawarah with Culture" },
-      "courtyard": { "title": "Courtyard trails", "description": "Mujaawarah with Knowledge" },
-      "hill": { "title": "Hill trails", "description": "Mujaawarah with Arts" }
+      "harbour": {
+        "title": "Harbour trails",
+        "description": "Mujaawarah with Culture"
+      },
+      "courtyard": {
+        "title": "Courtyard trails",
+        "description": "Mujaawarah with Knowledge"
+      },
+      "hill": {
+        "title": "Hill trails",
+        "description": "Mujaawarah with Arts"
+      }
     },
     "contactHeading": "Contact",
     "contactLocation": "Everywhere",
@@ -46,6 +64,8 @@
     "closeMenu": "Close menu",
     "switchToLight": "Switch to light theme",
     "switchToDark": "Switch to dark theme",
-    "profile": "Profile"
+    "profile": "Profile",
+    "myLibrary": "My Library",
+    "cart": "Cart"
   }
 }

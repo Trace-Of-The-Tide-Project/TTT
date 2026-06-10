@@ -281,7 +281,11 @@
       "previewLockedTitle": "L'aperçu gratuit s'arrête ici",
       "previewLockedBody": "Vous avez atteint la fin de l'aperçu gratuit. Achetez ce livre pour poursuivre votre lecture.",
       "previewBuy": "Acheter pour lire le livre en entier",
-      "previewNoContent": "Aucun aperçu n'est encore disponible pour ce livre."
+      "previewNoContent": "Aucun aperçu n'est encore disponible pour ce livre.",
+      "addToCart": "Ajouter au panier",
+      "addedToCart": "Ajouté au panier",
+      "readDownload": "Lire / Télécharger",
+      "owned": "Acquis"
     },
     "writingRoom": {
       "heroTitle": "Atelier d'écriture",
@@ -526,6 +530,28 @@
         "joinDisclaimer": "En réservant, vous acceptez nos conditions générales. Vous recevrez sous peu un e-mail de confirmation.",
         "backToWritingRoom": "Retour à l'atelier d'écriture"
       }
+    },
+    "Commerce": {
+      "cartTitle": "Votre panier",
+      "cartEmpty": "Votre panier est vide.",
+      "browseBooks": "Parcourir les livres",
+      "remove": "Retirer",
+      "subtotal": "Sous-total",
+      "checkout": "Paiement",
+      "checkoutError": "Impossible de démarrer le paiement. Veuillez réessayer.",
+      "continueShopping": "Continuer les achats",
+      "libraryTitle": "Ma bibliothèque",
+      "libraryEmpty": "Vous ne possédez encore aucun livre.",
+      "read": "Lire / Télécharger",
+      "purchasedOn": "Acheté le {date}",
+      "successTitle": "Paiement reçu",
+      "successFinalizing": "Finalisation de votre achat — cela ne prend qu’un instant…",
+      "successReady": "Vos livres sont prêts !",
+      "goToLibrary": "Aller à Ma bibliothèque",
+      "cancelTitle": "Paiement annulé",
+      "cancelBody": "Aucun paiement n’a été prélevé. Votre panier est toujours enregistré.",
+      "backToCart": "Retour au panier",
+      "downloadError": "Impossible d’ouvrir ce fichier. Veuillez réessayer."
     }
   }
 }
