@@ -26,6 +26,7 @@ export function useSubmitIssueProposal() {
 export function useApproveIssueProposal() {
   const qc = useQueryClient();
   return useMutation({
+    meta: { silent: true },
     mutationFn: async (args: {
       contribution: ContributionListItem;
       kind: string;
@@ -51,6 +52,7 @@ export function useApproveIssueProposal() {
 export function useRejectIssueProposal() {
   const qc = useQueryClient();
   return useMutation({
+    meta: { silent: true },
     mutationFn: (id: string) => updateContributionStatus(id, "archived"),
     onSuccess: () => qc.invalidateQueries({ queryKey: contributionsKeys.all }),
   });

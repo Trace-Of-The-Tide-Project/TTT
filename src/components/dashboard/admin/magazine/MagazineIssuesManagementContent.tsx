@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { toast } from "sonner";
 import { SearchIcon, EyeIcon, XIcon, RefreshCwIcon } from "@/components/ui/icons";
+import { mutationToast } from "@/hooks/useMutationToast";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import { formatApiError } from "@/lib/api/error-message";
 import {
@@ -339,33 +339,30 @@ export function MagazineIssuesManagementContent() {
           approving={approve.isPending}
           rejecting={reject.isPending}
           onClose={() => setSelected(null)}
-          onApprove={(kind) =>
-            approve.mutate(
-              { contribution: selected, kind },
+          onApprove={(kind) => {
+            mutationToast(
+              () => approve.mutateAsync({ contribution: selected, kind }),
               {
-                onSuccess: () => {
-                  toast.success(t("toast.approved"));
-                  setSelected(null);
-                },
-                onError: (err) =>
-                  toast.error(t("toast.approveError"), {
-                    description: formatApiError(err, t("toast.errorBody")),
-                  }),
+                loading: "Publishing issue…",
+                success: t("toast.approved"),
+                error: t("toast.approveError"),
               },
             )
-          }
-          onReject={() =>
-            reject.mutate(selected.id, {
-              onSuccess: () => {
-                toast.success(t("toast.rejected"));
-                setSelected(null);
+              .then(() => setSelected(null))
+              .catch(() => {});
+          }}
+          onReject={() => {
+            mutationToast(
+              () => reject.mutateAsync(selected.id),
+              {
+                loading: "Rejecting proposal…",
+                success: t("toast.rejected"),
+                error: t("toast.rejectError"),
               },
-              onError: (err) =>
-                toast.error(t("toast.rejectError"), {
-                  description: formatApiError(err, t("toast.errorBody")),
-                }),
-            })
-          }
+            )
+              .then(() => setSelected(null))
+              .catch(() => {});
+          }}
         />
       ) : null}
     </div>
