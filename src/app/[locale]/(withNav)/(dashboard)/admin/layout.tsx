@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useUsers } from "@/hooks/queries/users";
@@ -69,30 +69,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const routePath = normalizeAppPathname(pathname);
   const tLayout = useTranslations("Dashboard.layout");
   const commandCenter = getCommandCenter(pathname);
-  const [mounted, setMounted] = useState(false);
   const { data: usersResult } = useUsers({ limit: 1 });
-
-  // SSR hydration guard. setState in effect is the documented pattern.
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
-  }, []);
 
   const badgeOverrides = useMemo<Record<string, string>>(() => {
     const out: Record<string, string> = {};
     if (usersResult) out["/admin/users"] = formatCompact(usersResult.meta.total);
     return out;
   }, [usersResult]);
-
-  if (!mounted) {
-    return (
-      <div
-        className="min-h-screen w-full bg-background"
-        aria-busy="true"
-        aria-label={tLayout("loadingAdmin")}
-      />
-    );
-  }
 
   const mobileBarTitle = shouldShowAdminSettingsHeader(routePath)
     ? tLayout("adminSettings")

@@ -383,7 +383,7 @@ export function BookFormContent({ bookId }: Props) {
   }
 
   return (
-    <div className="my-4 mx-10 pb-12">
+    <div className="my-4 mx-auto px-10 pb-12 max-w-4xl">
       {/* Back nav */}
       <Link
         href="/admin/books"
@@ -399,7 +399,7 @@ export function BookFormContent({ bookId }: Props) {
         {isEdit ? t("editTitle") : t("createTitle")}
       </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
 
         {/* ── Section 1: Core info ── */}
         <div className={sectionClass}>

@@ -7,7 +7,8 @@ import { HeartIcon, MessageSquareIcon, TrendingUpIcon, GiftIcon } from "@/compon
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { fetchEngagementStats } from "@/services/engagements";
 
-function formatNumber(n: number): string {
+function formatNumber(n: number | undefined | null): string {
+  if (n == null) return "—";
   if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
   return n.toLocaleString();
 }
@@ -32,7 +33,7 @@ export function EngagementsPageHeader() {
             <MessageSquareIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">
-            {stats ? formatNumber(stats.total_comments) : "—"}
+            {formatNumber(stats?.total_comments)}
           </span>
           <span className="text-xs text-gray-500">{t("stats.totalComments")}</span>
         </div>
@@ -42,7 +43,7 @@ export function EngagementsPageHeader() {
             <HeartIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">
-            {stats ? formatNumber(stats.total_likes) : "—"}
+            {formatNumber(stats?.total_likes)}
           </span>
           <span className="text-xs text-gray-500">{t("stats.totalLikes")}</span>
         </div>
@@ -52,7 +53,7 @@ export function EngagementsPageHeader() {
             <TrendingUpIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">
-            {stats ? formatNumber(stats.active_discussions) : "—"}
+            {formatNumber(stats?.active_discussions)}
           </span>
           <span className="text-xs text-gray-500">{t("stats.activeDiscussions")}</span>
         </div>
@@ -62,7 +63,7 @@ export function EngagementsPageHeader() {
             <GiftIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">
-            {stats ? formatNumber(stats.badges_awarded) : "—"}
+            {formatNumber(stats?.badges_awarded)}
           </span>
           <span className="text-xs text-gray-500">{t("stats.badgesAwarded")}</span>
         </div>

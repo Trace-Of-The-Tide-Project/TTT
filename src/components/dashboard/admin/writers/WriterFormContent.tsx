@@ -374,7 +374,7 @@ export function WriterFormContent({ writerId }: Props) {
     ].join(" ");
 
   return (
-    <div className="my-4 mx-10 pb-12">
+    <div className="my-4 mx-auto px-10 pb-12 max-w-4xl">
       <Link
         href="/admin/writers"
         className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-foreground transition-colors mb-5"
@@ -389,7 +389,7 @@ export function WriterFormContent({ writerId }: Props) {
         {isEdit ? t("editTitle") : t("createTitle")}
       </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
         {/* ── Section 1: Writer account ── */}
         <div className={sectionClass}>
           <p className={sectionHeadingClass}>{t("sections.account")}</p>
