@@ -49,7 +49,7 @@ async function fetchHexCards(locale: string): Promise<HexCard[]> {
     title: oc.title,
     badge: formatCategory(oc.category, "Open Call"),
     image: oc.cover_image ?? oc.main_media?.url ?? null,
-    href: `/content/open-call?id=${encodeURIComponent(oc.id)}`,
+    href: `/open-calls/${encodeURIComponent(oc.id)}`,
   }));
 
   return [...articleCards, ...openCallCards];

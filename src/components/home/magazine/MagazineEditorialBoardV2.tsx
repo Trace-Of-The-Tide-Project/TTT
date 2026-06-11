@@ -84,7 +84,7 @@ const DEFAULT_ROLE_COUNTS: RoleCounts = {
 const FALLBACK_WRITERS: FollowWriterItem[] = Array.from({ length: 4 }, (_, i) => ({
   id: `pf-writer-${i}`,
   name: "Author",
-  title: "Insert card title here",
+  title: null,
   edition: "12.05",
   avatar: null,
   role: "Editors",
@@ -343,7 +343,7 @@ function CarouselCard({
   authorPlaceholder: string;
   rolePlaceholder: string;
 }) {
-  const title = writer.title?.trim() || cardTitlePlaceholder;
+  const title = writer.title?.trim() || writer.name?.trim() || cardTitlePlaceholder;
   const author = writer.name?.trim() || authorPlaceholder;
   const date = writer.edition?.trim() || "";
   const role = writer.role?.trim() || rolePlaceholder;

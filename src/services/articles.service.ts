@@ -367,17 +367,31 @@ export type RelatedArticleItem = {
   author?: { id: string; username?: string; full_name?: string | null } | null;
 };
 
-export type CollectionArticlesResult = {
-  count: number;
-  total_hours: number;
-  articles: Array<{
+export type CollectionArticleItem = {
+  id: string;
+  title: string;
+  slug?: string | null;
+  cover_image?: string | null;
+  content_type?: string | null;
+  reading_time?: number | null;
+  media_duration?: number | null;
+  edition?: string | null;
+  published_at?: string | null;
+  excerpt?: string | null;
+  author?: {
     id: string;
-    title: string;
-    cover_image?: string | null;
-    excerpt?: string | null;
-    published_at?: string | null;
-    author?: { id: string; username?: string; full_name?: string | null } | null;
-  }>;
+    username?: string;
+    full_name?: string | null;
+    profile?: { avatar?: string | null; display_name?: string | null } | null;
+  } | null;
+};
+
+export type CollectionArticlesResult = {
+  /** Total published items in the collection (from meta.total). */
+  count: number;
+  /** Sum of media/reading minutes ÷ 60, from meta.total_hours. */
+  total_hours: number;
+  articles: CollectionArticleItem[];
 };
 
 /** GET /articles/:id/related — returns up to 4 published articles in same category/tags. */
@@ -391,15 +405,26 @@ export async function getRelatedArticles(articleId: string): Promise<RelatedArti
   }
 }
 
-/** GET /articles/collection/:collectionId — returns all published articles in a collection. */
-export async function getCollectionArticles(collectionId: string): Promise<CollectionArticlesResult> {
+export type GetCollectionArticlesParams = { page?: number; limit?: number };
+
+/** GET /articles/collection/:collectionId — published articles in a collection.
+ *  Backend returns `{ rows, meta: { total, total_hours, ... } }`. */
+export async function getCollectionArticles(
+  collectionId: string,
+  params?: GetCollectionArticlesParams,
+): Promise<CollectionArticlesResult> {
   try {
-    const { data } = await api.get<unknown>(`/articles/collection/${encodeURIComponent(collectionId)}`);
-    const d = data as CollectionArticlesResult;
+    const { data } = await api.get<unknown>(
+      `/articles/collection/${encodeURIComponent(collectionId)}`,
+      { params },
+    );
+    const o = (data ?? {}) as Record<string, unknown>;
+    const rows = Array.isArray(o.rows) ? (o.rows as CollectionArticleItem[]) : [];
+    const meta = (o.meta ?? {}) as Record<string, unknown>;
     return {
-      count: d?.count ?? 0,
-      total_hours: d?.total_hours ?? 0,
-      articles: Array.isArray(d?.articles) ? d.articles : [],
+      count: typeof meta.total === "number" ? meta.total : rows.length,
+      total_hours: typeof meta.total_hours === "number" ? meta.total_hours : 0,
+      articles: rows,
     };
   } catch {
     return { count: 0, total_hours: 0, articles: [] };

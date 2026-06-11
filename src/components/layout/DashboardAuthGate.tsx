@@ -3,27 +3,26 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { guestMayAccessWithNavRoute } from "@/lib/auth/with-nav-public-routes";
 
 /**
- * Most `(withNav)` routes require a cookie session (`AuthProvider` status). Guests are
- * sent to `/auth/login` with `callbackUrl` unless the path is listed in
- * `with-nav-public-routes.ts`.
+ * Every `(dashboard)` route (admin + profile) requires a cookie session
+ * (`AuthProvider` status). Guests are sent to `/auth/login` with a
+ * `callbackUrl` back to the page they tried to open. Rendering is held
+ * back (spinner / null) until the session resolves so the auth-required
+ * queries those pages fire on mount never run for guests.
  */
-export function WithNavAuthGate({ children }: { children: React.ReactNode }) {
+export function DashboardAuthGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { status } = useAuth();
-  const guestOkHere = guestMayAccessWithNavRoute(pathname);
 
   useEffect(() => {
     if (status !== "unauthenticated") return;
-    if (guestOkHere) return;
     const search = typeof window !== "undefined" ? window.location.search : "";
     const path = `${pathname ?? "/"}${search}`;
     const cb = encodeURIComponent(path || "/");
     router.replace(`/auth/login?callbackUrl=${cb}`);
-  }, [status, pathname, router, guestOkHere]);
+  }, [status, pathname, router]);
 
   if (status === "loading") {
     return (
@@ -36,7 +35,7 @@ export function WithNavAuthGate({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (status === "unauthenticated" && !guestOkHere) {
+  if (status === "unauthenticated") {
     return null;
   }
 

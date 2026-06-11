@@ -58,9 +58,9 @@ const PREVIEW_PAGE_LIMIT = 4;
  * toolbar) but scoped to a single book and reachable from the
  * Preview button on the book detail page.
  *
- * The book content is a static brand spread (Book.png); the
- * page-flip animation is cosmetic. Real per-page artwork can drop
- * in later by replacing the spread layer.
+ * Entitled callers embed the full PDF; gated callers get either the
+ * curated page-image flipbook or a trimmed free-preview PDF served
+ * by GET /knowledge/books/:id/preview.
  */
 export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
   const t = useTranslations("Home");
@@ -68,12 +68,12 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
   const tDetail = useTranslations("Home.bookDetail");
 
   const totalPages = book.pageCount ?? FALLBACK_TOTAL_PAGES;
-  // Free books with a PDF show the real content inline; paid books
-  // are gated to the first few pages behind a buy prompt. A free book
-  // with no PDF has nothing to show, so it gets an empty state instead
-  // of a blank placeholder spread.
+  // The backend exposes pdf_url only to entitled callers (free books for
+  // everyone; paid books for owners/admins) — when present, embed the full
+  // PDF inline. Paid books without it get the gated preview reader; a free
+  // book with no PDF has nothing to show and gets an empty state.
   const isFree = book.price == null || book.price === 0;
-  const showPdf = isFree && Boolean(book.pdfUrl);
+  const showPdf = Boolean(book.pdfUrl);
   const showEmpty = isFree && !book.pdfUrl;
   const showReader = !showPdf && !showEmpty;
   const gated = !isFree;
@@ -90,8 +90,10 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
   const [flipPhase, setFlipPhase] = useState<"start" | "end">("start");
   const flipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Preview pages from GET /knowledge/books/:id/preview
+  // Preview content from GET /knowledge/books/:id/preview
   const [previewPages, setPreviewPages] = useState<string[]>([]);
+  const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null);
+  const [previewReady, setPreviewReady] = useState(false);
   const [previewMeta, setPreviewMeta] = useState<BookPreviewMeta | null>(null);
 
   const displayTotal = previewMeta
@@ -108,15 +110,26 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
       try {
         const res = await getBookPreview(book.id, { page, limit: 2 });
         if (res) {
-          setPreviewPages(res.rows);
+          setPreviewPages(res.pages);
+          setPreviewPdfUrl(res.previewPdfUrl);
           setPreviewMeta(res.meta);
         }
       } finally {
         setPreviewLoading(false);
+        setPreviewReady(true);
       }
     },
     [book.id, showReader],
   );
+
+  // Reader sub-modes: curated page images drive the flipbook; without
+  // them the trimmed free-preview PDF is embedded; failing both, an
+  // honest empty state (never a blank placeholder spread).
+  const readerImagesMode = showReader && previewPages.length > 0;
+  const readerPdfMode =
+    showReader && !readerImagesMode && Boolean(previewPdfUrl);
+  const readerEmpty =
+    showReader && previewReady && !readerImagesMode && !readerPdfMode;
 
   useEffect(() => {
     fetchPreviewPage(currentPage);
@@ -342,12 +355,11 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
           ) : null}
         </header>
 
-        {/* Reader — for free books with a PDF we embed the real
-            content; otherwise a cosmetic page-flip spread with side
-            chevrons (same pattern as MagazineIssues), gated behind a
-            buy prompt for paid books. */}
+        {/* Reader — entitled callers embed the full PDF; gated books
+            get the page-image flipbook (side chevrons, same pattern as
+            MagazineIssues) or the trimmed free-preview PDF. */}
         <div className="relative mt-8 mx-auto w-full sm:px-12 lg:px-16">
-          {showReader && (
+          {readerImagesMode && (
             <>
               <button
                 type="button"
@@ -372,7 +384,7 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
             </>
           )}
 
-          {showEmpty && (
+          {(showEmpty || readerEmpty) && (
             <LockedBook3D
               cover={book.coverImage || BOOK_COVER}
               title={book.title}
@@ -380,22 +392,68 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
             />
           )}
 
-          {!showEmpty && (
+          {!showEmpty && !readerEmpty && (
           <div
             className="relative mx-auto w-full max-w-[1100px]"
             style={{ perspective: "2000px" }}
           >
+            {readerPdfMode && (
+              <div
+                className="mb-4 flex flex-wrap items-center justify-between"
+                style={{
+                  gap: "12px",
+                  padding: "12px 16px",
+                  backgroundColor: "var(--tott-panel-bg)",
+                  border: "1px solid var(--tott-card-border)",
+                  borderRadius: "12px",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontWeight: 400,
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    letterSpacing: "-0.005em",
+                    color: "var(--tott-home-text-muted)",
+                  }}
+                >
+                  {tDetail("previewBanner", {
+                    count: previewMeta?.free_preview_limit ?? PREVIEW_PAGE_LIMIT,
+                  })}
+                </span>
+                <Link
+                  href={`/books/${book.id}`}
+                  className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
+                  style={{
+                    height: "36px",
+                    padding: "0 16px",
+                    borderRadius: "8px",
+                    backgroundColor: "var(--tott-magazine-btn-bg)",
+                    boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
+                    color: "var(--tott-auth-btn-text)",
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontWeight: 500,
+                    fontSize: "14px",
+                    lineHeight: "20px",
+                    letterSpacing: "-0.005em",
+                  }}
+                >
+                  {tDetail("previewBuy")}
+                </Link>
+              </div>
+            )}
             <div
               className="relative w-full overflow-hidden"
               style={{
                 aspectRatio: "1132 / 802",
                 transformStyle: "preserve-3d",
-                borderRadius: showReader ? undefined : "24px",
+                borderRadius: showReader && !readerPdfMode ? undefined : "24px",
               }}
             >
-              {showPdf ? (
+              {showPdf || readerPdfMode ? (
                 <iframe
-                  src={book.pdfUrl ?? undefined}
+                  src={(showPdf ? book.pdfUrl : previewPdfUrl) ?? undefined}
                   title={book.title}
                   className="absolute inset-0 h-full w-full border-0 bg-white"
                 />
@@ -540,7 +598,7 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
         </div>
 
         {/* Bottom capsule toolbar — page nav + view controls. */}
-        {!showEmpty && (
+        {!showEmpty && !readerEmpty && (
         <div
           className="mx-auto mt-8 flex w-full max-w-[542px] flex-nowrap items-center overflow-x-auto justify-start sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           style={{
@@ -553,7 +611,7 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
             columnGap: "clamp(12px, 3vw, 24px)",
           }}
         >
-          {showReader && (
+          {readerImagesMode && (
             <>
               <div className="flex items-center" style={{ gap: "16px" }}>
                 <button

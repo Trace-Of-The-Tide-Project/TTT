@@ -7,7 +7,7 @@ import { isAdmin } from "@/lib/auth/roles";
 
 /**
  * Blocks `/admin/*` for users who are authenticated but lack an admin role.
- * Unauthenticated users are already redirected by `WithNavAuthGate` higher up,
+ * Unauthenticated users are already redirected by `DashboardAuthGate` higher up,
  * so this only handles the role check.
  */
 export function AdminAuthGate({ children }: { children: React.ReactNode }) {

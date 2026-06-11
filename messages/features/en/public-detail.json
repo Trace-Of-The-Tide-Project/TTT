@@ -16,6 +16,15 @@
     "follow": "Follow",
     "following": "Following",
     "editionPrefix": "Edition",
-    "backToMagazine": "Back to Magazine"
+    "backToMagazine": "Back to Magazine",
+    "stats": {
+      "followers": "Followers",
+      "works": "Works"
+    },
+    "about": {
+      "basedIn": "Based in",
+      "collaborations": "Collaborations",
+      "recognition": "Recognition"
+    }
   }
 }

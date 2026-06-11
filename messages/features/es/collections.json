@@ -1,0 +1,32 @@
+{
+  "Collections": {
+    "breadcrumbRoot": "Collections",
+    "indexTitle": "Collections",
+    "indexSubtitle": "Curated journeys through stories, testimonies, and cultural memory.",
+    "searchPlaceholder": "Search collections...",
+    "itemsCount": "{count, plural, =0 {No items} one {# item} other {# items}}",
+    "noCollections": "No collections yet. Check back soon.",
+    "noResults": "No collections match your search.",
+    "contribute": "Contribute",
+    "detailSearchPlaceholder": "Search content...",
+    "filterShowAll": "Show all",
+    "filterArticles": "Articles",
+    "filterVideos": "Videos",
+    "filterAudio": "Audio",
+    "filterSlides": "Slides",
+    "sortLabel": "Sort by:",
+    "sortNewest": "Newest first",
+    "sortOldest": "Oldest first",
+    "filtersButton": "Filters",
+    "sectionPast": "Explore the past",
+    "sectionCurrent": "Explore the current",
+    "sectionFuture": "Explore the future",
+    "dateRange": "From {from} → to {to}",
+    "dateRangeEmpty": "No dated items",
+    "sectionEmpty": "Nothing here yet.",
+    "allEmpty": "No content matches your filters.",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "itemCounter": "{shown}/{total}"
+  }
+}

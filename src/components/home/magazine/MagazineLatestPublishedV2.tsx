@@ -80,10 +80,10 @@ export function MagazineLatestPublishedV2({
 function BookCard({ item }: { item: LatestPublishedItem }) {
   const date = formatMonthYear(item.publishedAt);
   const imgSrc = isValidImageUrl(item.coverImage) ? item.coverImage : FALLBACK_IMAGE;
-  // Public article reader lives at /content/article?id=... — the
-  // /books/[id] route is for book records, not articles. Fall back to
-  // the public books index when we somehow lack an id.
-  const href = item.id ? `/content/article?id=${encodeURIComponent(item.id)}` : "/books";
+  // These items come from /knowledge/books (see magazine/page.tsx
+  // fetchLatestBooks), so link to the book detail page — sending a book
+  // id to the /content/article reader renders its not-found state.
+  const href = item.id ? `/books/${encodeURIComponent(item.id)}` : "/books";
 
   return (
     <Link

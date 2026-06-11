@@ -282,6 +282,7 @@
       "previewLockedBody": "Has llegado al final de la vista previa gratuita. Compra este libro para seguir leyendo.",
       "previewBuy": "Compra para leer el libro completo",
       "previewNoContent": "Aún no hay una vista previa disponible para este libro.",
+      "previewBanner": "Vista previa gratuita — las primeras {count} páginas",
       "addToCart": "Añadir al carrito",
       "addedToCart": "Añadido al carrito",
       "readDownload": "Leer / Descargar",

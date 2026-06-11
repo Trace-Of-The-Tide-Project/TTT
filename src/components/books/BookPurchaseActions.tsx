@@ -64,6 +64,7 @@ export function BookActionButtons({
   isOwnedInitial: boolean;
 }) {
   const t = useTranslations("Home.bookDetail");
+  const tCommerce = useTranslations("Home.Commerce");
   const locale = useLocale();
   const router = useRouter();
   const { user, status } = useAuth();
@@ -105,7 +106,7 @@ export function BookActionButtons({
       await addToCart.mutateAsync(bookId);
       toast.success(t("addedToCart"));
     } catch (e) {
-      toast.error(formatApiError(e, t("checkoutError")));
+      toast.error(formatApiError(e, tCommerce("checkoutError")));
     }
   }
 
@@ -119,7 +120,7 @@ export function BookActionButtons({
       window.sessionStorage.setItem("tott:lastCheckoutBookId", bookId);
       window.location.assign(url);
     } catch (e) {
-      toast.error(formatApiError(e, t("checkoutError")));
+      toast.error(formatApiError(e, tCommerce("checkoutError")));
     }
   }
 
@@ -177,9 +178,17 @@ export function BookActionButtons({
 /** Gold "Read / Download" button that fetches a fresh short-lived signed URL. */
 function DownloadButton({ bookId, label }: { bookId: string; label: string }) {
   const t = useTranslations("Home.Commerce");
+  const router = useRouter();
+  const { user, status } = useAuth();
   const [loading, setLoading] = useState(false);
 
   async function handleDownload() {
+    // The download endpoint requires a session even for free books; redirect
+    // guests up front instead of letting the 401 interceptor do it mid-flight.
+    if (status !== "authenticated" || !user) {
+      router.push(`/auth/login?callbackUrl=${encodeURIComponent(`/books/${bookId}`)}`);
+      return;
+    }
     setLoading(true);
     try {
       const url = await getBookDownloadUrl(bookId);
@@ -223,9 +232,15 @@ export function BookDownloadLink({
   label: string;
 }) {
   const t = useTranslations("Home.Commerce");
+  const router = useRouter();
+  const { user, status } = useAuth();
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {
+    if (status !== "authenticated" || !user) {
+      router.push(`/auth/login?callbackUrl=${encodeURIComponent(`/books/${bookId}`)}`);
+      return;
+    }
     setLoading(true);
     try {
       const url = await getBookDownloadUrl(bookId);
