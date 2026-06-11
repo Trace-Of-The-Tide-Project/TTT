@@ -27,11 +27,24 @@ export function RichContent({
   if (!clean) return null;
 
   if (variant === "inline") {
+    // CMS rich text wraps content in block <p> elements. The inline variant is
+    // hosted inside an existing <p>/<blockquote>, and a <p> nested in a <p> is
+    // invalid HTML — the browser hoists the inner <p> out, corrupting the DOM
+    // and breaking hydration (server markup ≠ browser-parsed DOM). Flatten the
+    // block paragraphs to inline content with <br> breaks (see `.prose-inline
+    // br { display: block }`) so the span is valid wherever it's hosted. Pure,
+    // deterministic string op → identical output on server and client.
+    const inlineClean = clean
+      .replace(/<p(?:\s[^>]*)?>/gi, "")
+      .replace(/<\/p>/gi, "<br>")
+      .replace(/(?:\s*<br>\s*)+$/i, "")
+      .trim();
+    if (!inlineClean) return null;
     return (
       <span
         dir={dir}
         className={`prose-inline ${className ?? ""}`}
-        dangerouslySetInnerHTML={{ __html: clean }}
+        dangerouslySetInnerHTML={{ __html: inlineClean }}
       />
     );
   }
