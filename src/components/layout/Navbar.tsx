@@ -44,9 +44,13 @@ export function Navbar() {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { isDark, toggleScheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { user, status, logout } = useAuth();
   const displayName = user?.full_name || user?.username || user?.email || "Username";
   const userIsAdmin = isAdmin(user);
+  // While the session is still resolving, keep the auth slot empty —
+  // otherwise logged-in users see the guest login/sign-up buttons flash
+  // on every hard load.
+  const authResolving = status === "loading";
 
   const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
   const handleLogout = useCallback(async () => {
@@ -158,7 +162,7 @@ export function Navbar() {
             {isDark ? <SunIcon /> : <MoonIcon />}
           </button>
 
-          {user ? (
+          {authResolving ? null : user ? (
             <>
               {/* Mobile: avatar link */}
               <Link
@@ -363,7 +367,7 @@ export function Navbar() {
               <LanguageSwitcher mode="flat" />
             </div>
 
-            {user ? (
+            {authResolving ? null : user ? (
               <>
                 {userIsAdmin && (
                   <Link

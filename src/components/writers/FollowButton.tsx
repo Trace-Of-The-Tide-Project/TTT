@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { useIsFollowing } from "@/hooks/queries/follows";
 import { useToggleFollow } from "@/hooks/mutations/follows";
 
@@ -9,9 +10,11 @@ import { useToggleFollow } from "@/hooks/mutations/follows";
  * id the follow points at (writer profiles wrap a user). When the
  * caller can't resolve a user id the button renders nothing.
  *
- * Guests who click trigger a POST that 401s; the axios interceptor
- * then redirects to login — same pattern the rest of the app uses
- * for auth-gated actions.
+ * The follow-check query only runs for authenticated users — firing it
+ * for guests would 401 and the axios interceptor would hard-redirect
+ * the whole page to login. Guests who click trigger a POST that 401s;
+ * the axios interceptor then redirects to login — same pattern the
+ * rest of the app uses for auth-gated actions.
  */
 export function FollowButton({
   targetUserId,
@@ -21,7 +24,10 @@ export function FollowButton({
   size?: "sm" | "md";
 }) {
   const t = useTranslations("Writers");
-  const { data: isFollowing } = useIsFollowing(targetUserId);
+  const { status } = useAuth();
+  const { data: isFollowing } = useIsFollowing(
+    status === "authenticated" ? targetUserId : null,
+  );
   const toggle = useToggleFollow();
 
   if (!targetUserId) return null;

@@ -123,6 +123,67 @@ export async function getWriter(id: string): Promise<WriterProfile | null> {
   }
 }
 
+/**
+ * Full public profile payload returned by `GET /writers/{id}/profile-full`.
+ * Unlike the raw `GET /writers/{id}` row, this composes the About fields,
+ * social links, themes, and follower/work counts the artist screen renders.
+ * The backend always returns objects/arrays for `social_links`/`themes`
+ * (never null), but we type leniently and normalize on read anyway.
+ */
+export type WriterProfileFull = {
+  id: string;
+  user_id: string | null;
+  pen_name?: string | null;
+  /** Backend-resolved heading: pen_name → user.full_name → username. */
+  display_name?: string | null;
+  headline?: string | null;
+  bio_long?: string | null;
+  avatar_url?: string | null;
+  joined_at?: string | null;
+  location?: string | null;
+  email?: string | null;
+  external_link?: string | null;
+  social_links?: WriterSocialLinks | null;
+  themes?: string[] | null;
+  based_in?: string | null;
+  collaborations?: string | null;
+  recognition?: string | null;
+  quote?: string | null;
+  follower_count?: number | null;
+  following_count?: number | null;
+  work_count?: number | null;
+  creator_kind?: string | null;
+};
+
+function unwrapProfileFull(raw: unknown): WriterProfileFull | null {
+  if (!raw || typeof raw !== "object") return null;
+  const inner =
+    "data" in (raw as object)
+      ? (raw as { data?: unknown }).data
+      : raw;
+  if (!inner || typeof inner !== "object" || !("id" in (inner as object))) {
+    return null;
+  }
+  return inner as WriterProfileFull;
+}
+
+/** GET /writers/{id}/profile-full — public. Works server- or client-side.
+ * Returns the composed About + stats payload, or null on 404 / error. */
+export async function getWriterProfileFull(
+  id: string,
+): Promise<WriterProfileFull | null> {
+  const path = `/writers/${encodeURIComponent(id)}/profile-full`;
+  if (typeof window === "undefined") {
+    return unwrapProfileFull(await serverGet<unknown>(path));
+  }
+  try {
+    const { data } = await api.get<unknown>(path);
+    return unwrapProfileFull(data);
+  } catch {
+    return null;
+  }
+}
+
 /** Pick the best display name from the writer record (falls back
  * through profile.display_name → user.full_name → username). */
 export function writerDisplayName(w: WriterProfile): string {

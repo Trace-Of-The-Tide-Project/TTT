@@ -9,6 +9,7 @@ import { useBook } from "@/hooks/queries/books";
 import { useCreateBook, useUpdateBook } from "@/hooks/mutations/books";
 import { mutationToast } from "@/hooks/useMutationToast";
 import { uploadFileToUrl } from "@/services/uploads.service";
+import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import type { BookPayload } from "@/services/books.service";
 
 type Props = { bookId?: string };
@@ -82,7 +83,7 @@ function CoverUploadZone({
     return (
       <div className="relative mt-1 inline-block">
         <img
-          src={value}
+          src={resolveArticleMediaSrc(value)}
           alt="Cover preview"
           className="h-36 w-24 rounded-lg object-cover border border-[var(--tott-card-border)] shadow-md"
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
@@ -184,11 +185,11 @@ function PdfUploadZone({
           <line x1="16" y1="17" x2="8" y2="17" />
           <polyline points="10 9 9 9 8 9" />
         </svg>
-        <span className="flex-1 truncate text-xs text-gray-300">{value.split("/").pop() ?? "PDF uploaded"}</span>
+        <span className="flex-1 truncate text-xs text-gray-300">{value.split("/").pop()?.split("?")[0] || "File uploaded"}</span>
         <span className="shrink-0 rounded-full bg-green-500/15 px-2 py-0.5 text-[10px] font-medium text-green-400">✓ Ready</span>
         <label htmlFor={id} className="shrink-0 cursor-pointer text-[10px] text-gray-500 hover:text-gray-300 underline">
           Replace
-          <input id={id} ref={inputRef} type="file" accept="application/pdf" className="hidden" onChange={onChange} />
+          <input id={id} ref={inputRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={onChange} />
         </label>
       </div>
     );
@@ -209,7 +210,7 @@ function PdfUploadZone({
         id={id}
         ref={inputRef}
         type="file"
-        accept="application/pdf"
+        accept=".pdf,.doc,.docx"
         className="hidden"
         onChange={onChange}
         disabled={uploading}
@@ -217,7 +218,7 @@ function PdfUploadZone({
       {uploading ? (
         <div className="flex flex-col items-center gap-2 py-5">
           <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--tott-card-border)] border-t-[var(--tott-gold)]" />
-          <span className="text-xs text-gray-400">Uploading PDF…</span>
+          <span className="text-xs text-gray-400">Uploading file…</span>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-1 py-5 px-4 text-center pointer-events-none">
@@ -226,8 +227,8 @@ function PdfUploadZone({
             <polyline points="14 2 14 8 20 8" />
             <line x1="16" y1="13" x2="8" y2="13" />
           </svg>
-          <span className="text-xs font-medium text-gray-300 mt-1">Click to upload PDF</span>
-          <span className="text-[10px] text-gray-500">PDF format — drag & drop supported</span>
+          <span className="text-xs font-medium text-gray-300 mt-1">Click to upload PDF or Word document</span>
+          <span className="text-[10px] text-gray-500">PDF, DOC, DOCX — drag & drop supported</span>
         </div>
       )}
     </label>
@@ -294,10 +295,19 @@ export function BookFormContent({ bookId }: Props) {
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
+      e.target.value = "";
       setCoverUploading(true);
       try {
-        const url = await uploadFileToUrl(file);
+        // The signed URL previews immediately; the backend collapses it to
+        // the stable storage path when the book is saved.
+        const url = await mutationToast(() => uploadFileToUrl(file), {
+          loading: "Uploading cover image…",
+          success: "Cover image uploaded",
+          error: "Cover image upload failed",
+        });
         setForm((prev) => ({ ...prev, cover_image: url }));
+      } catch {
+        // error surfaced via toast
       } finally {
         setCoverUploading(false);
       }
@@ -309,10 +319,19 @@ export function BookFormContent({ bookId }: Props) {
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
+      e.target.value = "";
       setPdfUploading(true);
       try {
-        const url = await uploadFileToUrl(file);
+        // The backend collapses the signed URL to the stable storage path
+        // when the book is saved, and re-signs it fresh on read.
+        const url = await mutationToast(() => uploadFileToUrl(file), {
+          loading: "Uploading file…",
+          success: "File uploaded",
+          error: "File upload failed",
+        });
         setForm((prev) => ({ ...prev, pdf_url: url }));
+      } catch {
+        // error surfaced via toast
       } finally {
         setPdfUploading(false);
       }

@@ -282,6 +282,7 @@
       "previewLockedBody": "Vous avez atteint la fin de l'aperçu gratuit. Achetez ce livre pour poursuivre votre lecture.",
       "previewBuy": "Acheter pour lire le livre en entier",
       "previewNoContent": "Aucun aperçu n'est encore disponible pour ce livre.",
+      "previewBanner": "Aperçu gratuit — les {count} premières pages",
       "addToCart": "Ajouter au panier",
       "addedToCart": "Ajouté au panier",
       "readDownload": "Lire / Télécharger",

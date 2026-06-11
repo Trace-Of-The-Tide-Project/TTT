@@ -66,15 +66,19 @@ export type GetBooksParams = {
 
 export type BookPreviewMeta = {
   total: number;
-  total_pages_in_book: number;
+  total_pages_in_book: number | null;
   free_preview_limit: number;
+  is_full?: boolean;
   page: number;
   limit: number;
   totalPages: number;
 };
 
 export type BookPreviewResponse = {
-  rows: string[];
+  /** Signed URL for the preview PDF (trimmed free slice; full book when entitled). */
+  previewPdfUrl: string | null;
+  /** Signed page-image URLs for the current spread (books with curated preview_pages). */
+  pages: string[];
   meta: BookPreviewMeta;
 };
 
@@ -252,12 +256,23 @@ export async function getBookPreview(
 function extractPreview(raw: unknown): BookPreviewResponse | null {
   if (!raw || typeof raw !== "object") return null;
   const o = raw as Record<string, unknown>;
-  // ResponseInterceptor wraps as { data: rows[], meta: {...} }
-  // but getBookPreview returns { rows: [], meta: {} } directly inside data
-  const inner = (o.data ?? o) as Record<string, unknown>;
+  const inner = o.data ?? o;
   if (!inner || typeof inner !== "object") return null;
-  const rows = Array.isArray(inner.rows) ? (inner.rows as string[]) : [];
-  const meta = inner.meta as BookPreviewMeta | undefined;
+  // Legacy envelope: ResponseInterceptor flattened `rows` into a top-level
+  // `data` array with `meta` beside it.
+  if (Array.isArray(inner)) {
+    const meta = o.meta as BookPreviewMeta | undefined;
+    if (!meta) return null;
+    return { previewPdfUrl: null, pages: inner as string[], meta };
+  }
+  // Current shape: data is { preview_pdf_url, pages, meta }.
+  const obj = inner as Record<string, unknown>;
+  const meta = obj.meta as BookPreviewMeta | undefined;
   if (!meta) return null;
-  return { rows, meta };
+  return {
+    previewPdfUrl:
+      typeof obj.preview_pdf_url === "string" ? obj.preview_pdf_url : null,
+    pages: Array.isArray(obj.pages) ? (obj.pages as string[]) : [],
+    meta,
+  };
 }

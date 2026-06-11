@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { checkOwnership, getLibrary } from "@/services/commerce.service";
 import { useInvalidatePurchases } from "@/hooks/mutations/commerce";
 
@@ -16,10 +17,15 @@ const MAX_POLLS = 20; // ~40s
  */
 export function CheckoutSuccessContent() {
   const t = useTranslations("Home.Commerce");
+  const { status } = useAuth();
   const invalidate = useInvalidatePurchases();
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    // The polled endpoints require a session; polling as a guest would 401
+    // and the axios interceptor would hard-redirect to login.
+    if (status !== "authenticated") return;
+
     let active = true;
     let polls = 0;
     let timer: ReturnType<typeof setTimeout>;
@@ -58,7 +64,7 @@ export function CheckoutSuccessContent() {
       clearTimeout(timer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [status]);
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-col items-center px-4 py-16 text-center">

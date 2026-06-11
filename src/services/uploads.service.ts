@@ -95,6 +95,8 @@ async function postUploadFile(file: File): Promise<unknown> {
   formData.append("file", file);
 
   const { data } = await api.post<unknown>("/upload", formData, {
+    // Large media (book PDFs, video) needs far more than the 20s default.
+    timeout: 600_000,
     transformRequest: [
       (body, headers) => {
         if (body instanceof FormData) {

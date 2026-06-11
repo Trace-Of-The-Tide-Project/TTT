@@ -16,6 +16,15 @@
     "follow": "متابعة",
     "following": "تتابعه",
     "editionPrefix": "الإصدار",
-    "backToMagazine": "العودة إلى المجلة"
+    "backToMagazine": "العودة إلى المجلة",
+    "stats": {
+      "followers": "المتابعون",
+      "works": "الأعمال"
+    },
+    "about": {
+      "basedIn": "مقيم في",
+      "collaborations": "التعاونات",
+      "recognition": "التكريمات"
+    }
   }
 }

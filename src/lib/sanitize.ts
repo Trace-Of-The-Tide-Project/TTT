@@ -79,5 +79,9 @@ export function sanitizeHtml(dirty: string): string {
     // `svg+xml` is deliberately excluded — SVG can carry script.
     ALLOWED_URI_REGEXP:
       /^(?:(?:https?|mailto):|[^a-z]|[a-z+.-]+(?:[^a-z+.:-]|$)|data:image\/(?:png|jpe?g|gif|webp);)/i,
+    // Ensures block-level fragments (e.g. <p>…</p>) serialize correctly
+    // in jsdom on the server — without this, DOMPurify can return "" for
+    // valid block-level HTML during SSR.
+    FORCE_BODY: true,
   });
 }

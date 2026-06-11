@@ -285,7 +285,8 @@
       "previewLockedTitle": "Free preview ends here",
       "previewLockedBody": "You've reached the end of the free preview. Buy this book to keep reading.",
       "previewBuy": "Buy to read the full book",
-      "previewNoContent": "No preview is available for this book yet."
+      "previewNoContent": "No preview is available for this book yet.",
+      "previewBanner": "Free preview — the first {count} pages"
     },
     "writingRoom": {
       "heroTitle": "Writing Room",
