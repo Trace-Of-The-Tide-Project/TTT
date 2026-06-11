@@ -24,7 +24,7 @@ export function AuthInlineLink({ text, href, label, className }: AuthInlineLinkP
       {text ? <>{text} </> : null}
       <Link
         href={href}
-        className="cursor-pointer font-medium text-[#CBA158] hover:underline"
+        className="cursor-pointer font-medium text-[color:var(--tott-accent-gold)] hover:underline"
       >
         {label}
       </Link>

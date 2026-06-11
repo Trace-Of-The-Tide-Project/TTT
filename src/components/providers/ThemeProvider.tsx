@@ -11,27 +11,39 @@ import {
 
 const STORAGE_KEY = "tott-color-scheme";
 
-function readStored(): "light" | "dark" | null {
+export type ThemeScheme = "light" | "dark" | "tide";
+
+/** Order the toggle cycles through: dark → light → tide → dark. */
+const CYCLE: ThemeScheme[] = ["dark", "light", "tide"];
+
+function isScheme(v: unknown): v is ThemeScheme {
+  return v === "light" || v === "dark" || v === "tide";
+}
+
+function readStored(): ThemeScheme | null {
   try {
     const v = localStorage.getItem(STORAGE_KEY);
-    if (v === "light" || v === "dark") return v;
+    if (isScheme(v)) return v;
   } catch {
     /* ignore */
   }
   return null;
 }
 
-function applyDomTheme(scheme: "light" | "dark") {
+function applyDomTheme(scheme: ThemeScheme) {
   document.documentElement.dataset.theme = scheme;
+  /* tide is a light-family theme (sand surface), so only `dark` uses the dark UA scheme. */
   document.documentElement.style.colorScheme = scheme === "dark" ? "dark" : "light";
 }
 
-export type ThemeScheme = "light" | "dark";
-
 type ThemeContextValue = {
   scheme: ThemeScheme;
+  /** True only for the dark theme; light and tide (sand) are both light-family. */
   isDark: boolean;
+  /** Cycle dark → light → tide → dark. */
   toggleScheme: () => void;
+  /** Jump directly to a specific theme. */
+  setScheme: (scheme: ThemeScheme) => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -44,8 +56,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     applyDomTheme(scheme);
   }, [scheme]);
 
-  const toggleScheme = useCallback(() => {
-    const next = scheme === "dark" ? "light" : "dark";
+  const setScheme = useCallback((next: ThemeScheme) => {
     try {
       localStorage.setItem(STORAGE_KEY, next);
     } catch {
@@ -53,15 +64,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
     setSchemeState(next);
     applyDomTheme(next);
-  }, [scheme]);
+  }, []);
+
+  const toggleScheme = useCallback(() => {
+    const i = CYCLE.indexOf(scheme);
+    setScheme(CYCLE[(i + 1) % CYCLE.length]);
+  }, [scheme, setScheme]);
 
   const value = useMemo(
     () => ({
       scheme,
       isDark: scheme === "dark",
       toggleScheme,
+      setScheme,
     }),
-    [scheme, toggleScheme],
+    [scheme, toggleScheme, setScheme],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

@@ -51,7 +51,7 @@ export function AuthInput({
     "transition-[background-color,border-color,box-shadow] duration-200 ease-out",
     "hover:bg-[color:var(--tott-auth-input-hover)]",
     "focus:bg-[color:var(--tott-auth-input-hover)] focus:outline-none focus:ring-0",
-    "focus:border-[#CBA158]/55 focus:shadow-[inset_0_0_0_1px_rgba(203,161,88,0.12)]",
+    "focus:border-[color-mix(in_srgb,var(--tott-accent-gold)_55%,transparent)] focus:shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--tott-accent-gold)_12%,transparent)]",
     paddingRight,
   ].join(" ");
 

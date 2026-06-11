@@ -35,7 +35,7 @@ export function AuthSubmitButton({
         "transition-[color,background-color,opacity,transform,box-shadow] duration-200 ease-out",
         inactive
           ? "cursor-not-allowed bg-[color:var(--tott-auth-btn-disabled-bg)] text-[color:var(--tott-auth-btn-disabled-text)]"
-          : "cursor-pointer bg-[#CBA158] text-[color:var(--tott-auth-btn-text)] hover:brightness-[1.03] active:translate-y-px active:brightness-[0.98]",
+          : "cursor-pointer bg-[color:var(--tott-accent-gold)] text-[color:var(--tott-auth-btn-text)] hover:brightness-[1.03] active:translate-y-px active:brightness-[0.98]",
       ].join(" ")}
     >
       {loading && loadingLabel ? loadingLabel : children}

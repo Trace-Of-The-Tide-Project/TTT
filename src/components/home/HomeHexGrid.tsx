@@ -101,10 +101,12 @@ function calcHexSize(viewportWidth: number): number {
   return Math.round(viewportWidth / 4);
 }
 
-/* ─────────────────────────────── tokens (Figma) ─────────────────────────────── */
-const GOLD      = "#C9A96E";
-const GOLD_DARK = "#BD9352";
-const GOLD_TEXT = "#332217";
+/* ─────────────────────────────── tokens (Figma) ───────────────────────────────
+ * Hero accent words + CTA ink are token-backed so they track the theme: gold on
+ * light/dark, deep-sea/wave on tide. See `--tott-hero-*` in globals.css. */
+const GOLD      = "var(--tott-hero-accent)";
+const GOLD_DARK = "var(--tott-hero-accent-2)";
+const GOLD_TEXT = "var(--tott-hero-cta-ink)";
 
 /** Home page surface tokens — values live in globals.css (`--tott-home-*`) and switch with theme. */
 const TK = {
@@ -117,6 +119,7 @@ const TK = {
   textShadow: "var(--tott-home-text-shadow)",
   heroGradTop: "var(--tott-home-hero-grad-top)",
   heroGradMid: "var(--tott-home-hero-grad-mid)",
+  heroAccent: "var(--tott-hero-accent)",
 } as const;
 
 /** Inner hex image bounds — `IMAGE_PATH_LOCAL` ymin … ymax after `translate(16.5 20.5)`. */
@@ -363,13 +366,17 @@ export function HomeHexGrid({ cards }: Props) {
               lineHeight: `${Math.max(18, Math.round(20 * sz))}px`,
               letterSpacing: "-0.005em",
               textDecoration: "none",
+              /* Tide hides the baked gold slab (below) and shows this deep-sea fill instead. */
+              backgroundColor: TK.heroAccent,
             }}
           >
-            {/* Button.svg gold slab + Figma inner highlight (text path removed for i18n). */}
+            {/* Button.svg gold slab + Figma inner highlight (text path removed for i18n).
+                Hidden on tide (see globals.css) so the deep-sea CSS background shows. */}
             {/* eslint-disable-next-line @next/next/no-img-element -- local decorative SVG scales with layout */}
             <img
               src="/images/home/hero-cta-button-bg.svg"
               alt=""
+              data-tott-hero-cta-slab
               className="pointer-events-none absolute inset-0 h-full w-full select-none object-fill"
               draggable={false}
             />

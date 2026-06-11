@@ -145,9 +145,9 @@ export function RegisterForm() {
               key={i}
               className={`h-1.5 rounded-full transition-all duration-300 ${
                 i === step
-                  ? "w-6 bg-[#CBA158]"
+                  ? "w-6 bg-[color:var(--tott-accent-gold)]"
                   : i < step
-                    ? "w-1.5 bg-[#CBA158]/60"
+                    ? "w-1.5 bg-[color-mix(in_srgb,var(--tott-accent-gold)_60%,transparent)]"
                     : "w-1.5 bg-[color:var(--tott-auth-checkbox-border)]"
               }`}
             />
@@ -173,7 +173,7 @@ export function RegisterForm() {
             <button
               type="button"
               onClick={goNext}
-              className="flex-1 select-none rounded-md bg-[#CBA158] py-2 text-[13px] font-semibold text-[color:var(--tott-auth-btn-text)] transition-[background-color,transform] duration-200 ease-out hover:brightness-[1.03] active:translate-y-px"
+              className="flex-1 select-none rounded-md bg-[color:var(--tott-accent-gold)] py-2 text-[13px] font-semibold text-[color:var(--tott-auth-btn-text)] transition-[background-color,transform] duration-200 ease-out hover:brightness-[1.03] active:translate-y-px"
             >
               {t("stepNext")}
             </button>

@@ -24,6 +24,15 @@ html {
   --foreground: #ededed;
   /** Primary brand gold — CTAs, main links in auth */
   --tott-accent-gold: #cba158;
+  /** Slightly lighter gold for focus rings, borders, checkboxes */
+  --tott-accent-gold-focus: #c9a96e;
+  /** Ink placed on top of filled accents (buttons, avatars). Black on gold here;
+   * tide overrides to sand so deep-sea accents stay legible. */
+  --tott-on-accent: #000000;
+  /** Home hero heading words + CTA slab — gold on light/dark, brand blues on tide. */
+  --tott-hero-accent: #c9a96e;
+  --tott-hero-accent-2: #bd9352;
+  --tott-hero-cta-ink: #332217;
   /** Secondary “tide” teal — accents, hovers, rules; never replace gold buttons */
   --tott-accent-tide: #6db3ae;
   --tott-accent-tide-muted: rgba(109, 179, 174, 0.28);
@@ -151,6 +160,11 @@ html {
     --background: #fff;
     --foreground: #171717;
     --tott-accent-gold: #cba158;
+    --tott-accent-gold-focus: #c9a96e;
+    --tott-on-accent: #000000;
+    --tott-hero-accent: #c9a96e;
+    --tott-hero-accent-2: #bd9352;
+    --tott-hero-cta-ink: #332217;
     --tott-accent-tide: #4a8f89;
     --tott-accent-tide-muted: rgba(74, 143, 137, 0.35);
     --tott-accent-tide-subtle: rgba(74, 143, 137, 0.16);
@@ -226,6 +240,11 @@ html[data-theme="light"] {
   --background: #ffffff;
   --foreground: #171717;
   --tott-accent-gold: #cba158;
+  --tott-accent-gold-focus: #c9a96e;
+  --tott-on-accent: #000000;
+  --tott-hero-accent: #c9a96e;
+  --tott-hero-accent-2: #bd9352;
+  --tott-hero-cta-ink: #332217;
   --tott-accent-tide: #4a8f89;
   --tott-accent-tide-muted: rgba(74, 143, 137, 0.35);
   --tott-accent-tide-subtle: rgba(74, 143, 137, 0.16);
@@ -308,6 +327,125 @@ html[data-theme="light"] {
   --tott-auth-footer-muted: #6b5b47;
   --tott-auth-hex-band-opacity: 0.34;
   --tott-auth-checkbox-border: #c9a575;
+}
+
+/* Tide — brand theme (Trace of the Tide visual identity).
+ * Bright Sand (#FBE9D2)  → surfaces/backgrounds (warm cream tints for elevation),
+ * Deep Sea Blue (#003D66) → foreground/text + primary accent (CTAs, links — high
+ *   contrast on sand), with sand ink (--tott-on-accent) on those filled accents,
+ * Wave Blue  (#5CAEC1)    → secondary accent: hovers, rules, hex strokes, chips.
+ * LIGHT-family theme: isDark is false for tide, so component `isDark` branches render
+ * the light layout; the recolored tokens below carry the brand look. The full token
+ * set is copied (not partially overridden) so nothing silently inherits defaults. */
+html[data-theme="tide"] {
+  color-scheme: light;
+  --background: #fbe9d2;
+  --foreground: #003d66;
+  /** Deep Sea Blue is the tide primary accent — strong contrast on sand. */
+  --tott-accent-gold: #003d66;
+  --tott-accent-gold-focus: #0a4f7a;
+  /** Ink placed on top of filled accents (buttons, avatars) — sand for legibility. */
+  --tott-on-accent: #fbe9d2;
+  /** Home hero heading words + CTA slab — deep sea + wave on sand (replaces gold). */
+  --tott-hero-accent: #003d66;
+  --tott-hero-accent-2: #2f8aa0;
+  --tott-hero-cta-ink: #fbe9d2;
+  /** Wave Blue (deepened to clear AA as hover/link text on sand) — hovers, rules, subtle UI. */
+  --tott-accent-tide: #1b6a7d;
+  --tott-accent-tide-muted: rgba(92, 174, 193, 0.40);
+  --tott-accent-tide-subtle: rgba(92, 174, 193, 0.18);
+  --tott-motion-duration-hover: 180ms;
+  --tott-motion-duration-enter: 450ms;
+  --tott-motion-duration-page: 350ms;
+  --tott-motion-ease: cubic-bezier(.2, .8, .2, 1);
+  --tott-card-border: #e3cfa6;
+  --tott-panel-bg: #fdf3e1;
+  --tott-panel-text: #003d66;
+  --tott-well-bg: #f3e1c5;
+  --tott-auth-band-gradient: #fbe9d2;
+  --tott-auth-hex-outer: #ecd9b8;
+  --tott-auth-hex-inner: #fdf6ea;
+  --tott-auth-hex-inset-ring: rgba(0, 61, 102, 0.16);
+  --tott-auth-hex-stroke: #c2a875;
+  --tott-auth-hex-stroke-opacity: 0.4;
+  --tott-auth-hex-mask-from: #ffffff;
+  --tott-auth-hex-mask-to: #ffffff;
+  --tott-dash-surface: #fdf6ea;
+  --tott-dash-surface-2: #fbf0dd;
+  --tott-dash-surface-inset: #f5e6cc;
+  --tott-dash-input-bg: #fffaf0;
+  --tott-dash-control-bg: #f0ddbd;
+  --tott-dash-control-fg: #003d66;
+  --tott-dash-control-hover: #e7d0a6;
+  --tott-dash-ghost-hover: rgba(0, 61, 102, 0.06);
+  --tott-dash-icon-bg: #fffaf0;
+  --tott-contribute-hex-outer: var(--tott-well-bg);
+  --tott-contribute-hex-outer-hover: var(--tott-dash-control-hover);
+  --tott-contribute-hex-label-inactive: #003d66;
+  /* Secondary/label text — darkened to clear AA (4.5:1) on sand and cream wells. */
+  --tott-muted: #4d6273;
+  --tott-dash-gold-text: #003d66;
+  --tott-dash-gold-label: #15607f;
+  --tott-dash-positive: #16a34a;
+  --tott-dash-negative: #dc2626;
+  --tott-dash-divider: rgba(0, 61, 102, 0.10);
+  --tott-dash-progress-track: #ecd9b8;
+  --tott-dash-hex-opacity: 0.4;
+  --tott-elevated: #f7ead0;
+  --tott-elevated-hover: #f0ddbd;
+  /** Home page tide palette — sand surface with warm hex strokes. */
+  --tott-home-surface: #fbe9d2;
+  --tott-home-surface-rgb: 251, 233, 210;
+  --tott-home-hex-stroke: #ddc89f;
+  --tott-home-hex-peek: #f3e3c6;
+  --tott-home-hex-sheen: rgba(0, 61, 102, 0.08);
+  --tott-home-badge-bg: rgba(253, 246, 234, 0.85);
+  --tott-home-text-strong: #002b47;
+  --tott-home-text-heading: #114d70;
+  --tott-home-text-muted: #4d6273;
+  --tott-home-eyebrow: #15607f;
+  --tott-home-hero-grad-top: #fdf2df;
+  --tott-home-hero-grad-mid: #f8e6cb;
+  --tott-home-text-shadow: none;
+  --tott-image-invert: invert(1);
+  --tott-writer-card-fade: linear-gradient(180deg, rgba(251, 233, 210, 0) 0%, #fbe9d2 100%);
+  --tott-magazine-btn-bg: #003d66;
+  --tott-stat-icon: #15607f;
+  --tott-tab-inactive: #4d6273;
+  --tott-tab-inactive-hover: #003d66;
+  --tott-status-emerald: #16a34a;
+  --tott-status-blue: #2563eb;
+  --tott-status-coral: #dc2626;
+  --tott-status-amber: #b45309;
+  --tott-overlay: rgba(0, 30, 50, 0.45);
+  --tott-dark-pill: #003d66;
+  --tott-dark-pill-fg: #fbe9d2;
+  /* Content media + article chips — Wave Blue chip with deep-sea ink. */
+  --tott-gold-chip-bg: #5caec1;
+  --tott-gold-chip-ink: #00263c;
+  --tott-content-quote-border: #2f8aa0;
+  --tott-content-stat-label: #4d6273;
+  --tott-glass-bg: rgba(var(--tott-home-surface-rgb), 0.64);
+  --tott-glass-highlight: rgba(255, 255, 255, 0.5);
+  --tott-wave-near: rgba(0, 43, 71, 0.7);
+  --tott-wave-far: rgba(0, 43, 71, 0.35);
+
+  /* Auth routes only — sign-in / sign-up surfaces (see .tott-auth-page) */
+  --tott-auth-shell-bg: var(--background);
+  --tott-auth-foreground: #003d66;
+  --tott-auth-subtitle: #4a6275;
+  --tott-auth-input-bg: #fffaf0;
+  --tott-auth-input-hover: #fdf3e1;
+  --tott-auth-input-placeholder: #677685;
+  --tott-auth-input-icon: #347082;
+  --tott-auth-input-border: #d9c39b;
+  --tott-auth-btn-text: #fbe9d2;
+  --tott-auth-btn-disabled-bg: #ead9bd;
+  --tott-auth-btn-disabled-text: #776550;
+  --tott-auth-footer-muted: #4a6275;
+  --tott-auth-hex-band-opacity: 0.4;
+  --tott-auth-checkbox-border: #b99e74;
+  --tott-auth-input-shadow: 0 1px 0 rgba(255, 255, 255, 0.7), 0 2px 10px rgba(0, 61, 102, 0.07);
 }
 
 @theme inline {
@@ -397,6 +535,12 @@ html[data-theme="light"] {
   --foreground: var(--tott-auth-foreground);
 }
 
+/* Home hero CTA: the baked gold slab SVG is the wrong accent on the sand tide
+   theme, so hide it there and let the Link's deep-sea CSS background show. */
+html[data-theme="tide"] [data-tott-hero-cta-slab] {
+  display: none;
+}
+
 /* Light auth: layered wash — gold air + sand gradient (no heavy glow) */
 html[data-theme="light"] .tott-auth-page {
   background-color: #e8dfd0;
@@ -437,7 +581,7 @@ html[data-theme="light"] [data-tott-auth-hex-band]::after {
     90deg,
     transparent 0%,
     var(--tott-accent-tide-muted) 20%,
-    rgba(203, 161, 88, 0.55) 50%,
+    color-mix(in srgb, var(--tott-accent-gold) 55%, transparent) 50%,
     var(--tott-accent-tide-muted) 80%,
     transparent 100%
   );
@@ -626,7 +770,9 @@ a,
      • explicit manual override: html[data-theme="dark"]
      • no manual override + OS prefers dark: html:not([data-theme])
        inside @media (prefers-color-scheme: dark). */
-/* (1) Explicit manual dark override — always dark regardless of OS. */
+/* (1) Explicit manual dark override — always dark regardless of OS. (Tide is a
+   light/sand theme, so it is intentionally NOT included here — authored colors
+   win there, same as the light theme.) */
 html[data-theme="dark"] .prose [style*="color"]:not(a):not(mark),
 html[data-theme="dark"] .prose-inline [style*="color"]:not(a):not(mark) {
   color: var(--tott-home-text-strong) !important;

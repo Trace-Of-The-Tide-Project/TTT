@@ -6,7 +6,7 @@ import { getLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 
 /** Inline before paint so `data-theme` matches stored preference (avoids flash). Default: dark. */
-const THEME_BOOTSTRAP = `(function(){try{var k='tott-color-scheme',s=localStorage.getItem(k),t=s==='light'||s==='dark'?s:'dark';document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t==='dark'?'dark':'light';}catch(e){}})();`;
+const THEME_BOOTSTRAP = `(function(){try{var k='tott-color-scheme',s=localStorage.getItem(k),t=s==='light'||s==='dark'||s==='tide'?s:'dark';document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t==='dark'?'dark':'light';}catch(e){}})();`;
 
 const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",

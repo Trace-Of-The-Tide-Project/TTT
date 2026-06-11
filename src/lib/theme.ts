@@ -4,10 +4,16 @@
  */
 
 export const theme = {
-  /** Primary gold for buttons, links, accents */
-  accentGold: '#CBA158',
-  /** Slightly lighter gold for focus rings, borders, checkboxes */
-  accentGoldFocus: '#C9A96E',
+  /**
+   * Primary accent for buttons, links, accents. Token-backed so each theme
+   * supplies its own: gold (#cba158) on light/dark, Wave Blue (#5caec1) on tide.
+   * Safe in solid color contexts (`backgroundColor`, `color`, `border` shorthand);
+   * for alpha washes use `color-mix(in srgb, var(--tott-accent-gold) N%, transparent)`
+   * rather than hex-suffix concatenation.
+   */
+  accentGold: 'var(--tott-accent-gold)',
+  /** Slightly lighter accent for focus rings, borders, checkboxes (token-backed). */
+  accentGoldFocus: 'var(--tott-accent-gold-focus)',
 
   /**
    * Secondary “tide” accent — muted teal; use for hovers, rules, subtle UI.
@@ -17,10 +23,12 @@ export const theme = {
   accentTideMuted: "var(--tott-accent-tide-muted)",
 
   /**
-   * Pure black — text on gold chips and other fixed “ink on gold” UI.
-   * Do not use for full-page backgrounds; use {@link pageBackground}.
+   * Ink placed on top of filled accent surfaces (gold/blue buttons, avatars,
+   * chips). Token-backed: black on light/dark, sand (#fbe9d2) on tide so the
+   * deep-sea accent stays legible. Do not use for full-page backgrounds; use
+   * {@link pageBackground}.
    */
-  bgDark: '#000000',
+  bgDark: 'var(--tott-on-accent)',
 
   /** Full-page / section background — follows global light/dark (see globals.css). */
   pageBackground: "var(--background)",

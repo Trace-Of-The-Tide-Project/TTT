@@ -24,7 +24,8 @@ function DefaultCoverHero({ coverLabel }: { coverLabel?: string }) {
       <div
         className="absolute inset-0 opacity-40"
         style={{
-          background: `radial-gradient(ellipse 80% 70% at 50% 20%, ${theme.accentGold}33, transparent 55%)`,
+          background:
+            "radial-gradient(ellipse 80% 70% at 50% 20%, color-mix(in srgb, var(--tott-accent-gold) 20%, transparent), transparent 55%)",
         }}
         aria-hidden
       />
@@ -36,7 +37,7 @@ function DefaultCoverHero({ coverLabel }: { coverLabel?: string }) {
           <span
             className="rounded-md border border-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white backdrop-blur-sm sm:text-sm"
             style={{
-              backgroundColor: `${theme.accentGold}cc`,
+              backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 80%, transparent)",
               borderColor: theme.accentGold,
             }}
           >

@@ -48,7 +48,7 @@ export function ShareYourStory() {
             height="20"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#C9A96E"
+            stroke="var(--tott-accent-gold-focus)"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -79,8 +79,8 @@ export function ShareYourStory() {
           href="/contribute"
           className="inline-flex h-10 w-[149px] items-center justify-center rounded-lg text-sm font-medium transition-opacity hover:opacity-90"
           style={{
-            backgroundColor: "#C9A96E",
-            color: "#332217",
+            backgroundColor: "var(--tott-accent-gold-focus)",
+            color: "var(--tott-hero-cta-ink)",
             boxShadow: "inset 0 1px 0 rgba(255,255,255,0.4)",
           }}
         >

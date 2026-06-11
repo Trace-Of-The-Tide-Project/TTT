@@ -69,7 +69,8 @@ export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
               <hr
                 className="mx-auto h-px w-full max-w-2xl border-0"
                 style={{
-                  background: `linear-gradient(90deg, transparent 0%, ${theme.accentGold}33 15%, ${theme.accentGold}55 50%, ${theme.accentGold}33 85%, transparent 100%)`,
+                  background:
+                    "linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--tott-accent-gold) 20%, transparent) 15%, color-mix(in srgb, var(--tott-accent-gold) 33%, transparent) 50%, color-mix(in srgb, var(--tott-accent-gold) 20%, transparent) 85%, transparent 100%)",
                 }}
               />
             </div>

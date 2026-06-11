@@ -13,6 +13,7 @@ import {
   LanguagesIcon,
   MoonIcon,
   SunIcon,
+  WaveIcon,
   MenuIcon,
   LogOutIcon,
   XIcon,
@@ -43,7 +44,7 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { isDark, toggleScheme } = useTheme();
+  const { isDark, scheme, toggleScheme } = useTheme();
   const { user, status, logout } = useAuth();
   const displayName = user?.full_name || user?.username || user?.email || "Username";
   const userIsAdmin = isAdmin(user);
@@ -90,7 +91,16 @@ export function Navbar() {
   const navMuted = isDark ? "text-gray-400 hover:text-white" : "text-[color:var(--tott-muted)] hover:text-[color:var(--tott-accent-tide)]";
   const navRowHover = isDark ? "hover:bg-white/5 hover:text-white" : "hover:bg-[color:var(--tott-accent-tide-subtle)] hover:text-[color:var(--tott-accent-tide)]";
   const chipBg = isDark ? theme.cardBorder : "var(--tott-well-bg)";
-  const borderColor = isDark ? "#333333" : "var(--tott-card-border)";
+  const borderColor = "var(--tott-card-border)";
+
+  /* Theme toggle cycles dark → light → tide → dark. The button shows the
+     icon/label of the theme it switches *to* (matches the prior 2-state UX). */
+  const nextScheme = scheme === "dark" ? "light" : scheme === "light" ? "tide" : "dark";
+  const ThemeIcon = nextScheme === "light" ? SunIcon : nextScheme === "tide" ? WaveIcon : MoonIcon;
+  const themeAriaKey =
+    nextScheme === "light" ? "switchToLight" : nextScheme === "tide" ? "switchToTide" : "switchToDark";
+  const themeLabelKey =
+    nextScheme === "light" ? "lightMode" : nextScheme === "tide" ? "tideMode" : "darkMode";
 
   return (
     <header className="absolute inset-x-0 top-0 z-50 w-full py-2">
@@ -159,13 +169,13 @@ export function Navbar() {
             onClick={toggleScheme}
             className={`hidden lg:flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${
               isDark
-                ? "border-[#333333] text-gray-400 hover:text-white"
+                ? "border-[color:var(--tott-card-border)] text-gray-400 hover:text-white"
                 : "border-gray-200 text-gray-500 hover:text-gray-900"
             }`}
             style={{ backgroundColor: chipBg }}
-            aria-label={isDark ? t("switchToLight") : t("switchToDark")}
+            aria-label={t(themeAriaKey)}
           >
-            {isDark ? <SunIcon /> : <MoonIcon />}
+            <ThemeIcon />
           </button>
 
           {authResolving ? null : user ? (
@@ -174,7 +184,7 @@ export function Navbar() {
               <Link
                 href="/profile"
                 className="flex lg:hidden h-9 w-9 shrink-0 items-center justify-center rounded-full transition-opacity hover:opacity-90"
-                style={{ backgroundColor: theme.accentGoldFocus }}
+                style={{ backgroundColor: "var(--tott-accent-gold-focus, #c9a96e)" }}
                 aria-label={t("profile")}
               >
                 <span className="text-sm font-semibold" style={{ color: theme.bgDark }}>
@@ -196,7 +206,7 @@ export function Navbar() {
                 >
                   <span
                     className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-                    style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
+                    style={{ backgroundColor: "var(--tott-accent-gold-focus, #c9a96e)", color: theme.bgDark }}
                   >
                     {getInitial(user.full_name || user.username, user.email)}
                   </span>
@@ -207,7 +217,7 @@ export function Navbar() {
                 {isUserDropdownOpen && (
                   <div
                     className={`absolute right-0 top-full z-50 mt-1 w-44 rounded-lg border py-1 shadow-lg ${
-                      isDark ? "border-[#333333] bg-[#1a1a1a]" : "border-gray-200 bg-white"
+                      isDark ? "border-[color:var(--tott-card-border)] bg-[color:var(--tott-dash-surface-inset)]" : "border-gray-200 bg-white"
                     }`}
                   >
                     {userIsAdmin && (
@@ -289,7 +299,7 @@ export function Navbar() {
               <Link
                 href="/auth/register"
                 className="hidden lg:inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90"
-                style={{ backgroundColor: theme.accentGold, color: theme.bgDark }}
+                style={{ backgroundColor: "var(--tott-accent-gold)", color: theme.bgDark }}
               >
                 {t("signUp")}
               </Link>
@@ -330,10 +340,10 @@ export function Navbar() {
         <div
           className={`absolute right-0 top-0 flex h-full w-[min(280px,85vw)] flex-col border-l transition-transform duration-300 ease-out ${
             isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-          } ${isDark ? "border-[#333333] bg-[#171717]" : "border-[var(--tott-card-border)] bg-[var(--background)]"}`}
+          } ${isDark ? "border-[color:var(--tott-card-border)] bg-[color:var(--tott-home-surface)]" : "border-[var(--tott-card-border)] bg-[var(--background)]"}`}
         >
           <div
-            className={`flex flex-col gap-1 border-b p-4 ${isDark ? "border-[#333333]" : "border-gray-200"}`}
+            className={`flex flex-col gap-1 border-b p-4 ${isDark ? "border-[color:var(--tott-card-border)]" : "border-gray-200"}`}
           >
             <div className="flex items-center justify-between gap-2">
               <span className={`font-medium ${isDark ? "text-white" : "text-gray-900"}`}>{t("menu")}</span>
@@ -364,7 +374,7 @@ export function Navbar() {
               </Link>
             ))}
 
-            <span className={`my-2 h-px w-full ${isDark ? "bg-[#333333]" : "bg-gray-200"}`} />
+            <span className={`my-2 h-px w-full ${isDark ? "bg-[color:var(--tott-card-border)]" : "bg-gray-200"}`} />
 
             <div className={`flex flex-col gap-2 rounded-md px-4 py-3`}>
               <div className={`flex items-center gap-2 ${navMuted}`}>
@@ -391,7 +401,7 @@ export function Navbar() {
                 >
                   <span
                     className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-medium"
-                    style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
+                    style={{ backgroundColor: "var(--tott-accent-gold-focus, #c9a96e)", color: theme.bgDark }}
                   >
                     {getInitial(user.full_name || user.username, user.email)}
                   </span>
@@ -439,25 +449,24 @@ export function Navbar() {
                   href="/auth/register"
                   onClick={closeMobileMenu}
                   className="flex items-center justify-center gap-2 rounded-md px-4 py-3 font-medium transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: theme.accentGold, color: theme.bgDark }}
+                  style={{ backgroundColor: "var(--tott-accent-gold)", color: theme.bgDark }}
                 >
                   {t("signUp")}
                 </Link>
               </>
             )}
 
-            <span className={`my-2 h-px w-full ${isDark ? "bg-[#333333]" : "bg-gray-200"}`} />
+            <span className={`my-2 h-px w-full ${isDark ? "bg-[color:var(--tott-card-border)]" : "bg-gray-200"}`} />
 
             {/* Theme toggle — kept in mobile drawer */}
             <button
               type="button"
               onClick={toggleScheme}
               className={`flex w-full items-center gap-3 rounded-md px-4 py-3 text-left transition-colors ${navMuted} ${navRowHover}`}
-              aria-label={isDark ? t("switchToLight") : t("switchToDark")}
-              aria-pressed={isDark}
+              aria-label={t(themeAriaKey)}
             >
-              {isDark ? <SunIcon /> : <MoonIcon />}
-              <span>{isDark ? t("lightMode") : t("darkMode")}</span>
+              <ThemeIcon />
+              <span>{t(themeLabelKey)}</span>
             </button>
           </div>
         </div>

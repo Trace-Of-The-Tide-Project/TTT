@@ -28,7 +28,7 @@ export default async function CheckEmailPage({
         <div className="mx-auto flex w-full max-w-md flex-col items-center text-center">
           <div
             className="mb-6 flex h-16 w-16 items-center justify-center rounded-full"
-            style={{ backgroundColor: `${theme.accentGold}33` }}
+            style={{ backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 20%, transparent)" }}
             aria-hidden
           >
             <svg

@@ -89,7 +89,7 @@ export default function GdprPage() {
         <h2 className="mb-4 text-xl font-bold text-foreground">10. Contact Us</h2>
         <p className="leading-relaxed text-[color:var(--tott-muted)]">
           📧 Email:{" "}
-          <a href="mailto:your-email@example.com" className="hover:underline" style={{ color: "#CBA158" }}>
+          <a href="mailto:your-email@example.com" className="hover:underline" style={{ color: "var(--tott-accent-gold)" }}>
             [your-email@example.com]
           </a>
         </p>

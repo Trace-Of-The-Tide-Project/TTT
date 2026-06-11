@@ -26,20 +26,20 @@ export function TermsCheckbox({ checked, onChange, id = "terms" }: TermsCheckbox
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded-sm border border-[color:var(--tott-auth-checkbox-border)] bg-[color:var(--tott-auth-input-bg)] text-[#CBA158] focus:outline-none focus:ring-2 focus:ring-[#CBA158]/40"
+        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded-sm border border-[color:var(--tott-auth-checkbox-border)] bg-[color:var(--tott-auth-input-bg)] text-[color:var(--tott-accent-gold)] focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--tott-accent-gold)_40%,transparent)]"
       />
       <span className="leading-snug">
         {t("termsLead")}{" "}
         <Link
           href="/terms"
-          className="text-[#CBA158] transition-opacity hover:opacity-80"
+          className="text-[color:var(--tott-accent-gold)] transition-opacity hover:opacity-80"
         >
           {t("termsLink")}
         </Link>{" "}
         {t("termsAnd")}{" "}
         <Link
           href="/privacy"
-          className="text-[#CBA158] transition-opacity hover:opacity-80"
+          className="text-[color:var(--tott-accent-gold)] transition-opacity hover:opacity-80"
         >
           {t("privacyLink")}
         </Link>

@@ -59,7 +59,7 @@ export function LoginForm() {
         labelRight={
           <Link
             href="/auth/forgot-password"
-            className="text-sm text-[#CBA158] hover:underline"
+            className="text-sm text-[color:var(--tott-accent-gold)] hover:underline"
           >
             {t("forgotPassword")}
           </Link>

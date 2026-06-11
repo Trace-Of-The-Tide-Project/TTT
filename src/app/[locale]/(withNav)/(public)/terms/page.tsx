@@ -93,7 +93,7 @@ export default function TermsPage() {
           <a
             href="mailto:your-email@example.com"
             className="hover:underline"
-            style={{ color: "#CBA158" }}
+            style={{ color: "var(--tott-accent-gold)" }}
           >
             [your-email@example.com]
           </a>

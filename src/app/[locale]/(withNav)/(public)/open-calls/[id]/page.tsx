@@ -57,7 +57,7 @@ export default function OpenCallByIdPage() {
         <p className="text-sm text-gray-500">
           {phase === "missing" ? t("errorMissingBody") : t("errorLoadBody")}
         </p>
-        <Link href="/content" className="text-sm font-medium text-[#C9A96E] hover:underline">
+        <Link href="/content" className="text-sm font-medium text-[color:var(--tott-accent-gold)] hover:underline">
           {t("backToContent")}
         </Link>
       </div>

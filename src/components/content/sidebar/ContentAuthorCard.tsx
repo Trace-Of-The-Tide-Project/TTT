@@ -58,9 +58,9 @@ export function ContentAuthorCard({
             disabled={toggling || !authorId}
             className="shrink-0 rounded-md px-4 py-1.5 text-sm font-medium transition-colors hover:opacity-90 disabled:opacity-50"
             style={{
-              backgroundColor: isFollowing ? "transparent" : "var(--tott-dash-gold-label)",
-              color: isFollowing ? "var(--tott-dash-gold-label)" : "var(--tott-gold-chip-ink)",
-              border: isFollowing ? "1px solid var(--tott-dash-gold-label)" : "none",
+              backgroundColor: isFollowing ? "transparent" : "var(--tott-accent-gold)",
+              color: isFollowing ? "var(--tott-accent-gold)" : "var(--tott-on-accent)",
+              border: isFollowing ? "1px solid var(--tott-accent-gold)" : "none",
               boxShadow: isFollowing ? "none" : "inset 0 1px 0 rgba(255,255,255,0.4)",
             }}
           >
@@ -68,7 +68,7 @@ export function ContentAuthorCard({
           </button>
         </div>
         {link && (
-          <p className="mt-1 flex items-center gap-1.5 text-sm break-all" style={{ color: "var(--tott-dash-gold-label)" }}>
+          <p className="mt-1 flex items-center gap-1.5 text-sm break-all" style={{ color: "var(--tott-accent-gold)" }}>
             <LinkIcon />
             <span>{link}</span>
           </p>

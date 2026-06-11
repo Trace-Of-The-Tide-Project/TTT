@@ -258,6 +258,17 @@ export function MapPinIcon() {
   );
 }
 
+/** Stacked waves — used for the "Tide" brand theme toggle. */
+export function WaveIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M2 6c2 0 2 1.5 4 1.5S8 6 10 6s2 1.5 4 1.5S16 6 18 6s2 1.5 4 1.5" />
+      <path d="M2 12c2 0 2 1.5 4 1.5S8 12 10 12s2 1.5 4 1.5S16 12 18 12s2 1.5 4 1.5" />
+      <path d="M2 18c2 0 2 1.5 4 1.5S8 18 10 18s2 1.5 4 1.5S16 18 18 18s2 1.5 4 1.5" />
+    </svg>
+  );
+}
+
 export function PaletteIcon() {
   return (
     <svg {...iconProps}>
