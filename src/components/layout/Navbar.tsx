@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { LogoAnimated } from "@/components/layout/LogoAnimated";
+import Image from "next/image";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -115,8 +115,14 @@ export function Navbar() {
             isDark ? "text-white" : "text-gray-900"
           }`}
         >
-          <LogoAnimated className="h-6 w-auto" />
-          <span className="font-medium">{t("brand")}</span>
+          <Image
+            src="/images/tott-wordmark-gold.svg"
+            alt={t("brand")}
+            width={125}
+            height={80}
+            priority
+            className="h-8 w-auto"
+          />
         </Link>
 
         {/* Right section */}
