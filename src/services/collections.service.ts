@@ -1,9 +1,20 @@
-import { api } from "./api";
+import { serverGet } from "@/lib/api/isomorphic-fetch";
 
 export type CollectionItem = {
   id: string;
   name: string;
   description?: string | null;
+  cover_image?: string | null;
+};
+
+export type CollectionDetail = {
+  id: string;
+  name: string;
+  description?: string | null;
+  cover_image?: string | null;
+  language?: string | null;
+  creator?: { id: string; username?: string; full_name?: string | null } | null;
+  created_date?: string | null;
 };
 
 export type CollectionsListMeta = {
@@ -37,6 +48,21 @@ export type GetCollectionsParams = {
 
 /** GET /collections — public list (paginated). */
 export async function getCollections(params?: GetCollectionsParams): Promise<CollectionItem[]> {
-  const { data } = await api.get<unknown>("/collections", { params });
+  const data = await serverGet<unknown>("/collections", params as Record<string, string>);
   return unwrapCollectionsData(data);
+}
+
+function unwrapCollectionDetail(raw: unknown): CollectionDetail | null {
+  if (!raw || typeof raw !== "object") return null;
+  const o = raw as Record<string, unknown>;
+  const row =
+    o.data && typeof o.data === "object" ? (o.data as Record<string, unknown>) : o;
+  if (typeof row.id !== "string" || typeof row.name !== "string") return null;
+  return row as unknown as CollectionDetail;
+}
+
+/** GET /collections/:id — single collection (public). Returns null when missing. */
+export async function getCollectionById(id: string): Promise<CollectionDetail | null> {
+  const data = await serverGet<unknown>(`/collections/${encodeURIComponent(id)}`);
+  return unwrapCollectionDetail(data);
 }

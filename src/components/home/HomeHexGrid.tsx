@@ -135,11 +135,10 @@ export function HomeHexGrid({ cards }: Props) {
   const heroGradId = useId().replace(/:/g, "");
 
   /** Layout width + hex size (for title scale + grid offset). */
-  const [layout, setLayout] = useState<{ hex: number; vw: number }>(() =>
-    typeof window !== "undefined"
-      ? { hex: calcHexSize(window.innerWidth), vw: window.innerWidth }
-      : { hex: 360, vw: 1440 },
-  );
+  const [layout, setLayout] = useState<{ hex: number; vw: number }>({
+    hex: 360,
+    vw: 1440,
+  });
 
   useEffect(() => {
     const update = () =>

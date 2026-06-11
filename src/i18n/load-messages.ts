@@ -55,7 +55,7 @@ async function loadDashboardMessages(locale: AppLocale): Promise<Record<string, 
  */
 export async function loadMessages(locale: AppLocale) {
 
-  const [core, navbar, home, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, dashboardMerged] = await Promise.all([
+  const [core, navbar, home, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, collections, dashboardMerged] = await Promise.all([
     import(`../../messages/${locale}.json`),
     import(`../../messages/features/${locale}/navbar.json`),
     import(`../../messages/features/${locale}/home.json`),
@@ -67,6 +67,7 @@ export async function loadMessages(locale: AppLocale) {
     import(`../../messages/features/${locale}/open-issues.json`),
     import(`../../messages/features/${locale}/public-detail.json`),
     import(`../../messages/features/${locale}/comingSoon.json`),
+    import(`../../messages/features/${locale}/collections.json`),
     loadDashboardMessages(locale),
   ]);
 
@@ -82,6 +83,7 @@ export async function loadMessages(locale: AppLocale) {
     ...openIssues.default,
     ...publicDetail.default,
     ...comingSoon.default,
+    ...collections.default,
     Dashboard: dashboardMerged,
   } as Record<string, unknown>;
 }
