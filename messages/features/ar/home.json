@@ -24,7 +24,7 @@
         "publications": "الإصدارات",
         "issues": "الأعداد",
         "editorialBoard": "هيئة التحرير",
-        "support": "ادعم Hertz"
+        "support": "الدعم"
       },
       "manifesto": {
         "philosophyHeading": "فلسفتنا",
@@ -148,7 +148,20 @@
         "roleAuthor": "كاتب",
         "roleContributor": "مساهم",
         "previousCollab": "التعاون السابق",
-        "nextCollab": "التعاون التالي"
+        "nextCollab": "التعاون التالي",
+        "statuses": {
+          "pending": "قيد الانتظار",
+          "approved": "مقبول",
+          "rejected": "مرفوض",
+          "completed": "مكتمل",
+          "archived": "مؤرشف",
+          "draft": "مسودة",
+          "inreview": "قيد المراجعة"
+        },
+        "types": {
+          "personalstory": "قصة شخصية",
+          "other": "أخرى"
+        }
       },
       "supportV2": {
         "ctaEyebrow": "كن جزءًا من القصة",

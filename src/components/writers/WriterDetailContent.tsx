@@ -259,7 +259,7 @@ export function WriterDetailContent({ writer }: { writer: WriterDetailView }) {
             className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
             style={{ color: ACCENT }}
           >
-            <span aria-hidden>←</span>
+            <span aria-hidden className="inline-block rtl:-scale-x-100">←</span>
             {t("backToMagazine")}
           </Link>
         </div>

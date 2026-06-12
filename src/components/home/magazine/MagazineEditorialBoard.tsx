@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -214,8 +215,15 @@ export function MagazineEditorialBoard({
           </div>
 
           {/* xl — flex row with side fillers (clipped on the edges of
-              the viewport at 1280–1535 by the parent's overflow-hidden). */}
+              the viewport at 1280–1535 by the parent's overflow-hidden).
+              The two fillers are asymmetric — the left one is mirrored
+              (scaleX(-1)) so both fade inward toward the cards. Under RTL the
+              flex main axis reverses, which swaps the fillers to the wrong
+              sides (mirrored filler lands on the right). dir="ltr" pins the row
+              so the fillers + cards keep their designed left→right positions in
+              every locale, matching the English layout. */}
           <div
+            dir="ltr"
             className="hidden items-start justify-center xl:flex"
             style={{ gap: "8px" }}
           >
@@ -583,6 +591,10 @@ function WriterCard({ writer }: { writer: FollowWriterItem }) {
   const cardTitle = writer.title?.trim() || writer.name || t("writerCardTitle");
   const initial = (writer.name || cardTitle).slice(0, 1).toUpperCase() || "A";
   const editionLabel = writer.edition?.trim() || t("writerEdition");
+  // Avatars are optional and the URL may be missing/broken (placeholder seed
+  // data, 404s). On load error we drop the overlay so the silk hex frame shows
+  // through cleanly instead of the browser's broken-image icon.
+  const [avatarFailed, setAvatarFailed] = useState(false);
 
   return (
     <article
@@ -596,7 +608,7 @@ function WriterCard({ writer }: { writer: FollowWriterItem }) {
       {/* Writer avatar (when present) is layered behind the silk hex
           frame so the avatar reads inside the hex silhouette without
           the silk overpowering it. */}
-      {writer.avatar ? (
+      {writer.avatar && !avatarFailed ? (
         <Image
           src={writer.avatar}
           alt=""
@@ -604,6 +616,7 @@ function WriterCard({ writer }: { writer: FollowWriterItem }) {
           className="absolute inset-0 select-none object-cover opacity-70 mix-blend-luminosity"
           sizes="276px"
           draggable={false}
+          onError={() => setAvatarFailed(true)}
         />
       ) : null}
       <Image

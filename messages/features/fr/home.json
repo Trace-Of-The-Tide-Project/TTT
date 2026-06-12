@@ -24,7 +24,7 @@
         "publications": "Publications",
         "issues": "Numéros",
         "editorialBoard": "Comité éditorial",
-        "support": "Soutenir Hertz"
+        "support": "Soutien"
       },
       "manifesto": {
         "philosophyHeading": "Notre philosophie",
@@ -148,7 +148,20 @@
         "roleAuthor": "Auteur",
         "roleContributor": "Contributeur",
         "previousCollab": "Collaboration précédente",
-        "nextCollab": "Collaboration suivante"
+        "nextCollab": "Collaboration suivante",
+        "statuses": {
+          "pending": "En attente",
+          "approved": "Approuvé",
+          "rejected": "Rejeté",
+          "completed": "Terminé",
+          "archived": "Archivé",
+          "draft": "Brouillon",
+          "inreview": "En révision"
+        },
+        "types": {
+          "personalstory": "Histoire personnelle",
+          "other": "Autre"
+        }
       },
       "supportV2": {
         "ctaEyebrow": "Devenez partie de l'histoire",

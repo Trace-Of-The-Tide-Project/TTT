@@ -24,7 +24,7 @@
         "publications": "Publications",
         "issues": "Issues",
         "editorialBoard": "Editorial Board",
-        "support": "Support Hertz"
+        "support": "Support"
       },
       "manifesto": {
         "philosophyHeading": "Our Philosophy",
@@ -148,7 +148,20 @@
         "roleAuthor": "Author",
         "roleContributor": "Contributor",
         "previousCollab": "Previous collaboration",
-        "nextCollab": "Next collaboration"
+        "nextCollab": "Next collaboration",
+        "statuses": {
+          "pending": "Pending",
+          "approved": "Approved",
+          "rejected": "Rejected",
+          "completed": "Completed",
+          "archived": "Archived",
+          "draft": "Draft",
+          "inreview": "In review"
+        },
+        "types": {
+          "personalstory": "Personal Story",
+          "other": "Other"
+        }
       },
       "supportV2": {
         "ctaEyebrow": "Become Part of the Story",

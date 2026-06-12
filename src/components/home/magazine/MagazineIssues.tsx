@@ -229,7 +229,7 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
           style={{ color: "var(--tott-accent-gold)" }}
         >
           {t("viewMore")}
-          <span aria-hidden>→</span>
+          <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
         </Link>
       </header>
 
@@ -391,8 +391,14 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
         </div>
       </div>
 
-      {/* Bottom toolbar — capsule with paging + view controls. */}
+      {/* Bottom toolbar — capsule with paging + view controls.
+          Pinned to dir="ltr": the pager is `[◄ prev] [current / total] [next ►]`,
+          and under RTL the row would otherwise reverse — swapping the arrows to
+          the wrong sides (glyphs still pointing the old way) and flipping the
+          indicator to read "total / current". LTR keeps it a conventional,
+          unambiguous pager in every language. */}
       <div
+        dir="ltr"
         className="mx-auto flex w-full max-w-[542px] flex-nowrap items-center justify-start overflow-x-auto sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{
           height: "64px",

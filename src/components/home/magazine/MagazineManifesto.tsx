@@ -369,7 +369,9 @@ function SpaceCard({
         }}
       >
         {ctaLabel}
-        <span aria-hidden>→</span>
+        {/* Forward arrow — mirrored under RTL so it points left (the reading
+            direction) instead of right. */}
+        <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
       </Link>
     </div>
   );

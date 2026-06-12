@@ -79,7 +79,7 @@ export function MagazineLatestPublished({
           style={{ color: "var(--tott-accent-gold)" }}
         >
           {t("viewMore")}
-          <span aria-hidden>→</span>
+          <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
         </Link>
       </div>
 

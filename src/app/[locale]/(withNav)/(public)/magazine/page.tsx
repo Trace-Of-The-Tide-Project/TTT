@@ -125,7 +125,7 @@ async function fetchLatestBooks(): Promise<LatestPublishedItem[]> {
   }));
 }
 
-async function fetchLessReadArticles(): Promise<LessReadArticleItem[]> {
+async function fetchLessReadArticles(locale: string): Promise<LessReadArticleItem[]> {
   const raw = await serverGet<Envelope<RawArticle>>("/articles", {
     limit: 5,
     status: "published",
@@ -136,7 +136,7 @@ async function fetchLessReadArticles(): Promise<LessReadArticleItem[]> {
     id: a.id,
     title: a.title,
     author: pickAuthorName(a.author),
-    date: formatShortDate(a.published_at),
+    date: formatShortDate(a.published_at, locale),
     category: prettifyCategory(a.category),
     edition: a.edition ?? "",
   }));
@@ -175,7 +175,7 @@ async function fetchMagazineIssues(): Promise<MagazineIssueItem[]> {
   }));
 }
 
-async function fetchCollaborations(): Promise<CollaborationItem[]> {
+async function fetchCollaborations(locale: string): Promise<CollaborationItem[]> {
   const raw = await serverGet<Envelope<RawContribution>>("/contributions", {
     page: 1,
     limit: 7,
@@ -185,7 +185,7 @@ async function fetchCollaborations(): Promise<CollaborationItem[]> {
     title: c.title || c.description?.slice(0, 60) || "Collaboration",
     type: c.type?.name || "Contribution",
     status: c.status ?? null,
-    timeline: formatShortDate(c.submission_date) || null,
+    timeline: formatShortDate(c.submission_date, locale) || null,
     description: c.description || "",
   }));
 }
@@ -243,12 +243,13 @@ function prettifyCategory(c: string | null | undefined): string {
     .replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
-function formatShortDate(iso: string | null | undefined): string {
+function formatShortDate(iso: string | null | undefined, locale: string): string {
   const v = (iso ?? "").trim();
   if (!v) return "";
   const d = new Date(v);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  // Localize month + year to the active language (e.g. Arabic month names).
+  return d.toLocaleDateString(locale, { month: "short", year: "numeric" });
 }
 
 /**
@@ -339,10 +340,10 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
     cmsCopy,
   ] = await Promise.all([
     fetchLatestBooks(),
-    fetchLessReadArticles(),
+    fetchLessReadArticles(locale),
     fetchWriters(),
     fetchMagazineIssues(),
-    fetchCollaborations(),
+    fetchCollaborations(locale),
     fetchMagazineMeta(),
     fetchMagazineCmsCopy(),
   ]);

@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -102,6 +101,22 @@ export function Navbar() {
   const themeLabelKey =
     nextScheme === "light" ? "lightMode" : nextScheme === "tide" ? "tideMode" : "darkMode";
 
+  /* Desktop primary nav links — rendered next to the logo (see <nav> below). */
+  const desktopNavLinks = (
+    <div className="hidden items-center gap-2 lg:flex lg:gap-4">
+      {navLinks.map(({ href, messageKey, icon: Icon }) => (
+        <Link
+          key={href}
+          href={href}
+          className={`flex items-center gap-2 transition-colors ${navMuted}`}
+        >
+          <Icon />
+          <span>{t(messageKey)}</span>
+        </Link>
+      ))}
+    </div>
+  );
+
   return (
     <header className="absolute inset-x-0 top-0 z-50 w-full py-2">
       {/* Translucent background layer: denser at top-center, fades to transparent at edges + bottom.
@@ -122,40 +137,37 @@ export function Navbar() {
       />
       <nav className="flex h-14 w-full items-center justify-between gap-8 px-6">
 
-        {/* Brand — left */}
-        <Link
-          href="/"
-          className={`flex shrink-0 items-center gap-3 transition-opacity hover:opacity-90 ${
-            isDark ? "text-white" : "text-gray-900"
-          }`}
-        >
-          <Image
-            src="/images/tott-wordmark-gold.svg"
-            alt={t("brand")}
-            width={125}
-            height={80}
-            priority
-            className="h-8 w-auto"
-          />
-        </Link>
+        {/* Brand — logo + primary nav links next to it */}
+        <div className="flex items-center gap-6 lg:gap-8">
+          <Link
+            href="/"
+            className="flex shrink-0 items-center gap-3 transition-opacity hover:opacity-90"
+            aria-label={t("brand")}
+          >
+            {/* Wordmark rendered as a CSS mask so its color tracks the theme
+                via --tott-logo (gold on light/dark, deep sea on the sand tide). */}
+            <span
+              role="img"
+              aria-hidden
+              className="block h-8 w-[3.1rem]"
+              style={{
+                backgroundColor: "var(--tott-logo)",
+                maskImage: "url(/images/tott-wordmark-gold.svg)",
+                WebkitMaskImage: "url(/images/tott-wordmark-gold.svg)",
+                maskRepeat: "no-repeat",
+                WebkitMaskRepeat: "no-repeat",
+                maskPosition: "center",
+                WebkitMaskPosition: "center",
+                maskSize: "contain",
+                WebkitMaskSize: "contain",
+              }}
+            />
+          </Link>
+          {desktopNavLinks}
+        </div>
 
-        {/* Right section */}
+        {/* Right section — utility controls + account (nav links sit by the logo) */}
         <div className="flex items-center justify-end gap-2 lg:gap-4">
-
-          {/* Desktop nav links */}
-          {navLinks.map(({ href, messageKey, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className={`hidden lg:flex items-center gap-2 transition-colors ${navMuted}`}
-            >
-              <Icon />
-              <span>{t(messageKey)}</span>
-            </Link>
-          ))}
-
-          {/* Divider */}
-          <span className={`mx-1 hidden h-8 w-px lg:block`} style={{ backgroundColor: borderColor }} />
 
           {/* Language switcher */}
           <div className={`hidden items-center gap-2 lg:flex ${navMuted}`}>

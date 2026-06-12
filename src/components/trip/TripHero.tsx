@@ -47,7 +47,7 @@ export function TripHero({ image, title, price, difficulty, from, to }: TripHero
           <p className="mt-2 flex items-center gap-2 text-sm text-gray-300">
             <span>{from}</span>
             <IdlePulse style={{ display: "inline-flex" }}>
-              <span style={{ color: theme.accentGold }}>→</span>
+              <span className="inline-block rtl:-scale-x-100" style={{ color: theme.accentGold }}>→</span>
             </IdlePulse>
             <span>{to}</span>
           </p>

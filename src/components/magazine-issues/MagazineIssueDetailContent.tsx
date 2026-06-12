@@ -156,7 +156,7 @@ export function MagazineIssueDetailContent({
             style={{ color: ACCENT }}
           >
             {t("backToMagazine")}
-            <span aria-hidden>→</span>
+            <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
           </Link>
         </div>
       </div>

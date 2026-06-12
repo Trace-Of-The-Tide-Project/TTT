@@ -7,10 +7,12 @@ import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { FirstWordGold } from "./FirstWordGold";
 
-// Pre-rendered twin-hex header (Author + Contributor hexes connected
-// by the heart-handshake glyph). The labels baked into the SVG are
-// the only ones we render — no duplicate text on top.
-const FRAME_86 = "/images/home/Frame 86.svg";
+// Twin-hex header (Author + Contributor hexes connected by the
+// heart-handshake glyph). This is a label-stripped copy of the original
+// `Frame 86.svg` — the baked "Author"/"Contributor" vector text was removed
+// so we can render those labels as real, translatable text on top (the gold
+// gradient + hexagons are untouched).
+const FRAME_86 = "/images/home/twin-hex-nolabels.svg";
 
 // Outer card silhouette — chamfered-hex path lifted from the Figma
 // comp (Card-2.svg). Used as both the fill (matching the page
@@ -189,7 +191,7 @@ export function MagazineSupport({
             textAlign: "center",
           }}
         >
-          {subheadingText}
+          <RichContent html={subheadingText} variant="inline" />
         </p>
       </div>
 
@@ -302,6 +304,19 @@ function CollabCard({
   // card text isn't announced multiple times in a row.
   const ariaHidden = isClone || !isActive;
 
+  // The contribution type + status come from the backend as plain strings.
+  // Translate the known fixed values (keys under `types.*` / `statuses.*`),
+  // and fall back to the raw value for anything custom the admin adds.
+  const slug = (v: string) => v.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
+  const localizeType = (raw: string) => {
+    const key = `types.${slug(raw)}`;
+    return t.has(key) ? t(key) : raw;
+  };
+  const localizeStatus = (raw: string) => {
+    const key = `statuses.${slug(raw)}`;
+    return t.has(key) ? t(key) : prettifyStatus(raw);
+  };
+
   return (
     <article
       className="relative flex shrink-0 flex-col items-center justify-center"
@@ -351,10 +366,17 @@ function CollabCard({
         />
       </svg>
 
-      {/* Frame 86 — twin-hex header in flow. z=1 */}
+      {/* Frame 86 — twin-hex header in flow. z=1
+          The label-less graphic keeps the full gold gradient + hexagons; the
+          "Author"/"Contributor" labels are overlaid as real translated text on
+          the gold band (where the baked ones sat), so they switch per language.
+          dir="ltr" pins each label under its hexagon (author = left,
+          contributor = right) regardless of locale, since the art doesn't
+          mirror. containerType lets the label font scale with the graphic. */}
       <div
         className="relative w-full shrink-0"
-        style={{ maxWidth: "270px", aspectRatio: "270 / 156", zIndex: 1 }}
+        style={{ maxWidth: "270px", aspectRatio: "270 / 156", zIndex: 1, containerType: "inline-size" }}
+        dir="ltr"
       >
         <Image
           src={FRAME_86}
@@ -364,6 +386,25 @@ function CollabCard({
           className="pointer-events-none select-none"
           draggable={false}
         />
+        {/* Overlaid labels — sit on the gold band; light fixed color to read on
+            the dark/gold gradient (matches the original baked labels). */}
+        <div className="absolute inset-x-0 flex w-full" style={{ bottom: "6.5%" }}>
+          {[t("roleAuthor"), t("roleContributor")].map((label, i) => (
+            <span
+              key={i}
+              className="flex-1 text-center"
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: "clamp(9px, 4.6cqw, 13px)",
+                lineHeight: 1,
+                color: "#d6d6d6",
+              }}
+            >
+              {label}
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* Text block — Title + Meta + Description, in flow. z=2 */}
@@ -403,7 +444,7 @@ function CollabCard({
               textAlign: "center",
             }}
           >
-            {collab.type}
+            {localizeType(collab.type)}
           </span>
           {collab.timeline ? (
             <span
@@ -468,7 +509,7 @@ function CollabCard({
             WebkitClipPath: CHIP_CHAMFER,
           }}
         >
-          {prettifyStatus(collab.status)}
+          {localizeStatus(collab.status)}
         </span>
       ) : null}
     </article>
