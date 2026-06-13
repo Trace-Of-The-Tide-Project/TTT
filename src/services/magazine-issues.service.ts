@@ -21,6 +21,7 @@ export type MagazineIssue = {
   reading_time?: number | null;
   page_count?: number | null;
   edition?: string | null;
+  edition_number?: number | null;
   category?: string | null;
   magazine_id?: string | null;
   published_at?: string | null;
@@ -75,8 +76,13 @@ export type MagazineIssueInput = {
   excerpt?: string | null;
   description?: string | null;
   page_count?: number | null;
+  /** Display label exposed on read (e.g. "12"). */
   edition?: string | null;
+  /** Numeric edition — REQUIRED by the create/update DTO (the column is
+   * `edition_number`, an integer; `edition` is a read-side alias). */
+  edition_number?: number | null;
   category?: string | null;
+  /** REQUIRED by the create DTO — the parent magazine the issue belongs to. */
   magazine_id?: string | null;
   published_at?: string | null;
 };

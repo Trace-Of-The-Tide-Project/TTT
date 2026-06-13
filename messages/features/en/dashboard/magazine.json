@@ -183,6 +183,96 @@
         "rejected": "Proposal rejected.",
         "rejectError": "Could not reject the proposal",
         "errorBody": "Please try again."
+      },
+      "manageSubtitle": "Review proposals and manage the published issues shown on the magazine page.",
+      "subtabs": {
+        "proposals": "Proposals",
+        "published": "Published issues"
+      },
+      "published": {
+        "new": "New issue",
+        "tabs": {
+          "all": "All",
+          "published": "Published",
+          "draft": "Draft",
+          "archived": "Archived"
+        },
+        "list": {
+          "searchPlaceholder": "Search by title, edition, category, or kind…",
+          "loading": "Loading issues…",
+          "empty": "No published issues yet. Create one or approve a proposal.",
+          "noMatch": "No issues match this filter.",
+          "loadError": "Could not load issues.",
+          "retry": "Try again",
+          "edit": "Edit",
+          "delete": "Delete",
+          "headers": {
+            "title": "Title",
+            "kind": "Kind",
+            "edition": "Edition",
+            "status": "Status"
+          },
+          "pagination": "Showing {from}–{to} of {total}",
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "form": {
+          "createTitle": "New issue",
+          "editTitle": "Edit issue",
+          "close": "Close",
+          "fields": {
+            "title": "Title",
+            "titlePlaceholder": "Issue title",
+            "magazine": "Magazine",
+            "magazinePlaceholder": "Select a magazine",
+            "magazineLoading": "Loading magazines…",
+            "magazineEmpty": "No magazines found. Create a magazine first.",
+            "kind": "Kind",
+            "status": "Status",
+            "edition": "Edition number",
+            "editionPlaceholder": "e.g. 12",
+            "category": "Category",
+            "categoryPlaceholder": "e.g. Art & Activism",
+            "pageCount": "Page count",
+            "publishedAt": "Publish date",
+            "coverImage": "Cover image",
+            "coverImagePlaceholder": "Or paste an image URL",
+            "excerpt": "Excerpt",
+            "excerptPlaceholder": "Short summary shown in previews",
+            "description": "Description"
+          },
+          "errors": {
+            "titleRequired": "Title is required.",
+            "magazineRequired": "Please select a magazine.",
+            "editionRequired": "Edition number is required.",
+            "editionNumber": "Edition must be a number."
+          },
+          "uploadHint": "Click or drag to upload a cover image",
+          "uploading": "Uploading…",
+          "uploaded": "Cover image uploaded",
+          "uploadError": "Cover image upload failed",
+          "changeCover": "Change",
+          "cancel": "Cancel",
+          "create": "Create",
+          "save": "Save",
+          "saving": "Saving…"
+        },
+        "delete": {
+          "title": "Delete issue?",
+          "body": "“{title}” will be permanently removed from the magazine page. This cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Delete",
+          "deleting": "Deleting…"
+        },
+        "toast": {
+          "saving": "Saving issue…",
+          "created": "Issue created.",
+          "updated": "Issue updated.",
+          "saveError": "Could not save the issue",
+          "deleting": "Deleting issue…",
+          "deleted": "Issue deleted.",
+          "deleteError": "Could not delete the issue"
+        }
       }
     },
     "magazinePageEditor": {

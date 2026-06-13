@@ -3,8 +3,18 @@
     "workshopApplications": {
       "title": "Candidatures aux ateliers",
       "subtitle": "Examinez les candidatures envoyées à vos ateliers et approuvez-les ou rejetez-les.",
-      "tabs": { "all": "Toutes", "pending": "En attente", "approved": "Approuvées", "rejected": "Rejetées" },
-      "statuses": { "pending": "En attente", "approved": "Approuvée", "rejected": "Rejetée", "draft": "Brouillon" },
+      "tabs": {
+        "all": "Toutes",
+        "pending": "En attente",
+        "approved": "Approuvées",
+        "rejected": "Rejetées"
+      },
+      "statuses": {
+        "pending": "En attente",
+        "approved": "Approuvée",
+        "rejected": "Rejetée",
+        "draft": "Brouillon"
+      },
       "list": {
         "searchPlaceholder": "Rechercher par nom, e-mail, atelier ou expérience…",
         "loading": "Chargement des candidatures…",
@@ -13,7 +23,12 @@
         "loadError": "Impossible de charger les candidatures.",
         "retry": "Réessayer",
         "review": "Examiner",
-        "headers": { "primary": "Candidat", "secondary": "Atelier", "date": "Date", "status": "Statut" },
+        "headers": {
+          "primary": "Candidat",
+          "secondary": "Atelier",
+          "date": "Date",
+          "status": "Statut"
+        },
         "pagination": "Affichage de {from} à {to} sur {total}",
         "previous": "Précédent",
         "next": "Suivant"
@@ -39,8 +54,18 @@
     "encounterBookings": {
       "title": "Réservations de rencontres",
       "subtitle": "Examinez les réservations faites sur vos rencontres et approuvez-les ou rejetez-les.",
-      "tabs": { "all": "Toutes", "pending": "En attente", "approved": "Approuvées", "rejected": "Rejetées" },
-      "statuses": { "pending": "En attente", "approved": "Approuvée", "rejected": "Rejetée", "draft": "Brouillon" },
+      "tabs": {
+        "all": "Toutes",
+        "pending": "En attente",
+        "approved": "Approuvées",
+        "rejected": "Rejetées"
+      },
+      "statuses": {
+        "pending": "En attente",
+        "approved": "Approuvée",
+        "rejected": "Rejetée",
+        "draft": "Brouillon"
+      },
       "list": {
         "searchPlaceholder": "Rechercher par nom, e-mail, rencontre ou message…",
         "loading": "Chargement des réservations…",
@@ -49,7 +74,12 @@
         "loadError": "Impossible de charger les réservations — l'endpoint backend pour lister les réservations n'existe pas encore.",
         "retry": "Réessayer",
         "review": "Examiner",
-        "headers": { "primary": "Invité", "secondary": "Rencontre", "date": "Date", "status": "Statut" },
+        "headers": {
+          "primary": "Invité",
+          "secondary": "Rencontre",
+          "date": "Date",
+          "status": "Statut"
+        },
         "pagination": "Affichage de {from} à {to} sur {total}",
         "previous": "Précédent",
         "next": "Suivant"
@@ -183,6 +213,96 @@
         "rejected": "Proposition rejetée.",
         "rejectError": "Impossible de rejeter la proposition",
         "errorBody": "Veuillez réessayer."
+      },
+      "manageSubtitle": "Examinez les propositions et gérez les numéros publiés affichés sur la page Magazine.",
+      "subtabs": {
+        "proposals": "Propositions",
+        "published": "Numéros publiés"
+      },
+      "published": {
+        "new": "Nouveau numéro",
+        "tabs": {
+          "all": "Tous",
+          "published": "Publié",
+          "draft": "Brouillon",
+          "archived": "Archivé"
+        },
+        "list": {
+          "searchPlaceholder": "Rechercher par titre, numéro, catégorie ou type…",
+          "loading": "Chargement des numéros…",
+          "empty": "Aucun numéro publié. Créez-en un ou approuvez une proposition.",
+          "noMatch": "Aucun numéro ne correspond à ce filtre.",
+          "loadError": "Impossible de charger les numéros.",
+          "retry": "Réessayer",
+          "edit": "Modifier",
+          "delete": "Supprimer",
+          "headers": {
+            "title": "Titre",
+            "kind": "Type",
+            "edition": "Numéro",
+            "status": "Statut"
+          },
+          "pagination": "Affichage {from}–{to} sur {total}",
+          "previous": "Précédent",
+          "next": "Suivant"
+        },
+        "form": {
+          "createTitle": "Nouveau numéro",
+          "editTitle": "Modifier le numéro",
+          "close": "Fermer",
+          "fields": {
+            "title": "Titre",
+            "titlePlaceholder": "Titre du numéro",
+            "magazine": "Magazine",
+            "magazinePlaceholder": "Sélectionnez un magazine",
+            "magazineLoading": "Chargement des magazines…",
+            "magazineEmpty": "Aucun magazine trouvé. Créez d’abord un magazine.",
+            "kind": "Type",
+            "status": "Statut",
+            "edition": "Numéro d’édition",
+            "editionPlaceholder": "ex. 12",
+            "category": "Catégorie",
+            "categoryPlaceholder": "ex. Art et militantisme",
+            "pageCount": "Nombre de pages",
+            "publishedAt": "Date de publication",
+            "coverImage": "Image de couverture",
+            "coverImagePlaceholder": "Ou collez une URL d’image",
+            "excerpt": "Extrait",
+            "excerptPlaceholder": "Court résumé affiché dans les aperçus",
+            "description": "Description"
+          },
+          "errors": {
+            "titleRequired": "Le titre est requis.",
+            "magazineRequired": "Veuillez sélectionner un magazine.",
+            "editionRequired": "Le numéro d’édition est requis.",
+            "editionNumber": "Le numéro doit être un nombre."
+          },
+          "uploadHint": "Cliquez ou glissez pour téléverser une couverture",
+          "uploading": "Téléversement…",
+          "uploaded": "Image de couverture téléversée",
+          "uploadError": "Échec du téléversement de la couverture",
+          "changeCover": "Changer",
+          "cancel": "Annuler",
+          "create": "Créer",
+          "save": "Enregistrer",
+          "saving": "Enregistrement…"
+        },
+        "delete": {
+          "title": "Supprimer le numéro ?",
+          "body": "« {title} » sera définitivement retiré de la page Magazine. Cette action est irréversible.",
+          "cancel": "Annuler",
+          "confirm": "Supprimer",
+          "deleting": "Suppression…"
+        },
+        "toast": {
+          "saving": "Enregistrement du numéro…",
+          "created": "Numéro créé.",
+          "updated": "Numéro mis à jour.",
+          "saveError": "Impossible d’enregistrer le numéro",
+          "deleting": "Suppression du numéro…",
+          "deleted": "Numéro supprimé.",
+          "deleteError": "Impossible de supprimer le numéro"
+        }
       }
     },
     "magazinePageEditor": {

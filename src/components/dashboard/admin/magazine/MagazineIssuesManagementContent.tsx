@@ -16,6 +16,53 @@ import {
   useApproveIssueProposal,
   useRejectIssueProposal,
 } from "@/hooks/mutations/magazine-intake";
+import { PublishedIssuesPanel } from "./PublishedIssuesPanel";
+
+const SUBTABS = ["proposals", "published"] as const;
+type SubTab = (typeof SUBTABS)[number];
+
+/**
+ * Magazine Issues admin — two sub-tabs:
+ *   - Proposals: review issue proposals submitted from the public site
+ *     and approve/reject them.
+ *   - Published: full CRUD over the magazine-issues that drive the
+ *     public Magazine "Issues" tab.
+ */
+export function MagazineIssuesManagementContent() {
+  const t = useTranslations("Dashboard.magazineIssues");
+  const [view, setView] = useState<SubTab>("proposals");
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <h1 className="text-lg font-semibold text-foreground">{t("title")}</h1>
+        <p className="mt-0.5 text-sm text-[var(--tott-muted)]">
+          {t("manageSubtitle")}
+        </p>
+      </div>
+
+      {/* Sub-tab switcher */}
+      <div className="flex w-full gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
+        {SUBTABS.map((id) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => setView(id)}
+            className={`flex-1 rounded-md px-3 py-2.5 text-sm font-medium transition-all ${
+              view === id
+                ? "bg-[var(--tott-dash-control-bg)] text-foreground"
+                : "bg-transparent text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
+            }`}
+          >
+            {t(`subtabs.${id}`)}
+          </button>
+        ))}
+      </div>
+
+      {view === "proposals" ? <ProposalsPanel /> : <PublishedIssuesPanel />}
+    </div>
+  );
+}
 
 const KINDS = ["article", "essay", "collection", "slides"] as const;
 const TABS = ["all", "pending", "published", "archived"] as const;
@@ -50,7 +97,7 @@ function formatDate(iso: string | null | undefined, locale: string): string {
   });
 }
 
-export function MagazineIssuesManagementContent() {
+function ProposalsPanel() {
   const t = useTranslations("Dashboard.magazineIssues");
   const locale = useLocale();
   const statusLabel = (s: string) =>
@@ -120,11 +167,6 @@ export function MagazineIssuesManagementContent() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-lg font-semibold text-foreground">{t("title")}</h1>
-        <p className="mt-0.5 text-sm text-[var(--tott-muted)]">{t("subtitle")}</p>
-      </div>
-
       {/* Status tabs */}
       <div className="flex w-full flex-wrap gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
         {TABS.map((id) => (

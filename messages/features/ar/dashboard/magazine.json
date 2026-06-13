@@ -3,8 +3,18 @@
     "workshopApplications": {
       "title": "طلبات الورشات",
       "subtitle": "راجع الطلبات المُرسلة إلى ورشاتك ووافق عليها أو ارفضها.",
-      "tabs": { "all": "الكل", "pending": "قيد المراجعة", "approved": "مقبول", "rejected": "مرفوض" },
-      "statuses": { "pending": "قيد المراجعة", "approved": "مقبول", "rejected": "مرفوض", "draft": "مسودة" },
+      "tabs": {
+        "all": "الكل",
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "statuses": {
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض",
+        "draft": "مسودة"
+      },
       "list": {
         "searchPlaceholder": "ابحث بالاسم أو البريد أو الورشة أو الخبرة…",
         "loading": "جارٍ تحميل الطلبات…",
@@ -13,7 +23,12 @@
         "loadError": "تعذّر تحميل الطلبات.",
         "retry": "حاول مجددًا",
         "review": "مراجعة",
-        "headers": { "primary": "مقدّم الطلب", "secondary": "الورشة", "date": "التاريخ", "status": "الحالة" },
+        "headers": {
+          "primary": "مقدّم الطلب",
+          "secondary": "الورشة",
+          "date": "التاريخ",
+          "status": "الحالة"
+        },
         "pagination": "عرض {from}–{to} من {total}",
         "previous": "السابق",
         "next": "التالي"
@@ -39,8 +54,18 @@
     "encounterBookings": {
       "title": "حجوزات اللقاءات",
       "subtitle": "راجع الحجوزات المُسجّلة على لقاءاتك ووافق عليها أو ارفضها.",
-      "tabs": { "all": "الكل", "pending": "قيد المراجعة", "approved": "مقبول", "rejected": "مرفوض" },
-      "statuses": { "pending": "قيد المراجعة", "approved": "مقبول", "rejected": "مرفوض", "draft": "مسودة" },
+      "tabs": {
+        "all": "الكل",
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "statuses": {
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض",
+        "draft": "مسودة"
+      },
       "list": {
         "searchPlaceholder": "ابحث بالاسم أو البريد أو اللقاء أو الرسالة…",
         "loading": "جارٍ تحميل الحجوزات…",
@@ -49,7 +74,12 @@
         "loadError": "تعذّر تحميل الحجوزات.",
         "retry": "حاول مجددًا",
         "review": "مراجعة",
-        "headers": { "primary": "الضيف", "secondary": "اللقاء", "date": "التاريخ", "status": "الحالة" },
+        "headers": {
+          "primary": "الضيف",
+          "secondary": "اللقاء",
+          "date": "التاريخ",
+          "status": "الحالة"
+        },
         "pagination": "عرض {from}–{to} من {total}",
         "previous": "السابق",
         "next": "التالي"
@@ -183,6 +213,96 @@
         "rejected": "تم رفض المقترح.",
         "rejectError": "تعذّر رفض المقترح",
         "errorBody": "يرجى المحاولة مجددًا."
+      },
+      "manageSubtitle": "راجع المقترحات وأدِر الأعداد المنشورة الظاهرة في صفحة المجلة.",
+      "subtabs": {
+        "proposals": "المقترحات",
+        "published": "الأعداد المنشورة"
+      },
+      "published": {
+        "new": "عدد جديد",
+        "tabs": {
+          "all": "الكل",
+          "published": "منشور",
+          "draft": "مسودة",
+          "archived": "مؤرشف"
+        },
+        "list": {
+          "searchPlaceholder": "ابحث بالعنوان أو الإصدار أو التصنيف أو النوع…",
+          "loading": "جارٍ تحميل الأعداد…",
+          "empty": "لا توجد أعداد منشورة بعد. أنشئ عددًا أو وافق على مقترح.",
+          "noMatch": "لا توجد أعداد مطابقة لهذا التصفية.",
+          "loadError": "تعذّر تحميل الأعداد.",
+          "retry": "حاول مجددًا",
+          "edit": "تعديل",
+          "delete": "حذف",
+          "headers": {
+            "title": "العنوان",
+            "kind": "النوع",
+            "edition": "الإصدار",
+            "status": "الحالة"
+          },
+          "pagination": "عرض {from}–{to} من {total}",
+          "previous": "السابق",
+          "next": "التالي"
+        },
+        "form": {
+          "createTitle": "عدد جديد",
+          "editTitle": "تعديل العدد",
+          "close": "إغلاق",
+          "fields": {
+            "title": "العنوان",
+            "titlePlaceholder": "عنوان العدد",
+            "magazine": "المجلة",
+            "magazinePlaceholder": "اختر مجلة",
+            "magazineLoading": "جارٍ تحميل المجلات…",
+            "magazineEmpty": "لا توجد مجلات. أنشئ مجلة أولًا.",
+            "kind": "النوع",
+            "status": "الحالة",
+            "edition": "رقم الإصدار",
+            "editionPlaceholder": "مثال: 12",
+            "category": "التصنيف",
+            "categoryPlaceholder": "مثال: فن ونشاط",
+            "pageCount": "عدد الصفحات",
+            "publishedAt": "تاريخ النشر",
+            "coverImage": "صورة الغلاف",
+            "coverImagePlaceholder": "أو الصق رابط صورة",
+            "excerpt": "مقتطف",
+            "excerptPlaceholder": "ملخّص قصير يظهر في المعاينات",
+            "description": "الوصف"
+          },
+          "errors": {
+            "titleRequired": "العنوان مطلوب.",
+            "magazineRequired": "يرجى اختيار مجلة.",
+            "editionRequired": "رقم الإصدار مطلوب.",
+            "editionNumber": "يجب أن يكون الإصدار رقمًا."
+          },
+          "uploadHint": "انقر أو اسحب لرفع صورة الغلاف",
+          "uploading": "جارٍ الرفع…",
+          "uploaded": "تم رفع صورة الغلاف",
+          "uploadError": "فشل رفع صورة الغلاف",
+          "changeCover": "تغيير",
+          "cancel": "إلغاء",
+          "create": "إنشاء",
+          "save": "حفظ",
+          "saving": "جارٍ الحفظ…"
+        },
+        "delete": {
+          "title": "حذف العدد؟",
+          "body": "ستتم إزالة «{title}» نهائيًا من صفحة المجلة. لا يمكن التراجع عن هذا الإجراء.",
+          "cancel": "إلغاء",
+          "confirm": "حذف",
+          "deleting": "جارٍ الحذف…"
+        },
+        "toast": {
+          "saving": "جارٍ حفظ العدد…",
+          "created": "تم إنشاء العدد.",
+          "updated": "تم تحديث العدد.",
+          "saveError": "تعذّر حفظ العدد",
+          "deleting": "جارٍ حذف العدد…",
+          "deleted": "تم حذف العدد.",
+          "deleteError": "تعذّر حذف العدد"
+        }
       }
     },
     "magazinePageEditor": {
