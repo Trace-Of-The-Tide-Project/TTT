@@ -42,6 +42,7 @@ export function DashboardSidebar({ config, onItemClick, badgeOverrides, collapse
   useEffect(() => {
     const activeGroups = getActiveGroups(config, pathname);
     if (activeGroups.size === 0) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpenGroups((prev) => {
       const next = new Set(prev);
       for (const id of activeGroups) next.add(id);

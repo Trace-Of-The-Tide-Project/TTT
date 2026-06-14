@@ -62,7 +62,9 @@
       "createBook": "Add Book",
       "writers": "Writers",
       "allWriters": "All Writers",
-      "createWriter": "Add Writer"
+      "createWriter": "Add Writer",
+      "subscription": "Subscription",
+      "subscriptions": "Subscriptions"
     },
     "systemSettings": {
       "tabs": {

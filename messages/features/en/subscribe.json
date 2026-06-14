@@ -1,0 +1,42 @@
+{
+  "subscribe": {
+    "hero": {
+      "eyebrow": "Support independent journalism",
+      "title": "Stories worth keeping alive.",
+      "subtitle": "Your membership funds deep reporting, cultural memory, and independent voices — from Palestine to Bali and beyond."
+    },
+    "plan": {
+      "perMonth": "per month",
+      "mostPopular": "Most Popular",
+      "subscribe": "Subscribe",
+      "redirecting": "Redirecting…",
+      "reader": {
+        "desc": "Access to the magazine and all premium articles."
+      },
+      "full": {
+        "desc": "Everything in Reader, plus the complete PDF book library."
+      }
+    },
+    "features": {
+      "magazine": "Full magazine access",
+      "articles": "All premium articles",
+      "books": "PDF book library"
+    },
+    "trust": {
+      "stripe": "Secure checkout via Stripe",
+      "cancel": "Cancel anytime",
+      "billing": "Billed monthly"
+    },
+    "faq": {
+      "title": "Common questions",
+      "q1": "Can I cancel anytime?",
+      "a1": "Yes — cancel from your account settings at any time, no questions asked.",
+      "q2": "What payment methods are accepted?",
+      "a2": "All major credit and debit cards via Stripe. Payments are encrypted and secure.",
+      "q3": "Can I switch between plans?",
+      "a3": "Yes — upgrade or downgrade at any time from your subscription settings.",
+      "q4": "Do you offer gift subscriptions?",
+      "a4": "Yes — use the \"Gift a trace\" option in the navigation to give a membership."
+    }
+  }
+}
