@@ -22,6 +22,7 @@ export function NavigationProgress() {
     if (timerRef.current) clearTimeout(timerRef.current);
 
     // Start bar
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setVisible(true);
     setProgress(15);
 

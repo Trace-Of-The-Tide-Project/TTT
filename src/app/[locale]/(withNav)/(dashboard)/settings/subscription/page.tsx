@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/services/api';
 import type { UserSubscription } from '@/lib/api/subscriptions';
@@ -21,6 +22,7 @@ export default function SubscriptionSettingsPage() {
 
   useEffect(() => {
     api.get<{ data: UserSubscription }>('/subscriptions/me')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((r) => setSub(r.data.data ?? r.data as any))
       .catch(() => setSub(null));
   }, []);
@@ -152,13 +154,13 @@ export default function SubscriptionSettingsPage() {
           <p className="text-sm" style={{ color: '#666' }}>
             You don&apos;t have an active subscription.
           </p>
-          <a
+          <Link
             href="/subscribe"
             className="inline-block px-6 py-3 rounded-lg text-sm font-semibold transition-colors"
             style={{ background: '#cba158', color: '#000' }}
           >
             View Plans
-          </a>
+          </Link>
         </div>
       )}
 

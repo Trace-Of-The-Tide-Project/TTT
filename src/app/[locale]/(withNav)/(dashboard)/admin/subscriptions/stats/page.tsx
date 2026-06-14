@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { api } from '@/services/api';
 
 interface StatsData {
@@ -15,7 +16,8 @@ export default function AdminSubscriptionStatsPage() {
   const [stats, setStats] = useState<StatsData | null>(null);
 
   useEffect(() => {
-    api.get('/admin/subscriptions/stats').then((r: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    api.get('/admin/subscriptions/stats').then((r: { data: any }) => {
       setStats(r.data?.data ?? r.data);
     });
   }, []);

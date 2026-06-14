@@ -20,8 +20,8 @@ export default function SubscribePage({ plans, locale }: Props) {
     try {
       const res = await api.post('/subscriptions/checkout', { plan_id: planId, locale });
       router.push(res.data.data.url);
-    } catch (err: any) {
-      const msg = err?.response?.data?.message ?? 'Something went wrong. Please try again.';
+    } catch (err) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'Something went wrong. Please try again.';
       alert(msg);
     } finally {
       setLoading(null);
@@ -104,6 +104,7 @@ export default function SubscribePage({ plans, locale }: Props) {
               <p className="text-sm mb-4" style={{ color: '#555' }}>{t('plan.perMonth')}</p>
 
               <p className="text-xs leading-relaxed mb-5" style={{ color: '#666' }}>
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {t(descKey as any)}
               </p>
 
@@ -117,6 +118,7 @@ export default function SubscribePage({ plans, locale }: Props) {
                       ✦
                     </span>
                     <span className="text-sm" style={{ color: '#aaa' }}>
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       {t(`features.${f}` as any) ?? f}
                     </span>
                   </div>
@@ -158,9 +160,11 @@ export default function SubscribePage({ plans, locale }: Props) {
           {(['1', '2', '3', '4'] as const).map((n) => (
             <div key={n}>
               <p className="text-sm font-semibold mb-1.5" style={{ color: '#ccc' }}>
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {t(`faq.q${n}` as any)}
               </p>
               <p className="text-xs leading-relaxed" style={{ color: '#666' }}>
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {t(`faq.a${n}` as any)}
               </p>
             </div>

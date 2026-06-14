@@ -148,7 +148,6 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
   // state machine. React 19's set-state-in-effect rule doesn't fit.
   useEffect(() => {
     if (!flipping) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFlipPhase("start");
     const raf = requestAnimationFrame(() => {
       requestAnimationFrame(() => setFlipPhase("end"));

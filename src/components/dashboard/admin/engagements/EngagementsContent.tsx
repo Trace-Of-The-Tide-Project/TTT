@@ -119,7 +119,7 @@ function CommentCard({
               type="button"
               onClick={() => {
                 setIsOpen(false);
-                comment.is_flagged ? onUnflag() : onFlag();
+                if (comment.is_flagged) { onUnflag(); } else { onFlag(); }
               }}
               className="w-full px-4 py-2 text-start text-sm text-foreground hover:bg-[var(--tott-dash-surface-inset)]"
             >

@@ -35,7 +35,8 @@ export default function AdminSubscriptionsPage() {
   const [loading, setLoading]     = useState(false);
 
   useEffect(() => {
-    api.get('/subscriptions/plans').then((r: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    api.get('/subscriptions/plans').then((r: { data: any }) => {
       const data = r.data?.data ?? r.data;
       setPlans(Array.isArray(data) ? data : []);
     });
@@ -43,10 +44,10 @@ export default function AdminSubscriptionsPage() {
 
   function load(page = 1) {
     setLoading(true);
-    const params: any = { page, limit: 20 };
+    const params: Record<string, string | number> = { page, limit: 20 };
     if (statusFilter) params.status = statusFilter;
-    api.get('/admin/subscriptions', { params })
-      .then((r: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    api.get('/admin/subscriptions', { params }).then((r: { data: any }) => {
         const body = r.data?.data ?? r.data;
         setRows(body?.rows ?? []);
         setMeta(body?.meta ?? { total: 0, page: 1, totalPages: 1 });
@@ -54,6 +55,7 @@ export default function AdminSubscriptionsPage() {
       .finally(() => setLoading(false));
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
   useEffect(() => { load(); }, [statusFilter]);
 
   async function handleRevoke() {

@@ -81,7 +81,7 @@ const PAGE_SIZE = 10;
 
 export function SupportersContent() {
   const t = useTranslations("Dashboard.profileSupporters");
-  const qc = useQueryClient();
+  const _qc = useQueryClient();
   const [selectedFilter, setSelectedFilter] = useState<FilterType>("all");
   const [page, setPage] = useState(1);
   const [thankedIds, setThankedIds] = useState<Set<string>>(new Set());

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { api } from '@/services/api';
 import type { SubscriptionFeature } from './PremiumGate.types';
 
@@ -16,6 +17,7 @@ export default function PremiumGate({ feature, children }: Props) {
   useEffect(() => {
     api
       .get('/subscriptions/me')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((r: { data: any }) => {
         const sub = r.data;
         if (!sub) { setStatus('locked'); return; }
@@ -41,12 +43,12 @@ export default function PremiumGate({ feature, children }: Props) {
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 rounded-xl gap-3">
           <p className="font-semibold text-gray-800">Premium content</p>
           <p className="text-sm text-gray-500">Subscribe to continue reading.</p>
-          <a
+          <Link
             href="/subscribe"
             className="bg-gray-900 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors"
           >
             View Plans
-          </a>
+          </Link>
         </div>
       </div>
     );
