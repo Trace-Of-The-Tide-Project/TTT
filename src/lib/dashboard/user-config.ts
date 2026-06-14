@@ -12,6 +12,7 @@ import {
   ShieldIcon,
   LockIcon,
   UserCheckIcon,
+  CreditCardIcon,
 } from "@/components/ui/icons";
 import type { DashboardConfig } from "./types";
 
@@ -114,6 +115,12 @@ export const userConfig: DashboardConfig = {
               labelKey: "sidebar.account",
               href: "/profile/settings/account",
               icon: UserCheckIcon,
+            },
+            {
+              kind: "item",
+              labelKey: "sidebar.subscription",
+              href: "/settings/subscription",
+              icon: CreditCardIcon,
             },
           ],
         },

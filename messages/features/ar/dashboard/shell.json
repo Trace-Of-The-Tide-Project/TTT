@@ -62,7 +62,9 @@
       "createBook": "إضافة كتاب",
       "writers": "الكتّاب",
       "allWriters": "كل الكتّاب",
-      "createWriter": "إضافة كاتب"
+      "createWriter": "إضافة كاتب",
+      "subscription": "الاشتراك",
+      "subscriptions": "الاشتراكات"
     },
     "systemSettings": {
       "tabs": {

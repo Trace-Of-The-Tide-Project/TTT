@@ -240,6 +240,12 @@ export const adminConfig: DashboardConfig = {
               href: "/admin/analytics",
               icon: BarChartIcon,
             },
+            {
+              kind: "item",
+              labelKey: "sidebar.subscriptions",
+              href: "/admin/subscriptions",
+              icon: CreditCardIcon,
+            },
           ],
         },
         {
