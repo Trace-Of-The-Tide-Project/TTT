@@ -12,6 +12,9 @@ import { serverGet } from "@/lib/api/isomorphic-fetch";
  */
 export type Magazine = {
   id: string;
+  /** Backend stores the title under `name`; `title` may also be present
+   * as an alias. Read both defensively. */
+  name?: string | null;
   title: string;
   slug: string;
   description?: string | null;
@@ -76,6 +79,38 @@ export async function getMagazines(
   } catch {
     return [];
   }
+}
+
+function unwrapOne(raw: unknown): Magazine | null {
+  if (!raw || typeof raw !== "object") return null;
+  if ("data" in (raw as object)) {
+    return (raw as { data?: Magazine }).data ?? null;
+  }
+  return raw as Magazine;
+}
+
+/**
+ * Create payload. The backend's Swagger spec doesn't declare a request
+ * schema for `POST /magazines`; `title` is the only field the UI
+ * requires (the backend auto-generates `slug`).
+ */
+export type MagazineInput = {
+  /** The backend's NOT NULL column is `name`; `title` is a read-side
+   * alias. We send both so create works and reads stay populated. */
+  name: string;
+  title?: string;
+  slug?: string;
+  description?: string | null;
+  cover_image?: string | null;
+  status?: string | null;
+};
+
+/** Admin — create a magazine. POST /magazines */
+export async function createMagazine(
+  payload: MagazineInput,
+): Promise<Magazine | null> {
+  const { data } = await api.post<unknown>("/magazines", payload);
+  return unwrapOne(data);
 }
 
 /** Public — fetch a magazine by slug. Returns null when missing. */

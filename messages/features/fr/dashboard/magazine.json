@@ -250,13 +250,11 @@
           "createTitle": "Nouveau numéro",
           "editTitle": "Modifier le numéro",
           "close": "Fermer",
+          "publishingTo": "Publication dans {name}",
+          "publishingToNew": "Un nouveau magazine sera créé automatiquement.",
           "fields": {
             "title": "Titre",
             "titlePlaceholder": "Titre du numéro",
-            "magazine": "Magazine",
-            "magazinePlaceholder": "Sélectionnez un magazine",
-            "magazineLoading": "Chargement des magazines…",
-            "magazineEmpty": "Aucun magazine trouvé. Créez d’abord un magazine.",
             "kind": "Type",
             "status": "Statut",
             "edition": "Numéro d’édition",
@@ -273,7 +271,6 @@
           },
           "errors": {
             "titleRequired": "Le titre est requis.",
-            "magazineRequired": "Veuillez sélectionner un magazine.",
             "editionRequired": "Le numéro d’édition est requis.",
             "editionNumber": "Le numéro doit être un nombre."
           },

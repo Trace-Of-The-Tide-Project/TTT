@@ -78,7 +78,9 @@ function prettify(s: string | null | undefined): string {
  */
 export function MagazineIssuesV2({ items }: MagazineIssuesProps) {
   const t = useTranslations("Home.magazine.issues");
-  const visible = [...items, ...FALLBACK_ITEMS].slice(0, 4);
+  // Show real, admin-managed issues. The placeholder cards are only a
+  // pre-launch empty state — never mixed in alongside real data.
+  const visible = (items.length > 0 ? items : FALLBACK_ITEMS).slice(0, 4);
 
   return (
     <div className="mx-auto flex w-full max-w-[1128px] flex-wrap items-stretch justify-center gap-2">

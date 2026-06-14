@@ -250,13 +250,11 @@
           "createTitle": "عدد جديد",
           "editTitle": "تعديل العدد",
           "close": "إغلاق",
+          "publishingTo": "النشر في {name}",
+          "publishingToNew": "سيتم إنشاء مجلة جديدة تلقائيًا.",
           "fields": {
             "title": "العنوان",
             "titlePlaceholder": "عنوان العدد",
-            "magazine": "المجلة",
-            "magazinePlaceholder": "اختر مجلة",
-            "magazineLoading": "جارٍ تحميل المجلات…",
-            "magazineEmpty": "لا توجد مجلات. أنشئ مجلة أولًا.",
             "kind": "النوع",
             "status": "الحالة",
             "edition": "رقم الإصدار",
@@ -273,7 +271,6 @@
           },
           "errors": {
             "titleRequired": "العنوان مطلوب.",
-            "magazineRequired": "يرجى اختيار مجلة.",
             "editionRequired": "رقم الإصدار مطلوب.",
             "editionNumber": "يجب أن يكون الإصدار رقمًا."
           },

@@ -3,8 +3,18 @@
     "workshopApplications": {
       "title": "Workshop applications",
       "subtitle": "Review applications submitted to your workshops and approve or reject them.",
-      "tabs": { "all": "All", "pending": "Pending", "approved": "Approved", "rejected": "Rejected" },
-      "statuses": { "pending": "Pending", "approved": "Approved", "rejected": "Rejected", "draft": "Draft" },
+      "tabs": {
+        "all": "All",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "draft": "Draft"
+      },
       "list": {
         "searchPlaceholder": "Search by name, email, workshop, or experience…",
         "loading": "Loading applications…",
@@ -13,7 +23,12 @@
         "loadError": "Could not load applications.",
         "retry": "Try again",
         "review": "Review",
-        "headers": { "primary": "Applicant", "secondary": "Workshop", "date": "Date", "status": "Status" },
+        "headers": {
+          "primary": "Applicant",
+          "secondary": "Workshop",
+          "date": "Date",
+          "status": "Status"
+        },
         "pagination": "Showing {from}–{to} of {total}",
         "previous": "Previous",
         "next": "Next"
@@ -39,8 +54,18 @@
     "encounterBookings": {
       "title": "Encounter bookings",
       "subtitle": "Review bookings made on your encounters and approve or reject them.",
-      "tabs": { "all": "All", "pending": "Pending", "approved": "Approved", "rejected": "Rejected" },
-      "statuses": { "pending": "Pending", "approved": "Approved", "rejected": "Rejected", "draft": "Draft" },
+      "tabs": {
+        "all": "All",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "draft": "Draft"
+      },
       "list": {
         "searchPlaceholder": "Search by name, email, encounter, or message…",
         "loading": "Loading bookings…",
@@ -49,7 +74,12 @@
         "loadError": "Could not load bookings.",
         "retry": "Try again",
         "review": "Review",
-        "headers": { "primary": "Guest", "secondary": "Encounter", "date": "Date", "status": "Status" },
+        "headers": {
+          "primary": "Guest",
+          "secondary": "Encounter",
+          "date": "Date",
+          "status": "Status"
+        },
         "pagination": "Showing {from}–{to} of {total}",
         "previous": "Previous",
         "next": "Next"
@@ -220,13 +250,11 @@
           "createTitle": "New issue",
           "editTitle": "Edit issue",
           "close": "Close",
+          "publishingTo": "Publishing to {name}",
+          "publishingToNew": "A new magazine will be created automatically.",
           "fields": {
             "title": "Title",
             "titlePlaceholder": "Issue title",
-            "magazine": "Magazine",
-            "magazinePlaceholder": "Select a magazine",
-            "magazineLoading": "Loading magazines…",
-            "magazineEmpty": "No magazines found. Create a magazine first.",
             "kind": "Kind",
             "status": "Status",
             "edition": "Edition number",
@@ -243,7 +271,6 @@
           },
           "errors": {
             "titleRequired": "Title is required.",
-            "magazineRequired": "Please select a magazine.",
             "editionRequired": "Edition number is required.",
             "editionNumber": "Edition must be a number."
           },

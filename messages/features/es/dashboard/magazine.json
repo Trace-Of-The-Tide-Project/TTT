@@ -250,13 +250,11 @@
           "createTitle": "Nuevo número",
           "editTitle": "Editar número",
           "close": "Cerrar",
+          "publishingTo": "Publicando en {name}",
+          "publishingToNew": "Se creará una revista nueva automáticamente.",
           "fields": {
             "title": "Título",
             "titlePlaceholder": "Título del número",
-            "magazine": "Revista",
-            "magazinePlaceholder": "Selecciona una revista",
-            "magazineLoading": "Cargando revistas…",
-            "magazineEmpty": "No se encontraron revistas. Crea una revista primero.",
             "kind": "Tipo",
             "status": "Estado",
             "edition": "Número de edición",
@@ -273,7 +271,6 @@
           },
           "errors": {
             "titleRequired": "El título es obligatorio.",
-            "magazineRequired": "Selecciona una revista.",
             "editionRequired": "El número de edición es obligatorio.",
             "editionNumber": "La edición debe ser un número."
           },

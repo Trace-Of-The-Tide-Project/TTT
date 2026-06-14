@@ -15,6 +15,7 @@ export type MagazineIssue = {
    * client-side only. */
   kind?: string | null;
   status?: string | null;
+  language?: string | null;
   cover_image?: string | null;
   excerpt?: string | null;
   description?: string | null;
@@ -72,6 +73,8 @@ export type MagazineIssueInput = {
   slug?: string;
   kind?: string | null;
   status?: string | null;
+  /** Language/translation-group tag — enum en|ar|es|fr on the backend. */
+  language?: string | null;
   cover_image?: string | null;
   excerpt?: string | null;
   description?: string | null;

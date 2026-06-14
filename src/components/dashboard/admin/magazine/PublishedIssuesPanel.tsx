@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useId, useMemo, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import {
   SearchIcon,
   PlusIcon,
@@ -17,6 +17,7 @@ import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { uploadFileToUrl } from "@/services/uploads.service";
 import { useMagazineIssues } from "@/hooks/queries/magazine-issues";
 import { useMagazines } from "@/hooks/queries/magazines";
+import { useCreateMagazine } from "@/hooks/mutations/magazines";
 import {
   useCreateMagazineIssue,
   useUpdateMagazineIssue,
@@ -31,7 +32,23 @@ const KINDS = ["article", "essay", "collection", "slides"] as const;
 const STATUSES = ["published", "draft", "archived"] as const;
 const TABS = ["all", "published", "draft", "archived"] as const;
 const STATUS_KEYS = ["pending", "published", "archived", "rejected", "draft"];
+const LANGS = ["en", "ar", "es", "fr"] as const;
 const ROWS_PER_PAGE = 8;
+
+/** Default magazine auto-created when none exists, so the admin never
+ *  has to think about the magazine→issues hierarchy. */
+const DEFAULT_MAGAZINE_TITLE = "Trace of the Tide";
+
+/** URL-safe slug from any title. Unicode-aware so Arabic titles don't
+ *  collapse to empty; falls back to "issue" when nothing survives. */
+function slugify(input: string): string {
+  const base = input
+    .normalize("NFKD")
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-+|-+$/g, "");
+  return base || "issue";
+}
 
 type Tab = (typeof TABS)[number];
 
@@ -67,6 +84,24 @@ export function PublishedIssuesPanel() {
   const create = useCreateMagazineIssue();
   const update = useUpdateMagazineIssue();
   const remove = useDeleteMagazineIssue();
+
+  // Magazines are the parent of issues. We hide this from the admin:
+  // reuse the existing magazine, or auto-create a default one on the
+  // first issue. Single shared query (cache-backed) drives both.
+  const magazinesQuery = useMagazines({ limit: 100 });
+  const magazines = useMemo(
+    () => magazinesQuery.data ?? [],
+    [magazinesQuery.data],
+  );
+  const createMagazine = useCreateMagazine();
+  const magazineName = magazines[0]?.name ?? magazines[0]?.title ?? null;
+
+  // Next edition number = highest existing + 1 (→ 1 on the first issue).
+  const nextEdition = useMemo(
+    () =>
+      issues.reduce((m, it) => Math.max(m, it.edition_number ?? 0), 0) + 1,
+    [issues],
+  );
 
   const [tab, setTab] = useState<Tab>("all");
   const [search, setSearch] = useState("");
@@ -372,20 +407,50 @@ export function PublishedIssuesPanel() {
       {editing ? (
         <IssueFormModal
           item={editing === "new" ? null : editing}
-          saving={create.isPending || update.isPending}
+          defaultEdition={nextEdition}
+          magazineName={magazineName}
+          saving={create.isPending || update.isPending || createMagazine.isPending}
           onClose={() => setEditing(null)}
-          onSave={(payload) => {
+          onSave={(values) => {
             const isNew = editing === "new";
-            const run = isNew
-              ? create.mutateAsync(payload)
-              : update.mutateAsync({ id: (editing as MagazineIssue).id, payload });
-            mutationToast(() => run, {
-              loading: t("published.toast.saving"),
-              success: isNew
-                ? t("published.toast.created")
-                : t("published.toast.updated"),
-              error: t("published.toast.saveError"),
-            })
+            mutationToast(
+              async () => {
+                if (!isNew) {
+                  return update.mutateAsync({
+                    id: (editing as MagazineIssue).id,
+                    payload: values,
+                  });
+                }
+                // Resolve the parent magazine behind the scenes: reuse
+                // the existing one, else auto-create the default.
+                let magazineId: string | null = magazines[0]?.id ?? null;
+                if (!magazineId) {
+                  const created = await createMagazine.mutateAsync({
+                    name: DEFAULT_MAGAZINE_TITLE,
+                    title: DEFAULT_MAGAZINE_TITLE,
+                    slug: slugify(DEFAULT_MAGAZINE_TITLE),
+                    status: "published",
+                  });
+                  magazineId = created?.id ?? null;
+                }
+                // slug is required on create (and must be unique); never
+                // regenerated on edit so public deep-links stay stable.
+                return create.mutateAsync({
+                  ...values,
+                  magazine_id: magazineId,
+                  slug: `${slugify(values.title)}-${Date.now()
+                    .toString(36)
+                    .slice(-5)}`,
+                });
+              },
+              {
+                loading: t("published.toast.saving"),
+                success: isNew
+                  ? t("published.toast.created")
+                  : t("published.toast.updated"),
+                error: t("published.toast.saveError"),
+              },
+            )
               .then(() => setEditing(null))
               .catch(() => {});
           }}
@@ -416,7 +481,6 @@ export function PublishedIssuesPanel() {
 
 type FormState = {
   title: string;
-  magazine_id: string;
   kind: string;
   status: string;
   cover_image: string;
@@ -428,14 +492,11 @@ type FormState = {
   published_at: string;
 };
 
-type FieldErrors = Partial<
-  Record<"title" | "magazine_id" | "edition", string>
->;
+type FieldErrors = Partial<Record<"title" | "edition", string>>;
 
-function toForm(item: MagazineIssue | null): FormState {
+function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
   return {
     title: item?.title ?? "",
-    magazine_id: item?.magazine_id ?? "",
     kind: item?.kind ?? "article",
     status: normStatus(item?.status ?? "published"),
     cover_image: item?.cover_image ?? "",
@@ -445,7 +506,7 @@ function toForm(item: MagazineIssue | null): FormState {
     edition:
       item?.edition_number != null
         ? String(item.edition_number)
-        : item?.edition ?? "",
+        : item?.edition ?? (item ? "" : String(defaultEdition)),
     category: item?.category ?? "",
     published_at: item?.published_at ? item.published_at.slice(0, 10) : "",
   };
@@ -453,37 +514,26 @@ function toForm(item: MagazineIssue | null): FormState {
 
 function IssueFormModal({
   item,
+  defaultEdition,
+  magazineName,
   saving,
   onClose,
   onSave,
 }: {
   item: MagazineIssue | null;
+  defaultEdition: number;
+  magazineName: string | null;
   saving: boolean;
   onClose: () => void;
   onSave: (payload: MagazineIssueInput) => void;
 }) {
   const t = useTranslations("Dashboard.magazineIssues");
+  const locale = useLocale();
   const isEdit = Boolean(item);
-  const [form, setForm] = useState<FormState>(() => toForm(item));
+  const [form, setForm] = useState<FormState>(() => toForm(item, defaultEdition));
   const [errors, setErrors] = useState<FieldErrors>({});
   const [uploading, setUploading] = useState(false);
   const busy = saving || uploading;
-
-  const magazinesQuery = useMagazines({ limit: 100 });
-  const magazines = useMemo(
-    () => magazinesQuery.data ?? [],
-    [magazinesQuery.data],
-  );
-
-  // Default to the only/first magazine when creating, so the common
-  // single-magazine setup needs no manual pick.
-  useEffect(() => {
-    if (!form.magazine_id && magazines.length > 0) {
-      setForm((prev) =>
-        prev.magazine_id ? prev : { ...prev, magazine_id: magazines[0].id },
-      );
-    }
-  }, [magazines, form.magazine_id]);
 
   const set =
     (field: keyof FormState) =>
@@ -518,12 +568,12 @@ function IssueFormModal({
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Client-side validation for the fields the backend requires, with
-    // readable per-field messages (so users never see raw DB errors
-    // like "MagazineIssue.edition_number cannot be null").
+    // Only the genuinely user-facing fields are validated here; slug,
+    // magazine, and language are filled in automatically so the admin
+    // only has to type a title. Edition is prefilled with the next
+    // number but stays editable.
     const next: FieldErrors = {};
     if (!form.title.trim()) next.title = t("published.form.errors.titleRequired");
-    if (!form.magazine_id) next.magazine_id = t("published.form.errors.magazineRequired");
     const editionNum = parseInt(form.edition, 10);
     if (!form.edition.trim()) {
       next.edition = t("published.form.errors.editionRequired");
@@ -537,9 +587,11 @@ function IssueFormModal({
 
     onSave({
       title: form.title.trim(),
-      magazine_id: form.magazine_id,
       kind: form.kind || null,
       status: form.status || null,
+      language:
+        item?.language ??
+        ((LANGS as readonly string[]).includes(locale) ? locale : "en"),
       cover_image: form.cover_image.trim() || null,
       excerpt: form.excerpt.trim() || null,
       description: form.description.trim() || null,
@@ -600,34 +652,13 @@ function IssueFormModal({
             <FieldError message={errors.title} />
           </div>
 
-          <div>
-            <label className={labelClass}>
-              {t("published.form.fields.magazine")} *
-            </label>
-            <select
-              className={inputClass}
-              value={form.magazine_id}
-              onChange={set("magazine_id")}
-              disabled={magazinesQuery.isLoading}
-            >
-              <option value="">
-                {magazinesQuery.isLoading
-                  ? t("published.form.fields.magazineLoading")
-                  : t("published.form.fields.magazinePlaceholder")}
-              </option>
-              {magazines.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.title}
-                </option>
-              ))}
-            </select>
-            <FieldError message={errors.magazine_id} />
-            {!magazinesQuery.isLoading && magazines.length === 0 ? (
-              <p className="mt-1 text-xs" style={{ color: "var(--tott-muted)" }}>
-                {t("published.form.fields.magazineEmpty")}
-              </p>
-            ) : null}
-          </div>
+          {!isEdit ? (
+            <p className="text-xs" style={{ color: "var(--tott-muted)" }}>
+              {magazineName
+                ? t("published.form.publishingTo", { name: magazineName })
+                : t("published.form.publishingToNew")}
+            </p>
+          ) : null}
 
           <div className="grid grid-cols-2 gap-4">
             <div>

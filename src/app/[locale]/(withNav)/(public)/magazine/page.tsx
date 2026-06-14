@@ -168,7 +168,9 @@ async function fetchMagazineIssues(): Promise<MagazineIssueItem[]> {
     pageCount: it.page_count ?? null,
     coverImage: it.cover_image ?? null,
     excerpt: it.excerpt ?? null,
-    edition: it.edition ?? null,
+    edition:
+      it.edition ??
+      (it.edition_number != null ? String(it.edition_number) : null),
     category: it.category ?? null,
     publishedAt: it.published_at ?? null,
     slug: it.slug ?? null,
