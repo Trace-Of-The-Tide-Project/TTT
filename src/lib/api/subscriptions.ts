@@ -24,6 +24,6 @@ export interface UserSubscription {
 
 /** Server-side: fetch all active plans (public endpoint). */
 export async function fetchPlans(): Promise<SubscriptionPlan[]> {
-  const data = await serverGet<SubscriptionPlan[]>('/subscriptions/plans');
-  return data ?? [];
+  const res = await serverGet<{ data: SubscriptionPlan[] }>('/subscriptions/plans');
+  return res?.data ?? [];
 }
