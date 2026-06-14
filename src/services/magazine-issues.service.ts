@@ -8,11 +8,10 @@ import { serverGet } from "@/lib/api/isomorphic-fetch";
 export type MagazineIssue = {
   id: string;
   title: string;
+  subtitle?: string | null;
   slug: string;
-  /** Issue kind — drives the filter chips on the Issues pane.
-   * Observed values from the backend so far: "article", "essay",
-   * "collection", "slides". The chips also include "all" which is
-   * client-side only. */
+  /** Issue kind — backend enum. Documented values: "editorial",
+   * "crowdfunded". */
   kind?: string | null;
   status?: string | null;
   language?: string | null;
@@ -25,6 +24,12 @@ export type MagazineIssue = {
   edition_number?: number | null;
   category?: string | null;
   magazine_id?: string | null;
+  is_premium?: boolean | null;
+  /** Crowdfunded issues only. */
+  funding_goal?: number | null;
+  funding_deadline?: string | null;
+  open_call_id?: string | null;
+  translation_of?: string | null;
   published_at?: string | null;
   createdAt?: string;
   updatedAt?: string;
@@ -63,13 +68,15 @@ export async function getMagazineIssues(
 }
 
 /**
- * Create / update payload. The backend's Swagger spec does not declare
- * a request schema for `POST /magazine-issues`, so we send the same
- * snake_case fields the read model exposes; unknown fields are ignored
- * server-side. `title` is the only hard requirement.
+ * Create / update payload — mirrors the backend's documented
+ * `POST /magazine-issues` body. `title`, `magazine_id`, `slug`, and
+ * `edition_number` are required on create; `kind` is an enum
+ * ("editorial" | "crowdfunded"); crowdfunded issues add `funding_goal`
+ * + `funding_deadline`. PATCH accepts any subset.
  */
 export type MagazineIssueInput = {
   title: string;
+  subtitle?: string | null;
   slug?: string;
   kind?: string | null;
   status?: string | null;
@@ -81,12 +88,18 @@ export type MagazineIssueInput = {
   page_count?: number | null;
   /** Display label exposed on read (e.g. "12"). */
   edition?: string | null;
-  /** Numeric edition — REQUIRED by the create/update DTO (the column is
-   * `edition_number`, an integer; `edition` is a read-side alias). */
+  /** Numeric edition — REQUIRED by the create DTO (integer column
+   * `edition_number`; `edition` is a read-side alias). */
   edition_number?: number | null;
   category?: string | null;
   /** REQUIRED by the create DTO — the parent magazine the issue belongs to. */
   magazine_id?: string | null;
+  is_premium?: boolean | null;
+  /** Crowdfunded issues only. */
+  funding_goal?: number | null;
+  funding_deadline?: string | null;
+  open_call_id?: string | null;
+  translation_of?: string | null;
   published_at?: string | null;
 };
 

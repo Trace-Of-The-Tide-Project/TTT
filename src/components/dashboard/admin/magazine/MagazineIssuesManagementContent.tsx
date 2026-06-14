@@ -64,7 +64,7 @@ export function MagazineIssuesManagementContent() {
   );
 }
 
-const KINDS = ["article", "essay", "collection", "slides"] as const;
+const KINDS = ["editorial", "crowdfunded"] as const;
 const TABS = ["all", "pending", "published", "archived"] as const;
 const STATUS_KEYS = ["pending", "published", "archived", "rejected", "draft"];
 const ROWS_PER_PAGE = 8;

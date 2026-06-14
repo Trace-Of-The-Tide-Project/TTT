@@ -169,10 +169,8 @@
         "draft": "Brouillon"
       },
       "kinds": {
-        "article": "Article",
-        "essay": "Essai",
-        "collection": "Collection",
-        "slides": "Diapositives"
+        "editorial": "Éditorial",
+        "crowdfunded": "Financement participatif"
       },
       "list": {
         "searchPlaceholder": "Rechercher par titre, auteur ou description…",
@@ -255,8 +253,13 @@
           "fields": {
             "title": "Titre",
             "titlePlaceholder": "Titre du numéro",
+            "subtitle": "Sous-titre",
+            "subtitlePlaceholder": "Sous-titre (facultatif)",
             "kind": "Type",
             "status": "Statut",
+            "isPremium": "Numéro premium (payant)",
+            "fundingGoal": "Objectif de financement",
+            "fundingDeadline": "Date limite de financement",
             "edition": "Numéro d’édition",
             "editionPlaceholder": "ex. 12",
             "category": "Catégorie",

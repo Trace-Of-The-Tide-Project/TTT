@@ -28,7 +28,7 @@ import type {
   MagazineIssueInput,
 } from "@/services/magazine-issues.service";
 
-const KINDS = ["article", "essay", "collection", "slides"] as const;
+const KINDS = ["editorial", "crowdfunded"] as const;
 const STATUSES = ["published", "draft", "archived"] as const;
 const TABS = ["all", "published", "draft", "archived"] as const;
 const STATUS_KEYS = ["pending", "published", "archived", "rejected", "draft"];
@@ -481,8 +481,12 @@ export function PublishedIssuesPanel() {
 
 type FormState = {
   title: string;
+  subtitle: string;
   kind: string;
   status: string;
+  is_premium: boolean;
+  funding_goal: string;
+  funding_deadline: string;
   cover_image: string;
   excerpt: string;
   description: string;
@@ -497,8 +501,14 @@ type FieldErrors = Partial<Record<"title" | "edition", string>>;
 function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
   return {
     title: item?.title ?? "",
-    kind: item?.kind ?? "article",
+    subtitle: item?.subtitle ?? "",
+    kind: item?.kind ?? "editorial",
     status: normStatus(item?.status ?? "published"),
+    is_premium: item?.is_premium ?? false,
+    funding_goal: item?.funding_goal != null ? String(item.funding_goal) : "",
+    funding_deadline: item?.funding_deadline
+      ? item.funding_deadline.slice(0, 10)
+      : "",
     cover_image: item?.cover_image ?? "",
     excerpt: item?.excerpt ?? "",
     description: item?.description ?? "",
@@ -585,13 +595,22 @@ function IssueFormModal({
       return;
     }
 
+    const toIso = (ymd: string): string | null => {
+      if (!ymd) return null;
+      const d = new Date(ymd);
+      return Number.isNaN(d.getTime()) ? null : d.toISOString();
+    };
+    const isCrowdfunded = form.kind === "crowdfunded";
+
     onSave({
       title: form.title.trim(),
+      subtitle: form.subtitle.trim() || null,
       kind: form.kind || null,
       status: form.status || null,
       language:
         item?.language ??
         ((LANGS as readonly string[]).includes(locale) ? locale : "en"),
+      is_premium: form.is_premium,
       cover_image: form.cover_image.trim() || null,
       excerpt: form.excerpt.trim() || null,
       description: form.description.trim() || null,
@@ -599,13 +618,15 @@ function IssueFormModal({
       edition_number: editionNum,
       category: form.category.trim() || null,
       // The date input yields "YYYY-MM-DD"; the API stores a full ISO
-      // datetime, so normalize before sending (NaN guard → null).
-      published_at: form.published_at
-        ? (() => {
-            const d = new Date(form.published_at);
-            return Number.isNaN(d.getTime()) ? null : d.toISOString();
-          })()
-        : null,
+      // datetime, so normalize before sending.
+      published_at: toIso(form.published_at),
+      // Crowdfunded issues carry funding goal + deadline; null them out
+      // otherwise so switching kind doesn't leave stale values.
+      funding_goal:
+        isCrowdfunded && form.funding_goal
+          ? parseFloat(form.funding_goal)
+          : null,
+      funding_deadline: isCrowdfunded ? toIso(form.funding_deadline) : null,
     });
   };
 
@@ -650,6 +671,19 @@ function IssueFormModal({
               placeholder={t("published.form.fields.titlePlaceholder")}
             />
             <FieldError message={errors.title} />
+          </div>
+
+          <div>
+            <label className={labelClass}>
+              {t("published.form.fields.subtitle")}
+            </label>
+            <input
+              type="text"
+              className={inputClass}
+              value={form.subtitle}
+              onChange={set("subtitle")}
+              placeholder={t("published.form.fields.subtitlePlaceholder")}
+            />
           </div>
 
           {!isEdit ? (
@@ -725,6 +759,48 @@ function IssueFormModal({
               />
             </div>
           </div>
+
+          {form.kind === "crowdfunded" ? (
+            <div className="grid grid-cols-2 gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] p-3">
+              <div>
+                <label className={labelClass}>
+                  {t("published.form.fields.fundingGoal")}
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  className={inputClass}
+                  value={form.funding_goal}
+                  onChange={set("funding_goal")}
+                  placeholder="5000"
+                />
+              </div>
+              <div>
+                <label className={labelClass}>
+                  {t("published.form.fields.fundingDeadline")}
+                </label>
+                <input
+                  type="date"
+                  className={inputClass}
+                  value={form.funding_deadline}
+                  onChange={set("funding_deadline")}
+                />
+              </div>
+            </div>
+          ) : null}
+
+          <label className="flex items-center gap-2 text-sm text-foreground">
+            <input
+              type="checkbox"
+              checked={form.is_premium}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, is_premium: e.target.checked }))
+              }
+              className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+            />
+            {t("published.form.fields.isPremium")}
+          </label>
 
           <div>
             <label className={labelClass}>{t("published.form.fields.coverImage")}</label>

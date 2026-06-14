@@ -169,10 +169,8 @@
         "draft": "Borrador"
       },
       "kinds": {
-        "article": "Artículo",
-        "essay": "Ensayo",
-        "collection": "Colección",
-        "slides": "Diapositivas"
+        "editorial": "Editorial",
+        "crowdfunded": "Financiación colectiva"
       },
       "list": {
         "searchPlaceholder": "Buscar por título, remitente o descripción…",
@@ -255,8 +253,13 @@
           "fields": {
             "title": "Título",
             "titlePlaceholder": "Título del número",
+            "subtitle": "Subtítulo",
+            "subtitlePlaceholder": "Subtítulo opcional",
             "kind": "Tipo",
             "status": "Estado",
+            "isPremium": "Número premium (de pago)",
+            "fundingGoal": "Meta de financiación",
+            "fundingDeadline": "Fecha límite de financiación",
             "edition": "Número de edición",
             "editionPlaceholder": "p. ej. 12",
             "category": "Categoría",

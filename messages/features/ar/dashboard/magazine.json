@@ -169,10 +169,8 @@
         "draft": "مسودة"
       },
       "kinds": {
-        "article": "مقال",
-        "essay": "مقالة",
-        "collection": "مجموعة",
-        "slides": "شرائح"
+        "editorial": "تحريري",
+        "crowdfunded": "تمويل جماعي"
       },
       "list": {
         "searchPlaceholder": "ابحث بالعنوان أو المُرسِل أو الوصف…",
@@ -255,8 +253,13 @@
           "fields": {
             "title": "العنوان",
             "titlePlaceholder": "عنوان العدد",
+            "subtitle": "العنوان الفرعي",
+            "subtitlePlaceholder": "عنوان فرعي اختياري",
             "kind": "النوع",
             "status": "الحالة",
+            "isPremium": "عدد مدفوع (بريميوم)",
+            "fundingGoal": "هدف التمويل",
+            "fundingDeadline": "موعد انتهاء التمويل",
             "edition": "رقم الإصدار",
             "editionPlaceholder": "مثال: 12",
             "category": "التصنيف",

@@ -169,10 +169,8 @@
         "draft": "Draft"
       },
       "kinds": {
-        "article": "Article",
-        "essay": "Essay",
-        "collection": "Collection",
-        "slides": "Slides"
+        "editorial": "Editorial",
+        "crowdfunded": "Crowdfunded"
       },
       "list": {
         "searchPlaceholder": "Search by title, submitter, or description…",
@@ -255,8 +253,13 @@
           "fields": {
             "title": "Title",
             "titlePlaceholder": "Issue title",
+            "subtitle": "Subtitle",
+            "subtitlePlaceholder": "Optional subtitle",
             "kind": "Kind",
             "status": "Status",
+            "isPremium": "Premium issue (paid)",
+            "fundingGoal": "Funding goal",
+            "fundingDeadline": "Funding deadline",
             "edition": "Edition number",
             "editionPlaceholder": "e.g. 12",
             "category": "Category",
