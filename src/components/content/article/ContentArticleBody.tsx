@@ -1,3 +1,4 @@
+import { theme } from "@/lib/theme";
 import { isLikelyAudioUrl, isLikelyVideoUrl } from "@/lib/content/media-url";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { ArticleBodyVideo } from "@/components/content/article/ArticleBodyVideo";
