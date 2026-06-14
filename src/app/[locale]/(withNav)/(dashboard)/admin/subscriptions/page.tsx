@@ -16,37 +16,45 @@ interface SubscriberRow {
   created_at: string;
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  active: 'bg-green-100 text-green-800',
-  past_due: 'bg-yellow-100 text-yellow-800',
-  cancelled: 'bg-red-100 text-red-800',
-  expired: 'bg-gray-100 text-gray-600',
-  trialing: 'bg-blue-100 text-blue-800',
+const STATUS_STYLE: Record<string, { color: string; label: string }> = {
+  active:    { color: '#22c55e', label: 'Active' },
+  past_due:  { color: '#f59e0b', label: 'Past Due' },
+  cancelled: { color: '#ef4444', label: 'Cancelled' },
+  expired:   { color: '#666',    label: 'Expired' },
+  trialing:  { color: '#6db3ae', label: 'Trial' },
 };
 
 export default function AdminSubscriptionsPage() {
-  const [rows, setRows] = useState<SubscriberRow[]>([]);
-  const [meta, setMeta] = useState({ total: 0, page: 1, totalPages: 1 });
-  const [status, setStatus] = useState('');
+  const [rows, setRows]           = useState<SubscriberRow[]>([]);
+  const [meta, setMeta]           = useState({ total: 0, page: 1, totalPages: 1 });
+  const [statusFilter, setStatus] = useState('');
   const [revokeTarget, setRevokeTarget] = useState<SubscriberRow | null>(null);
-  const [grantTarget, setGrantTarget] = useState<string | null>(null);
-  const [grantPlanId, setGrantPlanId] = useState('');
-  const [plans, setPlans] = useState<Array<{ id: string; display_name: string }>>([]);
+  const [grantTarget, setGrantTarget]   = useState<SubscriberRow | null>(null);
+  const [grantPlanId, setGrantPlanId]   = useState('');
+  const [plans, setPlans]         = useState<Array<{ id: string; display_name: string }>>([]);
+  const [loading, setLoading]     = useState(false);
 
   useEffect(() => {
-    api.get('/subscriptions/plans').then((r: { data: Array<{ id: string; display_name: string }> }) => setPlans(r.data));
+    api.get('/subscriptions/plans').then((r: any) => {
+      const data = r.data?.data ?? r.data;
+      setPlans(Array.isArray(data) ? data : []);
+    });
   }, []);
 
   function load(page = 1) {
+    setLoading(true);
     const params: any = { page, limit: 20 };
-    if (status) params.status = status;
-    api.get('/admin/subscriptions', { params }).then((r: { data: { rows: SubscriberRow[]; meta: { total: number; page: number; totalPages: number } } }) => {
-      setRows(r.data.rows);
-      setMeta(r.data.meta);
-    });
+    if (statusFilter) params.status = statusFilter;
+    api.get('/admin/subscriptions', { params })
+      .then((r: any) => {
+        const body = r.data?.data ?? r.data;
+        setRows(body?.rows ?? []);
+        setMeta(body?.meta ?? { total: 0, page: 1, totalPages: 1 });
+      })
+      .finally(() => setLoading(false));
   }
 
-  useEffect(() => { load(); }, [status]);
+  useEffect(() => { load(); }, [statusFilter]);
 
   async function handleRevoke() {
     if (!revokeTarget) return;
@@ -57,116 +65,202 @@ export default function AdminSubscriptionsPage() {
 
   async function handleGrant() {
     if (!grantTarget || !grantPlanId) return;
-    await api.post('/admin/subscriptions/grant', { user_id: grantTarget, plan_id: grantPlanId });
+    await api.post('/admin/subscriptions/grant', { user_id: grantTarget.user_id, plan_id: grantPlanId });
     setGrantTarget(null);
     setGrantPlanId('');
     load();
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold">Subscribers</h1>
-        <a href="subscriptions/stats" className="text-sm text-blue-600 hover:underline">View Stats →</a>
-      </div>
+    <div className="p-6 max-w-6xl">
 
-      <div className="flex gap-3 mb-4">
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          className="border rounded px-3 py-2 text-sm"
+      {/* ── HEADER ── */}
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <p className="text-xs uppercase tracking-[3px] mb-1" style={{ color: '#cba158' }}>Admin</p>
+          <h1 className="text-2xl font-bold" style={{ color: '#ededed' }}>Subscriptions</h1>
+        </div>
+        <a
+          href="subscriptions/stats"
+          className="text-xs uppercase tracking-[2px] px-4 py-2 rounded-lg transition-colors"
+          style={{ border: '1px solid #2a2a2a', color: '#cba158', background: 'transparent' }}
         >
-          <option value="">All statuses</option>
-          {['active', 'past_due', 'cancelled', 'expired', 'trialing'].map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
+          Revenue & Stats →
+        </a>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-sm">
+      {/* ── FILTER BAR ── */}
+      <div className="flex items-center gap-3 mb-5">
+        {['', 'active', 'past_due', 'cancelled', 'expired', 'trialing'].map((s) => {
+          const active = statusFilter === s;
+          const style = s ? STATUS_STYLE[s] : null;
+          return (
+            <button
+              key={s}
+              onClick={() => setStatus(s)}
+              className="text-xs px-3 py-1.5 rounded-full font-medium transition-colors"
+              style={
+                active
+                  ? { background: style ? style.color : '#cba158', color: '#000' }
+                  : { background: '#1a1a1a', color: '#666', border: '1px solid #2a2a2a' }
+              }
+            >
+              {s ? (STATUS_STYLE[s]?.label ?? s) : 'All'}
+            </button>
+          );
+        })}
+        {loading && <span className="text-xs ml-2" style={{ color: '#555' }}>Loading…</span>}
+        <span className="ml-auto text-xs" style={{ color: '#555' }}>{meta.total} subscribers</span>
+      </div>
+
+      {/* ── TABLE ── */}
+      <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #2a2a2a' }}>
+        <table className="w-full text-sm">
           <thead>
-            <tr className="border-b text-left text-gray-500">
-              <th className="py-2 pr-4">User</th>
-              <th className="py-2 pr-4">Plan</th>
-              <th className="py-2 pr-4">Status</th>
-              <th className="py-2 pr-4">Renews</th>
-              <th className="py-2 pr-4">Source</th>
-              <th className="py-2">Actions</th>
+            <tr style={{ borderBottom: '1px solid #2a2a2a', background: '#141414' }}>
+              {['User', 'Plan', 'Status', 'Renews', 'Source', 'Actions'].map((h) => (
+                <th key={h} className="text-left py-3 px-4 text-xs uppercase tracking-wider font-semibold" style={{ color: '#555' }}>
+                  {h}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
-              <tr key={row.id} className="border-b hover:bg-gray-50">
-                <td className="py-2 pr-4">
-                  <p className="font-medium">{row.user_name ?? '—'}</p>
-                  <p className="text-gray-500">{row.user_email ?? '—'}</p>
-                </td>
-                <td className="py-2 pr-4">{row.plan_name ?? '—'}</td>
-                <td className="py-2 pr-4">
-                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${STATUS_COLORS[row.status] ?? ''}`}>
-                    {row.status}
-                  </span>
-                </td>
-                <td className="py-2 pr-4 text-gray-500">
-                  {row.current_period_end
-                    ? new Date(row.current_period_end).toLocaleDateString()
-                    : '—'}
-                </td>
-                <td className="py-2 pr-4 capitalize">{row.source}</td>
-                <td className="py-2 flex gap-2">
-                  <button
-                    onClick={() => setGrantTarget(row.user_id)}
-                    className="text-xs text-blue-600 hover:underline"
-                  >
-                    Grant
-                  </button>
-                  <button
-                    onClick={() => setRevokeTarget(row)}
-                    className="text-xs text-red-600 hover:underline"
-                  >
-                    Revoke
-                  </button>
+            {rows.length === 0 && !loading && (
+              <tr>
+                <td colSpan={6} className="py-12 text-center text-sm" style={{ color: '#555' }}>
+                  No subscribers found.
                 </td>
               </tr>
-            ))}
+            )}
+            {rows.map((row, i) => {
+              const st = STATUS_STYLE[row.status];
+              return (
+                <tr
+                  key={row.id}
+                  style={{
+                    borderBottom: i < rows.length - 1 ? '1px solid #1a1a1a' : 'none',
+                    background: 'transparent',
+                  }}
+                >
+                  <td className="py-3 px-4">
+                    <p className="font-medium text-sm" style={{ color: '#ededed' }}>{row.user_name ?? '—'}</p>
+                    <p className="text-xs mt-0.5" style={{ color: '#555' }}>{row.user_email ?? '—'}</p>
+                  </td>
+                  <td className="py-3 px-4 text-sm" style={{ color: '#aaa' }}>
+                    {row.plan_name ?? '—'}
+                  </td>
+                  <td className="py-3 px-4">
+                    {st ? (
+                      <span
+                        className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                        style={{ background: `${st.color}18`, color: st.color, border: `1px solid ${st.color}40` }}
+                      >
+                        {st.label}
+                      </span>
+                    ) : (
+                      <span className="text-xs" style={{ color: '#555' }}>{row.status}</span>
+                    )}
+                  </td>
+                  <td className="py-3 px-4 text-sm" style={{ color: '#666' }}>
+                    {row.current_period_end
+                      ? new Date(row.current_period_end).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+                      : '—'}
+                  </td>
+                  <td className="py-3 px-4 text-xs capitalize" style={{ color: '#666' }}>
+                    {row.source}
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => { setGrantTarget(row); setGrantPlanId(''); }}
+                        className="text-xs font-medium transition-colors"
+                        style={{ color: '#cba158' }}
+                      >
+                        Grant
+                      </button>
+                      <button
+                        onClick={() => setRevokeTarget(row)}
+                        className="text-xs font-medium transition-colors"
+                        style={{ color: '#ef4444' }}
+                      >
+                        Revoke
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
 
-      <div className="flex gap-3 mt-4 text-sm text-gray-500">
-        <span>{meta.total} total</span>
-        {meta.page > 1 && (
-          <button onClick={() => load(meta.page - 1)} className="text-blue-600 hover:underline">← Prev</button>
-        )}
-        {meta.page < meta.totalPages && (
-          <button onClick={() => load(meta.page + 1)} className="text-blue-600 hover:underline">Next →</button>
-        )}
-      </div>
+      {/* ── PAGINATION ── */}
+      {meta.totalPages > 1 && (
+        <div className="flex items-center gap-3 mt-4">
+          <button
+            onClick={() => load(meta.page - 1)}
+            disabled={meta.page <= 1}
+            className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30"
+            style={{ border: '1px solid #2a2a2a', color: '#aaa', background: 'transparent' }}
+          >
+            ← Prev
+          </button>
+          <span className="text-xs" style={{ color: '#555' }}>
+            Page {meta.page} of {meta.totalPages}
+          </span>
+          <button
+            onClick={() => load(meta.page + 1)}
+            disabled={meta.page >= meta.totalPages}
+            className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30"
+            style={{ border: '1px solid #2a2a2a', color: '#aaa', background: 'transparent' }}
+          >
+            Next →
+          </button>
+        </div>
+      )}
 
+      {/* ── REVOKE MODAL ── */}
       {revokeTarget && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-sm w-full">
-            <h2 className="font-semibold mb-2">Revoke subscription?</h2>
-            <p className="text-sm text-gray-600 mb-4">
-              This will immediately cancel access for <strong>{revokeTarget.user_email}</strong>.
+        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="rounded-xl p-6 max-w-sm w-full mx-4" style={{ background: '#141414', border: '1px solid #2a2a2a' }}>
+            <h2 className="font-semibold mb-1" style={{ color: '#ededed' }}>Revoke subscription?</h2>
+            <p className="text-sm mb-5" style={{ color: '#666' }}>
+              This will immediately cancel access for <span style={{ color: '#ccc' }}>{revokeTarget.user_email}</span>.
             </p>
             <div className="flex gap-3 justify-end">
-              <button onClick={() => setRevokeTarget(null)} className="text-sm px-4 py-2 border rounded">Cancel</button>
-              <button onClick={handleRevoke} className="text-sm px-4 py-2 bg-red-600 text-white rounded">Revoke</button>
+              <button
+                onClick={() => setRevokeTarget(null)}
+                className="text-sm px-4 py-2 rounded-lg"
+                style={{ border: '1px solid #2a2a2a', color: '#aaa', background: 'transparent' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRevoke}
+                className="text-sm px-4 py-2 rounded-lg font-semibold"
+                style={{ background: '#ef4444', color: '#fff' }}
+              >
+                Revoke
+              </button>
             </div>
           </div>
         </div>
       )}
 
+      {/* ── GRANT MODAL ── */}
       {grantTarget && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-sm w-full">
-            <h2 className="font-semibold mb-4">Grant subscription</h2>
+        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="rounded-xl p-6 max-w-sm w-full mx-4" style={{ background: '#141414', border: '1px solid #2a2a2a' }}>
+            <h2 className="font-semibold mb-1" style={{ color: '#ededed' }}>Grant subscription</h2>
+            <p className="text-sm mb-4" style={{ color: '#666' }}>
+              Granting access to <span style={{ color: '#ccc' }}>{grantTarget.user_email}</span>
+            </p>
             <select
               value={grantPlanId}
               onChange={(e) => setGrantPlanId(e.target.value)}
-              className="w-full border rounded px-3 py-2 text-sm mb-4"
+              className="w-full rounded-lg px-3 py-2 text-sm mb-4"
+              style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#ededed' }}
             >
               <option value="">Select a plan…</option>
               {plans.map((p) => (
@@ -174,12 +268,26 @@ export default function AdminSubscriptionsPage() {
               ))}
             </select>
             <div className="flex gap-3 justify-end">
-              <button onClick={() => setGrantTarget(null)} className="text-sm px-4 py-2 border rounded">Cancel</button>
-              <button onClick={handleGrant} disabled={!grantPlanId} className="text-sm px-4 py-2 bg-gray-900 text-white rounded disabled:opacity-50">Grant</button>
+              <button
+                onClick={() => setGrantTarget(null)}
+                className="text-sm px-4 py-2 rounded-lg"
+                style={{ border: '1px solid #2a2a2a', color: '#aaa', background: 'transparent' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleGrant}
+                disabled={!grantPlanId}
+                className="text-sm px-4 py-2 rounded-lg font-semibold disabled:opacity-40"
+                style={{ background: '#cba158', color: '#000' }}
+              >
+                Grant
+              </button>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }

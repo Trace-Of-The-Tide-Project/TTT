@@ -15,53 +15,89 @@ export default function AdminSubscriptionStatsPage() {
   const [stats, setStats] = useState<StatsData | null>(null);
 
   useEffect(() => {
-    api.get('/admin/subscriptions/stats').then((r: { data: StatsData }) => setStats(r.data));
+    api.get('/admin/subscriptions/stats').then((r: any) => {
+      setStats(r.data?.data ?? r.data);
+    });
   }, []);
 
-  if (!stats) return <div className="p-6">Loading…</div>;
+  if (!stats) {
+    return (
+      <div className="p-6">
+        <p className="text-sm" style={{ color: '#555' }}>Loading…</p>
+      </div>
+    );
+  }
 
   const maxCount = Math.max(...stats.monthly_counts.map((m) => m.count), 1);
 
+  const statCards = [
+    { label: 'MRR', value: `$${Number(stats.mrr).toFixed(2)}`, color: '#cba158' },
+    { label: 'Active Subscribers', value: String(stats.active_subscribers), color: '#22c55e' },
+    { label: 'Churn This Month', value: String(stats.churn_this_month), color: '#ef4444' },
+    ...Object.entries(stats.by_plan).map(([plan, count]) => ({
+      label: plan,
+      value: String(count),
+      color: '#6db3ae',
+    })),
+  ];
+
   return (
     <div className="p-6 max-w-4xl">
-      <div className="flex items-center gap-3 mb-6">
-        <a href="../subscriptions" className="text-sm text-blue-600 hover:underline">← Subscribers</a>
-        <h1 className="text-xl font-bold">Revenue & Stats</h1>
+
+      {/* ── HEADER ── */}
+      <div className="flex items-center gap-4 mb-8">
+        <a
+          href="../subscriptions"
+          className="text-xs uppercase tracking-[2px] px-4 py-2 rounded-lg"
+          style={{ border: '1px solid #2a2a2a', color: '#666', background: 'transparent' }}
+        >
+          ← Subscribers
+        </a>
+        <div>
+          <p className="text-xs uppercase tracking-[3px] mb-0.5" style={{ color: '#cba158' }}>Admin</p>
+          <h1 className="text-2xl font-bold" style={{ color: '#ededed' }}>Revenue & Stats</h1>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <StatCard label="MRR" value={`$${stats.mrr.toFixed(2)}`} />
-        <StatCard label="Active Subscribers" value={String(stats.active_subscribers)} />
-        <StatCard label="Churn This Month" value={String(stats.churn_this_month)} />
-        {Object.entries(stats.by_plan).map(([plan, count]) => (
-          <StatCard key={plan} label={plan} value={String(count)} />
+      {/* ── STAT CARDS ── */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        {statCards.map(({ label, value, color }) => (
+          <div
+            key={label}
+            className="rounded-xl p-4"
+            style={{ border: '1px solid #2a2a2a', background: '#141414' }}
+          >
+            <p className="text-xs uppercase tracking-wider mb-2" style={{ color: '#555' }}>{label}</p>
+            <p className="text-3xl font-extrabold" style={{ color }}>{value}</p>
+          </div>
         ))}
       </div>
 
-      <div>
-        <h2 className="font-semibold mb-3">New Subscribers (Last 6 Months)</h2>
-        <div className="flex items-end gap-2 h-32">
-          {stats.monthly_counts.map((m) => (
-            <div key={m.month} className="flex flex-col items-center flex-1 gap-1">
-              <span className="text-xs text-gray-500">{m.count}</span>
-              <div
-                className="w-full bg-gray-900 rounded-t"
-                style={{ height: `${Math.max((m.count / maxCount) * 96, m.count > 0 ? 4 : 0)}px` }}
-              />
-              <span className="text-xs text-gray-400">{m.month.slice(5)}</span>
-            </div>
-          ))}
+      {/* ── BAR CHART ── */}
+      <div
+        className="rounded-xl p-6"
+        style={{ border: '1px solid #2a2a2a', background: '#141414' }}
+      >
+        <p className="text-xs uppercase tracking-[3px] mb-6" style={{ color: '#cba158' }}>
+          New Subscribers — Last 6 Months
+        </p>
+        <div className="flex items-end gap-3 h-36">
+          {stats.monthly_counts.map((m) => {
+            const barH = Math.max((m.count / maxCount) * 120, m.count > 0 ? 4 : 0);
+            return (
+              <div key={m.month} className="flex flex-col items-center flex-1 gap-1.5">
+                <span className="text-xs" style={{ color: '#555' }}>{m.count || ''}</span>
+                <div
+                  className="w-full rounded-t"
+                  style={{ height: `${barH}px`, background: '#cba158', opacity: 0.7 }}
+                />
+                <span className="text-xs" style={{ color: '#555' }}>{m.month.slice(5)}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
-    </div>
-  );
-}
 
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border rounded-xl p-4">
-      <p className="text-xs text-gray-500 uppercase tracking-wide">{label}</p>
-      <p className="text-2xl font-bold mt-1">{value}</p>
     </div>
   );
 }
