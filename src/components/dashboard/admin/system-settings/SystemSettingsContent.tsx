@@ -13,7 +13,7 @@ import {
 import { BadgeFormModal } from "@/components/dashboard/modals/BadgeFormModal";
 import { CategoryFormModal } from "@/components/dashboard/modals/CategoryFormModal";
 import { TagFormModal } from "@/components/dashboard/modals/TagFormModal";
-import type { MessageTemplate } from "@/components/dashboard/modals/CreateMessageTemplateModal";
+import type { MessageTemplate, MessageTemplateCategory } from "@/components/dashboard/modals/CreateMessageTemplateModal";
 import { EditMessageTemplateModal } from "@/components/dashboard/modals/EditMessageTemplateModal";
 import { BadgeIconRenderer } from "@/components/dashboard/admin/system-settings/badge-icon-options";
 import { TagHexShell } from "@/components/dashboard/admin/system-settings/TagHexShell";
@@ -86,75 +86,70 @@ export function SystemSettingsContent() {
   const [savingGuidelines, setSavingGuidelines] = useState(false);
 
   // ── Loaders ──
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const loadCategories = useCallback(() => {
-    api.get("/admin/system-settings/categories").then((r: { data: any }) => {
-      const list = r.data?.categories ?? [];
-      setCategories(list.map((c: any) => ({
-        id: c.id,
-        name: c.name,
-        slug: c.slug ?? "",
-        itemCount: c.item_count ?? 0,
+    api.get("/admin/system-settings/categories").then((r: { data: Record<string, unknown> }) => {
+      const list = (r.data?.categories ?? []) as Record<string, unknown>[];
+      setCategories(list.map((c) => ({
+        id: c.id as string,
+        name: c.name as string,
+        slug: (c.slug as string) ?? "",
+        itemCount: (c.item_count as number) ?? 0,
       })));
     });
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const loadTags = useCallback(() => {
-    api.get("/admin/system-settings/tags").then((r: { data: any }) => {
-      const list = r.data?.tags ?? [];
-      setTags(list.map((t: any) => ({ id: t.id, label: t.name })));
+    api.get("/admin/system-settings/tags").then((r: { data: Record<string, unknown> }) => {
+      const list = (r.data?.tags ?? []) as Record<string, unknown>[];
+      setTags(list.map((t) => ({ id: t.id as string, label: t.name as string })));
     });
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const loadBadges = useCallback(() => {
-    api.get("/admin/system-settings/badges").then((r: { data: any }) => {
-      const list = r.data?.badges ?? [];
-      setBadges(list.map((b: any) => ({
-        id: b.id,
-        iconId: (b.icon ?? "star") as AchievementBadgeRow["iconId"],
-        name: b.name,
+    api.get("/admin/system-settings/badges").then((r: { data: Record<string, unknown> }) => {
+      const list = (r.data?.badges ?? []) as Record<string, unknown>[];
+      setBadges(list.map((b) => ({
+        id: b.id as string,
+        iconId: ((b.icon ?? "star") as string) as AchievementBadgeRow["iconId"],
+        name: b.name as string,
         milestone: b.criteria_type
           ? `${b.criteria_type}:${b.criteria_value ?? ""}`
-          : (b.description ?? ""),
+          : ((b.description as string) ?? ""),
       })));
     });
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const loadEmailTemplates = useCallback(() => {
-    api.get("/admin/system-settings/email-templates").then((r: { data: any }) => {
-      const list = r.data?.templates ?? [];
-      setEmailTemplates(list.map((t: any) => ({
-        id: t.id,
-        name: t.name,
-        subject: t.subject ?? "",
-        body: t.body ?? "",
-        lastEditedAt: t.updatedAt ?? t.createdAt ?? new Date().toISOString(),
+    api.get("/admin/system-settings/email-templates").then((r: { data: Record<string, unknown> }) => {
+      const list = (r.data?.templates ?? []) as Record<string, unknown>[];
+      setEmailTemplates(list.map((t) => ({
+        id: t.id as string,
+        name: t.name as string,
+        category: ((t.category as MessageTemplateCategory) ?? "broadcast"),
+        subject: (t.subject as string) ?? "",
+        body: (t.body as string) ?? "",
+        lastEditedAt: (t.updatedAt ?? t.createdAt ?? new Date().toISOString()) as string,
       })));
     });
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const loadLocalisation = useCallback(() => {
-    api.get("/admin/system-settings/localisation").then((r: { data: any }) => {
+    api.get("/admin/system-settings/localisation").then((r: { data: Record<string, unknown> }) => {
       const d = r.data;
       if (!d) return;
-      setDefaultLanguage(d.default_language ?? "English");
-      setTimezone((d.timezone as typeof timezone) ?? "utc");
-      setDateFormat((d.date_format as typeof dateFormat) ?? "mdy");
+      setDefaultLanguage((d.default_language as string) ?? "English");
+      setTimezone(((d.timezone as string) as typeof timezone) ?? "utc");
+      setDateFormat(((d.date_format as string) as typeof dateFormat) ?? "mdy");
       setMultiLanguageEnabled(!!d.enable_multi_language);
     });
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const loadGuidelines = useCallback(() => {
-    api.get("/admin/system-settings/guidelines").then((r: { data: any }) => {
+    api.get("/admin/system-settings/guidelines").then((r: { data: Record<string, unknown> }) => {
       const d = r.data;
       if (!d) return;
-      setCommunityGuidelines(d.community_guidelines ?? "");
-      setContentPolicy(d.content_policy ?? "");
+      setCommunityGuidelines((d.community_guidelines as string) ?? "");
+      setContentPolicy((d.content_policy as string) ?? "");
       setMultiLanguageEnabled(!!d.enable_multi_language_guidelines);
     });
   }, []);

@@ -30,24 +30,28 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     Promise.all([
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      api.get("/analytics/overview", { params: { period } }).then((r: { data: any }) => setOverview(r.data)),
+      api.get("/analytics/overview", { params: { period } }).then((r: { data: any }) => { if (!cancelled) setOverview(r.data); }),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      api.get("/analytics/content-performance", { params: { period } }).then((r: { data: any }) => setContentPerf(r.data)),
+      api.get("/analytics/content-performance", { params: { period } }).then((r: { data: any }) => { if (!cancelled) setContentPerf(r.data); }),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      api.get("/analytics/top-creators", { params: { period, limit: 10 } }).then((r: { data: any }) => setTopCreatorsData(r.data)),
+      api.get("/analytics/top-creators", { params: { period, limit: 10 } }).then((r: { data: any }) => { if (!cancelled) setTopCreatorsData(r.data); }),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      api.get("/analytics/conversion-funnel").then((r: { data: any }) => setFunnel(r.data)),
-    ]).finally(() => setLoading(false));
+      api.get("/analytics/conversion-funnel").then((r: { data: any }) => { if (!cancelled) setFunnel(r.data); }),
+    ]).finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [period]);
 
   const formatNum = (n: number) => (n ?? 0).toLocaleString(locale === "ar" ? "ar" : "en-US");
   const formatCurrency = (n: number) => `$${formatNum(n)}`;
 
-  const topCategories: Array<{ category: string; total_views: number; article_count: number }> =
-    contentPerf?.top_categories ?? [];
+  const topCategories: Array<{ category: string; total_views: number; article_count: number }> = useMemo(
+    () => contentPerf?.top_categories ?? [],
+    [contentPerf],
+  );
   const maxViews = useMemo(
     () => Math.max(1, ...topCategories.map((r) => r.total_views)),
     [topCategories],

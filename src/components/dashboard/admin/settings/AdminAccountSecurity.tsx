@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { TrashIcon } from "@/components/ui/icons";
 import { settingsCardClass } from "./SettingsPrimitives";
-import api from "@/services/api";
+import { api } from "@/services/api";
 
 export function AdminAccountSecurity() {
   const t = useTranslations("Dashboard.adminAccount");

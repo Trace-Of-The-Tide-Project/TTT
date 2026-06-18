@@ -69,6 +69,23 @@
     "dashboard": "Dashboard",
     "profile": "Profile",
     "myLibrary": "My Library",
-    "cart": "Cart"
+    "cart": "Cart",
+    "feed": "Feed"
+  },
+  "Feed": {
+    "title": "Your Feed",
+    "subtitle": "Latest from the writers you follow",
+    "loading": "Loading your feed…",
+    "error": "Couldn't load your feed. Please try again.",
+    "emptyTitle": "Your feed is empty",
+    "emptyBody": "Follow writers to see their latest published work here.",
+    "emptyCta": "Discover writers"
+  },
+  "AuthPrompt": {
+    "title": "Sign in to follow",
+    "body": "Create an account or log in to follow writers and build your feed.",
+    "login": "Login",
+    "signUp": "Sign up",
+    "close": "Close"
   }
 }
