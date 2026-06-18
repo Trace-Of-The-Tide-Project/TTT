@@ -31,6 +31,7 @@ export function CollectionCard({ data }: { data: CollectionCardData }) {
           fill
           className="object-cover"
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+          unoptimized
         />
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
