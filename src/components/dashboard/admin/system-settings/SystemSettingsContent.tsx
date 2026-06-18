@@ -13,7 +13,7 @@ import {
 import { BadgeFormModal } from "@/components/dashboard/modals/BadgeFormModal";
 import { CategoryFormModal } from "@/components/dashboard/modals/CategoryFormModal";
 import { TagFormModal } from "@/components/dashboard/modals/TagFormModal";
-import type { MessageTemplate } from "@/components/dashboard/modals/CreateMessageTemplateModal";
+import type { MessageTemplate, MessageTemplateCategory } from "@/components/dashboard/modals/CreateMessageTemplateModal";
 import { EditMessageTemplateModal } from "@/components/dashboard/modals/EditMessageTemplateModal";
 import { BadgeIconRenderer } from "@/components/dashboard/admin/system-settings/badge-icon-options";
 import { TagHexShell } from "@/components/dashboard/admin/system-settings/TagHexShell";
@@ -125,6 +125,7 @@ export function SystemSettingsContent() {
       setEmailTemplates(list.map((t) => ({
         id: t.id as string,
         name: t.name as string,
+        category: ((t.category as MessageTemplateCategory) ?? "broadcast"),
         subject: (t.subject as string) ?? "",
         body: (t.body as string) ?? "",
         lastEditedAt: (t.updatedAt ?? t.createdAt ?? new Date().toISOString()) as string,
