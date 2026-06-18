@@ -69,6 +69,23 @@
     "dashboard": "Tableau de bord",
     "profile": "Profil",
     "myLibrary": "Ma bibliothèque",
-    "cart": "Panier"
+    "cart": "Panier",
+    "feed": "Mon fil"
+  },
+  "Feed": {
+    "title": "Votre fil",
+    "subtitle": "Les dernières œuvres des auteurs que vous suivez",
+    "loading": "Chargement de votre fil…",
+    "error": "Impossible de charger votre fil. Réessayez.",
+    "emptyTitle": "Votre fil est vide",
+    "emptyBody": "Suivez des auteurs pour voir ici leurs dernières publications.",
+    "emptyCta": "Découvrir des auteurs"
+  },
+  "AuthPrompt": {
+    "title": "Connectez-vous pour suivre",
+    "body": "Créez un compte ou connectez-vous pour suivre des auteurs et construire votre fil.",
+    "login": "Connexion",
+    "signUp": "S'inscrire",
+    "close": "Fermer"
   }
 }

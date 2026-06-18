@@ -69,6 +69,23 @@
     "dashboard": "Panel de control",
     "profile": "Perfil",
     "myLibrary": "Mi biblioteca",
-    "cart": "Carrito"
+    "cart": "Carrito",
+    "feed": "Mi feed"
+  },
+  "Feed": {
+    "title": "Tu feed",
+    "subtitle": "Lo último de los escritores que sigues",
+    "loading": "Cargando tu feed…",
+    "error": "No se pudo cargar tu feed. Inténtalo de nuevo.",
+    "emptyTitle": "Tu feed está vacío",
+    "emptyBody": "Sigue a escritores para ver aquí sus últimas publicaciones.",
+    "emptyCta": "Descubrir escritores"
+  },
+  "AuthPrompt": {
+    "title": "Inicia sesión para seguir",
+    "body": "Crea una cuenta o inicia sesión para seguir a escritores y construir tu feed.",
+    "login": "Iniciar sesión",
+    "signUp": "Registrarse",
+    "close": "Cerrar"
   }
 }

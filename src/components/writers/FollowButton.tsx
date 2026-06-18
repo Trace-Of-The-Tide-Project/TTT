@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useIsFollowing } from "@/hooks/queries/follows";
 import { useToggleFollow } from "@/hooks/mutations/follows";
+import { AuthPromptModal } from "@/components/auth/AuthPromptModal";
 
 /**
  * Follow/unfollow toggle for a writer. `targetUserId` is the *user*
@@ -12,9 +14,8 @@ import { useToggleFollow } from "@/hooks/mutations/follows";
  *
  * The follow-check query only runs for authenticated users — firing it
  * for guests would 401 and the axios interceptor would hard-redirect
- * the whole page to login. Guests who click trigger a POST that 401s;
- * the axios interceptor then redirects to login — same pattern the
- * rest of the app uses for auth-gated actions.
+ * the whole page to login. Guests who click get an auth prompt modal
+ * (Login / Sign up) instead of a silent redirect.
  */
 export function FollowButton({
   targetUserId,
@@ -29,8 +30,17 @@ export function FollowButton({
     status === "authenticated" ? targetUserId : null,
   );
   const toggle = useToggleFollow();
+  const [authPromptOpen, setAuthPromptOpen] = useState(false);
 
   if (!targetUserId) return null;
+
+  function handleClick() {
+    if (status !== "authenticated") {
+      setAuthPromptOpen(true);
+      return;
+    }
+    toggle.mutate(targetUserId as string);
+  }
 
   const following = Boolean(isFollowing);
   const busy = toggle.isPending;
@@ -39,10 +49,11 @@ export function FollowButton({
   const fontSize = size === "sm" ? 13 : 14;
 
   return (
+    <>
     <button
       type="button"
       disabled={busy}
-      onClick={() => toggle.mutate(targetUserId)}
+      onClick={handleClick}
       aria-pressed={following}
       className="inline-flex items-center justify-center transition-opacity hover:opacity-90 disabled:opacity-60"
       style={{
@@ -70,5 +81,10 @@ export function FollowButton({
     >
       {following ? t("following") : t("follow")}
     </button>
+    <AuthPromptModal
+      open={authPromptOpen}
+      onClose={() => setAuthPromptOpen(false)}
+    />
+    </>
   );
 }

@@ -17,6 +17,7 @@ import {
   LogOutIcon,
   XIcon,
   ChevronDownSmallIcon,
+  ListIcon,
 } from "@/components/ui/icons";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -114,6 +115,17 @@ export function Navbar() {
           <span>{t(messageKey)}</span>
         </Link>
       ))}
+      {/* Feed is reader-only and auth-gated — show it just for signed-in users
+          so guests never hit a link that would bounce them to login. */}
+      {user ? (
+        <Link
+          href="/feed"
+          className={`flex items-center gap-2 transition-colors ${navMuted}`}
+        >
+          <ListIcon />
+          <span>{t("feed")}</span>
+        </Link>
+      ) : null}
     </div>
   );
 
@@ -385,6 +397,16 @@ export function Navbar() {
                 <span>{t(messageKey)}</span>
               </Link>
             ))}
+            {user ? (
+              <Link
+                href="/feed"
+                onClick={closeMobileMenu}
+                className={`flex items-center gap-3 rounded-md px-4 py-3 transition-colors ${navMuted} ${navRowHover}`}
+              >
+                <ListIcon />
+                <span>{t("feed")}</span>
+              </Link>
+            ) : null}
 
             <span className={`my-2 h-px w-full ${isDark ? "bg-[color:var(--tott-card-border)]" : "bg-gray-200"}`} />
 
