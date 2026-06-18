@@ -22,13 +22,14 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     Promise.all([
       api.get('/subscriptions/me').catch(() => ({ data: null })),
       api.get('/subscriptions/plans').catch(() => ({ data: [] })),
-    ]).then(([meRes, plansRes]: [{ data: any }, { data: any }]) => {
+    ]).then(([meRes, plansRes]: [{ data: UserSubscription | null }, { data: { data?: SubscriptionPlan[] } | SubscriptionPlan[] }]) => {
       setSubscription(meRes.data ?? null);
       const plansData = plansRes.data?.data ?? plansRes.data;
       setPlans(Array.isArray(plansData) ? plansData : []);
     }).finally(() => setLoading(false));
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchData(); }, [fetchData]);
 
   return (

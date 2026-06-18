@@ -81,7 +81,7 @@ export default function AdminSubscriptionsPage() {
       .finally(() => setLoading(false));
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, [statusFilter, planFilter]);
 
   async function handleRevoke() {
