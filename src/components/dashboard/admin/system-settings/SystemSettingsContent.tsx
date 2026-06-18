@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
   ContributeIcon,
@@ -19,19 +19,14 @@ import { BadgeIconRenderer } from "@/components/dashboard/admin/system-settings/
 import { TagHexShell } from "@/components/dashboard/admin/system-settings/TagHexShell";
 import {
   SYSTEM_SETTINGS_TAB_IDS,
-  sampleAchievementBadges,
-  sampleContentCategories,
-  sampleContentTags,
   type AchievementBadgeRow,
   type ContentCategoryRow,
   type ContentTagRow,
   type SystemSettingsTabId,
 } from "@/lib/dashboard/system-settings-constants";
-import {
-  sampleEmailTemplates,
-  type EmailTemplateListItem,
-} from "@/lib/dashboard/email-templates-constants";
+import type { EmailTemplateListItem } from "@/lib/dashboard/email-templates-constants";
 import { RichTextEditor, EditorToolbar, EditorRegistryProvider } from "@/components/ui/rich-text";
+import { api } from "@/services/api";
 
 const ACCENT = "#E8DDC0";
 
@@ -47,110 +42,227 @@ type BadgeModalState =
   | { type: "add" }
   | { type: "edit"; badge: AchievementBadgeRow };
 
+const SaveIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+    <path d="M17 21v-8H7v8" />
+    <path d="M7 3v5h8" />
+  </svg>
+);
+
 export function SystemSettingsContent() {
   const locale = useLocale();
   const tSettings = useTranslations("Dashboard.systemSettings");
+
   const [activeTab, setActiveTab] = useState<SystemSettingsTabId>("categories");
-  const [categories, setCategories] = useState<ContentCategoryRow[]>(() => [
-    ...sampleContentCategories,
-  ]);
+
+  // ── Categories ──
+  const [categories, setCategories] = useState<ContentCategoryRow[]>([]);
   const [categoryModal, setCategoryModal] = useState<CategoryModalState>({ type: "closed" });
-  const [tags, setTags] = useState<ContentTagRow[]>(() => [...sampleContentTags]);
+
+  // ── Tags ──
+  const [tags, setTags] = useState<ContentTagRow[]>([]);
   const [tagModal, setTagModal] = useState<TagModalState>({ type: "closed" });
-  const [badges, setBadges] = useState<AchievementBadgeRow[]>(() => [...sampleAchievementBadges]);
+
+  // ── Badges ──
+  const [badges, setBadges] = useState<AchievementBadgeRow[]>([]);
   const [badgeModal, setBadgeModal] = useState<BadgeModalState>({ type: "closed" });
-  const [emailTemplates, setEmailTemplates] = useState<EmailTemplateListItem[]>(() => [
-    ...sampleEmailTemplates,
-  ]);
+
+  // ── Email templates ──
+  const [emailTemplates, setEmailTemplates] = useState<EmailTemplateListItem[]>([]);
   const [editEmailOpen, setEditEmailOpen] = useState(false);
   const [selectedEmailTemplate, setSelectedEmailTemplate] = useState<MessageTemplate | null>(null);
+
+  // ── Localisation ──
   const [defaultLanguage, setDefaultLanguage] = useState("English");
   const [timezone, setTimezone] = useState<"utc" | "eastern" | "pacific" | "gmt">("utc");
   const [dateFormat, setDateFormat] = useState<"mdy" | "dmy" | "ymd">("mdy");
   const [multiLanguageEnabled, setMultiLanguageEnabled] = useState(false);
+  const [savingLocalisation, setSavingLocalisation] = useState(false);
+
+  // ── Guidelines ──
   const [communityGuidelines, setCommunityGuidelines] = useState("");
   const [contentPolicy, setContentPolicy] = useState("");
+  const [savingGuidelines, setSavingGuidelines] = useState(false);
 
-  // Refresh sample copy whenever the locale changes. Render-phase
-  // pattern instead of an effect.
-  const [prevLocale, setPrevLocale] = useState(locale);
-  if (prevLocale !== locale) {
-    setPrevLocale(locale);
-    setCommunityGuidelines(tSettings("guidelines.sampleCommunity"));
-    setContentPolicy(tSettings("guidelines.sampleContentPolicy"));
-  }
+  // ── Loaders ──
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const loadCategories = useCallback(() => {
+    api.get("/admin/system-settings/categories").then((r: { data: any }) => {
+      const list = r.data?.categories ?? [];
+      setCategories(list.map((c: any) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug ?? "",
+        itemCount: c.item_count ?? 0,
+      })));
+    });
+  }, []);
 
-  const handleCategorySave = (payload: { id?: string; name: string; slug: string }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const loadTags = useCallback(() => {
+    api.get("/admin/system-settings/tags").then((r: { data: any }) => {
+      const list = r.data?.tags ?? [];
+      setTags(list.map((t: any) => ({ id: t.id, label: t.name })));
+    });
+  }, []);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const loadBadges = useCallback(() => {
+    api.get("/admin/system-settings/badges").then((r: { data: any }) => {
+      const list = r.data?.badges ?? [];
+      setBadges(list.map((b: any) => ({
+        id: b.id,
+        iconId: (b.icon ?? "star") as AchievementBadgeRow["iconId"],
+        name: b.name,
+        milestone: b.criteria_type
+          ? `${b.criteria_type}:${b.criteria_value ?? ""}`
+          : (b.description ?? ""),
+      })));
+    });
+  }, []);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const loadEmailTemplates = useCallback(() => {
+    api.get("/admin/system-settings/email-templates").then((r: { data: any }) => {
+      const list = r.data?.templates ?? [];
+      setEmailTemplates(list.map((t: any) => ({
+        id: t.id,
+        name: t.name,
+        subject: t.subject ?? "",
+        body: t.body ?? "",
+        lastEditedAt: t.updatedAt ?? t.createdAt ?? new Date().toISOString(),
+      })));
+    });
+  }, []);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const loadLocalisation = useCallback(() => {
+    api.get("/admin/system-settings/localisation").then((r: { data: any }) => {
+      const d = r.data;
+      if (!d) return;
+      setDefaultLanguage(d.default_language ?? "English");
+      setTimezone((d.timezone as typeof timezone) ?? "utc");
+      setDateFormat((d.date_format as typeof dateFormat) ?? "mdy");
+      setMultiLanguageEnabled(!!d.enable_multi_language);
+    });
+  }, []);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const loadGuidelines = useCallback(() => {
+    api.get("/admin/system-settings/guidelines").then((r: { data: any }) => {
+      const d = r.data;
+      if (!d) return;
+      setCommunityGuidelines(d.community_guidelines ?? "");
+      setContentPolicy(d.content_policy ?? "");
+      setMultiLanguageEnabled(!!d.enable_multi_language_guidelines);
+    });
+  }, []);
+
+  useEffect(() => { loadCategories(); }, [loadCategories]);
+  useEffect(() => { loadTags(); }, [loadTags]);
+  useEffect(() => { loadBadges(); }, [loadBadges]);
+  useEffect(() => { loadEmailTemplates(); }, [loadEmailTemplates]);
+  useEffect(() => { loadLocalisation(); }, [loadLocalisation]);
+  useEffect(() => { loadGuidelines(); }, [loadGuidelines]);
+
+  // ── Category actions ──
+  const handleCategorySave = async (payload: { id?: string; name: string; slug: string }) => {
     if (categoryModal.type === "add") {
-      setCategories((prev) => [
-        ...prev,
-        { id: `c-${Date.now()}`, name: payload.name, slug: payload.slug, itemCount: 0 },
-      ]);
+      await api.post("/admin/system-settings/categories", { name: payload.name, slug: payload.slug });
     } else if (categoryModal.type === "edit" && payload.id) {
-      setCategories((prev) =>
-        prev.map((c) =>
-          c.id === payload.id ? { ...c, name: payload.name, slug: payload.slug } : c
-        )
-      );
+      await api.patch(`/admin/system-settings/categories/${payload.id}`, { name: payload.name, slug: payload.slug });
     }
+    loadCategories();
   };
 
-  const closeCategoryModal = () => setCategoryModal({ type: "closed" });
+  const handleCategoryDelete = async (id: string) => {
+    await api.delete(`/admin/system-settings/categories/${id}`);
+    loadCategories();
+  };
 
-  const handleTagSave = (payload: { id?: string; label: string }) => {
+  // ── Tag actions ──
+  const handleTagSave = async (payload: { id?: string; label: string }) => {
     if (tagModal.type === "add") {
-      setTags((prev) => [...prev, { id: `tag-${Date.now()}`, label: payload.label }]);
+      await api.post("/admin/system-settings/tags", { name: payload.label });
     } else if (tagModal.type === "edit" && payload.id) {
-      setTags((prev) =>
-        prev.map((t) => (t.id === payload.id ? { ...t, label: payload.label } : t))
-      );
+      await api.patch(`/admin/system-settings/tags/${payload.id}`, { name: payload.label });
     }
+    loadTags();
   };
 
-  const closeTagModal = () => setTagModal({ type: "closed" });
+  const handleTagDelete = async (id: string) => {
+    await api.delete(`/admin/system-settings/tags/${id}`);
+    loadTags();
+  };
 
-  const handleBadgeSave = (payload: {
+  // ── Badge actions ──
+  const handleBadgeSave = async (payload: {
     id?: string;
     iconId: AchievementBadgeRow["iconId"];
     name: string;
     milestone: string;
   }) => {
+    const [criteria_type, criteria_value_str] = payload.milestone.includes(":")
+      ? payload.milestone.split(":")
+      : [undefined, undefined];
+
+    const body = {
+      name: payload.name,
+      icon: payload.iconId,
+      ...(criteria_type ? { criteria_type, criteria_value: Number(criteria_value_str) || 0 } : { description: payload.milestone }),
+    };
+
     if (badgeModal.type === "add") {
-      setBadges((prev) => [
-        ...prev,
-        {
-          id: `b-${Date.now()}`,
-          iconId: payload.iconId,
-          name: payload.name,
-          milestone: payload.milestone,
-        },
-      ]);
+      await api.post("/admin/system-settings/badges", body);
     } else if (badgeModal.type === "edit" && payload.id) {
-      setBadges((prev) =>
-        prev.map((b) =>
-          b.id === payload.id
-            ? {
-                ...b,
-                iconId: payload.iconId,
-                name: payload.name,
-                milestone: payload.milestone,
-              }
-            : b
-        )
-      );
+      await api.patch(`/admin/system-settings/badges/${payload.id}`, body);
+    }
+    loadBadges();
+  };
+
+  // ── Email template save ──
+  const handleEmailTemplateSave = async (updated: MessageTemplate) => {
+    await api.patch(`/admin/system-settings/email-templates/${updated.id}`, {
+      name: updated.name,
+      subject: updated.subject,
+      body: updated.body,
+    });
+    loadEmailTemplates();
+  };
+
+  // ── Localisation save ──
+  const handleSaveLocalisation = async () => {
+    setSavingLocalisation(true);
+    try {
+      await api.patch("/admin/system-settings/localisation", {
+        default_language: defaultLanguage,
+        timezone,
+        date_format: dateFormat,
+        enable_multi_language: multiLanguageEnabled,
+      });
+    } finally {
+      setSavingLocalisation(false);
     }
   };
 
-  const closeBadgeModal = () => setBadgeModal({ type: "closed" });
-  const closeEditEmail = () => setEditEmailOpen(false);
+  // ── Guidelines save ──
+  const handleSaveGuidelines = async () => {
+    setSavingGuidelines(true);
+    try {
+      await api.patch("/admin/system-settings/guidelines", {
+        community_guidelines: communityGuidelines,
+        content_policy: contentPolicy,
+        enable_multi_language_guidelines: multiLanguageEnabled,
+      });
+    } finally {
+      setSavingGuidelines(false);
+    }
+  };
 
   const formatLastEdited = (iso: string) => {
     try {
-      return new Date(iso).toLocaleDateString(locale, {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
+      return new Date(iso).toLocaleDateString(locale, { month: "short", day: "numeric", year: "numeric" });
     } catch {
       return tSettings("dateUnknown");
     }
@@ -188,9 +300,7 @@ export function SystemSettingsContent() {
                 className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90"
                 style={{ backgroundColor: ACCENT }}
               >
-                <span className="[&_svg]:h-4 [&_svg]:w-4">
-                  <PlusIcon />
-                </span>
+                <span className="[&_svg]:h-4 [&_svg]:w-4"><PlusIcon /></span>
                 {tSettings("categories.add")}
               </button>
             </div>
@@ -204,9 +314,7 @@ export function SystemSettingsContent() {
                 className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90"
                 style={{ backgroundColor: ACCENT }}
               >
-                <span className="[&_svg]:h-4 [&_svg]:w-4">
-                  <PlusIcon />
-                </span>
+                <span className="[&_svg]:h-4 [&_svg]:w-4"><PlusIcon /></span>
                 {tSettings("tags.add")}
               </button>
             </div>
@@ -220,32 +328,29 @@ export function SystemSettingsContent() {
                 className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90"
                 style={{ backgroundColor: ACCENT }}
               >
-                <span className="[&_svg]:h-4 [&_svg]:w-4">
-                  <PlusIcon />
-                </span>
+                <span className="[&_svg]:h-4 [&_svg]:w-4"><PlusIcon /></span>
                 {tSettings("badges.add")}
               </button>
             </div>
           )}
         </div>
 
+        {/* ── CATEGORIES ── */}
         {activeTab === "categories" && (
           <div className="mt-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("categories.title")}</h2>
             <p className="mt-1 text-sm text-gray-500">{tSettings("categories.subtitle")}</p>
             <div className="mt-6 space-y-3">
+              {categories.length === 0 && (
+                <p className="text-sm text-gray-500">No categories yet.</p>
+              )}
               {categories.map((cat) => (
                 <div
                   key={cat.id}
                   className="flex items-center gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-4 sm:gap-5 sm:px-5 sm:py-4"
                 >
-                  <div
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-[#E8DDC0]"
-                    aria-hidden
-                  >
-                    <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
-                      <FolderIcon />
-                    </span>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-[#E8DDC0]" aria-hidden>
+                    <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><FolderIcon /></span>
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-foreground">{cat.name}</p>
@@ -264,19 +369,15 @@ export function SystemSettingsContent() {
                       className="rounded-lg p-2 text-[#E8DDC0] transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
                       aria-label={tSettings("categories.editAria", { name: cat.name })}
                     >
-                      <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
-                        <ContributeIcon />
-                      </span>
+                      <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><ContributeIcon /></span>
                     </button>
                     <button
                       type="button"
-                      onClick={() => setCategories((prev) => prev.filter((c) => c.id !== cat.id))}
+                      onClick={() => handleCategoryDelete(cat.id)}
                       className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
                       aria-label={tSettings("categories.deleteAria", { name: cat.name })}
                     >
-                      <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
-                        <TrashIcon />
-                      </span>
+                      <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><TrashIcon /></span>
                     </button>
                   </div>
                 </div>
@@ -285,19 +386,19 @@ export function SystemSettingsContent() {
           </div>
         )}
 
+        {/* ── TAGS ── */}
         {activeTab === "tags" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("tags.title")}</h2>
             <p className="mt-1 text-sm text-gray-500">{tSettings("tags.subtitle")}</p>
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+              {tags.length === 0 && <p className="text-sm text-gray-500 col-span-2">No tags yet.</p>}
               {tags.map((tag) => (
                 <div
                   key={tag.id}
                   className="flex items-center gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-4 sm:px-5 sm:py-4"
                 >
-                  <TagHexShell>
-                    <LinkIcon />
-                  </TagHexShell>
+                  <TagHexShell><LinkIcon /></TagHexShell>
                   <p className="min-w-0 flex-1 font-semibold text-foreground">{tag.label}</p>
                   <div className="flex shrink-0 items-center gap-1">
                     <button
@@ -306,19 +407,15 @@ export function SystemSettingsContent() {
                       className="rounded-lg p-2 text-[#E8DDC0] transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
                       aria-label={tSettings("tags.editAria", { name: tag.label })}
                     >
-                      <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
-                        <ContributeIcon />
-                      </span>
+                      <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><ContributeIcon /></span>
                     </button>
                     <button
                       type="button"
-                      onClick={() => setTags((prev) => prev.filter((t) => t.id !== tag.id))}
+                      onClick={() => handleTagDelete(tag.id)}
                       className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
                       aria-label={tSettings("tags.deleteAria", { name: tag.label })}
                     >
-                      <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
-                        <TrashIcon />
-                      </span>
+                      <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><TrashIcon /></span>
                     </button>
                   </div>
                 </div>
@@ -327,19 +424,19 @@ export function SystemSettingsContent() {
           </div>
         )}
 
+        {/* ── BADGES ── */}
         {activeTab === "badges" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("badges.title")}</h2>
             <p className="mt-1 text-sm text-gray-500">{tSettings("badges.subtitle")}</p>
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+              {badges.length === 0 && <p className="text-sm text-gray-500 col-span-2">No badges yet.</p>}
               {badges.map((badge) => (
                 <div
                   key={badge.id}
                   className="flex items-center gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-4 sm:px-5 sm:py-4"
                 >
-                  <TagHexShell>
-                    <BadgeIconRenderer iconId={badge.iconId} />
-                  </TagHexShell>
+                  <TagHexShell><BadgeIconRenderer iconId={badge.iconId} /></TagHexShell>
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-foreground">{badge.name}</p>
                     <p className="mt-0.5 text-sm text-gray-500">{badge.milestone}</p>
@@ -350,9 +447,7 @@ export function SystemSettingsContent() {
                     className="shrink-0 rounded-lg p-2 text-gray-500 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-[#E8DDC0]"
                     aria-label={tSettings("badges.editAria", { name: badge.name })}
                   >
-                    <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
-                      <PenLineIcon />
-                    </span>
+                    <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><PenLineIcon /></span>
                   </button>
                 </div>
               ))}
@@ -360,12 +455,13 @@ export function SystemSettingsContent() {
           </div>
         )}
 
+        {/* ── EMAIL TEMPLATES ── */}
         {activeTab === "email" && (
           <div className="mt-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("email.title")}</h2>
             <p className="mt-1 text-sm text-gray-500">{tSettings("email.subtitle")}</p>
-
             <div className="mt-6 space-y-4">
+              {emailTemplates.length === 0 && <p className="text-sm text-gray-500">No templates yet.</p>}
               {emailTemplates.map((tpl) => (
                 <div
                   key={tpl.id}
@@ -373,17 +469,7 @@ export function SystemSettingsContent() {
                 >
                   <div className="flex min-w-0 items-center gap-4">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-gray-400">
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden
-                      >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                         <path d="M4 6h16v12H4z" />
                         <path d="m4 7 8 6 8-6" />
                       </svg>
@@ -397,15 +483,10 @@ export function SystemSettingsContent() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setSelectedEmailTemplate(tpl);
-                      setEditEmailOpen(true);
-                    }}
+                    onClick={() => { setSelectedEmailTemplate(tpl); setEditEmailOpen(true); }}
                     className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2 text-sm font-medium text-gray-200 transition-colors hover:bg-[var(--tott-dash-surface-inset)]"
                   >
-                    <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: ACCENT }}>
-                      <ContributeIcon />
-                    </span>
+                    <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: ACCENT }}><ContributeIcon /></span>
                     {tSettings("email.editTemplate")}
                   </button>
                 </div>
@@ -414,21 +495,15 @@ export function SystemSettingsContent() {
           </div>
         )}
 
+        {/* ── LOCALISATION ── */}
         {activeTab === "localisation" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("localisation.title")}</h2>
             <p className="mt-1 text-sm text-gray-500">{tSettings("localisation.subtitle")}</p>
-
             <div className="mt-6 space-y-6">
               <div>
-                <p className="text-sm font-semibold text-foreground">
-                  {tSettings("localisation.defaultLanguage")}
-                </p>
-                <select
-                  value={defaultLanguage}
-                  onChange={(e) => setDefaultLanguage(e.target.value)}
-                  className={inputShell}
-                >
+                <p className="text-sm font-semibold text-foreground">{tSettings("localisation.defaultLanguage")}</p>
+                <select value={defaultLanguage} onChange={(e) => setDefaultLanguage(e.target.value)} className={inputShell}>
                   <option value="English">{tSettings("localisation.languageNames.English")}</option>
                   <option value="Spanish">{tSettings("localisation.languageNames.Spanish")}</option>
                   <option value="French">{tSettings("localisation.languageNames.French")}</option>
@@ -436,176 +511,102 @@ export function SystemSettingsContent() {
                   <option value="Arabic">{tSettings("localisation.languageNames.Arabic")}</option>
                 </select>
               </div>
-
               <div>
-                <p className="text-sm font-semibold text-foreground">
-                  {tSettings("localisation.timezone")}
-                </p>
-                <select
-                  value={timezone}
-                  onChange={(e) =>
-                    setTimezone(e.target.value as "utc" | "eastern" | "pacific" | "gmt")
-                  }
-                  className={inputShell}
-                >
+                <p className="text-sm font-semibold text-foreground">{tSettings("localisation.timezone")}</p>
+                <select value={timezone} onChange={(e) => setTimezone(e.target.value as typeof timezone)} className={inputShell}>
                   <option value="utc">{tSettings("localisation.timezones.utc")}</option>
                   <option value="eastern">{tSettings("localisation.timezones.eastern")}</option>
                   <option value="pacific">{tSettings("localisation.timezones.pacific")}</option>
                   <option value="gmt">{tSettings("localisation.timezones.gmt")}</option>
                 </select>
               </div>
-
               <div>
-                <p className="text-sm font-semibold text-foreground">
-                  {tSettings("localisation.dateFormat")}
-                </p>
-                <select
-                  value={dateFormat}
-                  onChange={(e) => setDateFormat(e.target.value as "mdy" | "dmy" | "ymd")}
-                  className={inputShell}
-                >
+                <p className="text-sm font-semibold text-foreground">{tSettings("localisation.dateFormat")}</p>
+                <select value={dateFormat} onChange={(e) => setDateFormat(e.target.value as typeof dateFormat)} className={inputShell}>
                   <option value="mdy">{tSettings("localisation.dateFormats.mdy")}</option>
                   <option value="dmy">{tSettings("localisation.dateFormats.dmy")}</option>
                   <option value="ymd">{tSettings("localisation.dateFormats.ymd")}</option>
                 </select>
               </div>
-
               <div className="flex items-center justify-between gap-6">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    {tSettings("localisation.multiLanguage")}
-                  </p>
-                  <p className="mt-1 text-sm text-gray-500">
-                    {tSettings("localisation.multiLanguageHint")}
-                  </p>
+                  <p className="text-sm font-semibold text-foreground">{tSettings("localisation.multiLanguage")}</p>
+                  <p className="mt-1 text-sm text-gray-500">{tSettings("localisation.multiLanguageHint")}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMultiLanguageEnabled((v) => !v)}
-                  className={`relative h-7 w-12 rounded-full border border-[var(--tott-card-border)] transition-colors ${
-                    multiLanguageEnabled ? "bg-[#E8DDC0]" : "bg-[var(--tott-dash-surface-inset)]"
-                  }`}
+                  className={`relative h-7 w-12 rounded-full border border-[var(--tott-card-border)] transition-colors ${multiLanguageEnabled ? "bg-[#E8DDC0]" : "bg-[var(--tott-dash-surface-inset)]"}`}
                   aria-pressed={multiLanguageEnabled}
                   aria-label={tSettings("toggleMultiLanguageAria")}
                 >
-                  <span
-                    className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full transition-all ${
-                      multiLanguageEnabled
-                        ? "left-6 bg-[var(--tott-dash-surface-2)]"
-                        : "left-1 bg-[var(--tott-dash-surface-2)]"
-                    }`}
-                  />
+                  <span className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full transition-all ${multiLanguageEnabled ? "left-6 bg-[var(--tott-dash-surface-2)]" : "left-1 bg-[var(--tott-dash-surface-2)]"}`} />
                 </button>
               </div>
-
               <div className="flex justify-end pt-2">
                 <button
                   type="button"
-                  className="inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90"
+                  onClick={handleSaveLocalisation}
+                  disabled={savingLocalisation}
+                  className="inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90 disabled:opacity-50"
                   style={{ backgroundColor: ACCENT }}
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden
-                  >
-                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                    <path d="M17 21v-8H7v8" />
-                    <path d="M7 3v5h8" />
-                  </svg>
-                  {tSettings("saveChanges")}
+                  <SaveIcon />
+                  {savingLocalisation ? "Saving…" : tSettings("saveChanges")}
                 </button>
               </div>
             </div>
           </div>
         )}
 
+        {/* ── GUIDELINES ── */}
         {activeTab === "guidelines" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("guidelines.title")}</h2>
             <p className="mt-1 text-sm text-gray-500">{tSettings("guidelines.subtitle")}</p>
-
             <div className="mt-6 space-y-6">
               <EditorRegistryProvider>
                 <div className="rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
                   <EditorToolbar />
                 </div>
-
                 <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    {tSettings("guidelines.communityLabel")}
-                  </p>
+                  <p className="text-sm font-semibold text-foreground">{tSettings("guidelines.communityLabel")}</p>
                   <div className="mt-2 overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]">
                     <RichTextEditor value={communityGuidelines} onChange={setCommunityGuidelines} />
                   </div>
                 </div>
-
                 <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    {tSettings("guidelines.contentPolicyLabel")}
-                  </p>
+                  <p className="text-sm font-semibold text-foreground">{tSettings("guidelines.contentPolicyLabel")}</p>
                   <div className="mt-2 overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]">
                     <RichTextEditor value={contentPolicy} onChange={setContentPolicy} />
                   </div>
                 </div>
               </EditorRegistryProvider>
-
               <div className="flex items-center justify-between gap-6">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    {tSettings("localisation.multiLanguage")}
-                  </p>
-                  <p className="mt-1 text-sm text-gray-500">
-                    {tSettings("localisation.multiLanguageHint")}
-                  </p>
+                  <p className="text-sm font-semibold text-foreground">{tSettings("localisation.multiLanguage")}</p>
+                  <p className="mt-1 text-sm text-gray-500">{tSettings("localisation.multiLanguageHint")}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMultiLanguageEnabled((v) => !v)}
-                  className={`relative h-7 w-12 rounded-full border border-[var(--tott-card-border)] transition-colors ${
-                    multiLanguageEnabled ? "bg-[#E8DDC0]" : "bg-[var(--tott-dash-surface-inset)]"
-                  }`}
+                  className={`relative h-7 w-12 rounded-full border border-[var(--tott-card-border)] transition-colors ${multiLanguageEnabled ? "bg-[#E8DDC0]" : "bg-[var(--tott-dash-surface-inset)]"}`}
                   aria-pressed={multiLanguageEnabled}
                   aria-label={tSettings("toggleMultiLanguageAria")}
                 >
-                  <span
-                    className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full transition-all ${
-                      multiLanguageEnabled
-                        ? "left-6 bg-[var(--tott-dash-surface-2)]"
-                        : "left-1 bg-[var(--tott-dash-surface-2)]"
-                    }`}
-                  />
+                  <span className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 rounded-full transition-all ${multiLanguageEnabled ? "left-6 bg-[var(--tott-dash-surface-2)]" : "left-1 bg-[var(--tott-dash-surface-2)]"}`} />
                 </button>
               </div>
-
               <div className="flex justify-end pt-2">
                 <button
                   type="button"
-                  className="inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90"
+                  onClick={handleSaveGuidelines}
+                  disabled={savingGuidelines}
+                  className="inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90 disabled:opacity-50"
                   style={{ backgroundColor: ACCENT }}
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden
-                  >
-                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                    <path d="M17 21v-8H7v8" />
-                    <path d="M7 3v5h8" />
-                  </svg>
-                  {tSettings("saveChanges")}
+                  <SaveIcon />
+                  {savingGuidelines ? "Saving…" : tSettings("saveChanges")}
                 </button>
               </div>
             </div>
@@ -615,7 +616,7 @@ export function SystemSettingsContent() {
 
       <CategoryFormModal
         open={categoryModal.type !== "closed"}
-        onClose={closeCategoryModal}
+        onClose={() => setCategoryModal({ type: "closed" })}
         mode={categoryModal.type === "edit" ? "edit" : "add"}
         categoryId={categoryModal.type === "edit" ? categoryModal.category.id : undefined}
         initialName={categoryModal.type === "edit" ? categoryModal.category.name : ""}
@@ -625,7 +626,7 @@ export function SystemSettingsContent() {
 
       <TagFormModal
         open={tagModal.type !== "closed"}
-        onClose={closeTagModal}
+        onClose={() => setTagModal({ type: "closed" })}
         mode={tagModal.type === "edit" ? "edit" : "add"}
         tagId={tagModal.type === "edit" ? tagModal.tag.id : undefined}
         initialLabel={tagModal.type === "edit" ? tagModal.tag.label : ""}
@@ -634,7 +635,7 @@ export function SystemSettingsContent() {
 
       <BadgeFormModal
         open={badgeModal.type !== "closed"}
-        onClose={closeBadgeModal}
+        onClose={() => setBadgeModal({ type: "closed" })}
         mode={badgeModal.type === "edit" ? "edit" : "add"}
         badgeId={badgeModal.type === "edit" ? badgeModal.badge.id : undefined}
         initialIconId={badgeModal.type === "edit" ? badgeModal.badge.iconId : undefined}
@@ -646,19 +647,8 @@ export function SystemSettingsContent() {
       <EditMessageTemplateModal
         open={editEmailOpen}
         template={selectedEmailTemplate}
-        onClose={() => {
-          closeEditEmail();
-          setSelectedEmailTemplate(null);
-        }}
-        onSave={(updated) => {
-          setEmailTemplates((prev) =>
-            prev.map((t) =>
-              t.id === updated.id
-                ? { ...(updated as EmailTemplateListItem), lastEditedAt: new Date().toISOString() }
-                : t
-            )
-          );
-        }}
+        onClose={() => { setEditEmailOpen(false); setSelectedEmailTemplate(null); }}
+        onSave={handleEmailTemplateSave}
       />
     </div>
   );

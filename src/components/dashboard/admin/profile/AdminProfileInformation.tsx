@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useId, useMemo, useRef, useState, type ChangeEvent, type FC } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type ChangeEvent, type FC } from "react";
 import { useTranslations } from "next-intl";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   CameraIcon,
   FacebookIcon,
@@ -13,6 +14,8 @@ import {
 } from "@/components/ui/icons";
 import { RichTextEditor, EditorToolbar, EditorRegistryProvider } from "@/components/ui/rich-text";
 import { theme } from "@/lib/theme";
+import { useProfile, profileKeys } from "@/hooks/queries/profile";
+import { updateProfile, uploadAvatar, type ProfileSocialLinks } from "@/services/profile.service";
 
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 
@@ -35,7 +38,7 @@ function initialsFromName(name: string): string {
   return name.slice(0, 2).toUpperCase() || "?";
 }
 
-type PresetKey = "facebook" | "twitter" | "instagram" | "linkedin";
+type PresetKey = keyof Omit<ProfileSocialLinks, "other" | "extra">;
 
 const PRESETS: { key: PresetKey; Icon: FC }[] = [
   { key: "facebook", Icon: FacebookIcon },
@@ -47,15 +50,16 @@ const PRESETS: { key: PresetKey; Icon: FC }[] = [
 export function AdminProfileInformation() {
   const t = useTranslations("Dashboard.adminProfile");
   const photoInputId = useId();
-  const [fullName, setFullName] = useState("Fadi Barghouti");
-  const [email, setEmail] = useState("fadi.b@example.com");
-  const [role, setRole] = useState("Lead Web Developer");
-  const [company, setCompany] = useState("TechCorp Inc.");
-  const [location, setLocation] = useState("Gaza, Palestine State of");
-  const [externalLink, setExternalLink] = useState("about.me/fadi-b");
-  const [biography, setBiography] = useState(
-    "Senior Frontend Developer with 8+ years of experience in React and TypeScript."
-  );
+  const queryClient = useQueryClient();
+  const { data: profile } = useProfile();
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
+  const [company, setCompany] = useState("");
+  const [location, setLocation] = useState("");
+  const [externalLink, setExternalLink] = useState("");
+  const [biography, setBiography] = useState("");
   const [presetUrls, setPresetUrls] = useState<Record<PresetKey, string>>({
     facebook: "",
     twitter: "",
@@ -66,9 +70,65 @@ export function AdminProfileInformation() {
   const [otherLinkUrl, setOtherLinkUrl] = useState("");
   const [otherFocused, setOtherFocused] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [savedFlash, setSavedFlash] = useState(false);
   const objectUrlRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!profile) return;
+    setFullName(profile.full_name);
+    setEmail(profile.email);
+    setRole(profile.job_title);
+    setCompany(profile.company);
+    setLocation(profile.location);
+    setExternalLink(profile.personal_link);
+    setBiography(profile.about);
+    setPresetUrls({
+      facebook: profile.social_links.facebook,
+      twitter: profile.social_links.twitter,
+      instagram: profile.social_links.instagram,
+      linkedin: profile.social_links.linkedin,
+    });
+    setOtherLinkUrl(profile.social_links.other);
+    setExtraLinks(
+      profile.social_links.extra.map((url) => ({ id: crypto.randomUUID(), url }))
+    );
+    if (profile.avatar_url) setAvatarPreview(profile.avatar_url);
+  }, [profile]);
+
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      let avatarPath: string | undefined;
+      if (pendingAvatarFile) {
+        avatarPath = await uploadAvatar(pendingAvatarFile);
+      }
+      return updateProfile({
+        full_name: fullName,
+        email,
+        job_title: role,
+        company,
+        location,
+        personal_link: externalLink,
+        about: biography,
+        social_links: JSON.stringify({
+          facebook: presetUrls.facebook,
+          twitter: presetUrls.twitter,
+          instagram: presetUrls.instagram,
+          linkedin: presetUrls.linkedin,
+          other: otherLinkUrl,
+          extra: extraLinks.map((x) => x.url).filter(Boolean),
+        }),
+        ...(avatarPath ? { avatar: avatarPath } : {}),
+      });
+    },
+    onSuccess: () => {
+      setPendingAvatarFile(null);
+      void queryClient.invalidateQueries({ queryKey: profileKeys.all });
+      setSavedFlash(true);
+      window.setTimeout(() => setSavedFlash(false), 2000);
+    },
+  });
 
   const initials = useMemo(() => initialsFromName(fullName), [fullName]);
 
@@ -97,6 +157,7 @@ export function AdminProfileInformation() {
       const url = URL.createObjectURL(f);
       objectUrlRef.current = url;
       setAvatarPreview(url);
+      setPendingAvatarFile(f);
     },
     [revokePreview, t]
   );
@@ -114,9 +175,8 @@ export function AdminProfileInformation() {
   }, []);
 
   const handleSave = useCallback(() => {
-    setSavedFlash(true);
-    window.setTimeout(() => setSavedFlash(false), 2000);
-  }, []);
+    saveMutation.mutate();
+  }, [saveMutation]);
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -333,13 +393,17 @@ export function AdminProfileInformation() {
         </div>
 
         <div className="mt-10">
+          {saveMutation.isError && (
+            <p className="mb-3 text-sm text-red-400">{t("saveError")}</p>
+          )}
           <button
             type="button"
             onClick={handleSave}
-            className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90"
+            disabled={saveMutation.isPending}
+            className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:opacity-60"
             style={{ backgroundColor: theme.accentGold }}
           >
-            {savedFlash ? t("saved") : t("saveChanges")}
+            {saveMutation.isPending ? t("saving") : savedFlash ? t("saved") : t("saveChanges")}
           </button>
         </div>
       </div>

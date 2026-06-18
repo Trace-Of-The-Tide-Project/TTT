@@ -4,16 +4,24 @@ import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { TrashIcon } from "@/components/ui/icons";
 import { settingsCardClass } from "./SettingsPrimitives";
+import api from "@/services/api";
 
 export function AdminAccountSecurity() {
   const t = useTranslations("Dashboard.adminAccount");
   const [busy, setBusy] = useState(false);
 
-  const onDeactivate = useCallback(() => {
-    const ok = window.confirm(t("deactivateConfirm"));
-    if (!ok) return;
+  const onDeactivate = useCallback(async () => {
+    const password = window.prompt(t("deactivateConfirm"));
+    if (!password) return;
     setBusy(true);
-    window.setTimeout(() => setBusy(false), 1200);
+    try {
+      await api.post("/author/settings/account/deactivate", { password });
+      window.location.href = "/";
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      window.alert(msg);
+      setBusy(false);
+    }
   }, [t]);
 
   return (

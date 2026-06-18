@@ -4,33 +4,57 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { AlertTriangleIcon, MoreDotsIcon } from "@/components/ui/icons";
-import {
-  sampleDonations,
-  samplePayouts,
-  sampleSuspiciousActivity,
-  type DonationRow,
-  type PayoutRow,
-} from "@/lib/dashboard/finance-constants";
+import { api } from "@/services/api";
 
 const FINANCE_TAB_IDS = ["donations", "payouts", "suspicious", "invoices"] as const;
 type FinanceTabId = (typeof FINANCE_TAB_IDS)[number];
 
-function payoutStatusKey(status: PayoutRow["status"]): "pending" | "underReview" {
-  return status === "Pending" ? "pending" : "underReview";
+interface DonationRow {
+  id: string;
+  donor_name: string | null;
+  donor_email: string | null;
+  recipient_name: string | null;
+  amount: number;
+  currency: string;
+  status: string;
+  created_at: string;
 }
 
-function donationStatusKey(status: DonationRow["status"]): "completed" | "pending" {
-  return status === "Completed" ? "completed" : "pending";
+interface PayoutRow {
+  id: string;
+  creator_name: string | null;
+  creator_email: string | null;
+  amount: number;
+  currency: string;
+  status: string;
+  created_at: string;
 }
 
-function RowActions() {
+interface FraudFlag {
+  id: string;
+  flag_type: string;
+  severity: string;
+  status: string;
+  user_email: string | null;
+  amount: number | null;
+  created_at: string;
+  notes: string | null;
+}
+
+function fmt(amount: number, currency = "USD") {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
+}
+
+function fmtDate(iso: string) {
+  return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+}
+
+function RowActions({ onViewDetails }: { onViewDetails?: () => void }) {
   const ta = useTranslations("Dashboard.financePage.actions");
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const [menuPos, setMenuPos] = useState<{ top: number; left: number; placeAbove: boolean } | null>(
-    null,
-  );
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number; placeAbove: boolean } | null>(null);
 
   const menuWidth = 160;
   const menuMargin = 8;
@@ -42,19 +66,11 @@ function RowActions() {
       const rect = btn.getBoundingClientRect();
       const viewportW = window.innerWidth;
       const viewportH = window.innerHeight;
-
-      // Default: open below, aligned right edge to button.
-      const left = Math.min(
-        Math.max(8, rect.right - menuWidth),
-        Math.max(8, viewportW - menuWidth - 8),
-      );
-
-      // Rough menu height: divider + 2 items + padding.
+      const left = Math.min(Math.max(8, rect.right - menuWidth), Math.max(8, viewportW - menuWidth - 8));
       const estimatedHeight = 2 * 40 + 12 + 8;
       const spaceBelow = viewportH - rect.bottom;
       const placeAbove = spaceBelow < estimatedHeight + menuMargin;
       const top = placeAbove ? rect.top - menuMargin : rect.bottom + menuMargin;
-
       setMenuPos({ top, left, placeAbove });
     };
   }, []);
@@ -76,18 +92,15 @@ function RowActions() {
     function onDocKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
     }
-    function onReposition() {
-      updatePosition();
-    }
     document.addEventListener("mousedown", onDocMouseDown);
     document.addEventListener("keydown", onDocKeyDown);
-    window.addEventListener("scroll", onReposition, true);
-    window.addEventListener("resize", onReposition);
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
     return () => {
       document.removeEventListener("mousedown", onDocMouseDown);
       document.removeEventListener("keydown", onDocKeyDown);
-      window.removeEventListener("scroll", onReposition, true);
-      window.removeEventListener("resize", onReposition);
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
     };
   }, [open, updatePosition]);
 
@@ -121,7 +134,7 @@ function RowActions() {
             <button
               type="button"
               className="w-full rounded-md px-3 py-2 text-start text-sm text-foreground hover:bg-[var(--tott-dash-ghost-hover)]"
-              onClick={() => setOpen(false)}
+              onClick={() => { onViewDetails?.(); setOpen(false); }}
             >
               {ta("viewDetails")}
             </button>
@@ -144,8 +157,72 @@ export function FinanceContent() {
   const td = useTranslations("Dashboard.financePage.donations");
   const tp = useTranslations("Dashboard.financePage.payouts");
   const ts = useTranslations("Dashboard.financePage.suspicious");
+
   const [activeTab, setActiveTab] = useState<FinanceTabId>("donations");
-  const [payouts, setPayouts] = useState(samplePayouts);
+
+  const [donations, setDonations] = useState<DonationRow[]>([]);
+  const [donationsMeta, setDonationsMeta] = useState({ total: 0, page: 1, totalPages: 1 });
+  const [donationsLoading, setDonationsLoading] = useState(false);
+
+  const [payouts, setPayouts] = useState<PayoutRow[]>([]);
+  const [payoutsMeta, setPayoutsMeta] = useState({ total: 0, page: 1, totalPages: 1 });
+  const [payoutsLoading, setPayoutsLoading] = useState(false);
+
+  const [fraudFlags, setFraudFlags] = useState<FraudFlag[]>([]);
+  const [fraudLoading, setFraudLoading] = useState(false);
+
+  function loadDonations(page = 1) {
+    setDonationsLoading(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    api.get("/finance/donations", { params: { page, limit: 20 } }).then((r: { data: any }) => {
+      const body = r.data?.data ?? r.data;
+      setDonations(body?.rows ?? body?.donations ?? []);
+      setDonationsMeta(body?.meta ?? { total: 0, page: 1, totalPages: 1 });
+    }).finally(() => setDonationsLoading(false));
+  }
+
+  function loadPayouts(page = 1) {
+    setPayoutsLoading(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    api.get("/finance/payouts", { params: { page, limit: 20 } }).then((r: { data: any }) => {
+      const body = r.data?.data ?? r.data;
+      setPayouts(body?.rows ?? body?.payouts ?? []);
+      setPayoutsMeta(body?.meta ?? { total: 0, page: 1, totalPages: 1 });
+    }).finally(() => setPayoutsLoading(false));
+  }
+
+  function loadFraudFlags() {
+    setFraudLoading(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    api.get("/finance/fraud-flags", { params: { limit: 20 } }).then((r: { data: any }) => {
+      const body = r.data?.data ?? r.data;
+      setFraudFlags(body?.rows ?? body?.flags ?? []);
+    }).finally(() => setFraudLoading(false));
+  }
+
+  useEffect(() => { loadDonations(); }, []);
+  useEffect(() => { loadPayouts(); }, []);
+  useEffect(() => { loadFraudFlags(); }, []);
+
+  async function handleApprove(id: string) {
+    await api.patch(`/finance/payouts/${id}/approve`);
+    loadPayouts();
+  }
+
+  async function handleReject(id: string) {
+    await api.patch(`/finance/payouts/${id}/reject`);
+    loadPayouts();
+  }
+
+  async function handleInvestigate(id: string) {
+    await api.patch(`/finance/fraud-flags/${id}/investigate`);
+    loadFraudFlags();
+  }
+
+  async function handleBlock(id: string) {
+    await api.patch(`/finance/fraud-flags/${id}/block`);
+    loadFraudFlags();
+  }
 
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
@@ -155,7 +232,7 @@ export function FinanceContent() {
             tabId === "payouts"
               ? t("tabs.payouts", { count: payouts.length })
               : tabId === "suspicious"
-                ? t("tabs.suspicious", { count: sampleSuspiciousActivity.length })
+                ? t("tabs.suspicious", { count: fraudFlags.length })
                 : t(`tabs.${tabId}`);
           return (
             <button
@@ -174,172 +251,231 @@ export function FinanceContent() {
         })}
       </div>
 
+      {/* ── PAYOUTS ── */}
       {activeTab === "payouts" ? (
         <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 lg:p-8">
           <h2 className="text-2xl font-semibold text-foreground">{tp("title")}</h2>
           <p className="mt-1 text-sm text-gray-500">{tp("subtitle")}</p>
 
-          <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--tott-card-border)]">
-            <div className="grid grid-cols-[1.3fr_0.8fr_1fr_0.9fr_1fr] items-center bg-[var(--tott-dash-surface)] px-6 py-4 text-sm border-b border-[var(--tott-card-border)]">
-              <div className="text-sm text-[#CBA158]">{tp("colCreator")}</div>
-              <div className="text-sm text-[#CBA158]">{tp("colAmount")}</div>
-              <div className="text-sm text-[#CBA158]">{tp("colRequested")}</div>
-              <div className="text-sm text-[#CBA158]">{tp("colStatus")}</div>
-              <div className="text-end text-sm text-[#CBA158]">{tp("colActions")}</div>
-            </div>
+          {payoutsLoading ? (
+            <p className="mt-8 text-center text-sm text-gray-500">Loading…</p>
+          ) : payouts.length === 0 ? (
+            <p className="mt-8 text-center text-sm text-gray-500">No payouts found.</p>
+          ) : (
+            <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--tott-card-border)]">
+              <div className="grid grid-cols-[1.3fr_0.8fr_1fr_0.9fr_1fr] items-center bg-[var(--tott-dash-surface)] px-6 py-4 text-sm border-b border-[var(--tott-card-border)]">
+                <div className="text-sm text-[#CBA158]">{tp("colCreator")}</div>
+                <div className="text-sm text-[#CBA158]">{tp("colAmount")}</div>
+                <div className="text-sm text-[#CBA158]">{tp("colRequested")}</div>
+                <div className="text-sm text-[#CBA158]">{tp("colStatus")}</div>
+                <div className="text-end text-sm text-[#CBA158]">{tp("colActions")}</div>
+              </div>
 
-            <div className="divide-y divide-[var(--tott-card-border)]">
-              {payouts.map((row) => (
-                <div
-                  key={row.id}
-                  className="grid grid-cols-[1.3fr_0.8fr_1fr_0.9fr_1fr] items-center px-6 py-4"
-                >
-                  <div className="text-sm font-medium text-foreground">{row.creator}</div>
-                  <div className="text-sm text-gray-500">{row.amount}</div>
-                  <div className="text-sm text-gray-400">{row.requested}</div>
+              <div className="divide-y divide-[var(--tott-card-border)]">
+                {payouts.map((row) => (
                   <div
-                    className={`text-sm font-medium ${
-                      row.status === "Pending" ? "text-[#F59E0B]" : "text-blue-400"
-                    }`}
+                    key={row.id}
+                    className="grid grid-cols-[1.3fr_0.8fr_1fr_0.9fr_1fr] items-center px-6 py-4"
                   >
-                    {tp(`status.${payoutStatusKey(row.status)}`)}
-                  </div>
-                  <div className="flex justify-end gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPayouts((prev) => prev.filter((p) => p.id !== row.id));
-                      }}
-                      className="inline-flex h-[36px] items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 text-sm font-medium text-emerald-400 transition-colors hover:bg-[var(--tott-dash-control-bg)]"
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{row.creator_name ?? "—"}</p>
+                      <p className="text-xs text-gray-500">{row.creator_email ?? ""}</p>
+                    </div>
+                    <div className="text-sm text-gray-500">{fmt(row.amount, row.currency)}</div>
+                    <div className="text-sm text-gray-400">{fmtDate(row.created_at)}</div>
+                    <div
+                      className={`text-sm font-medium capitalize ${
+                        row.status === "pending" ? "text-[#F59E0B]" : row.status === "approved" ? "text-emerald-400" : "text-blue-400"
+                      }`}
                     >
-                      <span className="[&_svg]:h-4 [&_svg]:w-4">
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                      {row.status}
+                    </div>
+                    {row.status === "pending" || row.status === "approved" ? (
+                      <div className="flex justify-end gap-3">
+                        {row.status === "pending" && (
+                          <button
+                            type="button"
+                            onClick={() => handleApprove(row.id)}
+                            className="inline-flex h-[36px] items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 text-sm font-medium text-emerald-400 transition-colors hover:bg-[var(--tott-dash-control-bg)]"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            {tp("approve")}
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleReject(row.id)}
+                          className="inline-flex h-[36px] items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 text-sm font-medium text-red-400 transition-colors hover:bg-[var(--tott-dash-control-bg)]"
                         >
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      </span>
-                      {tp("approve")}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPayouts((prev) => prev.filter((p) => p.id !== row.id));
-                      }}
-                      className="inline-flex h-[36px] items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 text-sm font-medium text-red-400 transition-colors hover:bg-[var(--tott-dash-control-bg)]"
-                    >
-                      <span className="[&_svg]:h-4 [&_svg]:w-4">
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M18 6L6 18M6 6l12 12" />
-                        </svg>
-                      </span>
-                      {tp("reject")}
-                    </button>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M18 6L6 18M6 6l12 12" />
+                          </svg>
+                          {tp("reject")}
+                        </button>
+                      </div>
+                    ) : (
+                      <div />
+                    )}
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {payoutsMeta.totalPages > 1 && (
+            <div className="flex items-center gap-3 mt-4">
+              <button
+                onClick={() => loadPayouts(payoutsMeta.page - 1)}
+                disabled={payoutsMeta.page <= 1}
+                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-gray-400"
+              >
+                ← Prev
+              </button>
+              <span className="text-xs text-gray-500">Page {payoutsMeta.page} of {payoutsMeta.totalPages}</span>
+              <button
+                onClick={() => loadPayouts(payoutsMeta.page + 1)}
+                disabled={payoutsMeta.page >= payoutsMeta.totalPages}
+                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-gray-400"
+              >
+                Next →
+              </button>
+            </div>
+          )}
         </div>
+
+      /* ── SUSPICIOUS ── */
       ) : activeTab === "suspicious" ? (
         <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 lg:p-8">
           <h2 className="text-2xl font-semibold text-foreground">{ts("title")}</h2>
           <p className="mt-1 text-sm text-gray-500">{ts("subtitle")}</p>
 
-          <div className="mt-6 space-y-4">
-            {sampleSuspiciousActivity.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between gap-6 rounded-2xl border border-red-500/60 bg-[var(--tott-dash-surface)] px-6 py-5"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-gray-300">
-                    <AlertTriangleIcon />
+          {fraudLoading ? (
+            <p className="mt-8 text-center text-sm text-gray-500">Loading…</p>
+          ) : fraudFlags.length === 0 ? (
+            <p className="mt-8 text-center text-sm text-gray-500">No suspicious activity.</p>
+          ) : (
+            <div className="mt-6 space-y-4">
+              {fraudFlags.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between gap-6 rounded-2xl border border-red-500/60 bg-[var(--tott-dash-surface)] px-6 py-5"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-gray-300">
+                      <AlertTriangleIcon />
+                    </div>
+                    <div>
+                      <p className="text-base font-semibold text-foreground capitalize">{item.flag_type.replace(/_/g, " ")}</p>
+                      <p className="mt-1 text-sm text-gray-500">
+                        {item.user_email ?? "Unknown"}{item.amount ? ` • ${fmt(item.amount)}` : ""} • {fmtDate(item.created_at)}
+                        {item.severity && <span className="ml-2 capitalize text-xs text-red-400">{item.severity}</span>}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-base font-semibold text-foreground">{item.title}</p>
-                    <p className="mt-1 text-sm text-gray-500">{item.meta}</p>
-                  </div>
-                </div>
 
-                <div className="flex shrink-0 items-center gap-3">
-                  <button
-                    type="button"
-                    className="h-[36px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-bg)]"
-                  >
-                    {ts("investigate")}
-                  </button>
-                  <button
-                    type="button"
-                    className="h-[36px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 text-sm font-medium text-red-400 transition-colors hover:bg-[var(--tott-dash-control-bg)]"
-                  >
-                    {ts("block")}
-                  </button>
+                  <div className="flex shrink-0 items-center gap-3">
+                    {item.status !== "investigating" && (
+                      <button
+                        type="button"
+                        onClick={() => handleInvestigate(item.id)}
+                        className="h-[36px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-bg)]"
+                      >
+                        {ts("investigate")}
+                      </button>
+                    )}
+                    {item.status !== "blocked" && (
+                      <button
+                        type="button"
+                        onClick={() => handleBlock(item.id)}
+                        className="h-[36px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 text-sm font-medium text-red-400 transition-colors hover:bg-[var(--tott-dash-control-bg)]"
+                      >
+                        {ts("block")}
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
+
+      /* ── INVOICES ── */
       ) : activeTab === "invoices" ? (
         <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-10 text-center text-gray-500">
           {t("invoices.comingSoon")}
         </div>
+
+      /* ── DONATIONS ── */
       ) : (
         <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 lg:p-8">
           <h2 className="text-2xl font-semibold text-foreground">{td("title")}</h2>
           <p className="mt-1 text-sm text-gray-500">{td("subtitle")}</p>
 
-          <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--tott-card-border)]">
-            <div className="grid grid-cols-[1.4fr_1fr_0.8fr_0.9fr_0.9fr_56px] items-center bg-[var(--tott-dash-surface)] px-6 py-4 text-sm border-b border-[var(--tott-card-border)]">
-              <div className="text-sm text-[#CBA158]">{td("colDonor")}</div>
-              <div className="text-sm text-[#CBA158]">{td("colRecipient")}</div>
-              <div className="text-sm text-[#CBA158]">{td("colAmount")}</div>
-              <div className="text-sm text-[#CBA158]">{td("colDate")}</div>
-              <div className="text-sm text-[#CBA158]">{td("colStatus")}</div>
-              <div />
-            </div>
+          {donationsLoading ? (
+            <p className="mt-8 text-center text-sm text-gray-500">Loading…</p>
+          ) : donations.length === 0 ? (
+            <p className="mt-8 text-center text-sm text-gray-500">No donations found.</p>
+          ) : (
+            <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--tott-card-border)]">
+              <div className="grid grid-cols-[1.4fr_1fr_0.8fr_0.9fr_0.9fr_56px] items-center bg-[var(--tott-dash-surface)] px-6 py-4 text-sm border-b border-[var(--tott-card-border)]">
+                <div className="text-sm text-[#CBA158]">{td("colDonor")}</div>
+                <div className="text-sm text-[#CBA158]">{td("colRecipient")}</div>
+                <div className="text-sm text-[#CBA158]">{td("colAmount")}</div>
+                <div className="text-sm text-[#CBA158]">{td("colDate")}</div>
+                <div className="text-sm text-[#CBA158]">{td("colStatus")}</div>
+                <div />
+              </div>
 
-            <div className="divide-y divide-[var(--tott-card-border)]">
-              {sampleDonations.map((row) => (
-                <div
-                  key={row.id}
-                  className="grid grid-cols-[1.4fr_1fr_0.8fr_0.9fr_0.9fr_56px] items-center px-6 py-4"
-                >
-                  <div className="text-sm font-medium text-foreground">{row.donor}</div>
-                  <div className="text-sm text-gray-200">{row.recipient}</div>
-                  <div className="text-sm text-gray-500">{row.amount}</div>
-                  <div className="text-sm text-gray-400">{row.date}</div>
+              <div className="divide-y divide-[var(--tott-card-border)]">
+                {donations.map((row) => (
                   <div
-                    className={`text-sm font-medium ${
-                      row.status === "Completed" ? "text-emerald-400" : "text-[#F59E0B]"
-                    }`}
+                    key={row.id}
+                    className="grid grid-cols-[1.4fr_1fr_0.8fr_0.9fr_0.9fr_56px] items-center px-6 py-4"
                   >
-                    {td(`status.${donationStatusKey(row.status)}`)}
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{row.donor_name ?? "—"}</p>
+                      <p className="text-xs text-gray-500">{row.donor_email ?? ""}</p>
+                    </div>
+                    <div className="text-sm text-gray-200">{row.recipient_name ?? "—"}</div>
+                    <div className="text-sm text-gray-500">{fmt(row.amount, row.currency)}</div>
+                    <div className="text-sm text-gray-400">{fmtDate(row.created_at)}</div>
+                    <div
+                      className={`text-sm font-medium capitalize ${
+                        row.status === "completed" ? "text-emerald-400" : "text-[#F59E0B]"
+                      }`}
+                    >
+                      {row.status === "completed" ? td("status.completed") : td("status.pending")}
+                    </div>
+                    <RowActions />
                   </div>
-                  <RowActions />
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {donationsMeta.totalPages > 1 && (
+            <div className="flex items-center gap-3 mt-4">
+              <button
+                onClick={() => loadDonations(donationsMeta.page - 1)}
+                disabled={donationsMeta.page <= 1}
+                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-gray-400"
+              >
+                ← Prev
+              </button>
+              <span className="text-xs text-gray-500">Page {donationsMeta.page} of {donationsMeta.totalPages}</span>
+              <button
+                onClick={() => loadDonations(donationsMeta.page + 1)}
+                disabled={donationsMeta.page >= donationsMeta.totalPages}
+                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-gray-400"
+              >
+                Next →
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
-

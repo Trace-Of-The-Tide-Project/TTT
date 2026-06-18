@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { api } from "@/services/api";
 import {
   ShieldIcon,
   ActivityIcon,
@@ -15,12 +16,25 @@ import {
 import { ConfigureRoleModal } from "@/components/dashboard/modals/ConfigureRoleModal";
 import { PermissionToggle } from "@/components/dashboard/admin/roles/PermissionToggle";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
-import {
-  securityAdminRoles,
-  adminSessionTableRows,
-  securityLogEntries,
-  type AdminSessionTableRow,
-} from "@/lib/dashboard/security-constants";
+import { securityAdminRoles } from "@/lib/dashboard/security-constants";
+
+interface LiveSession {
+  id: string;
+  ip_address: string;
+  user_agent: string;
+  created_at: string;
+  expires_at: string;
+  is_current?: boolean;
+}
+
+interface AuditEntry {
+  id: string;
+  action: string;
+  entity_type: string;
+  created_at: string;
+  user?: { full_name: string; username: string };
+  details?: Record<string, unknown>;
+}
 
 const ACCENT = "#E8DDC0";
 
@@ -42,7 +56,20 @@ export function SecurityContent() {
   const [configureOpen, setConfigureOpen] = useState(false);
   const [configureRoleTitle, setConfigureRoleTitle] = useState<string | null>(null);
 
-  const [sessions, setSessions] = useState<AdminSessionTableRow[]>(() => [...adminSessionTableRows]);
+  const [sessions, setSessions] = useState<LiveSession[]>([]);
+  const [auditLogs, setAuditLogs] = useState<AuditEntry[]>([]);
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    api.get("/author/settings/account/sessions").then((r: { data: any }) => {
+      setSessions(r.data?.sessions ?? []);
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    api.get("/audit-trails", { params: { limit: 20, sortBy: "timestamp", order: "DESC" } }).then((r: { data: any }) => {
+      const rows = r.data?.data ?? r.data?.rows ?? r.data ?? [];
+      setAuditLogs(Array.isArray(rows) ? rows : []);
+    });
+  }, []);
 
   const [require2fa, setRequire2fa] = useState(true);
   const [sessionTimeout, setSessionTimeout] = useState<SessionTimeoutKey>("m30");
@@ -55,22 +82,18 @@ export function SecurityContent() {
     setConfigureOpen(true);
   };
 
-  const endSession = (id: string) => {
+  const endSession = async (id: string) => {
+    await api.delete(`/author/settings/account/sessions/${id}`);
     setSessions((prev) => prev.filter((r) => r.id !== id));
   };
 
-  const endAllOtherSessions = () => {
-    setSessions((prev) => prev.filter((r) => r.status === "current"));
+  const endAllOtherSessions = async () => {
+    const others = sessions.filter((s) => !s.is_current);
+    await Promise.all(others.map((s) => api.delete(`/author/settings/account/sessions/${s.id}`)));
+    setSessions((prev) => prev.filter((s) => s.is_current));
   };
 
   const tabIconClass = "text-[#E8DDC0] [&_svg]:h-4 [&_svg]:w-4";
-
-  const statusLabel = (s: AdminSessionTableRow["status"]) => t(`sessions.status.${s}`);
-
-  const statusClass = (s: AdminSessionTableRow["status"]) => {
-    if (s === "idle") return "text-gray-500";
-    return "text-emerald-400";
-  };
 
   const sessionColumns = [
     t("sessions.columns.user"),
@@ -189,20 +212,27 @@ export function SecurityContent() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--tott-card-border)]">
+                  {sessions.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-8 text-center text-sm text-gray-500">No active sessions.</td>
+                    </tr>
+                  )}
                   {sessions.map((row) => (
                     <tr key={row.id} className="bg-[var(--tott-dash-surface)]">
                       <td className="px-4 py-3 font-semibold text-foreground">
-                        {t(`sessions.sampleRows.${row.id}.user`)}
+                        {row.is_current ? "You (current)" : "User"}
                       </td>
-                      <td className="px-4 py-3 text-gray-400">{row.ip}</td>
-                      <td className="px-4 py-3 text-gray-400">{t(`sessions.sampleRows.${row.id}.location`)}</td>
-                      <td className="px-4 py-3 text-gray-400">{t(`sessions.sampleRows.${row.id}.device`)}</td>
-                      <td className="px-4 py-3 text-gray-400">{t(`sessions.sampleRows.${row.id}.lastActive`)}</td>
-                      <td className={`px-4 py-3 font-medium ${statusClass(row.status)}`}>
-                        {statusLabel(row.status)}
+                      <td className="px-4 py-3 text-gray-400">{row.ip_address ?? "—"}</td>
+                      <td className="px-4 py-3 text-gray-400">—</td>
+                      <td className="px-4 py-3 text-gray-400 text-xs truncate max-w-[160px]">{row.user_agent ?? "—"}</td>
+                      <td className="px-4 py-3 text-gray-400 text-xs">
+                        {row.created_at ? new Date(row.created_at).toLocaleDateString() : "—"}
+                      </td>
+                      <td className={`px-4 py-3 font-medium text-sm ${row.is_current ? "text-emerald-400" : "text-gray-500"}`}>
+                        {row.is_current ? t("sessions.status.current") : t("sessions.status.idle")}
                       </td>
                       <td className="px-4 py-3 text-end">
-                        {row.status === "current" ? (
+                        {row.is_current ? (
                           <span className="text-xs text-gray-600">—</span>
                         ) : (
                           <button
@@ -331,13 +361,16 @@ export function SecurityContent() {
             <h2 className="text-lg font-bold text-foreground">{t("tabs.logs")}</h2>
             <p className="mt-1 text-sm text-gray-500">{t("logs.intro")}</p>
             <div className="mt-6 space-y-3">
-              {securityLogEntries.map((entry) => {
-                const isWarning = entry.variant === "warning";
+              {auditLogs.length === 0 && (
+                <p className="text-center text-sm text-gray-500 py-8">No audit logs yet.</p>
+              )}
+              {auditLogs.map((entry) => {
+                const isDelete = entry.action === "DELETE";
                 return (
                   <div
                     key={entry.id}
                     className={`flex items-center gap-4 rounded-xl border bg-[var(--tott-dash-surface)] px-4 py-4 sm:gap-5 sm:px-5 ${
-                      isWarning ? "border-red-600/45" : "border-[var(--tott-card-border)]"
+                      isDelete ? "border-red-600/45" : "border-[var(--tott-card-border)]"
                     }`}
                   >
                     <div
@@ -345,14 +378,20 @@ export function SecurityContent() {
                       aria-hidden
                     >
                       <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
-                        {isWarning ? <AlertTriangleIcon /> : <SquareCheckIcon />}
+                        {isDelete ? <AlertTriangleIcon /> : <SquareCheckIcon />}
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-foreground">{t(`logs.entries.${entry.id}.title`)}</p>
-                      <p className="mt-0.5 text-sm text-gray-500">{t(`logs.entries.${entry.id}.meta`)}</p>
+                      <p className="font-semibold text-foreground capitalize">
+                        {entry.action} {entry.entity_type?.replace(/_/g, " ")}
+                      </p>
+                      <p className="mt-0.5 text-sm text-gray-500">
+                        {entry.user?.full_name ?? entry.user?.username ?? "System"}
+                      </p>
                     </div>
-                    <p className="shrink-0 text-sm text-gray-500">{t(`logs.entries.${entry.id}.timeAgo`)}</p>
+                    <p className="shrink-0 text-sm text-gray-500">
+                      {entry.created_at ? new Date(entry.created_at).toLocaleString() : "—"}
+                    </p>
                   </div>
                 );
               })}
