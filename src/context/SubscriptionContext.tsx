@@ -22,9 +22,10 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     Promise.all([
       api.get('/subscriptions/me').catch(() => ({ data: null })),
       api.get('/subscriptions/plans').catch(() => ({ data: [] })),
-    ]).then(([meRes, plansRes]: [{ data: UserSubscription | null }, { data: { data?: SubscriptionPlan[] } | SubscriptionPlan[] }]) => {
+    ]).then(([meRes, plansRes]: [{ data: UserSubscription | null }, { data: unknown }]) => {
       setSubscription(meRes.data ?? null);
-      const plansData = plansRes.data?.data ?? plansRes.data;
+      const raw = plansRes.data as { data?: SubscriptionPlan[] } | SubscriptionPlan[];
+      const plansData = Array.isArray(raw) ? raw : raw.data;
       setPlans(Array.isArray(plansData) ? plansData : []);
     }).finally(() => setLoading(false));
   }, []);
