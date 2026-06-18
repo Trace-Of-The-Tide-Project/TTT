@@ -25,6 +25,15 @@
       "basedIn": "Basé à",
       "collaborations": "Collaborations",
       "recognition": "Distinctions"
+    },
+    "show": {
+      "title": "Les voix de TTT",
+      "subtitle": "Découvrez les auteurs qui façonnent nos pages — et suivez ceux que vous aimez.",
+      "featuredHeading": "Auteurs à la une",
+      "searchPlaceholder": "Rechercher des auteurs",
+      "allThemes": "Tous",
+      "emptyTitle": "Aucune voix ne correspond à votre recherche.",
+      "clearFilters": "Effacer les filtres"
     }
   }
 }

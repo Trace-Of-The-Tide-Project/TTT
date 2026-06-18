@@ -25,6 +25,15 @@
       "basedIn": "Based in",
       "collaborations": "Collaborations",
       "recognition": "Recognition"
+    },
+    "show": {
+      "title": "The Voices of TTT",
+      "subtitle": "Discover the writers shaping our pages — and follow the ones you love.",
+      "featuredHeading": "Featured writers",
+      "searchPlaceholder": "Search writers",
+      "allThemes": "All",
+      "emptyTitle": "No voices match your search.",
+      "clearFilters": "Clear filters"
     }
   }
 }

@@ -25,6 +25,15 @@
       "basedIn": "Reside en",
       "collaborations": "Colaboraciones",
       "recognition": "Reconocimientos"
+    },
+    "show": {
+      "title": "Las voces de TTT",
+      "subtitle": "Descubre a los escritores que dan forma a nuestras páginas — y sigue a los que más te gusten.",
+      "featuredHeading": "Escritores destacados",
+      "searchPlaceholder": "Buscar escritores",
+      "allThemes": "Todos",
+      "emptyTitle": "Ninguna voz coincide con tu búsqueda.",
+      "clearFilters": "Borrar filtros"
     }
   }
 }
