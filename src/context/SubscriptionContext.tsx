@@ -1,6 +1,7 @@
 'use client';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { api } from '@/services/api';
+import { useAuth } from '@/components/providers/AuthProvider';
 import type { SubscriptionPlan, UserSubscription } from '@/lib/api/subscriptions';
 
 export interface SubscriptionContextValue {
@@ -13,14 +14,17 @@ export interface SubscriptionContextValue {
 const SubscriptionContext = createContext<SubscriptionContextValue | null>(null);
 
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
+  const { status } = useAuth();
   const [subscription, setSubscription] = useState<UserSubscription | null>(null);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = useCallback(() => {
+  const fetchData = useCallback((isAuthenticated: boolean) => {
     setLoading(true);
     Promise.all([
-      api.get('/subscriptions/me').catch(() => ({ data: null })),
+      isAuthenticated
+        ? api.get('/subscriptions/me').catch(() => ({ data: null }))
+        : Promise.resolve({ data: null }),
       api.get('/subscriptions/plans').catch(() => ({ data: [] })),
     ]).then(([meRes, plansRes]: [{ data: UserSubscription | null }, { data: unknown }]) => {
       setSubscription(meRes.data ?? null);
@@ -30,11 +34,13 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     }).finally(() => setLoading(false));
   }, []);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    if (status === 'loading') return;
+    fetchData(status === 'authenticated');
+  }, [status, fetchData]);
 
   return (
-    <SubscriptionContext.Provider value={{ subscription, plans, loading, refetch: fetchData }}>
+    <SubscriptionContext.Provider value={{ subscription, plans, loading, refetch: () => fetchData(status === 'authenticated') }}>
       {children}
     </SubscriptionContext.Provider>
   );
