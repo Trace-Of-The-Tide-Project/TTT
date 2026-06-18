@@ -4,16 +4,37 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 
-const TEXT_STRONG = "var(--tott-home-text-strong)";
-const TEXT_MUTED = "var(--tott-home-text-muted)";
-const CARD_BORDER = "var(--tott-card-border)";
+// Hexagon grid SVG — matches the site's login/404 background pattern
+function HexGrid() {
+  return (
+    <svg
+      aria-hidden
+      className="pointer-events-none absolute inset-0 h-full w-full"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <pattern
+          id="hex-modal"
+          x="0"
+          y="0"
+          width="56"
+          height="64"
+          patternUnits="userSpaceOnUse"
+        >
+          {/* flat-top hexagon path, ~26px radius */}
+          <path
+            d="M28 4 L52 18 L52 46 L28 60 L4 46 L4 18 Z"
+            fill="none"
+            stroke="rgba(201,169,110,0.18)"
+            strokeWidth="1"
+          />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#hex-modal)" />
+    </svg>
+  );
+}
 
-/**
- * Lightweight auth prompt shown when a guest triggers an auth-gated action
- * (e.g. clicking Follow). Offers Login / Sign up, carrying a callbackUrl back
- * to the current page so the user returns after authenticating. Closes on Esc
- * or backdrop click.
- */
 export function AuthPromptModal({
   open,
   onClose,
@@ -50,66 +71,108 @@ export function AuthPromptModal({
       aria-modal="true"
       aria-label={t("title")}
     >
+      {/* Blurred backdrop */}
       <div
         className="absolute inset-0"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{ backgroundColor: "rgba(10,10,10,0.75)", backdropFilter: "blur(6px)" }}
         onClick={onClose}
         aria-hidden
       />
+
+      {/* Card — mirrors the login page panel shape */}
       <div
-        className="relative w-full max-w-sm p-6"
+        className="relative w-full max-w-sm overflow-hidden"
         style={{
-          backgroundColor: "var(--tott-home-surface, #171717)",
-          border: `1px solid ${CARD_BORDER}`,
-          borderRadius: 14,
+          backgroundColor: "#1c1c1c",
+          border: "1px solid rgba(201,169,110,0.25)",
+          borderRadius: 20,
+          boxShadow: "0 0 0 1px rgba(201,169,110,0.08), 0 24px 60px rgba(0,0,0,0.6)",
         }}
       >
-        <h2
-          className="text-lg font-medium"
-          style={{ color: TEXT_STRONG }}
-        >
-          {t("title")}
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed" style={{ color: TEXT_MUTED }}>
-          {t("body")}
-        </p>
+        {/* Hex pattern fills the card */}
+        <HexGrid />
 
-        <div className="mt-5 flex flex-col gap-3">
-          <Link
-            href={loginHref}
-            className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
-            style={{
-              height: 40,
-              borderRadius: 8,
-              fontWeight: 500,
-              fontSize: 14,
-              backgroundColor: "var(--tott-magazine-btn-bg)",
-              color: "var(--tott-auth-btn-text)",
-            }}
+        {/* Gold top accent line */}
+        <div
+          className="absolute inset-x-0 top-0 h-px"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(201,169,110,0.6), transparent)" }}
+        />
+
+        <div className="relative z-10 px-8 py-10">
+          {/* Brand mark */}
+          <div className="mb-6 flex justify-center">
+            <svg width="36" height="28" viewBox="0 0 36 28" fill="none" aria-hidden>
+              <path d="M2 14 L18 2 L34 14" stroke="#C9A96E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <path d="M6 14 L18 5 L30 14" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.5" />
+              <path d="M2 20 L18 8 L34 20" stroke="#C9A96E" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.25" />
+            </svg>
+          </div>
+
+          <h2
+            className="text-center text-xl font-semibold tracking-tight"
+            style={{ color: "#f5f0e8" }}
           >
-            {t("login")}
-          </Link>
-          <Link
-            href={signUpHref}
-            className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
-            style={{
-              height: 40,
-              borderRadius: 8,
-              fontWeight: 500,
-              fontSize: 14,
-              backgroundColor: CARD_BORDER,
-              color: TEXT_STRONG,
-            }}
+            {t("title")}
+          </h2>
+
+          {/* Gold divider */}
+          <div
+            className="mx-auto my-4 h-px w-16"
+            style={{ background: "linear-gradient(90deg, transparent, #C9A96E, transparent)" }}
+          />
+
+          <p
+            className="text-center text-sm leading-relaxed"
+            style={{ color: "rgba(245,240,232,0.55)" }}
           >
-            {t("signUp")}
-          </Link>
+            {t("body")}
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3">
+            <Link
+              href={loginHref}
+              className="inline-flex items-center justify-center font-medium transition-opacity hover:opacity-90"
+              style={{
+                height: 44,
+                borderRadius: 10,
+                fontSize: 14,
+                letterSpacing: "0.01em",
+                backgroundColor: "#C9A96E",
+                color: "#1a1209",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.25), 0 2px 8px rgba(201,169,110,0.3)",
+              }}
+            >
+              {t("login")}
+            </Link>
+            <Link
+              href={signUpHref}
+              className="inline-flex items-center justify-center font-medium transition-opacity hover:opacity-90"
+              style={{
+                height: 44,
+                borderRadius: 10,
+                fontSize: 14,
+                letterSpacing: "0.01em",
+                backgroundColor: "rgba(255,255,255,0.05)",
+                color: "#f5f0e8",
+                border: "1px solid rgba(201,169,110,0.3)",
+              }}
+            >
+              {t("signUp")}
+            </Link>
+          </div>
         </div>
 
+        {/* Close button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md transition-opacity hover:opacity-80"
-          style={{ color: TEXT_MUTED }}
+          className="absolute right-4 top-4 z-20 flex h-7 w-7 items-center justify-center rounded-full transition-opacity hover:opacity-70"
+          style={{
+            backgroundColor: "rgba(255,255,255,0.06)",
+            color: "rgba(245,240,232,0.5)",
+            fontSize: 13,
+            border: "1px solid rgba(255,255,255,0.08)",
+          }}
           aria-label={t("close")}
         >
           ✕
