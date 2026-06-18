@@ -58,7 +58,7 @@ export function FeedArticleCard({ article }: { article: ArticleListItem }) {
       style={{
         border: `1px solid ${CARD_BORDER}`,
         borderRadius: 12,
-        backgroundColor: "var(--tott-card-bg, transparent)",
+        backgroundColor: "var(--tott-dash-surface, #1c1c1c)",
       }}
     >
       <div
@@ -96,7 +96,7 @@ export function FeedArticleCard({ article }: { article: ArticleListItem }) {
             className="line-clamp-2 text-sm leading-relaxed"
             style={{ color: TEXT_MUTED }}
           >
-            {article.excerpt}
+            {article.excerpt.replace(/<[^>]*>/g, "")}
           </p>
         ) : null}
         {(author || dateLabel) && (

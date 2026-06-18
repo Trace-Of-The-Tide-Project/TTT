@@ -2,9 +2,11 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { DashboardLayout } from "@/components/dashboard/shared/DashboardLayout";
 import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
 import { FeedArticleCard } from "@/components/feed/FeedArticleCard";
 import { useFollowingFeed } from "@/hooks/queries/follows";
+import { userConfig } from "@/lib/dashboard/user-config";
 
 export default function FollowingFeedPage() {
   const t = useTranslations("Feed");
@@ -12,10 +14,10 @@ export default function FollowingFeedPage() {
   const articles = data?.data ?? [];
 
   return (
-    <div>
+    <DashboardLayout config={userConfig}>
       <DashboardHeader title={t("title")} subtitle={t("subtitle")} />
 
-      <div className="space-y-6 p-6 sm:p-8">
+      <div className="mt-2 space-y-6">
         {isLoading ? (
           <p className="text-sm" style={{ color: "var(--tott-home-text-muted)" }}>
             {t("loading")}
@@ -57,13 +59,13 @@ export default function FollowingFeedPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {articles.map((article) => (
               <FeedArticleCard key={article.id} article={article} />
             ))}
           </div>
         )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
