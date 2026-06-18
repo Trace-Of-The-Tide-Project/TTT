@@ -44,7 +44,7 @@ export default function FollowingFeedPage() {
               {t("emptyBody")}
             </p>
             <Link
-              href="/fields"
+              href="/writers"
               className="mt-1 inline-flex items-center justify-center transition-opacity hover:opacity-90"
               style={{
                 padding: "8px 20px",

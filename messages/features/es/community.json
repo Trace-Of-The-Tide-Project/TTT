@@ -1,0 +1,22 @@
+{
+  "Community": {
+    "heroEyebrow": "La Comunidad",
+    "heroTitle": "Donde se reúnen los narradores",
+    "heroSubtitle": "Escritores, convocatorias abiertas y los valores que nos unen — un solo lugar para encontrar tu camino.",
+    "statsWriters": "{count, plural, =0 {Escritores} one {Escritor} other {Escritores}}",
+    "statsOpenCalls": "{count, plural, =0 {Convocatorias} one {Convocatoria} other {Convocatorias}}",
+    "statsGuidelines": "{count, plural, =0 {Normas} one {Norma} other {Normas}}",
+    "writersHeading": "Escritores destacados",
+    "writersSubtitle": "Voces que dan forma a la revista ahora mismo.",
+    "writersCta": "Ver todos los escritores",
+    "openCallsHeading": "Convocatorias abiertas",
+    "openCallsSubtitle": "Invitaciones activas para contribuir. Elige una y únete.",
+    "openCallsCta": "Ver convocatoria",
+    "openCallsAll": "Ver todas las convocatorias",
+    "guidelinesHeading": "Normas de la comunidad",
+    "guidelinesSubtitle": "Las reglas compartidas que mantienen este un lugar donde vale la pena estar.",
+    "ctaHeading": "¿Listo para añadir tu voz?",
+    "ctaSubtitle": "Contribuye con una historia, únete a una convocatoria o inicia un número.",
+    "ctaButton": "Contribuir"
+  }
+}

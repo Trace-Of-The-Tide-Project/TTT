@@ -1,0 +1,22 @@
+{
+  "Community": {
+    "heroEyebrow": "La Communauté",
+    "heroTitle": "Là où les conteurs se rassemblent",
+    "heroSubtitle": "Des auteurs, des appels ouverts et les valeurs qui nous unissent — un seul endroit pour trouver votre place.",
+    "statsWriters": "{count, plural, =0 {Auteurs} one {Auteur} other {Auteurs}}",
+    "statsOpenCalls": "{count, plural, =0 {Appels ouverts} one {Appel ouvert} other {Appels ouverts}}",
+    "statsGuidelines": "{count, plural, =0 {Règles} one {Règle} other {Règles}}",
+    "writersHeading": "Auteurs à la une",
+    "writersSubtitle": "Des voix qui façonnent le magazine en ce moment.",
+    "writersCta": "Voir tous les auteurs",
+    "openCallsHeading": "Appels ouverts",
+    "openCallsSubtitle": "Invitations actives à contribuer. Choisissez-en une et participez.",
+    "openCallsCta": "Voir l'appel",
+    "openCallsAll": "Voir tous les appels ouverts",
+    "guidelinesHeading": "Règles de la communauté",
+    "guidelinesSubtitle": "Les règles communes qui font de cet endroit un lieu où il fait bon être.",
+    "ctaHeading": "Prêt à ajouter votre voix ?",
+    "ctaSubtitle": "Contribuez une histoire, rejoignez un appel ouvert ou lancez un numéro.",
+    "ctaButton": "Contribuer"
+  }
+}

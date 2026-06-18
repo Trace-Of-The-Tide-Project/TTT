@@ -1,4 +1,5 @@
 import { api } from "./api";
+import { serverGet } from "@/lib/api/isomorphic-fetch";
 
 export type OpenCallContentBlockType =
   | "paragraph"
@@ -163,13 +164,20 @@ export type OpenCallListItem = {
   status?: string;
 };
 
+function unwrapOpenCallList(data: unknown): OpenCallListItem[] {
+  if (!data || typeof data !== "object") return [];
+  const o = data as Record<string, unknown>;
+  const list = Array.isArray(o.data) ? o.data : Array.isArray(data) ? data : [];
+  return list as OpenCallListItem[];
+}
+
 export async function getActiveOpenCalls(params?: Record<string, string | number>): Promise<OpenCallListItem[]> {
+  if (typeof window === "undefined") {
+    return unwrapOpenCallList(await serverGet<unknown>("/open-calls/active", params));
+  }
   try {
     const { data } = await api.get<unknown>("/open-calls/active", { params });
-    if (!data || typeof data !== "object") return [];
-    const o = data as Record<string, unknown>;
-    const list = Array.isArray(o.data) ? o.data : Array.isArray(data) ? data : [];
-    return list as OpenCallListItem[];
+    return unwrapOpenCallList(data);
   } catch {
     return [];
   }

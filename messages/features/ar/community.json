@@ -1,0 +1,22 @@
+{
+  "Community": {
+    "heroEyebrow": "المجتمع",
+    "heroTitle": "حيث يلتقي رواة القصص",
+    "heroSubtitle": "كتّاب، ودعوات مفتوحة، والقيم التي تجمعنا — مكان واحد لتجد طريقك إلينا.",
+    "statsWriters": "{count, plural, zero {كتّاب} one {كاتب} two {كاتبان} few {كتّاب} many {كاتباً} other {كاتب}}",
+    "statsOpenCalls": "{count, plural, zero {دعوات مفتوحة} one {دعوة مفتوحة} two {دعوتان مفتوحتان} few {دعوات مفتوحة} many {دعوة مفتوحة} other {دعوة مفتوحة}}",
+    "statsGuidelines": "{count, plural, zero {إرشادات} one {إرشاد} two {إرشادان} few {إرشادات} many {إرشاداً} other {إرشاد}}",
+    "writersHeading": "كتّاب مميزون",
+    "writersSubtitle": "أصوات تشكّل المجلة الآن.",
+    "writersCta": "تعرّف على جميع الكتّاب",
+    "openCallsHeading": "الدعوات المفتوحة",
+    "openCallsSubtitle": "دعوات نشطة للمساهمة. اختر واحدة وانضم.",
+    "openCallsCta": "عرض الدعوة",
+    "openCallsAll": "عرض كل الدعوات المفتوحة",
+    "guidelinesHeading": "إرشادات المجتمع",
+    "guidelinesSubtitle": "القواعد المشتركة التي تجعل هذا المكان جديراً بالانتماء.",
+    "ctaHeading": "هل أنت مستعد لإضافة صوتك؟",
+    "ctaSubtitle": "ساهم بقصة، أو انضم إلى دعوة مفتوحة، أو ابدأ عدداً جديداً.",
+    "ctaButton": "ساهم"
+  }
+}

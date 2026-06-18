@@ -25,6 +25,15 @@
       "basedIn": "مقيم في",
       "collaborations": "التعاونات",
       "recognition": "التكريمات"
+    },
+    "show": {
+      "title": "أصوات TTT",
+      "subtitle": "اكتشف الكتّاب الذين يصوغون صفحاتنا — وتابع من تحب منهم.",
+      "featuredHeading": "كتّاب مميزون",
+      "searchPlaceholder": "ابحث عن كتّاب",
+      "allThemes": "الكل",
+      "emptyTitle": "لا توجد أصوات تطابق بحثك.",
+      "clearFilters": "مسح عوامل التصفية"
     }
   }
 }

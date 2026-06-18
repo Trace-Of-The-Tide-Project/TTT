@@ -1,0 +1,22 @@
+{
+  "Community": {
+    "heroEyebrow": "The Community",
+    "heroTitle": "Where storytellers gather",
+    "heroSubtitle": "Writers, open calls, and the values that hold us together — one place to find your way in.",
+    "statsWriters": "{count, plural, =0 {Writers} one {Writer} other {Writers}}",
+    "statsOpenCalls": "{count, plural, =0 {Open Calls} one {Open Call} other {Open Calls}}",
+    "statsGuidelines": "{count, plural, =0 {Guidelines} one {Guideline} other {Guidelines}}",
+    "writersHeading": "Featured writers",
+    "writersSubtitle": "Voices shaping the magazine right now.",
+    "writersCta": "Meet all writers",
+    "openCallsHeading": "Open calls",
+    "openCallsSubtitle": "Active invitations to contribute. Pick one and join.",
+    "openCallsCta": "View call",
+    "openCallsAll": "See all open calls",
+    "guidelinesHeading": "Community guidelines",
+    "guidelinesSubtitle": "The shared ground rules that keep this a place worth being in.",
+    "ctaHeading": "Ready to add your voice?",
+    "ctaSubtitle": "Contribute a story, join an open call, or start an issue.",
+    "ctaButton": "Contribute"
+  }
+}

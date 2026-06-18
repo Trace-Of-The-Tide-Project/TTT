@@ -114,6 +114,7 @@ export function BookReviewsContent({
                   className="absolute inset-0 object-cover opacity-70 mix-blend-luminosity"
                   sizes="200px"
                   priority
+                  unoptimized
                 />
               ) : null}
               <Image

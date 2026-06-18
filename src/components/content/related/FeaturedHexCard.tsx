@@ -65,6 +65,7 @@ export function FeaturedHexCard({
           style={{ clipPath: HEX_CLIP, WebkitClipPath: HEX_CLIP }}
           sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
           draggable={false}
+          unoptimized
         />
       ) : null}
       <Image
