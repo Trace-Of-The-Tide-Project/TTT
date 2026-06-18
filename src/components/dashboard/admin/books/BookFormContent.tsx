@@ -82,6 +82,7 @@ function CoverUploadZone({
   if (value && !uploading) {
     return (
       <div className="relative mt-1 inline-block">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={resolveArticleMediaSrc(value)}
           alt="Cover preview"

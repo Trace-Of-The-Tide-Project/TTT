@@ -75,6 +75,7 @@ export function AdminProfileInformation() {
   const [savedFlash, setSavedFlash] = useState(false);
   const objectUrlRef = useRef<string | null>(null);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (!profile) return;
     setFullName(profile.full_name);
