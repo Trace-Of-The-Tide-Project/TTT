@@ -273,7 +273,9 @@ function Carousel({
               alt=""
               fill
               className="select-none object-cover"
-              style={{ transform: "scaleX(-1)" }}
+              // The filler PNG is a baked dark gradient; invert it on light
+              // themes (sand/Tide) so the fade blends instead of showing black.
+              style={{ transform: "scaleX(-1)", filter: "var(--tott-image-invert)" }}
               sizes={`${GHOST_WIDTH}px`}
               draggable={false}
             />
@@ -292,6 +294,7 @@ function Carousel({
               alt=""
               fill
               className="select-none object-cover"
+              style={{ filter: "var(--tott-image-invert)" }}
               sizes={`${GHOST_WIDTH}px`}
               draggable={false}
             />
