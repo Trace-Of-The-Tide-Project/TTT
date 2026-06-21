@@ -58,6 +58,9 @@ export function WriterShowCard({ data }: { data: WriterShowCardData }) {
             alt=""
             width={64}
             height={64}
+            // External signed GCS URL — bypass the Next optimizer (it 502s on
+            // these); load directly.
+            unoptimized
             className="select-none object-cover"
             style={{
               width: 64,

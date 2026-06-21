@@ -10,7 +10,7 @@ import {
   useUpdateWriterProfile,
 } from "@/hooks/mutations/writers";
 import { useCreateAdminUser } from "@/hooks/mutations/users";
-import { uploadArticleAssetPath } from "@/services/uploads.service";
+import { uploadArticleAssetKeyAndUrl } from "@/services/uploads.service";
 import type { WriterProfilePayload } from "@/services/writers.service";
 import type { AdminUserListItem, CreatedAdminUser } from "@/services/users.service";
 import { formatApiError } from "@/lib/api/error-message";
@@ -117,6 +117,11 @@ export function WriterFormContent({ writerId }: Props) {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [avatarUploading, setAvatarUploading] = useState(false);
+  // Signed display URL for a just-uploaded avatar. We persist the stable
+  // storage key in `avatar_url`, but that key resolves to the private bucket
+  // (403) until the backend re-signs it on read — so the preview uses the
+  // signed URL the upload returned. Cleared when the key is edited by hand.
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const busy =
     submitting ||
@@ -170,8 +175,11 @@ export function WriterFormContent({ writerId }: Props) {
       setAvatarUploading(true);
       try {
         // Persist the STABLE storage key — signed URLs expire (book cover bug).
-        const key = await uploadArticleAssetPath(file);
+        // Keep the signed `url` for an immediate preview (the key's public-bucket
+        // URL 403s until the backend re-signs it on read).
+        const { key, url } = await uploadArticleAssetKeyAndUrl(file);
         setForm((prev) => ({ ...prev, avatar_url: key }));
+        setAvatarPreview(url);
       } catch {
         setSubmitError(t("errors.avatarUploadFailed"));
       } finally {
@@ -204,6 +212,31 @@ export function WriterFormContent({ writerId }: Props) {
         ? Number(form.monthly_goal)
         : null,
     };
+  };
+
+  // The backend rejects the request with a DB error ("Invalid query or data
+  // format") when optional columns receive `null`. Both POST and PATCH are
+  // partial here, so send only fields that actually carry a value: drop null /
+  // undefined / empty-string / empty-array / empty-object entries. Booleans and
+  // numbers — including `false` and `0` — are intentionally kept.
+  const prunePayload = (
+    payload: WriterProfilePayload,
+  ): Partial<WriterProfilePayload> => {
+    const out: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(payload)) {
+      if (value === null || value === undefined) continue;
+      if (typeof value === "string" && value.trim() === "") continue;
+      if (Array.isArray(value) && value.length === 0) continue;
+      if (
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        Object.keys(value as object).length === 0
+      ) {
+        continue;
+      }
+      out[key] = value;
+    }
+    return out as Partial<WriterProfilePayload>;
   };
 
   const validate = (): boolean => {
@@ -247,7 +280,11 @@ export function WriterFormContent({ writerId }: Props) {
     try {
       if (isEdit && writerId) {
         await mutationToast(
-          () => updateMutation.mutateAsync({ writerId, payload: buildPayload() }),
+          () =>
+            updateMutation.mutateAsync({
+              writerId,
+              payload: prunePayload(buildPayload()),
+            }),
           {
             loading: t("saving"),
             success: t("toasts.updated"),
@@ -294,7 +331,11 @@ export function WriterFormContent({ writerId }: Props) {
 
       try {
         await mutationToast(
-          () => createMutation.mutateAsync({ ...buildPayload(), user_id: userId }),
+          () =>
+            createMutation.mutateAsync({
+              ...prunePayload(buildPayload()),
+              user_id: userId,
+            }),
           {
             loading: t("saving"),
             success: t("toasts.created"),
@@ -524,6 +565,7 @@ export function WriterFormContent({ writerId }: Props) {
             <label className={labelClass}>{t("fields.avatar")}</label>
             <AvatarUploadZone
               value={form.avatar_url}
+              previewSrc={avatarPreview}
               uploading={avatarUploading}
               onChange={handleAvatarUpload}
               labels={{
@@ -537,7 +579,12 @@ export function WriterFormContent({ writerId }: Props) {
               type="text"
               className={`${inputClass} mt-2`}
               value={form.avatar_url}
-              onChange={set("avatar_url")}
+              onChange={(e) => {
+                // A hand-typed ref previews via the resolver, not the stale
+                // signed URL from a prior upload.
+                setAvatarPreview(null);
+                setForm((prev) => ({ ...prev, avatar_url: e.target.value }));
+              }}
               placeholder="https://…"
             />
             <p className="mt-1 text-[10px] text-gray-500">{t("fields.avatarUrlFallback")}</p>

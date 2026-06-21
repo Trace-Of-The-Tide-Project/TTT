@@ -32,6 +32,22 @@ const HEX_FADE_MASK = {
   maskMode: "alpha",
 } as React.CSSProperties;
 
+// Clip a real avatar photo to the full silk-hex silhouette using the same PNG
+// alpha as a mask, centered to line up with the `object-contain` silk below.
+// This lets a portrait fill the hex in full colour instead of ghosting behind
+// the silk (which washes real faces into a grey smudge).
+const HEX_PHOTO_MASK = {
+  WebkitMaskImage: `url(${WRITER_CARD})`,
+  maskImage: `url(${WRITER_CARD})`,
+  WebkitMaskSize: "100% auto",
+  maskSize: "100% auto",
+  WebkitMaskPosition: "center center",
+  maskPosition: "center center",
+  WebkitMaskRepeat: "no-repeat",
+  maskRepeat: "no-repeat",
+  maskMode: "alpha",
+} as React.CSSProperties;
+
 /* ─────────────────────────── tokens (Figma) ─────────────────────────── */
 // All colors resolve to CSS variables in globals.css so the cards
 // swap with the dark/light theme.
@@ -375,22 +391,11 @@ function CarouselCard({
         </div>
       ) : null}
 
-      {/* Optional cover image — sits behind the silk hex so the
-          writer's photo reads through the silk silhouette. */}
-      {writer.avatar ? (
-        <Image
-          src={writer.avatar}
-          alt=""
-          fill
-          className="absolute inset-0 select-none object-cover opacity-70 mix-blend-luminosity"
-          sizes="276px"
-          draggable={false}
-        />
-      ) : null}
-
       {/* Silk hex card — Image-2.png provides both the silhouette and
-          the silk fill (transparent outside the hex). Same brand asset
-          used by the writing-room "Discover Featured Writing" gallery. */}
+          the silk fill (transparent outside the hex). Drawn first so it's
+          the fallback fill behind a real avatar (and the whole card when
+          there's no photo). Same brand asset used by the writing-room
+          "Discover Featured Writing" gallery. */}
       <Image
         src={WRITER_CARD}
         alt=""
@@ -399,6 +404,22 @@ function CarouselCard({
         sizes="276px"
         draggable={false}
       />
+
+      {/* Real avatar photo — clipped to the hex silhouette and shown in full
+          colour on top of the silk (not ghosted behind it). External signed
+          GCS URL, so `unoptimized` to dodge the Next optimizer 502. */}
+      {writer.avatar ? (
+        <Image
+          src={writer.avatar}
+          alt=""
+          fill
+          unoptimized
+          className="absolute inset-0 select-none object-cover"
+          style={HEX_PHOTO_MASK}
+          sizes="276px"
+          draggable={false}
+        />
+      ) : null}
 
       {/* Top icon — Icon-4.svg, the 48×48 brand-exported hex glyph that
           sits above the card. */}
