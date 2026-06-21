@@ -384,33 +384,23 @@ function CarouselCard({
   const author = writer.name?.trim() || authorPlaceholder;
   const date = writer.edition?.trim() || "";
   const role = writer.role?.trim() || rolePlaceholder;
-  // Card links to the writer's profile when we have an id; the
-  // follow button sits above the stretched link as an interactive
-  // island so clicking it doesn't navigate.
+  // Card links to the writer's profile when we have an id.
   const profileHref = writer.id
     ? `/writers/${encodeURIComponent(writer.id)}`
     : "/writing-room";
 
   return (
+    <div className="flex flex-col items-center" style={{ width: CARD_W }}>
     <div
       className="relative block w-full transition-opacity hover:opacity-90"
       style={{ height: CARD_H, width: CARD_W }}
     >
-      {/* Stretched navigation link — covers the whole card (z-25, above
-          the silk + text overlay but below the follow island at z-30). */}
+      {/* Stretched navigation link — covers the whole card. */}
       <Link
         href={profileHref}
         aria-label={author}
         className="absolute inset-0 z-[25]"
       />
-
-      {/* Follow island — independent interactive control above the
-          stretched link. */}
-      {writer.userId ? (
-        <div className="absolute right-2 top-2 z-30">
-          <FollowButton targetUserId={writer.userId} size="sm" />
-        </div>
-      ) : null}
 
       {/* Silk hex card — Image-2.png provides both the silhouette and
           the silk fill (transparent outside the hex). Drawn first so it's
@@ -546,6 +536,15 @@ function CarouselCard({
       {/* Role pill — sits over the bottom fade, centered, with the
           dark chevron caps from the Figma comp. */}
       <RolePill label={role} />
+    </div>
+
+      {/* Follow button — centered beneath the hex card so it reads as a
+          tidy action for the profile rather than floating over the photo. */}
+      {writer.userId ? (
+        <div className="mt-3">
+          <FollowButton targetUserId={writer.userId} size="sm" />
+        </div>
+      ) : null}
     </div>
   );
 }
