@@ -48,6 +48,22 @@ const HEX_PHOTO_MASK = {
   maskMode: "alpha",
 } as React.CSSProperties;
 
+// Graduated backdrop-blur mask: the hex silhouette AND a vertical fade
+// (transparent at the top → opaque at the bottom), composited together so the
+// blur ramps in gradually instead of starting on a hard horizontal edge.
+const HEX_BLUR_MASK = {
+  WebkitMaskImage: `url(${WRITER_CARD}), linear-gradient(to top, #000 22%, transparent 92%)`,
+  maskImage: `url(${WRITER_CARD}), linear-gradient(to top, #000 22%, transparent 92%)`,
+  WebkitMaskSize: "100% auto, 100% 100%",
+  maskSize: "100% auto, 100% 100%",
+  WebkitMaskPosition: "left bottom, left bottom",
+  maskPosition: "left bottom, left bottom",
+  WebkitMaskRepeat: "no-repeat, no-repeat",
+  maskRepeat: "no-repeat, no-repeat",
+  WebkitMaskComposite: "source-in",
+  maskComposite: "intersect",
+} as React.CSSProperties;
+
 /* ─────────────────────────── tokens (Figma) ─────────────────────────── */
 // All colors resolve to CSS variables in globals.css so the cards
 // swap with the dark/light theme.
@@ -457,10 +473,27 @@ function CarouselCard({
         />
       </div>
 
+      {/* Graduated backdrop blur — a dedicated layer behind the text so the
+          blur fades in from the top instead of a hard edge. Kept separate from
+          the text overlay so the gradient mask doesn't fade the title/meta. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute z-10"
+        style={{
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 164,
+          backdropFilter: "blur(4px)",
+          WebkitBackdropFilter: "blur(4px)",
+          ...HEX_BLUR_MASK,
+        }}
+      />
+
       {/* Bottom text overlay — Figma "Text" frame (276×164, padding
           24/24/56, gap 8, justify-end). Background is the shared
-          --tott-writer-card-fade gradient + 4px backdrop blur so the
-          title and meta read cleanly over the silk hex. */}
+          --tott-writer-card-fade gradient so the title and meta read
+          cleanly over the silk hex (blur handled by the layer above). */}
       <div
         className="absolute z-10"
         style={{
@@ -475,8 +508,6 @@ function CarouselCard({
           justifyContent: "flex-end",
           alignItems: "center",
           background: "var(--tott-writer-card-fade)",
-          backdropFilter: "blur(4px)",
-          WebkitBackdropFilter: "blur(4px)",
           ...HEX_FADE_MASK,
         }}
       >
