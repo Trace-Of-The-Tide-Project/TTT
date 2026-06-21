@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -227,6 +227,21 @@ function Carousel({
 }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
+  // The arrows + side ghost-fades only make sense when the row has more cards
+  // than fit on screen (they signal "scroll for more"). With everything
+  // visible they're misleading, so show them only when the row overflows and
+  // centre the cards otherwise.
+  const [overflowing, setOverflowing] = useState(false);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const measure = () => setOverflowing(el.scrollWidth - el.clientWidth > 1);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [writers.length]);
+
   const scrollBy = (dx: number) => {
     scrollRef.current?.scrollBy({ left: dx, behavior: "smooth" });
   };
@@ -240,49 +255,52 @@ function Carousel({
     // consistent; the card content is centre-aligned so Arabic still
     // renders correctly. No-op on LTR locales.
     <div dir="ltr" className="relative w-full">
-      {/* Side ghost gradients — same `Content Grid Filler.png` strip
-          the writing-room "Discover Featured Writing" row uses, so
-          the next/previous hexagon peeks in under a matching fade. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-0 z-10 hidden sm:block"
-        style={{
-          left: -GHOST_WIDTH - 16,
-          width: GHOST_WIDTH,
-          height: CARD_H,
-        }}
-      >
-        <Image
-          src={FILLER}
-          alt=""
-          fill
-          className="select-none object-cover"
-          style={{ transform: "scaleX(-1)" }}
-          sizes={`${GHOST_WIDTH}px`}
-          draggable={false}
-        />
-      </div>
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-0 z-10 hidden sm:block"
-        style={{
-          right: -GHOST_WIDTH - 16,
-          width: GHOST_WIDTH,
-          height: CARD_H,
-        }}
-      >
-        <Image
-          src={FILLER}
-          alt=""
-          fill
-          className="select-none object-cover"
-          sizes={`${GHOST_WIDTH}px`}
-          draggable={false}
-        />
-      </div>
+      {/* Side ghost gradients — only when the row overflows, so the
+          peeking next/previous hex signals there's more to scroll. */}
+      {overflowing ? (
+        <>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute top-0 z-10 hidden sm:block"
+            style={{
+              left: -GHOST_WIDTH - 16,
+              width: GHOST_WIDTH,
+              height: CARD_H,
+            }}
+          >
+            <Image
+              src={FILLER}
+              alt=""
+              fill
+              className="select-none object-cover"
+              style={{ transform: "scaleX(-1)" }}
+              sizes={`${GHOST_WIDTH}px`}
+              draggable={false}
+            />
+          </div>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute top-0 z-10 hidden sm:block"
+            style={{
+              right: -GHOST_WIDTH - 16,
+              width: GHOST_WIDTH,
+              height: CARD_H,
+            }}
+          >
+            <Image
+              src={FILLER}
+              alt=""
+              fill
+              className="select-none object-cover"
+              sizes={`${GHOST_WIDTH}px`}
+              draggable={false}
+            />
+          </div>
+        </>
+      ) : null}
 
-      {/* Scrollable card row. Snap helps the arrow buttons feel
-          responsive when the row overflows on narrow viewports. */}
+      {/* Scrollable card row. Centred when everything fits; left-aligned
+          (scrollable) once it overflows. */}
       <div
         ref={scrollRef}
         className="flex w-full overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -290,6 +308,7 @@ function Carousel({
           gap: 8,
           padding: "0 4px",
           scrollSnapType: "x mandatory",
+          justifyContent: overflowing ? "flex-start" : "center",
         }}
       >
         {writers.map((w) => (
@@ -308,41 +327,44 @@ function Carousel({
         ))}
       </div>
 
-      {/* Slide-navigator buttons. Same panel-bg + card-border outline
-          + soft drop shadow the writing-room arrows use, positioned
-          outside the card row in the fade strip. */}
-      <button
-        type="button"
-        aria-label={previousLabel}
-        onClick={() => scrollBy(-(CARD_W + 8))}
-        className="absolute z-20 hidden h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 sm:flex"
-        style={{
-          left: -72,
-          top: (CARD_H - 40) / 2,
-          backgroundColor: "var(--tott-panel-bg)",
-          border: "1px solid var(--tott-card-border)",
-          color: "var(--tott-home-text-strong)",
-          boxShadow: "var(--tott-home-text-shadow)",
-        }}
-      >
-        <ArrowIcon direction="left" />
-      </button>
-      <button
-        type="button"
-        aria-label={nextLabel}
-        onClick={() => scrollBy(CARD_W + 8)}
-        className="absolute z-20 hidden h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 sm:flex"
-        style={{
-          right: -72,
-          top: (CARD_H - 40) / 2,
-          backgroundColor: "var(--tott-panel-bg)",
-          border: "1px solid var(--tott-card-border)",
-          color: "var(--tott-home-text-strong)",
-          boxShadow: "var(--tott-home-text-shadow)",
-        }}
-      >
-        <ArrowIcon direction="right" />
-      </button>
+      {/* Slide-navigator buttons — only when the row overflows; with all
+          cards visible there's nothing to scroll to. */}
+      {overflowing ? (
+        <>
+          <button
+            type="button"
+            aria-label={previousLabel}
+            onClick={() => scrollBy(-(CARD_W + 8))}
+            className="absolute z-20 hidden h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 sm:flex"
+            style={{
+              left: -72,
+              top: (CARD_H - 40) / 2,
+              backgroundColor: "var(--tott-panel-bg)",
+              border: "1px solid var(--tott-card-border)",
+              color: "var(--tott-home-text-strong)",
+              boxShadow: "var(--tott-home-text-shadow)",
+            }}
+          >
+            <ArrowIcon direction="left" />
+          </button>
+          <button
+            type="button"
+            aria-label={nextLabel}
+            onClick={() => scrollBy(CARD_W + 8)}
+            className="absolute z-20 hidden h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 sm:flex"
+            style={{
+              right: -72,
+              top: (CARD_H - 40) / 2,
+              backgroundColor: "var(--tott-panel-bg)",
+              border: "1px solid var(--tott-card-border)",
+              color: "var(--tott-home-text-strong)",
+              boxShadow: "var(--tott-home-text-shadow)",
+            }}
+          >
+            <ArrowIcon direction="right" />
+          </button>
+        </>
+      ) : null}
     </div>
   );
 }
