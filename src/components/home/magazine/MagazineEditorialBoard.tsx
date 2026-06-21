@@ -31,6 +31,21 @@ const CARD_MASK = "/images/home/Mask.png";
 // border — overlay text/icons sit inside the visible hex.
 const WRITER_CARD = "/images/home/Image-2.png";
 
+// Clip a real avatar photo to the silk-hex silhouette (PNG alpha as mask),
+// centered to line up with the `object-contain` silk below, so a portrait
+// fills the hex in full colour instead of ghosting behind the silk.
+const HEX_PHOTO_MASK = {
+  WebkitMaskImage: `url(${WRITER_CARD})`,
+  maskImage: `url(${WRITER_CARD})`,
+  WebkitMaskSize: "100% auto",
+  maskSize: "100% auto",
+  WebkitMaskPosition: "center center",
+  maskPosition: "center center",
+  WebkitMaskRepeat: "no-repeat",
+  maskRepeat: "no-repeat",
+  maskMode: "alpha",
+} as React.CSSProperties;
+
 // Side filler — gradient strip used at the left/right edges of the
 // writer carousel to suggest more cards beyond the visible row.
 const FILLER = "/images/home/Content Grid Filler.png";
@@ -68,6 +83,8 @@ export type FollowWriterItem = {
    * the writer's display name when missing. */
   title?: string | null;
   edition?: string | null;
+  /** Role pill label (mapped from the writer's creator_kind). */
+  role?: string | null;
   /** Optional avatar / cover surfaced inside the hex frame. */
   avatar?: string | null;
 };
@@ -605,20 +622,8 @@ function WriterCard({ writer }: { writer: FollowWriterItem }) {
         flexShrink: 0,
       }}
     >
-      {/* Writer avatar (when present) is layered behind the silk hex
-          frame so the avatar reads inside the hex silhouette without
-          the silk overpowering it. */}
-      {writer.avatar && !avatarFailed ? (
-        <Image
-          src={writer.avatar}
-          alt=""
-          fill
-          className="absolute inset-0 select-none object-cover opacity-70 mix-blend-luminosity"
-          sizes="276px"
-          draggable={false}
-          onError={() => setAvatarFailed(true)}
-        />
-      ) : null}
+      {/* Silk hex frame drawn first — fallback fill behind a real avatar,
+          and the whole card when there's no photo (or it 404s). */}
       <Image
         src={WRITER_CARD}
         alt=""
@@ -627,6 +632,23 @@ function WriterCard({ writer }: { writer: FollowWriterItem }) {
         sizes="276px"
         draggable={false}
       />
+
+      {/* Real avatar photo — clipped to the hex silhouette and shown in full
+          colour on top of the silk (not ghosted behind it). External signed
+          GCS URL, so `unoptimized` to dodge the Next optimizer 502. */}
+      {writer.avatar && !avatarFailed ? (
+        <Image
+          src={writer.avatar}
+          alt=""
+          fill
+          unoptimized
+          className="absolute inset-0 select-none object-cover"
+          style={HEX_PHOTO_MASK}
+          sizes="276px"
+          draggable={false}
+          onError={() => setAvatarFailed(true)}
+        />
+      ) : null}
 
       {/* Top icon — pre-rendered Icon-4.svg (48×48 with hex bg + glyph
           baked in). */}
