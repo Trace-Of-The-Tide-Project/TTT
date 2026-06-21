@@ -246,6 +246,7 @@
         },
         "form": {
           "createTitle": "New issue",
+          "description": "An issue is one published edition of the magazine — a curated collection of content shown on the public Magazine → Issues page. It is not a single article or a book.",
           "editTitle": "Edit issue",
           "close": "Close",
           "publishingTo": "Publishing to {name}",

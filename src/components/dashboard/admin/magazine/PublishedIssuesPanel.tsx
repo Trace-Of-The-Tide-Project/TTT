@@ -660,6 +660,12 @@ function IssueFormModal({
           </button>
         </div>
 
+        {/* Clarify what this form produces — admins confused an issue with a
+            single article vs a book. */}
+        <p className="mb-4 text-xs leading-relaxed text-[var(--tott-muted)]">
+          {t("published.form.description")}
+        </p>
+
         <form onSubmit={submit} className="space-y-4">
           <div>
             <label className={labelClass}>{t("published.form.fields.title")} *</label>

@@ -35,6 +35,7 @@
       },
       "form": {
         "createTitle": "Añadir nuevo libro",
+        "createDescription": "Un libro es una obra publicada independiente (con PDF y precio opcionales) que se muestra en la página pública de Libros. Para una edición de la revista usa un Número; para un solo artículo usa Contenido.",
         "editTitle": "Editar libro",
         "saving": "Guardando…",
         "save": "Guardar",

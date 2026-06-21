@@ -419,9 +419,14 @@ export function BookFormContent({ bookId }: Props) {
         {t("backToList")}
       </Link>
 
-      <h1 className="mb-6 text-xl font-semibold text-foreground">
+      <h1 className="mb-2 text-xl font-semibold text-foreground">
         {isEdit ? t("editTitle") : t("createTitle")}
       </h1>
+      {/* Clarify what a book is vs an issue/article — admins were unsure which
+          form to use for which kind of content. */}
+      <p className="mb-6 max-w-2xl text-xs leading-relaxed text-[var(--tott-muted)]">
+        {t("createDescription")}
+      </p>
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
 

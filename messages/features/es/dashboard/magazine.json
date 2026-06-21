@@ -246,6 +246,7 @@
         },
         "form": {
           "createTitle": "Nuevo número",
+          "description": "Un número es una edición publicada de la revista — una colección curada de contenido que se muestra en la página pública de la Revista → Números. No es un solo artículo ni un libro.",
           "editTitle": "Editar número",
           "close": "Cerrar",
           "publishingTo": "Publicando en {name}",

@@ -63,11 +63,12 @@
           "twitter": "X (Twitter)",
           "instagram": "Instagram",
           "youtube": "YouTube",
-          "featured": "Mostrar en la franja de escritores destacados"
+          "featured": "Mostrar en la franja de escritores destacados",
+          "featuredHint": "Los escritores destacados aparecen en la página pública de la Revista → Consejo Editorial. Déjalo sin marcar para mantener el perfil oculto del panel."
         },
         "kinds": { "none": "—", "musician": "Músico", "writer": "Escritor", "visual_artist": "Artista visual", "filmmaker": "Cineasta" },
         "toasts": { "created": "Perfil de escritor creado", "updated": "Perfil de escritor actualizado" },
-        "created": { "title": "Perfil de escritor creado", "description": "Comparte estos datos de acceso con el escritor ahora — la contraseña temporal no se volverá a mostrar.", "continue": "Ir a perfiles de escritores" },
+        "created": { "title": "Perfil de escritor creado", "description": "Comparte estos datos de acceso con el escritor ahora — la contraseña temporal no se volverá a mostrar.", "copyInvite": "Copiar mensaje de acceso", "inviteCopied": "¡Copiado!", "emailHint": "No se envía ningún correo automáticamente — pega este mensaje al escritor.", "inviteTemplate": "Te han añadido como escritor en Trace of the Tide.\n\nIniciar sesión: {url}\nCorreo: {email}\nContraseña temporal: {password}\n\nCambia tu contraseña después de iniciar sesión por primera vez.", "continue": "Ir a perfiles de escritores" },
         "errors": {
           "userRequired": "Selecciona un usuario o crea uno nuevo.",
           "fullNameRequired": "El nombre completo es obligatorio.",

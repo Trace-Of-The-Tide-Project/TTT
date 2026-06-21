@@ -63,11 +63,12 @@
           "twitter": "X (Twitter)",
           "instagram": "Instagram",
           "youtube": "YouTube",
-          "featured": "Show on the featured writers strip"
+          "featured": "Show on the featured writers strip",
+          "featuredHint": "Featured writers appear on the public Magazine → Editorial Board. Leave off to keep the profile hidden from the board."
         },
         "kinds": { "none": "—", "musician": "Musician", "writer": "Writer", "visual_artist": "Visual artist", "filmmaker": "Filmmaker" },
         "toasts": { "created": "Writer profile created", "updated": "Writer profile updated" },
-        "created": { "title": "Writer profile created", "description": "Share these sign-in details with the writer now — the temporary password will not be shown again.", "continue": "Go to writer profiles" },
+        "created": { "title": "Writer profile created", "description": "Share these sign-in details with the writer now — the temporary password will not be shown again.", "copyInvite": "Copy sign-in message", "inviteCopied": "Copied!", "emailHint": "No email is sent automatically — paste this message to the writer.", "inviteTemplate": "You've been added as a writer on Trace of the Tide.\n\nSign in: {url}\nEmail: {email}\nTemporary password: {password}\n\nPlease change your password after you first sign in.", "continue": "Go to writer profiles" },
         "errors": {
           "userRequired": "Select a user or create a new one.",
           "fullNameRequired": "Full name is required.",

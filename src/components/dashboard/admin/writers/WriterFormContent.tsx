@@ -100,6 +100,7 @@ export function WriterFormContent({ writerId }: Props) {
   const [tempPassword, setTempPassword] = useState("");
   const [copied, setCopied] = useState(false);
   const [summaryCopied, setSummaryCopied] = useState(false);
+  const [inviteCopied, setInviteCopied] = useState(false);
   const [createdUser, setCreatedUser] = useState<CreatedAdminUser | null>(null);
   /** Password the account was actually created with — the summary must show
    * this even if tempPassword was regenerated between attempts. */
@@ -383,6 +384,26 @@ export function WriterFormContent({ writerId }: Props) {
     }
   };
 
+  // There's no backend invite-email endpoint, so the admin hands the writer
+  // their login manually. Build a ready-to-send message (login URL + email +
+  // temp password) they can paste into an email/DM in one click.
+  const copyInviteMessage = async () => {
+    if (!createdSummary) return;
+    const loginUrl = `${window.location.origin}/login`;
+    const message = t("created.inviteTemplate", {
+      url: loginUrl,
+      email: createdSummary.email,
+      password: createdSummary.password,
+    });
+    try {
+      await navigator.clipboard.writeText(message);
+      setInviteCopied(true);
+      window.setTimeout(() => setInviteCopied(false), 2000);
+    } catch {
+      /* clipboard unavailable — user can select the text manually */
+    }
+  };
+
   if (isEdit && writerQuery.isPending) {
     return <div className="my-4 mx-10 text-sm text-gray-500">{t("loading")}</div>;
   }
@@ -660,6 +681,11 @@ export function WriterFormContent({ writerId }: Props) {
             />
             {t("fields.featured")}
           </label>
+          {/* Make the board-visibility consequence explicit — otherwise a new
+              writer is created but never appears publicly, which reads as a bug. */}
+          <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
+            {t("fields.featuredHint")}
+          </p>
         </div>
 
         {submitError && (
@@ -730,6 +756,16 @@ export function WriterFormContent({ writerId }: Props) {
                 </div>
               </div>
             </div>
+            <button
+              type="button"
+              onClick={copyInviteMessage}
+              className="mb-2 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] px-5 py-2 text-sm font-medium text-foreground hover:bg-white/5 transition-colors"
+            >
+              {inviteCopied ? t("created.inviteCopied") : t("created.copyInvite")}
+            </button>
+            <p className="mb-4 text-[11px] text-[var(--tott-muted)]">
+              {t("created.emailHint")}
+            </p>
             <button
               type="button"
               onClick={() => router.push("/admin/writers")}
