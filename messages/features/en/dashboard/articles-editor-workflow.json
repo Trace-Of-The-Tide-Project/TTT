@@ -243,6 +243,14 @@
             "es": "Spanish",
             "fr": "French"
           },
+          "translationOf": {
+            "label": "Translation of",
+            "placeholder": "Search an article to translate…",
+            "hint": "Link this as a translation of an existing article so readers can switch languages.",
+            "clear": "Unlink",
+            "none": "No matching articles",
+            "searching": "Searching…"
+          },
           "visibility": {
             "label": "Visibility",
             "private": "Private",

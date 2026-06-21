@@ -141,7 +141,20 @@ export function ContentEditorLayout({
   const [language, setLanguage] = useState(initialLanguage || "en");
   // When set, this content is created as a translation of the given original and
   // inherits its translation group on save. Stays fixed for the editor session.
-  const [translationOf] = useState<string | undefined>(initialTranslationOf);
+  const [translationOf, setTranslationOf] = useState<string | undefined>(
+    initialTranslationOf,
+  );
+
+  // Linking the current article to an existing original (the editor picker) or
+  // clearing it. Keep `originalTitle` in sync so the "Translating from" banner
+  // reflects the choice.
+  const handleTranslationOfChange = useCallback(
+    (id: string | undefined, title?: string | null) => {
+      setTranslationOf(id || undefined);
+      setOriginalTitle(id ? (title ?? null) : null);
+    },
+    [],
+  );
   const [originalTitle, setOriginalTitle] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [seoTitle, setSeoTitle] = useState("");
@@ -196,6 +209,7 @@ export function ContentEditorLayout({
     const sat = a.scheduled_at?.trim();
     setScheduledAt(sat && sat.length ? sat : null);
     setLanguage((a.language || "en").trim() || "en");
+    setTranslationOf(a.translation_of?.trim() || undefined);
     setVisibility((a.visibility || "public").toLowerCase() === "private" ? "private" : "public");
     setSeoTitle(a.seo_title?.trim() ?? "");
     setMetaDescription(a.meta_description?.trim() ?? "");
@@ -686,6 +700,9 @@ export function ContentEditorLayout({
             onCategoryChange={setCategory}
             language={language}
             onLanguageChange={setLanguage}
+            translationOf={translationOf}
+            onTranslationOfChange={handleTranslationOfChange}
+            excludeId={articleId}
             visibility={visibility}
             onVisibilityChange={setVisibility}
             seoTitle={seoTitle}
