@@ -97,14 +97,10 @@ const DEFAULT_ROLE_COUNTS: RoleCounts = {
   reviewers: 2,
 };
 
-const FALLBACK_WRITERS: FollowWriterItem[] = Array.from({ length: 4 }, (_, i) => ({
-  id: `pf-writer-${i}`,
-  name: "Author",
-  title: null,
-  edition: "12.05",
-  avatar: null,
-  role: "Editors",
-}));
+// "Our People" shows invented role counts (Editors/Translators/Reviewers) the
+// backend has no data for. Hidden until the backend exposes real masthead roles
+// — flip to true to re-enable. The carousel below shows only real writers.
+const SHOW_OUR_PEOPLE = false;
 
 /* ─────────────────────────── page entry ─────────────────────────── */
 export function MagazineEditorialBoardV2({
@@ -112,7 +108,8 @@ export function MagazineEditorialBoardV2({
   roleCounts = DEFAULT_ROLE_COUNTS,
 }: MagazineEditorialBoardProps) {
   const t = useTranslations("Home.magazine.editorialBoard");
-  const carouselWriters = [...writers, ...FALLBACK_WRITERS].slice(0, 4);
+  // Real writers only — no fake "Author / 12.05" filler padding the row.
+  const carouselWriters = writers.slice(0, 4);
 
   return (
     <div
@@ -134,18 +131,20 @@ export function MagazineEditorialBoardV2({
         nextLabel={t("nextSlide")}
       />
 
-      <OurPeople
-        eyebrow={t("peopleEyebrow")}
-        heading={t("peopleHeading")}
-        counts={roleCounts}
-        labels={{
-          editors: t("roleEditors"),
-          writers: t("roleWriters"),
-          translators: t("roleTranslators"),
-          contributors: t("roleContributors"),
-          reviewers: t("roleReviewers"),
-        }}
-      />
+      {SHOW_OUR_PEOPLE ? (
+        <OurPeople
+          eyebrow={t("peopleEyebrow")}
+          heading={t("peopleHeading")}
+          counts={roleCounts}
+          labels={{
+            editors: t("roleEditors"),
+            writers: t("roleWriters"),
+            translators: t("roleTranslators"),
+            contributors: t("roleContributors"),
+            reviewers: t("roleReviewers"),
+          }}
+        />
+      ) : null}
     </div>
   );
 }

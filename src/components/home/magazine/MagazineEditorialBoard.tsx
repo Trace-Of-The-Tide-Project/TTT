@@ -83,6 +83,8 @@ export type FollowWriterItem = {
    * the writer's display name when missing. */
   title?: string | null;
   edition?: string | null;
+  /** Role pill label (mapped from the writer's creator_kind). */
+  role?: string | null;
   /** Optional avatar / cover surfaced inside the hex frame. */
   avatar?: string | null;
 };
