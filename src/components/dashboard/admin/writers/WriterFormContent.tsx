@@ -69,7 +69,7 @@ function generateTempPassword(): string {
 }
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-[var(--tott-gold)]/60 transition-colors";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-[var(--tott-muted)] outline-none focus:border-[var(--tott-gold)]/60 transition-colors";
 const labelClass =
   "text-xs font-medium text-[var(--tott-dash-gold-label)] mb-1 block";
 const sectionClass =
@@ -405,7 +405,7 @@ export function WriterFormContent({ writerId }: Props) {
   };
 
   if (isEdit && writerQuery.isPending) {
-    return <div className="my-4 mx-10 text-sm text-gray-500">{t("loading")}</div>;
+    return <div className="my-4 mx-10 text-sm text-[var(--tott-muted)]">{t("loading")}</div>;
   }
 
   if (isEdit && !writerQuery.data) {
@@ -413,14 +413,14 @@ export function WriterFormContent({ writerId }: Props) {
       <div className="my-4 mx-10">
         <Link
           href="/admin/writers"
-          className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-foreground transition-colors mb-5"
+          className="inline-flex items-center gap-1.5 text-xs text-[var(--tott-muted)] hover:text-foreground transition-colors mb-5"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
           {t("backToList")}
         </Link>
-        <p className="text-sm text-gray-500">{t("notFound")}</p>
+        <p className="text-sm text-[var(--tott-muted)]">{t("notFound")}</p>
       </div>
     );
   }
@@ -437,14 +437,14 @@ export function WriterFormContent({ writerId }: Props) {
       "rounded-lg px-4 py-1.5 text-sm font-medium transition-colors",
       active
         ? "border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 text-[var(--tott-gold)]"
-        : "border border-[var(--tott-card-border)] text-gray-400 hover:text-foreground",
+        : "border border-[var(--tott-card-border)] text-[var(--tott-muted)] hover:text-foreground",
     ].join(" ");
 
   return (
     <div className="my-4 mx-auto px-10 pb-12 max-w-4xl">
       <Link
         href="/admin/writers"
-        className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-foreground transition-colors mb-5"
+        className="inline-flex items-center gap-1.5 text-xs text-[var(--tott-muted)] hover:text-foreground transition-colors mb-5"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
@@ -529,7 +529,7 @@ export function WriterFormContent({ writerId }: Props) {
                       <button
                         type="button"
                         onClick={copyPassword}
-                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-gray-300 hover:text-foreground"
+                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground"
                       >
                         {copied ? t("account.copied") : t("account.copy")}
                       </button>
@@ -537,12 +537,12 @@ export function WriterFormContent({ writerId }: Props) {
                         type="button"
                         onClick={() => setTempPassword(generateTempPassword())}
                         disabled={busy || (createdUser !== null && (createdUser.email?.toLowerCase() ?? "") === newEmail.trim().toLowerCase())}
-                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-gray-300 hover:text-foreground disabled:opacity-40"
+                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground disabled:opacity-40"
                       >
                         {t("account.regenerate")}
                       </button>
                     </div>
-                    <p className="mt-1 text-[10px] text-gray-500">
+                    <p className="mt-1 text-[10px] text-[var(--tott-muted)]">
                       {t("account.tempPasswordHint")}
                     </p>
                   </div>
@@ -608,7 +608,7 @@ export function WriterFormContent({ writerId }: Props) {
               }}
               placeholder="https://…"
             />
-            <p className="mt-1 text-[10px] text-gray-500">{t("fields.avatarUrlFallback")}</p>
+            <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("fields.avatarUrlFallback")}</p>
           </div>
         </div>
 
@@ -713,7 +713,7 @@ export function WriterFormContent({ writerId }: Props) {
           </button>
           <Link
             href="/admin/writers"
-            className="rounded-lg px-4 py-2 text-sm text-gray-400 hover:text-foreground hover:bg-white/5 transition-colors"
+            className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground hover:bg-white/5 transition-colors"
           >
             {t("cancel")}
           </Link>
@@ -723,13 +723,12 @@ export function WriterFormContent({ writerId }: Props) {
       {createdSummary && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div
-            className="w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] p-6 shadow-xl"
-            style={{ backgroundColor: "var(--tott-dash-bg, #1a1a1a)" }}
+            className="w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-xl"
           >
             <h2 className="mb-2 text-base font-semibold text-foreground">
               {t("created.title")}
             </h2>
-            <p className="mb-4 text-sm text-gray-400">
+            <p className="mb-4 text-sm text-[var(--tott-muted)]">
               {t("created.description")}
             </p>
             <div className="space-y-3 mb-5">
@@ -749,7 +748,7 @@ export function WriterFormContent({ writerId }: Props) {
                   <button
                     type="button"
                     onClick={copySummaryPassword}
-                    className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-gray-300 hover:text-foreground"
+                    className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground"
                   >
                     {summaryCopied ? t("account.copied") : t("account.copy")}
                   </button>
