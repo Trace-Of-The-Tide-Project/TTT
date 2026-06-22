@@ -23,6 +23,13 @@ export type HexCoverProps = {
    *  the bottom 164px of the hex (Issues tab). Defaults to false for
    *  the clean Publications cover. */
   showFade?: boolean;
+  /** When false the cover renders in full colour. Defaults to true
+   *  (grayscale), matching the original muted gallery look. */
+  grayscale?: boolean;
+  /** When true the cover reacts to hover on an ancestor `.group`:
+   *  the image blooms from grayscale to full colour and the hex rim
+   *  brightens to the accent gold. Used by the interactive cell grid. */
+  interactive?: boolean;
 };
 
 /**
@@ -31,7 +38,13 @@ export type HexCoverProps = {
  * optional bottom fade overlays the lower third so a dark
  * page-surface caption underneath reads cleanly.
  */
-export function HexCover({ src, alt, showFade = false }: HexCoverProps) {
+export function HexCover({
+  src,
+  alt,
+  showFade = false,
+  grayscale = true,
+  interactive = false,
+}: HexCoverProps) {
   const rawId = useId();
   const uid = rawId.replace(/:/g, "");
   const maskId = `hex-mask-${uid}`;
@@ -76,16 +89,15 @@ export function HexCover({ src, alt, showFade = false }: HexCoverProps) {
             width={COVER_W}
             height={COVER_H}
             preserveAspectRatio="xMidYMid slice"
-            style={{ filter: "grayscale(1)" }}
+            className={
+              interactive
+                ? "[filter:grayscale(1)] transition-[filter] duration-500 ease-out group-hover:[filter:grayscale(0)] motion-reduce:transition-none"
+                : undefined
+            }
+            style={interactive ? undefined : { filter: grayscale ? "grayscale(1)" : "none" }}
           />
           {showFade ? (
-            <rect
-              x="0"
-              y="130"
-              width={COVER_W}
-              height="164"
-              fill={`url(#${fadeId})`}
-            />
+            <rect x="0" y="130" width={COVER_W} height="164" fill={`url(#${fadeId})`} />
           ) : null}
         </g>
 
@@ -94,6 +106,11 @@ export function HexCover({ src, alt, showFade = false }: HexCoverProps) {
           fill="none"
           stroke="var(--tott-home-hex-sheen)"
           strokeWidth="1"
+          className={
+            interactive
+              ? "transition-[stroke] duration-300 ease-out group-hover:[stroke:var(--tott-accent-gold)] motion-reduce:transition-none"
+              : undefined
+          }
         />
       </svg>
     </div>

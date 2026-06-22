@@ -7,10 +7,8 @@ import {
   type LatestPublishedItem,
 } from "@/components/home/magazine/MagazineLatestPublished";
 import { MagazineLatestPublishedV2 } from "@/components/home/magazine/MagazineLatestPublishedV2";
-import {
-  MagazineIssues,
-  type MagazineIssueItem,
-} from "@/components/home/magazine/MagazineIssues";
+import { type MagazineIssueItem } from "@/components/home/magazine/MagazineIssues";
+import { MagazineIssuesCells } from "@/components/home/magazine/MagazineIssuesCells";
 import { MagazineIssuesV2 } from "@/components/home/magazine/MagazineIssuesV2";
 import {
   MagazineEditorialBoard,
@@ -440,7 +438,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
               latestArticles.length > 0 ? (
                 <MagazineLatestPublished items={latestArticles} />
               ) : undefined,
-            issues: <MagazineIssues items={issues} />,
+            issues: <MagazineIssuesCells items={issues} />,
             editorialBoard:
               lessReadArticles.length > 0 ||
               writers.length > 0 ||
