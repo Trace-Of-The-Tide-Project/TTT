@@ -10,10 +10,10 @@ import { UsersByRole } from "@/components/dashboard/admin/mainDashboard/UsersByR
 import { FinanceSnapshot } from "@/components/dashboard/admin/mainDashboard/FinanceSnapshot";
 import { RecentActivity } from "@/components/dashboard/admin/mainDashboard/RecentActivity";
 import { quickActions } from "@/lib/dashboard/admin-dashboard-constants";
-import { BroadcastModal } from "@/components/dashboard/modals/BroadcastModal";
+import { BroadcastModal } from "@/components/dashboard/admin/mainDashboard/BroadcastModal";
 import { DetailModal } from "@/components/dashboard/modals/DetailModal";
-import { FeatureContentModal } from "@/components/dashboard/modals/FeatureContentModal";
-import { MaintenanceModal } from "@/components/dashboard/modals/MaintenanceModal";
+import { FeatureContentModal } from "@/components/dashboard/admin/mainDashboard/FeatureContentModal";
+import { MaintenanceModal } from "@/components/dashboard/admin/mainDashboard/MaintenanceModal";
 import {
   FileTextIcon,
   FilmIcon,

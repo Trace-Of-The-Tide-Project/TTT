@@ -10,9 +10,9 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@/components/ui/icons";
-import { BadgeFormModal } from "@/components/dashboard/modals/BadgeFormModal";
-import { CategoryFormModal } from "@/components/dashboard/modals/CategoryFormModal";
-import { TagFormModal } from "@/components/dashboard/modals/TagFormModal";
+import { BadgeFormModal } from "@/components/dashboard/admin/system-settings/BadgeFormModal";
+import { CategoryFormModal } from "@/components/dashboard/admin/system-settings/CategoryFormModal";
+import { TagFormModal } from "@/components/dashboard/admin/system-settings/TagFormModal";
 import type { MessageTemplate, MessageTemplateCategory } from "@/components/dashboard/modals/CreateMessageTemplateModal";
 import { EditMessageTemplateModal } from "@/components/dashboard/modals/EditMessageTemplateModal";
 import { BadgeIconRenderer } from "@/components/dashboard/admin/system-settings/badge-icon-options";

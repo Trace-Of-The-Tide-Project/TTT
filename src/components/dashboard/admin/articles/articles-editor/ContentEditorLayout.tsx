@@ -1,563 +1,57 @@
 "use client";
 
-import { Link } from "@/i18n/navigation";
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
-import { useRouter } from "@/i18n/navigation";
-import {
-  AvailableBlocks,
-  type BlockType,
-} from "@/components/dashboard/admin/articles/articles-editor/AvailableBlocks";
+import { Link } from "@/i18n/navigation";
+import { AvailableBlocks } from "@/components/dashboard/admin/articles/articles-editor/AvailableBlocks";
 import { EditorToolbar } from "@/components/dashboard/admin/articles/articles-editor/EditorToolbar";
 import { EditorRegistryProvider } from "@/components/dashboard/admin/articles/articles-editor/lib/editor-registry";
-import {
-  ContentBlocks,
-  type ContentBlock,
-} from "@/components/dashboard/admin/articles/articles-editor/ContentBlocks";
-import {
-  ContentSettings,
-  type ArticleWorkflowStatus,
-} from "@/components/dashboard/admin/articles/articles-editor/ArticleSettings";
+import { ContentBlocks } from "@/components/dashboard/admin/articles/articles-editor/ContentBlocks";
+import { ContentSettings } from "@/components/dashboard/admin/articles/articles-editor/ArticleSettings";
 import { ContentEditorFooter } from "@/components/dashboard/admin/articles/articles-editor/ContentEditorFooter";
 import { ScheduleArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ScheduleArticleModal";
-import { buildArticleBlocksFromEditor } from "@/components/dashboard/admin/articles/articles-editor/lib/build-api-blocks";
-import { uploadArticleAssetPath } from "@/services/uploads.service";
-import { articleDetailBlocksToContentBlocks } from "@/components/dashboard/admin/articles/articles-editor/lib/api-blocks-to-content-blocks";
-import {
-  articleConfig,
-  contentFormConfigForType,
-  type ContentFormConfig,
-} from "./content-form-config";
-import {
-  localizeContentFormConfig,
-  localizeMainMediaEditorCopy,
-} from "@/lib/dashboard/localize-article-editor-config";
-import { invalidateAdminArticlesListCache } from "@/lib/dashboard/admin-articles-list-cache";
-import {
-  createArticle,
-  getArticleById,
-  getArticleIdFromCreateResponse,
-  publishArticle,
-  scheduleArticle,
-  updateArticle,
-  type ArticleLifecycleStatus,
-  type CreateArticlePayload,
-} from "@/services/articles.service";
-import { useArticle } from "@/hooks/queries/articles";
 import { TranslationsPanel } from "@/components/dashboard/admin/translations/TranslationsPanel";
-import { isAxiosError } from "axios";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
+import {
+  useArticleEditor,
+  type ContentEditorLayoutProps,
+} from "./hooks/useArticleEditor";
+
+export type { ContentEditorLayoutProps };
+
+const ADMIN_ARTICLES_PATH = "/admin/articles";
 
 const titleClass =
   "w-full border-0 bg-transparent px-0 py-2 text-lg text-foreground placeholder:text-foreground outline-none";
 
-function editPatchFromPayload(payload: CreateArticlePayload) {
-  return {
-    title: payload.title || undefined,
-    category: payload.category || undefined,
-    collection_id: payload.collection_id?.trim() ? payload.collection_id.trim() : null,
-    cover_image: payload.cover_image ?? null,
-    blocks: payload.blocks,
-    tag_ids: payload.tag_ids,
-  };
-}
-
-export type ContentEditorLayoutProps = {
-  /** Create mode */
-  config?: ContentFormConfig;
-  /** Edit mode — same editor UI, loads article into the form */
-  articleId?: string;
-  /**
-   * Create-translation mode: the new article links to this original's
-   * translation group on save (set from the create route's ?translation_of=).
-   */
-  initialTranslationOf?: string;
-  /** Pre-selected language when adding a translation (?language=). */
-  initialLanguage?: string;
-  /**
-   * Where to go after a successful save (?return=). Used by the translation
-   * wizard so creating a translation loops back to the hub instead of the list.
-   * Must be an internal admin path.
-   */
-  returnTo?: string;
-};
-
-const ADMIN_ARTICLES_PATH = "/admin/articles";
-
-const SUCCESS_TOAST_MS = 3200;
-
-export function ContentEditorLayout({
-  config: configFromProps,
-  articleId,
-  initialTranslationOf,
-  initialLanguage,
-  returnTo,
-}: ContentEditorLayoutProps) {
-  const t = useTranslations("Dashboard.articles.editor");
-  const tLayout = useTranslations("Dashboard.articles.editor.layout");
-
-  const translateErr = useCallback(
-    (e: unknown): string => {
-      if (isAxiosError(e)) {
-        const d = e.response?.data;
-        if (typeof d === "string" && d.trim()) return d;
-        if (d && typeof d === "object") {
-          const o = d as Record<string, unknown>;
-          if (typeof o.message === "string") return o.message;
-          if (Array.isArray(o.message)) return o.message.map(String).join("; ");
-          if (typeof o.error === "string") return o.error;
-        }
-        return e.message || tLayout("errorRequestFailed");
-      }
-      if (e instanceof Error) return e.message;
-      return tLayout("errorGeneric");
-    },
-    [tLayout],
-  );
-
-  const router = useRouter();
-  const invalidateArticlesListAndLeave = useCallback(
-    (destination: string = ADMIN_ARTICLES_PATH) => {
-      invalidateAdminArticlesListCache();
-      router.push(destination);
-    },
-    [router],
-  );
-  const isEditMode = Boolean(articleId);
-  const initialWasDraftRef = useRef(true);
-  const pendingDelayedNavRef = useRef(false);
-  const [mediaUploading, setMediaUploading] = useState(false);
-  const [successToast, setSuccessToast] = useState<string | null>(null);
-  const [toastEntered, setToastEntered] = useState(false);
-
-  const [config, setConfig] = useState<ContentFormConfig>(() => configFromProps ?? articleConfig);
-
-  const localizedConfig = useMemo(
-    () => localizeContentFormConfig(config, (key) => t(key)),
-    [config, t],
-  );
-
-  const localizedMainMedia = useMemo(
-    () => localizeMainMediaEditorCopy(config.contentType, (key) => t(key)),
-    [config.contentType, t],
-  );
-
-  const [title, setTitle] = useState("");
-  const [blocks, setBlocks] = useState<ContentBlock[]>(() => configFromProps?.defaultBlocks ?? articleConfig.defaultBlocks);
-  const [workflowStatus, setWorkflowStatus] = useState<ArticleWorkflowStatus>("draft");
-  const [scheduledAt, setScheduledAt] = useState<string | null>(null);
-  const [category, setCategory] = useState("");
-  const [language, setLanguage] = useState(initialLanguage || "en");
-  // When set, this content is created as a translation of the given original and
-  // inherits its translation group on save. Stays fixed for the editor session.
-  const [translationOf, setTranslationOf] = useState<string | undefined>(
-    initialTranslationOf,
-  );
-
-  // Linking the current article to an existing original (the editor picker) or
-  // clearing it. Keep `originalTitle` in sync so the "Translating from" banner
-  // reflects the choice.
-  const handleTranslationOfChange = useCallback(
-    (id: string | undefined, title?: string | null) => {
-      setTranslationOf(id || undefined);
-      setOriginalTitle(id ? (title ?? null) : null);
-    },
-    [],
-  );
-  const [originalTitle, setOriginalTitle] = useState<string | null>(null);
-  const [visibility, setVisibility] = useState<"public" | "private">("public");
-  const [seoTitle, setSeoTitle] = useState("");
-  const [metaDescription, setMetaDescription] = useState("");
-  const [collectionId, setCollectionId] = useState("");
-  const [tagIds, setTagIds] = useState<string[]>([]);
-  // Cover image: existing URL loaded on edit, or a freshly-picked File whose
-  // upload is deferred until save (mirrors how image blocks defer upload).
-  const [coverImage, setCoverImage] = useState<string | null>(null);
-  const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loadKey, setLoadKey] = useState(0);
-  const [portalReady, setPortalReady] = useState(false);
-
-  useEffect(() => {
-    setPortalReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (configFromProps && !articleId) {
-      setConfig(configFromProps);
-      setBlocks(configFromProps.defaultBlocks);
-    }
-  }, [configFromProps, articleId]);
-
-  const articleQuery = useArticle(articleId);
-  const articleLoading = isEditMode && articleQuery.isPending;
-  const articleNotFound = articleQuery.isSuccess && articleQuery.data === null;
-  const loadError = articleNotFound
-    ? tLayout("articleNotFound")
-    : articleQuery.error
-      ? translateErr(articleQuery.error)
-      : null;
-
-  useEffect(() => {
-    const a = articleQuery.data;
-    if (!a) return;
-    setConfig(contentFormConfigForType(a.content_type));
-    setTitle(a.title ?? "");
-    setCategory(a.category ?? "");
-    const st = (a.status || "draft").trim().toLowerCase();
-    initialWasDraftRef.current = st === "draft";
-    const isScheduled =
-      st === "scheduled" ||
-      st === "schedule_pending" ||
-      st === "scheduled_for_publish";
-    setWorkflowStatus(
-      isScheduled ? "scheduled" : st === "published" ? "published" : "draft",
-    );
-    const sat = a.scheduled_at?.trim();
-    setScheduledAt(sat && sat.length ? sat : null);
-    setLanguage((a.language || "en").trim() || "en");
-    setTranslationOf(a.translation_of?.trim() || undefined);
-    setVisibility((a.visibility || "public").toLowerCase() === "private" ? "private" : "public");
-    setSeoTitle(a.seo_title?.trim() ?? "");
-    setMetaDescription(a.meta_description?.trim() ?? "");
-    setCollectionId(a.collection_id?.trim() ?? "");
-    setCoverImage(a.cover_image ?? null);
-    setCoverFile(null);
-    setTagIds(
-      Array.isArray(a.tags)
-        ? a.tags.map((tagItem) => tagItem.id).filter((id): id is string => typeof id === "string")
-        : [],
-    );
-    const mapped = articleDetailBlocksToContentBlocks(a.blocks);
-    setBlocks(
-      mapped.length
-        ? mapped
-        : [{ id: crypto.randomUUID(), type: "paragraph", content: "" }],
-    );
-  }, [articleQuery.data, loadKey]);
-
-  // Translation create mode: pre-fill form fields from the original so the
-  // translator starts with content rather than a blank page.
-  useEffect(() => {
-    if (!translationOf || articleId) return;
-    getArticleById(translationOf).then((a) => {
-      if (!a) return;
-      setOriginalTitle(a.title ?? null);
-      setTitle(a.title ?? "");
-      setCategory(a.category ?? "");
-      setSeoTitle(a.seo_title?.trim() ?? "");
-      setMetaDescription(a.meta_description?.trim() ?? "");
-      setCoverImage(a.cover_image ?? null);
-      const mapped = articleDetailBlocksToContentBlocks(a.blocks);
-      if (mapped.length) setBlocks(mapped);
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (!successToast) {
-      setToastEntered(false);
-      return;
-    }
-    const id = window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => setToastEntered(true));
-    });
-    return () => window.cancelAnimationFrame(id);
-  }, [successToast]);
-
-  const notifySuccessAndLeave = useCallback(
-    (message: string, destination?: string) => {
-      pendingDelayedNavRef.current = true;
-      setSuccessToast(message);
-      window.setTimeout(() => {
-        pendingDelayedNavRef.current = false;
-        setSuccessToast(null);
-        invalidateArticlesListAndLeave(destination);
-      }, SUCCESS_TOAST_MS);
-    },
-    [invalidateArticlesListAndLeave],
-  );
-
-  // Where to land after a successful save:
-  // - an explicit `returnTo` (translation wizard loop) wins;
-  // - a brand-new ORIGINAL article enters its translation wizard hub;
-  // - everything else falls back to the articles list.
-  const safeReturnTo =
-    returnTo && returnTo.startsWith("/admin/") ? returnTo : undefined;
-  const destinationAfterSave = useCallback(
-    (createdId?: string | null) => {
-      if (safeReturnTo) return safeReturnTo;
-      // Only article-type content uses the translation wizard hub; other
-      // content types (video, audio, artwork…) keep the plain list redirect.
-      if (
-        !isEditMode &&
-        !translationOf &&
-        createdId &&
-        config.contentType === "article"
-      ) {
-        return `/admin/articles/translate/${createdId}`;
-      }
-      return ADMIN_ARTICLES_PATH;
-    },
-    [safeReturnTo, isEditMode, translationOf, config.contentType],
-  );
-
-  const addBlock = useCallback((type: BlockType) => {
-    setBlocks((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        type,
-        ...(type === "divider" ? {} : { content: "" }),
-      },
-    ]);
-  }, []);
-
-  const addCoverBlock = useCallback(() => {
-    setBlocks((prev) => [
-      {
-        id: crypto.randomUUID(),
-        type: "image" as const,
-      },
-      ...prev,
-    ]);
-  }, []);
-
-  const reorderBlocks = useCallback((activeId: string, overId: string) => {
-    setBlocks((prev) => {
-      const from = prev.findIndex((b) => b.id === activeId);
-      const to = prev.findIndex((b) => b.id === overId);
-      if (from < 0 || to < 0 || from === to) return prev;
-      const next = [...prev];
-      const [item] = next.splice(from, 1);
-      // Insert at original target index (same rule as splice(from,1); splice(to,0) on a copy).
-      next.splice(to, 0, item);
-      return next;
-    });
-  }, []);
-
-  const updateBlock = useCallback((id: string, patch: Partial<ContentBlock>) => {
-    setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)));
-  }, []);
-
-  const buildPayload = useCallback(async (): Promise<CreateArticlePayload> => {
-    const apiBlocks = await buildArticleBlocksFromEditor(blocks, {
-      onUploading: setMediaUploading,
-    });
-    // Resolve the cover to persist: upload a freshly-picked file (deferred until
-    // now) and store its stable object key, otherwise reuse the already-loaded
-    // value. We keep `coverImage` as-is for the on-screen preview (a local
-    // object-URL for fresh picks, or the backend-signed URL when editing) — the
-    // bare storage key isn't directly renderable (private bucket), so it only
-    // goes into the payload, never into the preview state.
-    let resolvedCover = coverImage;
-    if (coverFile) {
-      setMediaUploading(true);
-      try {
-        resolvedCover = await uploadArticleAssetPath(coverFile);
-        setCoverFile(null);
-      } finally {
-        setMediaUploading(false);
-      }
-    }
-    const cid = collectionId.trim();
-    return {
-      title: title.trim(),
-      content_type: config.contentType,
-      category: category.trim(),
-      language: language.trim() || undefined,
-      visibility,
-      seo_title: seoTitle.trim() || undefined,
-      meta_description: metaDescription.trim() || undefined,
-      collection_id: cid || undefined,
-      tag_ids: tagIds.length ? tagIds : undefined,
-      cover_image: resolvedCover || undefined,
-      blocks: apiBlocks,
-      translation_of: translationOf || undefined,
-    };
-  }, [
+export function ContentEditorLayout(props: ContentEditorLayoutProps) {
+  const {
+    t, tLayout, isEditMode, localizedConfig, localizedMainMedia, config,
+    articleLoading, loadError,
+    title, setTitle,
     blocks,
-    title,
-    config.contentType,
-    category,
-    language,
-    visibility,
-    seoTitle,
-    metaDescription,
-    collectionId,
-    tagIds,
+    workflowStatus, setWorkflowStatus,
+    scheduledAt,
+    category, setCategory,
+    language, setLanguage,
+    translationOf, originalTitle,
+    visibility, setVisibility,
+    seoTitle, setSeoTitle,
+    metaDescription, setMetaDescription,
+    collectionId, setCollectionId,
+    tagIds, setTagIds,
     coverImage,
-    coverFile,
-    translationOf,
-  ]);
+    scheduleModalOpen, setScheduleModalOpen,
+    busy, error,
+    loadKey, setLoadKey,
+    portalReady,
+    mediaUploading,
+    successToast, toastEntered,
+    addBlock, addCoverBlock, reorderBlocks, updateBlock,
+    handleSaveDraft, handlePublish, handleScheduleConfirm, handleTranslationOfChange,
+    setCoverFile, setCoverImage,
+  } = useArticleEditor(props);
 
-  const handleSaveDraft = useCallback(async () => {
-    if (!title.trim()) {
-      setError(tLayout("validationTitle"));
-      return;
-    }
-    if (!category.trim()) {
-      setError(tLayout("validationCategory"));
-      return;
-    }
-    setError(null);
-    setBusy(true);
-    try {
-      const payload = await buildPayload();
-      if (payload.blocks.length === 0) {
-        setError(tLayout("validationBlocksDraft"));
-        return;
-      }
-      if (isEditMode && articleId) {
-        const status: ArticleLifecycleStatus =
-          workflowStatus === "draft"
-            ? "draft"
-            : workflowStatus === "published"
-              ? "published"
-              : "scheduled";
-        await updateArticle(articleId, { ...editPatchFromPayload(payload), status });
-        notifySuccessAndLeave(tLayout("successChangesSaved"), destinationAfterSave());
-        return;
-      }
-      const res = await createArticle(payload);
-      const id = getArticleIdFromCreateResponse(res);
-      notifySuccessAndLeave(tLayout("successDraftSaved"), destinationAfterSave(id));
-    } catch (e) {
-      setError(translateErr(e));
-    } finally {
-      if (!pendingDelayedNavRef.current) setBusy(false);
-    }
-  }, [
-    title,
-    category,
-    buildPayload,
-    notifySuccessAndLeave,
-    destinationAfterSave,
-    isEditMode,
-    articleId,
-    workflowStatus,
-    tLayout,
-    translateErr,
-  ]);
-
-  const handlePublish = useCallback(async () => {
-    if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
-    if (!title.trim()) {
-      setError(tLayout("validationTitle"));
-      return;
-    }
-    if (!category.trim()) {
-      setError(tLayout("validationCategory"));
-      return;
-    }
-    setError(null);
-    setBusy(true);
-    try {
-      const payload = await buildPayload();
-      if (payload.blocks.length === 0) {
-        setError(tLayout("validationBlocksPublish"));
-        return;
-      }
-      if (isEditMode && articleId) {
-        await updateArticle(articleId, editPatchFromPayload(payload));
-        if (initialWasDraftRef.current || workflowStatus === "scheduled") {
-          await publishArticle(articleId);
-          initialWasDraftRef.current = false;
-        }
-        notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave());
-        return;
-      }
-      const res = await createArticle(payload);
-      const id = getArticleIdFromCreateResponse(res);
-      if (!id) {
-        setError(tLayout("errorCreateNoIdPublish"));
-        return;
-      }
-      await publishArticle(id);
-      notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave(id));
-    } catch (e) {
-      setError(translateErr(e));
-    } finally {
-      if (!pendingDelayedNavRef.current) setBusy(false);
-    }
-  }, [
-    workflowStatus,
-    title,
-    category,
-    buildPayload,
-    notifySuccessAndLeave,
-    destinationAfterSave,
-    isEditMode,
-    articleId,
-    tLayout,
-    translateErr,
-  ]);
-
-  const handleScheduleConfirm = useCallback(
-    async (iso: string) => {
-      if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
-      if (!title.trim()) {
-        setError(tLayout("validationTitle"));
-        setScheduleModalOpen(false);
-        return;
-      }
-      if (!category.trim()) {
-        setError(tLayout("validationCategory"));
-        setScheduleModalOpen(false);
-        return;
-      }
-      setError(null);
-      setBusy(true);
-      try {
-        const payload = await buildPayload();
-        if (payload.blocks.length === 0) {
-          setError(tLayout("validationBlocksSchedule"));
-          setScheduleModalOpen(false);
-          return;
-        }
-        if (isEditMode && articleId) {
-          await updateArticle(articleId, {
-            ...editPatchFromPayload(payload),
-            status: "scheduled",
-          });
-          await scheduleArticle(articleId, iso);
-          setScheduleModalOpen(false);
-          notifySuccessAndLeave(tLayout("successArticleScheduled"), destinationAfterSave());
-          return;
-        }
-        const res = await createArticle(payload);
-        const id = getArticleIdFromCreateResponse(res);
-        if (!id) {
-          setError(tLayout("errorCreateNoIdSchedule"));
-          setScheduleModalOpen(false);
-          return;
-        }
-        await scheduleArticle(id, iso);
-        setScheduleModalOpen(false);
-        notifySuccessAndLeave(tLayout("successArticleScheduled"), destinationAfterSave(id));
-      } catch (e) {
-        setError(translateErr(e));
-        setScheduleModalOpen(false);
-      } finally {
-        if (!pendingDelayedNavRef.current) setBusy(false);
-      }
-    },
-    [
-      workflowStatus,
-      title,
-      category,
-      buildPayload,
-      notifySuccessAndLeave,
-      destinationAfterSave,
-      isEditMode,
-      articleId,
-      tLayout,
-      translateErr,
-    ],
-  );
+  const { articleId } = props;
 
   if (isEditMode && articleLoading) {
     return (
@@ -585,7 +79,7 @@ export function ContentEditorLayout({
     );
   }
 
-  if (!isEditMode && !configFromProps) {
+  if (!isEditMode && !props.config) {
     return (
       <div className="p-8 text-sm text-red-300">
         {tLayout("misconfigured")}
@@ -639,142 +133,139 @@ export function ContentEditorLayout({
 
   return (
     <EditorRegistryProvider>
-    <div className="flex min-h-0 flex-col">
-      {uploadOverlay}
-      {successToastPortal}
-      <ScheduleArticleModal
-        open={scheduleModalOpen}
-        busy={busy}
-        onClose={() => !busy && setScheduleModalOpen(false)}
-        onConfirm={handleScheduleConfirm}
-      />
+      <div className="flex min-h-0 flex-col">
+        {uploadOverlay}
+        {successToastPortal}
+        <ScheduleArticleModal
+          open={scheduleModalOpen}
+          busy={busy}
+          onClose={() => !busy && setScheduleModalOpen(false)}
+          onConfirm={handleScheduleConfirm}
+        />
 
-      {config.showToolbar ? (
-        <div className="mb-4 shrink-0">
-          <EditorToolbar />
-        </div>
-      ) : null}
-
-      {/* Edit-mode top bar: breadcrumb + translations chip row + preview link */}
-      {isEditMode && articleId ? (
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4 shrink-0">
-          <div className="flex flex-wrap items-center gap-3 text-sm">
-            <Link href={ADMIN_ARTICLES_PATH} className="text-[#C9A96E] hover:underline">
-              {tLayout("backToArticles")}
-            </Link>
-            <span className="text-gray-500">{tLayout("editArticle")}</span>
+        {config.showToolbar ? (
+          <div className="mb-4 shrink-0">
+            <EditorToolbar />
           </div>
-          <div className="flex items-center gap-3">
-            <TranslationsPanel
-              contentType="article"
-              contentId={articleId}
-              currentLanguage={language}
-              createBasePath={`/admin/articles/create/${config.contentType}`}
-            />
-            <Link
-              href={previewHrefForContentType(config.contentType, articleId)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[#C9A96E]/50 hover:bg-[#252525]"
-            >
-              {tLayout("preview")}
-            </Link>
-          </div>
-        </div>
-      ) : null}
+        ) : null}
 
-      <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
-        <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
-          {translationOf && originalTitle ? (
-            <div className="flex items-center gap-2 rounded-lg border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-3 py-2 text-xs text-gray-400">
-              <span>Translating from:</span>
-              <span className="font-medium text-[#C9A96E]">{originalTitle}</span>
-              <span className="text-gray-600">·</span>
+        {isEditMode && articleId ? (
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4 shrink-0">
+            <div className="flex flex-wrap items-center gap-3 text-sm">
+              <Link href={ADMIN_ARTICLES_PATH} className="text-[#C9A96E] hover:underline">
+                {tLayout("backToArticles")}
+              </Link>
+              <span className="text-gray-500">{tLayout("editArticle")}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <TranslationsPanel
+                contentType="article"
+                contentId={articleId}
+                currentLanguage={language}
+                createBasePath={`/admin/articles/create/${config.contentType}`}
+              />
               <Link
-                href={`/admin/articles/edit/${translationOf}`}
-                className="text-blue-400 hover:underline"
+                href={previewHrefForContentType(config.contentType, articleId)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[#C9A96E]/50 hover:bg-[#252525]"
               >
-                View original →
+                {tLayout("preview")}
               </Link>
             </div>
-          ) : null}
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder={localizedConfig.titlePlaceholder}
-            className={titleClass}
-          />
-          <ContentBlocks
-            blocks={blocks}
-            onUpdateBlock={updateBlock}
-            onAddCoverBlock={addCoverBlock}
-            onReorderBlock={reorderBlocks}
-            config={localizedConfig}
-            mainMediaCopy={localizedMainMedia}
-          />
+          </div>
+        ) : null}
+
+        <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
+          <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
+            {translationOf && originalTitle ? (
+              <div className="flex items-center gap-2 rounded-lg border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-3 py-2 text-xs text-gray-400">
+                <span>Translating from:</span>
+                <span className="font-medium text-[#C9A96E]">{originalTitle}</span>
+                <span className="text-gray-600">·</span>
+                <Link
+                  href={`/admin/articles/edit/${translationOf}`}
+                  className="text-blue-400 hover:underline"
+                >
+                  View original →
+                </Link>
+              </div>
+            ) : null}
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={localizedConfig.titlePlaceholder}
+              className={titleClass}
+            />
+            <ContentBlocks
+              blocks={blocks}
+              onUpdateBlock={updateBlock}
+              onAddCoverBlock={addCoverBlock}
+              onReorderBlock={reorderBlocks}
+              config={localizedConfig}
+              mainMediaCopy={localizedMainMedia}
+            />
+          </div>
+
+          <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-64 lg:overflow-y-auto">
+            <AvailableBlocks
+              onAddBlock={addBlock}
+              allowedBlockTypes={config.allowedBlockTypes}
+              imageBlockLabel={
+                config.disableHero
+                  ? undefined
+                  : config.contentType === "video" || config.contentType === "audio"
+                    ? tLayout("imageBlockShort")
+                    : localizedMainMedia.blockName
+              }
+            />
+            <ContentSettings
+              title={localizedConfig.settingsTitle}
+              workflowStatus={workflowStatus}
+              onWorkflowStatusChange={setWorkflowStatus}
+              scheduledAt={scheduledAt}
+              category={category}
+              onCategoryChange={setCategory}
+              language={language}
+              onLanguageChange={setLanguage}
+              translationOf={translationOf}
+              onTranslationOfChange={handleTranslationOfChange}
+              excludeId={articleId}
+              visibility={visibility}
+              onVisibilityChange={setVisibility}
+              seoTitle={seoTitle}
+              onSeoTitleChange={setSeoTitle}
+              metaDescription={metaDescription}
+              onMetaDescriptionChange={setMetaDescription}
+              collectionId={collectionId}
+              onCollectionIdChange={setCollectionId}
+              tagIds={tagIds}
+              onTagIdsChange={setTagIds}
+              coverImage={coverImage}
+              onCoverFileSelect={(file) => {
+                setCoverFile(file);
+                setCoverImage(URL.createObjectURL(file));
+              }}
+              onCoverRemove={() => {
+                setCoverFile(null);
+                setCoverImage(null);
+              }}
+            />
+          </aside>
         </div>
 
-        <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-64 lg:overflow-y-auto">
-          <AvailableBlocks
-            onAddBlock={addBlock}
-            allowedBlockTypes={config.allowedBlockTypes}
-            imageBlockLabel={
-              // No cover concept for article-style editors — fall back to the
-              // default "Image" label from translations.
-              config.disableHero
-                ? undefined
-                : config.contentType === "video" || config.contentType === "audio"
-                  ? tLayout("imageBlockShort")
-                  : localizedMainMedia.blockName
-            }
-          />
-          <ContentSettings
-            title={localizedConfig.settingsTitle}
-            workflowStatus={workflowStatus}
-            onWorkflowStatusChange={setWorkflowStatus}
-            scheduledAt={scheduledAt}
-            category={category}
-            onCategoryChange={setCategory}
-            language={language}
-            onLanguageChange={setLanguage}
-            translationOf={translationOf}
-            onTranslationOfChange={handleTranslationOfChange}
-            excludeId={articleId}
-            visibility={visibility}
-            onVisibilityChange={setVisibility}
-            seoTitle={seoTitle}
-            onSeoTitleChange={setSeoTitle}
-            metaDescription={metaDescription}
-            onMetaDescriptionChange={setMetaDescription}
-            collectionId={collectionId}
-            onCollectionIdChange={setCollectionId}
-            tagIds={tagIds}
-            onTagIdsChange={setTagIds}
-            coverImage={coverImage}
-            onCoverFileSelect={(file) => {
-              setCoverFile(file);
-              setCoverImage(URL.createObjectURL(file));
-            }}
-            onCoverRemove={() => {
-              setCoverFile(null);
-              setCoverImage(null);
-            }}
-          />
-        </aside>
+        <ContentEditorFooter
+          primaryButtonLabel={localizedConfig.primaryButtonLabel}
+          saveDraftLabel={isEditMode ? t("footer.defaults.saveChanges") : undefined}
+          workflowStatus={workflowStatus}
+          busy={busy}
+          error={error}
+          onPublish={handlePublish}
+          onSaveDraft={handleSaveDraft}
+          onOpenSchedule={() => setScheduleModalOpen(true)}
+        />
       </div>
-
-      <ContentEditorFooter
-        primaryButtonLabel={localizedConfig.primaryButtonLabel}
-        saveDraftLabel={isEditMode ? t("footer.defaults.saveChanges") : undefined}
-        workflowStatus={workflowStatus}
-        busy={busy}
-        error={error}
-        onPublish={handlePublish}
-        onSaveDraft={handleSaveDraft}
-        onOpenSchedule={() => setScheduleModalOpen(true)}
-      />
-    </div>
     </EditorRegistryProvider>
   );
 }
