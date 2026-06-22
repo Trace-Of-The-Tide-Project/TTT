@@ -8,15 +8,10 @@ const TAB_IDS = ["manifesto", "publications", "issues", "editorialBoard", "suppo
 type TabId = (typeof TAB_IDS)[number];
 
 /**
- * Slot props — each pane is rendered by the parent (the page server
- * component) so it can fetch its own data and stream in independently.
- *
- *   - `manifesto / publications / issues / editorialBoard / support`
- *     drive the stacked "Manifesto" view (the original landing page).
- *     Any pane can be omitted; the matching tab will hide.
- *   - `standalone.{publications, issues, editorialBoard, support}`
- *     overrides the slot when that tab is active on its own (Figma
- *     Variants 2-5). Falls back to the same stacked slot when omitted.
+ * One slot per tab. Each pane is rendered by the parent (the page
+ * server component) so it can fetch its own data and stream in
+ * independently. A pane left `undefined` hides its tab — so a section
+ * with no data never renders as a blank panel.
  */
 export type MagazineTabId = (typeof TAB_IDS)[number];
 
@@ -26,12 +21,6 @@ export type MagazineTabsProps = {
   issues?: ReactNode;
   editorialBoard?: ReactNode;
   support?: ReactNode;
-  standalone?: {
-    publications?: ReactNode;
-    issues?: ReactNode;
-    editorialBoard?: ReactNode;
-    support?: ReactNode;
-  };
   /** Optional external active-tab state — lets a parent client
    *  component lift this state up to coordinate sibling sections
    *  (e.g. the page's MagazineNewsletter swapping its copy when the
@@ -42,15 +31,18 @@ export type MagazineTabsProps = {
 };
 
 /**
- * Magazine body.
+ * Magazine body — one focused section per tab.
  *
- * Tab behavior:
- *   - First tab ("Manifesto") = the full landing experience: every
- *     visible stacked-slot pane rendered vertically. This stays as the
- *     original landing page.
- *   - Every other tab = the matching `standalone[tab]` if provided,
- *     else the stacked slot. Matches the Figma variants where each
- *     tab reveals a single focused redesign.
+ * Previously the first tab ("Manifesto") stacked *every* section into
+ * one endless scroll. Now each tab reveals a single, self-contained
+ * section, so the visitor chooses what to look at instead of wading
+ * through the whole page. The active pane is the only one mounted, so
+ * its entrance animation replays on each switch.
+ *
+ * Known production follow-up: because only the active pane is in the
+ * DOM, crawlers / no-JS visitors see just the default (manifesto) tab.
+ * Acceptable for this redesign; revisit if the page must be fully
+ * crawlable without JS.
  */
 export function MagazineTabs({
   manifesto,
@@ -58,7 +50,6 @@ export function MagazineTabs({
   issues,
   editorialBoard,
   support,
-  standalone,
   active: activeProp,
   onActiveChange,
 }: MagazineTabsProps) {
@@ -71,25 +62,18 @@ export function MagazineTabs({
     editorialBoard,
     support,
   };
-  /** Per-tab override used when the tab is the active standalone view. */
-  const standaloneSlots: Partial<Record<TabId, ReactNode>> = {
-    publications: standalone?.publications,
-    issues: standalone?.issues,
-    editorialBoard: standalone?.editorialBoard,
-    support: standalone?.support,
-  };
-  // A tab shows if it has *either* a stacked slot or a standalone
-  // override. Manifesto only ever uses the stacked slot.
-  const visibleTabIds = TAB_IDS.filter(
-    (id) => slots[id] !== undefined || standaloneSlots[id] !== undefined,
-  );
+  // A tab shows only when it has content — keeps dataless sections from
+  // rendering as an empty panel.
+  const visibleTabIds = TAB_IDS.filter((id) => slots[id] !== undefined);
   const initialTab: TabId = visibleTabIds[0] ?? "manifesto";
 
   // Internal state used as a fallback when a parent doesn't lift the
   // active tab up. When the parent passes `active` + `onActiveChange`,
   // those win and the internal state is unused.
   const [internalActive, setInternalActive] = useState<TabId>(initialTab);
-  const active = activeProp ?? internalActive;
+  const activeRaw = activeProp ?? internalActive;
+  // Guard against an active tab whose slot vanished (e.g. data emptied).
+  const active = slots[activeRaw] !== undefined ? activeRaw : initialTab;
   const setActive = (id: TabId) => {
     setInternalActive(id);
     onActiveChange?.(id);
@@ -101,13 +85,11 @@ export function MagazineTabs({
   }));
 
   return (
-    <section
-      className="relative w-full px-4 pb-16 sm:px-6 sm:pb-20 md:px-8 md:pb-28"
-    >
+    <section className="relative w-full px-4 pb-16 sm:px-6 sm:pb-20 md:px-8 md:pb-28">
       <div className="mx-auto w-full max-w-[1392px]">
         {/* Sticky tab bar — pinned while the user scrolls the active
-            pane(s). Capped at max-w-2xl so the 5 tabs stay grouped on
-            wide screens. Horizontally scrollable on small screens. */}
+            pane. Capped at max-w-2xl so the tabs stay grouped on wide
+            screens. Horizontally scrollable on small screens. */}
         <div
           className="sticky top-3 z-30 mx-auto mb-10 max-w-2xl overflow-x-auto sm:top-4 sm:mb-12 md:mb-14 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           style={{
@@ -127,28 +109,9 @@ export function MagazineTabs({
           </div>
         </div>
 
-        {/* min-w-0 on each grid item: a grid item's default min-width
-            is `auto` (= its content's min-content). Without this, wide
-            content (like Support's carousel) can drag the page wider
-            than the viewport.
-            Manifesto stack uses the original stacked slots; every other
-            tab prefers its standalone override (the Figma variant
-            redesign) and falls back to the stacked slot when missing. */}
-        {active === "manifesto" ? (
-          <div className="grid gap-20 sm:gap-24 md:gap-28">
-            {visibleTabIds
-              .filter((id) => slots[id] !== undefined)
-              .map((id) => (
-                <div key={id} className="min-w-0">
-                  {slots[id]}
-                </div>
-              ))}
-          </div>
-        ) : (
-          <div className="min-w-0">
-            {standaloneSlots[active] ?? slots[active]}
-          </div>
-        )}
+        {/* One focused section at a time. min-w-0 stops wide content
+            (carousels, grids) from dragging the page past the viewport. */}
+        <div className="min-w-0">{slots[active]}</div>
       </div>
     </section>
   );

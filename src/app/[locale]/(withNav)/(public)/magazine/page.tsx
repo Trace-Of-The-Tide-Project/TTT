@@ -2,32 +2,15 @@ import HexBackground from "@/components/ui/HexBackground";
 import { MagazineHero } from "@/components/home/magazine/MagazineHero";
 import { MagazineBody } from "@/components/home/magazine/MagazineBody";
 import { MagazineManifesto } from "@/components/home/magazine/MagazineManifesto";
-import {
-  MagazineLatestPublished,
-  type LatestPublishedItem,
-} from "@/components/home/magazine/MagazineLatestPublished";
-import { MagazineLatestPublishedV2 } from "@/components/home/magazine/MagazineLatestPublishedV2";
+import { type LatestPublishedItem } from "@/components/home/magazine/MagazineLatestPublished";
+import { MagazinePublicationsCells } from "@/components/home/magazine/MagazinePublicationsCells";
 import { type MagazineIssueItem } from "@/components/home/magazine/MagazineIssues";
 import { MagazineIssuesCells } from "@/components/home/magazine/MagazineIssuesCells";
-import { MagazineIssuesV2 } from "@/components/home/magazine/MagazineIssuesV2";
-import {
-  MagazineEditorialBoard,
-  type LessReadArticleItem,
-  type FollowWriterItem,
-  type FounderQuoteData,
-} from "@/components/home/magazine/MagazineEditorialBoard";
-import { MagazineEditorialBoardV2 } from "@/components/home/magazine/MagazineEditorialBoardV2";
-import {
-  MagazineSupport,
-  type CollaborationItem,
-} from "@/components/home/magazine/MagazineSupport";
-import { MagazineSupportV2 } from "@/components/home/magazine/MagazineSupportV2";
+import { type FollowWriterItem } from "@/components/home/magazine/MagazineEditorialBoard";
+import { MagazineWritersCells } from "@/components/home/magazine/MagazineWritersCells";
+import { MagazineSupportCells } from "@/components/home/magazine/MagazineSupportCells";
 import { serverGet } from "@/lib/api/isomorphic-fetch";
-import {
-  writerAvatar,
-  writerDisplayName,
-  type WriterProfile,
-} from "@/services/writers.service";
+import { writerAvatar, writerDisplayName, type WriterProfile } from "@/services/writers.service";
 import type { MagazineIssue } from "@/services/magazine-issues.service";
 import type { Magazine } from "@/services/magazines.service";
 import {
@@ -56,36 +39,6 @@ export const dynamic = "force-dynamic";
 
 // ─── Backend response shapes (loose; OpenAPI doesn't declare them) ──
 
-type RawArticle = {
-  id: string;
-  title: string;
-  slug?: string;
-  excerpt?: string | null;
-  cover_image?: string | null;
-  category?: string | null;
-  reading_time?: number | null;
-  view_count?: number | null;
-  edition?: string | null;
-  published_at?: string | null;
-  author?: {
-    full_name?: string | null;
-    username?: string | null;
-    profile?: { display_name?: string | null; avatar?: string | null } | null;
-  } | null;
-};
-
-type RawContribution = {
-  id: string;
-  title?: string | null;
-  description?: string | null;
-  status?: string | null;
-  submission_date?: string | null;
-  contributor_name?: string | null;
-  type?: { name?: string | null } | null;
-  user?: { full_name?: string | null; username?: string | null } | null;
-  files?: Array<{ url?: string | null; path?: string | null }> | null;
-};
-
 type RawBook = {
   id: string;
   title: string;
@@ -107,12 +60,11 @@ function unwrapList<T>(raw: Envelope<T> | T[] | null): T[] {
 }
 
 async function fetchLatestBooks(): Promise<LatestPublishedItem[]> {
-  const raw = await serverGet<{ rows?: RawBook[]; data?: RawBook[] }>(
-    "/knowledge/books",
-    { limit: 5, page: 1 },
-  );
-  const rows: RawBook[] =
-    raw?.rows ?? raw?.data ?? (Array.isArray(raw) ? raw : []);
+  const raw = await serverGet<{ rows?: RawBook[]; data?: RawBook[] }>("/knowledge/books", {
+    limit: 5,
+    page: 1,
+  });
+  const rows: RawBook[] = raw?.rows ?? raw?.data ?? (Array.isArray(raw) ? raw : []);
   return rows.map((b) => ({
     id: b.id,
     title: b.title,
@@ -123,28 +75,9 @@ async function fetchLatestBooks(): Promise<LatestPublishedItem[]> {
   }));
 }
 
-async function fetchLessReadArticles(locale: string): Promise<LessReadArticleItem[]> {
-  const raw = await serverGet<Envelope<RawArticle>>("/articles", {
-    limit: 5,
-    status: "published",
-    sortBy: "view_count",
-    order: "ASC",
-  });
-  return unwrapList(raw).map((a) => ({
-    id: a.id,
-    title: a.title,
-    author: pickAuthorName(a.author),
-    date: formatShortDate(a.published_at, locale),
-    category: prettifyCategory(a.category),
-    edition: a.edition ?? "",
-  }));
-}
-
 async function fetchWriters(): Promise<FollowWriterItem[]> {
   // Try featured strip first; fall back to the full writers list.
-  const featured = await serverGet<Envelope<WriterProfile>>(
-    "/writers/featured",
-  );
+  const featured = await serverGet<Envelope<WriterProfile>>("/writers/featured");
   const list = unwrapList(featured);
   if (list.length > 0) return list.map(toWriterItem);
 
@@ -166,33 +99,16 @@ async function fetchMagazineIssues(): Promise<MagazineIssueItem[]> {
     pageCount: it.page_count ?? null,
     coverImage: it.cover_image ?? null,
     excerpt: it.excerpt ?? null,
-    edition:
-      it.edition ??
-      (it.edition_number != null ? String(it.edition_number) : null),
+    edition: it.edition ?? (it.edition_number != null ? String(it.edition_number) : null),
     category: it.category ?? null,
     publishedAt: it.published_at ?? null,
     slug: it.slug ?? null,
   }));
 }
 
-async function fetchCollaborations(locale: string): Promise<CollaborationItem[]> {
-  const raw = await serverGet<Envelope<RawContribution>>("/contributions", {
-    page: 1,
-    limit: 7,
-  });
-  return unwrapList(raw).map((c) => ({
-    id: c.id,
-    title: c.title || c.description?.slice(0, 60) || "Collaboration",
-    type: c.type?.name || "Contribution",
-    status: c.status ?? null,
-    timeline: formatShortDate(c.submission_date, locale) || null,
-    description: c.description || "",
-  }));
-}
-
 async function fetchMagazineMeta(): Promise<{
   hero: { title?: string; subtitle?: string; image?: string } | null;
-  founder: FounderQuoteData | null;
+  founder: { quote: string; name: string } | null;
   magazineId: string | null;
 }> {
   // Pull the first published magazine entity. When the backend hasn't
@@ -215,23 +131,12 @@ async function fetchMagazineMeta(): Promise<{
           }
         : null,
     founder:
-      m.founder_quote && m.founder_name
-        ? { quote: m.founder_quote, name: m.founder_name }
-        : null,
+      m.founder_quote && m.founder_name ? { quote: m.founder_quote, name: m.founder_name } : null,
     magazineId: m.id,
   };
 }
 
 // ─── Mapping helpers ────────────────────────────────────────────────
-
-function pickAuthorName(author: RawArticle["author"]): string {
-  return (
-    author?.profile?.display_name?.trim() ||
-    author?.full_name?.trim() ||
-    author?.username?.trim() ||
-    ""
-  );
-}
 
 function prettifyCategory(c: string | null | undefined): string {
   const v = (c ?? "").trim();
@@ -241,15 +146,6 @@ function prettifyCategory(c: string | null | undefined): string {
     .replace(/[_-]+/g, " ")
     .replace(/\s+/g, " ")
     .replace(/\b\w/g, (l) => l.toUpperCase());
-}
-
-function formatShortDate(iso: string | null | undefined, locale: string): string {
-  const v = (iso ?? "").trim();
-  if (!v) return "";
-  const d = new Date(v);
-  if (Number.isNaN(d.getTime())) return "";
-  // Localize month + year to the active language (e.g. Arabic month names).
-  return d.toLocaleDateString(locale, { month: "short", year: "numeric" });
 }
 
 /**
@@ -278,11 +174,10 @@ async function fetchMagazineCmsCopy(): Promise<MagazineCmsCopy> {
   // OpenAPI). serverGet swallows failures so the page falls back to
   // i18n + legacy /magazines record on backend errors.
   const page = await serverGet<CmsPage | { data: CmsPage }>(
-    `/cms/pages/slug/${MAGAZINE_PAGE_SLUG}`,
+    `/cms/pages/slug/${MAGAZINE_PAGE_SLUG}`
   );
   if (!page) return EMPTY_CMS_COPY;
-  const unwrapped =
-    (page as { data?: CmsPage }).data ?? (page as CmsPage);
+  const unwrapped = (page as { data?: CmsPage }).data ?? (page as CmsPage);
   if (!unwrapped?.sections) return EMPTY_CMS_COPY;
 
   const pickVisible = (key: Parameters<typeof findSection>[1]) => {
@@ -292,12 +187,8 @@ async function fetchMagazineCmsCopy(): Promise<MagazineCmsCopy> {
 
   return {
     hero: pickVisible("hero") ? parseHeroConfig(pickVisible("hero")) : null,
-    manifesto: pickVisible("manifesto")
-      ? parseManifestoConfig(pickVisible("manifesto"))
-      : null,
-    founder: pickVisible("founderQuote")
-      ? parseFounderConfig(pickVisible("founderQuote"))
-      : null,
+    manifesto: pickVisible("manifesto") ? parseManifestoConfig(pickVisible("manifesto")) : null,
+    founder: pickVisible("founderQuote") ? parseFounderConfig(pickVisible("founderQuote")) : null,
     newsletter: pickVisible("newsletterCopy")
       ? parseNewsletterConfig(pickVisible("newsletterCopy"))
       : null,
@@ -331,23 +222,13 @@ type PageProps = {
 export default async function MagazinePreviewPage({ params }: PageProps) {
   const { locale } = await params;
 
-  // Parallel fetch — all six endpoints fire in one round trip; each
-  // resolves to an empty array on failure (serverGet swallows errors)
-  // so the page always renders, even with the backend offline.
-  const [
-    latestArticles,
-    lessReadArticles,
-    writers,
-    issues,
-    collaborations,
-    magazineMeta,
-    cmsCopy,
-  ] = await Promise.all([
+  // Parallel fetch — every endpoint fires in one round trip; each
+  // resolves to an empty array/null on failure (serverGet swallows
+  // errors) so the page always renders, even with the backend offline.
+  const [latestArticles, writers, issues, magazineMeta, cmsCopy] = await Promise.all([
     fetchLatestBooks(),
-    fetchLessReadArticles(locale),
     fetchWriters(),
     fetchMagazineIssues(),
-    fetchCollaborations(locale),
     fetchMagazineMeta(),
     fetchMagazineCmsCopy(),
   ]);
@@ -360,26 +241,18 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
   const heroSubtitle = cmsHeroLocale.subtitle || magazineMeta.hero?.subtitle;
   const heroPrimaryCta = cmsHeroLocale.primaryCtaLabel;
   const heroSecondaryCta = cmsHeroLocale.secondaryCtaLabel;
-  const heroPrimaryHref =
-    cmsCopy.hero?.primaryHref || "/magazine#magazine-content";
-  const heroSecondaryHref =
-    cmsCopy.hero?.secondaryHref || "/magazine#newsletter-heading";
+  const heroPrimaryHref = cmsCopy.hero?.primaryHref || "/magazine#magazine-content";
+  const heroSecondaryHref = cmsCopy.hero?.secondaryHref || "/magazine#newsletter-heading";
 
-  const manifestoLocale = cmsCopy.manifesto
-    ? pickManifestoLocale(cmsCopy.manifesto, locale)
-    : {};
+  const manifestoLocale = cmsCopy.manifesto ? pickManifestoLocale(cmsCopy.manifesto, locale) : {};
   const newsletterLocale = cmsCopy.newsletter
     ? pickNewsletterLocale(cmsCopy.newsletter, locale)
     : {};
-  const supportLocale = cmsCopy.support
-    ? pickSupportLocale(cmsCopy.support, locale)
-    : {};
+  const supportLocale = cmsCopy.support ? pickSupportLocale(cmsCopy.support, locale) : {};
 
   // Founder: merge CMS override into the legacy magazineMeta.founder
   // object so MagazineEditorialBoard receives a single FounderQuoteData.
-  const founderLocale = cmsCopy.founder
-    ? pickFounderLocale(cmsCopy.founder, locale)
-    : {};
+  const founderLocale = cmsCopy.founder ? pickFounderLocale(cmsCopy.founder, locale) : {};
   const founderForRender = (() => {
     const legacy = magazineMeta.founder ?? null;
     const cmsQuote = founderLocale.quote?.trim();
@@ -436,35 +309,19 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
             ),
             publications:
               latestArticles.length > 0 ? (
-                <MagazineLatestPublished items={latestArticles} />
+                <MagazinePublicationsCells items={latestArticles} />
               ) : undefined,
             issues: <MagazineIssuesCells items={issues} />,
             editorialBoard:
-              lessReadArticles.length > 0 ||
-              writers.length > 0 ||
-              founderForRender ? (
-                <MagazineEditorialBoard
-                  lessReadArticles={lessReadArticles}
-                  writers={writers}
-                  founder={founderForRender}
-                />
+              writers.length > 0 ? (
+                <MagazineWritersCells writers={writers} founder={founderForRender} />
               ) : undefined,
-            support:
-              collaborations.length > 0 ? (
-                <MagazineSupport
-                  collaborations={collaborations}
-                  headingOverride={supportLocale.heading}
-                  subheadingOverride={supportLocale.subheading}
-                />
-              ) : undefined,
-            standalone: {
-              publications: (
-                <MagazineLatestPublishedV2 items={latestArticles} />
-              ),
-              issues: <MagazineIssuesV2 items={issues} />,
-              editorialBoard: <MagazineEditorialBoardV2 writers={writers} />,
-              support: <MagazineSupportV2 issues={issues} />,
-            },
+            support: (
+              <MagazineSupportCells
+                headingOverride={supportLocale.heading}
+                subheadingOverride={supportLocale.subheading}
+              />
+            ),
           }}
           newsletter={{
             locale,

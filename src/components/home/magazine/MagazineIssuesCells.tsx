@@ -4,8 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { HexCover } from "./HexCover";
-import { HexPatternBackdrop } from "./HexPatternBackdrop";
-import { FirstWordGold } from "./FirstWordGold";
+import { MagazineSection } from "./MagazineSection";
 
 const FALLBACK_IMAGE = "/images/image.png";
 
@@ -113,112 +112,73 @@ export function MagazineIssuesCells({ items, limit = 8 }: MagazineIssuesCellsPro
   const visible = filtered.slice(0, limit);
 
   return (
-    <section className="relative w-full overflow-hidden">
-      {/* Faint honeycomb atmosphere — vertically centred so it sits
-          behind the cells (not the header) and reinforces the "cells"
-          idea without competing with the content. */}
+    <MagazineSection
+      eyebrow={t("issuePrefix")}
+      heading={t("galleryHeading")}
+      subtitle={t("gallerySubtitle")}
+      viewMore={{ label: t("viewMore"), href: "/open-issues" }}
+    >
+      {/* Light, borderless filter chips */}
       <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 top-32 -z-0"
-        style={{ opacity: 0.35 }}
+        role="group"
+        aria-label={t("galleryHeading")}
+        className="flex flex-wrap items-center gap-x-5 gap-y-2"
       >
-        <HexPatternBackdrop />
+        {FILTERS.map((f) => {
+          const isActive = active === f.id;
+          return (
+            <button
+              key={f.id}
+              type="button"
+              aria-pressed={isActive}
+              onClick={() => setActive(f.id)}
+              className="relative pb-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tott-accent-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--tott-home-surface)]"
+              style={{
+                color: isActive ? "var(--tott-accent-gold)" : "var(--tott-home-text-muted)",
+                fontWeight: isActive ? 600 : 400,
+              }}
+            >
+              {t(f.key)}
+              <span
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 h-px origin-center transition-transform duration-300"
+                style={{
+                  backgroundColor: "var(--tott-accent-gold)",
+                  transform: isActive ? "scaleX(1)" : "scaleX(0)",
+                }}
+              />
+            </button>
+          );
+        })}
       </div>
 
-      <div className="relative z-10 grid w-full gap-8 px-4 sm:gap-10 sm:px-6 md:px-8">
-        {/* Header */}
-        <header className="flex w-full flex-wrap items-end justify-between gap-4">
-          <div className="min-w-0">
-            <p
-              className="mb-2 text-xs font-medium uppercase tracking-[0.18em]"
-              style={{ color: "var(--tott-home-eyebrow)" }}
+      {/* Honeycomb grid of issue cells */}
+      {visible.length > 0 ? (
+        <ul className="flex flex-wrap justify-center gap-x-4 gap-y-10 sm:gap-x-6">
+          {visible.map((item, i) => (
+            <li
+              key={item.id}
+              className="max-w-[276px] basis-[calc(50%-0.5rem)] transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none sm:basis-[220px]"
+              style={{
+                opacity: mounted ? 1 : 0,
+                transform: mounted ? "translateY(0)" : "translateY(16px)",
+                transitionDelay: `${Math.min(i, 8) * 60}ms`,
+              }}
             >
-              {t("issuePrefix")}
-            </p>
-            <h2 className="text-2xl font-medium tracking-tight sm:text-3xl">
-              <FirstWordGold raw={t("galleryHeading")} />
-            </h2>
-            <p
-              className="mt-2 max-w-[52ch] text-sm sm:text-[0.95rem]"
-              style={{ color: "var(--tott-home-text-muted)" }}
-            >
-              {t("gallerySubtitle")}
-            </p>
-          </div>
-          <Link
-            href="/open-issues"
-            className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-80"
-            style={{ color: "var(--tott-accent-gold)" }}
-          >
-            {t("viewMore")}
-            <span aria-hidden className="inline-block rtl:-scale-x-100">
-              →
-            </span>
-          </Link>
-        </header>
-
-        {/* Light, borderless filter chips */}
-        <div
-          role="group"
-          aria-label={t("galleryHeading")}
-          className="flex flex-wrap items-center gap-x-5 gap-y-2"
-        >
-          {FILTERS.map((f) => {
-            const isActive = active === f.id;
-            return (
-              <button
-                key={f.id}
-                type="button"
-                aria-pressed={isActive}
-                onClick={() => setActive(f.id)}
-                className="relative pb-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tott-accent-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--tott-home-surface)]"
-                style={{
-                  color: isActive ? "var(--tott-accent-gold)" : "var(--tott-home-text-muted)",
-                  fontWeight: isActive ? 600 : 400,
-                }}
-              >
-                {t(f.key)}
-                <span
-                  aria-hidden
-                  className="absolute inset-x-0 bottom-0 h-px origin-center transition-transform duration-300"
-                  style={{
-                    backgroundColor: "var(--tott-accent-gold)",
-                    transform: isActive ? "scaleX(1)" : "scaleX(0)",
-                  }}
-                />
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Honeycomb grid of issue cells */}
-        {visible.length > 0 ? (
-          <ul className="flex flex-wrap justify-center gap-x-4 gap-y-10 sm:gap-x-6">
-            {visible.map((item, i) => (
-              <li
-                key={item.id}
-                className="max-w-[276px] basis-[calc(50%-0.5rem)] transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none sm:basis-[220px]"
-                style={{
-                  opacity: mounted ? 1 : 0,
-                  transform: mounted ? "translateY(0)" : "translateY(16px)",
-                  transitionDelay: `${Math.min(i, 8) * 60}ms`,
-                }}
-              >
-                <IssueCell
-                  item={item}
-                  readOnlineLabel={t("readOnline")}
-                  issuePrefix={t("issuePrefix")}
-                />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="py-12 text-center text-sm" style={{ color: "var(--tott-home-text-muted)" }}>
-            {t("noResults")}
-          </p>
-        )}
-      </div>
-    </section>
+              <IssueCell
+                item={item}
+                readOnlineLabel={t("readOnline")}
+                issuePrefix={t("issuePrefix")}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="py-12 text-center text-sm" style={{ color: "var(--tott-home-text-muted)" }}>
+          {t("noResults")}
+        </p>
+      )}
+    </MagazineSection>
   );
 }
 

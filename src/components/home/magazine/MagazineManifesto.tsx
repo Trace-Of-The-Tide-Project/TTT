@@ -5,10 +5,10 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { PenLineIcon, BookIcon } from "@/components/ui/icons";
 import { RichContent } from "@/components/ui/rich-text/RichContent";
+import { MagazineSection } from "./MagazineSection";
 import { FirstWordGold } from "./FirstWordGold";
 
-const HEX_CLIP =
-  "polygon(50% 5%, 90% 27%, 90% 73%, 50% 95%, 10% 73%, 10% 27%)";
+const HEX_CLIP = "polygon(50% 5%, 90% 27%, 90% 73%, 50% 95%, 10% 73%, 10% 27%)";
 
 const DEFAULT_BANNER = "/images/home/hero-silk.png";
 
@@ -20,35 +20,27 @@ function safeBanner(src: string | undefined): {
 } {
   const value = src?.trim();
   if (!value) return { src: DEFAULT_BANNER, unoptimized: false };
-  const ok =
-    value.startsWith("/") ||
-    value.startsWith("http://") ||
-    value.startsWith("https://");
+  const ok = value.startsWith("/") || value.startsWith("http://") || value.startsWith("https://");
   if (!ok) return { src: DEFAULT_BANNER, unoptimized: false };
   return { src: value, unoptimized: !value.startsWith("/") };
 }
 
 /**
- * Manifesto pane content. The Figma comp has:
+ * Manifesto pane — the magazine's "about" content, calmed down.
  *
- *   ┌─────── silk banner (rounded, no text) ───────┐
- *   Our Philosophy
- *   "…philosophy quote…"
- *   ─────────────────────────────────────────────────
- *   Vision
- *   …
- *   ─────────────────────────────────────────────────
- *   Mission
- *   …
- *   ─────────────────────────────────────────────────
- *   Editorial Values
- *   • value 1 …
+ * Same CMS-driven content as before (every block is admin-editable per
+ * locale, so nothing is removed), but re-laid-out for breathing room:
  *
- *   (closing pull-quote in chamfered well at the bottom)
+ *   silk banner
+ *   ── eyebrow + philosophy heading + lead quote ──
+ *   Vision   |   Mission        (two calm columns)
+ *   Editorial Values            (light hex chips, not a bullet list)
+ *   closing pull-quote
+ *   Explore Our Spaces          (two cards)
  *
- * All headings render at the same scale (matches the comp). Section
- * dividers use the existing `--tott-card-border` token so they read
- * correctly in both light and dark themes.
+ * This trades the old long single-column wall (heading, quote, divider,
+ * Vision, divider, Mission, divider, 5-bullet list, quote, cards) for a
+ * shorter, scannable rhythm while keeping every editable field.
  */
 export type MagazineManifestoProps = {
   /** Per-locale copy overrides. Empty/whitespace falls back to i18n. */
@@ -79,43 +71,24 @@ export function MagazineManifesto({
   bannerHidden,
 }: MagazineManifestoProps = {}) {
   const t = useTranslations("Home.magazine.manifesto");
-  const tr = (key: string, override?: string) =>
-    override?.trim() ? override : t(key);
+  const tTabs = useTranslations("Home.magazine.tabs");
+  const tr = (key: string, override?: string) => (override?.trim() ? override : t(key));
 
   const values = ["value1", "value2", "value3", "value4", "value5"] as const;
 
-  // "Our Philosophy" heading — large display heading.
-  const headingClass =
-    "text-3xl font-medium tracking-tight sm:text-4xl md:text-[2.5rem] lg:text-5xl";
-  const headingStyle = { color: "var(--tott-home-text-strong)" } as const;
-
-  // Sub-section headings — Vision / Mission / Editorial Values fixed at
-  // 20px (text-xl) per the design.
-  const subHeadingClass = "text-xl font-medium tracking-tight";
-
-  // Body for Vision / Mission / Editorial Values — Figma spec:
-  //   font-weight: 400, font-size: 14px, line-height: 20px,
-  //   letter-spacing: -0.005em. Color is now theme-aware so the text
-  //   stays legible on both the dark and light page surfaces.
-  const bodyClass = "w-full";
-  const bodyTypoStyle = {
-    fontWeight: 400,
+  const strong = { color: "var(--tott-home-text-strong)" } as const;
+  const subHeadingClass = "text-lg font-medium tracking-tight sm:text-xl";
+  const bodyStyle = {
     fontSize: "clamp(0.875rem, 0.5vw + 0.75rem, 1rem)",
-    lineHeight: 1.6,
+    lineHeight: 1.65,
     letterSpacing: "-0.005em",
-    color: "var(--tott-home-text-strong)",
+    color: "var(--tott-home-text-muted)",
   } as const;
-
-  // Symmetric horizontal padding — small on mobile, scales up on
-  // larger screens. Capped earlier so xl screens don't squeeze the text
-  // into a narrow column. Same scale as ExploreSpaces below.
-  const textIndent = "px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32";
-  const bodyStrongStyle = { color: "var(--tott-home-text-strong)" } as const;
 
   return (
     <div className="grid gap-10 sm:gap-12">
-      {/* Silk banner — wide, no overlay text, matches the rounded-corner
-          card from the comp. Hidden when the admin disables it. */}
+      {/* Silk banner — wide, no overlay text. Hidden when the admin
+          disables it. */}
       {bannerHidden ? null : (
         <div
           className="relative w-full overflow-hidden rounded-[28px]"
@@ -137,140 +110,94 @@ export function MagazineManifesto({
         </div>
       )}
 
-      {/* Our Philosophy — heading + pull quote. White text, slightly
-          larger than the rest of the body copy so it carries weight
-          without dominating like the original "way too big" version. */}
-      <section className={textIndent}>
-        <h2 className={headingClass} style={headingStyle}>
-          {tr("philosophyHeading", philosophyHeadingOverride)}
-        </h2>
+      <MagazineSection
+        eyebrow={tTabs("manifesto")}
+        heading={tr("philosophyHeading", philosophyHeadingOverride)}
+        backdrop={false}
+      >
+        {/* Lead pull-quote — the philosophy statement, calm and large. */}
         <p
-          className="mt-5 w-full leading-snug"
-          style={{
-            ...bodyStrongStyle,
-            fontSize: "clamp(1.25rem, 1.5vw + 0.75rem, 2rem)",
-          }}
+          className="max-w-[68ch] leading-snug"
+          style={{ ...strong, fontSize: "clamp(1.25rem, 1.5vw + 0.75rem, 1.875rem)" }}
         >
-          <RichContent
-            html={tr("philosophyQuote", philosophyQuoteOverride)}
-            variant="inline"
-          />
+          <RichContent html={tr("philosophyQuote", philosophyQuoteOverride)} variant="inline" />
         </p>
-      </section>
 
-      <SectionDivider />
+        {/* Vision + Mission — two calm columns instead of stacked blocks
+            separated by dividers. */}
+        <div className="grid gap-8 md:grid-cols-2 md:gap-12">
+          <section>
+            <h3 className={subHeadingClass} style={strong}>
+              {tr("visionHeading", visionHeadingOverride)}
+            </h3>
+            <p className="mt-3" style={bodyStyle}>
+              <RichContent html={tr("visionBody", visionBodyOverride)} variant="inline" />
+            </p>
+          </section>
+          <section>
+            <h3 className={subHeadingClass} style={strong}>
+              {tr("missionHeading", missionHeadingOverride)}
+            </h3>
+            <p className="mt-3" style={bodyStyle}>
+              <RichContent html={tr("missionBody", missionBodyOverride)} variant="inline" />
+            </p>
+          </section>
+        </div>
 
-      {/* Vision */}
-      <section className={textIndent}>
-        <h3 className={subHeadingClass} style={headingStyle}>
-          {tr("visionHeading", visionHeadingOverride)}
-        </h3>
-        <p className={`mt-4 ${bodyClass}`} style={bodyTypoStyle}>
-          <RichContent
-            html={tr("visionBody", visionBodyOverride)}
-            variant="inline"
-          />
-        </p>
-      </section>
-
-      <SectionDivider />
-
-      {/* Mission */}
-      <section className={textIndent}>
-        <h3 className={subHeadingClass} style={headingStyle}>
-          {tr("missionHeading", missionHeadingOverride)}
-        </h3>
-        <p className={`mt-4 ${bodyClass}`} style={bodyTypoStyle}>
-          <RichContent
-            html={tr("missionBody", missionBodyOverride)}
-            variant="inline"
-          />
-        </p>
-      </section>
-
-      <SectionDivider />
-
-      {/* Editorial Values — each <li> follows the Figma "Paragraph / X
-          Small" token (Inter 400 12/16, white, max-width 930px). */}
-      <section className={textIndent}>
-        <h3 className={subHeadingClass} style={headingStyle}>
-          {tr("valuesHeading", valuesHeadingOverride)}
-        </h3>
-        <ul className="mt-5 grid gap-3">
-          {values.map((key) => (
-            <li key={key} className="flex items-start gap-3">
-              <span
-                aria-hidden
-                className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full"
-                style={{ backgroundColor: "var(--tott-home-text-strong)" }}
-              />
-              <span
-                className="block w-full"
+        {/* Editorial Values — light hex chips. */}
+        <section>
+          <h3 className={subHeadingClass} style={strong}>
+            {tr("valuesHeading", valuesHeadingOverride)}
+          </h3>
+          <ul className="mt-4 flex flex-wrap gap-2.5">
+            {values.map((key) => (
+              <li
+                key={key}
+                className="inline-flex items-center gap-2 rounded-full py-1.5 pe-4 ps-2.5 text-sm"
                 style={{
-                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                  fontWeight: 400,
-                  fontSize: "clamp(0.8125rem, 0.4vw + 0.7rem, 0.9375rem)",
-                  lineHeight: 1.55,
+                  backgroundColor: "var(--tott-panel-bg)",
+                  border: "1px solid var(--tott-card-border)",
                   color: "var(--tott-home-text-strong)",
-                  maxWidth: "930px",
                 }}
               >
+                <span
+                  aria-hidden
+                  className="h-3 w-3 shrink-0"
+                  style={{
+                    clipPath: HEX_CLIP,
+                    WebkitClipPath: HEX_CLIP,
+                    backgroundColor: "var(--tott-accent-gold)",
+                  }}
+                />
                 {t(key)}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-      {/* Closing pull-quote — Figma "Description" container:
-          flex column, items-start, padding 0, gap 4px, max-width 930px,
-          stretches to fill. Gold rule on the left, italic body text. */}
-      <section className={textIndent}>
-        <div
-          className="flex w-full items-start gap-3"
-          style={{ alignSelf: "stretch" }}
-        >
+        {/* Closing pull-quote — gold rule + italic body. */}
+        <div className="flex w-full items-stretch gap-3">
           <span
             aria-hidden
-            className="mt-1 block w-px shrink-0 self-stretch"
+            className="block w-px shrink-0"
             style={{ backgroundColor: "var(--tott-magazine-btn-bg)" }}
           />
-          <div
+          <p
+            className="max-w-[68ch] italic"
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              padding: 0,
-              gap: "4px",
-              width: "100%",
-              maxWidth: "930px",
-              alignSelf: "stretch",
+              fontSize: "clamp(0.9375rem, 0.5vw + 0.8rem, 1.125rem)",
+              lineHeight: 1.6,
+              letterSpacing: "-0.005em",
+              color: "var(--tott-home-text-heading)",
+              margin: 0,
             }}
           >
-            <p
-              className="italic"
-              style={{
-                fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                fontWeight: 400,
-                fontSize: "clamp(0.9375rem, 0.5vw + 0.8rem, 1.125rem)",
-                lineHeight: 1.55,
-                letterSpacing: "-0.005em",
-                color: "var(--tott-home-text-heading)",
-                margin: 0,
-              }}
-            >
-              <RichContent
-                html={tr("closingQuote", closingQuoteOverride)}
-                variant="inline"
-              />
-            </p>
-          </div>
+            <RichContent html={tr("closingQuote", closingQuoteOverride)} variant="inline" />
+          </p>
         </div>
-      </section>
 
-      {/* Explore Our Spaces — two cards (Writing Room / Reading Salon)
-          centered under a small gold heading. */}
-      <ExploreSpaces />
+        <ExploreSpaces />
+      </MagazineSection>
     </div>
   );
 }
@@ -280,23 +207,20 @@ function ExploreSpaces() {
   const t = useTranslations("Home.magazine.spaces");
 
   return (
-    <section className="mt-6 px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32">
-      <header className="text-center">
+    <section className="mt-2">
+      <header>
         <h3
-          className="text-xl font-medium tracking-tight"
+          className="text-lg font-medium tracking-tight sm:text-xl"
           style={{ color: "var(--tott-home-text-strong)" }}
         >
           <FirstWordGold raw={t("heading")} />
         </h3>
-        <p
-          className="mt-1 text-sm sm:text-base"
-          style={{ color: "var(--tott-home-text-strong)" }}
-        >
+        <p className="mt-1 text-sm sm:text-base" style={{ color: "var(--tott-home-text-muted)" }}>
           {t("subtitle")}
         </p>
       </header>
 
-      <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
         <SpaceCard
           icon={<PenLineIcon />}
           title={t("writingRoomTitle")}
@@ -376,19 +300,10 @@ function SpaceCard({
         {ctaLabel}
         {/* Forward arrow — mirrored under RTL so it points left (the reading
             direction) instead of right. */}
-        <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
+        <span aria-hidden className="inline-block rtl:-scale-x-100">
+          →
+        </span>
       </Link>
     </div>
-  );
-}
-
-/** Hairline divider matching the dim 1px line between sections in Figma. */
-function SectionDivider() {
-  return (
-    <div
-      aria-hidden
-      className="h-px w-full"
-      style={{ backgroundColor: "var(--tott-card-border)" }}
-    />
   );
 }
