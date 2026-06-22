@@ -26,6 +26,54 @@
         "es": "Espagnol",
         "fr": "Français"
       }
+    },
+    "hub": {
+      "heroTitle": "L'Atrium",
+      "heroIntro": "Cinq entrées dans les archives — récits, son, image, film et fil, réunis sous un même toit.",
+      "heroEyebrow": "Choix de la rédaction",
+      "heroCta": "Lire le reportage",
+      "heroIntroCta": "Commencer la lecture",
+      "byline": "Par {name}",
+      "featured": {
+        "article": "Récit à la une",
+        "audio": "Audio à la une",
+        "gallery": "Galerie à la une",
+        "video": "Film à la une",
+        "threads": "Fil à la une"
+      },
+      "manifesto": "Une maison, cinq salles — choisissez comment lire les archives.",
+      "gatewaysHeading": "Entrez par format",
+      "types": {
+        "article": "Articles",
+        "audio": "Audio",
+        "gallery": "Galeries",
+        "video": "Vidéo",
+        "threads": "Fils"
+      },
+      "typeDesc": {
+        "article": "Textes et essais écrits",
+        "audio": "Podcasts et enregistrements",
+        "gallery": "Galeries photo et séries visuelles",
+        "video": "Films et image animée",
+        "threads": "Récits longs en fil"
+      },
+      "count": {
+        "article": "{count, plural, =0 {Pas encore d'articles} one {# article} other {# articles}}",
+        "audio": "{count, plural, =0 {Pas encore d'audio} one {# piste} other {# pistes}}",
+        "gallery": "{count, plural, =0 {Pas encore de galeries} one {# galerie} other {# galeries}}",
+        "video": "{count, plural, =0 {Pas encore de vidéos} one {# vidéo} other {# vidéos}}",
+        "threads": "{count, plural, =0 {Pas encore de fils} one {# fil} other {# fils}}"
+      },
+      "enter": "Entrer",
+      "gatewayEmpty": "Cette salle est encore en cours de cartographie.",
+      "curatedHeading": "Tous formats confondus",
+      "curatedSub": "Une sélection transversale des dernières publications de chaque salle.",
+      "curatedEndCap": "Tout voir",
+      "newsletterTitle": "Restez dans la salle",
+      "newsletterBody": "Une lettre discrète lorsqu'une publication mérite votre temps. Sans bruit.",
+      "newsletterPlaceholder": "vous@exemple.com",
+      "newsletterCta": "S'abonner",
+      "newsletterSuccess": "Merci — vous êtes inscrit."
     }
   }
 }

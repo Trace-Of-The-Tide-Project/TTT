@@ -1,4 +1,8 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { formatViewCount } from "@/lib/format-view-count";
+import { BookmarkButton } from "./BookmarkButton";
 
 type ContentArticleHeaderProps = {
   title: string;
@@ -7,6 +11,8 @@ type ContentArticleHeaderProps = {
   publishedDate?: string;
   readingTime?: string;
   viewCount?: number;
+  /** When provided, renders a bookmark toggle button. */
+  articleId?: string;
   /** Show folder/calendar/clock icons before the meta items (Thread Figma). */
   metaIcons?: boolean;
 };
@@ -56,13 +62,18 @@ export function ContentArticleHeader({
   publishedDate,
   readingTime,
   viewCount,
+  articleId,
   metaIcons = false,
 }: ContentArticleHeaderProps) {
+  const t = useTranslations("Content");
   return (
     <div>
-      <h1 className="text-2xl font-medium leading-tight text-foreground sm:text-[2rem] sm:leading-10">
-        {title}
-      </h1>
+      <div className="flex items-start justify-between gap-4">
+        <h1 className="text-2xl font-medium leading-tight text-foreground sm:text-[2rem] sm:leading-10">
+          {title}
+        </h1>
+        {articleId && <BookmarkButton articleId={articleId} />}
+      </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-white/65">
         {edition && (
@@ -82,7 +93,7 @@ export function ContentArticleHeader({
             <span className="text-white/40">·</span>
             <span className="inline-flex items-center gap-1">
               {metaIcons && <FolderIcon />}
-              {metaIcons ? category : `Category: ${category}`}
+              {metaIcons ? category : `${t("category")}: ${category}`}
             </span>
           </>
         )}
@@ -91,7 +102,7 @@ export function ContentArticleHeader({
             <span className="text-white/40">·</span>
             <span className="inline-flex items-center gap-1">
               {metaIcons && <CalendarIcon />}
-              Published: {publishedDate}
+              {t("published")}: {publishedDate}
             </span>
           </>
         )}
@@ -100,7 +111,7 @@ export function ContentArticleHeader({
             <span className="text-white/40">·</span>
             <span className="inline-flex items-center gap-1">
               {metaIcons && <ClockIcon />}
-              {metaIcons ? readingTime : `Reading Time: ${readingTime}`}
+              {metaIcons ? readingTime : `${t("readingTime")}: ${readingTime}`}
             </span>
           </>
         )}

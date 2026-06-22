@@ -25,6 +25,7 @@ import {
   CONTENT_RELATED,
 } from "@/lib/constants";
 import { useOptionalArticleReadingHeader } from "@/components/layout/ArticleReadingHeaderContext";
+import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 
 type DemoArticle = typeof CONTENT_ARTICLE | typeof CONTENT_ARTICLE_FULL;
 
@@ -84,7 +85,7 @@ function mapRelated(items: Awaited<ReturnType<typeof getRelatedArticles>>): Rela
       author: a.author?.full_name || a.author?.username || "Author",
       date: formatShortDate(a.published_at),
       edition: a.edition || a.category || "Article",
-      href: `/content/article?id=${a.id}`,
+      href: previewHrefForContentType(a.content_type ?? undefined, a.id),
     }));
 }
 

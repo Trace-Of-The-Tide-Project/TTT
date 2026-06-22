@@ -61,7 +61,7 @@ export function FeaturedHexCard({
           src={coverImage}
           alt=""
           fill
-          className="absolute inset-0 select-none object-cover opacity-70 mix-blend-luminosity"
+          className="absolute inset-0 select-none object-cover"
           style={{ clipPath: HEX_CLIP, WebkitClipPath: HEX_CLIP }}
           sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
           draggable={false}

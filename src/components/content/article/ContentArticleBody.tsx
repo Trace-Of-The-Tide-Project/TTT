@@ -24,19 +24,31 @@ type ContentArticleBodyProps = {
   sections: ContentArticleSection[];
 };
 
+/** Stable slug for a heading so the table of contents can anchor to it. */
+export function articleHeadingId(heading: string, index: number): string {
+  const slug = heading
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-+|-+$/g, "");
+  return `section-${index}${slug ? `-${slug}` : ""}`;
+}
+
 export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
   return (
-    <div className="space-y-8">
+    /* Measured line length for comfortable long-form reading — caps the
+       text column near ~68 characters while figures/galleries can still
+       breathe within their own blocks. */
+    <div className="max-w-[68ch] space-y-10 text-[1.0625rem] leading-[1.75]">
       {sections.map((section, i) => (
-        <div key={i} className="space-y-4">
+        <div key={i} className="space-y-4 scroll-mt-24" id={section.heading ? articleHeadingId(section.heading, i) : undefined}>
           {section.heading && (
-            <h2 className="text-xl font-medium leading-7 text-foreground">
+            <h2 className="text-2xl font-medium leading-snug text-foreground">
               {section.heading}
             </h2>
           )}
 
           {section.paragraphs.map((p, j) => (
-            <p key={j} className="text-sm leading-relaxed text-foreground">
+            <p key={j} className="text-[1.0625rem] leading-[1.75] text-foreground">
               <RichContent html={p} variant="inline" />
             </p>
           ))}

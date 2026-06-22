@@ -26,6 +26,54 @@
         "es": "Español",
         "fr": "Francés"
       }
+    },
+    "hub": {
+      "heroTitle": "El Atrio",
+      "heroIntro": "Cinco maneras de entrar al archivo — relatos, sonido, imagen, película e hilo, reunidos bajo un mismo techo.",
+      "heroEyebrow": "Selección del editor",
+      "heroCta": "Leer el reportaje",
+      "heroIntroCta": "Empezar a leer",
+      "byline": "Por {name}",
+      "featured": {
+        "article": "Historia destacada",
+        "audio": "Audio destacado",
+        "gallery": "Galería destacada",
+        "video": "Película destacada",
+        "threads": "Hilo destacado"
+      },
+      "manifesto": "Una casa, cinco salas: elige cómo quieres leer el archivo.",
+      "gatewaysHeading": "Entra por formato",
+      "types": {
+        "article": "Artículos",
+        "audio": "Audio",
+        "gallery": "Galerías",
+        "video": "Vídeo",
+        "threads": "Hilos"
+      },
+      "typeDesc": {
+        "article": "Textos y ensayos escritos",
+        "audio": "Pódcasts y grabaciones",
+        "gallery": "Galerías de fotos y series visuales",
+        "video": "Películas e imagen en movimiento",
+        "threads": "Narrativas extensas en hilo"
+      },
+      "count": {
+        "article": "{count, plural, =0 {Aún no hay artículos} one {# artículo} other {# artículos}}",
+        "audio": "{count, plural, =0 {Aún no hay audio} one {# pista} other {# pistas}}",
+        "gallery": "{count, plural, =0 {Aún no hay galerías} one {# galería} other {# galerías}}",
+        "video": "{count, plural, =0 {Aún no hay vídeos} one {# vídeo} other {# vídeos}}",
+        "threads": "{count, plural, =0 {Aún no hay hilos} one {# hilo} other {# hilos}}"
+      },
+      "enter": "Entrar",
+      "gatewayEmpty": "Esta sala aún se está trazando.",
+      "curatedHeading": "En todos los formatos",
+      "curatedSub": "Una selección transversal de lo más reciente de cada sala.",
+      "curatedEndCap": "Ver todo",
+      "newsletterTitle": "Quédate en la sala",
+      "newsletterBody": "Una carta tranquila cuando se publica algo que vale tu tiempo. Sin ruido.",
+      "newsletterPlaceholder": "tu@ejemplo.com",
+      "newsletterCta": "Suscribirse",
+      "newsletterSuccess": "Gracias — ya estás en la lista."
     }
   }
 }

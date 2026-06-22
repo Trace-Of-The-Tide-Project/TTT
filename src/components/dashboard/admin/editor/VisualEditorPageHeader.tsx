@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { theme } from "@/lib/theme";
 import { EyeIcon, FileTextIcon } from "@/components/ui/icons";
 import { DashboardHeader } from "@/components/dashboard/shared/DashboardHeader";
@@ -11,7 +11,13 @@ type PublishState = "idle" | "publishing" | "published" | "error";
 
 export function VisualEditorPageHeader() {
   const t = useTranslations("Dashboard.headers.visualEditor");
+  const locale = useLocale();
   const [publishState, setPublishState] = useState<PublishState>("idle");
+
+  const handlePreview = () => {
+    // Open the live public homepage (CMS slug "home") in a new tab.
+    window.open(`/${locale}/home`, "_blank", "noopener,noreferrer");
+  };
 
   const handlePublish = async () => {
     setPublishState("publishing");
@@ -35,6 +41,7 @@ export function VisualEditorPageHeader() {
         <>
           <button
             type="button"
+            onClick={handlePreview}
             className="flex items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-surface-inset)]"
           >
             <span className="[&_svg]:h-4 [&_svg]:w-4">

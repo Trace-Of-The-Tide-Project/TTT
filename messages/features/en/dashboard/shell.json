@@ -63,6 +63,9 @@
       "writers": "Writers",
       "allWriters": "All Writers",
       "createWriter": "Add Writer",
+      "people": "People",
+      "allPeople": "All People",
+      "addPerson": "Add Person",
       "subscription": "Subscription",
       "subscriptions": "Subscriptions"
     },

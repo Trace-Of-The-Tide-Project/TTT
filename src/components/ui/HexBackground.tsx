@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useId, useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { useIdle } from "@/hooks/useIdle";
 import { springs } from "@/lib/motion";
@@ -61,9 +61,14 @@ const row2Path = ROW2_CENTERS.map((c) => roundedHexPath(c.cx, c.cy, R)).join("")
 export default function HexBackground() {
   const id = useId();
   const isIdle = useIdle({ timeout: 2500 });
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   const patternId = `hexagons-${id.replace(/:/g, "")}`;
   const gradientId = `hex-fade-${id.replace(/:/g, "")}`;
   const maskId = `hex-mask-${id.replace(/:/g, "")}`;
+
+  if (!mounted) return null;
 
   return (
     <motion.svg
