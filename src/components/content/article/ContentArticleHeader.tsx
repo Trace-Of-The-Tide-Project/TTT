@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { formatViewCount } from "@/lib/format-view-count";
 import { BookmarkButton } from "./BookmarkButton";
 
@@ -62,6 +65,7 @@ export function ContentArticleHeader({
   articleId,
   metaIcons = false,
 }: ContentArticleHeaderProps) {
+  const t = useTranslations("Content");
   return (
     <div>
       <div className="flex items-start justify-between gap-4">
@@ -89,7 +93,7 @@ export function ContentArticleHeader({
             <span className="text-white/40">·</span>
             <span className="inline-flex items-center gap-1">
               {metaIcons && <FolderIcon />}
-              {metaIcons ? category : `Category: ${category}`}
+              {metaIcons ? category : `${t("category")}: ${category}`}
             </span>
           </>
         )}
@@ -98,7 +102,7 @@ export function ContentArticleHeader({
             <span className="text-white/40">·</span>
             <span className="inline-flex items-center gap-1">
               {metaIcons && <CalendarIcon />}
-              Published: {publishedDate}
+              {t("published")}: {publishedDate}
             </span>
           </>
         )}
@@ -107,7 +111,7 @@ export function ContentArticleHeader({
             <span className="text-white/40">·</span>
             <span className="inline-flex items-center gap-1">
               {metaIcons && <ClockIcon />}
-              {metaIcons ? readingTime : `Reading Time: ${readingTime}`}
+              {metaIcons ? readingTime : `${t("readingTime")}: ${readingTime}`}
             </span>
           </>
         )}

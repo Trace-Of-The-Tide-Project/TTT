@@ -690,8 +690,15 @@ a,
    `dir` set on the wrapper. No @tailwindcss/typography dependency. */
 .prose {
   color: var(--tott-home-text-strong);
-  font-size: 0.95rem;
-  line-height: 1.7;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+/* Arabic long-form reads better in the Plex Arabic face at a slightly
+   larger size; applied when the reading surface is RTL. */
+[dir="rtl"] .prose,
+.prose[dir="rtl"] {
+  font-family: var(--font-plex-arabic), var(--font-sans, sans-serif);
+  line-height: 1.9;
 }
 .prose > :first-child { margin-top: 0; }
 .prose > :last-child { margin-bottom: 0; }

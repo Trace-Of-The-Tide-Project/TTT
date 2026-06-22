@@ -364,6 +364,7 @@ export type RelatedArticleItem = {
   published_at?: string | null;
   edition?: string | null;
   category?: string | null;
+  content_type?: string | null;
   author?: { id: string; username?: string; full_name?: string | null } | null;
 };
 

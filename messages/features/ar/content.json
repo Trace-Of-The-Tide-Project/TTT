@@ -15,6 +15,8 @@
     "relatedDescription": "استكشف المزيد من أرشيفنا.",
     "viewMore": "عرض المزيد",
     "published": "النشر",
+    "category": "التصنيف",
+    "readingTime": "وقت القراءة",
     "shareTitle": "شاركنا قصتك",
     "shareBody": "كل قصة تهمّ. ساعدنا على حفظ الذاكرة الجمعية من خلال مشاركة تجاربك الشخصية وشهاداتك أو معرفتك بالأحداث التاريخية.",
     "shareCta": "ساهم الآن",
@@ -26,6 +28,54 @@
         "es": "الإسبانية",
         "fr": "الفرنسية"
       }
+    },
+    "hub": {
+      "heroTitle": "الأَتْريوم",
+      "heroIntro": "خمسة مداخل إلى الأرشيف — حكايات وصوت وصورة وفيلم وخيط، تجتمع تحت سقف واحد.",
+      "heroEyebrow": "اختيار المحرّر",
+      "heroCta": "اقرأ المادة المميّزة",
+      "heroIntroCta": "ابدأ القراءة",
+      "byline": "بقلم {name}",
+      "featured": {
+        "article": "قصة مميّزة",
+        "audio": "صوت مميّز",
+        "gallery": "معرض مميّز",
+        "video": "فيلم مميّز",
+        "threads": "خيط مميّز"
+      },
+      "manifesto": "بيتٌ واحد، خمس غرف — اختر كيف تقرأ الأرشيف.",
+      "gatewaysHeading": "ادخل حسب الصيغة",
+      "types": {
+        "article": "مقالات",
+        "audio": "صوت",
+        "gallery": "معارض",
+        "video": "فيديو",
+        "threads": "خيوط"
+      },
+      "typeDesc": {
+        "article": "نصوص ومقالات مكتوبة",
+        "audio": "بودكاست وتسجيلات",
+        "gallery": "معارض صور ومجموعات بصرية",
+        "video": "أفلام وصور متحركة",
+        "threads": "سرديات مطوّلة متسلسلة"
+      },
+      "count": {
+        "article": "{count, plural, =0 {لا مقالات بعد} one {مقالة واحدة} two {مقالتان} few {# مقالات} many {# مقالة} other {# مقالة}}",
+        "audio": "{count, plural, =0 {لا صوت بعد} one {مقطع واحد} two {مقطعان} few {# مقاطع} many {# مقطعًا} other {# مقطع}}",
+        "gallery": "{count, plural, =0 {لا معارض بعد} one {معرض واحد} two {معرضان} few {# معارض} many {# معرضًا} other {# معرض}}",
+        "video": "{count, plural, =0 {لا فيديوهات بعد} one {فيديو واحد} two {فيديوهان} few {# فيديوهات} many {# فيديو} other {# فيديو}}",
+        "threads": "{count, plural, =0 {لا خيوط بعد} one {خيط واحد} two {خيطان} few {# خيوط} many {# خيطًا} other {# خيط}}"
+      },
+      "enter": "ادخل",
+      "gatewayEmpty": "ما زالت هذه الغرفة قيد الإعداد.",
+      "curatedHeading": "عبر كل الصيغ",
+      "curatedSub": "مقطع منتقى من أحدث ما في كل غرفة.",
+      "curatedEndCap": "شاهد كل شيء",
+      "newsletterTitle": "ابقَ في الغرفة",
+      "newsletterBody": "رسالة هادئة واحدة عند نشر ما يستحق وقتك. بلا ضجيج.",
+      "newsletterPlaceholder": "you@example.com",
+      "newsletterCta": "اشترك",
+      "newsletterSuccess": "شكرًا لك — أنت الآن على القائمة."
     }
   }
 }

@@ -1,4 +1,4 @@
-import type { ArticleDetail } from "@/services/articles.service";
+import type { ArticleDetail, ArticleDetailBlock } from "@/services/articles.service";
 import {
   articleBlocksToSections,
   getFirstCoverHeroFromBlocks,
@@ -73,6 +73,47 @@ function videoArticleHeroBreadcrumbs(article: ArticleDetail): { label: string; h
   ];
 }
 
+/** Matches `/content/gallery`: Content → Gallery → title. */
+function galleryArticleHeroBreadcrumbs(article: ArticleDetail): { label: string; href?: string }[] {
+  return [
+    { label: "Content", href: "/content" },
+    { label: "Gallery", href: "/content/gallery" },
+    { label: article.title },
+  ];
+}
+
+type GalleryItem = NonNullable<ContentPageLayoutProps["media"]["items"]>[number];
+
+function galleryItemsFromBlocks(blocks: ArticleDetailBlock[]): GalleryItem[] {
+  const sorted = [...blocks].sort((a, b) => a.block_order - b.block_order);
+  const items: GalleryItem[] = [];
+  for (const b of sorted) {
+    const type = (b.block_type || "").toLowerCase();
+    if (type !== "gallery") continue;
+    const raw = b.metadata;
+    let obj: Record<string, unknown> | null = null;
+    if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+      obj = raw as Record<string, unknown>;
+    } else if (typeof raw === "string") {
+      try { obj = JSON.parse(raw) as Record<string, unknown>; } catch { /* ignore */ }
+    }
+    if (!obj) continue;
+    const imgs = obj.images;
+    if (!Array.isArray(imgs)) continue;
+    for (const im of imgs) {
+      if (!im || typeof im !== "object") continue;
+      const row = im as Record<string, unknown>;
+      const url = typeof row.url === "string" ? row.url.trim() : "";
+      if (!url || !isUsableArticleMediaRef(url)) continue;
+      const src = resolveArticleMediaSrc(url);
+      const thumbnail = typeof row.thumbnail === "string" ? row.thumbnail.trim() : undefined;
+      const title = typeof row.caption === "string" ? row.caption.trim() : (typeof row.alt === "string" ? row.alt.trim() : undefined);
+      items.push({ type: "image" as const, src, thumbnail: thumbnail || src, title: title || undefined });
+    }
+  }
+  return items;
+}
+
 export function buildArticleContentPageProps(article: ArticleDetail): ContentPageLayoutProps {
   const authorName =
     article.author?.full_name?.trim() || article.author?.username?.trim() || "Author";
@@ -131,19 +172,28 @@ export function buildArticleContentPageProps(article: ArticleDetail): ContentPag
       };
 
   const contentTypeNorm = normalizedArticleContentType(article);
+
+  const galleryItems = contentTypeNorm === "gallery" ? galleryItemsFromBlocks(article.blocks) : [];
+  const resolvedMedia: ContentPageLayoutProps["media"] =
+    contentTypeNorm === "gallery" && galleryItems.length > 0
+      ? { type: "gallery" as const, items: galleryItems }
+      : media;
+
   const breadcrumbs =
     contentTypeNorm === "audio"
       ? audioArticleHeroBreadcrumbs(article)
       : contentTypeNorm === "video"
         ? videoArticleHeroBreadcrumbs(article)
-        : articleContentBreadcrumbs(article);
+        : contentTypeNorm === "gallery"
+          ? galleryArticleHeroBreadcrumbs(article)
+          : articleContentBreadcrumbs(article);
 
   return {
     articleId: article.id,
     openCallId: article.open_call_id ?? undefined,
     contentType: article.content_type,
     breadcrumbs,
-    media,
+    media: resolvedMedia,
     article: {
       title: article.title,
       category: article.category,

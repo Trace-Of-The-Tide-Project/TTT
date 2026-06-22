@@ -1,73 +1,60 @@
-import { callBackend } from "@/lib/auth/proxy-backend";
-import { HomeHexGrid } from "@/components/home/HomeHexGrid";
-import { ShareYourStory } from "@/components/home/ShareYourStory";
+import { serverGet } from "@/lib/api/isomorphic-fetch";
+import type { CmsPage } from "@/services/cms.service";
+import { HOME_PAGE_SLUG, findHomeSection, parseHeroConfig } from "@/services/home-page.service";
+import { fetchHomeData } from "@/lib/home/fetch-home-data";
+import { HomeSections } from "@/components/home/HomeSections";
+import { HomeD01 } from "@/components/home/directions/HomeD01";
+import { HomeD02 } from "@/components/home/directions/HomeD02";
+import { HomeD03 } from "@/components/home/directions/HomeD03";
 
-export type HexCard = {
-  id: string;
-  title: string;
-  badge: string;
-  image: string | null;
-  href: string;
-};
-
-function formatCategory(raw?: string | null, fallback = "Article"): string {
-  if (!raw) return fallback;
-  return raw.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-}
-
-type RawArticle = { id: string; title: string; category?: string | null; cover_image?: string | null };
-type RawOpenCall = { id: string; title: string; category?: string | null; cover_image?: string | null; main_media?: { url?: string } | null };
-
-async function fetchHexCards(locale: string): Promise<HexCard[]> {
-  const [articlesRes, openCallsRes] = await Promise.all([
-    callBackend({ path: `/articles?limit=100&dedupe=group&viewer_lang=${locale}` }),
-    callBackend({ path: `/open-calls/active?limit=100` }),
-  ]);
-
-  const articles: RawArticle[] = (() => {
-    if (!articlesRes.ok) return [];
-    const j = articlesRes.json as Record<string, unknown>;
-    return (Array.isArray(j.data) ? j.data : Array.isArray(j) ? j : []) as RawArticle[];
-  })();
-
-  const openCalls: RawOpenCall[] = (() => {
-    if (!openCallsRes.ok) return [];
-    const j = openCallsRes.json as Record<string, unknown>;
-    return (Array.isArray(j.data) ? j.data : Array.isArray(j) ? j : []) as RawOpenCall[];
-  })();
-
-  const articleCards: HexCard[] = articles.map((a) => ({
-    id: `article-${a.id}`,
-    title: a.title,
-    badge: formatCategory(a.category),
-    image: a.cover_image ?? null,
-    href: `/content/article?id=${encodeURIComponent(a.id)}`,
-  }));
-
-  const openCallCards: HexCard[] = openCalls.map((oc) => ({
-    id: `oc-${oc.id}`,
-    title: oc.title,
-    badge: formatCategory(oc.category, "Open Call"),
-    image: oc.cover_image ?? oc.main_media?.url ?? null,
-    href: `/open-calls/${encodeURIComponent(oc.id)}`,
-  }));
-
-  return [...articleCards, ...openCallCards];
-}
-
+/**
+ * Redesigned homepage — an editorial front page of the archive.
+ *
+ * CMS-section-driven (mirrors `/magazine`): the home CMS page
+ * (`/cms/pages/slug/home`) supplies section order, visibility, and
+ * locale copy; the data rails come live from the backend APIs. When the
+ * CMS page is absent, `HomeSections` falls back to the seed order, so
+ * the page renders fully without any admin setup.
+ */
 export default async function Home({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const cards = await fetchHexCards(locale);
+
+  // Fetch CMS framing + live rail data in parallel. `serverGet` returns
+  // null on failure (e.g. the page hasn't been seeded yet) — the
+  // renderer falls back to the seed order in that case.
+  const [pageRaw, data] = await Promise.all([
+    serverGet<CmsPage | { data: CmsPage }>(`/cms/pages/slug/${HOME_PAGE_SLUG}`),
+    fetchHomeData(locale),
+  ]);
+
+  // The CMS endpoint may wrap the page in `{ data: ... }`.
+  const page =
+    pageRaw && typeof pageRaw === "object" && "data" in pageRaw
+      ? (pageRaw as { data: CmsPage }).data
+      : (pageRaw as CmsPage | null);
+
+  // Check for an admin-selected full-page direction variant.
+  const heroSection = findHomeSection(page, "hero");
+  const heroConfig = parseHeroConfig(heroSection);
+  const dir = locale === "ar" ? "rtl" : "ltr";
+
+  if (heroConfig.variant === "d01") {
+    return <HomeD01 data={data} locale={locale} dir={dir} />;
+  }
+  if (heroConfig.variant === "d02") {
+    return <HomeD02 data={data} locale={locale} dir={dir} />;
+  }
+  if (heroConfig.variant === "d03") {
+    return <HomeD03 data={data} locale={locale} dir={dir} />;
+  }
+
   return (
     <main className="min-h-0">
-      {/* Full-width: HomeHexGrid + ShareYourStory scale with viewport so wide screens don't show empty side strips.
-          Sections paint their own theme-aware backgrounds (light/dark) — no parent bg here. */}
-      <HomeHexGrid cards={cards} />
-      <ShareYourStory />
+      <HomeSections page={page ?? null} data={data} locale={locale} />
     </main>
   );
 }
