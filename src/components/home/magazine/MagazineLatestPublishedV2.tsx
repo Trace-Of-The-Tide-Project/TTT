@@ -63,7 +63,7 @@ function formatMonthYear(iso: string | null | undefined): string {
 export function MagazineLatestPublishedV2({
   items,
 }: MagazineLatestPublishedProps) {
-  const visible = [...items, ...FALLBACK_ITEMS].slice(0, 4);
+  const visible = (items.length > 0 ? items : FALLBACK_ITEMS).slice(0, 4);
 
   return (
     <div

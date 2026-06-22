@@ -11,6 +11,11 @@ import { ContentAuthorCard } from "./sidebar/ContentAuthorCard";
 import { ContentContributors } from "./sidebar/ContentContributors";
 import { ContentCollection } from "./sidebar/ContentCollection";
 import { RelatedContent } from "./related/RelatedContent";
+import { ReadingProgressBar } from "./article/ReadingProgressBar";
+import {
+  ArticleTableOfContents,
+  tocEntriesFromSections,
+} from "./article/ArticleTableOfContents";
 import type { RelatedContentCardData } from "./related/RelatedContentCard";
 
 export type ContentPageLayoutProps = {
@@ -90,8 +95,10 @@ export function ContentPageLayout({
   const isOpenCall =
     contentType === "open_call" || contentType === "open-call" || contentType === "opencall";
   const isAudio = media.type === "audio";
+  const tocEntries = tocEntriesFromSections(article.sections);
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden" style={{ backgroundColor: theme.homeSurface }}>
+      <ReadingProgressBar />
       {isAudio && media.thumbnail ? (
         /* Audio hero band — a full-bleed blurred cover image behind the
            breadcrumb + player, darkened by a dual gradient that vignettes the
@@ -153,6 +160,7 @@ export function ContentPageLayout({
             publishedDate={article.publishedDate}
             readingTime={article.readingTime}
             viewCount={article.viewCount}
+            articleId={articleId}
           />
           {/* Show which languages this piece is available in; lets the reader
               switch versions. Renders nothing when only one language exists. */}
@@ -191,6 +199,9 @@ export function ContentPageLayout({
 
           {/* Right — sidebar */}
           <aside className="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-6 lg:w-[24rem] lg:self-start">
+            {tocEntries.length >= 2 ? (
+              <ArticleTableOfContents entries={tocEntries} title="On this page" />
+            ) : null}
             <div
               className="rounded-2xl border border-[var(--tott-card-border)] p-5"
               style={{ backgroundColor: theme.homeSurface }}
