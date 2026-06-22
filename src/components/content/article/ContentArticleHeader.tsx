@@ -1,4 +1,5 @@
 import { formatViewCount } from "@/lib/format-view-count";
+import { BookmarkButton } from "./BookmarkButton";
 
 type ContentArticleHeaderProps = {
   title: string;
@@ -7,6 +8,8 @@ type ContentArticleHeaderProps = {
   publishedDate?: string;
   readingTime?: string;
   viewCount?: number;
+  /** When provided, renders a bookmark toggle button. */
+  articleId?: string;
   /** Show folder/calendar/clock icons before the meta items (Thread Figma). */
   metaIcons?: boolean;
 };
@@ -56,13 +59,17 @@ export function ContentArticleHeader({
   publishedDate,
   readingTime,
   viewCount,
+  articleId,
   metaIcons = false,
 }: ContentArticleHeaderProps) {
   return (
     <div>
-      <h1 className="text-2xl font-medium leading-tight text-foreground sm:text-[2rem] sm:leading-10">
-        {title}
-      </h1>
+      <div className="flex items-start justify-between gap-4">
+        <h1 className="text-2xl font-medium leading-tight text-foreground sm:text-[2rem] sm:leading-10">
+          {title}
+        </h1>
+        {articleId && <BookmarkButton articleId={articleId} />}
+      </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-white/65">
         {edition && (
