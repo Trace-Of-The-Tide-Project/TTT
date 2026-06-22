@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { theme } from "@/lib/theme";
-import { CreateBadgeModal } from "@/components/dashboard/modals/CreateBadgeModal";
-import { AwardBadgeModal } from "@/components/dashboard/modals/AwardBadgeModal";
+import { CreateBadgeModal } from "@/components/dashboard/admin/engagements/CreateBadgeModal";
+import { AwardBadgeModal } from "@/components/dashboard/admin/engagements/AwardBadgeModal";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { RichContent } from "@/components/ui/rich-text/RichContent";
 import {
