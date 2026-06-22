@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -30,6 +30,38 @@ const HEX_FADE_MASK = {
   WebkitMaskRepeat: "no-repeat",
   maskRepeat: "no-repeat",
   maskMode: "alpha",
+} as React.CSSProperties;
+
+// Clip a real avatar photo to the full silk-hex silhouette using the same PNG
+// alpha as a mask, centered to line up with the `object-contain` silk below.
+// This lets a portrait fill the hex in full colour instead of ghosting behind
+// the silk (which washes real faces into a grey smudge).
+const HEX_PHOTO_MASK = {
+  WebkitMaskImage: `url(${WRITER_CARD})`,
+  maskImage: `url(${WRITER_CARD})`,
+  WebkitMaskSize: "100% auto",
+  maskSize: "100% auto",
+  WebkitMaskPosition: "center center",
+  maskPosition: "center center",
+  WebkitMaskRepeat: "no-repeat",
+  maskRepeat: "no-repeat",
+  maskMode: "alpha",
+} as React.CSSProperties;
+
+// Graduated backdrop-blur mask: the hex silhouette AND a vertical fade
+// (transparent at the top → opaque at the bottom), composited together so the
+// blur ramps in gradually instead of starting on a hard horizontal edge.
+const HEX_BLUR_MASK = {
+  WebkitMaskImage: `url(${WRITER_CARD}), linear-gradient(to top, #000 22%, transparent 92%)`,
+  maskImage: `url(${WRITER_CARD}), linear-gradient(to top, #000 22%, transparent 92%)`,
+  WebkitMaskSize: "100% auto, 100% 100%",
+  maskSize: "100% auto, 100% 100%",
+  WebkitMaskPosition: "left bottom, left bottom",
+  maskPosition: "left bottom, left bottom",
+  WebkitMaskRepeat: "no-repeat, no-repeat",
+  maskRepeat: "no-repeat, no-repeat",
+  WebkitMaskComposite: "source-in",
+  maskComposite: "intersect",
 } as React.CSSProperties;
 
 /* ─────────────────────────── tokens (Figma) ─────────────────────────── */
@@ -81,14 +113,10 @@ const DEFAULT_ROLE_COUNTS: RoleCounts = {
   reviewers: 2,
 };
 
-const FALLBACK_WRITERS: FollowWriterItem[] = Array.from({ length: 4 }, (_, i) => ({
-  id: `pf-writer-${i}`,
-  name: "Author",
-  title: null,
-  edition: "12.05",
-  avatar: null,
-  role: "Editors",
-}));
+// "Our People" shows invented role counts (Editors/Translators/Reviewers) the
+// backend has no data for. Hidden until the backend exposes real masthead roles
+// — flip to true to re-enable. The carousel below shows only real writers.
+const SHOW_OUR_PEOPLE = false;
 
 /* ─────────────────────────── page entry ─────────────────────────── */
 export function MagazineEditorialBoardV2({
@@ -96,7 +124,8 @@ export function MagazineEditorialBoardV2({
   roleCounts = DEFAULT_ROLE_COUNTS,
 }: MagazineEditorialBoardProps) {
   const t = useTranslations("Home.magazine.editorialBoard");
-  const carouselWriters = [...writers, ...FALLBACK_WRITERS].slice(0, 4);
+  // Real writers only — no fake "Author / 12.05" filler padding the row.
+  const carouselWriters = writers.slice(0, 4);
 
   return (
     <div
@@ -118,18 +147,20 @@ export function MagazineEditorialBoardV2({
         nextLabel={t("nextSlide")}
       />
 
-      <OurPeople
-        eyebrow={t("peopleEyebrow")}
-        heading={t("peopleHeading")}
-        counts={roleCounts}
-        labels={{
-          editors: t("roleEditors"),
-          writers: t("roleWriters"),
-          translators: t("roleTranslators"),
-          contributors: t("roleContributors"),
-          reviewers: t("roleReviewers"),
-        }}
-      />
+      {SHOW_OUR_PEOPLE ? (
+        <OurPeople
+          eyebrow={t("peopleEyebrow")}
+          heading={t("peopleHeading")}
+          counts={roleCounts}
+          labels={{
+            editors: t("roleEditors"),
+            writers: t("roleWriters"),
+            translators: t("roleTranslators"),
+            contributors: t("roleContributors"),
+            reviewers: t("roleReviewers"),
+          }}
+        />
+      ) : null}
     </div>
   );
 }
@@ -212,6 +243,21 @@ function Carousel({
 }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
+  // The arrows + side ghost-fades only make sense when the row has more cards
+  // than fit on screen (they signal "scroll for more"). With everything
+  // visible they're misleading, so show them only when the row overflows and
+  // centre the cards otherwise.
+  const [overflowing, setOverflowing] = useState(false);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const measure = () => setOverflowing(el.scrollWidth - el.clientWidth > 1);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [writers.length]);
+
   const scrollBy = (dx: number) => {
     scrollRef.current?.scrollBy({ left: dx, behavior: "smooth" });
   };
@@ -225,49 +271,55 @@ function Carousel({
     // consistent; the card content is centre-aligned so Arabic still
     // renders correctly. No-op on LTR locales.
     <div dir="ltr" className="relative w-full">
-      {/* Side ghost gradients — same `Content Grid Filler.png` strip
-          the writing-room "Discover Featured Writing" row uses, so
-          the next/previous hexagon peeks in under a matching fade. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-0 z-10 hidden sm:block"
-        style={{
-          left: -GHOST_WIDTH - 16,
-          width: GHOST_WIDTH,
-          height: CARD_H,
-        }}
-      >
-        <Image
-          src={FILLER}
-          alt=""
-          fill
-          className="select-none object-cover"
-          style={{ transform: "scaleX(-1)" }}
-          sizes={`${GHOST_WIDTH}px`}
-          draggable={false}
-        />
-      </div>
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-0 z-10 hidden sm:block"
-        style={{
-          right: -GHOST_WIDTH - 16,
-          width: GHOST_WIDTH,
-          height: CARD_H,
-        }}
-      >
-        <Image
-          src={FILLER}
-          alt=""
-          fill
-          className="select-none object-cover"
-          sizes={`${GHOST_WIDTH}px`}
-          draggable={false}
-        />
-      </div>
+      {/* Side ghost gradients — only when the row overflows, so the
+          peeking next/previous hex signals there's more to scroll. */}
+      {overflowing ? (
+        <>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute top-0 z-10 hidden sm:block"
+            style={{
+              left: -GHOST_WIDTH - 16,
+              width: GHOST_WIDTH,
+              height: CARD_H,
+            }}
+          >
+            <Image
+              src={FILLER}
+              alt=""
+              fill
+              className="select-none object-cover"
+              // The filler PNG is a baked dark gradient; invert it on light
+              // themes (sand/Tide) so the fade blends instead of showing black.
+              style={{ transform: "scaleX(-1)", filter: "var(--tott-image-invert)" }}
+              sizes={`${GHOST_WIDTH}px`}
+              draggable={false}
+            />
+          </div>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute top-0 z-10 hidden sm:block"
+            style={{
+              right: -GHOST_WIDTH - 16,
+              width: GHOST_WIDTH,
+              height: CARD_H,
+            }}
+          >
+            <Image
+              src={FILLER}
+              alt=""
+              fill
+              className="select-none object-cover"
+              style={{ filter: "var(--tott-image-invert)" }}
+              sizes={`${GHOST_WIDTH}px`}
+              draggable={false}
+            />
+          </div>
+        </>
+      ) : null}
 
-      {/* Scrollable card row. Snap helps the arrow buttons feel
-          responsive when the row overflows on narrow viewports. */}
+      {/* Scrollable card row. Centred when everything fits; left-aligned
+          (scrollable) once it overflows. */}
       <div
         ref={scrollRef}
         className="flex w-full overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -275,6 +327,7 @@ function Carousel({
           gap: 8,
           padding: "0 4px",
           scrollSnapType: "x mandatory",
+          justifyContent: overflowing ? "flex-start" : "center",
         }}
       >
         {writers.map((w) => (
@@ -293,41 +346,44 @@ function Carousel({
         ))}
       </div>
 
-      {/* Slide-navigator buttons. Same panel-bg + card-border outline
-          + soft drop shadow the writing-room arrows use, positioned
-          outside the card row in the fade strip. */}
-      <button
-        type="button"
-        aria-label={previousLabel}
-        onClick={() => scrollBy(-(CARD_W + 8))}
-        className="absolute z-20 hidden h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 sm:flex"
-        style={{
-          left: -72,
-          top: (CARD_H - 40) / 2,
-          backgroundColor: "var(--tott-panel-bg)",
-          border: "1px solid var(--tott-card-border)",
-          color: "var(--tott-home-text-strong)",
-          boxShadow: "var(--tott-home-text-shadow)",
-        }}
-      >
-        <ArrowIcon direction="left" />
-      </button>
-      <button
-        type="button"
-        aria-label={nextLabel}
-        onClick={() => scrollBy(CARD_W + 8)}
-        className="absolute z-20 hidden h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 sm:flex"
-        style={{
-          right: -72,
-          top: (CARD_H - 40) / 2,
-          backgroundColor: "var(--tott-panel-bg)",
-          border: "1px solid var(--tott-card-border)",
-          color: "var(--tott-home-text-strong)",
-          boxShadow: "var(--tott-home-text-shadow)",
-        }}
-      >
-        <ArrowIcon direction="right" />
-      </button>
+      {/* Slide-navigator buttons — only when the row overflows; with all
+          cards visible there's nothing to scroll to. */}
+      {overflowing ? (
+        <>
+          <button
+            type="button"
+            aria-label={previousLabel}
+            onClick={() => scrollBy(-(CARD_W + 8))}
+            className="absolute z-20 hidden h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 sm:flex"
+            style={{
+              left: -72,
+              top: (CARD_H - 40) / 2,
+              backgroundColor: "var(--tott-panel-bg)",
+              border: "1px solid var(--tott-card-border)",
+              color: "var(--tott-home-text-strong)",
+              boxShadow: "var(--tott-home-text-shadow)",
+            }}
+          >
+            <ArrowIcon direction="left" />
+          </button>
+          <button
+            type="button"
+            aria-label={nextLabel}
+            onClick={() => scrollBy(CARD_W + 8)}
+            className="absolute z-20 hidden h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 sm:flex"
+            style={{
+              right: -72,
+              top: (CARD_H - 40) / 2,
+              backgroundColor: "var(--tott-panel-bg)",
+              border: "1px solid var(--tott-card-border)",
+              color: "var(--tott-home-text-strong)",
+              boxShadow: "var(--tott-home-text-shadow)",
+            }}
+          >
+            <ArrowIcon direction="right" />
+          </button>
+        </>
+      ) : null}
     </div>
   );
 }
@@ -347,50 +403,29 @@ function CarouselCard({
   const author = writer.name?.trim() || authorPlaceholder;
   const date = writer.edition?.trim() || "";
   const role = writer.role?.trim() || rolePlaceholder;
-  // Card links to the writer's profile when we have an id; the
-  // follow button sits above the stretched link as an interactive
-  // island so clicking it doesn't navigate.
+  // Card links to the writer's profile when we have an id.
   const profileHref = writer.id
     ? `/writers/${encodeURIComponent(writer.id)}`
     : "/writing-room";
 
   return (
+    <div className="flex flex-col items-center" style={{ width: CARD_W }}>
     <div
       className="relative block w-full transition-opacity hover:opacity-90"
       style={{ height: CARD_H, width: CARD_W }}
     >
-      {/* Stretched navigation link — covers the whole card (z-25, above
-          the silk + text overlay but below the follow island at z-30). */}
+      {/* Stretched navigation link — covers the whole card. */}
       <Link
         href={profileHref}
         aria-label={author}
         className="absolute inset-0 z-[25]"
       />
 
-      {/* Follow island — independent interactive control above the
-          stretched link. */}
-      {writer.userId ? (
-        <div className="absolute right-2 top-2 z-30">
-          <FollowButton targetUserId={writer.userId} size="sm" />
-        </div>
-      ) : null}
-
-      {/* Optional cover image — sits behind the silk hex so the
-          writer's photo reads through the silk silhouette. */}
-      {writer.avatar ? (
-        <Image
-          src={writer.avatar}
-          alt=""
-          fill
-          className="absolute inset-0 select-none object-cover opacity-70 mix-blend-luminosity"
-          sizes="276px"
-          draggable={false}
-        />
-      ) : null}
-
       {/* Silk hex card — Image-2.png provides both the silhouette and
-          the silk fill (transparent outside the hex). Same brand asset
-          used by the writing-room "Discover Featured Writing" gallery. */}
+          the silk fill (transparent outside the hex). Drawn first so it's
+          the fallback fill behind a real avatar (and the whole card when
+          there's no photo). Same brand asset used by the writing-room
+          "Discover Featured Writing" gallery. */}
       <Image
         src={WRITER_CARD}
         alt=""
@@ -399,6 +434,22 @@ function CarouselCard({
         sizes="276px"
         draggable={false}
       />
+
+      {/* Real avatar photo — clipped to the hex silhouette and shown in full
+          colour on top of the silk (not ghosted behind it). External signed
+          GCS URL, so `unoptimized` to dodge the Next optimizer 502. */}
+      {writer.avatar ? (
+        <Image
+          src={writer.avatar}
+          alt=""
+          fill
+          unoptimized
+          className="absolute inset-0 select-none object-cover"
+          style={HEX_PHOTO_MASK}
+          sizes="276px"
+          draggable={false}
+        />
+      ) : null}
 
       {/* Top icon — Icon-4.svg, the 48×48 brand-exported hex glyph that
           sits above the card. */}
@@ -422,10 +473,27 @@ function CarouselCard({
         />
       </div>
 
+      {/* Graduated backdrop blur — a dedicated layer behind the text so the
+          blur fades in from the top instead of a hard edge. Kept separate from
+          the text overlay so the gradient mask doesn't fade the title/meta. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute z-10"
+        style={{
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 164,
+          backdropFilter: "blur(4px)",
+          WebkitBackdropFilter: "blur(4px)",
+          ...HEX_BLUR_MASK,
+        }}
+      />
+
       {/* Bottom text overlay — Figma "Text" frame (276×164, padding
           24/24/56, gap 8, justify-end). Background is the shared
-          --tott-writer-card-fade gradient + 4px backdrop blur so the
-          title and meta read cleanly over the silk hex. */}
+          --tott-writer-card-fade gradient so the title and meta read
+          cleanly over the silk hex (blur handled by the layer above). */}
       <div
         className="absolute z-10"
         style={{
@@ -440,8 +508,6 @@ function CarouselCard({
           justifyContent: "flex-end",
           alignItems: "center",
           background: "var(--tott-writer-card-fade)",
-          backdropFilter: "blur(4px)",
-          WebkitBackdropFilter: "blur(4px)",
           ...HEX_FADE_MASK,
         }}
       >
@@ -504,6 +570,15 @@ function CarouselCard({
       {/* Role pill — sits over the bottom fade, centered, with the
           dark chevron caps from the Figma comp. */}
       <RolePill label={role} />
+    </div>
+
+      {/* Follow button — centered beneath the hex card so it reads as a
+          tidy action for the profile rather than floating over the photo. */}
+      {writer.userId ? (
+        <div className="mt-3">
+          <FollowButton targetUserId={writer.userId} size="sm" />
+        </div>
+      ) : null}
     </div>
   );
 }

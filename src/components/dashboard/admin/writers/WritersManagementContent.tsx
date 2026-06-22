@@ -339,8 +339,7 @@ export function WritersManagementContent() {
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div
-            className="w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] p-6 shadow-xl"
-            style={{ backgroundColor: "var(--tott-dash-bg, #1a1a1a)" }}
+            className="w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-xl"
           >
             <h2 className="mb-2 text-base font-semibold">
               {t("delete.title")}

@@ -246,6 +246,7 @@
         },
         "form": {
           "createTitle": "Nouveau numéro",
+          "description": "Un numéro est une édition publiée du magazine — une sélection de contenus affichée sur la page publique du Magazine → Numéros. Ce n'est ni un article isolé ni un livre.",
           "editTitle": "Modifier le numéro",
           "close": "Fermer",
           "publishingTo": "Publication dans {name}",
@@ -369,7 +370,8 @@
           "missionBody": "Texte — Mission",
           "valuesHeading": "Titre — Valeurs",
           "closingQuote": "Citation de clôture",
-          "bannerUrl": "URL de l’image de bannière"
+          "bannerUrl": "URL de l’image de bannière",
+          "bannerHidden": "Masquer l’image de bannière"
         }
       },
       "founderQuote": {

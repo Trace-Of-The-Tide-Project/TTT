@@ -7,6 +7,7 @@ import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import type { AdminTagItem } from "@/services/admin-tags.service";
 import { useAdminTags } from "@/hooks/queries/admin-tags";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+import { TranslationOfPicker } from "./TranslationOfPicker";
 
 /**
  * Resolve the cover value for the `<img>` preview. Fresh picks are local
@@ -90,6 +91,12 @@ type ContentSettingsProps = {
   onCategoryChange: (v: string) => void;
   language: string;
   onLanguageChange: (v: string) => void;
+  /** Links this article as a translation of an existing one. When omitted the
+   * picker is hidden (e.g. content types that don't support translation). */
+  translationOf?: string;
+  onTranslationOfChange?: (id: string | undefined, title?: string | null) => void;
+  /** The current article's id, so it can't be linked as its own translation. */
+  excludeId?: string;
   visibility: "public" | "private";
   onVisibilityChange: (v: "public" | "private") => void;
   seoTitle: string;
@@ -131,6 +138,9 @@ export function ContentSettings({
   onCategoryChange,
   language,
   onLanguageChange,
+  translationOf,
+  onTranslationOfChange,
+  excludeId,
   visibility,
   onVisibilityChange,
   seoTitle,
@@ -341,6 +351,27 @@ export function ContentSettings({
             ))}
           </FieldSelect>
         </div>
+
+        {onTranslationOfChange ? (
+          <div>
+            <SectionLabel icon={<GlobeIcon />}>
+              {t("translationOf.label")}
+            </SectionLabel>
+            <TranslationOfPicker
+              value={translationOf}
+              excludeId={excludeId}
+              onChange={onTranslationOfChange}
+              labels={{
+                label: t("translationOf.label"),
+                placeholder: t("translationOf.placeholder"),
+                hint: t("translationOf.hint"),
+                clear: t("translationOf.clear"),
+                none: t("translationOf.none"),
+                searching: t("translationOf.searching"),
+              }}
+            />
+          </div>
+        ) : null}
 
         <div>
           <SectionLabel icon={<EyeIcon />}>{t("visibility.label")}</SectionLabel>

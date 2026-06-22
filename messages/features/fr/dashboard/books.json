@@ -35,6 +35,7 @@
       },
       "form": {
         "createTitle": "Ajouter un nouveau livre",
+        "createDescription": "Un livre est une œuvre publiée autonome (avec PDF et prix optionnels) affichée sur la page publique des Livres. Pour une édition du magazine, utilisez un Numéro ; pour un seul article, utilisez Contenu.",
         "editTitle": "Modifier le livre",
         "saving": "Enregistrement…",
         "save": "Enregistrer",

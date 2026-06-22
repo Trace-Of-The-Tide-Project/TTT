@@ -20,6 +20,16 @@
         "ar": "Árabe",
         "es": "Español",
         "fr": "Francés"
+      },
+      "wizard": {
+        "title": "Añadir traducciones",
+        "subtitle": "Añade este artículo en los otros idiomas del sitio. Cada versión se escribe y publica por separado.",
+        "progress": "{done}/{total} idiomas listos",
+        "originalBadge": "Original",
+        "notAdded": "Aún no añadido",
+        "addTranslation": "Añadir traducción",
+        "edit": "Editar",
+        "finish": "Finalizar"
       }
     }
   }

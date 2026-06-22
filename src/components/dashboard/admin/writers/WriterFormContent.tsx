@@ -10,7 +10,7 @@ import {
   useUpdateWriterProfile,
 } from "@/hooks/mutations/writers";
 import { useCreateAdminUser } from "@/hooks/mutations/users";
-import { uploadArticleAssetPath } from "@/services/uploads.service";
+import { uploadArticleAssetKeyAndUrl } from "@/services/uploads.service";
 import type { WriterProfilePayload } from "@/services/writers.service";
 import type { AdminUserListItem, CreatedAdminUser } from "@/services/users.service";
 import { formatApiError } from "@/lib/api/error-message";
@@ -69,7 +69,7 @@ function generateTempPassword(): string {
 }
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-[var(--tott-gold)]/60 transition-colors";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-[var(--tott-muted)] outline-none focus:border-[var(--tott-gold)]/60 transition-colors";
 const labelClass =
   "text-xs font-medium text-[var(--tott-dash-gold-label)] mb-1 block";
 const sectionClass =
@@ -100,6 +100,7 @@ export function WriterFormContent({ writerId }: Props) {
   const [tempPassword, setTempPassword] = useState("");
   const [copied, setCopied] = useState(false);
   const [summaryCopied, setSummaryCopied] = useState(false);
+  const [inviteCopied, setInviteCopied] = useState(false);
   const [createdUser, setCreatedUser] = useState<CreatedAdminUser | null>(null);
   /** Password the account was actually created with — the summary must show
    * this even if tempPassword was regenerated between attempts. */
@@ -117,6 +118,11 @@ export function WriterFormContent({ writerId }: Props) {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [avatarUploading, setAvatarUploading] = useState(false);
+  // Signed display URL for a just-uploaded avatar. We persist the stable
+  // storage key in `avatar_url`, but that key resolves to the private bucket
+  // (403) until the backend re-signs it on read — so the preview uses the
+  // signed URL the upload returned. Cleared when the key is edited by hand.
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const busy =
     submitting ||
@@ -170,8 +176,11 @@ export function WriterFormContent({ writerId }: Props) {
       setAvatarUploading(true);
       try {
         // Persist the STABLE storage key — signed URLs expire (book cover bug).
-        const key = await uploadArticleAssetPath(file);
+        // Keep the signed `url` for an immediate preview (the key's public-bucket
+        // URL 403s until the backend re-signs it on read).
+        const { key, url } = await uploadArticleAssetKeyAndUrl(file);
         setForm((prev) => ({ ...prev, avatar_url: key }));
+        setAvatarPreview(url);
       } catch {
         setSubmitError(t("errors.avatarUploadFailed"));
       } finally {
@@ -204,6 +213,31 @@ export function WriterFormContent({ writerId }: Props) {
         ? Number(form.monthly_goal)
         : null,
     };
+  };
+
+  // The backend rejects the request with a DB error ("Invalid query or data
+  // format") when optional columns receive `null`. Both POST and PATCH are
+  // partial here, so send only fields that actually carry a value: drop null /
+  // undefined / empty-string / empty-array / empty-object entries. Booleans and
+  // numbers — including `false` and `0` — are intentionally kept.
+  const prunePayload = (
+    payload: WriterProfilePayload,
+  ): Partial<WriterProfilePayload> => {
+    const out: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(payload)) {
+      if (value === null || value === undefined) continue;
+      if (typeof value === "string" && value.trim() === "") continue;
+      if (Array.isArray(value) && value.length === 0) continue;
+      if (
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        Object.keys(value as object).length === 0
+      ) {
+        continue;
+      }
+      out[key] = value;
+    }
+    return out as Partial<WriterProfilePayload>;
   };
 
   const validate = (): boolean => {
@@ -247,7 +281,11 @@ export function WriterFormContent({ writerId }: Props) {
     try {
       if (isEdit && writerId) {
         await mutationToast(
-          () => updateMutation.mutateAsync({ writerId, payload: buildPayload() }),
+          () =>
+            updateMutation.mutateAsync({
+              writerId,
+              payload: prunePayload(buildPayload()),
+            }),
           {
             loading: t("saving"),
             success: t("toasts.updated"),
@@ -294,7 +332,11 @@ export function WriterFormContent({ writerId }: Props) {
 
       try {
         await mutationToast(
-          () => createMutation.mutateAsync({ ...buildPayload(), user_id: userId }),
+          () =>
+            createMutation.mutateAsync({
+              ...prunePayload(buildPayload()),
+              user_id: userId,
+            }),
           {
             loading: t("saving"),
             success: t("toasts.created"),
@@ -342,8 +384,28 @@ export function WriterFormContent({ writerId }: Props) {
     }
   };
 
+  // There's no backend invite-email endpoint, so the admin hands the writer
+  // their login manually. Build a ready-to-send message (login URL + email +
+  // temp password) they can paste into an email/DM in one click.
+  const copyInviteMessage = async () => {
+    if (!createdSummary) return;
+    const loginUrl = `${window.location.origin}/login`;
+    const message = t("created.inviteTemplate", {
+      url: loginUrl,
+      email: createdSummary.email,
+      password: createdSummary.password,
+    });
+    try {
+      await navigator.clipboard.writeText(message);
+      setInviteCopied(true);
+      window.setTimeout(() => setInviteCopied(false), 2000);
+    } catch {
+      /* clipboard unavailable — user can select the text manually */
+    }
+  };
+
   if (isEdit && writerQuery.isPending) {
-    return <div className="my-4 mx-10 text-sm text-gray-500">{t("loading")}</div>;
+    return <div className="my-4 mx-10 text-sm text-[var(--tott-muted)]">{t("loading")}</div>;
   }
 
   if (isEdit && !writerQuery.data) {
@@ -351,14 +413,14 @@ export function WriterFormContent({ writerId }: Props) {
       <div className="my-4 mx-10">
         <Link
           href="/admin/writers"
-          className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-foreground transition-colors mb-5"
+          className="inline-flex items-center gap-1.5 text-xs text-[var(--tott-muted)] hover:text-foreground transition-colors mb-5"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
           {t("backToList")}
         </Link>
-        <p className="text-sm text-gray-500">{t("notFound")}</p>
+        <p className="text-sm text-[var(--tott-muted)]">{t("notFound")}</p>
       </div>
     );
   }
@@ -375,14 +437,14 @@ export function WriterFormContent({ writerId }: Props) {
       "rounded-lg px-4 py-1.5 text-sm font-medium transition-colors",
       active
         ? "border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 text-[var(--tott-gold)]"
-        : "border border-[var(--tott-card-border)] text-gray-400 hover:text-foreground",
+        : "border border-[var(--tott-card-border)] text-[var(--tott-muted)] hover:text-foreground",
     ].join(" ");
 
   return (
     <div className="my-4 mx-auto px-10 pb-12 max-w-4xl">
       <Link
         href="/admin/writers"
-        className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-foreground transition-colors mb-5"
+        className="inline-flex items-center gap-1.5 text-xs text-[var(--tott-muted)] hover:text-foreground transition-colors mb-5"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
@@ -467,7 +529,7 @@ export function WriterFormContent({ writerId }: Props) {
                       <button
                         type="button"
                         onClick={copyPassword}
-                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-gray-300 hover:text-foreground"
+                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground"
                       >
                         {copied ? t("account.copied") : t("account.copy")}
                       </button>
@@ -475,12 +537,12 @@ export function WriterFormContent({ writerId }: Props) {
                         type="button"
                         onClick={() => setTempPassword(generateTempPassword())}
                         disabled={busy || (createdUser !== null && (createdUser.email?.toLowerCase() ?? "") === newEmail.trim().toLowerCase())}
-                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-gray-300 hover:text-foreground disabled:opacity-40"
+                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground disabled:opacity-40"
                       >
                         {t("account.regenerate")}
                       </button>
                     </div>
-                    <p className="mt-1 text-[10px] text-gray-500">
+                    <p className="mt-1 text-[10px] text-[var(--tott-muted)]">
                       {t("account.tempPasswordHint")}
                     </p>
                   </div>
@@ -524,6 +586,7 @@ export function WriterFormContent({ writerId }: Props) {
             <label className={labelClass}>{t("fields.avatar")}</label>
             <AvatarUploadZone
               value={form.avatar_url}
+              previewSrc={avatarPreview}
               uploading={avatarUploading}
               onChange={handleAvatarUpload}
               labels={{
@@ -537,10 +600,15 @@ export function WriterFormContent({ writerId }: Props) {
               type="text"
               className={`${inputClass} mt-2`}
               value={form.avatar_url}
-              onChange={set("avatar_url")}
+              onChange={(e) => {
+                // A hand-typed ref previews via the resolver, not the stale
+                // signed URL from a prior upload.
+                setAvatarPreview(null);
+                setForm((prev) => ({ ...prev, avatar_url: e.target.value }));
+              }}
               placeholder="https://…"
             />
-            <p className="mt-1 text-[10px] text-gray-500">{t("fields.avatarUrlFallback")}</p>
+            <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("fields.avatarUrlFallback")}</p>
           </div>
         </div>
 
@@ -613,6 +681,11 @@ export function WriterFormContent({ writerId }: Props) {
             />
             {t("fields.featured")}
           </label>
+          {/* Make the board-visibility consequence explicit — otherwise a new
+              writer is created but never appears publicly, which reads as a bug. */}
+          <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
+            {t("fields.featuredHint")}
+          </p>
         </div>
 
         {submitError && (
@@ -640,7 +713,7 @@ export function WriterFormContent({ writerId }: Props) {
           </button>
           <Link
             href="/admin/writers"
-            className="rounded-lg px-4 py-2 text-sm text-gray-400 hover:text-foreground hover:bg-white/5 transition-colors"
+            className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground hover:bg-white/5 transition-colors"
           >
             {t("cancel")}
           </Link>
@@ -648,15 +721,29 @@ export function WriterFormContent({ writerId }: Props) {
       </form>
 
       {createdSummary && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          onClick={() => router.push("/admin/writers")}
+        >
           <div
-            className="w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] p-6 shadow-xl"
-            style={{ backgroundColor: "var(--tott-dash-bg, #1a1a1a)" }}
+            className="relative w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="mb-2 text-base font-semibold text-foreground">
+            <button
+              type="button"
+              onClick={() => router.push("/admin/writers")}
+              aria-label={t("cancel")}
+              className="absolute right-3 top-3 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-white/5 hover:text-foreground"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <h2 className="mb-2 pr-7 text-base font-semibold text-foreground">
               {t("created.title")}
             </h2>
-            <p className="mb-4 text-sm text-gray-400">
+            <p className="mb-4 text-sm text-[var(--tott-muted)]">
               {t("created.description")}
             </p>
             <div className="space-y-3 mb-5">
@@ -676,13 +763,23 @@ export function WriterFormContent({ writerId }: Props) {
                   <button
                     type="button"
                     onClick={copySummaryPassword}
-                    className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-gray-300 hover:text-foreground"
+                    className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground"
                   >
                     {summaryCopied ? t("account.copied") : t("account.copy")}
                   </button>
                 </div>
               </div>
             </div>
+            <button
+              type="button"
+              onClick={copyInviteMessage}
+              className="mb-2 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] px-5 py-2 text-sm font-medium text-foreground hover:bg-white/5 transition-colors"
+            >
+              {inviteCopied ? t("created.inviteCopied") : t("created.copyInvite")}
+            </button>
+            <p className="mb-4 text-[11px] text-[var(--tott-muted)]">
+              {t("created.emailHint")}
+            </p>
             <button
               type="button"
               onClick={() => router.push("/admin/writers")}

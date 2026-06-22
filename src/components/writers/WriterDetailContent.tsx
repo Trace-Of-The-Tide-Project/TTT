@@ -124,6 +124,9 @@ export function WriterDetailContent({ writer }: { writer: WriterDetailView }) {
                 alt=""
                 fill
                 sizes="120px"
+                // External signed GCS URL — bypass the Next optimizer (it 502s
+                // on these); load directly.
+                unoptimized
                 className="select-none object-cover"
                 draggable={false}
               />

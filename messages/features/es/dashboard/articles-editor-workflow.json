@@ -243,6 +243,14 @@
             "es": "Español",
             "fr": "Francés"
           },
+          "translationOf": {
+            "label": "Traducción de",
+            "placeholder": "Busca un artículo para traducir…",
+            "hint": "Vincúlalo como traducción de un artículo existente para que los lectores puedan cambiar de idioma.",
+            "clear": "Desvincular",
+            "none": "No hay artículos coincidentes",
+            "searching": "Buscando…"
+          },
           "visibility": {
             "label": "Visibilidad",
             "private": "Privado",

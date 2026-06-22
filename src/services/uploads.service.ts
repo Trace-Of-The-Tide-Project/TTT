@@ -140,6 +140,24 @@ export async function uploadArticleAssetPath(file: File): Promise<string> {
 }
 
 /**
+ * POST /upload — returns BOTH the stable storage key (to persist) and the
+ * signed `url` (to preview right away). The public bucket is private, so a
+ * freshly-uploaded `images/…` key can't be displayed via its public URL (403);
+ * the signed `url` from the same response loads immediately. Persist `key`,
+ * preview `url`.
+ */
+export async function uploadArticleAssetKeyAndUrl(
+  file: File,
+): Promise<{ key: string; url: string | null }> {
+  const data = await postUploadFile(file);
+  const key = pickStorageReferenceForContribution(data);
+  if (!key) throw new Error("Upload response did not include a path or URL.");
+  const picked = pickPathOrUrlFromPayload(data);
+  const url = picked && /^https?:\/\//i.test(picked) ? picked : null;
+  return { key, url };
+}
+
+/**
  * Same POST /upload as {@link uploadArticleAsset}; returns the **storage key** (`data.path`) for
  * contribution multipart `files` filenames (not the signed URL — avoids backend "invalid query"),
  * plus optional `mimeType` from the envelope. Display URLs match articles via signed `url` when present.

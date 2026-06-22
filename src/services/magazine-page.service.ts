@@ -72,6 +72,8 @@ export type ManifestoLocaleFields = {
 export type ManifestoConfig = {
   copy: Localized<ManifestoLocaleFields>;
   banner?: string;
+  /** Admin toggle — when true the silk banner image is hidden on the page. */
+  bannerHidden?: boolean;
 };
 export const EMPTY_MANIFESTO_CONFIG: ManifestoConfig = { copy: {} };
 
@@ -258,6 +260,7 @@ export function parseManifestoConfig(
   return {
     copy: base.copy,
     banner: typeof cfg.banner === "string" ? cfg.banner : undefined,
+    bannerHidden: cfg.bannerHidden === true,
   };
 }
 

@@ -316,6 +316,10 @@ function toWriterItem(w: WriterProfile): FollowWriterItem {
     name: writerDisplayName(w) || "Writer",
     title: w.bio?.slice(0, 80) || writerDisplayName(w) || null,
     edition: w.edition ?? null,
+    // Real role from the backend (writer / musician / visual_artist /
+    // filmmaker) instead of a hardcoded "Editors" pill. Null lets the card
+    // fall back to its i18n placeholder.
+    role: w.creator_kind ? prettifyCategory(w.creator_kind) : null,
     avatar: writerAvatar(w),
   };
 }
@@ -429,6 +433,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
                 valuesHeadingOverride={manifestoLocale.valuesHeading}
                 closingQuoteOverride={manifestoLocale.closingQuote}
                 bannerOverride={cmsCopy.manifesto?.banner}
+                bannerHidden={cmsCopy.manifesto?.bannerHidden}
               />
             ),
             publications:

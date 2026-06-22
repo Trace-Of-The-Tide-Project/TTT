@@ -35,6 +35,7 @@
       },
       "form": {
         "createTitle": "Add New Book",
+        "createDescription": "A book is a standalone published work (with an optional PDF and price) shown on the public Books page. For a magazine edition use an Issue; for a single article use Content.",
         "editTitle": "Edit Book",
         "saving": "Saving…",
         "save": "Save",

@@ -75,6 +75,12 @@ export type ContentEditorLayoutProps = {
   initialTranslationOf?: string;
   /** Pre-selected language when adding a translation (?language=). */
   initialLanguage?: string;
+  /**
+   * Where to go after a successful save (?return=). Used by the translation
+   * wizard so creating a translation loops back to the hub instead of the list.
+   * Must be an internal admin path.
+   */
+  returnTo?: string;
 };
 
 const ADMIN_ARTICLES_PATH = "/admin/articles";
@@ -86,6 +92,7 @@ export function ContentEditorLayout({
   articleId,
   initialTranslationOf,
   initialLanguage,
+  returnTo,
 }: ContentEditorLayoutProps) {
   const t = useTranslations("Dashboard.articles.editor");
   const tLayout = useTranslations("Dashboard.articles.editor.layout");
@@ -110,10 +117,13 @@ export function ContentEditorLayout({
   );
 
   const router = useRouter();
-  const invalidateArticlesListAndLeave = useCallback(() => {
-    invalidateAdminArticlesListCache();
-    router.push(ADMIN_ARTICLES_PATH);
-  }, [router]);
+  const invalidateArticlesListAndLeave = useCallback(
+    (destination: string = ADMIN_ARTICLES_PATH) => {
+      invalidateAdminArticlesListCache();
+      router.push(destination);
+    },
+    [router],
+  );
   const isEditMode = Boolean(articleId);
   const initialWasDraftRef = useRef(true);
   const pendingDelayedNavRef = useRef(false);
@@ -141,7 +151,20 @@ export function ContentEditorLayout({
   const [language, setLanguage] = useState(initialLanguage || "en");
   // When set, this content is created as a translation of the given original and
   // inherits its translation group on save. Stays fixed for the editor session.
-  const [translationOf] = useState<string | undefined>(initialTranslationOf);
+  const [translationOf, setTranslationOf] = useState<string | undefined>(
+    initialTranslationOf,
+  );
+
+  // Linking the current article to an existing original (the editor picker) or
+  // clearing it. Keep `originalTitle` in sync so the "Translating from" banner
+  // reflects the choice.
+  const handleTranslationOfChange = useCallback(
+    (id: string | undefined, title?: string | null) => {
+      setTranslationOf(id || undefined);
+      setOriginalTitle(id ? (title ?? null) : null);
+    },
+    [],
+  );
   const [originalTitle, setOriginalTitle] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [seoTitle, setSeoTitle] = useState("");
@@ -196,6 +219,7 @@ export function ContentEditorLayout({
     const sat = a.scheduled_at?.trim();
     setScheduledAt(sat && sat.length ? sat : null);
     setLanguage((a.language || "en").trim() || "en");
+    setTranslationOf(a.translation_of?.trim() || undefined);
     setVisibility((a.visibility || "public").toLowerCase() === "private" ? "private" : "public");
     setSeoTitle(a.seo_title?.trim() ?? "");
     setMetaDescription(a.meta_description?.trim() ?? "");
@@ -245,16 +269,40 @@ export function ContentEditorLayout({
   }, [successToast]);
 
   const notifySuccessAndLeave = useCallback(
-    (message: string) => {
+    (message: string, destination?: string) => {
       pendingDelayedNavRef.current = true;
       setSuccessToast(message);
       window.setTimeout(() => {
         pendingDelayedNavRef.current = false;
         setSuccessToast(null);
-        invalidateArticlesListAndLeave();
+        invalidateArticlesListAndLeave(destination);
       }, SUCCESS_TOAST_MS);
     },
     [invalidateArticlesListAndLeave],
+  );
+
+  // Where to land after a successful save:
+  // - an explicit `returnTo` (translation wizard loop) wins;
+  // - a brand-new ORIGINAL article enters its translation wizard hub;
+  // - everything else falls back to the articles list.
+  const safeReturnTo =
+    returnTo && returnTo.startsWith("/admin/") ? returnTo : undefined;
+  const destinationAfterSave = useCallback(
+    (createdId?: string | null) => {
+      if (safeReturnTo) return safeReturnTo;
+      // Only article-type content uses the translation wizard hub; other
+      // content types (video, audio, artwork…) keep the plain list redirect.
+      if (
+        !isEditMode &&
+        !translationOf &&
+        createdId &&
+        config.contentType === "article"
+      ) {
+        return `/admin/articles/translate/${createdId}`;
+      }
+      return ADMIN_ARTICLES_PATH;
+    },
+    [safeReturnTo, isEditMode, translationOf, config.contentType],
   );
 
   const addBlock = useCallback((type: BlockType) => {
@@ -371,11 +419,12 @@ export function ContentEditorLayout({
               ? "published"
               : "scheduled";
         await updateArticle(articleId, { ...editPatchFromPayload(payload), status });
-        notifySuccessAndLeave(tLayout("successChangesSaved"));
+        notifySuccessAndLeave(tLayout("successChangesSaved"), destinationAfterSave());
         return;
       }
-      await createArticle(payload);
-      notifySuccessAndLeave(tLayout("successDraftSaved"));
+      const res = await createArticle(payload);
+      const id = getArticleIdFromCreateResponse(res);
+      notifySuccessAndLeave(tLayout("successDraftSaved"), destinationAfterSave(id));
     } catch (e) {
       setError(translateErr(e));
     } finally {
@@ -386,6 +435,7 @@ export function ContentEditorLayout({
     category,
     buildPayload,
     notifySuccessAndLeave,
+    destinationAfterSave,
     isEditMode,
     articleId,
     workflowStatus,
@@ -417,7 +467,7 @@ export function ContentEditorLayout({
           await publishArticle(articleId);
           initialWasDraftRef.current = false;
         }
-        notifySuccessAndLeave(tLayout("successArticleSubmitted"));
+        notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave());
         return;
       }
       const res = await createArticle(payload);
@@ -427,7 +477,7 @@ export function ContentEditorLayout({
         return;
       }
       await publishArticle(id);
-      notifySuccessAndLeave(tLayout("successArticleSubmitted"));
+      notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave(id));
     } catch (e) {
       setError(translateErr(e));
     } finally {
@@ -439,6 +489,7 @@ export function ContentEditorLayout({
     category,
     buildPayload,
     notifySuccessAndLeave,
+    destinationAfterSave,
     isEditMode,
     articleId,
     tLayout,
@@ -474,7 +525,7 @@ export function ContentEditorLayout({
           });
           await scheduleArticle(articleId, iso);
           setScheduleModalOpen(false);
-          notifySuccessAndLeave(tLayout("successArticleScheduled"));
+          notifySuccessAndLeave(tLayout("successArticleScheduled"), destinationAfterSave());
           return;
         }
         const res = await createArticle(payload);
@@ -486,7 +537,7 @@ export function ContentEditorLayout({
         }
         await scheduleArticle(id, iso);
         setScheduleModalOpen(false);
-        notifySuccessAndLeave(tLayout("successArticleScheduled"));
+        notifySuccessAndLeave(tLayout("successArticleScheduled"), destinationAfterSave(id));
       } catch (e) {
         setError(translateErr(e));
         setScheduleModalOpen(false);
@@ -500,6 +551,7 @@ export function ContentEditorLayout({
       category,
       buildPayload,
       notifySuccessAndLeave,
+      destinationAfterSave,
       isEditMode,
       articleId,
       tLayout,
@@ -686,6 +738,9 @@ export function ContentEditorLayout({
             onCategoryChange={setCategory}
             language={language}
             onLanguageChange={setLanguage}
+            translationOf={translationOf}
+            onTranslationOfChange={handleTranslationOfChange}
+            excludeId={articleId}
             visibility={visibility}
             onVisibilityChange={setVisibility}
             seoTitle={seoTitle}

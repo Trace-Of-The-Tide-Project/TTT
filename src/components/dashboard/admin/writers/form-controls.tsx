@@ -4,14 +4,19 @@ import { useId, useRef, useState } from "react";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 
 /** Drag-and-drop + click-to-upload zone for the writer avatar.
- * `value` is the persisted ref (relative storage key or absolute URL). */
+ * `value` is the persisted ref (relative storage key or absolute URL).
+ * `previewSrc`, when set, is a ready-to-display URL (e.g. the signed URL from a
+ * just-completed upload) used for the preview instead of resolving `value` —
+ * needed because a freshly-uploaded `images/…` key 403s on the private bucket. */
 export function AvatarUploadZone({
   value,
+  previewSrc,
   uploading,
   onChange,
   labels,
 }: {
   value: string;
+  previewSrc?: string | null;
   uploading: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   labels: { uploading: string; click: string; hint: string; change: string };
@@ -21,11 +26,13 @@ export function AvatarUploadZone({
   const [broken, setBroken] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Render-time reset (same pattern as the books admin list): a new value
-  // gets a fresh chance to load even if the previous one 404'd.
-  const [prevValue, setPrevValue] = useState(value);
-  if (prevValue !== value) {
-    setPrevValue(value);
+  // Render-time reset (same pattern as the books admin list): a new ref —
+  // whether the persisted value or the signed preview URL — gets a fresh chance
+  // to load even if the previous one 404'd.
+  const previewKey = `${value}|${previewSrc ?? ""}`;
+  const [prevKey, setPrevKey] = useState(previewKey);
+  if (prevKey !== previewKey) {
+    setPrevKey(previewKey);
     setBroken(false);
   }
 
@@ -44,12 +51,12 @@ export function AvatarUploadZone({
     },
   };
 
-  if (value && !uploading && !broken) {
+  if ((previewSrc || value) && !uploading && !broken) {
     return (
       <div className="relative mt-1 inline-block">
         {/* eslint-disable-next-line @next/next/no-img-element -- preview of arbitrary ref */}
         <img
-          src={resolveArticleMediaSrc(value)}
+          src={previewSrc || resolveArticleMediaSrc(value)}
           alt=""
           className="h-24 w-24 rounded-full object-cover border border-[var(--tott-card-border)] shadow-md"
           onError={() => setBroken(true)}
