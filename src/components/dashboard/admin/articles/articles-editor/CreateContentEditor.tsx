@@ -20,6 +20,7 @@ function Inner({ config }: { config: ContentFormConfig }) {
     config,
     initialTranslationOf: params.get("translation_of") ?? undefined,
     initialLanguage: params.get("language") ?? undefined,
+    returnTo: params.get("return") ?? undefined,
   };
   return <ContentEditorLayout {...props} />;
 }

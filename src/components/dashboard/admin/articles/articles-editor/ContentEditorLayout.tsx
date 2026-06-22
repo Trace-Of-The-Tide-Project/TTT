@@ -75,6 +75,12 @@ export type ContentEditorLayoutProps = {
   initialTranslationOf?: string;
   /** Pre-selected language when adding a translation (?language=). */
   initialLanguage?: string;
+  /**
+   * Where to go after a successful save (?return=). Used by the translation
+   * wizard so creating a translation loops back to the hub instead of the list.
+   * Must be an internal admin path.
+   */
+  returnTo?: string;
 };
 
 const ADMIN_ARTICLES_PATH = "/admin/articles";
@@ -86,6 +92,7 @@ export function ContentEditorLayout({
   articleId,
   initialTranslationOf,
   initialLanguage,
+  returnTo,
 }: ContentEditorLayoutProps) {
   const t = useTranslations("Dashboard.articles.editor");
   const tLayout = useTranslations("Dashboard.articles.editor.layout");
@@ -110,10 +117,13 @@ export function ContentEditorLayout({
   );
 
   const router = useRouter();
-  const invalidateArticlesListAndLeave = useCallback(() => {
-    invalidateAdminArticlesListCache();
-    router.push(ADMIN_ARTICLES_PATH);
-  }, [router]);
+  const invalidateArticlesListAndLeave = useCallback(
+    (destination: string = ADMIN_ARTICLES_PATH) => {
+      invalidateAdminArticlesListCache();
+      router.push(destination);
+    },
+    [router],
+  );
   const isEditMode = Boolean(articleId);
   const initialWasDraftRef = useRef(true);
   const pendingDelayedNavRef = useRef(false);
@@ -259,16 +269,40 @@ export function ContentEditorLayout({
   }, [successToast]);
 
   const notifySuccessAndLeave = useCallback(
-    (message: string) => {
+    (message: string, destination?: string) => {
       pendingDelayedNavRef.current = true;
       setSuccessToast(message);
       window.setTimeout(() => {
         pendingDelayedNavRef.current = false;
         setSuccessToast(null);
-        invalidateArticlesListAndLeave();
+        invalidateArticlesListAndLeave(destination);
       }, SUCCESS_TOAST_MS);
     },
     [invalidateArticlesListAndLeave],
+  );
+
+  // Where to land after a successful save:
+  // - an explicit `returnTo` (translation wizard loop) wins;
+  // - a brand-new ORIGINAL article enters its translation wizard hub;
+  // - everything else falls back to the articles list.
+  const safeReturnTo =
+    returnTo && returnTo.startsWith("/admin/") ? returnTo : undefined;
+  const destinationAfterSave = useCallback(
+    (createdId?: string | null) => {
+      if (safeReturnTo) return safeReturnTo;
+      // Only article-type content uses the translation wizard hub; other
+      // content types (video, audio, artwork…) keep the plain list redirect.
+      if (
+        !isEditMode &&
+        !translationOf &&
+        createdId &&
+        config.contentType === "article"
+      ) {
+        return `/admin/articles/translate/${createdId}`;
+      }
+      return ADMIN_ARTICLES_PATH;
+    },
+    [safeReturnTo, isEditMode, translationOf, config.contentType],
   );
 
   const addBlock = useCallback((type: BlockType) => {
@@ -385,11 +419,12 @@ export function ContentEditorLayout({
               ? "published"
               : "scheduled";
         await updateArticle(articleId, { ...editPatchFromPayload(payload), status });
-        notifySuccessAndLeave(tLayout("successChangesSaved"));
+        notifySuccessAndLeave(tLayout("successChangesSaved"), destinationAfterSave());
         return;
       }
-      await createArticle(payload);
-      notifySuccessAndLeave(tLayout("successDraftSaved"));
+      const res = await createArticle(payload);
+      const id = getArticleIdFromCreateResponse(res);
+      notifySuccessAndLeave(tLayout("successDraftSaved"), destinationAfterSave(id));
     } catch (e) {
       setError(translateErr(e));
     } finally {
@@ -400,6 +435,7 @@ export function ContentEditorLayout({
     category,
     buildPayload,
     notifySuccessAndLeave,
+    destinationAfterSave,
     isEditMode,
     articleId,
     workflowStatus,
@@ -431,7 +467,7 @@ export function ContentEditorLayout({
           await publishArticle(articleId);
           initialWasDraftRef.current = false;
         }
-        notifySuccessAndLeave(tLayout("successArticleSubmitted"));
+        notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave());
         return;
       }
       const res = await createArticle(payload);
@@ -441,7 +477,7 @@ export function ContentEditorLayout({
         return;
       }
       await publishArticle(id);
-      notifySuccessAndLeave(tLayout("successArticleSubmitted"));
+      notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave(id));
     } catch (e) {
       setError(translateErr(e));
     } finally {
@@ -453,6 +489,7 @@ export function ContentEditorLayout({
     category,
     buildPayload,
     notifySuccessAndLeave,
+    destinationAfterSave,
     isEditMode,
     articleId,
     tLayout,
@@ -488,7 +525,7 @@ export function ContentEditorLayout({
           });
           await scheduleArticle(articleId, iso);
           setScheduleModalOpen(false);
-          notifySuccessAndLeave(tLayout("successArticleScheduled"));
+          notifySuccessAndLeave(tLayout("successArticleScheduled"), destinationAfterSave());
           return;
         }
         const res = await createArticle(payload);
@@ -500,7 +537,7 @@ export function ContentEditorLayout({
         }
         await scheduleArticle(id, iso);
         setScheduleModalOpen(false);
-        notifySuccessAndLeave(tLayout("successArticleScheduled"));
+        notifySuccessAndLeave(tLayout("successArticleScheduled"), destinationAfterSave(id));
       } catch (e) {
         setError(translateErr(e));
         setScheduleModalOpen(false);
@@ -514,6 +551,7 @@ export function ContentEditorLayout({
       category,
       buildPayload,
       notifySuccessAndLeave,
+      destinationAfterSave,
       isEditMode,
       articleId,
       tLayout,
