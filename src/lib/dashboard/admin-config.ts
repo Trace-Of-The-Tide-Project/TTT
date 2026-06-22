@@ -204,6 +204,26 @@ export const adminConfig: DashboardConfig = {
         },
         {
           kind: "group",
+          groupId: "people",
+          labelKey: "sidebar.people",
+          icon: PersonIcon,
+          items: [
+            {
+              kind: "item",
+              labelKey: "sidebar.addPerson",
+              href: "/admin/people/create",
+              icon: PlusIcon,
+            },
+            {
+              kind: "item",
+              labelKey: "sidebar.allPeople",
+              href: "/admin/people",
+              icon: PersonIcon,
+            },
+          ],
+        },
+        {
+          kind: "group",
           groupId: "community",
           labelKey: "sidebar.community",
           icon: HeartHandshakeIcon,

@@ -6,6 +6,7 @@ import {
   getCmsSettings,
 } from "@/services/cms.service";
 import { ensureMagazinePage } from "@/services/magazine-page.service";
+import { ensureHomePage } from "@/services/home-page.service";
 
 export const cmsKeys = {
   all: ["cms"] as const,
@@ -30,6 +31,18 @@ export function useEnsureMagazinePage() {
   return useQuery({
     queryKey: cmsKeys.pageBySlug("magazine"),
     queryFn: ensureMagazinePage,
+  });
+}
+
+/**
+ * Ensure the home CMS page (and seed sections) exist, then return it.
+ * Idempotent — safe on every admin mount. Mirrors
+ * {@link useEnsureMagazinePage}.
+ */
+export function useEnsureHomePage() {
+  return useQuery({
+    queryKey: cmsKeys.pageBySlug("home"),
+    queryFn: ensureHomePage,
   });
 }
 

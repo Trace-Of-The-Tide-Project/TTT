@@ -34,6 +34,7 @@ type ThreadsPageLayoutProps = {
   initialVisibleCount?: number;
   loadMoreCount?: number;
   author: {
+    id?: string;
     name: string;
     initials: string;
     link?: string;
@@ -262,7 +263,7 @@ export function ThreadsPageLayout({
               className="rounded-2xl border border-[var(--tott-card-border)] p-5"
               style={{ backgroundColor: theme.homeSurface }}
             >
-              <ContentAuthorCard {...author} />
+              <ContentAuthorCard {...author} authorId={author.id} />
               <div className="my-5 h-px bg-[var(--tott-card-border)]" />
               <ContentContributors contributors={contributors} />
             </div>
