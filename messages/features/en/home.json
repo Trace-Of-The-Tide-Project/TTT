@@ -99,7 +99,8 @@
         "zoomOut": "Zoom out",
         "fullscreen": "Fullscreen",
         "share": "Share",
-        "more": "More options"
+        "more": "More options",
+        "noResults": "No issues in this filter yet."
       },
       "editorialBoard": {
         "mastheadEyebrow": "Masthead · 2026",

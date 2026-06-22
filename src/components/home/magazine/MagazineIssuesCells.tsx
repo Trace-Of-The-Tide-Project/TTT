@@ -114,11 +114,12 @@ export function MagazineIssuesCells({ items, limit = 8 }: MagazineIssuesCellsPro
 
   return (
     <section className="relative w-full overflow-hidden">
-      {/* Faint honeycomb atmosphere — reinforces the "cells" idea
-          without competing with the content. */}
+      {/* Faint honeycomb atmosphere — vertically centred so it sits
+          behind the cells (not the header) and reinforces the "cells"
+          idea without competing with the content. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-10 -z-0 h-[260px]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 top-32 -z-0"
         style={{ opacity: 0.35 }}
       >
         <HexPatternBackdrop />
@@ -158,7 +159,7 @@ export function MagazineIssuesCells({ items, limit = 8 }: MagazineIssuesCellsPro
 
         {/* Light, borderless filter chips */}
         <div
-          role="tablist"
+          role="group"
           aria-label={t("galleryHeading")}
           className="flex flex-wrap items-center gap-x-5 gap-y-2"
         >
@@ -168,8 +169,7 @@ export function MagazineIssuesCells({ items, limit = 8 }: MagazineIssuesCellsPro
               <button
                 key={f.id}
                 type="button"
-                role="tab"
-                aria-selected={isActive}
+                aria-pressed={isActive}
                 onClick={() => setActive(f.id)}
                 className="relative pb-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tott-accent-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--tott-home-surface)]"
                 style={{
@@ -193,11 +193,11 @@ export function MagazineIssuesCells({ items, limit = 8 }: MagazineIssuesCellsPro
 
         {/* Honeycomb grid of issue cells */}
         {visible.length > 0 ? (
-          <ul className="grid grid-cols-2 justify-items-center gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4">
+          <ul className="flex flex-wrap justify-center gap-x-4 gap-y-10 sm:gap-x-6">
             {visible.map((item, i) => (
               <li
                 key={item.id}
-                className="w-full max-w-[276px] transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none"
+                className="max-w-[276px] basis-[calc(50%-0.5rem)] transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none sm:basis-[220px]"
                 style={{
                   opacity: mounted ? 1 : 0,
                   transform: mounted ? "translateY(0)" : "translateY(16px)",
@@ -214,7 +214,7 @@ export function MagazineIssuesCells({ items, limit = 8 }: MagazineIssuesCellsPro
           </ul>
         ) : (
           <p className="py-12 text-center text-sm" style={{ color: "var(--tott-home-text-muted)" }}>
-            {t("gallerySubtitle")}
+            {t("noResults")}
           </p>
         )}
       </div>

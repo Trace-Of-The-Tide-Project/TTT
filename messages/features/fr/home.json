@@ -99,7 +99,8 @@
         "zoomOut": "Zoom arrière",
         "fullscreen": "Plein écran",
         "share": "Partager",
-        "more": "Plus d'options"
+        "more": "Plus d'options",
+        "noResults": "Aucun numéro dans ce filtre pour l'instant."
       },
       "editorialBoard": {
         "mastheadEyebrow": "Ours · 2026",

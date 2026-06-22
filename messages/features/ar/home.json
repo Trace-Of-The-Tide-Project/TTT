@@ -99,7 +99,8 @@
         "zoomOut": "تصغير",
         "fullscreen": "ملء الشاشة",
         "share": "مشاركة",
-        "more": "خيارات أخرى"
+        "more": "خيارات أخرى",
+        "noResults": "لا توجد إصدارات في هذا التصنيف بعد."
       },
       "editorialBoard": {
         "mastheadEyebrow": "هيئة التحرير · 2026",
