@@ -370,7 +370,8 @@
           "missionBody": "Texte — Mission",
           "valuesHeading": "Titre — Valeurs",
           "closingQuote": "Citation de clôture",
-          "bannerUrl": "URL de l’image de bannière"
+          "bannerUrl": "URL de l’image de bannière",
+          "bannerHidden": "Masquer l’image de bannière"
         }
       },
       "founderQuote": {

@@ -62,6 +62,8 @@ export type MagazineManifestoProps = {
   closingQuoteOverride?: string;
   /** Silk banner image at the top. Empty falls back to the bundled default. */
   bannerOverride?: string;
+  /** Hide the banner image entirely (admin toggle). */
+  bannerHidden?: boolean;
 };
 
 export function MagazineManifesto({
@@ -74,6 +76,7 @@ export function MagazineManifesto({
   valuesHeadingOverride,
   closingQuoteOverride,
   bannerOverride,
+  bannerHidden,
 }: MagazineManifestoProps = {}) {
   const t = useTranslations("Home.magazine.manifesto");
   const tr = (key: string, override?: string) =>
@@ -112,25 +115,27 @@ export function MagazineManifesto({
   return (
     <div className="grid gap-10 sm:gap-12">
       {/* Silk banner — wide, no overlay text, matches the rounded-corner
-          card from the comp. */}
-      <div
-        className="relative w-full overflow-hidden rounded-[28px]"
-        style={{
-          aspectRatio: "1300 / 220",
-          backgroundColor: "var(--tott-panel-bg)",
-        }}
-        aria-hidden
-      >
-        <Image
-          src={safeBanner(bannerOverride).src}
-          alt=""
-          fill
-          className="object-cover"
-          sizes="(min-width: 1280px) 1300px, 100vw"
-          priority={false}
-          unoptimized={safeBanner(bannerOverride).unoptimized}
-        />
-      </div>
+          card from the comp. Hidden when the admin disables it. */}
+      {bannerHidden ? null : (
+        <div
+          className="relative w-full overflow-hidden rounded-[28px]"
+          style={{
+            aspectRatio: "1300 / 220",
+            backgroundColor: "var(--tott-panel-bg)",
+          }}
+          aria-hidden
+        >
+          <Image
+            src={safeBanner(bannerOverride).src}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(min-width: 1280px) 1300px, 100vw"
+            priority={false}
+            unoptimized={safeBanner(bannerOverride).unoptimized}
+          />
+        </div>
+      )}
 
       {/* Our Philosophy — heading + pull quote. White text, slightly
           larger than the rest of the body copy so it carries weight

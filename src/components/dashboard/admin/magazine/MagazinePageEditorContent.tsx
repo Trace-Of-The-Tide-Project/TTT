@@ -844,6 +844,17 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
                   placeholder="/images/home/hero-silk.png"
                 />
               </Field>
+              <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
+                <input
+                  type="checkbox"
+                  checked={draft.bannerHidden ?? false}
+                  onChange={(e) =>
+                    setDraft((prev) => ({ ...prev, bannerHidden: e.target.checked }))
+                  }
+                  className="h-4 w-4 accent-[var(--tott-gold)]"
+                />
+                {t("fields.bannerHidden")}
+              </label>
             </FieldGroup>
           </div>
         </FormCard>
@@ -860,6 +871,7 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
           valuesHeadingOverride={localeFields.valuesHeading}
           closingQuoteOverride={localeFields.closingQuote}
           bannerOverride={draft.banner}
+          bannerHidden={draft.bannerHidden}
         />
       </PreviewFrame>
     </>

@@ -370,7 +370,8 @@
           "missionBody": "نص الرسالة",
           "valuesHeading": "عنوان القيم",
           "closingQuote": "الاقتباس الختامي",
-          "bannerUrl": "رابط صورة البانر"
+          "bannerUrl": "رابط صورة البانر",
+          "bannerHidden": "إخفاء صورة البانر"
         }
       },
       "founderQuote": {
