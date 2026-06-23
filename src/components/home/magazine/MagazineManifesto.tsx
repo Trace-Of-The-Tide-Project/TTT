@@ -113,7 +113,6 @@ export function MagazineManifesto({
       <MagazineSection
         eyebrow={tTabs("manifesto")}
         heading={tr("philosophyHeading", philosophyHeadingOverride)}
-        backdrop={false}
       >
         {/* Lead pull-quote — the philosophy statement, calm and large. */}
         <p

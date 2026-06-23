@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
-import { HexPatternBackdrop } from "./HexPatternBackdrop";
 import { FirstWordGold } from "./FirstWordGold";
 
 /**
@@ -34,8 +33,6 @@ export type MagazineSectionProps = {
   subtitle?: string;
   /** Optional "view more" affordance on the trailing edge of the header. */
   viewMore?: { label: string; href: string };
-  /** Render the faint honeycomb atmosphere behind the body. Default true. */
-  backdrop?: boolean;
   /** Anchor id for in-page links. */
   id?: string;
   children: ReactNode;
@@ -49,20 +46,22 @@ export type MagazineSectionProps = {
  *   │ Heading (gold→strong gradient)                   │
  *   │ one-line subtitle                                │
  *   ├──────────────────────────────────────────────────┤
- *   │  (faint honeycomb behind)  …section content…      │
+ *   │  …section content…                                │
  *   └──────────────────────────────────────────────────┘
  *
  * Header copy + the "view more" link are passed in already-localised,
  * so this stays a pure presentational component (no i18n/hooks) and
  * can render on the server. Everything is theme-token driven and
  * RTL-safe (the arrow mirrors, the layout uses logical flow order).
+ *
+ * The honeycomb motif lives once at the foot of the page (the
+ * newsletter band), not behind every section — so sections stay clean.
  */
 export function MagazineSection({
   eyebrow,
   heading,
   subtitle,
   viewMore,
-  backdrop = true,
   id,
   children,
 }: MagazineSectionProps) {
@@ -72,16 +71,6 @@ export function MagazineSection({
 
   return (
     <section id={id} className="relative w-full overflow-hidden">
-      {backdrop ? (
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 top-32 -z-0"
-          style={{ opacity: 0.35 }}
-        >
-          <HexPatternBackdrop />
-        </div>
-      ) : null}
-
       <div className="relative z-10 grid w-full gap-8 px-4 sm:gap-10 sm:px-6 md:px-8">
         <header className="flex w-full flex-wrap items-end justify-between gap-4">
           <div className="min-w-0">
