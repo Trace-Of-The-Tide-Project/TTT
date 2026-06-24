@@ -14,7 +14,6 @@ export default async function ContributePage() {
       description={t("features.traceAStory.description")}
       ctaLabel={t("shared.ctaLabel")}
       homeLabel={t("shared.homeLabel")}
-      iconKey="pen"
     />
   );
 }

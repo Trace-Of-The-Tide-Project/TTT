@@ -1,5 +1,5 @@
-// The homepage temporarily shows a Coming Soon page while the team decides
-// what to feature. The full editorial homepage is preserved verbatim in
+// The homepage temporarily shows the shared Coming Soon page while the team
+// decides what to feature. The full editorial homepage is preserved verbatim in
 // `./_home-original.tsx` — restore it by copying that component back here.
 // No pages or code were removed.
 import { getTranslations } from "next-intl/server";
@@ -14,9 +14,7 @@ export default async function Home() {
       title={t("features.home.title")}
       description={t("features.home.description")}
       ctaLabel={t("shared.ctaLabel")}
-      homeLabel={t("shared.homeLabel")}
       ctaHref="/magazine"
-      iconKey="grid"
     />
   );
 }

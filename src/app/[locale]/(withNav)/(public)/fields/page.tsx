@@ -14,7 +14,6 @@ export default async function FieldsPage() {
       description={t("features.fields.description")}
       ctaLabel={t("shared.ctaLabel")}
       homeLabel={t("shared.homeLabel")}
-      iconKey="grid"
     />
   );
 }
