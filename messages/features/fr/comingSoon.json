@@ -21,6 +21,10 @@
       "traceAStory": {
         "title": "Votre histoire vaut l'attente",
         "description": "L'espace pour laisser votre propre trace — partager un souvenir, un témoignage ou une œuvre d'art — est en cours de finition pour lui rendre justice. Gardez vos mots ; nous avons hâte de les entendre très bientôt."
+      },
+      "home": {
+        "title": "Une nouvelle page d'accueil prend forme",
+        "description": "Nous réimaginons la porte d'entrée des archives. Le temps de choisir ce qui vous accueillera en premier, le magazine et tout ce qui s'y trouve déjà restent ouverts à l'exploration."
       }
     }
   }

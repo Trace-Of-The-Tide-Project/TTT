@@ -21,6 +21,10 @@
       "traceAStory": {
         "title": "Tu historia vale la espera",
         "description": "El espacio para dejar tu propia huella —compartir un recuerdo, un testimonio o una obra de arte— se está puliendo para hacerle justicia. Guarda tus palabras; estamos deseando escucharlas muy pronto."
+      },
+      "home": {
+        "title": "Una nueva portada está tomando forma",
+        "description": "Estamos reimaginando la entrada al archivo. Mientras decidimos con qué recibirte primero, la revista y todo lo que ya hay dentro están abiertos para explorar."
       }
     }
   }
