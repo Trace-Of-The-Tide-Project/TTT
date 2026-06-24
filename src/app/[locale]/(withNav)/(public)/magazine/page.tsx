@@ -408,6 +408,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
 
       <div className="relative">
         <MagazineHero
+          fontScale={cmsCopy.hero?.fontScale}
           artwork={heroArtwork}
           title={heroTitle}
           subtitle={heroSubtitle}
@@ -424,6 +425,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
           tabs={{
             manifesto: (
               <MagazineManifesto
+                fontScale={cmsCopy.manifesto?.fontScale}
                 philosophyHeadingOverride={manifestoLocale.philosophyHeading}
                 philosophyQuoteOverride={manifestoLocale.philosophyQuote}
                 visionHeadingOverride={manifestoLocale.visionHeading}
@@ -446,6 +448,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
               writers.length > 0 ||
               founderForRender ? (
                 <MagazineEditorialBoard
+                  fontScale={cmsCopy.founder?.fontScale}
                   lessReadArticles={lessReadArticles}
                   writers={writers}
                   founder={founderForRender}
@@ -454,6 +457,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
             support:
               collaborations.length > 0 ? (
                 <MagazineSupport
+                  fontScale={cmsCopy.support?.fontScale}
                   collaborations={collaborations}
                   headingOverride={supportLocale.heading}
                   subheadingOverride={supportLocale.subheading}
@@ -473,6 +477,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
             magazineId: magazineMeta.magazineId,
             titleOverride: newsletterLocale.title,
             bodyOverride: newsletterLocale.body,
+            fontScale: cmsCopy.newsletter?.fontScale,
           }}
         />
       </div>

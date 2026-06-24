@@ -32,6 +32,9 @@ import { usePublishCmsPage, useToggleCmsSection, useUpdateCmsSection } from "@/h
 import {
   MAGAZINE_SECTION_TYPES,
   SUPPORTED_LOCALES,
+  MAGAZINE_FONT_PRESETS,
+  DEFAULT_FONT_SCALE,
+  clampFontScale,
   parseHeroConfig,
   parseManifestoConfig,
   parseFounderConfig,
@@ -311,6 +314,8 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
+        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
+        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
 
       <EditorRegistryProvider>
@@ -385,6 +390,7 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
 
       <PreviewFrame locale={activeLocale}>
         <MagazineHero
+          fontScale={draft.fontScale}
           artwork={draft.artwork || undefined}
           title={localeFields.title}
           subtitle={localeFields.subtitle}
@@ -403,6 +409,45 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div>
       <label className="mb-1.5 block text-xs font-medium text-gray-400">{label}</label>
       {children}
+    </div>
+  );
+}
+
+/** Per-section text-size preset buttons. Sets the section config's
+ * `fontScale`; "Default" (1×) matches the site's current sizing. */
+function FontSizeField({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (scale: number) => void;
+}) {
+  const t = useTranslations("Dashboard.magazinePageEditor.fontSize");
+  const current = clampFontScale(value);
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+        {t("label")}
+      </span>
+      <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
+        {MAGAZINE_FONT_PRESETS.map((p) => {
+          const active = Math.abs(current - p.scale) < 0.001;
+          return (
+            <button
+              key={p.key}
+              type="button"
+              onClick={() => onChange(p.scale)}
+              className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                active
+                  ? "bg-[var(--tott-dash-surface-inset)] text-foreground shadow-sm"
+                  : "text-[var(--tott-tab-inactive)] hover:text-foreground"
+              }`}
+            >
+              {t(p.key)}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -471,6 +516,8 @@ function EditorToolbar({
   isSaving,
   onReset,
   onSave,
+  fontScale,
+  onFontScaleChange,
 }: {
   title: string;
   subtitle: string;
@@ -480,6 +527,8 @@ function EditorToolbar({
   isSaving: boolean;
   onReset: () => void;
   onSave: () => void;
+  fontScale?: number;
+  onFontScaleChange?: (scale: number) => void;
 }) {
   const t = useTranslations("Dashboard.magazinePageEditor.hero");
   return (
@@ -528,6 +577,14 @@ function EditorToolbar({
           </button>
         </div>
       </div>
+      {onFontScaleChange ? (
+        <div className="mt-3 border-t border-[var(--tott-card-border)] pt-3">
+          <FontSizeField
+            value={fontScale ?? DEFAULT_FONT_SCALE}
+            onChange={onFontScaleChange}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -770,6 +827,8 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
+        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
+        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
 
       <EditorRegistryProvider>
@@ -862,6 +921,7 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
 
       <PreviewFrame locale={activeLocale}>
         <MagazineManifesto
+          fontScale={draft.fontScale}
           philosophyHeadingOverride={localeFields.philosophyHeading}
           philosophyQuoteOverride={localeFields.philosophyQuote}
           visionHeadingOverride={localeFields.visionHeading}
@@ -907,6 +967,8 @@ function FounderQuoteEditor({ section, onSave, isSaving, registerDraftState }: E
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
+        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
+        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
 
       <EditorRegistryProvider>
@@ -955,6 +1017,7 @@ function FounderQuoteEditor({ section, onSave, isSaving, registerDraftState }: E
 
       <PreviewFrame locale={activeLocale}>
         <MagazineEditorialBoard
+          fontScale={draft.fontScale}
           lessReadArticles={[]}
           writers={[]}
           founder={{
@@ -972,7 +1035,7 @@ function FounderQuoteEditor({ section, onSave, isSaving, registerDraftState }: E
 function NewsletterCopyEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.newsletterCopy");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
-  const { draft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
+  const { draft, setDraft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
     useLocalizedDraft<NewsletterCopyLocaleFields, NewsletterCopyConfig>(
       section,
       parseNewsletterConfig
@@ -991,6 +1054,8 @@ function NewsletterCopyEditor({ section, onSave, isSaving, registerDraftState }:
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
+        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
+        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
       <EditorRegistryProvider>
         <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
@@ -1016,7 +1081,7 @@ function NewsletterCopyEditor({ section, onSave, isSaving, registerDraftState }:
       </EditorRegistryProvider>
 
       <PreviewFrame locale={activeLocale}>
-        <MagazineNewsletter titleOverride={localeFields.title} bodyOverride={localeFields.body} />
+        <MagazineNewsletter fontScale={draft.fontScale} titleOverride={localeFields.title} bodyOverride={localeFields.body} />
       </PreviewFrame>
     </>
   );
@@ -1047,7 +1112,7 @@ const PREVIEW_COLLABS_PLACEHOLDER = [
 function SupportEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.support");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
-  const { draft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
+  const { draft, setDraft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
     useLocalizedDraft<SupportLocaleFields, SupportConfig>(section, parseSupportConfig);
   useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
   const isRtl = RTL_LOCALES.has(activeLocale);
@@ -1063,6 +1128,8 @@ function SupportEditor({ section, onSave, isSaving, registerDraftState }: Editor
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
+        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
+        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
       <EditorRegistryProvider>
         <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
@@ -1094,6 +1161,7 @@ function SupportEditor({ section, onSave, isSaving, registerDraftState }: Editor
 
       <PreviewFrame locale={activeLocale}>
         <MagazineSupport
+          fontScale={draft.fontScale}
           collaborations={PREVIEW_COLLABS_PLACEHOLDER}
           headingOverride={localeFields.heading}
           subheadingOverride={localeFields.subheading}

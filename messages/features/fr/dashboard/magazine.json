@@ -408,6 +408,14 @@
         "pasteImageUrl": "…ou collez l’URL d’une image",
         "linkPlaceholder": "https://example.com",
         "removeLink": "Supprimer le lien"
+      },
+      "fontSize": {
+        "label": "Taille du texte",
+        "hint": "Met à l'échelle le texte de cette section. La valeur par défaut correspond à la taille actuelle du site.",
+        "small": "Petit",
+        "default": "Par défaut",
+        "large": "Grand",
+        "xl": "Très grand"
       }
     }
   }

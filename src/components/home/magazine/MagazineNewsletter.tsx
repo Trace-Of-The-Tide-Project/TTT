@@ -31,6 +31,8 @@ export type MagazineNewsletterProps = {
    *  subscribe form with a single gold button (Figma "Apply to Join"
    *  spec). Currently used by the Editorial Board tab. */
   ctaButton?: { label: string; href: string };
+  /** Per-section text scale (1 = current sizes). */
+  fontScale?: number;
 };
 
 /**
@@ -44,6 +46,7 @@ export function MagazineNewsletter({
   titleOverride,
   bodyOverride,
   ctaButton,
+  fontScale = 1,
 }: MagazineNewsletterProps = {}) {
   const t = useTranslations("Home.magazine.newsletter");
   const [email, setEmail] = useState("");
@@ -89,7 +92,7 @@ export function MagazineNewsletter({
     <section
       aria-labelledby="newsletter-heading"
       className="relative w-full overflow-hidden px-4 py-16 sm:px-12 sm:py-28 md:py-32"
-      style={{ minHeight: "420px" }}
+      style={{ minHeight: "420px", ["--mag-fs"]: fontScale } as React.CSSProperties}
     >
       <HexPatternBackdrop />
 
@@ -125,7 +128,7 @@ export function MagazineNewsletter({
             // `Join our cultural circle` keep its gold first-word
             // accent; override copy renders flat strong-text per the
             // spec (theme-aware via --tott-home-text-strong).
-            fontSize: 24,
+            fontSize: `calc(24px * var(--mag-fs, 1))`,
             lineHeight: "32px",
             color: "var(--tott-home-text-strong)",
             maxWidth: 529,
@@ -141,7 +144,7 @@ export function MagazineNewsletter({
             // theme-muted (--tott-home-text-muted swaps light/dark).
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 400,
-            fontSize: 14,
+            fontSize: `calc(14px * var(--mag-fs, 1))`,
             lineHeight: "20px",
             letterSpacing: "-0.005em",
             color: "var(--tott-home-text-muted)",
@@ -167,7 +170,7 @@ export function MagazineNewsletter({
               borderRadius: 8,
               fontFamily: "'Inter', var(--font-sans, sans-serif)",
               fontWeight: 500,
-              fontSize: 14,
+              fontSize: `calc(14px * var(--mag-fs, 1))`,
               lineHeight: "20px",
               letterSpacing: "-0.005em",
               color: "var(--tott-auth-btn-text)",

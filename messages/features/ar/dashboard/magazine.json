@@ -408,6 +408,14 @@
         "pasteImageUrl": "…أو الصق رابط الصورة",
         "linkPlaceholder": "https://example.com",
         "removeLink": "إزالة الرابط"
+      },
+      "fontSize": {
+        "label": "حجم النص",
+        "hint": "يضبط حجم نص هذا القسم. الافتراضي يطابق الأحجام الحالية للموقع.",
+        "small": "صغير",
+        "default": "افتراضي",
+        "large": "كبير",
+        "xl": "كبير جداً"
       }
     }
   }

@@ -60,6 +60,8 @@ export type MagazineSupportProps = {
   headingOverride?: string;
   /** Section subheading override. Empty/whitespace falls back to i18n. */
   subheadingOverride?: string;
+  /** Per-section text scale (1 = current sizes). */
+  fontScale?: number;
 };
 
 /**
@@ -76,6 +78,7 @@ export function MagazineSupport({
   collaborations,
   headingOverride,
   subheadingOverride,
+  fontScale = 1,
 }: MagazineSupportProps) {
   const t = useTranslations("Home.magazine.support");
   const headingText = headingOverride?.trim() || t("heading");
@@ -160,6 +163,7 @@ export function MagazineSupport({
     <section
       className="relative mx-auto w-full max-w-[1392px]"
       aria-labelledby="recent-collabs-heading"
+      style={{ ["--mag-fs"]: fontScale } as React.CSSProperties}
     >
       <ChamferedFrame size={24} borderColor={BORDER} />
 
@@ -170,7 +174,7 @@ export function MagazineSupport({
           style={{
             fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
             fontWeight: 500,
-            fontSize: "32px",
+            fontSize: `calc((32px) * var(--mag-fs, 1))`,
             lineHeight: "40px",
             color: "var(--tott-home-text-strong)",
             textAlign: "center",
@@ -183,7 +187,7 @@ export function MagazineSupport({
           style={{
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 400,
-            fontSize: "14px",
+            fontSize: `calc((14px) * var(--mag-fs, 1))`,
             lineHeight: "20px",
             letterSpacing: "-0.005em",
             color: "var(--tott-home-text-muted)",
@@ -396,7 +400,7 @@ function CollabCard({
               style={{
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 400,
-                fontSize: "clamp(9px, 4.6cqw, 13px)",
+                fontSize: `calc((clamp(9px, 4.6cqw, 13px)) * var(--mag-fs, 1))`,
                 lineHeight: 1,
                 color: "#d6d6d6",
               }}
@@ -418,7 +422,7 @@ function CollabCard({
             width: "100%",
             fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
             fontWeight: 500,
-            fontSize: "20px",
+            fontSize: `calc((20px) * var(--mag-fs, 1))`,
             lineHeight: "28px",
             color: "var(--tott-home-text-strong)",
             textAlign: "center",
@@ -438,7 +442,7 @@ function CollabCard({
             style={{
               fontFamily: "'Inter', var(--font-sans, sans-serif)",
               fontWeight: 400,
-              fontSize: "12px",
+              fontSize: `calc((12px) * var(--mag-fs, 1))`,
               lineHeight: "16px",
               color: "var(--tott-dash-gold-label)",
               textAlign: "center",
@@ -456,7 +460,7 @@ function CollabCard({
                 style={{
                   fontFamily: "'Inter', var(--font-sans, sans-serif)",
                   fontWeight: 400,
-                  fontSize: "12px",
+                  fontSize: `calc((12px) * var(--mag-fs, 1))`,
                   lineHeight: "16px",
                   color: "var(--tott-home-text-muted)",
                 }}
@@ -472,7 +476,7 @@ function CollabCard({
           style={{
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 400,
-            fontSize: "12px",
+            fontSize: `calc((12px) * var(--mag-fs, 1))`,
             lineHeight: "16px",
             color: "var(--tott-home-text-muted)",
             textAlign: "center",
@@ -501,7 +505,7 @@ function CollabCard({
             color: "#FFFFFF",
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 500,
-            fontSize: "12px",
+            fontSize: `calc((12px) * var(--mag-fs, 1))`,
             lineHeight: "16px",
             backdropFilter: "blur(4px)",
             WebkitBackdropFilter: "blur(4px)",
