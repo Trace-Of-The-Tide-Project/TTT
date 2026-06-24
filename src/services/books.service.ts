@@ -19,6 +19,9 @@ export type Book = {
   pdf_url?: string | null;
   genre?: string | null;
   language?: string | null;
+  /** Translation-group id — all language versions of one book share it
+   * (pending backend rollout; see docs/backend-asks-translations.md). */
+  translation_group_id?: string | null;
   page_count?: number | null;
   price?: number | string | null;
   currency?: string | null;
@@ -206,6 +209,8 @@ export type BookPayload = {
   currency?: string | null;
   magazine_id?: string | null;
   created_by?: string | null;
+  /** On create only: id of the book this is a translation of. */
+  translation_of?: string | null;
 };
 
 /** POST /knowledge/books — requires JWT + admin role. */

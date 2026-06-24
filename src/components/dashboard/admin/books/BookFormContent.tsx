@@ -10,9 +10,19 @@ import { useCreateBook, useUpdateBook } from "@/hooks/mutations/books";
 import { mutationToast } from "@/hooks/useMutationToast";
 import { uploadFileToUrl } from "@/services/uploads.service";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+import { TranslationsPanel } from "@/components/dashboard/admin/translations";
+import { isTranslatableNow } from "@/services/translations.service";
 import type { BookPayload } from "@/services/books.service";
 
-type Props = { bookId?: string };
+const BOOK_LANGS = ["en", "ar", "es", "fr", "de"] as const;
+
+type Props = {
+  bookId?: string;
+  /** Create-mode only: ISO code for the version being created. */
+  createLanguage?: string;
+  /** Create-mode only: id of the book this is a translation of. */
+  translationOf?: string;
+};
 
 type FormState = {
   title: string;
@@ -236,15 +246,28 @@ function PdfUploadZone({
   );
 }
 
-export function BookFormContent({ bookId }: Props) {
+export function BookFormContent({ bookId, createLanguage, translationOf }: Props) {
   const t = useTranslations("Dashboard.books.form");
   const router = useRouter();
   const isEdit = Boolean(bookId);
   const currentUser = useAuthUser();
+  const translationsOn = isTranslatableNow("book");
+  const isTranslation = !isEdit && translationsOn && Boolean(translationOf);
+
+  const initialLanguage = (
+    BOOK_LANGS.includes((createLanguage ?? "") as (typeof BOOK_LANGS)[number])
+      ? createLanguage
+      : ""
+  ) as FormState["language"];
 
   const bookQuery = useBook(bookId);
-  const [form, setForm] = useState<FormState>(EMPTY);
+  const sourceQuery = useBook(isTranslation ? translationOf : undefined);
+  const [form, setForm] = useState<FormState>(() => ({
+    ...EMPTY,
+    language: initialLanguage,
+  }));
   const [seeded, setSeeded] = useState(false);
+  const [translationSeeded, setTranslationSeeded] = useState(false);
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [coverUploading, setCoverUploading] = useState(false);
@@ -280,6 +303,34 @@ export function BookFormContent({ bookId }: Props) {
     });
     setSeeded(true);
   }, [bookQuery.data, seeded]);
+
+  // Clone the source book's fields when adding a translation; keep the target
+  // language already set from `?language=`.
+  useEffect(() => {
+    if (!isTranslation || translationSeeded || !sourceQuery.data) return;
+    const b = sourceQuery.data;
+    setForm((prev) => ({
+      ...prev,
+      title: b.title ?? "",
+      author: b.author ?? "",
+      co_authors: Array.isArray(b.co_authors)
+        ? b.co_authors.join(", ")
+        : (b.co_authors ?? ""),
+      publisher: b.publisher ?? "",
+      published_date: b.published_date ? b.published_date.slice(0, 10) : "",
+      year: b.year != null ? String(b.year) : "",
+      summary: b.summary ?? "",
+      cover_image: b.cover_image ?? "",
+      pdf_url: b.pdf_url ?? "",
+      genre: b.genre ?? "",
+      page_count: b.page_count != null ? String(b.page_count) : "",
+      price: b.price != null ? String(b.price) : "",
+      currency: b.currency ?? "USD",
+      magazine_id: b.magazine_id ?? "",
+      // language stays as the target version language from `?language=`.
+    }));
+    setTranslationSeeded(true);
+  }, [isTranslation, translationSeeded, sourceQuery.data]);
 
   const set = useCallback(
     (field: keyof FormState) =>
@@ -359,6 +410,10 @@ export function BookFormContent({ bookId }: Props) {
     currency: form.currency || null,
     magazine_id: form.magazine_id || null,
     created_by: currentUser?.id ?? null,
+    // Link into the source's translation group (create-only, flag-gated).
+    // `undefined` (not null) so JSON serialization omits the key entirely on
+    // the current backend, which has no such column yet.
+    translation_of: isTranslation ? translationOf : undefined,
   });
 
   const handleSubmit = useCallback(
@@ -419,14 +474,40 @@ export function BookFormContent({ bookId }: Props) {
         {t("backToList")}
       </Link>
 
-      <h1 className="mb-2 text-xl font-semibold text-foreground">
-        {isEdit ? t("editTitle") : t("createTitle")}
-      </h1>
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-xl font-semibold text-foreground">
+          {isEdit ? t("editTitle") : t("createTitle")}
+        </h1>
+        {isEdit && bookId && translationsOn ? (
+          <TranslationsPanel
+            contentType="book"
+            contentId={bookId}
+            currentLanguage={form.language || undefined}
+          />
+        ) : null}
+      </div>
       {/* Clarify what a book is vs an issue/article — admins were unsure which
           form to use for which kind of content. */}
       <p className="mb-6 max-w-2xl text-xs leading-relaxed text-[var(--tott-muted)]">
         {t("createDescription")}
       </p>
+
+      {isTranslation ? (
+        <div className="mb-6 max-w-2xl mx-auto rounded-xl border border-[var(--tott-gold)]/30 bg-[var(--tott-gold)]/5 px-4 py-3 text-sm">
+          <p className="font-medium text-[var(--tott-gold)]">
+            {form.language && t.has(`languages.${form.language}`)
+              ? `${t(`languages.${form.language}`)} — ${t("translation.banner")}`
+              : t("translation.banner")}
+          </p>
+          {sourceQuery.data ? (
+            <p className="mt-1 text-[var(--tott-muted)]">
+              {t("translation.ofOriginal", {
+                name: sourceQuery.data.title?.trim() || "—",
+              })}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
 

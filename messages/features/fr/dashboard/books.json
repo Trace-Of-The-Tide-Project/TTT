@@ -91,6 +91,10 @@
           "pdfUpload": "Télécharger le PDF",
           "pdfUploading": "Téléchargement…",
           "pdfUploaded": "PDF téléchargé ✓"
+        },
+        "translation": {
+          "banner": "Ajout d'une traduction — rédigez la version de cette langue ci-dessous.",
+          "ofOriginal": "Traduction de «{name}»"
         }
       }
     }

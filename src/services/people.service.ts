@@ -7,6 +7,10 @@ export type PersonProfile = {
   portrait?: string | null;
   birth_date?: string | null;
   death_date?: string | null;
+  /** Translation-group fields (pending backend rollout — see
+   * docs/backend-asks-translations.md). */
+  language?: string | null;
+  translation_group_id?: string | null;
   createdAt?: string;
   updatedAt?: string;
   biographicalCards?: Array<{ id: string; summary?: string | null; image?: string | null }> | null;
@@ -18,6 +22,10 @@ export type PersonProfilePayload = {
   portrait?: string | null;
   birth_date?: string | null;
   death_date?: string | null;
+  /** ISO code for the version being created/edited. */
+  language?: string | null;
+  /** On create only: id of the person this is a translation of. */
+  translation_of?: string | null;
 };
 
 export type PeopleListMeta = {

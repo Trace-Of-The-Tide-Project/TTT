@@ -14,6 +14,8 @@ import { uploadArticleAssetKeyAndUrl } from "@/services/uploads.service";
 import type { WriterProfilePayload } from "@/services/writers.service";
 import type { AdminUserListItem, CreatedAdminUser } from "@/services/users.service";
 import { formatApiError } from "@/lib/api/error-message";
+import { TranslationsPanel } from "@/components/dashboard/admin/translations";
+import { isTranslatableNow } from "@/services/translations.service";
 import { UserPicker } from "./UserPicker";
 import { AvatarUploadZone, ThemesInput } from "./form-controls";
 
@@ -37,6 +39,7 @@ type FormState = {
   social_twitter: string;
   social_instagram: string;
   social_youtube: string;
+  language: string;
 };
 
 const EMPTY: FormState = {
@@ -56,6 +59,7 @@ const EMPTY: FormState = {
   social_twitter: "",
   social_instagram: "",
   social_youtube: "",
+  language: "en",
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -77,20 +81,43 @@ const sectionClass =
 const sectionHeadingClass =
   "text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]";
 
-type Props = { writerId?: string };
+type Props = {
+  writerId?: string;
+  /** Create-mode only: ISO code for the version being created (from
+   * `?language=`). */
+  createLanguage?: string;
+  /** Create-mode only: id of the writer this is a translation of (from
+   * `?translation_of=`). */
+  translationOf?: string;
+};
 
-export function WriterFormContent({ writerId }: Props) {
+export function WriterFormContent({
+  writerId,
+  createLanguage,
+  translationOf,
+}: Props) {
   const t = useTranslations("Dashboard.writersManagement.form");
+  const tTr = useTranslations("Dashboard.translations");
   const router = useRouter();
   const isEdit = Boolean(writerId);
+  // Translation features are flag-gated until the backend ships writer
+  // translation groups (see docs/backend-asks-translations.md).
+  const translationsOn = isTranslatableNow("writer");
+  const isTranslation = !isEdit && translationsOn && Boolean(translationOf);
 
   const writerQuery = useWriter(writerId);
+  // Source writer to clone fields from when adding a translation.
+  const sourceQuery = useWriter(isTranslation ? translationOf : undefined);
   const createMutation = useCreateWriterProfile();
   const updateMutation = useUpdateWriterProfile();
   const createUserMutation = useCreateAdminUser();
 
-  const [form, setForm] = useState<FormState>(EMPTY);
+  const [form, setForm] = useState<FormState>(() => ({
+    ...EMPTY,
+    language: (createLanguage || "en").trim() || "en",
+  }));
   const [seeded, setSeeded] = useState(false);
+  const [translationSeeded, setTranslationSeeded] = useState(false);
 
   // ── User section state (create mode only) ──
   const [userMode, setUserMode] = useState<"existing" | "new">("existing");
@@ -153,9 +180,41 @@ export function WriterFormContent({ writerId }: Props) {
       social_twitter: links.twitter ?? "",
       social_instagram: links.instagram ?? "",
       social_youtube: links.youtube ?? "",
+      language: (w.language ?? "en").trim() || "en",
     });
     setSeeded(true);
   }, [isEdit, seeded, writerQuery.data]);
+
+  // ── Translation-create seeding ──
+  // Clone the source writer's fields so the admin only translates the text,
+  // not re-enter avatars / links / themes. The user account is inherited at
+  // submit (a translation belongs to the same writer), so no UserPicker here.
+  useEffect(() => {
+    if (!isTranslation || translationSeeded || !sourceQuery.data) return;
+    const w = sourceQuery.data;
+    const links = w.social_links ?? {};
+    setForm((prev) => ({
+      ...prev,
+      pen_name: w.pen_name ?? "",
+      headline: w.headline ?? "",
+      bio_long: w.bio_long ?? "",
+      avatar_url: w.avatar_url ?? "",
+      featured: Boolean(w.featured),
+      creator_kind: (w.creator_kind ?? "") as FormState["creator_kind"],
+      location: w.location ?? "",
+      themes: Array.isArray(w.themes) ? w.themes : [],
+      quote: w.quote ?? "",
+      collaborations: w.collaborations ?? "",
+      recognition: w.recognition ?? "",
+      monthly_goal: w.monthly_goal != null ? String(w.monthly_goal) : "",
+      social_website: links.website ?? "",
+      social_twitter: links.twitter ?? "",
+      social_instagram: links.instagram ?? "",
+      social_youtube: links.youtube ?? "",
+      // keep prev.language — that's the target language from ?language=
+    }));
+    setTranslationSeeded(true);
+  }, [isTranslation, translationSeeded, sourceQuery.data]);
 
   const set = useCallback(
     (field: keyof FormState) =>
@@ -212,6 +271,11 @@ export function WriterFormContent({ writerId }: Props) {
       monthly_goal: form.monthly_goal.trim()
         ? Number(form.monthly_goal)
         : null,
+      // Translation-group fields — create-only and flag-gated so we never
+      // send columns the backend doesn't yet understand. `prunePayload` drops
+      // them when null (e.g. edit mode).
+      language: !isEdit && translationsOn ? form.language.trim() || null : null,
+      translation_of: isTranslation ? (translationOf ?? null) : null,
     };
   };
 
@@ -244,7 +308,8 @@ export function WriterFormContent({ writerId }: Props) {
     setUserError(null);
     setFieldError(null);
     setSubmitError(null);
-    if (!isEdit) {
+    // A translation inherits the original's account — no user step to validate.
+    if (!isEdit && !isTranslation) {
       if (userMode === "existing" && !selectedUser) {
         setUserError(t("errors.userRequired"));
         return false;
@@ -299,7 +364,15 @@ export function WriterFormContent({ writerId }: Props) {
       // Create mode — resolve the user_id strictly per-mode.
       let userId: string | null = null;
       let handoffPassword: string | null = null;
-      if (userMode === "existing") {
+      if (isTranslation) {
+        // A translation belongs to the same writer as the original.
+        userId =
+          sourceQuery.data?.user_id ?? sourceQuery.data?.user?.id ?? null;
+        if (!userId) {
+          setUserError(t("errors.userRequired"));
+          return;
+        }
+      } else if (userMode === "existing") {
         userId = selectedUser?.id ?? null;
       } else if (
         createdUser &&
@@ -452,9 +525,38 @@ export function WriterFormContent({ writerId }: Props) {
         {t("backToList")}
       </Link>
 
-      <h1 className="mb-6 text-xl font-semibold text-foreground">
-        {isEdit ? t("editTitle") : t("createTitle")}
-      </h1>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-xl font-semibold text-foreground">
+          {isEdit ? t("editTitle") : t("createTitle")}
+        </h1>
+        {isEdit && writerId && translationsOn ? (
+          <TranslationsPanel
+            contentType="writer"
+            contentId={writerId}
+            currentLanguage={form.language}
+          />
+        ) : null}
+      </div>
+
+      {isTranslation ? (
+        <div className="mb-6 max-w-2xl mx-auto rounded-xl border border-[var(--tott-gold)]/30 bg-[var(--tott-gold)]/5 px-4 py-3 text-sm">
+          <p className="font-medium text-[var(--tott-gold)]">
+            {tTr.has(`languages.${form.language}`)
+              ? `${tTr(`languages.${form.language}`)} — ${t("translation.banner")}`
+              : t("translation.banner")}
+          </p>
+          {sourceQuery.data ? (
+            <p className="mt-1 text-[var(--tott-muted)]">
+              {t("translation.ofOriginal", {
+                name:
+                  sourceQuery.data.pen_name?.trim() ||
+                  sourceQuery.data.user?.full_name?.trim() ||
+                  "—",
+              })}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
 
       <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
         {/* ── Section 1: Writer account ── */}
@@ -465,6 +567,19 @@ export function WriterFormContent({ writerId }: Props) {
             <div>
               <label className={labelClass}>{t("account.linkedUser")}</label>
               <p className="text-sm text-foreground">{linkedUserLabel}</p>
+            </div>
+          ) : isTranslation ? (
+            <div>
+              <label className={labelClass}>{t("account.linkedUser")}</label>
+              <p className="text-sm text-foreground">
+                {sourceQuery.data?.user?.full_name?.trim() ||
+                  sourceQuery.data?.user?.username?.trim() ||
+                  sourceQuery.data?.user_id ||
+                  "—"}
+              </p>
+              <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
+                {t("translation.sameAccount")}
+              </p>
             </div>
           ) : (
             <>

@@ -91,6 +91,10 @@
           "pdfUpload": "Upload PDF",
           "pdfUploading": "Uploading…",
           "pdfUploaded": "PDF uploaded ✓"
+        },
+        "translation": {
+          "banner": "Adding a translation — write this language's version below.",
+          "ofOriginal": "Translation of “{name}”"
         }
       }
     }

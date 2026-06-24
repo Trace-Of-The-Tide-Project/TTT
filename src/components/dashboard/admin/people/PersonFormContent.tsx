@@ -9,6 +9,8 @@ import { uploadArticleAssetPath } from "@/services/uploads.service";
 import type { PersonProfilePayload } from "@/services/people.service";
 import { formatApiError } from "@/lib/api/error-message";
 import { AvatarUploadZone } from "@/components/dashboard/admin/writers/form-controls";
+import { TranslationsPanel } from "@/components/dashboard/admin/translations";
+import { isTranslatableNow } from "@/services/translations.service";
 import { toast } from "sonner";
 
 type FormState = {
@@ -17,6 +19,7 @@ type FormState = {
   portrait: string;
   birth_date: string;
   death_date: string;
+  language: string;
 };
 
 const EMPTY: FormState = {
@@ -25,6 +28,7 @@ const EMPTY: FormState = {
   portrait: "",
   birth_date: "",
   death_date: "",
+  language: "en",
 };
 
 const inputClass =
@@ -35,18 +39,31 @@ const sectionClass =
 const sectionHeadingClass =
   "text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]";
 
-type Props = { personId?: string };
+type Props = {
+  personId?: string;
+  /** Create-mode only: ISO code for the version being created. */
+  createLanguage?: string;
+  /** Create-mode only: id of the person this is a translation of. */
+  translationOf?: string;
+};
 
-export function PersonFormContent({ personId }: Props) {
+export function PersonFormContent({ personId, createLanguage, translationOf }: Props) {
   const router = useRouter();
   const isEdit = Boolean(personId);
+  const translationsOn = isTranslatableNow("person");
+  const isTranslation = !isEdit && translationsOn && Boolean(translationOf);
 
   const personQuery = usePerson(personId);
+  const sourceQuery = usePerson(isTranslation ? translationOf : undefined);
   const createMutation = useCreatePerson();
   const updateMutation = useUpdatePerson();
 
-  const [form, setForm] = useState<FormState>(EMPTY);
+  const [form, setForm] = useState<FormState>(() => ({
+    ...EMPTY,
+    language: (createLanguage || "en").trim() || "en",
+  }));
   const [seeded, setSeeded] = useState(false);
+  const [translationSeeded, setTranslationSeeded] = useState(false);
   const [uploadingPortrait, setUploadingPortrait] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -60,9 +77,27 @@ export function PersonFormContent({ personId }: Props) {
       portrait: p.portrait ?? "",
       birth_date: p.birth_date ? p.birth_date.slice(0, 10) : "",
       death_date: p.death_date ? p.death_date.slice(0, 10) : "",
+      language: (p.language ?? "en").trim() || "en",
     });
     setSeeded(true);
   }, [isEdit, seeded, personQuery.data]);
+
+  // Clone the source person when adding a translation; keep the target
+  // language already set from `?language=`.
+  useEffect(() => {
+    if (!isTranslation || translationSeeded || !sourceQuery.data) return;
+    const p = sourceQuery.data;
+    setForm((prev) => ({
+      ...prev,
+      full_name: p.full_name ?? "",
+      biography: p.biography ?? "",
+      portrait: p.portrait ?? "",
+      birth_date: p.birth_date ? p.birth_date.slice(0, 10) : "",
+      death_date: p.death_date ? p.death_date.slice(0, 10) : "",
+      // language stays as the target version language.
+    }));
+    setTranslationSeeded(true);
+  }, [isTranslation, translationSeeded, sourceQuery.data]);
 
   const set = useCallback(
     (key: keyof FormState, value: string) =>
@@ -93,6 +128,11 @@ export function PersonFormContent({ personId }: Props) {
     portrait: form.portrait.trim() || null,
     birth_date: form.birth_date || null,
     death_date: form.death_date || null,
+    // Translation-group fields — create-only and flag-gated. `undefined` so
+    // JSON serialization omits the key on the current backend (no such column
+    // yet); `prunePayload` isn't used here.
+    language: !isEdit && translationsOn ? form.language.trim() || undefined : undefined,
+    translation_of: isTranslation ? translationOf : undefined,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -133,17 +173,40 @@ export function PersonFormContent({ personId }: Props) {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-8 px-4">
-      <div className="flex items-center gap-3">
-        <Link
-          href="/admin/people"
-          className="text-xs text-[var(--tott-muted)] hover:text-foreground"
-        >
-          ← People
-        </Link>
-        <h1 className="text-lg font-semibold">
-          {isEdit ? "Edit person" : "Add person"}
-        </h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/people"
+            className="text-xs text-[var(--tott-muted)] hover:text-foreground"
+          >
+            ← People
+          </Link>
+          <h1 className="text-lg font-semibold">
+            {isEdit ? "Edit person" : "Add person"}
+          </h1>
+        </div>
+        {isEdit && personId && translationsOn ? (
+          <TranslationsPanel
+            contentType="person"
+            contentId={personId}
+            currentLanguage={form.language}
+          />
+        ) : null}
       </div>
+
+      {isTranslation ? (
+        <div className="rounded-xl border border-[var(--tott-gold)]/30 bg-[var(--tott-gold)]/5 px-4 py-3 text-sm">
+          <p className="font-medium text-[var(--tott-gold)]">
+            Adding a translation ({form.language.toUpperCase()}) — write this
+            language&apos;s version below.
+          </p>
+          {sourceQuery.data ? (
+            <p className="mt-1 text-[var(--tott-muted)]">
+              Translation of “{sourceQuery.data.full_name?.trim() || "—"}”
+            </p>
+          ) : null}
+        </div>
+      ) : null}
 
       {loadingEdit ? (
         <div className="py-12 text-center text-sm text-gray-400">Loading…</div>

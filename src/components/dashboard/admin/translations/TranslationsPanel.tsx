@@ -6,18 +6,19 @@ import { useLocale } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { useTranslations } from "@/hooks/queries/translations";
 import {
+  isTranslatableNow,
   type TranslatableType,
   type TranslationVersion,
 } from "@/services/translations.service";
+import { TRANSLATION_ROUTES } from "./translation-routes";
 
 type TranslationsPanelProps = {
   contentType: TranslatableType;
   contentId: string;
   currentLanguage?: string;
+  /** Override the registry create path (e.g. article sub-kinds like trips). */
   createBasePath?: string;
 };
-
-const DEFAULT_CREATE_PATH = "/admin/articles/create/article";
 
 /**
  * Compact language-switcher chip row for the editor toolbar.
@@ -25,16 +26,22 @@ const DEFAULT_CREATE_PATH = "/admin/articles/create/article";
  * - Existing other version: link to that version's editor (same tab).
  * - Missing version: dimmed chip with "+", opens create route (same tab).
  * - "Add all" button: opens the first missing language; the rest stay as chips.
+ *
+ * Renders nothing when the content type has no admin editor route or its
+ * translation support is gated off (pending backend rollout).
  */
 export function TranslationsPanel({
   contentType,
   contentId,
   currentLanguage,
-  createBasePath = DEFAULT_CREATE_PATH,
+  createBasePath,
 }: TranslationsPanelProps) {
   const t = useIntl("Dashboard.translations");
   const locale = useLocale();
   const { data } = useTranslations(contentType, contentId);
+
+  const route = TRANSLATION_ROUTES[contentType];
+  const createPath = createBasePath ?? route?.create;
 
   const byLanguage = useMemo(() => {
     const map = new Map<string, TranslationVersion>();
@@ -46,8 +53,11 @@ export function TranslationsPanel({
     (loc) => loc !== currentLanguage && !byLanguage.has(loc),
   );
 
+  // No editor route, or pending type with the flag off → nothing to show.
+  if (!route || !createPath || !isTranslatableNow(contentType)) return null;
+
   function createHref(loc: string) {
-    return `/${locale}${createBasePath}?language=${loc}&translation_of=${encodeURIComponent(contentId)}`;
+    return `/${locale}${createPath}?language=${loc}&translation_of=${encodeURIComponent(contentId)}`;
   }
 
   function handleAddAll() {
@@ -84,7 +94,7 @@ export function TranslationsPanel({
             return (
               <a
                 key={loc}
-                href={`/${locale}/admin/articles/edit/${version.id}`}
+                href={`/${locale}${route.edit(version.id)}`}
                 className={`${base} text-[var(--tott-tab-inactive)] hover:text-foreground`}
                 title={
                   version.status

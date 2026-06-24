@@ -40,6 +40,11 @@ export type WriterProfile = {
   /** Backend DECIMAL — may arrive as a numeric string; coerce with Number()
    * before sending back via WriterProfilePayload. */
   monthly_goal?: number | string | null;
+  /** Translation-group fields (pending backend rollout — see
+   * docs/backend-asks-translations.md). `language` is the ISO code of this
+   * version; all language versions of one writer share `translation_group_id`. */
+  language?: string | null;
+  translation_group_id?: string | null;
   createdAt?: string;
   updatedAt?: string;
   /** When the backend joins the user record onto the writer profile
@@ -226,6 +231,11 @@ export type WriterProfilePayload = {
   collaborations?: string | null;
   recognition?: string | null;
   monthly_goal?: number | null;
+  /** ISO code for the version being created/edited (e.g. "ar"). */
+  language?: string | null;
+  /** On create only: id of the source writer this is a translation of. The
+   * backend links both into the same translation group. */
+  translation_of?: string | null;
 };
 
 export type WritersListMeta = {

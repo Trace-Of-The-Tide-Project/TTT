@@ -91,6 +91,10 @@
           "pdfUpload": "رفع PDF",
           "pdfUploading": "جارٍ الرفع…",
           "pdfUploaded": "تم رفع PDF ✓"
+        },
+        "translation": {
+          "banner": "إضافة ترجمة — اكتب نسخة هذه اللغة بالأسفل.",
+          "ofOriginal": "ترجمة لـ ”{name}“"
         }
       }
     }
