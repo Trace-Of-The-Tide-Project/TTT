@@ -94,6 +94,7 @@ export function SystemSettingsContent() {
         name: c.name as string,
         slug: (c.slug as string) ?? "",
         itemCount: (c.item_count as number) ?? 0,
+        nameI18n: (c.name_i18n as Record<string, string>) ?? undefined,
       })));
     });
   }, []);
@@ -101,7 +102,11 @@ export function SystemSettingsContent() {
   const loadTags = useCallback(() => {
     api.get("/admin/system-settings/tags").then((r: { data: Record<string, unknown> }) => {
       const list = (r.data?.tags ?? []) as Record<string, unknown>[];
-      setTags(list.map((t) => ({ id: t.id as string, label: t.name as string })));
+      setTags(list.map((t) => ({
+        id: t.id as string,
+        label: t.name as string,
+        nameI18n: (t.name_i18n as Record<string, string>) ?? undefined,
+      })));
     });
   }, []);
 
@@ -115,6 +120,7 @@ export function SystemSettingsContent() {
         milestone: b.criteria_type
           ? `${b.criteria_type}:${b.criteria_value ?? ""}`
           : ((b.description as string) ?? ""),
+        nameI18n: (b.name_i18n as Record<string, string>) ?? undefined,
       })));
     });
   }, []);
@@ -162,11 +168,23 @@ export function SystemSettingsContent() {
   useEffect(() => { loadGuidelines(); }, [loadGuidelines]);
 
   // ── Category actions ──
-  const handleCategorySave = async (payload: { id?: string; name: string; slug: string }) => {
+  const handleCategorySave = async (payload: {
+    id?: string;
+    name: string;
+    slug: string;
+    name_i18n?: Record<string, string>;
+  }) => {
+    // name_i18n is only present when the extended-translations flag is on, so
+    // the current backend never receives an unknown column.
+    const body = {
+      name: payload.name,
+      slug: payload.slug,
+      ...(payload.name_i18n ? { name_i18n: payload.name_i18n } : {}),
+    };
     if (categoryModal.type === "add") {
-      await api.post("/admin/system-settings/categories", { name: payload.name, slug: payload.slug });
+      await api.post("/admin/system-settings/categories", body);
     } else if (categoryModal.type === "edit" && payload.id) {
-      await api.patch(`/admin/system-settings/categories/${payload.id}`, { name: payload.name, slug: payload.slug });
+      await api.patch(`/admin/system-settings/categories/${payload.id}`, body);
     }
     loadCategories();
   };
@@ -177,11 +195,19 @@ export function SystemSettingsContent() {
   };
 
   // ── Tag actions ──
-  const handleTagSave = async (payload: { id?: string; label: string }) => {
+  const handleTagSave = async (payload: {
+    id?: string;
+    label: string;
+    name_i18n?: Record<string, string>;
+  }) => {
+    const body = {
+      name: payload.label,
+      ...(payload.name_i18n ? { name_i18n: payload.name_i18n } : {}),
+    };
     if (tagModal.type === "add") {
-      await api.post("/admin/system-settings/tags", { name: payload.label });
+      await api.post("/admin/system-settings/tags", body);
     } else if (tagModal.type === "edit" && payload.id) {
-      await api.patch(`/admin/system-settings/tags/${payload.id}`, { name: payload.label });
+      await api.patch(`/admin/system-settings/tags/${payload.id}`, body);
     }
     loadTags();
   };
@@ -197,6 +223,7 @@ export function SystemSettingsContent() {
     iconId: AchievementBadgeRow["iconId"];
     name: string;
     milestone: string;
+    name_i18n?: Record<string, string>;
   }) => {
     const [criteria_type, criteria_value_str] = payload.milestone.includes(":")
       ? payload.milestone.split(":")
@@ -206,6 +233,7 @@ export function SystemSettingsContent() {
       name: payload.name,
       icon: payload.iconId,
       ...(criteria_type ? { criteria_type, criteria_value: Number(criteria_value_str) || 0 } : { description: payload.milestone }),
+      ...(payload.name_i18n ? { name_i18n: payload.name_i18n } : {}),
     };
 
     if (badgeModal.type === "add") {
@@ -616,6 +644,7 @@ export function SystemSettingsContent() {
         categoryId={categoryModal.type === "edit" ? categoryModal.category.id : undefined}
         initialName={categoryModal.type === "edit" ? categoryModal.category.name : ""}
         initialSlug={categoryModal.type === "edit" ? categoryModal.category.slug : ""}
+        initialNameI18n={categoryModal.type === "edit" ? categoryModal.category.nameI18n : undefined}
         onSave={handleCategorySave}
       />
 
@@ -625,6 +654,7 @@ export function SystemSettingsContent() {
         mode={tagModal.type === "edit" ? "edit" : "add"}
         tagId={tagModal.type === "edit" ? tagModal.tag.id : undefined}
         initialLabel={tagModal.type === "edit" ? tagModal.tag.label : ""}
+        initialNameI18n={tagModal.type === "edit" ? tagModal.tag.nameI18n : undefined}
         onSave={handleTagSave}
       />
 
@@ -636,6 +666,7 @@ export function SystemSettingsContent() {
         initialIconId={badgeModal.type === "edit" ? badgeModal.badge.iconId : undefined}
         initialName={badgeModal.type === "edit" ? badgeModal.badge.name : ""}
         initialMilestone={badgeModal.type === "edit" ? badgeModal.badge.milestone : ""}
+        initialNameI18n={badgeModal.type === "edit" ? badgeModal.badge.nameI18n : undefined}
         onSave={handleBadgeSave}
       />
 

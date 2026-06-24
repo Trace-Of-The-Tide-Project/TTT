@@ -4,10 +4,36 @@ import { useCallback, useEffect, useState } from "react";
 import { XIcon } from "@/components/ui/icons";
 import { BADGE_ICON_OPTIONS } from "@/components/dashboard/admin/system-settings/badge-icon-options";
 import type { BadgeIconId } from "@/lib/dashboard/system-settings-constants";
+import { routing } from "@/i18n/routing";
+import { EXTENDED_TRANSLATIONS_ENABLED } from "@/services/translations.service";
+import { LocaleNameFields } from "./LocaleNameFields";
 
 const ACCENT = "#E8DDC0";
 
 const DEFAULT_ICON: BadgeIconId = "gift";
+
+// See docs/backend-asks-translations.md — name_i18n only sent when the flag is
+// on, so the current backend never receives an unknown column.
+function buildNameI18n(
+  defaultName: string,
+  others: Record<string, string>,
+): Record<string, string> | undefined {
+  if (!EXTENDED_TRANSLATIONS_ENABLED) return undefined;
+  const out: Record<string, string> = { [routing.defaultLocale]: defaultName };
+  for (const [loc, val] of Object.entries(others)) {
+    if (val.trim()) out[loc] = val.trim();
+  }
+  return out;
+}
+
+function nonDefaultI18n(src?: Record<string, string>): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!src) return out;
+  for (const [loc, val] of Object.entries(src)) {
+    if (loc !== routing.defaultLocale && val) out[loc] = val;
+  }
+  return out;
+}
 
 type BadgeFormModalProps = {
   open: boolean;
@@ -17,7 +43,15 @@ type BadgeFormModalProps = {
   initialIconId?: BadgeIconId;
   initialName?: string;
   initialMilestone?: string;
-  onSave: (payload: { id?: string; iconId: BadgeIconId; name: string; milestone: string }) => void;
+  /** Existing per-language names (edit mode), keyed by locale. */
+  initialNameI18n?: Record<string, string>;
+  onSave: (payload: {
+    id?: string;
+    iconId: BadgeIconId;
+    name: string;
+    milestone: string;
+    name_i18n?: Record<string, string>;
+  }) => void;
 };
 
 export function BadgeFormModal({
@@ -28,15 +62,19 @@ export function BadgeFormModal({
   initialIconId = DEFAULT_ICON,
   initialName = "",
   initialMilestone = "",
+  initialNameI18n,
   onSave,
 }: BadgeFormModalProps) {
   const [iconId, setIconId] = useState<BadgeIconId>(DEFAULT_ICON);
   const [name, setName] = useState("");
   const [milestone, setMilestone] = useState("");
+  const [i18n, setI18n] = useState<Record<string, string>>({});
 
   // Reset form fields each time the modal opens. React 19 prefers
   // adjusting state during render over doing it in an effect.
-  const openKey = open ? `${mode}|${initialIconId}|${initialName}|${initialMilestone}` : null;
+  const openKey = open
+    ? `${mode}|${initialIconId}|${initialName}|${initialMilestone}|${JSON.stringify(initialNameI18n ?? {})}`
+    : null;
   const [prevOpenKey, setPrevOpenKey] = useState<string | null>(null);
   if (openKey && openKey !== prevOpenKey) {
     setPrevOpenKey(openKey);
@@ -44,10 +82,12 @@ export function BadgeFormModal({
       setIconId(initialIconId);
       setName(initialName);
       setMilestone(initialMilestone);
+      setI18n(nonDefaultI18n(initialNameI18n));
     } else {
       setIconId(DEFAULT_ICON);
       setName("");
       setMilestone("");
+      setI18n({});
     }
   } else if (!openKey && prevOpenKey !== null) {
     setPrevOpenKey(null);
@@ -82,12 +122,13 @@ export function BadgeFormModal({
     const n = name.trim();
     const m = milestone.trim();
     if (!n || !m) return;
-    onSave({ id: badgeId, iconId, name: n, milestone: m });
+    onSave({ id: badgeId, iconId, name: n, milestone: m, name_i18n: buildNameI18n(n, i18n) });
     onClose();
   };
 
   const inputClass =
     "mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none";
+  const labelClass = "block text-sm font-medium text-foreground";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -173,6 +214,15 @@ export function BadgeFormModal({
               className={inputClass}
             />
           </div>
+
+          {EXTENDED_TRANSLATIONS_ENABLED ? (
+            <LocaleNameFields
+              values={i18n}
+              onChange={(loc, val) => setI18n((prev) => ({ ...prev, [loc]: val }))}
+              inputClassName={inputClass}
+              labelClassName={labelClass}
+            />
+          ) : null}
         </div>
 
         <div className="flex justify-end gap-3 border-t border-[var(--tott-card-border)] px-6 py-4">

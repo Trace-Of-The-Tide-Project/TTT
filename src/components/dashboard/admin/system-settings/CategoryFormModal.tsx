@@ -2,8 +2,35 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { XIcon } from "@/components/ui/icons";
+import { routing } from "@/i18n/routing";
+import { EXTENDED_TRANSLATIONS_ENABLED } from "@/services/translations.service";
+import { LocaleNameFields } from "./LocaleNameFields";
 
 const ACCENT = "#E8DDC0";
+
+/** name_i18n = canonical default-locale name + any non-empty other-language
+ * names. Returned only when the flag is on, so the current backend (no such
+ * column) never receives it. See docs/backend-asks-translations.md. */
+function buildNameI18n(
+  defaultName: string,
+  others: Record<string, string>,
+): Record<string, string> | undefined {
+  if (!EXTENDED_TRANSLATIONS_ENABLED) return undefined;
+  const out: Record<string, string> = { [routing.defaultLocale]: defaultName };
+  for (const [loc, val] of Object.entries(others)) {
+    if (val.trim()) out[loc] = val.trim();
+  }
+  return out;
+}
+
+function nonDefaultI18n(src?: Record<string, string>): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!src) return out;
+  for (const [loc, val] of Object.entries(src)) {
+    if (loc !== routing.defaultLocale && val) out[loc] = val;
+  }
+  return out;
+}
 
 function slugWithoutSlash(s: string) {
   return s.trim().replace(/^\//, "");
@@ -22,7 +49,14 @@ type CategoryFormModalProps = {
   categoryId?: string;
   initialName?: string;
   initialSlug?: string;
-  onSave: (payload: { id?: string; name: string; slug: string }) => void;
+  /** Existing per-language names (edit mode), keyed by locale. */
+  initialNameI18n?: Record<string, string>;
+  onSave: (payload: {
+    id?: string;
+    name: string;
+    slug: string;
+    name_i18n?: Record<string, string>;
+  }) => void;
 };
 
 export function CategoryFormModal({
@@ -32,23 +66,30 @@ export function CategoryFormModal({
   categoryId,
   initialName = "",
   initialSlug = "",
+  initialNameI18n,
   onSave,
 }: CategoryFormModalProps) {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  // Other-language names (excludes the default locale, which is `name`).
+  const [i18n, setI18n] = useState<Record<string, string>>({});
 
   // Reset form fields each time the modal opens. React 19 prefers
   // adjusting state during render over doing it in an effect.
-  const openKey = open ? `${mode}|${initialName}|${initialSlug}` : null;
+  const openKey = open
+    ? `${mode}|${initialName}|${initialSlug}|${JSON.stringify(initialNameI18n ?? {})}`
+    : null;
   const [prevOpenKey, setPrevOpenKey] = useState<string | null>(null);
   if (openKey && openKey !== prevOpenKey) {
     setPrevOpenKey(openKey);
     if (mode === "edit") {
       setName(initialName);
       setSlug(slugWithoutSlash(initialSlug));
+      setI18n(nonDefaultI18n(initialNameI18n));
     } else {
       setName("");
       setSlug("");
+      setI18n({});
     }
   } else if (!openKey && prevOpenKey !== null) {
     setPrevOpenKey(null);
@@ -82,9 +123,18 @@ export function CategoryFormModal({
   const submit = () => {
     const stored = toStoredSlug(slug);
     if (!name.trim() || !stored) return;
-    onSave({ id: categoryId, name: name.trim(), slug: stored });
+    onSave({
+      id: categoryId,
+      name: name.trim(),
+      slug: stored,
+      name_i18n: buildNameI18n(name.trim(), i18n),
+    });
     onClose();
   };
+
+  const inputClass =
+    "mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none";
+  const labelClass = "block text-sm font-medium text-foreground";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -148,6 +198,14 @@ export function CategoryFormModal({
             />
             <p className="mt-1.5 text-xs text-gray-500">URL-friendly identifier: /…</p>
           </div>
+          {EXTENDED_TRANSLATIONS_ENABLED ? (
+            <LocaleNameFields
+              values={i18n}
+              onChange={(loc, val) => setI18n((prev) => ({ ...prev, [loc]: val }))}
+              inputClassName={inputClass}
+              labelClassName={labelClass}
+            />
+          ) : null}
         </div>
 
         <div className="flex justify-end gap-3 border-t border-[var(--tott-card-border)] px-6 py-4">

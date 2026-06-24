@@ -2,8 +2,34 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { XIcon } from "@/components/ui/icons";
+import { routing } from "@/i18n/routing";
+import { EXTENDED_TRANSLATIONS_ENABLED } from "@/services/translations.service";
+import { LocaleNameFields } from "./LocaleNameFields";
 
 const ACCENT = "#E8DDC0";
+
+// See docs/backend-asks-translations.md — name_i18n only sent when the flag is
+// on, so the current backend never receives an unknown column.
+function buildNameI18n(
+  defaultName: string,
+  others: Record<string, string>,
+): Record<string, string> | undefined {
+  if (!EXTENDED_TRANSLATIONS_ENABLED) return undefined;
+  const out: Record<string, string> = { [routing.defaultLocale]: defaultName };
+  for (const [loc, val] of Object.entries(others)) {
+    if (val.trim()) out[loc] = val.trim();
+  }
+  return out;
+}
+
+function nonDefaultI18n(src?: Record<string, string>): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!src) return out;
+  for (const [loc, val] of Object.entries(src)) {
+    if (loc !== routing.defaultLocale && val) out[loc] = val;
+  }
+  return out;
+}
 
 type TagFormModalProps = {
   open: boolean;
@@ -11,7 +37,13 @@ type TagFormModalProps = {
   mode: "add" | "edit";
   tagId?: string;
   initialLabel?: string;
-  onSave: (payload: { id?: string; label: string }) => void;
+  /** Existing per-language names (edit mode), keyed by locale. */
+  initialNameI18n?: Record<string, string>;
+  onSave: (payload: {
+    id?: string;
+    label: string;
+    name_i18n?: Record<string, string>;
+  }) => void;
 };
 
 export function TagFormModal({
@@ -20,17 +52,22 @@ export function TagFormModal({
   mode,
   tagId,
   initialLabel = "",
+  initialNameI18n,
   onSave,
 }: TagFormModalProps) {
   const [label, setLabel] = useState("");
+  const [i18n, setI18n] = useState<Record<string, string>>({});
 
   // Reset the label each time the modal opens. React 19 prefers
   // adjusting state during render over doing it in an effect.
-  const openKey = open ? `${mode}|${initialLabel}` : null;
+  const openKey = open
+    ? `${mode}|${initialLabel}|${JSON.stringify(initialNameI18n ?? {})}`
+    : null;
   const [prevOpenKey, setPrevOpenKey] = useState<string | null>(null);
   if (openKey && openKey !== prevOpenKey) {
     setPrevOpenKey(openKey);
     setLabel(mode === "edit" ? initialLabel : "");
+    setI18n(mode === "edit" ? nonDefaultI18n(initialNameI18n) : {});
   } else if (!openKey && prevOpenKey !== null) {
     setPrevOpenKey(null);
   }
@@ -63,9 +100,13 @@ export function TagFormModal({
   const submit = () => {
     const t = label.trim();
     if (!t) return;
-    onSave({ id: tagId, label: t });
+    onSave({ id: tagId, label: t, name_i18n: buildNameI18n(t, i18n) });
     onClose();
   };
+
+  const inputClass =
+    "mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none";
+  const labelClass = "block text-sm font-medium text-foreground";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -113,6 +154,16 @@ export function TagFormModal({
             placeholder={mode === "add" ? "e.g Featured" : undefined}
             className="mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
           />
+          {EXTENDED_TRANSLATIONS_ENABLED ? (
+            <div className="mt-4">
+              <LocaleNameFields
+                values={i18n}
+                onChange={(loc, val) => setI18n((prev) => ({ ...prev, [loc]: val }))}
+                inputClassName={inputClass}
+                labelClassName={labelClass}
+              />
+            </div>
+          ) : null}
         </div>
 
         <div className="flex justify-end gap-3 border-t border-[var(--tott-card-border)] px-6 py-4">

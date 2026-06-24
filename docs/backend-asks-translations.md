@@ -150,8 +150,17 @@ row with a **localized name/description**, e.g.:
 Proposal: add `name_i18n` (and `description_i18n` where relevant) JSON columns,
 keep `slug` language-neutral, and have reads resolve `name_i18n[locale]` with an
 `en` fallback. This is a separate, smaller change — flagged here so it isn't
-accidentally built as translation groups. Frontend wiring for taxonomy is **not**
-yet done pending agreement on this shape.
+accidentally built as translation groups.
+
+**Frontend status:** built and merged, dark behind the flag. The
+category / tag / badge modals (`system-settings/*FormModal.tsx`, via the shared
+`LocaleNameFields`) show per-language name inputs when the flag is on and send a
+`name_i18n` object (`{ "en": "...", "ar": "...", ... }`) on create/update —
+omitted entirely when the flag is off. Backend ask:
+- add `name_i18n` JSON to `categories`, `tags`, `badges`;
+- accept `name_i18n` on their create/update endpoints
+  (`/admin/system-settings/{categories,tags,badges}`);
+- return `name_i18n` on reads so edit mode can prefill it.
 
 ---
 

@@ -14,6 +14,9 @@ export type ContentCategoryRow = {
   name: string;
   slug: string;
   itemCount: number;
+  /** Per-language names (pending backend rollout — see
+   * docs/backend-asks-translations.md). */
+  nameI18n?: Record<string, string>;
 };
 
 export const sampleContentCategories: ContentCategoryRow[] = [
@@ -27,6 +30,8 @@ export const sampleContentCategories: ContentCategoryRow[] = [
 export type ContentTagRow = {
   id: string;
   label: string;
+  /** Per-language names (pending backend rollout). */
+  nameI18n?: Record<string, string>;
 };
 
 export const sampleContentTags: ContentTagRow[] = [
@@ -45,6 +50,8 @@ export type AchievementBadgeRow = {
   iconId: BadgeIconId;
   name: string;
   milestone: string;
+  /** Per-language names (pending backend rollout). */
+  nameI18n?: Record<string, string>;
 };
 
 export const sampleAchievementBadges: AchievementBadgeRow[] = [
