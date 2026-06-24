@@ -5,10 +5,17 @@
 import { Link } from "@/i18n/navigation";
 import type { HomeData } from "@/lib/home/fetch-home-data";
 
-const GOLD = "#c9a96e";
-const BG = "#171717";
-const SURFACE = "#1c1c1c";
-const MUTED = "#b7b2a8";
+// Theme tokens (defined per theme in globals.css). Never hardcode colors here —
+// the home page must follow light / dark / tide like the rest of the site.
+const GOLD = "var(--tott-accent-gold)";
+const BG = "var(--tott-home-surface)";
+const SURFACE = "var(--tott-home-surface)";
+const MUTED = "var(--tott-home-text-muted)";
+const TEXT = "var(--tott-home-text-strong)";
+const CTA_INK = "var(--tott-on-accent)";
+/** Subtle theme-aware divider/border. */
+const HAIRLINE = "color-mix(in srgb, var(--tott-home-text-strong) 8%, transparent)";
+const BORDER = "var(--tott-card-border)";
 
 const HexMark = ({ size = 26 }: { size?: number }) => (
   <div
@@ -38,7 +45,7 @@ const HexImg = ({
       width,
       height,
       clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-      background: "#2a2a2a",
+      background: "var(--tott-home-hero-grad-top)",
       overflow: "hidden",
       flexShrink: 0,
     }}
@@ -51,7 +58,7 @@ const HexImg = ({
         style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(1) contrast(1.02)" }}
       />
     ) : (
-      <div style={{ width: "100%", height: "100%", background: `linear-gradient(135deg, #2a2a2a, #1a1a1a)` }} />
+      <div style={{ width: "100%", height: "100%", background: `linear-gradient(135deg, var(--tott-home-hero-grad-top), var(--tott-home-hero-grad-mid))` }} />
     )}
   </div>
 );
@@ -80,7 +87,7 @@ export function HomeD01({
   const contributeHref = data.primaryOpenCall?.href ?? "/contribute";
 
   return (
-    <div style={{ background: BG, color: "#e8e4de", fontFamily: "'IBM Plex Sans', sans-serif", minHeight: "100vh" }}>
+    <div dir={dir} style={{ background: BG, color: TEXT, fontFamily: "'IBM Plex Sans', sans-serif", minHeight: "100vh" }}>
 
       {/* HERO */}
       <section style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 64px 60px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
@@ -92,7 +99,7 @@ export function HomeD01({
               {t("A living archive of culture & memory", "أرشيفٌ حيٌّ للثقافة والذاكرة")}
             </span>
           </div>
-          <h1 style={{ fontSize: 60, fontWeight: 300, lineHeight: 1.05, letterSpacing: "-0.025em", color: "#e8e4de", margin: "0 0 20px" }}>
+          <h1 style={{ fontSize: 60, fontWeight: 300, lineHeight: 1.05, letterSpacing: "-0.025em", color: TEXT, margin: "0 0 20px" }}>
             {t("We keep the ", "نحفظ ")}
             <span style={{ color: GOLD }}>{t("trace of every", "أثر كل")}</span>
             {t(" tide.", " مدّ.")}
@@ -106,13 +113,13 @@ export function HomeD01({
           <div style={{ display: "flex", gap: 12 }}>
             <Link
               href="/content"
-              style={{ background: GOLD, color: "#332217", padding: "14px 28px", borderRadius: 8, fontSize: 14, fontWeight: 600, textDecoration: "none" }}
+              style={{ background: GOLD, color: CTA_INK, padding: "14px 28px", borderRadius: 8, fontSize: 14, fontWeight: 600, textDecoration: "none" }}
             >
               {t("Explore the archive", "استكشف الأرشيف")}
             </Link>
             <Link
               href={contributeHref}
-              style={{ border: `1px solid rgba(255,255,255,0.2)`, color: "#e8e4de", padding: "14px 28px", borderRadius: 8, fontSize: 14, textDecoration: "none" }}
+              style={{ border: `1px solid ${BORDER}`, color: TEXT, padding: "14px 28px", borderRadius: 8, fontSize: 14, textDecoration: "none" }}
             >
               {t("Share your story", "شاركنا قصتك")}
             </Link>
@@ -127,7 +134,7 @@ export function HomeD01({
               <HexImg src={data.issues[0]?.image ?? null} width={220} height={254} alt="" />
               {data.issues[0] && (
                 <div style={{ position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)", textAlign: "center", pointerEvents: "none" }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: "#fff", whiteSpace: "nowrap" }}>{data.issues[0].title}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: TEXT, whiteSpace: "nowrap" }}>{data.issues[0].title}</div>
                   <div style={{ fontSize: 10, color: GOLD, textTransform: "uppercase", letterSpacing: "0.1em" }}>{t("Magazine", "المجلة")}</div>
                 </div>
               )}
@@ -139,7 +146,7 @@ export function HomeD01({
               <HexImg src={data.spotlight?.image ?? null} width={260} height={300} alt={data.spotlight?.title ?? ""} />
               {data.spotlight && (
                 <div style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", textAlign: "center", pointerEvents: "none", width: "80%" }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{data.spotlight.title}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: TEXT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{data.spotlight.title}</div>
                   <div style={{ fontSize: 10, color: GOLD, textTransform: "uppercase", letterSpacing: "0.1em" }}>{t("Essay", "مقال")}</div>
                 </div>
               )}
@@ -168,9 +175,9 @@ export function HomeD01({
               key={item.href}
               href={item.href}
               style={{
-                background: SURFACE, border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12,
+                background: SURFACE, border: `1px solid ${HAIRLINE}`, borderRadius: 12,
                 padding: "24px 16px", textDecoration: "none", display: "flex", flexDirection: "column",
-                alignItems: "center", gap: 12, color: "#e8e4de", fontSize: 13, fontWeight: 500,
+                alignItems: "center", gap: 12, color: TEXT, fontSize: 13, fontWeight: 500,
                 transition: "border-color 0.2s",
               }}
             >
@@ -185,26 +192,26 @@ export function HomeD01({
       {/* FEATURED ISSUE */}
       {issue ? (
         <section style={{ maxWidth: 1200, margin: "0 auto", padding: "0 64px 80px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "420px 1fr", gap: 40, background: SURFACE, borderRadius: 16, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "420px 1fr", gap: 40, background: SURFACE, borderRadius: 16, overflow: "hidden", border: `1px solid ${HAIRLINE}` }}>
             <div style={{ height: 320, overflow: "hidden" }}>
               {issue.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={issue.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(1) contrast(1.04)" }} />
               ) : (
-                <div style={{ width: "100%", height: "100%", background: "#222" }} />
+                <div style={{ width: "100%", height: "100%", background: "var(--tott-home-hero-grad-top)" }} />
               )}
             </div>
             <div style={{ padding: "40px 40px 40px 0", display: "flex", flexDirection: "column", justifyContent: "center", gap: 16 }}>
               <span style={{ fontSize: 11, color: GOLD, textTransform: "uppercase", letterSpacing: "0.16em", fontWeight: 600 }}>
                 {t("Featured Issue", "العدد المميّز")}
               </span>
-              <h3 style={{ fontSize: 28, fontWeight: 300, color: "#e8e4de", lineHeight: 1.2, margin: 0 }}>{issue.title}</h3>
+              <h3 style={{ fontSize: 28, fontWeight: 300, color: TEXT, lineHeight: 1.2, margin: 0 }}>{issue.title}</h3>
               {issue.subtitle && (
                 <p style={{ fontSize: 14, color: MUTED, lineHeight: 1.6, margin: 0 }}>{issue.subtitle}</p>
               )}
               <Link
                 href={issue.href}
-                style={{ border: "1px solid rgba(255,255,255,0.2)", color: "#e8e4de", padding: "10px 22px", borderRadius: 8, fontSize: 13, textDecoration: "none", width: "fit-content" }}
+                style={{ border: `1px solid ${BORDER}`, color: TEXT, padding: "10px 22px", borderRadius: 8, fontSize: 13, textDecoration: "none", width: "fit-content" }}
               >
                 {t("Read issue →", "اقرأ العدد ←")}
               </Link>
@@ -214,7 +221,7 @@ export function HomeD01({
       ) : null}
 
       {/* SHARE YOUR STORY CTA */}
-      <section style={{ background: "#111", borderTop: "1px solid rgba(255,255,255,0.05)", padding: "80px 64px", textAlign: "center" }}>
+      <section style={{ background: BG, borderTop: `1px solid ${HAIRLINE}`, padding: "80px 64px", textAlign: "center" }}>
         {/* Sound-wave / oral-archive icon */}
         <div aria-hidden style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 3, height: 32, marginBottom: 24 }}>
           {[6, 14, 22, 14, 6].map((h, i) => (
@@ -222,7 +229,7 @@ export function HomeD01({
           ))}
         </div>
         <div>
-          <h2 style={{ fontSize: 36, fontWeight: 300, color: "#e8e4de", margin: "0 0 16px", letterSpacing: "-0.02em" }}>
+          <h2 style={{ fontSize: 36, fontWeight: 300, color: TEXT, margin: "0 0 16px", letterSpacing: "-0.02em" }}>
             {t("Share your story", "شاركنا قصتك")}
           </h2>
           <p style={{ fontSize: 16, color: MUTED, maxWidth: 520, margin: "0 auto 32px", lineHeight: 1.7 }}>
@@ -233,7 +240,7 @@ export function HomeD01({
           </p>
           <Link
             href={contributeHref}
-            style={{ background: GOLD, color: "#332217", padding: "16px 36px", borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: "none" }}
+            style={{ background: GOLD, color: CTA_INK, padding: "16px 36px", borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: "none" }}
           >
             {t("Contribute now", "ساهم الآن")}
           </Link>

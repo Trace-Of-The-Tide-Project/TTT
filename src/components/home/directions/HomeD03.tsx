@@ -63,7 +63,6 @@ export function HomeD03({
   const t = (en: string, arStr: string) => (ar ? arStr : en);
 
   const heroImage = resolveImg(data.spotlight?.image);
-  const contributeHref = data.primaryOpenCall?.href ?? "/contribute";
 
   const portalImages = [
     resolveImg(data.issues[0]?.image),
@@ -73,7 +72,7 @@ export function HomeD03({
   ];
 
   return (
-    <div style={{ background: BG, color: TEXT, fontFamily: "'IBM Plex Sans', sans-serif", minHeight: "100vh" }}>
+    <div dir={dir} style={{ background: BG, color: TEXT, fontFamily: "'IBM Plex Sans', sans-serif", minHeight: "100vh" }}>
 
       {/* FULL-BLEED HERO */}
       <section style={{ position: "relative", height: 660, overflow: "hidden" }}>
