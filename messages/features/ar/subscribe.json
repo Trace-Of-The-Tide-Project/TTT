@@ -10,17 +10,31 @@
       "mostPopular": "الأكثر شعبية",
       "subscribe": "اشترك",
       "redirecting": "جارٍ التوجيه…",
-      "reader": {
-        "desc": "الوصول إلى المجلة وجميع المقالات المميزة."
-      },
-      "full": {
-        "desc": "كل ما في خطة القارئ، بالإضافة إلى مكتبة الكتب PDF الكاملة."
+      "desc": {
+        "reader": "The lowest rate possible for the fragmented media landscape of our time. Open for a founding 1,000 readers.",
+        "subscriber": "Our suggested subscription rate. Access to everything we publish + lots of great discounts at bookshops and independent publishers around the world.",
+        "bookshelf": "For the reader who wants to take things offline with our carefully curated selection of the best new books published on Palestine.",
+        "supporter": "For the reader who wants full access to the extended universe.",
+        "collector": "For those who need a complete bookshelf of new writing on Palestine: we'll carefully curate and mail you a physical book every month so you never miss a title.",
+        "patron": "For those able to support our work at an infrastructural level."
       }
     },
     "features": {
-      "magazine": "الوصول الكامل للمجلة",
-      "articles": "جميع المقالات المميزة",
-      "books": "مكتبة الكتب PDF"
+      "archive": "Full access to the archive",
+      "podcast": "The Trace of the Tide Podcast direct to your inbox",
+      "newsletter": "The Trace of the Tide Weekly cultural newsletter",
+      "shop_discount": "10% off at the Trace of the Tide shop",
+      "partner_discount": "10% off at partner bookshops & publishers around the world",
+      "tote_or_pin": "A classic Trace of the Tide tote bag or enamel supporter pin",
+      "subscriber_benefits": "All of the Subscriber benefits +",
+      "ttt_bookshelf": "The Trace of the Tide Bookshelf: 6 physical books per year",
+      "bookshelf_benefits": "All of the Bookshelf benefits +",
+      "early_bird_tickets": "Early bird tickets for live events",
+      "zoom_invitations": "Invitations to live Zoom conversations with authors about key pieces",
+      "supporter_benefits": "All of the Supporter benefits +",
+      "physical_books_12": "12 physical books per year (1 per month) + bespoke extras",
+      "collector_benefits": "All of the Collector benefits +",
+      "masthead_listing": "Public thanks & listing on our masthead"
     },
     "trust": {
       "stripe": "دفع آمن عبر Stripe",

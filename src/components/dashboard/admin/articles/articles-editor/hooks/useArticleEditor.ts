@@ -94,6 +94,7 @@ export function useArticleEditor({
   const [translationOf, setTranslationOf] = useState<string | undefined>(initialTranslationOf);
   const [originalTitle, setOriginalTitle] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
+  const [isPremium, setIsPremium] = useState(false);
   const [seoTitle, setSeoTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [collectionId, setCollectionId] = useState("");
@@ -151,6 +152,7 @@ export function useArticleEditor({
     setLanguage((a.language || "en").trim() || "en");
     setTranslationOf(a.translation_of?.trim() || undefined);
     setVisibility((a.visibility || "public").toLowerCase() === "private" ? "private" : "public");
+    setIsPremium(a.is_premium ?? false);
     setSeoTitle(a.seo_title?.trim() ?? "");
     setMetaDescription(a.meta_description?.trim() ?? "");
     setCollectionId(a.collection_id?.trim() ?? "");
@@ -262,6 +264,7 @@ export function useArticleEditor({
       category: category.trim(),
       language: language.trim() || undefined,
       visibility,
+      is_premium: isPremium,
       seo_title: seoTitle.trim() || undefined,
       meta_description: metaDescription.trim() || undefined,
       collection_id: cid || undefined,
@@ -271,7 +274,7 @@ export function useArticleEditor({
       translation_of: translationOf || undefined,
     };
   }, [
-    blocks, title, config.contentType, category, language, visibility,
+    blocks, title, config.contentType, category, language, visibility, isPremium,
     seoTitle, metaDescription, collectionId, tagIds, coverImage, coverFile, translationOf,
   ]);
 
@@ -403,6 +406,7 @@ export function useArticleEditor({
     translationOf,
     originalTitle,
     visibility, setVisibility,
+    isPremium, setIsPremium,
     seoTitle, setSeoTitle,
     metaDescription, setMetaDescription,
     collectionId, setCollectionId,

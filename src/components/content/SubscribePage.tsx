@@ -28,22 +28,19 @@ export default function SubscribePage({ plans, locale }: Props) {
     }
   }
 
-  // Reader first, Full Access last (right column LTR / left column RTL)
   const safePlans = Array.isArray(plans) ? plans : [];
-  const sorted = [...safePlans].sort((a, b) =>
-    a.name === 'full' ? 1 : b.name === 'full' ? -1 : 0
-  );
+  const sorted = [...safePlans].sort((a, b) => Number(a.price_monthly) - Number(b.price_monthly));
 
   if (sorted.length === 0) {
     return (
-      <main className="max-w-3xl mx-auto px-4 py-24 text-center">
+      <main className="max-w-6xl mx-auto px-4 py-24 text-center">
         <p style={{ color: '#666' }}>No subscription plans are available right now.</p>
       </main>
     );
   }
 
   return (
-    <main className="max-w-3xl mx-auto px-4 pb-24">
+    <main className="max-w-6xl mx-auto px-4 pb-24">
 
       {/* ── HERO ── */}
       <section className="relative text-center py-20 overflow-hidden">
@@ -67,10 +64,9 @@ export default function SubscribePage({ plans, locale }: Props) {
       </section>
 
       {/* ── PLAN CARDS ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
         {sorted.map((plan) => {
-          const isFeatured = plan.name === 'full';
-          const descKey = isFeatured ? 'plan.full.desc' : 'plan.reader.desc';
+          const isFeatured = plan.name === 'subscriber';
           const isLoading = loading === plan.id;
 
           return (
@@ -105,7 +101,7 @@ export default function SubscribePage({ plans, locale }: Props) {
 
               <p className="text-xs leading-relaxed mb-5" style={{ color: '#666' }}>
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {t(descKey as any)}
+                {t(`plan.desc.${plan.name}` as any)}
               </p>
 
               <div className="flex flex-col gap-2.5 pt-5 mb-6 flex-1" style={{ borderTop: '1px solid #1e1e1e' }}>

@@ -8,5 +8,6 @@ export function editPatchFromPayload(payload: CreateArticlePayload) {
     cover_image: payload.cover_image ?? null,
     blocks: payload.blocks,
     tag_ids: payload.tag_ids,
+    is_premium: payload.is_premium ?? false,
   };
 }
