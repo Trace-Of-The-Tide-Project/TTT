@@ -4,10 +4,8 @@ import {
   revokeUserRole,
   updateUser,
   updateUserStatus,
-  createAdminUser,
   type AdminUserStatus,
   type UpdateUserPayload,
-  type CreateAdminUserPayload,
 } from "@/services/users.service";
 import { usersKeys } from "@/hooks/queries/users";
 
@@ -45,14 +43,6 @@ export function useRevokeUserRole() {
   return useMutation({
     mutationFn: (args: { userId: string; role: string }) =>
       revokeUserRole(args.userId, args.role),
-    onSuccess: () => qc.invalidateQueries({ queryKey: usersKeys.all }),
-  });
-}
-
-export function useCreateAdminUser() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (payload: CreateAdminUserPayload) => createAdminUser(payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: usersKeys.all }),
   });
 }

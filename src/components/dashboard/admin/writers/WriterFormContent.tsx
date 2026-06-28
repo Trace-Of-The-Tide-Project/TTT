@@ -9,10 +9,9 @@ import {
   useCreateWriterProfile,
   useUpdateWriterProfile,
 } from "@/hooks/mutations/writers";
-import { useCreateAdminUser } from "@/hooks/mutations/users";
 import { uploadArticleAssetKeyAndUrl } from "@/services/uploads.service";
 import type { WriterProfilePayload } from "@/services/writers.service";
-import type { AdminUserListItem, CreatedAdminUser } from "@/services/users.service";
+import type { AdminUserListItem } from "@/services/users.service";
 import { formatApiError } from "@/lib/api/error-message";
 import { TranslationsPanel } from "@/components/dashboard/admin/translations";
 import { isTranslatableNow } from "@/services/translations.service";
@@ -62,16 +61,6 @@ const EMPTY: FormState = {
   language: "en",
 };
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function generateTempPassword(): string {
-  // Unambiguous alphanumerics (no 0/O/1/l/I), 12 chars.
-  const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
-  const bytes = new Uint32Array(12);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes, (b) => chars[b % chars.length]!).join("");
-}
-
 const inputClass =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-[var(--tott-muted)] outline-none focus:border-[var(--tott-gold)]/60 transition-colors";
 const labelClass =
@@ -110,7 +99,6 @@ export function WriterFormContent({
   const sourceQuery = useWriter(isTranslation ? translationOf : undefined);
   const createMutation = useCreateWriterProfile();
   const updateMutation = useUpdateWriterProfile();
-  const createUserMutation = useCreateAdminUser();
 
   const [form, setForm] = useState<FormState>(() => ({
     ...EMPTY,
@@ -120,24 +108,9 @@ export function WriterFormContent({
   const [translationSeeded, setTranslationSeeded] = useState(false);
 
   // ── User section state (create mode only) ──
-  const [userMode, setUserMode] = useState<"existing" | "new">("existing");
+  // A writer profile links to an existing user account; admins do not create
+  // login accounts from here.
   const [selectedUser, setSelectedUser] = useState<AdminUserListItem | null>(null);
-  const [newFullName, setNewFullName] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [tempPassword, setTempPassword] = useState("");
-  const [copied, setCopied] = useState(false);
-  const [summaryCopied, setSummaryCopied] = useState(false);
-  const [inviteCopied, setInviteCopied] = useState(false);
-  const [createdUser, setCreatedUser] = useState<CreatedAdminUser | null>(null);
-  /** Password the account was actually created with — the summary must show
-   * this even if tempPassword was regenerated between attempts. */
-  const [createdPassword, setCreatedPassword] = useState<string | null>(null);
-  const [createdSummary, setCreatedSummary] = useState<{ email: string; password: string } | null>(null);
-
-  useEffect(() => {
-    // Generate the password client-side only (avoids SSR/CSR mismatch).
-    if (!isEdit && !tempPassword) setTempPassword(generateTempPassword());
-  }, [isEdit, tempPassword]);
 
   // ── Errors ──
   const [userError, setUserError] = useState<string | null>(null);
@@ -155,8 +128,7 @@ export function WriterFormContent({
     submitting ||
     avatarUploading ||
     createMutation.isPending ||
-    updateMutation.isPending ||
-    createUserMutation.isPending;
+    updateMutation.isPending;
 
   // ── Edit-mode seeding ──
   useEffect(() => {
@@ -309,25 +281,9 @@ export function WriterFormContent({
     setFieldError(null);
     setSubmitError(null);
     // A translation inherits the original's account — no user step to validate.
-    if (!isEdit && !isTranslation) {
-      if (userMode === "existing" && !selectedUser) {
-        setUserError(t("errors.userRequired"));
-        return false;
-      }
-      if (userMode === "new") {
-        if (!newFullName.trim()) {
-          setUserError(t("errors.fullNameRequired"));
-          return false;
-        }
-        if (!EMAIL_RE.test(newEmail.trim())) {
-          setUserError(t("errors.emailRequired"));
-          return false;
-        }
-        if (tempPassword.length < 6) {
-          setUserError(t("errors.passwordTooShort"));
-          return false;
-        }
-      }
+    if (!isEdit && !isTranslation && !selectedUser) {
+      setUserError(t("errors.userRequired"));
+      return false;
     }
     if (form.monthly_goal.trim()) {
       const goal = Number(form.monthly_goal);
@@ -363,40 +319,12 @@ export function WriterFormContent({
 
       // Create mode — resolve the user_id strictly per-mode.
       let userId: string | null = null;
-      let handoffPassword: string | null = null;
       if (isTranslation) {
         // A translation belongs to the same writer as the original.
         userId =
           sourceQuery.data?.user_id ?? sourceQuery.data?.user?.id ?? null;
-        if (!userId) {
-          setUserError(t("errors.userRequired"));
-          return;
-        }
-      } else if (userMode === "existing") {
-        userId = selectedUser?.id ?? null;
-      } else if (
-        createdUser &&
-        createdUser.email?.toLowerCase() === newEmail.trim().toLowerCase()
-      ) {
-        // This account was already created by a previous attempt — reuse it
-        // so retries never duplicate the user.
-        userId = createdUser.id;
-        handoffPassword = createdPassword;
       } else {
-        try {
-          const created = await createUserMutation.mutateAsync({
-            full_name: newFullName.trim(),
-            email: newEmail.trim(),
-            password: tempPassword,
-          });
-          setCreatedUser(created);
-          setCreatedPassword(tempPassword);
-          userId = created.id;
-          handoffPassword = tempPassword;
-        } catch (err) {
-          setUserError(formatApiError(err, t("errors.createUserFailed")));
-          return;
-        }
+        userId = selectedUser?.id ?? null;
       }
       if (!userId) {
         setUserError(t("errors.userRequired"));
@@ -416,14 +344,7 @@ export function WriterFormContent({
             error: t("errors.saveFailed"),
           },
         );
-        if (userMode === "new") {
-          setCreatedSummary({
-            email: newEmail.trim(),
-            password: handoffPassword ?? tempPassword,
-          });
-        } else {
-          router.push("/admin/writers");
-        }
+        router.push("/admin/writers");
       } catch (err) {
         const msg = formatApiError(err, t("errors.saveFailed"));
         if (/already exists/i.test(msg)) {
@@ -433,47 +354,6 @@ export function WriterFormContent({
       }
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const copyPassword = async () => {
-    try {
-      await navigator.clipboard.writeText(tempPassword);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* clipboard unavailable — user can select the text manually */
-    }
-  };
-
-  const copySummaryPassword = async () => {
-    if (!createdSummary) return;
-    try {
-      await navigator.clipboard.writeText(createdSummary.password);
-      setSummaryCopied(true);
-      window.setTimeout(() => setSummaryCopied(false), 2000);
-    } catch {
-      /* clipboard unavailable — user can select the text manually */
-    }
-  };
-
-  // There's no backend invite-email endpoint, so the admin hands the writer
-  // their login manually. Build a ready-to-send message (login URL + email +
-  // temp password) they can paste into an email/DM in one click.
-  const copyInviteMessage = async () => {
-    if (!createdSummary) return;
-    const loginUrl = `${window.location.origin}/login`;
-    const message = t("created.inviteTemplate", {
-      url: loginUrl,
-      email: createdSummary.email,
-      password: createdSummary.password,
-    });
-    try {
-      await navigator.clipboard.writeText(message);
-      setInviteCopied(true);
-      window.setTimeout(() => setInviteCopied(false), 2000);
-    } catch {
-      /* clipboard unavailable — user can select the text manually */
     }
   };
 
@@ -504,14 +384,6 @@ export function WriterFormContent({
       writerQuery.data?.user_id ||
       "—"
     : null;
-
-  const modeButtonClass = (active: boolean) =>
-    [
-      "rounded-lg px-4 py-1.5 text-sm font-medium transition-colors",
-      active
-        ? "border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 text-[var(--tott-gold)]"
-        : "border border-[var(--tott-card-border)] text-[var(--tott-muted)] hover:text-foreground",
-    ].join(" ");
 
   return (
     <div className="my-4 mx-auto px-10 pb-12 max-w-4xl">
@@ -583,86 +455,11 @@ export function WriterFormContent({
             </div>
           ) : (
             <>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => { setUserMode("existing"); setUserError(null); }}
-                  className={modeButtonClass(userMode === "existing")}
-                >
-                  {t("account.modeExisting")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setUserMode("new"); setUserError(null); }}
-                  className={modeButtonClass(userMode === "new")}
-                >
-                  {t("account.modeNew")}
-                </button>
-              </div>
-
-              {userMode === "existing" && (
-                <UserPicker
-                  value={selectedUser}
-                  onChange={(u) => { setSelectedUser(u); setUserError(null); }}
-                  disabled={busy}
-                />
-              )}
-
-              {userMode === "new" && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className={labelClass}>{t("account.fullName")} *</label>
-                      <input
-                        type="text"
-                        className={inputClass}
-                        value={newFullName}
-                        onChange={(e) => setNewFullName(e.target.value)}
-                        disabled={busy}
-                      />
-                    </div>
-                    <div>
-                      <label className={labelClass}>{t("account.email")} *</label>
-                      <input
-                        type="email"
-                        className={inputClass}
-                        value={newEmail}
-                        onChange={(e) => setNewEmail(e.target.value)}
-                        disabled={busy}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className={labelClass}>{t("account.tempPassword")}</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        readOnly
-                        className={`${inputClass} font-mono`}
-                        value={tempPassword}
-                      />
-                      <button
-                        type="button"
-                        onClick={copyPassword}
-                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground"
-                      >
-                        {copied ? t("account.copied") : t("account.copy")}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setTempPassword(generateTempPassword())}
-                        disabled={busy || (createdUser !== null && (createdUser.email?.toLowerCase() ?? "") === newEmail.trim().toLowerCase())}
-                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground disabled:opacity-40"
-                      >
-                        {t("account.regenerate")}
-                      </button>
-                    </div>
-                    <p className="mt-1 text-[10px] text-[var(--tott-muted)]">
-                      {t("account.tempPasswordHint")}
-                    </p>
-                  </div>
-                </div>
-              )}
+              <UserPicker
+                value={selectedUser}
+                onChange={(u) => { setSelectedUser(u); setUserError(null); }}
+                disabled={busy}
+              />
 
               {userError && (
                 <p className="text-xs text-red-400">{userError}</p>
@@ -834,77 +631,6 @@ export function WriterFormContent({
           </Link>
         </div>
       </form>
-
-      {createdSummary && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-          onClick={() => router.push("/admin/writers")}
-        >
-          <div
-            className="relative w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => router.push("/admin/writers")}
-              aria-label={t("cancel")}
-              className="absolute right-3 top-3 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-white/5 hover:text-foreground"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-            <h2 className="mb-2 pr-7 text-base font-semibold text-foreground">
-              {t("created.title")}
-            </h2>
-            <p className="mb-4 text-sm text-[var(--tott-muted)]">
-              {t("created.description")}
-            </p>
-            <div className="space-y-3 mb-5">
-              <div>
-                <label className={labelClass}>{t("account.email")}</label>
-                <p className="text-sm text-foreground">{createdSummary.email}</p>
-              </div>
-              <div>
-                <label className={labelClass}>{t("account.tempPassword")}</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    readOnly
-                    className={`${inputClass} font-mono`}
-                    value={createdSummary.password}
-                  />
-                  <button
-                    type="button"
-                    onClick={copySummaryPassword}
-                    className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground"
-                  >
-                    {summaryCopied ? t("account.copied") : t("account.copy")}
-                  </button>
-                </div>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={copyInviteMessage}
-              className="mb-2 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] px-5 py-2 text-sm font-medium text-foreground hover:bg-white/5 transition-colors"
-            >
-              {inviteCopied ? t("created.inviteCopied") : t("created.copyInvite")}
-            </button>
-            <p className="mb-4 text-[11px] text-[var(--tott-muted)]">
-              {t("created.emailHint")}
-            </p>
-            <button
-              type="button"
-              onClick={() => router.push("/admin/writers")}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 transition-colors"
-            >
-              {t("created.continue")}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
