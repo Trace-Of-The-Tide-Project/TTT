@@ -62,7 +62,12 @@
       "createBook": "Añadir libro",
       "writers": "Escritores",
       "allWriters": "Todos los escritores",
-      "createWriter": "Añadir escritor"
+      "createWriter": "Añadir escritor",
+      "people": "Personas",
+      "allPeople": "Todas las personas",
+      "addPerson": "Añadir persona",
+      "subscription": "Suscripción",
+      "subscriptions": "Suscripciones"
     },
     "systemSettings": {
       "tabs": {

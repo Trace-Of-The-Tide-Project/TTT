@@ -48,6 +48,10 @@
           "requestFailed": "Échec de la requête",
           "generic": "Une erreur s'est produite"
         },
+        "tabs": {
+          "createTrip": "Créer un voyage",
+          "archive": "Archives"
+        },
         "joinForm": {
           "title": "Formulaire pour rejoindre le voyage",
           "hint": "Les voyageurs voient ceci sur la page publique du voyage. Mêmes types de champs que les candidatures aux appels ouverts ; la réinitialisation restaure le modèle par défaut (nom, e-mail, message facultatif)."
@@ -55,6 +59,8 @@
         "sidebar": {
           "previewTrip": "Aperçu du voyage",
           "duplicateTrip": "Dupliquer le voyage",
+          "resetForm": "Réinitialiser le formulaire",
+          "archiveTrip": "Archiver le voyage",
           "archive": "Archiver"
         },
         "footer": {
@@ -68,6 +74,8 @@
           "startDate": "Date de départ",
           "duration": "Durée",
           "durationHours": "{hours} h",
+          "durationDays": "{count, plural, one {# jour} other {# jours}}",
+          "location": "Lieu",
           "lastStop": "Dernier arrêt",
           "price": "Prix",
           "placeholder": "—"
@@ -87,11 +95,20 @@
         },
         "details": {
           "heading": "Détails du voyage",
+          "route": "Itinéraire",
+          "startLocation": "Lieu de départ",
+          "startLocationPlaceholder": "Ex. : Londres",
+          "endLocation": "Lieu d'arrivée",
+          "endLocationPlaceholder": "Ex. : Paris",
+          "startDate": "Date de départ",
+          "durationDays": "Durée",
+          "durationDaysSuffix": "(jours)",
+          "groupSize": "Taille du groupe",
+          "openGroup": "Groupe ouvert",
           "category": "Catégorie",
           "categoryRequired": "*",
           "categoryPlaceholder": "Ex. : culturel, aventure",
           "difficulty": "Difficulté",
-          "startDate": "Date de départ",
           "endDate": "Date de fin",
           "durationHours": "Durée (heures)",
           "maxParticipants": "Nombre max de participants",
@@ -107,12 +124,17 @@
           "heading": "Tarification",
           "hint": "Contribution minimale uniquement. Sur la page publique du voyage, les voyageurs utilisent une échelle démarrant à ce montant ; ils peuvent aller plus haut (pas de plafond fixe dans l'éditeur).",
           "minimumPrice": "Prix minimum",
-          "currency": "Devise"
+          "price": "Prix",
+          "currency": "Devise",
+          "pricePerPerson": "Prix par personne",
+          "discountPercent": "Remise %",
+          "optional": "(Facultatif)"
         },
         "languages": {
           "heading": "Langues",
           "selectLabel": "Sélectionner une langue",
           "selectPlaceholder": "Sélectionner…",
+          "nSelected": "{count} sélectionné(s)",
           "removeAria": "Supprimer {label}",
           "labels": {
             "AR": "Arabe",
@@ -126,17 +148,29 @@
         },
         "itinerary": {
           "heading": "Arrêts",
+          "addLocation": "Ajouter un lieu",
+          "dayNumber": "Jour {number}",
+          "untitledLocation": "Lieu sans titre",
+          "route": "Itinéraire",
+          "locationName": "Nom du lieu",
+          "locationPlaceholder": "Ex. : Rue du Parc",
+          "dateLabel": "Date",
+          "timeLabel": "Heure",
+          "detailsLabel": "Détails",
+          "latitude": "Latitude",
+          "longitude": "Longitude",
+          "descriptionPlaceholder": "Ce qui se passe à ce lieu",
+          "removeStopAria": "Supprimer l'arrêt {number}",
+          "duplicateStopAria": "Dupliquer le jour {number}",
+          "searchPlaceholder": "Rechercher un lieu…",
+          "searching": "Recherche en cours…",
           "addStop": "+ Ajouter un arrêt",
           "stopNumber": "Arrêt {number}",
           "stopTitle": "Titre de l'arrêt",
           "stopTitlePlaceholder": "Ex. : Point de rassemblement à la Porte de Jaffa",
           "description": "Description",
-          "descriptionPlaceholder": "Ce qui se passe à cet arrêt…",
           "arrivalTime": "Heure d'arrivée",
-          "durationMinutes": "Durée (min)",
-          "removeStopAria": "Supprimer l'arrêt {number}",
-          "searchPlaceholder": "Rechercher un lieu…",
-          "searching": "Recherche en cours…"
+          "durationMinutes": "Durée (min)"
         }
       }
     }
