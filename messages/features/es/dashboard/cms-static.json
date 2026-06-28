@@ -1,0 +1,13 @@
+{
+  "Dashboard": {
+    "cmsStatic": {
+      "loading": "Cargando páginas…",
+      "lastEdited": "Última edición: {date}",
+      "published": "Publicado",
+      "draft": "Borrador",
+      "edit": "Editar",
+      "preview": "Vista previa",
+      "emptyState": "No se encontraron páginas estáticas."
+    }
+  }
+}

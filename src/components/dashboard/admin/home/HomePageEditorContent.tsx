@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { EyeIcon, RefreshCwIcon } from "@/components/ui/icons";
 import { useEnsureHomePage } from "@/hooks/queries/cms";
 import {
@@ -26,12 +27,14 @@ import {
 // ── Field schemas per section ──────────────────────────────────────
 
 type FieldKind = "text" | "textarea";
-type LocalField = { key: string; label: string; kind: FieldKind };
-type FlatField = { key: string; label: string; kind: FieldKind };
+// `labelKey` is a translation key under the Dashboard.cmsHome namespace,
+// resolved with `t(...)` at render time.
+type LocalField = { key: string; labelKey: string; kind: FieldKind };
+type FlatField = { key: string; labelKey: string; kind: FieldKind };
 
 const RAIL_FIELDS: LocalField[] = [
-  { key: "heading", label: "Heading", kind: "text" },
-  { key: "subheading", label: "Subheading", kind: "textarea" },
+  { key: "heading", labelKey: "fields.heading", kind: "text" },
+  { key: "subheading", labelKey: "fields.subheading", kind: "textarea" },
 ];
 
 const SECTION_SCHEMA: Record<
@@ -40,23 +43,23 @@ const SECTION_SCHEMA: Record<
 > = {
   hero: {
     localized: [
-      { key: "eyebrow", label: "Eyebrow", kind: "text" },
-      { key: "title", label: "Title", kind: "text" },
-      { key: "subtitle", label: "Mission subtitle", kind: "textarea" },
-      { key: "primaryCtaLabel", label: "Primary CTA label", kind: "text" },
-      { key: "secondaryCtaLabel", label: "Secondary CTA label", kind: "text" },
+      { key: "eyebrow", labelKey: "fields.eyebrow", kind: "text" },
+      { key: "title", labelKey: "fields.title", kind: "text" },
+      { key: "subtitle", labelKey: "fields.missionSubtitle", kind: "textarea" },
+      { key: "primaryCtaLabel", labelKey: "fields.primaryCtaLabel", kind: "text" },
+      { key: "secondaryCtaLabel", labelKey: "fields.secondaryCtaLabel", kind: "text" },
     ],
     flat: [
-      { key: "artwork", label: "Artwork image URL", kind: "text" },
-      { key: "primaryHref", label: "Primary CTA link", kind: "text" },
-      { key: "secondaryHref", label: "Secondary CTA link", kind: "text" },
-      { key: "variant", label: "Homepage direction", kind: "text" },
+      { key: "artwork", labelKey: "fields.artworkUrl", kind: "text" },
+      { key: "primaryHref", labelKey: "fields.primaryCtaLink", kind: "text" },
+      { key: "secondaryHref", labelKey: "fields.secondaryCtaLink", kind: "text" },
+      { key: "variant", labelKey: "fields.homepageDirection", kind: "text" },
     ],
   },
   spotlight: {
     localized: [
-      { key: "eyebrow", label: "Eyebrow", kind: "text" },
-      { key: "heading", label: "Heading (optional)", kind: "text" },
+      { key: "eyebrow", labelKey: "fields.eyebrow", kind: "text" },
+      { key: "heading", labelKey: "fields.headingOptional", kind: "text" },
     ],
     flat: [],
   },
@@ -68,11 +71,11 @@ const SECTION_SCHEMA: Record<
   bookClub: { localized: RAIL_FIELDS, flat: [] },
   contributeCta: {
     localized: [
-      { key: "heading", label: "Heading", kind: "text" },
-      { key: "body", label: "Body", kind: "textarea" },
-      { key: "ctaLabel", label: "CTA label", kind: "text" },
+      { key: "heading", labelKey: "fields.heading", kind: "text" },
+      { key: "body", labelKey: "fields.body", kind: "textarea" },
+      { key: "ctaLabel", labelKey: "fields.ctaLabel", kind: "text" },
     ],
-    flat: [{ key: "openCallId", label: "Linked open-call id", kind: "text" }],
+    flat: [{ key: "openCallId", labelKey: "fields.openCallId", kind: "text" }],
   },
 };
 
@@ -127,11 +130,14 @@ const LOCALE_LABEL: Record<HomeLocale, string> = {
 const inputClass =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none";
 
+// `label` of null means the human label comes from the `variants.default`
+// translation key. D01/D02/D03 are identifiers and stay verbatim, while
+// their human names come from `sublabelKey`.
 const VARIANT_OPTIONS = [
-  { value: "", label: "Default", sublabel: "CMS sections" },
-  { value: "d01", label: "D01", sublabel: "Lattice Refined" },
-  { value: "d02", label: "D02", sublabel: "The Tideline" },
-  { value: "d03", label: "D03", sublabel: "Currents" },
+  { value: "", label: null, sublabelKey: "variants.defaultSub" },
+  { value: "d01", label: "D01", sublabelKey: "variants.d01" },
+  { value: "d02", label: "D02", sublabelKey: "variants.d02" },
+  { value: "d03", label: "D03", sublabelKey: "variants.d03" },
 ] as const;
 
 function VariantPicker({
@@ -141,6 +147,7 @@ function VariantPicker({
   value: string;
   onChange: (v: string) => void;
 }) {
+  const t = useTranslations("Dashboard.cmsHome");
   return (
     <div className="grid grid-cols-4 gap-2">
       {VARIANT_OPTIONS.map((opt) => {
@@ -156,8 +163,12 @@ function VariantPicker({
                 : "border-[var(--tott-card-border)] text-gray-400 hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
             }`}
           >
-            <span className="text-sm font-semibold">{opt.label}</span>
-            <span className="text-[10px] leading-tight opacity-70">{opt.sublabel}</span>
+            <span className="text-sm font-semibold">
+              {opt.label ?? t("variants.default")}
+            </span>
+            <span className="text-[10px] leading-tight opacity-70">
+              {t(opt.sublabelKey)}
+            </span>
           </button>
         );
       })}
@@ -166,6 +177,7 @@ function VariantPicker({
 }
 
 export function HomePageEditorContent() {
+  const t = useTranslations("Dashboard.cmsHome");
   const { data: page, isPending } = useEnsureHomePage();
   const updateSection = useUpdateCmsSection();
   const toggleSection = useToggleCmsSection();
@@ -198,7 +210,7 @@ export function HomePageEditorContent() {
   if (isPending || !page) {
     return (
       <div className="flex items-center justify-center py-20 text-sm text-gray-500">
-        Loading homepage editor…
+        {t("loading")}
       </div>
     );
   }
@@ -232,20 +244,17 @@ export function HomePageEditorContent() {
       {/* Section list */}
       <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-foreground">Sections</h3>
+          <h3 className="text-sm font-semibold text-foreground">{t("sections")}</h3>
           <button
             type="button"
             onClick={() => publishPage.mutate(page.id)}
             disabled={publishPage.isPending}
             className="rounded-lg border border-[#C9A96E]/40 bg-[#C9A96E]/20 px-3 py-1.5 text-xs font-medium text-[#C9A96E] hover:bg-[#C9A96E]/30 disabled:opacity-50"
           >
-            {publishPage.isPending ? "Publishing…" : "Publish"}
+            {publishPage.isPending ? t("publishing") : t("publish")}
           </button>
         </div>
-        <p className="mt-1 text-xs text-gray-500">
-          Toggle visibility; edit copy per language. Rail contents come live
-          from the archive.
-        </p>
+        <p className="mt-1 text-xs text-gray-500">{t("listHelper")}</p>
         <div className="mt-4 flex flex-col gap-2">
           {sections.map((section) => {
             const isSel = section.id === (selected?.id ?? null);
@@ -269,7 +278,7 @@ export function HomePageEditorContent() {
                   className={`rounded p-1.5 hover:bg-[var(--tott-dash-ghost-hover)] ${
                     section.is_visible ? "text-gray-400" : "text-gray-600 opacity-40"
                   }`}
-                  aria-label={section.is_visible ? "Hide section" : "Show section"}
+                  aria-label={section.is_visible ? t("hideSection") : t("showSection")}
                 >
                   <span className="[&_svg]:h-4 [&_svg]:w-4">
                     <EyeIcon />
@@ -298,7 +307,7 @@ export function HomePageEditorContent() {
                   <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">
                     <RefreshCwIcon />
                   </span>
-                  Reset
+                  {t("reset")}
                 </button>
                 <button
                   type="button"
@@ -306,7 +315,7 @@ export function HomePageEditorContent() {
                   disabled={saving}
                   className="rounded-lg border border-[#C9A96E]/40 bg-[#C9A96E]/20 px-3 py-1.5 text-xs font-medium text-[#C9A96E] hover:bg-[#C9A96E]/30 disabled:opacity-50"
                 >
-                  {saving ? "Saving…" : "Save"}
+                  {saving ? t("saving") : t("save")}
                 </button>
               </div>
             </div>
@@ -337,7 +346,7 @@ export function HomePageEditorContent() {
                 return (
                   <div key={f.key}>
                     <label className="mb-1.5 block text-xs font-medium text-foreground">
-                      {f.label}
+                      {t(f.labelKey)}
                     </label>
                     {f.kind === "textarea" ? (
                       <textarea
@@ -363,12 +372,12 @@ export function HomePageEditorContent() {
               {schema.flat.length > 0 ? (
                 <div className="mt-2 border-t border-[var(--tott-card-border)] pt-4">
                   <p className="mb-3 text-xs font-medium uppercase tracking-wide text-gray-500">
-                    Shared (all languages)
+                    {t("sharedAllLanguages")}
                   </p>
                   {schema.flat.map((f) => (
                     <div key={f.key} className="mb-4">
                       <label className="mb-1.5 block text-xs font-medium text-foreground">
-                        {f.label}
+                        {t(f.labelKey)}
                       </label>
                       {f.key === "variant" ? (
                         <VariantPicker
@@ -391,7 +400,7 @@ export function HomePageEditorContent() {
           </>
         ) : (
           <div className="flex h-full items-center justify-center py-20 text-sm text-gray-500">
-            Select a section to edit.
+            {t("emptyState")}
           </div>
         )}
       </div>

@@ -31,6 +31,10 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/translations.json`),
     /** Large shared surfaces (content library, CMS editor, roles UI). */
     import(`../../messages/features/${locale}/dashboard/admin-surfaces.json`),
+    import(`../../messages/features/${locale}/dashboard/cms-home.json`),
+    import(`../../messages/features/${locale}/dashboard/cms-static.json`),
+    import(`../../messages/features/${locale}/dashboard/cms-branding.json`),
+    import(`../../messages/features/${locale}/dashboard/cms-nav.json`),
     import(`../../messages/features/${locale}/dashboard/books.json`),
     import(`../../messages/features/${locale}/dashboard/writers.json`),
     /**

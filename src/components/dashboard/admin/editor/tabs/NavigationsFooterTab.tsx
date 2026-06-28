@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { GripVerticalIcon, PlusIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
 import { useCmsSettings } from "@/hooks/queries/cms";
@@ -28,6 +29,7 @@ function NavFooterToggle({ checked, onChange }: { checked: boolean; onChange: (v
 }
 
 function SaveButton({ state, onSave }: { state: SaveState; onSave: () => void }) {
+  const t = useTranslations("Dashboard.cmsNav");
   return (
     <button
       type="button"
@@ -41,12 +43,13 @@ function SaveButton({ state, onSave }: { state: SaveState; onSave: () => void })
             : "border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] text-foreground hover:bg-[var(--tott-dash-control-hover)]"
       }`}
     >
-      {state === "saving" ? "Saving…" : state === "saved" ? "Saved" : state === "error" ? "Error — retry" : "Save"}
+      {state === "saving" ? t("saving") : state === "saved" ? t("saved") : state === "error" ? t("saveError") : t("save")}
     </button>
   );
 }
 
 export function NavigationsFooterTab() {
+  const t = useTranslations("Dashboard.cmsNav");
   const [navLinks, setNavLinks] = useState<NavLink[]>([]);
   const [footerText, setFooterText] = useState("");
   const [twitter, setTwitter] = useState("");
@@ -157,24 +160,24 @@ export function NavigationsFooterTab() {
   };
 
   return (
-    <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2" role="region" aria-label="Navigations and footer configuration">
+    <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2" role="region" aria-label={t("regionLabel")}>
       {/* Header Navigation */}
       <div
         className="isolate min-w-0 overflow-visible rounded-xl border border-[var(--tott-card-border)] p-6"
         role="group"
-        aria-label="Header navigation configuration"
+        aria-label={t("headerNavGroupLabel")}
       >
-        <h3 className="text-sm font-semibold text-foreground">Header Navigation</h3>
-        <p className="mt-1 text-xs text-gray-500">Configure main navigation links</p>
+        <h3 className="text-sm font-semibold text-foreground">{t("headerNavTitle")}</h3>
+        <p className="mt-1 text-xs text-gray-500">{t("headerNavDescription")}</p>
         <div className="mt-4 space-y-4">
           {navLinks.map((link) => (
             <div key={link.id} className="flex min-w-0 items-center gap-3">
-              <span className="cursor-grab text-gray-500" aria-label="Reorder">
+              <span className="cursor-grab text-gray-500" aria-label={t("reorderLabel")}>
                 <GripVerticalIcon />
               </span>
               <input
                 type="text"
-                placeholder="Text"
+                placeholder={t("textPlaceholder")}
                 value={link.text}
                 onChange={(e) => updateNavLink(link.id, "text", e.target.value)}
                 className="min-w-0 flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
@@ -201,7 +204,7 @@ export function NavigationsFooterTab() {
           <span className="[&_svg]:h-4 [&_svg]:w-4">
             <PlusIcon />
           </span>
-          Add Link
+          {t("addLink")}
         </button>
         <SaveButton state={navSave} onSave={handleSaveNav} />
       </div>
@@ -210,15 +213,15 @@ export function NavigationsFooterTab() {
       <div
         className="isolate overflow-hidden rounded-xl border border-[var(--tott-card-border)] p-6"
         role="group"
-        aria-label="Footer configuration"
+        aria-label={t("footerGroupLabel")}
       >
-        <h3 className="text-sm font-semibold text-foreground">Footer</h3>
-        <p className="mt-1 text-xs text-gray-500">Configure footer content and links</p>
+        <h3 className="text-sm font-semibold text-foreground">{t("footerTitle")}</h3>
+        <p className="mt-1 text-xs text-gray-500">{t("footerDescription")}</p>
         <div className="mt-4 space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-foreground">Footer Text</label>
+            <label className="mb-1.5 block text-xs font-medium text-foreground">{t("footerTextLabel")}</label>
             <textarea
-              placeholder="© 2024 TTT. All rights reserved."
+              placeholder={t("footerTextPlaceholder")}
               rows={3}
               value={footerText}
               onChange={(e) => setFooterText(e.target.value)}
@@ -226,25 +229,25 @@ export function NavigationsFooterTab() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-foreground">Social Links</label>
+            <label className="mb-1.5 block text-xs font-medium text-foreground">{t("socialLinksLabel")}</label>
             <div className="space-y-2">
               <input
                 type="text"
-                placeholder="Twitter URL"
+                placeholder={t("twitterPlaceholder")}
                 value={twitter}
                 onChange={(e) => setTwitter(e.target.value)}
                 className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
               />
               <input
                 type="text"
-                placeholder="Instagram URL"
+                placeholder={t("instagramPlaceholder")}
                 value={instagram}
                 onChange={(e) => setInstagram(e.target.value)}
                 className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
               />
               <input
                 type="text"
-                placeholder="LinkedIn URL"
+                placeholder={t("linkedinPlaceholder")}
                 value={linkedin}
                 onChange={(e) => setLinkedin(e.target.value)}
                 className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"

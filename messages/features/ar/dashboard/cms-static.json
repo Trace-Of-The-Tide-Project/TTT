@@ -1,0 +1,13 @@
+{
+  "Dashboard": {
+    "cmsStatic": {
+      "loading": "جارٍ تحميل الصفحات…",
+      "lastEdited": "آخر تعديل: {date}",
+      "published": "منشور",
+      "draft": "مسودة",
+      "edit": "تحرير",
+      "preview": "معاينة",
+      "emptyState": "لا توجد صفحات ثابتة."
+    }
+  }
+}

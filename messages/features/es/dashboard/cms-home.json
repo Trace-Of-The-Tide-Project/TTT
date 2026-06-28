@@ -1,0 +1,42 @@
+{
+  "Dashboard": {
+    "cmsHome": {
+      "sections": "Secciones",
+      "listHelper": "Alterna la visibilidad; edita el texto por idioma. El contenido de los raíles proviene en directo del archivo.",
+      "publish": "Publicar",
+      "publishing": "Publicando…",
+      "hideSection": "Ocultar sección",
+      "showSection": "Mostrar sección",
+      "reset": "Restablecer",
+      "save": "Guardar",
+      "saving": "Guardando…",
+      "sharedAllLanguages": "Compartido (todos los idiomas)",
+      "loading": "Cargando el editor de la página de inicio…",
+      "emptyState": "Selecciona una sección para editar.",
+      "fields": {
+        "heading": "Encabezado",
+        "subheading": "Subencabezado",
+        "eyebrow": "Antetítulo",
+        "title": "Título",
+        "missionSubtitle": "Subtítulo de la misión",
+        "primaryCtaLabel": "Texto del CTA principal",
+        "secondaryCtaLabel": "Texto del CTA secundario",
+        "artworkUrl": "URL de la imagen de la obra",
+        "primaryCtaLink": "Enlace del CTA principal",
+        "secondaryCtaLink": "Enlace del CTA secundario",
+        "homepageDirection": "Dirección de la página de inicio",
+        "headingOptional": "Encabezado (opcional)",
+        "body": "Cuerpo",
+        "ctaLabel": "Texto del CTA",
+        "openCallId": "ID de la convocatoria abierta vinculada"
+      },
+      "variants": {
+        "default": "Predeterminado",
+        "defaultSub": "Secciones del CMS",
+        "d01": "Celosía refinada",
+        "d02": "La línea de marea",
+        "d03": "Corrientes"
+      }
+    }
+  }
+}

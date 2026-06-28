@@ -1,0 +1,42 @@
+{
+  "Dashboard": {
+    "cmsHome": {
+      "sections": "Sections",
+      "listHelper": "Toggle visibility; edit copy per language. Rail contents come live from the archive.",
+      "publish": "Publish",
+      "publishing": "Publishing…",
+      "hideSection": "Hide section",
+      "showSection": "Show section",
+      "reset": "Reset",
+      "save": "Save",
+      "saving": "Saving…",
+      "sharedAllLanguages": "Shared (all languages)",
+      "loading": "Loading homepage editor…",
+      "emptyState": "Select a section to edit.",
+      "fields": {
+        "heading": "Heading",
+        "subheading": "Subheading",
+        "eyebrow": "Eyebrow",
+        "title": "Title",
+        "missionSubtitle": "Mission subtitle",
+        "primaryCtaLabel": "Primary CTA label",
+        "secondaryCtaLabel": "Secondary CTA label",
+        "artworkUrl": "Artwork image URL",
+        "primaryCtaLink": "Primary CTA link",
+        "secondaryCtaLink": "Secondary CTA link",
+        "homepageDirection": "Homepage direction",
+        "headingOptional": "Heading (optional)",
+        "body": "Body",
+        "ctaLabel": "CTA label",
+        "openCallId": "Linked open-call id"
+      },
+      "variants": {
+        "default": "Default",
+        "defaultSub": "CMS sections",
+        "d01": "Lattice Refined",
+        "d02": "The Tideline",
+        "d03": "Currents"
+      }
+    }
+  }
+}

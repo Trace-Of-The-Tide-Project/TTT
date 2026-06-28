@@ -1,0 +1,42 @@
+{
+  "Dashboard": {
+    "cmsHome": {
+      "sections": "الأقسام",
+      "listHelper": "بدّل الظهور؛ حرّر النص لكل لغة. تأتي محتويات الأشرطة مباشرةً من الأرشيف.",
+      "publish": "نشر",
+      "publishing": "جارٍ النشر…",
+      "hideSection": "إخفاء القسم",
+      "showSection": "إظهار القسم",
+      "reset": "إعادة تعيين",
+      "save": "حفظ",
+      "saving": "جارٍ الحفظ…",
+      "sharedAllLanguages": "مشترك (كل اللغات)",
+      "loading": "جارٍ تحميل محرّر الصفحة الرئيسية…",
+      "emptyState": "اختر قسمًا لتحريره.",
+      "fields": {
+        "heading": "العنوان",
+        "subheading": "العنوان الفرعي",
+        "eyebrow": "النص التمهيدي",
+        "title": "العنوان",
+        "missionSubtitle": "العنوان الفرعي للرسالة",
+        "primaryCtaLabel": "نص الزر الأساسي",
+        "secondaryCtaLabel": "نص الزر الثانوي",
+        "artworkUrl": "رابط صورة العمل الفني",
+        "primaryCtaLink": "رابط الزر الأساسي",
+        "secondaryCtaLink": "رابط الزر الثانوي",
+        "homepageDirection": "اتجاه الصفحة الرئيسية",
+        "headingOptional": "العنوان (اختياري)",
+        "body": "النص",
+        "ctaLabel": "نص الزر",
+        "openCallId": "معرّف الدعوة المفتوحة المرتبطة"
+      },
+      "variants": {
+        "default": "افتراضي",
+        "defaultSub": "أقسام نظام إدارة المحتوى",
+        "d01": "شبكة مُنقّحة",
+        "d02": "خط المد",
+        "d03": "التيارات"
+      }
+    }
+  }
+}

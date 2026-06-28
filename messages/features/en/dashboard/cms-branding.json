@@ -1,0 +1,22 @@
+{
+  "Dashboard": {
+    "cmsBranding": {
+      "title": "Brand Settings",
+      "subtitle": "Logo, colors, and typography.",
+      "logoLabel": "Logo",
+      "logoPreviewAlt": "Logo preview",
+      "savedLogo": "Saved logo",
+      "faviconLabel": "Favicon",
+      "faviconPreviewAlt": "Favicon preview",
+      "savedFavicon": "Saved favicon",
+      "uploadPrompt": "Drag and drop files here, or click to browse",
+      "logoFormats": "Supported formats: JPG, PNG, WebP, SVG, GIF (Max 20MB)",
+      "faviconFormats": "Supported formats: PNG, WebP, SVG, ICO (Max 20MB)",
+      "primaryColorLabel": "Primary Color",
+      "saving": "Saving…",
+      "saved": "Saved",
+      "errorRetry": "Error — retry",
+      "save": "Save Branding"
+    }
+  }
+}

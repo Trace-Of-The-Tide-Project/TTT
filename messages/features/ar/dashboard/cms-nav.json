@@ -1,0 +1,26 @@
+{
+  "Dashboard": {
+    "cmsNav": {
+      "regionLabel": "إعدادات التنقل والتذييل",
+      "headerNavGroupLabel": "إعداد تنقل الترويسة",
+      "headerNavTitle": "تنقل الترويسة",
+      "headerNavDescription": "تكوين روابط التنقل الرئيسية",
+      "reorderLabel": "إعادة ترتيب",
+      "textPlaceholder": "النص",
+      "addLink": "إضافة رابط",
+      "footerGroupLabel": "إعداد التذييل",
+      "footerTitle": "التذييل",
+      "footerDescription": "تكوين محتوى التذييل والروابط",
+      "footerTextLabel": "نص التذييل",
+      "footerTextPlaceholder": "© 2024 TTT. جميع الحقوق محفوظة.",
+      "socialLinksLabel": "روابط التواصل الاجتماعي",
+      "twitterPlaceholder": "رابط Twitter",
+      "instagramPlaceholder": "رابط Instagram",
+      "linkedinPlaceholder": "رابط LinkedIn",
+      "saving": "جارٍ الحفظ…",
+      "saved": "تم الحفظ",
+      "saveError": "خطأ — إعادة المحاولة",
+      "save": "حفظ"
+    }
+  }
+}
