@@ -62,11 +62,11 @@ const EMPTY: FormState = {
 };
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-[var(--tott-muted)] outline-none focus:border-[var(--tott-gold)]/60 transition-colors";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-[var(--tott-muted)] outline-none focus:border-[var(--tott-accent-gold)]/60 transition-colors";
 const labelClass =
   "text-xs font-medium text-[var(--tott-dash-gold-label)] mb-1 block";
 const sectionClass =
-  "rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated,#111)] p-5 space-y-4";
+  "rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] p-5 space-y-4";
 const sectionHeadingClass =
   "text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]";
 
@@ -411,8 +411,8 @@ export function WriterFormContent({
       </div>
 
       {isTranslation ? (
-        <div className="mb-6 max-w-2xl mx-auto rounded-xl border border-[var(--tott-gold)]/30 bg-[var(--tott-gold)]/5 px-4 py-3 text-sm">
-          <p className="font-medium text-[var(--tott-gold)]">
+        <div className="mb-6 max-w-2xl mx-auto rounded-xl border border-[var(--tott-accent-gold)]/30 bg-[var(--tott-accent-gold)]/5 px-4 py-3 text-sm">
+          <p className="font-medium text-[var(--tott-accent-gold)]">
             {tTr.has(`languages.${form.language}`)
               ? `${tTr(`languages.${form.language}`)} — ${t("translation.banner")}`
               : t("translation.banner")}
@@ -589,7 +589,7 @@ export function WriterFormContent({
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, featured: e.target.checked }))
               }
-              className="h-4 w-4 accent-[var(--tott-gold)]"
+              className="h-4 w-4 accent-[var(--tott-accent-gold)]"
             />
             {t("fields.featured")}
           </label>
@@ -610,7 +610,7 @@ export function WriterFormContent({
           <button
             type="submit"
             disabled={busy}
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 disabled:opacity-40 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/60 bg-[var(--tott-accent-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-accent-gold)] hover:bg-[var(--tott-accent-gold)]/20 disabled:opacity-40 transition-colors"
           >
             {busy && (
               <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />

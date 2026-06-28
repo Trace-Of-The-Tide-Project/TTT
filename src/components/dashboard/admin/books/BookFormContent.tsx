@@ -124,8 +124,8 @@ function CoverUploadZone({
       className={[
         "mt-1 flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed cursor-pointer transition-colors min-h-[120px]",
         dragging
-          ? "border-[var(--tott-gold)] bg-[var(--tott-gold)]/5"
-          : "border-[var(--tott-card-border)] hover:border-[var(--tott-gold)]/50 bg-[var(--tott-dash-input-bg)]",
+          ? "border-[var(--tott-accent-gold)] bg-[var(--tott-accent-gold)]/5"
+          : "border-[var(--tott-card-border)] hover:border-[var(--tott-accent-gold)]/50 bg-[var(--tott-dash-input-bg)]",
       ].join(" ")}
     >
       <input
@@ -139,18 +139,18 @@ function CoverUploadZone({
       />
       {uploading ? (
         <div className="flex flex-col items-center gap-2 py-6">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--tott-card-border)] border-t-[var(--tott-gold)]" />
-          <span className="text-xs text-gray-400">Uploading…</span>
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--tott-card-border)] border-t-[var(--tott-accent-gold)]" />
+          <span className="text-xs text-[var(--tott-muted)]">Uploading…</span>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-1 py-6 px-4 text-center pointer-events-none">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--tott-muted)]">
             <rect x="3" y="3" width="18" height="18" rx="2" />
             <circle cx="8.5" cy="8.5" r="1.5" />
             <polyline points="21 15 16 10 5 21" />
           </svg>
-          <span className="text-xs font-medium text-gray-300 mt-1">Click to upload cover image</span>
-          <span className="text-[10px] text-gray-500">JPG, PNG, WebP — drag & drop supported</span>
+          <span className="text-xs font-medium text-[var(--tott-muted)] mt-1">Click to upload cover image</span>
+          <span className="text-[10px] text-[var(--tott-muted)]">JPG, PNG, WebP — drag & drop supported</span>
         </div>
       )}
     </label>
@@ -196,9 +196,9 @@ function PdfUploadZone({
           <line x1="16" y1="17" x2="8" y2="17" />
           <polyline points="10 9 9 9 8 9" />
         </svg>
-        <span className="flex-1 truncate text-xs text-gray-300">{value.split("/").pop()?.split("?")[0] || "File uploaded"}</span>
+        <span className="flex-1 truncate text-xs text-[var(--tott-muted)]">{value.split("/").pop()?.split("?")[0] || "File uploaded"}</span>
         <span className="shrink-0 rounded-full bg-green-500/15 px-2 py-0.5 text-[10px] font-medium text-green-400">✓ Ready</span>
-        <label htmlFor={id} className="shrink-0 cursor-pointer text-[10px] text-gray-500 hover:text-gray-300 underline">
+        <label htmlFor={id} className="shrink-0 cursor-pointer text-[10px] text-[var(--tott-muted)] hover:text-[var(--tott-muted)] underline">
           Replace
           <input id={id} ref={inputRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={onChange} />
         </label>
@@ -213,8 +213,8 @@ function PdfUploadZone({
       className={[
         "mt-1 flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed cursor-pointer transition-colors min-h-[100px]",
         dragging
-          ? "border-[var(--tott-gold)] bg-[var(--tott-gold)]/5"
-          : "border-[var(--tott-card-border)] hover:border-[var(--tott-gold)]/50 bg-[var(--tott-dash-input-bg)]",
+          ? "border-[var(--tott-accent-gold)] bg-[var(--tott-accent-gold)]/5"
+          : "border-[var(--tott-card-border)] hover:border-[var(--tott-accent-gold)]/50 bg-[var(--tott-dash-input-bg)]",
       ].join(" ")}
     >
       <input
@@ -228,18 +228,18 @@ function PdfUploadZone({
       />
       {uploading ? (
         <div className="flex flex-col items-center gap-2 py-5">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--tott-card-border)] border-t-[var(--tott-gold)]" />
-          <span className="text-xs text-gray-400">Uploading file…</span>
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--tott-card-border)] border-t-[var(--tott-accent-gold)]" />
+          <span className="text-xs text-[var(--tott-muted)]">Uploading file…</span>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-1 py-5 px-4 text-center pointer-events-none">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--tott-muted)]">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
             <polyline points="14 2 14 8 20 8" />
             <line x1="16" y1="13" x2="8" y2="13" />
           </svg>
-          <span className="text-xs font-medium text-gray-300 mt-1">Click to upload PDF or Word document</span>
-          <span className="text-[10px] text-gray-500">PDF, DOC, DOCX — drag & drop supported</span>
+          <span className="text-xs font-medium text-[var(--tott-muted)] mt-1">Click to upload PDF or Word document</span>
+          <span className="text-[10px] text-[var(--tott-muted)]">PDF, DOC, DOCX — drag & drop supported</span>
         </div>
       )}
     </label>
@@ -449,15 +449,15 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
   );
 
   const inputClass =
-    "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-[var(--tott-gold)]/60 transition-colors";
+    "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-accent-gold)]/60 transition-colors";
   const labelClass =
     "text-xs font-medium text-[var(--tott-dash-gold-label)] mb-1 block";
   const sectionClass =
-    "rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated,#111)] p-5 space-y-4";
+    "rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] p-5 space-y-4";
 
   if (isEdit && bookQuery.isPending) {
     return (
-      <div className="my-4 mx-10 text-sm text-gray-500">Loading book…</div>
+      <div className="my-4 mx-10 text-sm text-[var(--tott-muted)]">Loading book…</div>
     );
   }
 
@@ -466,7 +466,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
       {/* Back nav */}
       <Link
         href="/admin/books"
-        className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-foreground transition-colors mb-5"
+        className="inline-flex items-center gap-1.5 text-xs text-[var(--tott-muted)] hover:text-foreground transition-colors mb-5"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
@@ -493,8 +493,8 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
       </p>
 
       {isTranslation ? (
-        <div className="mb-6 max-w-2xl mx-auto rounded-xl border border-[var(--tott-gold)]/30 bg-[var(--tott-gold)]/5 px-4 py-3 text-sm">
-          <p className="font-medium text-[var(--tott-gold)]">
+        <div className="mb-6 max-w-2xl mx-auto rounded-xl border border-[var(--tott-accent-gold)]/30 bg-[var(--tott-accent-gold)]/5 px-4 py-3 text-sm">
+          <p className="font-medium text-[var(--tott-accent-gold)]">
             {form.language && t.has(`languages.${form.language}`)
               ? `${t(`languages.${form.language}`)} — ${t("translation.banner")}`
               : t("translation.banner")}
@@ -587,7 +587,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
             <div className="sm:col-span-2">
               <label className={labelClass}>{t("fields.price")}</label>
               <input type="number" step="0.01" min="0" className={inputClass} placeholder={t("fields.pricePlaceholder")} value={form.price} onChange={set("price")} />
-              <p className="mt-1 text-[10px] text-gray-500">Leave blank to mark as free</p>
+              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">Leave blank to mark as free</p>
             </div>
             <div>
               <label className={labelClass}>{t("fields.currency")}</label>
@@ -623,7 +623,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
                 value={form.cover_image}
                 onChange={set("cover_image")}
               />
-              <p className="mt-1 text-[10px] text-gray-500">Or paste an image URL directly</p>
+              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">Or paste an image URL directly</p>
             </div>
           </div>
 
@@ -644,7 +644,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
                 value={form.pdf_url}
                 onChange={set("pdf_url")}
               />
-              <p className="mt-1 text-[10px] text-gray-500">Or paste a PDF URL directly</p>
+              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">Or paste a PDF URL directly</p>
             </div>
           </div>
         </div>
@@ -661,7 +661,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
           <button
             type="submit"
             disabled={busy}
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 disabled:opacity-40 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/60 bg-[var(--tott-accent-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-accent-gold)] hover:bg-[var(--tott-accent-gold)]/20 disabled:opacity-40 transition-colors"
           >
             {busy && (
               <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -672,7 +672,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
           </button>
           <Link
             href="/admin/books"
-            className="rounded-lg px-4 py-2 text-sm text-gray-400 hover:text-foreground hover:bg-white/5 transition-colors"
+            className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground hover:bg-white/5 transition-colors"
           >
             {t("cancel")}
           </Link>
