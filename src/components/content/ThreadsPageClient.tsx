@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { ThreadsPageLayout } from "@/components/content/ThreadsPageLayout";
@@ -66,6 +67,7 @@ function mapCollection(
 }
 
 function ThreadByIdLoader({ id }: { id: string }) {
+  const t = useTranslations("Content");
   const articleQuery = useArticle(id);
   const article: ArticleDetail | null = articleQuery.data ?? null;
   const phase: "loading" | "ok" | "missing" | "error" = articleQuery.isPending
@@ -107,7 +109,7 @@ function ThreadByIdLoader({ id }: { id: string }) {
         className="flex min-h-[50vh] items-center justify-center px-6 text-sm text-gray-500"
         style={{ backgroundColor: theme.homeSurface }}
       >
-        Loading thread…
+        {t("threads.loading")}
       </div>
     );
   }
@@ -118,10 +120,10 @@ function ThreadByIdLoader({ id }: { id: string }) {
         className="mx-auto flex min-h-[50vh] max-w-lg flex-col items-center justify-center gap-4 px-6 py-16 text-center text-foreground"
         style={{ backgroundColor: "var(--tott-well-bg)" }}
       >
-        <h1 className="text-xl font-semibold">Thread not found</h1>
-        <p className="text-sm text-[var(--tott-muted)]">No thread exists for this link.</p>
+        <h1 className="text-xl font-semibold">{t("threads.notFound")}</h1>
+        <p className="text-sm text-[var(--tott-muted)]">{t("threads.notFoundBody")}</p>
         <Link href="/content" className="text-sm font-medium text-[var(--tott-dash-gold-label)] hover:underline">
-          Back to content
+          {t("threads.backToContent")}
         </Link>
       </div>
     );
@@ -133,10 +135,10 @@ function ThreadByIdLoader({ id }: { id: string }) {
         className="mx-auto flex min-h-[50vh] max-w-lg flex-col items-center justify-center gap-4 px-6 py-16 text-center text-foreground"
         style={{ backgroundColor: "var(--tott-well-bg)" }}
       >
-        <h1 className="text-xl font-semibold">Could not load thread</h1>
-        <p className="text-sm text-[var(--tott-muted)]">Check your connection or try again later.</p>
+        <h1 className="text-xl font-semibold">{t("threads.loadError")}</h1>
+        <p className="text-sm text-[var(--tott-muted)]">{t("threads.loadErrorBody")}</p>
         <Link href="/content" className="text-sm font-medium text-[var(--tott-dash-gold-label)] hover:underline">
-          Back to content
+          {t("threads.backToContent")}
         </Link>
       </div>
     );

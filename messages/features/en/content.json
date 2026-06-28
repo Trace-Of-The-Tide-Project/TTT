@@ -17,6 +17,17 @@
     "published": "Published",
     "category": "Category",
     "readingTime": "Reading Time",
+    "breadcrumbCollections": "Collections",
+    "fallbackAuthor": "Author",
+    "fallbackArticle": "Article",
+    "threads": {
+      "loading": "Loading thread…",
+      "notFound": "Thread not found",
+      "notFoundBody": "No thread exists for this link.",
+      "backToContent": "Back to content",
+      "loadError": "Could not load thread",
+      "loadErrorBody": "Check your connection or try again later."
+    },
     "shareTitle": "Share your story",
     "shareBody": "Every story matters. Help us preserve the collective memory by contributing your personal experiences, testimonies, or knowledge of historical events.",
     "shareCta": "Contribute Now",
@@ -76,6 +87,14 @@
       "newsletterPlaceholder": "you@example.com",
       "newsletterCta": "Subscribe",
       "newsletterSuccess": "Thank you — you're on the list."
+    },
+    "article": {
+      "loading": "Loading article…",
+      "notFound": "Article not found",
+      "notFoundBody": "No article exists for this link.",
+      "backToContent": "Back to content",
+      "loadError": "Could not load article",
+      "loadErrorBody": "Check your connection or try again later."
     }
   }
 }

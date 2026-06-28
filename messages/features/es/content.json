@@ -15,6 +15,19 @@
     "relatedDescription": "Explora más de nuestro archivo.",
     "viewMore": "Ver más",
     "published": "Publicado",
+    "category": "Categoría",
+    "readingTime": "Tiempo de lectura",
+    "breadcrumbCollections": "Colecciones",
+    "fallbackAuthor": "Autor",
+    "fallbackArticle": "Artículo",
+    "threads": {
+      "loading": "Cargando hilo…",
+      "notFound": "Hilo no encontrado",
+      "notFoundBody": "No existe ningún hilo para este enlace.",
+      "backToContent": "Volver al contenido",
+      "loadError": "No se pudo cargar el hilo",
+      "loadErrorBody": "Comprueba tu conexión o inténtalo de nuevo más tarde."
+    },
     "shareTitle": "Comparte tu historia",
     "shareBody": "Cada historia importa. Ayúdanos a preservar la memoria colectiva contribuyendo con tus experiencias personales, testimonios o conocimientos sobre eventos históricos.",
     "shareCta": "Contribuir ahora",
@@ -74,6 +87,14 @@
       "newsletterPlaceholder": "tu@ejemplo.com",
       "newsletterCta": "Suscribirse",
       "newsletterSuccess": "Gracias — ya estás en la lista."
+    },
+    "article": {
+      "loading": "Cargando artículo…",
+      "notFound": "Artículo no encontrado",
+      "notFoundBody": "No existe ningún artículo para este enlace.",
+      "backToContent": "Volver al contenido",
+      "loadError": "No se pudo cargar el artículo",
+      "loadErrorBody": "Comprueba tu conexión o inténtalo de nuevo más tarde."
     }
   }
 }

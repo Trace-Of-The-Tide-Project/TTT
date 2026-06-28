@@ -15,6 +15,19 @@
     "relatedDescription": "Explorez davantage notre archive.",
     "viewMore": "Voir plus",
     "published": "Publié",
+    "category": "Catégorie",
+    "readingTime": "Temps de lecture",
+    "breadcrumbCollections": "Collections",
+    "fallbackAuthor": "Auteur",
+    "fallbackArticle": "Article",
+    "threads": {
+      "loading": "Chargement du fil…",
+      "notFound": "Fil introuvable",
+      "notFoundBody": "Aucun fil n'existe pour ce lien.",
+      "backToContent": "Retour au contenu",
+      "loadError": "Impossible de charger le fil",
+      "loadErrorBody": "Vérifiez votre connexion ou réessayez plus tard."
+    },
     "shareTitle": "Partagez votre histoire",
     "shareBody": "Chaque histoire compte. Aidez-nous à préserver la mémoire collective en partageant vos expériences personnelles, témoignages ou connaissances des événements historiques.",
     "shareCta": "Contribuer maintenant",
@@ -74,6 +87,14 @@
       "newsletterPlaceholder": "vous@exemple.com",
       "newsletterCta": "S'abonner",
       "newsletterSuccess": "Merci — vous êtes inscrit."
+    },
+    "article": {
+      "loading": "Chargement de l'article…",
+      "notFound": "Article introuvable",
+      "notFoundBody": "Aucun article n'existe pour ce lien.",
+      "backToContent": "Retour au contenu",
+      "loadError": "Impossible de charger l'article",
+      "loadErrorBody": "Vérifiez votre connexion ou réessayez plus tard."
     }
   }
 }
