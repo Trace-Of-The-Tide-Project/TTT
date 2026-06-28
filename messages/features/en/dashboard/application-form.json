@@ -138,6 +138,7 @@
         "fileDropHint": "Drag and drop files (max {maxFiles}, {types}, up to {maxSizeMb} MB)"
       },
       "tripBooking": {
+        "aboutTitle": "About this trip",
         "joinTitle": "Join this adventure",
         "joinSubtitle": "Secure your spot on this journey.",
         "chooseContribution": "Choose your contribution",

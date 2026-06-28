@@ -138,6 +138,7 @@
         "fileDropHint": "Arrastra y suelta archivos (máx. {maxFiles}, {types}, hasta {maxSizeMb} MB)"
       },
       "tripBooking": {
+        "aboutTitle": "Sobre este viaje",
         "joinTitle": "Únete a esta aventura",
         "joinSubtitle": "Asegura tu lugar en este viaje.",
         "chooseContribution": "Elige tu contribución",

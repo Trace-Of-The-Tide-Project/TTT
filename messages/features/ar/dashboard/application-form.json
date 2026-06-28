@@ -138,6 +138,7 @@
         "fileDropHint": "اسحب الملفات وأفلتها (حد أقصى {maxFiles}، {types}، حتى {maxSizeMb} ميجابايت)"
       },
       "tripBooking": {
+        "aboutTitle": "عن هذه الرحلة",
         "joinTitle": "انضم إلى هذه المغامرة",
         "joinSubtitle": "احجز مكانك في هذه الرحلة.",
         "chooseContribution": "اختر مساهمتك",

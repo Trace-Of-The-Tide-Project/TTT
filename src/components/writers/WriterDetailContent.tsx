@@ -250,7 +250,9 @@ export function WriterDetailContent({ writer }: { writer: WriterDetailView }) {
                   color: ACCENT,
                 }}
               >
-                {socialLabel(s.key)}
+                {s.key.toLowerCase() === "website"
+                  ? t("socials.website")
+                  : socialLabel(s.key)}
               </a>
             ))}
           </div>
