@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
 import { PlusIcon, TrashIcon, PenLineIcon } from "@/components/ui/icons";
@@ -39,6 +40,7 @@ function formatDate(d: string | null | undefined): string {
 }
 
 export function PeopleManagementContent() {
+  const t = useTranslations("Dashboard.people");
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -66,7 +68,7 @@ export function PeopleManagementContent() {
   const people = peopleQuery.data?.people ?? [];
   const meta = peopleQuery.data?.meta ?? emptyMeta;
   const loading = peopleQuery.isPending;
-  const loadError = peopleQuery.error ? formatApiError(peopleQuery.error, "Failed to load people") : null;
+  const loadError = peopleQuery.error ? formatApiError(peopleQuery.error, t("list.errors.loadFailed")) : null;
 
   const deleteMutation = useDeletePerson();
   const deleteBusy = deleteMutation.isPending;
@@ -81,9 +83,9 @@ export function PeopleManagementContent() {
     deleteMutation.mutate(deleteTarget.id, {
       onSuccess: () => {
         setDeleteTarget(null);
-        toast.success("Person deleted");
+        toast.success(t("list.toasts.deleted"));
       },
-      onError: (e) => setDeleteError(formatApiError(e, "Delete failed")),
+      onError: (e) => setDeleteError(formatApiError(e, t("list.errors.deleteFailed"))),
     });
   };
 
@@ -95,7 +97,7 @@ export function PeopleManagementContent() {
     () => [
       {
         key: "person",
-        header: "Person",
+        header: t("list.headers.person"),
         width: "30%",
         cellClassName: "flex min-w-0 items-center gap-3 px-5 py-3",
         cell: (p) => {
@@ -125,7 +127,7 @@ export function PeopleManagementContent() {
       },
       {
         key: "dates",
-        header: "Lifespan",
+        header: t("list.headers.lifespan"),
         width: "16%",
         cellClassName: "px-5 py-3 text-sm text-[var(--tott-muted)] flex items-center",
         cell: (p) => (
@@ -137,7 +139,7 @@ export function PeopleManagementContent() {
       },
       {
         key: "bio",
-        header: "Biography",
+        header: t("list.headers.biography"),
         width: "42%",
         cellClassName: "px-5 py-3 text-sm text-[var(--tott-muted)] flex items-center min-w-0",
         cell: (p) => (
@@ -155,7 +157,7 @@ export function PeopleManagementContent() {
             <Link
               href={`/admin/people/${p.id}/edit`}
               className="rounded p-1 text-gray-400 hover:text-foreground"
-              title="Edit"
+              title={t("list.edit")}
             >
               <PenLineIcon />
             </Link>
@@ -163,7 +165,7 @@ export function PeopleManagementContent() {
               type="button"
               onClick={() => openDelete(p)}
               className="rounded p-1 text-gray-400 hover:text-red-400"
-              title="Delete"
+              title={t("list.delete")}
             >
               <TrashIcon />
             </button>
@@ -171,25 +173,25 @@ export function PeopleManagementContent() {
         ),
       },
     ],
-    [openDelete],
+    [openDelete, t],
   );
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-foreground">People</h1>
+        <h1 className="text-xl font-semibold text-foreground">{t("list.pageTitle")}</h1>
         <Link
           href="/admin/people/create"
           className="flex items-center gap-1.5 rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-3 py-1.5 text-xs font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 transition-colors"
         >
           <PlusIcon />
-          Add Person
+          {t("list.addNew")}
         </Link>
       </div>
 
       <input
         type="text"
-        placeholder="Search people…"
+        placeholder={t("list.searchPlaceholder")}
         value={searchInput}
         onChange={(e) => setSearchInput(e.target.value)}
         className="w-full max-w-sm rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500"
@@ -199,7 +201,7 @@ export function PeopleManagementContent() {
         <div className="flex items-center justify-between gap-3 rounded-lg border border-red-900/50 bg-red-950/30 px-3 py-3 text-sm text-red-200">
           <span>{loadError}</span>
           <button type="button" onClick={() => peopleQuery.refetch()} className="shrink-0 underline hover:no-underline">
-            Try again
+            {t("list.tryAgain")}
           </button>
         </div>
       )}
@@ -214,8 +216,8 @@ export function PeopleManagementContent() {
         rows={people}
         rowKey={(p) => p.id}
         loading={loading}
-        loadingLabel="Loading…"
-        emptyLabel={debouncedSearch ? "No people match your search" : "No people yet"}
+        loadingLabel={t("list.loading")}
+        emptyLabel={debouncedSearch ? t("list.empty.noMatch") : t("list.empty.none")}
       />
 
       {totalPages > 1 && (
@@ -226,7 +228,7 @@ export function PeopleManagementContent() {
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             className="disabled:opacity-40"
           >
-            Previous
+            {t("list.pagination.previous")}
           </button>
           <span>
             {effectivePage} / {totalPages}
@@ -237,7 +239,7 @@ export function PeopleManagementContent() {
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             className="disabled:opacity-40"
           >
-            Next
+            {t("list.pagination.next")}
           </button>
         </div>
       )}
@@ -248,9 +250,9 @@ export function PeopleManagementContent() {
             className="w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] p-6 shadow-xl"
             style={{ backgroundColor: "var(--tott-dash-bg, #1a1a1a)" }}
           >
-            <h2 className="mb-2 text-base font-semibold">Delete person?</h2>
+            <h2 className="mb-2 text-base font-semibold">{t("list.deleteModal.title")}</h2>
             <p className="mb-4 text-sm text-gray-400">
-              &ldquo;{deleteTarget.full_name}&rdquo; will be permanently removed.
+              {t("list.deleteModal.description", { name: deleteTarget.full_name })}
             </p>
             {deleteError && <p className="mb-3 text-xs text-red-400">{deleteError}</p>}
             <div className="flex justify-end gap-3">
@@ -260,7 +262,7 @@ export function PeopleManagementContent() {
                 disabled={deleteBusy}
                 className="rounded-lg px-4 py-1.5 text-sm text-gray-400 hover:text-foreground disabled:opacity-40"
               >
-                Cancel
+                {t("list.deleteModal.cancel")}
               </button>
               <button
                 type="button"
@@ -268,7 +270,7 @@ export function PeopleManagementContent() {
                 disabled={deleteBusy}
                 className="rounded-lg bg-red-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-40"
               >
-                {deleteBusy ? "Deleting…" : "Delete"}
+                {deleteBusy ? t("list.deleteModal.confirmBusy") : t("list.deleteModal.confirm")}
               </button>
             </div>
           </div>

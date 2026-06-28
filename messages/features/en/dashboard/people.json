@@ -1,0 +1,85 @@
+{
+  "Dashboard": {
+    "people": {
+      "list": {
+        "pageTitle": "People",
+        "addNew": "Add Person",
+        "searchPlaceholder": "Search people…",
+        "loading": "Loading…",
+        "empty": {
+          "none": "No people yet",
+          "noMatch": "No people match your search"
+        },
+        "headers": {
+          "person": "Person",
+          "lifespan": "Lifespan",
+          "biography": "Biography"
+        },
+        "edit": "Edit",
+        "delete": "Delete",
+        "tryAgain": "Try again",
+        "pagination": {
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "errors": {
+          "loadFailed": "Failed to load people",
+          "deleteFailed": "Delete failed"
+        },
+        "toasts": {
+          "deleted": "Person deleted"
+        },
+        "deleteModal": {
+          "title": "Delete person?",
+          "description": "“{name}” will be permanently removed.",
+          "cancel": "Cancel",
+          "confirm": "Delete",
+          "confirmBusy": "Deleting…"
+        }
+      },
+      "form": {
+        "backToList": "People",
+        "createTitle": "Add person",
+        "editTitle": "Edit person",
+        "loading": "Loading…",
+        "sections": {
+          "identity": "Identity",
+          "biography": "Biography"
+        },
+        "fields": {
+          "fullName": "Full name",
+          "fullNamePlaceholder": "e.g. Mahmoud Darwish",
+          "birthDate": "Birth date",
+          "deathDate": "Death date",
+          "portrait": "Portrait",
+          "biography": "Biography",
+          "biographyPlaceholder": "Short biographical summary…"
+        },
+        "upload": {
+          "uploading": "Uploading…",
+          "click": "Click or drag portrait image",
+          "hint": "JPG, PNG, WebP — recommended square",
+          "change": "Change"
+        },
+        "translation": {
+          "banner": "Adding a translation ({language}) — write this language's version below.",
+          "ofOriginal": "Translation of “{name}”"
+        },
+        "errors": {
+          "fullNameRequired": "Full name is required.",
+          "portraitUploadFailed": "Portrait upload failed",
+          "updateFailed": "Update failed",
+          "createFailed": "Create failed"
+        },
+        "toasts": {
+          "updated": "Person updated",
+          "created": "Person created"
+        },
+        "cancel": "Cancel",
+        "saving": "Saving…",
+        "save": "Save changes",
+        "create": "Create person"
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { usePerson } from "@/hooks/queries/people";
@@ -48,6 +49,7 @@ type Props = {
 };
 
 export function PersonFormContent({ personId, createLanguage, translationOf }: Props) {
+  const t = useTranslations("Dashboard.people");
   const router = useRouter();
   const isEdit = Boolean(personId);
   const translationsOn = isTranslatableNow("person");
@@ -114,12 +116,12 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
         const key = await uploadArticleAssetPath(file);
         set("portrait", key);
       } catch {
-        toast.error("Portrait upload failed");
+        toast.error(t("form.errors.portraitUploadFailed"));
       } finally {
         setUploadingPortrait(false);
       }
     },
-    [set],
+    [set, t],
   );
 
   const buildPayload = (): PersonProfilePayload => ({
@@ -140,7 +142,7 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
     setFormError(null);
 
     if (!form.full_name.trim()) {
-      setFormError("Full name is required.");
+      setFormError(t("form.errors.fullNameRequired"));
       return;
     }
 
@@ -151,19 +153,19 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
         { personId, payload },
         {
           onSuccess: () => {
-            toast.success("Person updated");
+            toast.success(t("form.toasts.updated"));
             router.push("/admin/people");
           },
-          onError: (err) => setFormError(formatApiError(err, "Update failed")),
+          onError: (err) => setFormError(formatApiError(err, t("form.errors.updateFailed"))),
         },
       );
     } else {
       createMutation.mutate(payload, {
         onSuccess: () => {
-          toast.success("Person created");
+          toast.success(t("form.toasts.created"));
           router.push("/admin/people");
         },
-        onError: (err) => setFormError(formatApiError(err, "Create failed")),
+        onError: (err) => setFormError(formatApiError(err, t("form.errors.createFailed"))),
       });
     }
   };
@@ -179,10 +181,10 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
             href="/admin/people"
             className="text-xs text-[var(--tott-muted)] hover:text-foreground"
           >
-            ← People
+            ← {t("form.backToList")}
           </Link>
           <h1 className="text-lg font-semibold">
-            {isEdit ? "Edit person" : "Add person"}
+            {isEdit ? t("form.editTitle") : t("form.createTitle")}
           </h1>
         </div>
         {isEdit && personId && translationsOn ? (
@@ -197,39 +199,40 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
       {isTranslation ? (
         <div className="rounded-xl border border-[var(--tott-gold)]/30 bg-[var(--tott-gold)]/5 px-4 py-3 text-sm">
           <p className="font-medium text-[var(--tott-gold)]">
-            Adding a translation ({form.language.toUpperCase()}) — write this
-            language&apos;s version below.
+            {t("form.translation.banner", { language: form.language.toUpperCase() })}
           </p>
           {sourceQuery.data ? (
             <p className="mt-1 text-[var(--tott-muted)]">
-              Translation of “{sourceQuery.data.full_name?.trim() || "—"}”
+              {t("form.translation.ofOriginal", {
+                name: sourceQuery.data.full_name?.trim() || "—",
+              })}
             </p>
           ) : null}
         </div>
       ) : null}
 
       {loadingEdit ? (
-        <div className="py-12 text-center text-sm text-gray-400">Loading…</div>
+        <div className="py-12 text-center text-sm text-gray-400">{t("form.loading")}</div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Identity */}
           <div className={sectionClass}>
-            <p className={sectionHeadingClass}>Identity</p>
+            <p className={sectionHeadingClass}>{t("form.sections.identity")}</p>
 
             <div>
-              <label className={labelClass}>Full name *</label>
+              <label className={labelClass}>{t("form.fields.fullName")} *</label>
               <input
                 className={inputClass}
                 value={form.full_name}
                 onChange={(e) => set("full_name", e.target.value)}
-                placeholder="e.g. Mahmoud Darwish"
+                placeholder={t("form.fields.fullNamePlaceholder")}
                 disabled={busy}
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={labelClass}>Birth date</label>
+                <label className={labelClass}>{t("form.fields.birthDate")}</label>
                 <input
                   type="date"
                   className={inputClass}
@@ -239,7 +242,7 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
                 />
               </div>
               <div>
-                <label className={labelClass}>Death date</label>
+                <label className={labelClass}>{t("form.fields.deathDate")}</label>
                 <input
                   type="date"
                   className={inputClass}
@@ -251,16 +254,16 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
             </div>
 
             <div>
-              <label className={labelClass}>Portrait</label>
+              <label className={labelClass}>{t("form.fields.portrait")}</label>
               <AvatarUploadZone
                 value={form.portrait}
                 uploading={uploadingPortrait}
                 onChange={handlePortraitUpload}
                 labels={{
-                  uploading: "Uploading…",
-                  click: "Click or drag portrait image",
-                  hint: "JPG, PNG, WebP — recommended square",
-                  change: "Change",
+                  uploading: t("form.upload.uploading"),
+                  click: t("form.upload.click"),
+                  hint: t("form.upload.hint"),
+                  change: t("form.upload.change"),
                 }}
               />
             </div>
@@ -268,15 +271,15 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
 
           {/* Biography */}
           <div className={sectionClass}>
-            <p className={sectionHeadingClass}>Biography</p>
+            <p className={sectionHeadingClass}>{t("form.sections.biography")}</p>
             <div>
-              <label className={labelClass}>Biography</label>
+              <label className={labelClass}>{t("form.fields.biography")}</label>
               <textarea
                 rows={6}
                 className={inputClass}
                 value={form.biography}
                 onChange={(e) => set("biography", e.target.value)}
-                placeholder="Short biographical summary…"
+                placeholder={t("form.fields.biographyPlaceholder")}
                 disabled={busy}
               />
             </div>
@@ -293,14 +296,14 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
               href="/admin/people"
               className="rounded-lg px-4 py-2 text-sm text-gray-400 hover:text-foreground"
             >
-              Cancel
+              {t("form.cancel")}
             </Link>
             <button
               type="submit"
               disabled={busy}
               className="rounded-lg bg-[var(--tott-gold)] px-5 py-2 text-sm font-semibold text-black hover:opacity-90 disabled:opacity-40 transition-opacity"
             >
-              {busy ? "Saving…" : isEdit ? "Save changes" : "Create person"}
+              {busy ? t("form.saving") : isEdit ? t("form.save") : t("form.create")}
             </button>
           </div>
         </form>
