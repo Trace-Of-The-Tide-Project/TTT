@@ -1,0 +1,152 @@
+{
+  "Legal": {
+    "contact": {
+      "title": "اتصل بنا",
+      "subtitle": "يسعدنا أن نسمع منك",
+      "getInTouch": {
+        "heading": "تواصل معنا",
+        "body": "أسئلة أو أفكار أو ملاحظات؟ تواصل مع فريق التحرير مباشرةً عبر البريد الإلكتروني وسنرد عليك في أقرب وقت ممكن."
+      },
+      "contribute": {
+        "heading": "هل ترغب في المساهمة؟",
+        "body": "إذا كنت ترغب في مشاركة قصة أو الانضمام إلى المجلة، انتقل إلى صفحة <link>المساهمة</link>."
+      }
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "subtitle": "Effective Date: [Insert Date]",
+      "s1": {
+        "heading": "1. Introduction",
+        "body": "We value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and share information when you use our website [yourdomain.com]."
+      },
+      "s2": {
+        "heading": "2. Information We Collect",
+        "intro": "We may collect the following types of information:",
+        "item1": "<b>Personal Information:</b> Name, email, or other details you voluntarily submit (e.g., contact forms or newsletter subscriptions).",
+        "item2": "<b>Usage Data:</b> IP address, browser type, device, pages visited, and time spent — collected via cookies and analytics tools.",
+        "item3": "<b>Uploaded Content:</b> Any content (articles, comments, media) you submit or contribute."
+      },
+      "s3": {
+        "heading": "3. How We Use Your Information",
+        "intro": "We use your data to:",
+        "item1": "Provide and maintain our services",
+        "item2": "Improve user experience and content relevance",
+        "item3": "Respond to inquiries or support requests",
+        "item4": "Send occasional updates (only with your consent)"
+      },
+      "s4": {
+        "heading": "4. Sharing and Disclosure",
+        "intro": "We do not sell or share your personal information with third parties, except:",
+        "item1": "With service providers (e.g., hosting, analytics) under confidentiality agreements",
+        "item2": "If required by law or legal process",
+        "item3": "To prevent fraud or protect the security of our services"
+      },
+      "s5": {
+        "heading": "5. Cookies and Analytics",
+        "body": "We use cookies and similar technologies to collect usage data and improve our services. You can control cookie preferences through your browser settings. We may use analytics services (e.g., Google Analytics) to understand how visitors use our site and to optimize content and performance."
+      }
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "subtitle": "Effective Date: [Insert Date]",
+      "s1": {
+        "heading": "1. Acceptance of Terms",
+        "body": "By accessing or using [yourdomain.com], you agree to these Terms of Service and our Privacy Policy. If you do not agree, please do not use the website."
+      },
+      "s2": {
+        "heading": "2. Use of the Website",
+        "intro": "You agree to:",
+        "item1": "Use the site only for lawful, non-commercial purposes",
+        "item2": "Respect intellectual property rights",
+        "item3": "Not interfere with or disrupt the site or servers"
+      },
+      "s3": {
+        "heading": "3. User Content",
+        "intro": "If you upload or contribute content:",
+        "item1": "You retain ownership, but grant us a license to display, share, and archive your content on our platform",
+        "item2": "You must not upload content that is unlawful, defamatory, infringing, or harmful",
+        "after": "We reserve the right to remove any content at our discretion."
+      },
+      "s4": {
+        "heading": "4. Intellectual Property",
+        "body": "All content on this website — including text, design, logos, videos, and other media — is either owned by or licensed to us and protected by copyright and intellectual property laws."
+      },
+      "s5": {
+        "heading": "5. Links to Other Websites",
+        "body": "Our site may contain links to third-party websites. We are not responsible for their content, policies, or practices."
+      },
+      "s6": {
+        "heading": "6. Disclaimers",
+        "body": "The content provided is for educational and informational purposes. While we strive for accuracy, we make no warranties about the completeness, reliability, or accuracy of any content."
+      },
+      "s7": {
+        "heading": "7. Limitation of Liability",
+        "body": "We are not liable for any direct, indirect, incidental, or consequential damages arising from your use of this website."
+      },
+      "s8": {
+        "heading": "8. Modifications",
+        "body": "We may update these Terms of Service at any time. Continued use of the site means you accept the revised terms."
+      },
+      "s9": {
+        "heading": "9. Governing Law",
+        "body": "These terms are governed by the laws of [Your Country/State]. Any disputes shall be resolved under the jurisdiction of [Your Jurisdiction]."
+      },
+      "s10": {
+        "heading": "10. Contact Us",
+        "email": "📧 Email: <mail>[your-email@example.com]</mail>",
+        "address": "📍 Address: [Your Organization, Street Address, City, Country]"
+      }
+    },
+    "gdpr": {
+      "title": "GDPR",
+      "subtitle": "Effective Date: [Insert Date]",
+      "s1": {
+        "heading": "1. Acceptance of Terms",
+        "body": "By accessing or using [yourdomain.com], you agree to these Terms of Service and our Privacy Policy. If you do not agree, please do not use the website."
+      },
+      "s2": {
+        "heading": "2. Use of the Website",
+        "intro": "You agree to:",
+        "item1": "Use the site only for lawful, non-commercial purposes",
+        "item2": "Respect intellectual property rights",
+        "item3": "Not interfere with or disrupt the site or servers"
+      },
+      "s3": {
+        "heading": "3. User Content",
+        "intro": "If you upload or contribute content:",
+        "item1": "You retain ownership, but grant us a license to display, share, and archive your content on our platform",
+        "item2": "You must not upload content that is unlawful, defamatory, infringing, or harmful",
+        "after": "We reserve the right to remove any content at our discretion."
+      },
+      "s4": {
+        "heading": "4. Intellectual Property",
+        "body": "All content on this website — including text, design, logos, videos, and other media — is either owned by or licensed to us and protected by copyright and intellectual property laws."
+      },
+      "s5": {
+        "heading": "5. Links to Other Websites",
+        "body": "Our site may contain links to third-party websites. We are not responsible for their content, policies, or practices."
+      },
+      "s6": {
+        "heading": "6. Disclaimers",
+        "body": "The content provided is for educational and informational purposes. While we strive for accuracy, we make no warranties about the completeness, reliability, or accuracy of any content."
+      },
+      "s7": {
+        "heading": "7. Limitation of Liability",
+        "body": "We are not liable for any direct, indirect, incidental, or consequential damages arising from your use of this website."
+      },
+      "s8": {
+        "heading": "8. Modifications",
+        "body": "We may update these Terms of Service at any time. Continued use of the site means you accept the revised terms."
+      },
+      "s9": {
+        "heading": "9. Governing Law",
+        "body": "These terms are governed by the laws of [Your Country/State]. Any disputes shall be resolved under the jurisdiction of [Your Jurisdiction]."
+      },
+      "s10": {
+        "heading": "10. Contact Us",
+        "email": "📧 Email: <mail>[your-email@example.com]</mail>",
+        "address": "📍 Address: [Your Organization, Street Address, City, Country]"
+      }
+    }
+  }
+}
