@@ -64,14 +64,14 @@ export default function PremiumGate({ feature, children, upgradeMessage }: Props
     heading = `Requires ${cheapestUnlock.display_name}`;
     body =
       upgradeMessage ??
-      `This content requires ${cheapestUnlock.display_name} ($${cheapestUnlock.price_monthly}/mo).`;
+      `This content requires ${cheapestUnlock.display_name} (£${cheapestUnlock.price_monthly}/mo).`;
     actionLabel = 'Upgrade';
     actionHref = '/settings/subscription';
   } else if (!subscription && cheapestUnlock) {
     heading = 'Premium content';
     body =
       upgradeMessage ??
-      `Available on ${cheapestUnlock.display_name} ($${cheapestUnlock.price_monthly}/mo) and above.`;
+      `Available on ${cheapestUnlock.display_name} (£${cheapestUnlock.price_monthly}/mo) and above.`;
     actionLabel = 'Subscribe';
     actionHref = '/subscribe';
   }
