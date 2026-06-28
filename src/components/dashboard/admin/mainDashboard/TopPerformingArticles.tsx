@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { HexIconOutlined } from "@/components/dashboard/admin/articles/articles-create/HexIconOutlined";
 import { MapPinIcon } from "@/components/ui/icons";
 import { TrendingUpIcon, TrendingDownIcon } from "@/components/ui/icons";
@@ -18,9 +19,10 @@ type TopPerformingArticlesProps = {
 };
 
 export function TopPerformingArticles({ items }: TopPerformingArticlesProps) {
+  const t = useTranslations("Dashboard.analyticsExtra");
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-bold text-foreground">Top Performing Articles</h3>
+      <h3 className="text-lg font-bold text-foreground">{t("topPerformingArticles")}</h3>
       <div className="flex flex-col gap-3">
         {items.map((entry) => (
           <div
@@ -38,9 +40,9 @@ export function TopPerformingArticles({ items }: TopPerformingArticlesProps) {
             </div>
             <div className="flex shrink-0 flex-col items-end gap-0.5">
               {entry.contributors !== undefined && (
-                <p className="text-xs text-gray-400">{entry.contributors} contributors</p>
+                <p className="text-xs text-gray-400">{t("contributorsCount", { count: entry.contributors })}</p>
               )}
-              <p className="text-xs text-gray-400">{entry.views} views</p>
+              <p className="text-xs text-gray-400">{t("viewsCount", { count: entry.views })}</p>
             </div>
             {entry.trend && (
               <span

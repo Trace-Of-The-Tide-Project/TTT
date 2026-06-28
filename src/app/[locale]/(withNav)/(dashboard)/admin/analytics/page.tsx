@@ -15,6 +15,7 @@ const ANALYTICS_TAB_IDS: AnalyticsTabId[] = [
 
 export default function AnalyticsPage() {
   const t = useTranslations("Dashboard.analyticsPage");
+  const tx = useTranslations("Dashboard.analyticsExtra");
   const locale = useLocale();
   const [activeTab, setActiveTab] = useState<AnalyticsTabId>("overview");
   const [period, setPeriod] = useState<"7d" | "30d" | "90d" | "1y">("30d");
@@ -102,14 +103,14 @@ export default function AnalyticsPage() {
             onChange={(e) => setPeriod(e.target.value as typeof period)}
             className="rounded-lg border border-[#444] bg-[#232323] px-3 py-2 text-sm text-white focus:outline-none"
           >
-            <option value="7d">Last 7 days</option>
-            <option value="30d">Last 30 days</option>
-            <option value="90d">Last 90 days</option>
-            <option value="1y">Last year</option>
+            <option value="7d">{tx("period7d")}</option>
+            <option value="30d">{tx("period30d")}</option>
+            <option value="90d">{tx("period90d")}</option>
+            <option value="1y">{tx("periodYear")}</option>
           </select>
         </div>
 
-        {loading && <p className="text-center text-sm text-gray-500 py-8">Loading…</p>}
+        {loading && <p className="text-center text-sm text-gray-500 py-8">{tx("loading")}</p>}
 
         {!loading && activeTab === "overview" && (
           <div className="space-y-6">
@@ -164,7 +165,7 @@ export default function AnalyticsPage() {
             <h2 className="text-2xl font-semibold text-white">{t("contentPerformance.title")}</h2>
             <p className="mt-1 text-sm text-gray-500">{t("contentPerformance.subtitle")}</p>
             {topCategories.length === 0 ? (
-              <p className="mt-8 text-center text-sm text-gray-500">No data yet.</p>
+              <p className="mt-8 text-center text-sm text-gray-500">{tx("noDataYet")}</p>
             ) : (
               <div className="mt-7 space-y-6">
                 {topCategories.map((row, idx) => {
@@ -202,13 +203,13 @@ export default function AnalyticsPage() {
             <h2 className="text-2xl font-semibold text-white">{t("topCreators.title")}</h2>
             <p className="mt-1 text-sm text-gray-500">{t("topCreators.subtitle")}</p>
             {topAuthors.length === 0 ? (
-              <p className="mt-8 text-center text-sm text-gray-500">No data yet.</p>
+              <p className="mt-8 text-center text-sm text-gray-500">{tx("noDataYet")}</p>
             ) : (
               <div className="mt-6 overflow-hidden rounded-2xl border border-[#2f2f2f]">
                 <div className="grid grid-cols-[1.6fr_0.7fr_0.7fr] items-center border-b border-[#2f2f2f] bg-[#121212] px-6 py-4">
                   <div className="text-start text-sm text-[#CBA158]">{t("topCreators.colCreator")}</div>
                   <div className="text-center text-sm text-[#CBA158]">{t("topCreators.colContent")}</div>
-                  <div className="text-end text-sm text-[#CBA158]">Views</div>
+                  <div className="text-end text-sm text-[#CBA158]">{tx("viewsColumn")}</div>
                 </div>
                 <div className="divide-y divide-[#2f2f2f]">
                   {topAuthors.map((row, idx) => (
@@ -231,7 +232,7 @@ export default function AnalyticsPage() {
             <h2 className="text-2xl font-semibold text-white">{t("funnel.title")}</h2>
             <p className="mt-1 text-sm text-gray-500">{t("funnel.subtitle")}</p>
             {funnelSteps.length === 0 ? (
-              <p className="mt-8 text-center text-sm text-gray-500">No data yet.</p>
+              <p className="mt-8 text-center text-sm text-gray-500">{tx("noDataYet")}</p>
             ) : (
               <div className="mt-8 space-y-7">
                 {funnelSteps.map((step) => {

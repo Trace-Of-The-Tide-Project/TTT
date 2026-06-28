@@ -28,8 +28,10 @@ function getInitials(name: string): string {
     .join("");
 }
 
-function formatArticleSubtitle(article: RecentArticle): string {
-  const label = article.status === "published" ? "Published article" : "Draft article";
+type Translator = (key: string, values?: Record<string, string | number>) => string;
+
+function formatArticleSubtitle(article: RecentArticle, t: Translator): string {
+  const label = article.status === "published" ? t("publishedArticle") : t("draftArticle");
   const date = article.published_at ?? article.createdAt;
   if (!date) return label;
   try {
@@ -39,17 +41,17 @@ function formatArticleSubtitle(article: RecentArticle): string {
   }
 }
 
-function articleToListItem(article: RecentArticle): RecentListItem {
+function articleToListItem(article: RecentArticle, t: Translator): RecentListItem {
   return {
     id: article.id,
-    title: article.title || "Untitled",
-    subtitle: formatArticleSubtitle(article),
+    title: article.title || t("untitled"),
+    subtitle: formatArticleSubtitle(article, t),
     href: `/admin/articles/${article.id}`,
   };
 }
 
-function supporterToListItem(supporter: RecentSupporter): RecentListItem {
-  const name = supporter.User?.full_name || supporter.User?.username || "Anonymous";
+function supporterToListItem(supporter: RecentSupporter, t: Translator): RecentListItem {
+  const name = supporter.User?.full_name || supporter.User?.username || t("anonymous");
   const initials = getInitials(name);
   const amount = supporter.amount ? `$${supporter.amount}` : "";
   return {
@@ -68,6 +70,7 @@ function formatNumber(n: number): string {
 export default function ProfileDashboardPage() {
   const tDash = useTranslations("Dashboard");
   const tProfile = useTranslations("Dashboard.profileHome");
+  const tx = useTranslations("Dashboard.analyticsExtra");
 
   const sessionUser = useAuthUser();
   const { data: profile } = useProfile();
@@ -91,8 +94,8 @@ export default function ProfileDashboardPage() {
     formatNumber(stats?.days_active ?? 0),
   ] as const;
 
-  const recentArticles: RecentListItem[] = dashboard?.recent_articles.map(articleToListItem) ?? [];
-  const recentSupporters: RecentListItem[] = dashboard?.recent_supporters.map(supporterToListItem) ?? [];
+  const recentArticles: RecentListItem[] = dashboard?.recent_articles.map((a) => articleToListItem(a, tx)) ?? [];
+  const recentSupporters: RecentListItem[] = dashboard?.recent_supporters.map((s) => supporterToListItem(s, tx)) ?? [];
 
   return (
     <div>

@@ -12,6 +12,7 @@ import {
   HeartHandshakeIcon,
   GridIcon,
 } from "@/components/ui/icons";
+import { useTranslations } from "next-intl";
 import { useAuthorDashboard } from "@/hooks/queries/author-dashboard";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/services/api";
@@ -124,6 +125,7 @@ function StatMiniCard({ icon, value, label, trend }: StatMiniCardProps) {
 }
 
 export function ProfileAnalytics() {
+  const t = useTranslations("Dashboard.analyticsExtra");
   const { data: analytics, isLoading } = useAuthorAnalytics();
   const { data: dashboard } = useAuthorDashboard();
 
@@ -141,8 +143,8 @@ export function ProfileAnalytics() {
     <div>
       <DashboardHeader
         compactPadding
-        title="Analytics"
-        subtitle="Track your content performance and audience."
+        title={t("pageTitle")}
+        subtitle={t("pageSubtitle")}
       />
 
       <div className="space-y-8 p-6 sm:p-8">
@@ -151,28 +153,28 @@ export function ProfileAnalytics() {
           <StatMiniCard
             icon={<EyeIcon />}
             value={isLoading ? dash : formatNumber(totalViews)}
-            label="Total views"
+            label={t("totalViews")}
           />
           <StatMiniCard
             icon={<GridIcon />}
             value={isLoading ? dash : String(articlesPublished)}
-            label="Articles published"
+            label={t("articlesPublished")}
           />
           <StatMiniCard
             icon={<BarChartIcon />}
             value={isLoading ? dash : formatNumber(avgViews)}
-            label="Avg views / article"
+            label={t("avgViewsPerArticle")}
           />
           <StatMiniCard
             icon={<HeartHandshakeIcon />}
             value={isLoading ? dash : String(totalContributors)}
-            label="Total contributors"
+            label={t("totalContributors")}
           />
         </div>
 
         {/* Top articles */}
         <div>
-          <h3 className="mb-4 text-lg font-bold text-foreground">Top Performing Articles</h3>
+          <h3 className="mb-4 text-lg font-bold text-foreground">{t("topPerformingArticles")}</h3>
 
           {isLoading ? (
             <div className="flex flex-col gap-3">
@@ -195,8 +197,8 @@ export function ProfileAnalytics() {
               <span style={{ color: "var(--tott-dash-gold-text)" }}>
                 <BarChartIcon />
               </span>
-              <p className="text-sm text-[var(--tott-muted)]">No published articles yet.</p>
-              <p className="text-xs text-gray-600">Publish your first article to see analytics here.</p>
+              <p className="text-sm text-[var(--tott-muted)]">{t("noPublishedArticlesYet")}</p>
+              <p className="text-xs text-gray-600">{t("publishFirstArticleHint")}</p>
             </div>
           ) : (
             <div className="flex flex-col gap-3">
@@ -229,7 +231,7 @@ export function ProfileAnalytics() {
                         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-gray-500">
                           {pubDate && <span>{pubDate}</span>}
                           {article.contributors > 0 && (
-                            <span>· {article.contributors} contributor{article.contributors !== 1 ? "s" : ""}</span>
+                            <span>· {t("contributorsCount", { count: article.contributors })}</span>
                           )}
                         </div>
 
@@ -249,7 +251,7 @@ export function ProfileAnalytics() {
                       <div className="shrink-0 flex flex-col items-end gap-1">
                         <span className="text-sm font-semibold text-foreground">
                           {formatNumber(article.view_count)}
-                          <span className="ml-1 text-xs font-normal text-gray-500">views</span>
+                          <span className="ml-1 text-xs font-normal text-gray-500">{t("views")}</span>
                         </span>
                         <span
                           className="flex items-center gap-0.5 text-xs font-medium"
