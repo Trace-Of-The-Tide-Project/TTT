@@ -99,6 +99,8 @@ type ContentSettingsProps = {
   excludeId?: string;
   visibility: "public" | "private";
   onVisibilityChange: (v: "public" | "private") => void;
+  isPremium?: boolean;
+  onIsPremiumChange?: (v: boolean) => void;
   seoTitle: string;
   onSeoTitleChange: (v: string) => void;
   metaDescription: string;
@@ -143,6 +145,8 @@ export function ContentSettings({
   excludeId,
   visibility,
   onVisibilityChange,
+  isPremium = false,
+  onIsPremiumChange,
   seoTitle,
   onSeoTitleChange,
   metaDescription,
@@ -382,6 +386,18 @@ export function ContentSettings({
             <option value="private">{t("visibility.private")}</option>
             <option value="public">{t("visibility.public")}</option>
           </FieldSelect>
+        </div>
+
+        <div>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isPremium}
+              onChange={(e) => onIsPremiumChange?.(e.target.checked)}
+              className="h-4 w-4 rounded border-[var(--tott-card-border)] accent-amber-500"
+            />
+            <span className="text-sm text-gray-300">Premium (subscribers only)</span>
+          </label>
         </div>
 
         <div>

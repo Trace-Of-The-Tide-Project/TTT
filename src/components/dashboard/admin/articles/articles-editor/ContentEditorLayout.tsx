@@ -35,6 +35,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
     language, setLanguage,
     translationOf, originalTitle,
     visibility, setVisibility,
+    isPremium, setIsPremium,
     seoTitle, setSeoTitle,
     metaDescription, setMetaDescription,
     collectionId, setCollectionId,
@@ -234,6 +235,8 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
               excludeId={articleId}
               visibility={visibility}
               onVisibilityChange={setVisibility}
+              isPremium={isPremium}
+              onIsPremiumChange={setIsPremium}
               seoTitle={seoTitle}
               onSeoTitleChange={setSeoTitle}
               metaDescription={metaDescription}

@@ -27,6 +27,7 @@ import {
 } from "@/lib/constants";
 import { useOptionalArticleReadingHeader } from "@/components/layout/ArticleReadingHeaderContext";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
+import PremiumGate from "@/components/content/PremiumGate";
 
 type DemoArticle = typeof CONTENT_ARTICLE | typeof CONTENT_ARTICLE_FULL;
 
@@ -249,7 +250,7 @@ function ArticleByIdLoader({ id }: { id: string }) {
 
   if (article) {
     const props = buildArticleContentPageProps(article);
-    return (
+    const layout = (
       <ContentPageLayout
         {...props}
         article={{ ...props.article, viewCount: displayViewCount ?? props.article.viewCount }}
@@ -257,6 +258,9 @@ function ArticleByIdLoader({ id }: { id: string }) {
         relatedContent={liveRelated.length > 0 ? liveRelated : props.relatedContent}
       />
     );
+    return article.is_premium ? (
+      <PremiumGate feature="archive">{layout}</PremiumGate>
+    ) : layout;
   }
 
   return null;

@@ -26,6 +26,7 @@ export type CreateArticlePayload = {
   category: string;
   language?: string;
   visibility?: "public" | "private";
+  is_premium?: boolean;
   seo_title?: string;
   meta_description?: string;
   collection_id?: string;
@@ -90,6 +91,7 @@ function toCreateArticleBody(payload: CreateArticlePayload): Record<string, unkn
   if (payload.scheduled_at != null) body.scheduled_at = payload.scheduled_at;
   if (payload.open_call_id) body.open_call_id = payload.open_call_id;
   if (payload.translation_of) body.translation_of = payload.translation_of;
+  if (payload.is_premium != null) body.is_premium = payload.is_premium;
 
   return body;
 }
@@ -300,6 +302,7 @@ export type ArticleDetail = {
   open_call_id?: string | null;
   translation_of?: string | null;
   translation_group_id?: string | null;
+  is_premium?: boolean;
 };
 
 function unwrapArticleDetailPayload(raw: unknown): ArticleDetail | null {
