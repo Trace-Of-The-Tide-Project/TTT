@@ -1,10 +1,23 @@
 # Backend Asks — Extend translation groups to writers, books & people
 
-> **STATUS (2026-06-24): 🟡 proposed — frontend wired ahead, dark behind a flag.**
+> **STATUS (2026-06-28): 🔴 backend not yet shipped — frontend complete, flag OFF.**
 >
-> The frontend for these types is built and merged, but gated off by
-> `NEXT_PUBLIC_FEATURE_EXTENDED_TRANSLATIONS`. Flip it to `true` once the
-> endpoints below ship and the UI lights up with no further frontend change.
+> Verified against the live OpenAPI spec (`/api/docs-json`) on 2026-06-28:
+> **none** of the asks below have shipped. Confirmed absent:
+> - `GET /writers/:id/translations`, `/people/:id/translations`,
+>   `/knowledge/books/:id/translations` — not present.
+> - `translation_group_id` — on no schema.
+> - `translation_of` — accepted only on Article & Open-call create DTOs (the
+>   already-live types), not on writer/person/book.
+> - `name_i18n` (taxonomy) — nowhere in the spec.
+>
+> The 4 already-live types are confirmed working: `/articles`, `/open-calls`,
+> `/collections`, `/magazine-issues` each expose `/{id}/translations`.
+>
+> The frontend for the pending types is built and merged, gated off by
+> `NEXT_PUBLIC_FEATURE_EXTENDED_TRANSLATIONS` (kept `false` until these ship).
+> Flip it to `true` once the endpoints below ship and the UI lights up with no
+> further frontend change.
 >
 > Backend reference: `https://ttt-api-619600614028.europe-west2.run.app/api/docs`.
 
@@ -180,7 +193,8 @@ omitted entirely when the flag is off. Backend ask:
     current backend never receives unknown columns).
 
 ### Known follow-ups
-- Open-call **edit-mode** language panel: the create-translation flow works, but
-  the bespoke open-call editor doesn't yet render `TranslationsPanel`
-  (`contentType="open-call"`). Small wiring task once verified the open-call
-  translations endpoint is live.
+- ~~Open-call **edit-mode** language panel~~ ✅ **Done (2026-06-28).** The shared
+  article editor (`ContentEditorLayout`) now passes
+  `contentType={config.contentType === "open-call" ? "open-call" : "article"}`
+  to `TranslationsPanel`, so editing an open-call reads its own translation
+  group (the `/open-calls/:id/translations` endpoint is live).

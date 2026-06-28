@@ -159,7 +159,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
             </div>
             <div className="flex items-center gap-3">
               <TranslationsPanel
-                contentType="article"
+                contentType={config.contentType === "open-call" ? "open-call" : "article"}
                 contentId={articleId}
                 currentLanguage={language}
                 createBasePath={`/admin/articles/create/${config.contentType}`}
