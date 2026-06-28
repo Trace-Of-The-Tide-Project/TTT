@@ -636,7 +636,7 @@ function AdvancedFilterPopover({
         {activeCount > 0 ? (
           <span
             aria-hidden
-            className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold"
+            className="absolute -end-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold"
             style={{
               backgroundColor: "var(--tott-dark-pill)",
               color: "var(--tott-dark-pill-fg)",
@@ -651,7 +651,7 @@ function AdvancedFilterPopover({
         <div
           role="dialog"
           aria-label="Filters"
-          className="absolute right-0 top-full z-30 mt-2 w-80 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] p-4 shadow-lg"
+          className="absolute end-0 top-full z-30 mt-2 w-80 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] p-4 shadow-lg"
         >
           <div className="mb-3 flex items-center justify-between">
             <p className="text-sm font-semibold text-foreground">Filters</p>
