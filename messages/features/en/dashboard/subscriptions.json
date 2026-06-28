@@ -1,0 +1,68 @@
+{
+  "Dashboard": {
+    "subscriptions": {
+      "admin": "Admin",
+      "loading": "Loading…",
+      "cancel": "Cancel",
+      "grant": "Grant",
+      "revoke": "Revoke",
+      "changePlan": "Change Plan",
+      "revenueStats": "Revenue & Stats",
+      "status": {
+        "active": "Active",
+        "trialing": "Trial",
+        "past_due": "Past Due",
+        "cancelled": "Cancelled",
+        "expired": "Expired"
+      },
+      "list": {
+        "title": "Subscriptions",
+        "filterAll": "All",
+        "allPlans": "All Plans",
+        "subscribersCount": "{count} subscribers",
+        "colUser": "User",
+        "colPlan": "Plan",
+        "colStatus": "Status",
+        "colRenews": "Renews",
+        "colSource": "Source",
+        "colActions": "Actions",
+        "empty": "No subscribers found.",
+        "prev": "Prev",
+        "next": "Next",
+        "pageOf": "Page {page} of {totalPages}",
+        "revokeTitle": "Revoke subscription?",
+        "revokeBody": "This will immediately cancel access for {email}.",
+        "grantTitle": "Grant subscription",
+        "grantBody": "Granting access to {email}",
+        "selectPlan": "Select a plan…",
+        "changeTitle": "Change plan",
+        "changeUser": "User:",
+        "changeCurrentPlan": "Current plan:",
+        "selectNewPlan": "Select new plan…"
+      },
+      "stats": {
+        "backToSubscribers": "Subscribers",
+        "mrr": "MRR",
+        "activeSubscribers": "Active Subscribers",
+        "churn": "Churn This Month",
+        "chartTitle": "New Subscribers — Last 6 Months"
+      },
+      "settings": {
+        "eyebrow": "Account",
+        "title": "Subscription",
+        "successTitle": "You're now subscribed!",
+        "successBody": "Welcome aboard. You now have full access to everything included in your plan.",
+        "currentPlan": "Current plan",
+        "sourceSubscription": "{source} subscription",
+        "accessUntil": "Access until",
+        "renewsOn": "Renews on",
+        "gracePeriod": "Grace period ends {date}. Renew to keep access.",
+        "opening": "Opening…",
+        "manage": "Manage Subscription",
+        "portalError": "Could not open billing portal. Please try again.",
+        "noSubscription": "You don't have an active subscription.",
+        "viewPlans": "View Plans"
+      }
+    }
+  }
+}

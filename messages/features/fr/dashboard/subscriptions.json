@@ -1,0 +1,68 @@
+{
+  "Dashboard": {
+    "subscriptions": {
+      "admin": "Administration",
+      "loading": "Chargement…",
+      "cancel": "Annuler",
+      "grant": "Accorder",
+      "revoke": "Révoquer",
+      "changePlan": "Changer de forfait",
+      "revenueStats": "Revenus et statistiques",
+      "status": {
+        "active": "Actif",
+        "trialing": "Essai",
+        "past_due": "Paiement en retard",
+        "cancelled": "Annulé",
+        "expired": "Expiré"
+      },
+      "list": {
+        "title": "Abonnements",
+        "filterAll": "Tous",
+        "allPlans": "Tous les forfaits",
+        "subscribersCount": "{count} abonnés",
+        "colUser": "Utilisateur",
+        "colPlan": "Forfait",
+        "colStatus": "Statut",
+        "colRenews": "Renouvellement",
+        "colSource": "Source",
+        "colActions": "Actions",
+        "empty": "Aucun abonné trouvé.",
+        "prev": "Précédent",
+        "next": "Suivant",
+        "pageOf": "Page {page} sur {totalPages}",
+        "revokeTitle": "Révoquer l'abonnement ?",
+        "revokeBody": "Cela annulera immédiatement l'accès de {email}.",
+        "grantTitle": "Accorder un abonnement",
+        "grantBody": "Octroi de l'accès à {email}",
+        "selectPlan": "Sélectionnez un forfait…",
+        "changeTitle": "Changer de forfait",
+        "changeUser": "Utilisateur :",
+        "changeCurrentPlan": "Forfait actuel :",
+        "selectNewPlan": "Sélectionnez un nouveau forfait…"
+      },
+      "stats": {
+        "backToSubscribers": "Abonnés",
+        "mrr": "MRR",
+        "activeSubscribers": "Abonnés actifs",
+        "churn": "Résiliations ce mois-ci",
+        "chartTitle": "Nouveaux abonnés — 6 derniers mois"
+      },
+      "settings": {
+        "eyebrow": "Compte",
+        "title": "Abonnement",
+        "successTitle": "Vous êtes maintenant abonné !",
+        "successBody": "Bienvenue. Vous avez désormais un accès complet à tout ce qui est inclus dans votre forfait.",
+        "currentPlan": "Forfait actuel",
+        "sourceSubscription": "Abonnement {source}",
+        "accessUntil": "Accès jusqu'au",
+        "renewsOn": "Se renouvelle le",
+        "gracePeriod": "Le délai de grâce se termine le {date}. Renouvelez pour conserver l'accès.",
+        "opening": "Ouverture…",
+        "manage": "Gérer l'abonnement",
+        "portalError": "Impossible d'ouvrir le portail de facturation. Veuillez réessayer.",
+        "noSubscription": "Vous n'avez pas d'abonnement actif.",
+        "viewPlans": "Voir les forfaits"
+      }
+    }
+  }
+}

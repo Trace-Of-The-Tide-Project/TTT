@@ -1,0 +1,68 @@
+{
+  "Dashboard": {
+    "subscriptions": {
+      "admin": "الإدارة",
+      "loading": "جاري التحميل…",
+      "cancel": "إلغاء",
+      "grant": "منح",
+      "revoke": "سحب",
+      "changePlan": "تغيير الخطة",
+      "revenueStats": "الإيرادات والإحصائيات",
+      "status": {
+        "active": "نشط",
+        "trialing": "تجريبي",
+        "past_due": "متأخر السداد",
+        "cancelled": "ملغى",
+        "expired": "منتهي"
+      },
+      "list": {
+        "title": "الاشتراكات",
+        "filterAll": "الكل",
+        "allPlans": "كل الخطط",
+        "subscribersCount": "{count} مشترك",
+        "colUser": "المستخدم",
+        "colPlan": "الخطة",
+        "colStatus": "الحالة",
+        "colRenews": "التجديد",
+        "colSource": "المصدر",
+        "colActions": "إجراءات",
+        "empty": "لا يوجد مشتركون.",
+        "prev": "السابق",
+        "next": "التالي",
+        "pageOf": "صفحة {page} من {totalPages}",
+        "revokeTitle": "إلغاء الاشتراك؟",
+        "revokeBody": "سيؤدي هذا إلى إلغاء الوصول فورًا للمستخدم {email}.",
+        "grantTitle": "منح اشتراك",
+        "grantBody": "منح الوصول إلى {email}",
+        "selectPlan": "اختر خطة…",
+        "changeTitle": "تغيير الخطة",
+        "changeUser": "المستخدم:",
+        "changeCurrentPlan": "الخطة الحالية:",
+        "selectNewPlan": "اختر خطة جديدة…"
+      },
+      "stats": {
+        "backToSubscribers": "المشتركون",
+        "mrr": "الإيراد الشهري المتكرر",
+        "activeSubscribers": "المشتركون النشطون",
+        "churn": "معدل الإلغاء هذا الشهر",
+        "chartTitle": "مشتركون جدد — آخر ٦ أشهر"
+      },
+      "settings": {
+        "eyebrow": "الحساب",
+        "title": "الاشتراك",
+        "successTitle": "أنت الآن مشترك!",
+        "successBody": "مرحبًا بك. أصبح لديك الآن وصول كامل إلى كل ما تتضمنه خطتك.",
+        "currentPlan": "الخطة الحالية",
+        "sourceSubscription": "اشتراك {source}",
+        "accessUntil": "الوصول حتى",
+        "renewsOn": "يتجدد في",
+        "gracePeriod": "تنتهي فترة السماح في {date}. جدّد للحفاظ على الوصول.",
+        "opening": "جارٍ الفتح…",
+        "manage": "إدارة الاشتراك",
+        "portalError": "تعذّر فتح بوابة الدفع. يرجى المحاولة مرة أخرى.",
+        "noSubscription": "ليس لديك اشتراك نشط.",
+        "viewPlans": "عرض الخطط"
+      }
+    }
+  }
+}

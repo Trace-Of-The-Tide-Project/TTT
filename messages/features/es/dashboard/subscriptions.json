@@ -1,0 +1,68 @@
+{
+  "Dashboard": {
+    "subscriptions": {
+      "admin": "Administración",
+      "loading": "Cargando…",
+      "cancel": "Cancelar",
+      "grant": "Conceder",
+      "revoke": "Revocar",
+      "changePlan": "Cambiar plan",
+      "revenueStats": "Ingresos y estadísticas",
+      "status": {
+        "active": "Activa",
+        "trialing": "Prueba",
+        "past_due": "Pago vencido",
+        "cancelled": "Cancelada",
+        "expired": "Expirada"
+      },
+      "list": {
+        "title": "Suscripciones",
+        "filterAll": "Todas",
+        "allPlans": "Todos los planes",
+        "subscribersCount": "{count} suscriptores",
+        "colUser": "Usuario",
+        "colPlan": "Plan",
+        "colStatus": "Estado",
+        "colRenews": "Renueva",
+        "colSource": "Origen",
+        "colActions": "Acciones",
+        "empty": "No se encontraron suscriptores.",
+        "prev": "Anterior",
+        "next": "Siguiente",
+        "pageOf": "Página {page} de {totalPages}",
+        "revokeTitle": "¿Revocar suscripción?",
+        "revokeBody": "Esto cancelará de inmediato el acceso de {email}.",
+        "grantTitle": "Conceder suscripción",
+        "grantBody": "Concediendo acceso a {email}",
+        "selectPlan": "Selecciona un plan…",
+        "changeTitle": "Cambiar plan",
+        "changeUser": "Usuario:",
+        "changeCurrentPlan": "Plan actual:",
+        "selectNewPlan": "Selecciona un nuevo plan…"
+      },
+      "stats": {
+        "backToSubscribers": "Suscriptores",
+        "mrr": "MRR",
+        "activeSubscribers": "Suscriptores activos",
+        "churn": "Cancelaciones este mes",
+        "chartTitle": "Nuevos suscriptores — últimos 6 meses"
+      },
+      "settings": {
+        "eyebrow": "Cuenta",
+        "title": "Suscripción",
+        "successTitle": "¡Ya estás suscrito!",
+        "successBody": "Te damos la bienvenida. Ahora tienes acceso completo a todo lo incluido en tu plan.",
+        "currentPlan": "Plan actual",
+        "sourceSubscription": "Suscripción de {source}",
+        "accessUntil": "Acceso hasta",
+        "renewsOn": "Se renueva el",
+        "gracePeriod": "El periodo de gracia termina el {date}. Renueva para mantener el acceso.",
+        "opening": "Abriendo…",
+        "manage": "Gestionar suscripción",
+        "portalError": "No se pudo abrir el portal de facturación. Inténtalo de nuevo.",
+        "noSubscription": "No tienes una suscripción activa.",
+        "viewPlans": "Ver planes"
+      }
+    }
+  }
+}
