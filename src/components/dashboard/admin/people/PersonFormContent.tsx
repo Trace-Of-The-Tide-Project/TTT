@@ -33,10 +33,10 @@ const EMPTY: FormState = {
 };
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-[var(--tott-gold)]/60 transition-colors";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-accent-gold)]/60 transition-colors";
 const labelClass = "text-xs font-medium text-[var(--tott-dash-gold-label)] mb-1 block";
 const sectionClass =
-  "rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated,#111)] p-5 space-y-4";
+  "rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] p-5 space-y-4";
 const sectionHeadingClass =
   "text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]";
 
@@ -197,8 +197,8 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
       </div>
 
       {isTranslation ? (
-        <div className="rounded-xl border border-[var(--tott-gold)]/30 bg-[var(--tott-gold)]/5 px-4 py-3 text-sm">
-          <p className="font-medium text-[var(--tott-gold)]">
+        <div className="rounded-xl border border-[var(--tott-accent-gold)]/30 bg-[var(--tott-accent-gold)]/5 px-4 py-3 text-sm">
+          <p className="font-medium text-[var(--tott-accent-gold)]">
             {t("form.translation.banner", { language: form.language.toUpperCase() })}
           </p>
           {sourceQuery.data ? (
@@ -212,7 +212,7 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
       ) : null}
 
       {loadingEdit ? (
-        <div className="py-12 text-center text-sm text-gray-400">{t("form.loading")}</div>
+        <div className="py-12 text-center text-sm text-[var(--tott-muted)]">{t("form.loading")}</div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Identity */}
@@ -273,20 +273,20 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
           <div className={sectionClass}>
             <p className={sectionHeadingClass}>{t("form.sections.biography")}</p>
             <div>
-              <label className={labelClass}>{t("form.fields.biography")}</label>
               <textarea
                 rows={6}
                 className={inputClass}
                 value={form.biography}
                 onChange={(e) => set("biography", e.target.value)}
                 placeholder={t("form.fields.biographyPlaceholder")}
+                aria-label={t("form.sections.biography")}
                 disabled={busy}
               />
             </div>
           </div>
 
           {formError && (
-            <div className="rounded-lg border border-red-900/50 bg-red-950/30 px-3 py-3 text-sm text-red-200">
+            <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-3 text-sm text-red-400">
               {formError}
             </div>
           )}
@@ -294,14 +294,14 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
           <div className="flex items-center justify-end gap-3">
             <Link
               href="/admin/people"
-              className="rounded-lg px-4 py-2 text-sm text-gray-400 hover:text-foreground"
+              className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground"
             >
               {t("form.cancel")}
             </Link>
             <button
               type="submit"
               disabled={busy}
-              className="rounded-lg bg-[var(--tott-gold)] px-5 py-2 text-sm font-semibold text-black hover:opacity-90 disabled:opacity-40 transition-opacity"
+              className="rounded-lg bg-[var(--tott-accent-gold)] px-5 py-2 text-sm font-semibold text-[var(--tott-on-accent)] hover:opacity-90 disabled:opacity-40 transition-opacity"
             >
               {busy ? t("form.saving") : isEdit ? t("form.save") : t("form.create")}
             </button>
