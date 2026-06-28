@@ -36,6 +36,17 @@
         "d01": "Lattice Refined",
         "d02": "The Tideline",
         "d03": "Currents"
+      },
+      "sectionNames": {
+        "hero": "Hero",
+        "spotlight": "Spotlight Story",
+        "oralHistories": "Oral Histories & Testimonies",
+        "magazineIssues": "Magazine Issues",
+        "collections": "Curated Collections",
+        "people": "People of the Archive",
+        "trips": "Heritage Trips",
+        "bookClub": "Book Club",
+        "contributeCta": "Contribute"
       }
     }
   }

@@ -36,6 +36,17 @@
         "d01": "Celosía refinada",
         "d02": "La línea de marea",
         "d03": "Corrientes"
+      },
+      "sectionNames": {
+        "hero": "Portada",
+        "spotlight": "Historia destacada",
+        "oralHistories": "Historias orales y testimonios",
+        "magazineIssues": "Números de la revista",
+        "collections": "Colecciones seleccionadas",
+        "people": "Personas del archivo",
+        "trips": "Viajes patrimoniales",
+        "bookClub": "Club de lectura",
+        "contributeCta": "Contribuir"
       }
     }
   }

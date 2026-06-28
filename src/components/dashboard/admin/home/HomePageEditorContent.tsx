@@ -189,6 +189,15 @@ export function HomePageEditorContent() {
         .sort((a, b) => a.section_order - b.section_order)
     : [];
 
+  // The stored CmsSection.title is a single, non-localized DB field, so it
+  // would stay English for every locale. In the admin chrome we instead show
+  // a localized label derived from the (stable) section_type, falling back to
+  // the raw title for any unknown/legacy section.
+  const sectionLabel = (section: CmsSection): string => {
+    const key = HOME_SECTION_KEY_BY_TYPE[section.section_type];
+    return key ? t(`sectionNames.${key}`) : section.title;
+  };
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeLocale, setActiveLocale] = useState<HomeLocale>("en");
   const [working, setWorking] = useState<WorkingConfig | null>(null);
@@ -267,7 +276,7 @@ export function HomePageEditorContent() {
                 }`}
               >
                 <span className={`flex-1 text-sm font-medium ${isSel ? "text-[#C9A96E]" : "text-foreground"}`}>
-                  {section.title}
+                  {sectionLabel(section)}
                 </span>
                 <button
                   type="button"
@@ -296,7 +305,7 @@ export function HomePageEditorContent() {
           <>
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-foreground">
-                {selected.title}
+                {sectionLabel(selected)}
               </h3>
               <div className="flex gap-2">
                 <button

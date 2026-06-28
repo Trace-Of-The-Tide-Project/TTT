@@ -36,6 +36,17 @@
         "d01": "Treillis raffiné",
         "d02": "La ligne de marée",
         "d03": "Courants"
+      },
+      "sectionNames": {
+        "hero": "Bannière principale",
+        "spotlight": "Histoire à la une",
+        "oralHistories": "Histoires orales et témoignages",
+        "magazineIssues": "Numéros du magazine",
+        "collections": "Collections sélectionnées",
+        "people": "Personnes des archives",
+        "trips": "Voyages patrimoniaux",
+        "bookClub": "Club de lecture",
+        "contributeCta": "Contribuer"
       }
     }
   }
