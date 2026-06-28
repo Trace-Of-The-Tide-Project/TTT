@@ -177,8 +177,8 @@
         "all": "Todo el contenido",
         "published": "Publicado",
         "pending": "Pendiente",
-        "archived": "Archivado",
-        "rejected": "Rechazado"
+        "draft": "Borrador",
+        "flagged": "Marcado"
       },
       "allTypes": "Todos los tipos",
       "searchPlaceholder": "Buscar contribuciones...",
@@ -201,9 +201,8 @@
       "statusLabels": {
         "published": "Publicado",
         "pending": "Pendiente",
-        "archived": "Archivado",
-        "rejected": "Rechazado",
-        "draft": "Borrador"
+        "draft": "Borrador",
+        "flagged": "Marcado"
       },
       "pagination": {
         "summary": "Página {page} de {totalPages} · {total, plural, one {# contribución} other {# contribuciones}}",
@@ -217,8 +216,13 @@
       "actions": {
         "menuAria": "Más acciones",
         "view": "Ver",
-        "archive": "Archivar",
-        "delete": "Eliminar"
+        "delete": "Eliminar",
+        "setStatus": {
+          "published": "Publicar",
+          "pending": "Marcar como pendiente",
+          "draft": "Mover a borrador",
+          "flagged": "Marcar"
+        }
       },
       "detail": {
         "closeModalAria": "Cerrar modal",
@@ -235,6 +239,10 @@
         "filesHeading": "Archivos ({count})",
         "collectionsHeading": "Colecciones ({count})",
         "close": "Cerrar"
+      },
+      "toasts": {
+        "statusUpdated": "\"{title}\" actualizado",
+        "statusUpdateFailed": "No se pudo actualizar el estado"
       }
     },
     "cmsEditor": {

@@ -31,6 +31,7 @@ import {
   type ContributionFile,
   type ContributionListItem,
   type ContributionListMeta,
+  type ContributionStatusValue,
 } from "@/services/contributions.service";
 import { useContributions } from "@/hooks/queries/contributions";
 import {
@@ -64,18 +65,17 @@ function errMessage(e: unknown, requestFailed: string, generic: string): string 
   return generic;
 }
 
-type ContributionStatus = "all" | "pending" | "published" | "archived" | "rejected";
+type ContributionStatus = "all" | "pending" | "published" | "draft" | "flagged";
 
 const TYPE_FILTER_ALL = "__all__";
 
-const TAB_IDS: ContributionStatus[] = ["all", "published", "pending", "archived", "rejected"];
+const TAB_IDS: ContributionStatus[] = ["all", "published", "pending", "draft", "flagged"];
 
 const statusColorMap: Record<string, string> = {
   published: "#2ECC71",
   pending: "#E67E22",
-  archived: "#9CA3AF",
-  rejected: "#ef4444",
   draft: "#3498DB",
+  flagged: "#ef4444",
 };
 
 function statusColor(status: string): string {
@@ -103,11 +103,17 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+// Statuses an admin can set from the row menu — mirrors the backend enum
+// (UpdateContributionStatusDto). "draft" is the reversible "archive".
+const SETTABLE_STATUSES = ["published", "pending", "draft", "flagged"] as const;
+
 function ContentActionsDropdown({
   contentId,
+  currentStatus,
   onAction,
 }: {
   contentId: string;
+  currentStatus?: string;
   onAction?: (actionId: string, contentId: string) => void;
 }) {
   const ta = useTranslations("Dashboard.contentLibrary.actions");
@@ -137,30 +143,47 @@ function ContentActionsDropdown({
         <MoreDotsIcon />
       </button>
       {isOpen && (
-        <div className="absolute right-0 top-full z-20 mt-1 min-w-[140px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-1 shadow-lg">
-          {(
-            [
-              { id: "view", labelKey: "view" as const },
-              { id: "archive", labelKey: "archive" as const },
-              { id: "delete", labelKey: "delete" as const, destructive: true },
-            ] as const
-          ).map((action) => (
-            <button
-              key={action.id}
-              type="button"
-              onClick={() => {
-                onAction?.(action.id, contentId);
-                setIsOpen(false);
-              }}
-              className={`w-full px-4 py-2 text-left text-sm transition-colors hover:bg-[var(--tott-dash-surface-inset)] ${
-                "destructive" in action && action.destructive
-                  ? "text-red-400 hover:bg-red-500/10"
-                  : "text-foreground"
-              }`}
-            >
-              {ta(action.labelKey)}
-            </button>
-          ))}
+        <div className="absolute end-0 top-full z-20 mt-1 min-w-[160px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-1 shadow-lg">
+          {(() => {
+            const current = (currentStatus ?? "").trim().toLowerCase();
+            const actions: {
+              id: string;
+              label: string;
+              destructive?: boolean;
+              divider?: boolean;
+            }[] = [{ id: "view", label: ta("view") }];
+            // One "Set status → X" entry per backend status, skipping the
+            // status the item is already in.
+            for (const s of SETTABLE_STATUSES) {
+              if (s === current) continue;
+              actions.push({ id: `status:${s}`, label: ta(`setStatus.${s}`) });
+            }
+            actions.push({
+              id: "delete",
+              label: ta("delete"),
+              destructive: true,
+              divider: true,
+            });
+            return actions.map((action) => (
+              <button
+                key={action.id}
+                type="button"
+                onClick={() => {
+                  onAction?.(action.id, contentId);
+                  setIsOpen(false);
+                }}
+                className={`w-full px-4 py-2 text-start text-sm transition-colors hover:bg-[var(--tott-dash-surface-inset)] ${
+                  action.divider ? "mt-1 border-t border-[var(--tott-card-border)] pt-2" : ""
+                } ${
+                  action.destructive
+                    ? "text-red-400 hover:bg-red-500/10"
+                    : "text-foreground"
+                }`}
+              >
+                {action.label}
+              </button>
+            ));
+          })()}
         </div>
       )}
     </div>
@@ -190,7 +213,7 @@ function ContributionDetailModal({
 
   const statusText = (raw: string) => {
     const k = raw.trim().toLowerCase();
-    if (["published", "pending", "archived", "rejected", "draft"].includes(k)) {
+    if (["published", "pending", "draft", "flagged"].includes(k)) {
       return (ts as (key: string) => string)(`statusLabels.${k}`);
     }
     return capitalize(raw);
@@ -491,7 +514,7 @@ export function ContentLibraryContent() {
 
   const statusLabel = (raw: string) => {
     const k = raw.trim().toLowerCase();
-    if (["published", "pending", "archived", "rejected", "draft"].includes(k)) {
+    if (["published", "pending", "draft", "flagged"].includes(k)) {
       return (t as (key: string) => string)(`statusLabels.${k}`);
     }
     return capitalize(raw);
@@ -499,7 +522,7 @@ export function ContentLibraryContent() {
 
   const totalPages = meta?.totalPages ?? 1;
 
-  const archiveMutation = useUpdateContributionStatus();
+  const statusMutation = useUpdateContributionStatus();
   const deleteMutation = useDeleteContribution();
 
   const handleRowAction = useCallback(
@@ -510,12 +533,17 @@ export function ContentLibraryContent() {
         setPreviewItem(item);
         return;
       }
-      if (actionId === "archive") {
-        archiveMutation.mutate(
-          { id: contentId, status: "archived" },
+      if (actionId.startsWith("status:")) {
+        // The backend accepts draft/pending/published/flagged. "Move to draft"
+        // is the reversible "archive". See ContributionStatusValue.
+        const status = actionId.slice("status:".length) as ContributionStatusValue;
+        statusMutation.mutate(
+          { id: contentId, status },
           {
-            onSuccess: () => toast.success(`Archived "${item.title}"`),
-            onError: (e) => toast.error(formatApiError(e, "Failed to archive")),
+            onSuccess: () =>
+              toast.success(t("toasts.statusUpdated", { title: item.title })),
+            onError: (e) =>
+              toast.error(formatApiError(e, t("toasts.statusUpdateFailed"))),
           },
         );
         return;
@@ -525,7 +553,7 @@ export function ContentLibraryContent() {
         setDeleteTarget(item);
       }
     },
-    [items, archiveMutation],
+    [items, statusMutation, t],
   );
 
   const closeDeleteDialog = useCallback(() => {
@@ -675,7 +703,7 @@ export function ContentLibraryContent() {
                     >
                       <EyeIcon />
                     </button>
-                    <ContentActionsDropdown contentId={item.id} onAction={handleRowAction} />
+                    <ContentActionsDropdown contentId={item.id} currentStatus={item.status} onAction={handleRowAction} />
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-400">
@@ -823,7 +851,7 @@ export function ContentLibraryContent() {
                       >
                         <EyeIcon />
                       </button>
-                      <ContentActionsDropdown contentId={item.id} onAction={handleRowAction} />
+                      <ContentActionsDropdown contentId={item.id} currentStatus={item.status} onAction={handleRowAction} />
                     </div>
                   ),
                 },

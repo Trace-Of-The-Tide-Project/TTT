@@ -232,13 +232,15 @@ export async function submitIssueProposal(
   return createContribution(fd);
 }
 
-/** Possible status values that the backend accepts for a contribution. */
+/** Status values the backend's UpdateContributionStatusDto accepts. There is no
+ * "archived"/"rejected" — sending those returns 400 ("status must be one of the
+ * following values"). "Archive" in the UI maps to `draft` (unpublished,
+ * reversible). Keep this in sync with the backend enum. */
 export type ContributionStatusValue =
+  | "draft"
   | "pending"
   | "published"
-  | "archived"
-  | "rejected"
-  | "draft";
+  | "flagged";
 
 /** Update a contribution's status (used for archive / publish / reject). */
 export async function updateContributionStatus(

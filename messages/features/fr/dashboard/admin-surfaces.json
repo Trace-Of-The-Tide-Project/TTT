@@ -177,8 +177,8 @@
         "all": "Tout le contenu",
         "published": "Publié",
         "pending": "En attente",
-        "archived": "Archivé",
-        "rejected": "Rejeté"
+        "draft": "Brouillon",
+        "flagged": "Signalé"
       },
       "allTypes": "Tous les types",
       "searchPlaceholder": "Rechercher des contributions…",
@@ -201,9 +201,8 @@
       "statusLabels": {
         "published": "Publié",
         "pending": "En attente",
-        "archived": "Archivé",
-        "rejected": "Rejeté",
-        "draft": "Brouillon"
+        "draft": "Brouillon",
+        "flagged": "Signalé"
       },
       "pagination": {
         "summary": "Page {page} sur {totalPages} · {total, plural, one {# contribution} other {# contributions}}",
@@ -217,8 +216,13 @@
       "actions": {
         "menuAria": "Plus d'actions",
         "view": "Voir",
-        "archive": "Archiver",
-        "delete": "Supprimer"
+        "delete": "Supprimer",
+        "setStatus": {
+          "published": "Publier",
+          "pending": "Marquer en attente",
+          "draft": "Déplacer en brouillon",
+          "flagged": "Signaler"
+        }
       },
       "detail": {
         "closeModalAria": "Fermer la fenêtre",
@@ -235,6 +239,10 @@
         "filesHeading": "Fichiers ({count})",
         "collectionsHeading": "Collections ({count})",
         "close": "Fermer"
+      },
+      "toasts": {
+        "statusUpdated": "« {title} » mis à jour",
+        "statusUpdateFailed": "Échec de la mise à jour du statut"
       }
     },
     "cmsEditor": {

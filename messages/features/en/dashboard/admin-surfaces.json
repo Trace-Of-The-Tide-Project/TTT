@@ -177,8 +177,8 @@
         "all": "All Content",
         "published": "Published",
         "pending": "Pending",
-        "archived": "Archived",
-        "rejected": "Rejected"
+        "draft": "Draft",
+        "flagged": "Flagged"
       },
       "allTypes": "All Types",
       "searchPlaceholder": "Search contributions...",
@@ -201,9 +201,8 @@
       "statusLabels": {
         "published": "Published",
         "pending": "Pending",
-        "archived": "Archived",
-        "rejected": "Rejected",
-        "draft": "Draft"
+        "draft": "Draft",
+        "flagged": "Flagged"
       },
       "pagination": {
         "summary": "Page {page} of {totalPages} · {total, plural, one {# contribution} other {# contributions}}",
@@ -217,8 +216,13 @@
       "actions": {
         "menuAria": "More actions",
         "view": "View",
-        "archive": "Archive",
-        "delete": "Delete"
+        "delete": "Delete",
+        "setStatus": {
+          "published": "Publish",
+          "pending": "Mark as pending",
+          "draft": "Move to draft",
+          "flagged": "Flag"
+        }
       },
       "detail": {
         "closeModalAria": "Close modal",
@@ -235,6 +239,10 @@
         "filesHeading": "Files ({count})",
         "collectionsHeading": "Collections ({count})",
         "close": "Close"
+      },
+      "toasts": {
+        "statusUpdated": "Updated \"{title}\"",
+        "statusUpdateFailed": "Failed to update status"
       }
     },
     "cmsEditor": {
