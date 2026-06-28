@@ -92,7 +92,7 @@ export default function SubscribePage({ plans, locale }: Props) {
               </p>
 
               <div className="flex items-start gap-0.5 mb-1">
-                <span className="text-xl font-semibold mt-2" style={{ color: '#ededed' }}>$</span>
+                <span className="text-xl font-semibold mt-2" style={{ color: '#ededed' }}>£</span>
                 <span className="text-5xl font-extrabold leading-none" style={{ color: '#ededed', letterSpacing: '-1px' }}>
                   {Math.floor(Number(plan.price_monthly))}
                 </span>
