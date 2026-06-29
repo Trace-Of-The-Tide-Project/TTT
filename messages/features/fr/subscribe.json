@@ -10,17 +10,31 @@
       "mostPopular": "Most Popular",
       "subscribe": "Subscribe",
       "redirecting": "Redirecting…",
-      "reader": {
-        "desc": "Access to the magazine and all premium articles."
-      },
-      "full": {
-        "desc": "Everything in Reader, plus the complete PDF book library."
+      "desc": {
+        "reader": "Le tarif le plus bas possible pour le paysage médiatique fragmenté de notre époque. Ouvert aux 1 000 premiers lecteurs fondateurs.",
+        "subscriber": "Notre tarif d’abonnement recommandé. Accès à tout ce que nous publions, ainsi que de nombreuses réductions dans les librairies et maisons d’édition indépendantes du monde entier.",
+        "bookshelf": "Pour le lecteur qui souhaite passer au format papier avec notre sélection soigneusement constituée des meilleurs nouveaux livres publiés sur la Palestine.",
+        "supporter": "Pour le lecteur qui souhaite un accès complet à l’univers étendu.",
+        "collector": "Pour ceux qui ont besoin d’une bibliothèque complète de nouveaux écrits sur la Palestine : nous sélectionnerons avec soin et vous enverrons un livre physique chaque mois afin que vous ne manquiez jamais un titre.",
+        "patron": "Pour ceux qui peuvent soutenir notre travail à un niveau structurel."
       }
     },
     "features": {
-      "magazine": "Full magazine access",
-      "articles": "All premium articles",
-      "books": "PDF book library"
+      "archive": "Accès complet aux archives",
+      "podcast": "Le podcast Trace of the Tide directement dans votre boîte de réception",
+      "newsletter": "La newsletter culturelle hebdomadaire Trace of the Tide",
+      "shop_discount": "10 % de réduction à la boutique Trace of the Tide",
+      "partner_discount": "10 % de réduction dans les librairies et maisons d’édition partenaires du monde entier",
+      "tote_or_pin": "Un sac en toile classique Trace of the Tide ou un pin’s en émail de soutien",
+      "subscriber_benefits": "Tous les avantages Abonné +",
+      "ttt_bookshelf": "La bibliothèque Trace of the Tide : 6 livres physiques par an",
+      "bookshelf_benefits": "Tous les avantages Bibliothèque +",
+      "early_bird_tickets": "Billets en prévente pour les événements en direct",
+      "zoom_invitations": "Invitations à des conversations Zoom en direct avec des auteurs sur des pièces clés",
+      "supporter_benefits": "Tous les avantages Soutien +",
+      "physical_books_12": "12 livres physiques par an (1 par mois) + extras sur mesure",
+      "collector_benefits": "Tous les avantages Collectionneur +",
+      "masthead_listing": "Remerciements publics et mention dans notre ours éditorial"
     },
     "trust": {
       "stripe": "Secure checkout via Stripe",
