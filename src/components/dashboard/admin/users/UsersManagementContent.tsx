@@ -576,6 +576,7 @@ function AdvancedFilterPopover({
   ascLabel: string;
   descLabel: string;
 }) {
+  const t = useTranslations("Dashboard.usersManagement");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -615,8 +616,8 @@ function AdvancedFilterPopover({
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label="Filters"
-        title="Filters"
+        aria-label={t("filters.title")}
+        title={t("filters.title")}
         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--tott-muted)]"
         style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)" }}
       >
@@ -650,33 +651,33 @@ function AdvancedFilterPopover({
       {open ? (
         <div
           role="dialog"
-          aria-label="Filters"
+          aria-label={t("filters.title")}
           className="absolute end-0 top-full z-30 mt-2 w-80 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] p-4 shadow-lg"
         >
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-sm font-semibold text-foreground">Filters</p>
+            <p className="text-sm font-semibold text-foreground">{t("filters.title")}</p>
             {activeCount > 0 ? (
               <button
                 type="button"
                 onClick={clearAll}
                 className="text-xs font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
               >
-                Clear all
+                {t("filters.clearAll")}
               </button>
             ) : null}
           </div>
 
-          <FilterField label="Email contains">
+          <FilterField label={t("filters.emailContains")}>
             <input
               type="text"
               value={email}
               onChange={(e) => onEmailChange(e.target.value)}
-              placeholder="e.g. @domain.com"
+              placeholder={t("filters.emailPlaceholder")}
               className={FILTER_INPUT_CLASS}
             />
           </FilterField>
 
-          <FilterField label="Min contributions">
+          <FilterField label={t("filters.minContributions")}>
             <input
               type="number"
               min={0}
@@ -687,7 +688,7 @@ function AdvancedFilterPopover({
             />
           </FilterField>
 
-          <FilterField label="Joined after">
+          <FilterField label={t("filters.joinedAfter")}>
             <input
               type="date"
               value={joinedAfter}
@@ -696,7 +697,7 @@ function AdvancedFilterPopover({
             />
           </FilterField>
 
-          <FilterField label="Sort order">
+          <FilterField label={t("filters.sortOrder")}>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
@@ -729,7 +730,7 @@ function AdvancedFilterPopover({
               onClick={() => setOpen(false)}
               className="rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
             >
-              Done
+              {t("filters.done")}
             </button>
           </div>
         </div>

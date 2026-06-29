@@ -138,6 +138,16 @@
           "creating": "Creating user…",
           "created": "User created"
         }
+      },
+      "filters": {
+        "title": "Filters",
+        "clearAll": "Clear all",
+        "emailContains": "Email contains",
+        "emailPlaceholder": "e.g. @domain.com",
+        "minContributions": "Min contributions",
+        "joinedAfter": "Joined after",
+        "sortOrder": "Sort order",
+        "done": "Done"
       }
     }
   }

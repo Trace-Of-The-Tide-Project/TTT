@@ -138,6 +138,16 @@
           "creating": "Creando usuario…",
           "created": "Usuario creado"
         }
+      },
+      "filters": {
+        "title": "Filtros",
+        "clearAll": "Borrar todo",
+        "emailContains": "El correo contiene",
+        "emailPlaceholder": "p. ej. @domain.com",
+        "minContributions": "Contribuciones mínimas",
+        "joinedAfter": "Se unió después de",
+        "sortOrder": "Orden de clasificación",
+        "done": "Listo"
       }
     }
   }

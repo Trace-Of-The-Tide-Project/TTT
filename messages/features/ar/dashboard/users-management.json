@@ -138,6 +138,16 @@
           "creating": "جارٍ إنشاء المستخدم…",
           "created": "تم إنشاء المستخدم"
         }
+      },
+      "filters": {
+        "title": "عوامل التصفية",
+        "clearAll": "مسح الكل",
+        "emailContains": "البريد يحتوي على",
+        "emailPlaceholder": "مثال: @domain.com",
+        "minContributions": "الحد الأدنى للمساهمات",
+        "joinedAfter": "انضم بعد",
+        "sortOrder": "ترتيب الفرز",
+        "done": "تم"
       }
     }
   }
