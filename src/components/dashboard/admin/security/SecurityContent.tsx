@@ -214,13 +214,13 @@ export function SecurityContent() {
                 <tbody className="divide-y divide-[var(--tott-card-border)]">
                   {sessions.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-sm text-[var(--tott-muted)]">No active sessions.</td>
+                      <td colSpan={7} className="px-4 py-8 text-center text-sm text-[var(--tott-muted)]">{t("sessions.empty")}</td>
                     </tr>
                   )}
                   {sessions.map((row) => (
                     <tr key={row.id} className="bg-[var(--tott-dash-surface)]">
                       <td className="px-4 py-3 font-semibold text-foreground">
-                        {row.is_current ? "You (current)" : "User"}
+                        {row.is_current ? t("sessions.youCurrent") : t("sessions.userFallback")}
                       </td>
                       <td className="px-4 py-3 text-[var(--tott-muted)]">{row.ip_address ?? "—"}</td>
                       <td className="px-4 py-3 text-[var(--tott-muted)]">—</td>
@@ -362,7 +362,7 @@ export function SecurityContent() {
             <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("logs.intro")}</p>
             <div className="mt-6 space-y-3">
               {auditLogs.length === 0 && (
-                <p className="text-center text-sm text-[var(--tott-muted)] py-8">No audit logs yet.</p>
+                <p className="text-center text-sm text-[var(--tott-muted)] py-8">{t("logs.empty")}</p>
               )}
               {auditLogs.map((entry) => {
                 const isDelete = entry.action === "DELETE";
@@ -386,7 +386,7 @@ export function SecurityContent() {
                         {entry.action} {entry.entity_type?.replace(/_/g, " ")}
                       </p>
                       <p className="mt-0.5 text-sm text-[var(--tott-muted)]">
-                        {entry.user?.full_name ?? entry.user?.username ?? "System"}
+                        {entry.user?.full_name ?? entry.user?.username ?? t("logs.systemUser")}
                       </p>
                     </div>
                     <p className="shrink-0 text-sm text-[var(--tott-muted)]">

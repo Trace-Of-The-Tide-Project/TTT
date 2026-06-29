@@ -48,6 +48,9 @@
       },
       "sessions": {
         "intro": "Supervisa y gestiona las sesiones activas de administrador.",
+        "empty": "No hay sesiones activas.",
+        "youCurrent": "Tú (actual)",
+        "userFallback": "Usuario",
         "columns": {
           "user": "Usuario",
           "ip": "Dirección IP",
@@ -117,6 +120,8 @@
       },
       "logs": {
         "intro": "Eventos recientes relacionados con la seguridad en toda la plataforma.",
+        "empty": "Aún no hay registros de auditoría.",
+        "systemUser": "Sistema",
         "entries": {
           "l1": {
             "title": "Inicio de sesión exitoso",

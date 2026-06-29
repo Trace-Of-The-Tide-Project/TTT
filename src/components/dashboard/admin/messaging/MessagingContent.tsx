@@ -617,7 +617,7 @@ export function MessagingContent() {
               </button>
             ))}
             {templates.length === 0 && (
-              <p className="col-span-2 py-10 text-center text-sm text-[var(--tott-muted)]">No templates yet</p>
+              <p className="col-span-2 py-10 text-center text-sm text-[var(--tott-muted)]">{tt("emptyState")}</p>
             )}
           </div>
         </div>
@@ -740,7 +740,7 @@ export function MessagingContent() {
 
                   <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
                     {loadingMessages && activeMessages.length === 0 && (
-                      <p className="text-center text-xs text-[var(--tott-muted)]">Loading…</p>
+                      <p className="text-center text-xs text-[var(--tott-muted)]">{ti("loading")}</p>
                     )}
                     {activeMessages.map((m) => (
                       <div
