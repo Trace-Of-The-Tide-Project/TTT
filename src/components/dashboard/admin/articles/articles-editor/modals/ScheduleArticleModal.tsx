@@ -85,12 +85,12 @@ export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: Schedul
             <h2 id="schedule-article-title" className="text-lg font-bold text-foreground">
               {t("title")}
             </h2>
-            <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("subtitle")}</p>
           </div>
           <button
             type="button"
             onClick={() => !busy && onClose()}
-            className="shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground disabled:opacity-40"
+            className="shrink-0 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground disabled:opacity-40"
             aria-label={tModals("close")}
             disabled={busy}
           >
@@ -99,7 +99,7 @@ export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: Schedul
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
-          <label className="flex flex-col gap-1.5 text-sm text-gray-400">
+          <label className="flex flex-col gap-1.5 text-sm text-[var(--tott-muted)]">
             <span>{t("datetimeLabel")}</span>
             <input
               type="datetime-local"
@@ -110,7 +110,7 @@ export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: Schedul
               }}
               disabled={busy}
               required
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-2.5 text-sm text-foreground outline-none focus:border-gray-500 disabled:opacity-50"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-2.5 text-sm text-foreground outline-none focus:border-[var(--tott-card-border)] disabled:opacity-50"
             />
           </label>
           {hint ? <p className="text-sm text-amber-400">{hint}</p> : null}
@@ -120,15 +120,15 @@ export function ScheduleArticleModal({ open, busy, onClose, onConfirm }: Schedul
               type="button"
               disabled={busy}
               onClick={onClose}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-transparent px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-transparent px-4 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
             >
               {t("cancel")}
             </button>
             <button
               type="submit"
               disabled={busy}
-              className="rounded-lg px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-              style={{ backgroundColor: "#C9A96E" }}
+              className="rounded-lg px-4 py-2 text-sm font-medium text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ backgroundColor: "var(--tott-accent-gold)" }}
             >
               {busy ? t("confirmBusy") : t("confirm")}
             </button>

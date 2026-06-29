@@ -10,7 +10,7 @@ import type { TripStop } from "@/services/trips.service";
 const LocationMapPicker = dynamic(() => import("./LocationMapPicker"), { ssr: false });
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]";
 
 /** Flat editor shape — easier to bind to inputs than nested TripStop */
 export type EditorStop = {
@@ -90,14 +90,14 @@ function StopEntry({ stop, index, onChange, onRemove }: StopEntryProps) {
       <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-4">
         <div className="mb-2 flex items-center justify-between gap-3">
           <p className="flex items-center gap-2 text-sm">
-            <span className="text-gray-400">{t("dayNumber", { number: index + 1 })}</span>
+            <span className="text-[var(--tott-muted)]">{t("dayNumber", { number: index + 1 })}</span>
             <span className="truncate font-semibold text-foreground">{stopName}</span>
           </p>
           <div className="flex items-center gap-2">
             <button
               type="button"
               aria-label={t("duplicateStopAria", { number: index + 1 })}
-              className="text-gray-400 transition-colors hover:text-foreground"
+              className="text-[var(--tott-muted)] transition-colors hover:text-foreground"
             >
               <svg
                 width="16"
@@ -139,7 +139,7 @@ function StopEntry({ stop, index, onChange, onRemove }: StopEntryProps) {
         </div>
 
         <hr className="mb-3 border-[var(--tott-card-border)]" />
-        <p className="mb-3 text-sm text-gray-400">{t("route")}</p>
+        <p className="mb-3 text-sm text-[var(--tott-muted)]">{t("route")}</p>
 
         <div className="space-y-3">
           <div>
@@ -179,7 +179,7 @@ function StopEntry({ stop, index, onChange, onRemove }: StopEntryProps) {
                   onChange={(e) => onChange({ arrivalTime: joinDateTime(date, e.target.value) })}
                   className={`${inputClass} pr-9 [&::-webkit-calendar-picker-indicator]:opacity-0`}
                 />
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
                   <svg
                     width="14"
                     height="14"
@@ -315,7 +315,7 @@ export function ItineraryBuilder({ stops, onChange }: ItineraryBuilderProps) {
   return (
     <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-5">
       <h3 className="mb-4 flex items-center gap-2 text-sm font-bold text-foreground">
-        <span className="text-gray-400">
+        <span className="text-[var(--tott-muted)]">
           <MapPinIcon />
         </span>
         {t("heading")}
@@ -342,7 +342,7 @@ export function ItineraryBuilder({ stops, onChange }: ItineraryBuilderProps) {
             <button
               type="button"
               onClick={addStop}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-3 text-sm text-gray-300 transition-colors hover:bg-[var(--tott-dash-control-bg)] hover:text-foreground"
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-3 text-sm text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-control-bg)] hover:text-foreground"
             >
               <svg
                 width="16"

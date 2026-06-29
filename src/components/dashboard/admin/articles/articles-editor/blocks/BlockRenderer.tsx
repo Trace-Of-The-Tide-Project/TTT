@@ -14,7 +14,7 @@ const fieldShell =
 const fieldInput =
   "w-full bg-transparent border-0 outline-none px-4 py-2.5 text-sm text-foreground placeholder:text-foreground/60";
 
-const inputClass = `${fieldShell} px-4 py-3 text-sm text-foreground placeholder:text-foreground outline-none focus-within:border-gray-500`;
+const inputClass = `${fieldShell} px-4 py-3 text-sm text-foreground placeholder:text-foreground outline-none focus-within:border-[var(--tott-card-border)]`;
 
 const DEFAULT_LABELS: Partial<Record<BlockType, string>> = {
   paragraph: "Start writing your article...",
@@ -69,7 +69,7 @@ export function BlockRenderer({
       return (
         <div
           className="w-full rounded-r-xl border border-[var(--tott-card-border)] border-l-4 bg-[var(--tott-dash-control-bg)]"
-          style={{ borderLeftColor: "#C9A96E" }}
+          style={{ borderLeftColor: "var(--tott-accent-gold)" }}
         >
           <input
             type="text"
@@ -87,11 +87,11 @@ export function BlockRenderer({
       return (
         <div className="space-y-3">
           {isCoverImageBlock ? (
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--tott-muted)]">
               {heroCopy.blockName}
             </p>
           ) : null}
-          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-10 transition-colors hover:border-[#C9A96E]">
+          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-10 transition-colors hover:border-[var(--tott-accent-gold)]">
             <span className="text-foreground">
               <CloudUploadIcon />
             </span>
@@ -100,16 +100,16 @@ export function BlockRenderer({
                 <span className="text-lg font-semibold" style={{ color: theme.accentGold }}>
                   {heroCopy.uploadTitle}
                 </span>
-                <span className="text-xs text-gray-400">{heroCopy.uploadDetail}</span>
+                <span className="text-xs text-[var(--tott-muted)]">{heroCopy.uploadDetail}</span>
               </span>
             ) : (
               <>
                 <span className="text-sm font-medium">
-                  <span style={{ color: "#C9A96E" }}>choose file</span>{" "}
+                  <span style={{ color: "var(--tott-accent-gold)" }}>choose file</span>{" "}
                   <span className="text-foreground">to upload</span>
                 </span>
-                <span className="text-xs text-gray-400">Recommended: 1200×630px</span>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-[var(--tott-muted)]">Recommended: 1200×630px</span>
+                <span className="text-xs text-[var(--tott-muted)]">
                   Supported formats: {SUPPORTED_FILE_LABEL}
                 </span>
               </>
@@ -135,7 +135,7 @@ export function BlockRenderer({
           </label>
           {isCoverImageBlock ? (
             <div>
-              <p className="mb-1 text-xs text-gray-500">{heroCopy.pasteUrlHint}</p>
+              <p className="mb-1 text-xs text-[var(--tott-muted)]">{heroCopy.pasteUrlHint}</p>
               <input
                 type="url"
                 value={block.imageUrl ?? ""}
@@ -150,7 +150,7 @@ export function BlockRenderer({
           ) : null}
           {isCoverImageBlock ? (
             <div>
-              <p className="mb-1 text-xs text-gray-500">
+              <p className="mb-1 text-xs text-[var(--tott-muted)]">
                 Caption (optional, shown under this media on the public page)
               </p>
               <div className={fieldShell}>
@@ -168,7 +168,7 @@ export function BlockRenderer({
     case "gallery":
       return (
         <div className="space-y-3">
-          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-10 transition-colors hover:border-[#C9A96E]">
+          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-10 transition-colors hover:border-[var(--tott-accent-gold)]">
             <span className="text-foreground">
               <CloudUploadIcon />
             </span>
@@ -203,7 +203,7 @@ export function BlockRenderer({
             </ul>
           ) : null}
           <div>
-            <p className="mb-1 text-xs text-gray-500">Or one URL per line</p>
+            <p className="mb-1 text-xs text-[var(--tott-muted)]">Or one URL per line</p>
             <textarea
               value={(block.galleryUrls ?? []).join("\n")}
               onChange={(e) =>
@@ -227,7 +227,7 @@ export function BlockRenderer({
       return (
         <div
           className="w-full rounded-r-xl border border-[var(--tott-card-border)] border-l-4 bg-[var(--tott-dash-control-bg)]"
-          style={{ borderLeftColor: "#C9A96E" }}
+          style={{ borderLeftColor: "var(--tott-accent-gold)" }}
         >
           <input
             type="text"

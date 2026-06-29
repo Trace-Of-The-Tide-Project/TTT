@@ -442,10 +442,10 @@ export function OpenCallEditorLayout({
       <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
         <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
           {translationOf && originalTitle ? (
-            <div className="flex items-center gap-2 rounded-lg border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-3 py-2 text-xs text-gray-400">
+            <div className="flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/30 bg-[var(--tott-accent-gold)]/5 px-3 py-2 text-xs text-[var(--tott-muted)]">
               <span>Translating from:</span>
-              <span className="font-medium text-[#C9A96E]">{originalTitle}</span>
-              <span className="text-gray-600">·</span>
+              <span className="font-medium text-[var(--tott-accent-gold)]">{originalTitle}</span>
+              <span className="text-[var(--tott-muted)]">·</span>
               <Link
                 href={`/admin/articles/edit/${translationOf}`}
                 target="_blank"
@@ -479,7 +479,7 @@ export function OpenCallEditorLayout({
             <button
               type="button"
               onClick={() => setEditingFormBlock((v) => !v)}
-              className="mb-3 inline-flex items-center gap-2 text-sm text-gray-300 transition-colors hover:text-foreground"
+              className="mb-3 inline-flex items-center gap-2 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground"
             >
               <svg
                 width="16"

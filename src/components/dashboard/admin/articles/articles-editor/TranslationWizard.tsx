@@ -102,7 +102,7 @@ export function TranslationWizard({ articleId }: { articleId: string }) {
                   <CheckIcon />
                   <a
                     href={`/${locale}/admin/articles/edit/${editId}`}
-                    className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-white/5"
+                    className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-elevated-hover)]"
                   >
                     {t("edit")}
                   </a>
@@ -123,7 +123,7 @@ export function TranslationWizard({ articleId }: { articleId: string }) {
       <div className="mt-8 flex justify-end">
         <a
           href={`/${locale}/admin/articles`}
-          className="rounded-lg border border-[var(--tott-card-border)] px-5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-white/5"
+          className="rounded-lg border border-[var(--tott-card-border)] px-5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-elevated-hover)]"
         >
           {t("finish")}
         </a>

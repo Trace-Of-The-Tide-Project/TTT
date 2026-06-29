@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]";
 
 type TripDetailsSectionProps = {
   startLocation: string;
@@ -80,18 +80,18 @@ export function TripDetailsSection({
   return (
     <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-5">
       <h3 className="mb-4 flex items-center gap-2 text-sm font-bold text-foreground">
-        <span className="text-gray-400">
+        <span className="text-[var(--tott-muted)]">
           <LocationPinIcon />
         </span>
         {t("heading")}
       </h3>
 
       <div className="space-y-4">
-        <p className="text-xs uppercase tracking-wide text-gray-500">{t("route")}</p>
+        <p className="text-xs uppercase tracking-wide text-[var(--tott-muted)]">{t("route")}</p>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-gray-400">
+            <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
               {t("startLocation")}
             </label>
             <input
@@ -103,7 +103,7 @@ export function TripDetailsSection({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-gray-400">
+            <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
               {t("endLocation")}
             </label>
             <input
@@ -118,7 +118,7 @@ export function TripDetailsSection({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-gray-400">
+            <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
               {t("startDate")}
             </label>
             <div className="relative">
@@ -128,15 +128,15 @@ export function TripDetailsSection({
                 onChange={(e) => onStartDateChange(e.target.value)}
                 className={`${inputClass} pl-9`}
               />
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
                 <CalendarGlyph />
               </span>
             </div>
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-gray-400">
+            <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
               {t("durationDays")}{" "}
-              <span className="text-gray-500">{t("durationDaysSuffix")}</span>
+              <span className="text-[var(--tott-muted)]">{t("durationDaysSuffix")}</span>
             </label>
             <input
               type="number"
@@ -152,7 +152,7 @@ export function TripDetailsSection({
 
         <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-gray-400">
+            <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
               {t("groupSize")}
             </label>
             <input
@@ -177,7 +177,7 @@ export function TripDetailsSection({
             >
               <span
                 aria-hidden
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                className={`inline-block h-4 w-4 transform rounded-full bg-[var(--tott-dash-surface)] transition-transform ${
                   openGroup ? "translate-x-4" : "translate-x-0.5"
                 }`}
               />

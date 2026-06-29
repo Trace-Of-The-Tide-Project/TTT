@@ -353,7 +353,7 @@ export function ArticlesTable({
                   <Link
                     role="menuitem"
                     href={previewHrefForContentType(openMenuRow.content_type, openMenuRow.id)}
-                    className="block px-4 py-2 text-sm text-gray-200 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+                    className="block px-4 py-2 text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
                     onClick={closeArticleMenu}
                   >
                     {t("table.preview")}
@@ -363,7 +363,7 @@ export function ArticlesTable({
                   <Link
                     role="menuitem"
                     href={`/admin/articles/edit/${encodeURIComponent(openMenuRow.id)}`}
-                    className="block px-4 py-2 text-sm text-gray-200 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+                    className="block px-4 py-2 text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
                     onClick={closeArticleMenu}
                   >
                     {t("table.edit")}
@@ -439,7 +439,7 @@ export function ArticlesTable({
               <span className="flex items-center gap-2">
                 <span style={{ color: "var(--tott-dash-gold-text)" }}>{row.title}</span>
                 {row.language && row.language !== "en" ? (
-                  <span className="shrink-0 rounded bg-[var(--tott-elevated)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                  <span className="shrink-0 rounded bg-[var(--tott-elevated)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
                     {row.language}
                   </span>
                 ) : null}

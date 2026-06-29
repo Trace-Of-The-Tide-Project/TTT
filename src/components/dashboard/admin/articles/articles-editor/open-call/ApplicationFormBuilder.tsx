@@ -9,7 +9,7 @@ import { GripIcon } from "../ArticleEditorIcons";
 import { ApplicationFormPreview } from "./ApplicationFormPreview";
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]";
 
 const FIELD_DRAG_MIME = "application/x-tott-field-index";
 
@@ -131,14 +131,14 @@ export function ApplicationFormBuilder({ fields, onChange, defaultTemplateFields
           <button
             type="button"
             onClick={() => setShowPreview(true)}
-            className="rounded-lg border border-[#C9A96E] px-4 py-1.5 text-xs font-medium text-[#C9A96E] transition-colors hover:bg-[#C9A96E]/10"
+            className="rounded-lg border border-[var(--tott-accent-gold)] px-4 py-1.5 text-xs font-medium text-[var(--tott-accent-gold)] transition-colors hover:bg-[var(--tott-accent-gold)]/10"
           >
             {tb("previewForm")}
           </button>
           <button
             type="button"
             onClick={resetDefaults}
-            className="text-xs font-medium text-[#C9A96E] underline hover:text-[#DBC99E]"
+            className="text-xs font-medium text-[var(--tott-accent-gold)] underline hover:text-[var(--tott-accent-gold)]"
           >
             {tb("resetTemplate")}
           </button>
@@ -163,7 +163,7 @@ export function ApplicationFormBuilder({ fields, onChange, defaultTemplateFields
         ))}
 
         <div className="flex flex-wrap items-center gap-2 pt-2">
-          <span className="text-xs text-gray-500">{tb("addField")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{tb("addField")}</span>
           {(
             ["text", "email", "phone", "textarea", "select", "checkbox", "file_multiple"] as const
           ).map((fieldType) => (
@@ -171,7 +171,7 @@ export function ApplicationFormBuilder({ fields, onChange, defaultTemplateFields
               key={fieldType}
               type="button"
               onClick={() => addField(fieldType)}
-              className="rounded border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-2 py-1 text-xs text-gray-300 hover:border-gray-500"
+              className="rounded border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-2 py-1 text-xs text-[var(--tott-muted)] hover:border-[var(--tott-card-border)]"
             >
               + {tb(`fieldTypeLabels.${fieldType}`)}
             </button>
@@ -208,7 +208,7 @@ function PreviewModal({
             type="button"
             onClick={onClose}
             aria-label={tb("closePreviewAria")}
-            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
+            className="rounded-lg p-1.5 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
           >
             <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 6 6 18" />
@@ -282,8 +282,8 @@ function FieldRow({
 
   return (
     <div
-      className={`flex gap-3 rounded-lg border bg-[#141414] p-4 transition-all ${
-        isDragging ? "border-[#C9A96E]/40 opacity-50" : isDragOver ? "border-[#C9A96E] bg-[var(--tott-dash-input-bg)]" : "border-[var(--tott-card-border)]"
+      className={`flex gap-3 rounded-lg border bg-[var(--tott-elevated)] p-4 transition-all ${
+        isDragging ? "border-[var(--tott-accent-gold)]/40 opacity-50" : isDragOver ? "border-[var(--tott-accent-gold)] bg-[var(--tott-dash-input-bg)]" : "border-[var(--tott-card-border)]"
       }`}
       onDragOver={(e) => onDragOver(e, index)}
       onDrop={(e) => onDrop(e, index)}
@@ -316,7 +316,7 @@ function FieldRow({
         </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs text-gray-500">{tb("participantLabelField")}</label>
+          <label className="mb-1 block text-xs text-[var(--tott-muted)]">{tb("participantLabelField")}</label>
           <input
             className={inputClass}
             dir="auto"
@@ -334,7 +334,7 @@ function FieldRow({
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-gray-500">{tb("typeLabel")}</label>
+          <label className="mb-1 block text-xs text-[var(--tott-muted)]">{tb("typeLabel")}</label>
           <select
             className={inputClass}
             value={field.type}
@@ -359,19 +359,19 @@ function FieldRow({
           </select>
         </div>
       </div>
-      <label className="mt-3 flex items-center gap-2 text-sm text-gray-300">
+      <label className="mt-3 flex items-center gap-2 text-sm text-[var(--tott-muted)]">
         <input
           type="checkbox"
           checked={field.required}
           onChange={(e) => setRequired(e.target.checked)}
-          className="rounded border-gray-600"
+          className="rounded border-[var(--tott-card-border)]"
         />
         {tb("required")}
       </label>
 
       {field.type === "select" ? (
         <div className="mt-3">
-          <label className="mb-1 block text-xs text-gray-500">{tb("optionsLabel")}</label>
+          <label className="mb-1 block text-xs text-[var(--tott-muted)]">{tb("optionsLabel")}</label>
           <textarea
             className={`${inputClass} min-h-[80px] font-mono text-xs`}
             value={localOptions}
@@ -392,7 +392,7 @@ function FieldRow({
       {field.type === "file_multiple" ? (
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <div>
-            <label className="mb-1 block text-xs text-gray-500">{tb("maxFiles")}</label>
+            <label className="mb-1 block text-xs text-[var(--tott-muted)]">{tb("maxFiles")}</label>
             <input
               type="number"
               min={1}
@@ -408,7 +408,7 @@ function FieldRow({
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-gray-500">{tb("maxSizeMb")}</label>
+            <label className="mb-1 block text-xs text-[var(--tott-muted)]">{tb("maxSizeMb")}</label>
             <input
               type="number"
               min={1}
@@ -424,7 +424,7 @@ function FieldRow({
             />
           </div>
           <div className="sm:col-span-3">
-            <label className="mb-1 block text-xs text-gray-500">{tb("allowedTypes")}</label>
+            <label className="mb-1 block text-xs text-[var(--tott-muted)]">{tb("allowedTypes")}</label>
             <input
               className={inputClass}
               value={localAllowedTypes}

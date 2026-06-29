@@ -123,7 +123,7 @@ export default function TripPreviewRouteMap({ points, className = "" }: TripPrev
   if (positions.length === 0) {
     return (
       <div
-        className={`flex h-full min-h-[280px] items-center justify-center rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-center text-xs text-gray-500 ${className}`}
+        className={`flex h-full min-h-[280px] items-center justify-center rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-center text-xs text-[var(--tott-muted)] ${className}`}
       >
         Add latitude and longitude to itinerary stops to show the route on the map.
       </div>

@@ -32,9 +32,9 @@ import {
 // Field tokens are pulled straight from the Figma source SVG so the dark
 // surfaces match exactly (#262626 fill, #333 stroke, 7.5px radius).
 const FIELD_BASE =
-  "w-full rounded-[7.5px] border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2.5 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-400";
+  "w-full rounded-[7.5px] border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]";
 
-const SELECT_BASE = `${FIELD_BASE} appearance-none pr-9 text-gray-300`;
+const SELECT_BASE = `${FIELD_BASE} appearance-none pr-9 text-[var(--tott-muted)]`;
 
 function ChevronDown() {
   return (
@@ -61,7 +61,7 @@ function FieldSelect({ children, ...rest }: SelectHTMLAttributes<HTMLSelectEleme
         {children}
       </select>
       <span
-        className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500"
+        className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[var(--tott-muted)]"
         aria-hidden
       >
         <ChevronDown />
@@ -72,8 +72,8 @@ function FieldSelect({ children, ...rest }: SelectHTMLAttributes<HTMLSelectEleme
 
 function SectionLabel({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
-    <span className="mb-2 flex items-center gap-2 text-sm text-gray-400">
-      <span className="text-gray-500">{icon}</span>
+    <span className="mb-2 flex items-center gap-2 text-sm text-[var(--tott-muted)]">
+      <span className="text-[var(--tott-muted)]">{icon}</span>
       {children}
     </span>
   );
@@ -255,7 +255,7 @@ export function ContentSettings({
             </div>
           ) : null}
           <div className="flex items-center gap-2">
-            <label className={`${FIELD_BASE} flex cursor-pointer items-center justify-center text-center text-gray-300 hover:border-gray-400`}>
+            <label className={`${FIELD_BASE} flex cursor-pointer items-center justify-center text-center text-[var(--tott-muted)] hover:border-[var(--tott-card-border)]`}>
               {coverImage ? t("cover.replace") : t("cover.choose")}
               <input
                 type="file"
@@ -273,7 +273,7 @@ export function ContentSettings({
               <button
                 type="button"
                 onClick={() => onCoverRemove?.()}
-                className="shrink-0 rounded-[7.5px] border border-[var(--tott-card-border)] px-3 py-2.5 text-sm text-gray-400 transition-colors hover:border-gray-400 hover:text-foreground"
+                className="shrink-0 rounded-[7.5px] border border-[var(--tott-card-border)] px-3 py-2.5 text-sm text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
               >
                 {t("cover.remove")}
               </button>
@@ -299,7 +299,7 @@ export function ContentSettings({
                     <button
                       type="button"
                       onClick={() => removeTagById(id)}
-                      className="grid h-3.5 w-3.5 shrink-0 place-items-center text-gray-400 transition-colors hover:text-foreground"
+                      className="grid h-3.5 w-3.5 shrink-0 place-items-center text-[var(--tott-muted)] transition-colors hover:text-foreground"
                       aria-label={t("tags.removeAria", {
                         name: tagNameById.get(id) ?? t("tags.fallbackName"),
                       })}
@@ -396,7 +396,7 @@ export function ContentSettings({
               onChange={(e) => onIsPremiumChange?.(e.target.checked)}
               className="h-4 w-4 rounded border-[var(--tott-card-border)] accent-amber-500"
             />
-            <span className="text-sm text-gray-300">Premium (subscribers only)</span>
+            <span className="text-sm text-[var(--tott-muted)]">Premium (subscribers only)</span>
           </label>
         </div>
 
@@ -407,8 +407,8 @@ export function ContentSettings({
               <p className="truncate text-sm text-foreground">
                 {seoTitle.trim() || t("seo.previewTitlePlaceholder")}
               </p>
-              <p className="mt-0.5 truncate text-xs text-gray-500">{t("seo.previewUrlStub")}</p>
-              <p className="mt-1 line-clamp-2 text-xs text-gray-400">
+              <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]">{t("seo.previewUrlStub")}</p>
+              <p className="mt-1 line-clamp-2 text-xs text-[var(--tott-muted)]">
                 {metaDescription.trim() || t("seo.previewPlaceholder")}
               </p>
             </div>

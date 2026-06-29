@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 
 const selectClass =
-  "w-full appearance-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2.5 pr-9 text-sm text-gray-300 outline-none focus:border-gray-500";
+  "w-full appearance-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2.5 pr-9 text-sm text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]";
 
 const LANGUAGE_CODES = ["AR", "EN", "HE", "FR", "ES", "DE", "TR"] as const;
 
@@ -77,7 +77,7 @@ export function TripLanguages({ languages, onLanguagesChange }: TripLanguagesPro
   return (
     <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-5">
       <h3 className="mb-4 flex items-center gap-2 text-sm font-bold text-foreground">
-        <span className="text-gray-400">
+        <span className="text-[var(--tott-muted)]">
           <TranslateIcon />
         </span>
         {t("heading")}
@@ -108,7 +108,7 @@ export function TripLanguages({ languages, onLanguagesChange }: TripLanguagesPro
               );
             })}
           </select>
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
             <ChevronDown />
           </span>
         </div>
@@ -126,7 +126,7 @@ export function TripLanguages({ languages, onLanguagesChange }: TripLanguagesPro
                   <button
                     type="button"
                     onClick={() => removeLanguage(code)}
-                    className="grid h-3.5 w-3.5 shrink-0 place-items-center text-gray-400 transition-colors hover:text-foreground"
+                    className="grid h-3.5 w-3.5 shrink-0 place-items-center text-[var(--tott-muted)] transition-colors hover:text-foreground"
                     aria-label={t("removeAria", { label })}
                   >
                     <svg

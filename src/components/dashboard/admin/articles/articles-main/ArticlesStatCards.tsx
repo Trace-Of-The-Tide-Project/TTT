@@ -40,7 +40,7 @@ export function ArticlesStatCards({ stats }: ArticlesStatCardsProps) {
                 <Icon />
               </span>
               <span className="relative text-2xl font-bold text-foreground">{stat.value}</span>
-              <span className="relative text-xs text-gray-500">{(t as (key: string) => string)(stat.labelKey)}</span>
+              <span className="relative text-xs text-[var(--tott-muted)]">{(t as (key: string) => string)(stat.labelKey)}</span>
             </div>
           </StaggerItem>
         );

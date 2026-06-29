@@ -56,7 +56,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
 
   if (isEditMode && articleLoading) {
     return (
-      <div className="flex min-h-0 flex-col p-8 text-sm text-gray-500" role="status">
+      <div className="flex min-h-0 flex-col p-8 text-sm text-[var(--tott-muted)]" role="status">
         {tLayout("loadingArticle")}
       </div>
     );
@@ -65,14 +65,14 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
   if (isEditMode && loadError) {
     return (
       <div className="flex min-h-0 flex-col gap-4 p-8 text-foreground">
-        <Link href={ADMIN_ARTICLES_PATH} className="text-sm text-[#C9A96E] hover:underline">
+        <Link href={ADMIN_ARTICLES_PATH} className="text-sm text-[var(--tott-accent-gold)] hover:underline">
           {tLayout("backToArticles")}
         </Link>
         <p className="text-sm text-red-300">{loadError}</p>
         <button
           type="button"
           onClick={() => setLoadKey((k: number) => k + 1)}
-          className="w-fit text-sm text-gray-400 underline hover:text-foreground"
+          className="w-fit text-sm text-[var(--tott-muted)] underline hover:text-foreground"
         >
           {tLayout("tryAgain")}
         </button>
@@ -100,13 +100,13 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
           >
             <div className="max-w-sm rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-8 py-10 text-center shadow-xl">
               <div
-                className="mx-auto mb-5 h-12 w-12 rounded-full border-2 border-[#C9A96E]/25 border-t-[#C9A96E] animate-spin"
+                className="mx-auto mb-5 h-12 w-12 rounded-full border-2 border-[var(--tott-accent-gold)]/25 border-t-[var(--tott-accent-gold)] animate-spin"
                 aria-hidden
               />
               <p id="article-editor-uploading-title" className="text-lg font-semibold text-foreground">
                 {tLayout("uploadingTitle")}
               </p>
-              <p className="mt-2 text-sm text-gray-400">{tLayout("uploadingDetail")}</p>
+              <p className="mt-2 text-sm text-[var(--tott-muted)]">{tLayout("uploadingDetail")}</p>
             </div>
           </div>,
           document.body,
@@ -125,7 +125,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
           >
             <div className="pointer-events-auto rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-3 shadow-lg">
               <p className="text-sm font-semibold text-foreground">{successToast}</p>
-              <p className="mt-0.5 text-xs text-gray-400">{tLayout("successRedirect")}</p>
+              <p className="mt-0.5 text-xs text-[var(--tott-muted)]">{tLayout("successRedirect")}</p>
             </div>
           </div>,
           document.body,
@@ -153,10 +153,10 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
         {isEditMode && articleId ? (
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4 shrink-0">
             <div className="flex flex-wrap items-center gap-3 text-sm">
-              <Link href={ADMIN_ARTICLES_PATH} className="text-[#C9A96E] hover:underline">
+              <Link href={ADMIN_ARTICLES_PATH} className="text-[var(--tott-accent-gold)] hover:underline">
                 {tLayout("backToArticles")}
               </Link>
-              <span className="text-gray-500">{tLayout("editArticle")}</span>
+              <span className="text-[var(--tott-muted)]">{tLayout("editArticle")}</span>
             </div>
             <div className="flex items-center gap-3">
               <TranslationsPanel
@@ -169,7 +169,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
                 href={previewHrefForContentType(config.contentType, articleId)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[#C9A96E]/50 hover:bg-[#252525]"
+                className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[var(--tott-accent-gold)]/50 hover:bg-[var(--tott-elevated-hover)]"
               >
                 {tLayout("preview")}
               </Link>
@@ -180,10 +180,10 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
         <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
           <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
             {translationOf && originalTitle ? (
-              <div className="flex items-center gap-2 rounded-lg border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-3 py-2 text-xs text-gray-400">
+              <div className="flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/30 bg-[var(--tott-accent-gold)]/5 px-3 py-2 text-xs text-[var(--tott-muted)]">
                 <span>Translating from:</span>
-                <span className="font-medium text-[#C9A96E]">{originalTitle}</span>
-                <span className="text-gray-600">·</span>
+                <span className="font-medium text-[var(--tott-accent-gold)]">{originalTitle}</span>
+                <span className="text-[var(--tott-muted)]">·</span>
                 <Link
                   href={`/admin/articles/edit/${translationOf}`}
                   className="text-blue-400 hover:underline"

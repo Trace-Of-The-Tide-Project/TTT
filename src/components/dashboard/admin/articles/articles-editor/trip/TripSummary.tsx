@@ -75,10 +75,10 @@ function SummaryRow({ icon, label, value }: SummaryRowProps) {
   return (
     <div>
       <div className="flex items-center gap-2 text-sm text-foreground">
-        <span className="text-gray-400">{icon}</span>
+        <span className="text-[var(--tott-muted)]">{icon}</span>
         {label}
       </div>
-      <p className="mt-0.5 pl-6 text-xs text-gray-500">{value || "---"}</p>
+      <p className="mt-0.5 pl-6 text-xs text-[var(--tott-muted)]">{value || "---"}</p>
     </div>
   );
 }

@@ -9,11 +9,11 @@ const FIELD_BG = "bg-[var(--tott-dash-input-bg)]";
 const FIELD_BORDER = "border-[var(--tott-card-border)]";
 const FIELD_RADIUS = "rounded-[7.5px]";
 
-const FIELD_BASE = `w-full ${FIELD_RADIUS} border ${FIELD_BORDER} ${FIELD_BG} px-3 py-2.5 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-400`;
+const FIELD_BASE = `w-full ${FIELD_RADIUS} border ${FIELD_BORDER} ${FIELD_BG} px-3 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]`;
 
 function iconForFieldName(name: string): ReactNode {
   const n = name.toLowerCase();
-  const stroke = "#A3A3A3";
+  const stroke = "var(--tott-muted)";
   if (n.includes("first") || n.includes("last") || n === "full_name") {
     return (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={stroke}
@@ -73,7 +73,7 @@ function FieldShell({ icon, children }: { icon: ReactNode; children: ReactNode }
   return (
     <div className="relative">
       {icon ? (
-        <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
+        <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-[var(--tott-muted)]">
           {icon}
         </span>
       ) : null}
@@ -147,7 +147,7 @@ function renderField(f: ApplicationFormField) {
     return (
       <FieldShell icon={icon}>
         <select
-          className={`${FIELD_BASE} appearance-none ${padLeft} ${trailing ? "pr-9" : ""} text-gray-300`}
+          className={`${FIELD_BASE} appearance-none ${padLeft} ${trailing ? "pr-9" : ""} text-[var(--tott-muted)]`}
           defaultValue=""
           // Suppress every browser's native dropdown indicator so only our
           // custom trailing icon (or nothing) renders on the right.
@@ -164,7 +164,7 @@ function renderField(f: ApplicationFormField) {
           ))}
         </select>
         {trailing ? (
-          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500">
+          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[var(--tott-muted)]">
             {trailing}
           </span>
         ) : null}
@@ -247,7 +247,7 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
         {phone ? (
           <FieldWithLabel field={phone}>
             {renderField(phone)}
-            <p className="mt-1.5 text-xs text-gray-500">
+            <p className="mt-1.5 text-xs text-[var(--tott-muted)]">
               Don&apos;t forget to to write the phone number with your country code
             </p>
           </FieldWithLabel>
@@ -280,10 +280,10 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
           <div className="space-y-2.5">
             <p className="text-sm text-foreground">
               {labelForField(filesField)}{" "}
-              <span className="text-xs text-gray-500">Upload as many as you want</span>
+              <span className="text-xs text-[var(--tott-muted)]">Upload as many as you want</span>
             </p>
             <div className={`${FIELD_RADIUS} border ${FIELD_BORDER} ${FIELD_BG} px-4 py-8 text-center`}>
-              <span className="mx-auto mb-2 inline-flex h-6 w-6 items-center justify-center text-gray-400">
+              <span className="mx-auto mb-2 inline-flex h-6 w-6 items-center justify-center text-[var(--tott-muted)]">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -294,14 +294,14 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
               <p className="text-sm font-medium text-foreground">
                 Drag and drop files here, or click to browse
               </p>
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-[var(--tott-muted)]">
                 Supported formats: {filesField.allowed_types.join(", ")} (Max {filesField.max_size_mb}MB)
               </p>
             </div>
             {/* Sample file row — purely illustrative for the preview. */}
             <div className={`flex items-center justify-between gap-3 ${FIELD_RADIUS} border ${FIELD_BORDER} ${FIELD_BG} px-3 py-2.5`}>
               <div className="flex min-w-0 items-center gap-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] text-gray-400">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] text-[var(--tott-muted)]">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                        strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -310,13 +310,13 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
                 </span>
                 <div className="min-w-0">
                   <p className="truncate text-sm text-foreground">the-history-of-palestine.pdf</p>
-                  <p className="text-xs text-gray-500">16.28 MB</p>
+                  <p className="text-xs text-[var(--tott-muted)]">16.28 MB</p>
                 </div>
               </div>
               <button
                 type="button"
                 aria-label="Remove file"
-                className="grid h-8 w-8 place-items-center rounded-md text-gray-400 transition-colors hover:text-foreground"
+                className="grid h-8 w-8 place-items-center rounded-md text-[var(--tott-muted)] transition-colors hover:text-foreground"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -329,10 +329,10 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
         ) : null}
 
         {termsField ? (
-          <label className="mt-1 flex items-center gap-3 text-sm text-gray-300">
+          <label className="mt-1 flex items-center gap-3 text-sm text-[var(--tott-muted)]">
             <input
               type="checkbox"
-              className="h-4 w-4 shrink-0 rounded border-gray-500 bg-[var(--tott-dash-input-bg)] accent-[var(--tott-accent-gold)]"
+              className="h-4 w-4 shrink-0 rounded border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] accent-[var(--tott-accent-gold)]"
             />
             <span className="flex-1 text-center">
               I agree to the{" "}
@@ -345,12 +345,12 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
 
         <button
           type="button"
-          className="mt-1 w-full rounded-md bg-[var(--tott-accent-gold)] py-3 text-sm font-medium text-black"
+          className="mt-1 w-full rounded-md bg-[var(--tott-accent-gold)] py-3 text-sm font-medium text-[var(--tott-on-accent)]"
         >
           Submit
         </button>
 
-        <p className="mt-1 text-center text-sm text-gray-400">
+        <p className="mt-1 text-center text-sm text-[var(--tott-muted)]">
           Go back to{" "}
           <a className="text-[var(--tott-accent-gold)] hover:underline" href="#">Home page</a>
         </p>

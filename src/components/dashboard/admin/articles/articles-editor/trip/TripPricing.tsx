@@ -4,10 +4,10 @@ import { useTranslations } from "next-intl";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]";
 
 const selectClass =
-  "w-full appearance-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 pr-9 text-sm text-foreground outline-none focus:border-gray-500";
+  "w-full appearance-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 pr-9 text-sm text-foreground outline-none focus:border-[var(--tott-card-border)]";
 
 const CURRENCIES = ["USD", "EUR", "GBP", "ILS", "JOD", "EGP", "AED", "SAR"] as const;
 
@@ -85,7 +85,7 @@ export function TripPricing({
   return (
     <ChamferedPanel className="bg-[var(--tott-dash-input-bg)] p-5">
       <h3 className="mb-4 flex items-center gap-2 text-sm font-bold text-foreground">
-        <span className="text-gray-400">
+        <span className="text-[var(--tott-muted)]">
           <DollarHeadingIcon />
         </span>
         {t("heading")}
@@ -93,7 +93,7 @@ export function TripPricing({
 
       <div className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-gray-400">
+          <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
             {t("price")}
           </label>
           <input
@@ -107,7 +107,7 @@ export function TripPricing({
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-gray-400">
+          <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
             {t("currency")}
           </label>
           <div className="relative">
@@ -128,16 +128,16 @@ export function TripPricing({
                 </option>
               ))}
             </select>
-            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
               <ChevronDown />
             </span>
           </div>
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-gray-400">
+          <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
             {t("pricePerPerson")}{" "}
-            <span className="text-gray-500">{t("optional")}</span>
+            <span className="text-[var(--tott-muted)]">{t("optional")}</span>
           </label>
           <input
             type="number"
@@ -150,9 +150,9 @@ export function TripPricing({
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-gray-400">
+          <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
             {t("discountPercent")}{" "}
-            <span className="text-gray-500">{t("optional")}</span>
+            <span className="text-[var(--tott-muted)]">{t("optional")}</span>
           </label>
           <input
             type="number"

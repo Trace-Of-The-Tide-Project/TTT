@@ -49,10 +49,10 @@ export function TemplateCard({
         <HexIconOutlined size={iconSize}>{icon}</HexIconOutlined>
       </div>
       <div className="relative space-y-1 text-center">
-        <p className={`font-medium text-gray-500 ${compact ? "text-[11px]" : "text-xs"}`}>{number}</p>
+        <p className={`font-medium text-[var(--tott-muted)] ${compact ? "text-[11px]" : "text-xs"}`}>{number}</p>
         <h3 className={`font-bold text-foreground ${compact ? "text-sm" : "text-base"}`}>{title}</h3>
       </div>
-      <p className={`relative text-center leading-snug text-gray-500 ${compact ? "text-xs" : "text-sm"}`}>{description}</p>
+      <p className={`relative text-center leading-snug text-[var(--tott-muted)] ${compact ? "text-xs" : "text-sm"}`}>{description}</p>
     </>
   );
 
