@@ -200,7 +200,7 @@ function ThreadRow({
           <div className="flex items-center justify-between gap-3">
             <p className="truncate text-sm font-semibold text-foreground">{thread.senderName}</p>
             {priorityKey && (
-              <span className="rounded-full border border-[var(--tott-accent-gold)] bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[10px] font-semibold text-[var(--tott-accent-gold)]">
+              <span className="rounded-full border border-[var(--tott-accent-gold)] bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[10px] font-semibold text-[var(--tott-dash-gold-text)]">
                 {t(`prioritiesShort.${priorityKey}`)}
               </span>
             )}
@@ -721,7 +721,7 @@ export function MessagingContent() {
                           </button>
                           <button
                             type="button"
-                            className="w-full rounded-md px-3 py-2 text-start text-sm text-[var(--tott-accent-gold)] hover:bg-[var(--tott-dash-ghost-hover)]"
+                            className="w-full rounded-md px-3 py-2 text-start text-sm text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-dash-ghost-hover)]"
                             onClick={handleArchiveThread}
                           >
                             {ti("archive")}

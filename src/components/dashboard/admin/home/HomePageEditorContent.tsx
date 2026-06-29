@@ -159,7 +159,7 @@ function VariantPicker({
             onClick={() => onChange(opt.value)}
             className={`flex flex-col items-center gap-1 rounded-lg border px-3 py-3 text-center transition-colors ${
               active
-                ? "border-[var(--tott-accent-gold)] bg-[var(--tott-accent-gold)]/15 text-[var(--tott-accent-gold)]"
+                ? "border-[var(--tott-accent-gold)] bg-[var(--tott-accent-gold)]/15 text-[var(--tott-dash-gold-text)]"
                 : "border-[var(--tott-card-border)] text-[var(--tott-muted)] hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
             }`}
           >
@@ -258,7 +258,7 @@ export function HomePageEditorContent() {
             type="button"
             onClick={() => publishPage.mutate(page.id)}
             disabled={publishPage.isPending}
-            className="rounded-lg border border-[var(--tott-accent-gold)]/40 bg-[var(--tott-accent-gold)]/20 px-3 py-1.5 text-xs font-medium text-[var(--tott-accent-gold)] hover:bg-[var(--tott-accent-gold)]/30 disabled:opacity-50"
+            className="rounded-lg border border-[var(--tott-accent-gold)]/40 bg-[var(--tott-accent-gold)]/20 px-3 py-1.5 text-xs font-medium text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-accent-gold)]/30 disabled:opacity-50"
           >
             {publishPage.isPending ? t("publishing") : t("publish")}
           </button>
@@ -275,7 +275,7 @@ export function HomePageEditorContent() {
                   isSel ? "border-[var(--tott-accent-gold)]" : "border-[var(--tott-card-border)]"
                 }`}
               >
-                <span className={`flex-1 text-sm font-medium ${isSel ? "text-[var(--tott-accent-gold)]" : "text-foreground"}`}>
+                <span className={`flex-1 text-sm font-medium ${isSel ? "text-[var(--tott-dash-gold-text)]" : "text-foreground"}`}>
                   {sectionLabel(section)}
                 </span>
                 <button
@@ -322,7 +322,7 @@ export function HomePageEditorContent() {
                   type="button"
                   onClick={handleSave}
                   disabled={saving}
-                  className="rounded-lg border border-[var(--tott-accent-gold)]/40 bg-[var(--tott-accent-gold)]/20 px-3 py-1.5 text-xs font-medium text-[var(--tott-accent-gold)] hover:bg-[var(--tott-accent-gold)]/30 disabled:opacity-50"
+                  className="rounded-lg border border-[var(--tott-accent-gold)]/40 bg-[var(--tott-accent-gold)]/20 px-3 py-1.5 text-xs font-medium text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-accent-gold)]/30 disabled:opacity-50"
                 >
                   {saving ? t("saving") : t("save")}
                 </button>
@@ -339,7 +339,7 @@ export function HomePageEditorContent() {
                     onClick={() => setActiveLocale(loc)}
                     className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                       activeLocale === loc
-                        ? "bg-[var(--tott-accent-gold)]/20 text-[var(--tott-accent-gold)]"
+                        ? "bg-[var(--tott-accent-gold)]/20 text-[var(--tott-dash-gold-text)]"
                         : "text-[var(--tott-muted)] hover:bg-[var(--tott-dash-control-hover)]"
                     }`}
                   >

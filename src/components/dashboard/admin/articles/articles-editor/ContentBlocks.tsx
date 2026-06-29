@@ -98,7 +98,7 @@ export function ContentBlocks({
             <button
               type="button"
               onClick={onAddCoverBlock}
-              className="shrink-0 rounded-lg border border-[var(--tott-accent-gold)]/50 bg-[var(--tott-dash-control-bg)] px-4 py-2.5 text-sm font-medium text-[var(--tott-accent-gold)] transition-colors hover:border-[var(--tott-accent-gold)] hover:bg-[var(--tott-dash-control-hover)]"
+              className="shrink-0 rounded-lg border border-[var(--tott-accent-gold)]/50 bg-[var(--tott-dash-control-bg)] px-4 py-2.5 text-sm font-medium text-[var(--tott-dash-gold-text)] transition-colors hover:border-[var(--tott-accent-gold)] hover:bg-[var(--tott-dash-control-hover)]"
             >
               {heroCopy.addBlockButton}
             </button>

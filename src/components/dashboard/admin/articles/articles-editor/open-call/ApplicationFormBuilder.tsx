@@ -131,14 +131,14 @@ export function ApplicationFormBuilder({ fields, onChange, defaultTemplateFields
           <button
             type="button"
             onClick={() => setShowPreview(true)}
-            className="rounded-lg border border-[var(--tott-accent-gold)] px-4 py-1.5 text-xs font-medium text-[var(--tott-accent-gold)] transition-colors hover:bg-[var(--tott-accent-gold)]/10"
+            className="rounded-lg border border-[var(--tott-accent-gold)] px-4 py-1.5 text-xs font-medium text-[var(--tott-dash-gold-text)] transition-colors hover:bg-[var(--tott-accent-gold)]/10"
           >
             {tb("previewForm")}
           </button>
           <button
             type="button"
             onClick={resetDefaults}
-            className="text-xs font-medium text-[var(--tott-accent-gold)] underline hover:text-[var(--tott-accent-gold)]"
+            className="text-xs font-medium text-[var(--tott-dash-gold-text)] underline hover:text-[var(--tott-dash-gold-text)]"
           >
             {tb("resetTemplate")}
           </button>

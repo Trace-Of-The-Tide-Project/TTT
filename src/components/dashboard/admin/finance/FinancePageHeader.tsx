@@ -54,7 +54,7 @@ export function FinancePageHeader() {
           </span>
           <span className="text-2xl font-bold text-foreground">$2,596</span>
           <span className="text-xs text-[var(--tott-muted)]">{t("cards.pendingPayouts")}</span>
-          <span className="text-xs text-[var(--tott-accent-gold)]">{t("cards.pendingCount")}</span>
+          <span className="text-xs text-[var(--tott-dash-gold-text)]">{t("cards.pendingCount")}</span>
         </div>
 
         <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />

@@ -198,7 +198,7 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
 
       {isTranslation ? (
         <div className="rounded-xl border border-[var(--tott-accent-gold)]/30 bg-[var(--tott-accent-gold)]/5 px-4 py-3 text-sm">
-          <p className="font-medium text-[var(--tott-accent-gold)]">
+          <p className="font-medium text-[var(--tott-dash-gold-text)]">
             {t("form.translation.banner", { language: form.language.toUpperCase() })}
           </p>
           {sourceQuery.data ? (

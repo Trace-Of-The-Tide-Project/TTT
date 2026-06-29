@@ -412,7 +412,7 @@ export function WriterFormContent({
 
       {isTranslation ? (
         <div className="mb-6 max-w-2xl mx-auto rounded-xl border border-[var(--tott-accent-gold)]/30 bg-[var(--tott-accent-gold)]/5 px-4 py-3 text-sm">
-          <p className="font-medium text-[var(--tott-accent-gold)]">
+          <p className="font-medium text-[var(--tott-dash-gold-text)]">
             {tTr.has(`languages.${form.language}`)
               ? `${tTr(`languages.${form.language}`)} — ${t("translation.banner")}`
               : t("translation.banner")}
@@ -610,7 +610,7 @@ export function WriterFormContent({
           <button
             type="submit"
             disabled={busy}
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/60 bg-[var(--tott-accent-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-accent-gold)] hover:bg-[var(--tott-accent-gold)]/20 disabled:opacity-40 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/60 bg-[var(--tott-accent-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-accent-gold)]/20 disabled:opacity-40 transition-colors"
           >
             {busy && (
               <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />

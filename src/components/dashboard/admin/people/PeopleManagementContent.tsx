@@ -118,7 +118,7 @@ export function PeopleManagementContent() {
                   {nameInitials(p.full_name)}
                 </span>
               )}
-              <p className="truncate text-sm font-medium text-[var(--tott-accent-gold)]">
+              <p className="truncate text-sm font-medium text-[var(--tott-dash-gold-text)]">
                 {p.full_name}
               </p>
             </>

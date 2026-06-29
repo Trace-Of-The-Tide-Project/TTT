@@ -207,9 +207,9 @@ export default function AnalyticsPage() {
             ) : (
               <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--tott-card-border)]">
                 <div className="grid grid-cols-[1.6fr_0.7fr_0.7fr] items-center border-b border-[var(--tott-card-border)] bg-[var(--tott-elevated)] px-6 py-4">
-                  <div className="text-start text-sm text-[var(--tott-accent-gold)]">{t("topCreators.colCreator")}</div>
-                  <div className="text-center text-sm text-[var(--tott-accent-gold)]">{t("topCreators.colContent")}</div>
-                  <div className="text-end text-sm text-[var(--tott-accent-gold)]">{tx("viewsColumn")}</div>
+                  <div className="text-start text-sm text-[var(--tott-dash-gold-text)]">{t("topCreators.colCreator")}</div>
+                  <div className="text-center text-sm text-[var(--tott-dash-gold-text)]">{t("topCreators.colContent")}</div>
+                  <div className="text-end text-sm text-[var(--tott-dash-gold-text)]">{tx("viewsColumn")}</div>
                 </div>
                 <div className="divide-y divide-[var(--tott-card-border)]">
                   {topAuthors.map((row, idx) => (

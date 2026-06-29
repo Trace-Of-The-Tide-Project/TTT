@@ -444,7 +444,7 @@ export function OpenCallEditorLayout({
           {translationOf && originalTitle ? (
             <div className="flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/30 bg-[var(--tott-accent-gold)]/5 px-3 py-2 text-xs text-[var(--tott-muted)]">
               <span>Translating from:</span>
-              <span className="font-medium text-[var(--tott-accent-gold)]">{originalTitle}</span>
+              <span className="font-medium text-[var(--tott-dash-gold-text)]">{originalTitle}</span>
               <span className="text-[var(--tott-muted)]">·</span>
               <Link
                 href={`/admin/articles/edit/${translationOf}`}

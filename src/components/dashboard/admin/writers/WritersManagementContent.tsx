@@ -155,7 +155,7 @@ export function WritersManagementContent() {
                 </span>
               )}
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-[var(--tott-accent-gold)]">
+                <p className="truncate text-sm font-medium text-[var(--tott-dash-gold-text)]">
                   {writerRowName(w)}
                 </p>
                 <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]">

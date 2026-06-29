@@ -65,7 +65,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
   if (isEditMode && loadError) {
     return (
       <div className="flex min-h-0 flex-col gap-4 p-8 text-foreground">
-        <Link href={ADMIN_ARTICLES_PATH} className="text-sm text-[var(--tott-accent-gold)] hover:underline">
+        <Link href={ADMIN_ARTICLES_PATH} className="text-sm text-[var(--tott-dash-gold-text)] hover:underline">
           {tLayout("backToArticles")}
         </Link>
         <p className="text-sm text-red-300">{loadError}</p>
@@ -153,7 +153,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
         {isEditMode && articleId ? (
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4 shrink-0">
             <div className="flex flex-wrap items-center gap-3 text-sm">
-              <Link href={ADMIN_ARTICLES_PATH} className="text-[var(--tott-accent-gold)] hover:underline">
+              <Link href={ADMIN_ARTICLES_PATH} className="text-[var(--tott-dash-gold-text)] hover:underline">
                 {tLayout("backToArticles")}
               </Link>
               <span className="text-[var(--tott-muted)]">{tLayout("editArticle")}</span>
@@ -182,7 +182,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
             {translationOf && originalTitle ? (
               <div className="flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/30 bg-[var(--tott-accent-gold)]/5 px-3 py-2 text-xs text-[var(--tott-muted)]">
                 <span>Translating from:</span>
-                <span className="font-medium text-[var(--tott-accent-gold)]">{originalTitle}</span>
+                <span className="font-medium text-[var(--tott-dash-gold-text)]">{originalTitle}</span>
                 <span className="text-[var(--tott-muted)]">·</span>
                 <Link
                   href={`/admin/articles/edit/${translationOf}`}

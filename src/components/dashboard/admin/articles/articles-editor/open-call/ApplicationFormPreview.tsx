@@ -336,9 +336,9 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
             />
             <span className="flex-1 text-center">
               I agree to the{" "}
-              <a className="text-[var(--tott-accent-gold)] hover:underline" href="#">terms</a>
+              <a className="text-[var(--tott-dash-gold-text)] hover:underline" href="#">terms</a>
               {" "}and{" "}
-              <a className="text-[var(--tott-accent-gold)] hover:underline" href="#">privacy policy.</a>
+              <a className="text-[var(--tott-dash-gold-text)] hover:underline" href="#">privacy policy.</a>
             </span>
           </label>
         ) : null}
@@ -352,7 +352,7 @@ export function ApplicationFormPreview({ fields }: { fields: ApplicationFormFiel
 
         <p className="mt-1 text-center text-sm text-[var(--tott-muted)]">
           Go back to{" "}
-          <a className="text-[var(--tott-accent-gold)] hover:underline" href="#">Home page</a>
+          <a className="text-[var(--tott-dash-gold-text)] hover:underline" href="#">Home page</a>
         </p>
       </div>
     </ChamferedPanel>

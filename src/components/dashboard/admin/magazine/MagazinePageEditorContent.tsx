@@ -125,7 +125,7 @@ export function MagazinePageEditorContent() {
         </div>
         <div className="flex items-center gap-3">
           {activeDraftState?.isDirty ? (
-            <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--tott-accent-gold)]">
+            <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--tott-dash-gold-text)]">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--tott-accent-gold)]" />
               {t("unsavedChanges")}
             </span>
@@ -190,7 +190,7 @@ export function MagazinePageEditorContent() {
                       type="button"
                       onClick={() => setActiveSection(row.key)}
                       className={`flex-1 truncate text-left text-[13px] font-medium ${
-                        isActive ? "text-[var(--tott-accent-gold)]" : "text-foreground"
+                        isActive ? "text-[var(--tott-dash-gold-text)]" : "text-foreground"
                       }`}
                     >
                       {t(row.labelKey)}

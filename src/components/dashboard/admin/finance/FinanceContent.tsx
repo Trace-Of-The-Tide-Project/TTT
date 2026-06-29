@@ -267,11 +267,11 @@ export function FinanceContent() {
           ) : (
             <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--tott-card-border)]">
               <div className="grid grid-cols-[1.3fr_0.8fr_1fr_0.9fr_1fr] items-center bg-[var(--tott-dash-surface)] px-6 py-4 text-sm border-b border-[var(--tott-card-border)]">
-                <div className="text-sm text-[var(--tott-accent-gold)]">{tp("colCreator")}</div>
-                <div className="text-sm text-[var(--tott-accent-gold)]">{tp("colAmount")}</div>
-                <div className="text-sm text-[var(--tott-accent-gold)]">{tp("colRequested")}</div>
-                <div className="text-sm text-[var(--tott-accent-gold)]">{tp("colStatus")}</div>
-                <div className="text-end text-sm text-[var(--tott-accent-gold)]">{tp("colActions")}</div>
+                <div className="text-sm text-[var(--tott-dash-gold-text)]">{tp("colCreator")}</div>
+                <div className="text-sm text-[var(--tott-dash-gold-text)]">{tp("colAmount")}</div>
+                <div className="text-sm text-[var(--tott-dash-gold-text)]">{tp("colRequested")}</div>
+                <div className="text-sm text-[var(--tott-dash-gold-text)]">{tp("colStatus")}</div>
+                <div className="text-end text-sm text-[var(--tott-dash-gold-text)]">{tp("colActions")}</div>
               </div>
 
               <div className="divide-y divide-[var(--tott-card-border)]">
@@ -423,11 +423,11 @@ export function FinanceContent() {
           ) : (
             <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--tott-card-border)]">
               <div className="grid grid-cols-[1.4fr_1fr_0.8fr_0.9fr_0.9fr_56px] items-center bg-[var(--tott-dash-surface)] px-6 py-4 text-sm border-b border-[var(--tott-card-border)]">
-                <div className="text-sm text-[var(--tott-accent-gold)]">{td("colDonor")}</div>
-                <div className="text-sm text-[var(--tott-accent-gold)]">{td("colRecipient")}</div>
-                <div className="text-sm text-[var(--tott-accent-gold)]">{td("colAmount")}</div>
-                <div className="text-sm text-[var(--tott-accent-gold)]">{td("colDate")}</div>
-                <div className="text-sm text-[var(--tott-accent-gold)]">{td("colStatus")}</div>
+                <div className="text-sm text-[var(--tott-dash-gold-text)]">{td("colDonor")}</div>
+                <div className="text-sm text-[var(--tott-dash-gold-text)]">{td("colRecipient")}</div>
+                <div className="text-sm text-[var(--tott-dash-gold-text)]">{td("colAmount")}</div>
+                <div className="text-sm text-[var(--tott-dash-gold-text)]">{td("colDate")}</div>
+                <div className="text-sm text-[var(--tott-dash-gold-text)]">{td("colStatus")}</div>
                 <div />
               </div>
 

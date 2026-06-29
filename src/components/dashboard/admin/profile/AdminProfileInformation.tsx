@@ -385,7 +385,7 @@ export function AdminProfileInformation() {
                 className="flex w-full items-center justify-between gap-3 rounded-lg border border-dashed border-[var(--tott-card-border)] bg-transparent px-3 py-3 text-left text-sm text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-accent-gold)]/50 hover:text-foreground"
               >
                 <span>{t("addNewLink")}</span>
-                <span className="flex h-9 w-9 items-center justify-center rounded-md text-[var(--tott-accent-gold)]">
+                <span className="flex h-9 w-9 items-center justify-center rounded-md text-[var(--tott-dash-gold-text)]">
                   <PlusIcon />
                 </span>
               </button>
