@@ -174,6 +174,58 @@
           "description": "راجع واعتمد طلبات المحررين."
         },
         "viewAll": "عرض الكل"
+      },
+      "broadcastModal": {
+        "title": "إرسال رسالة بث",
+        "description": "أرسل رسالة إلى جميع المستخدمين أو مجموعة دور محددة.",
+        "closeModal": "إغلاق النافذة",
+        "close": "إغلاق",
+        "audienceLabel": "الجمهور المستهدف",
+        "audience": {
+          "allUsers": "جميع المستخدمين",
+          "authorsOnly": "المؤلفون فقط",
+          "editorsOnly": "المحررون فقط",
+          "contributorsOnly": "المساهمون فقط"
+        },
+        "subjectLabel": "الموضوع",
+        "subjectPlaceholder": "أدخل موضوع البث…",
+        "messageLabel": "الرسالة",
+        "messagePlaceholder": "اكتب رسالة البث…",
+        "send": "إرسال البث"
+      },
+      "featureModal": {
+        "title": "إبراز محتوى في الصفحة الرئيسية",
+        "description": "اختر المحتوى لإبرازه في الصفحة الرئيسية.",
+        "closeModal": "إغلاق النافذة",
+        "close": "إغلاق",
+        "contentTypeLabel": "نوع المحتوى",
+        "types": {
+          "article": "مقال",
+          "film": "فيلم",
+          "music": "موسيقى",
+          "podcast": "بودكاست"
+        },
+        "searchLabel": "البحث في المحتوى",
+        "searchPlaceholder": "ابحث بالعنوان أو المؤلف",
+        "feature": "إبراز"
+      },
+      "maintenanceModal": {
+        "title": "وضع الصيانة",
+        "description": "فعّل وضع الصيانة لتعطيل وصول المستخدمين إلى المنصة مؤقتاً.",
+        "closeModal": "إغلاق النافذة",
+        "close": "إغلاق",
+        "enableLabel": "تفعيل وضع الصيانة",
+        "enableHint": "سيرى المستخدمون صفحة صيانة.",
+        "messageLabel": "رسالة الصيانة",
+        "messagePlaceholder": "نقوم حالياً بإجراء صيانة مجدولة …",
+        "durationLabel": "المدة التقديرية",
+        "durations": {
+          "thirtyMinutes": "30 دقيقة",
+          "oneHour": "ساعة واحدة",
+          "twoHours": "ساعتان",
+          "threeHours": "3 ساعات"
+        },
+        "enable": "تفعيل الصيانة"
       }
     }
   }

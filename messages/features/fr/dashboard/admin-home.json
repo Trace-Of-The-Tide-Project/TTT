@@ -174,6 +174,58 @@
           "description": "Examiner et approuver les candidatures d'éditeurs."
         },
         "viewAll": "Tout voir"
+      },
+      "broadcastModal": {
+        "title": "Envoyer un message de diffusion",
+        "description": "Envoyez un message à tous les utilisateurs ou à un groupe de rôles spécifique.",
+        "closeModal": "Fermer la fenêtre",
+        "close": "Fermer",
+        "audienceLabel": "Public cible",
+        "audience": {
+          "allUsers": "Tous les utilisateurs",
+          "authorsOnly": "Auteurs uniquement",
+          "editorsOnly": "Éditeurs uniquement",
+          "contributorsOnly": "Contributeurs uniquement"
+        },
+        "subjectLabel": "Objet",
+        "subjectPlaceholder": "Saisissez l'objet de la diffusion...",
+        "messageLabel": "Message",
+        "messagePlaceholder": "Rédigez votre message de diffusion...",
+        "send": "Envoyer la diffusion"
+      },
+      "featureModal": {
+        "title": "Mettre du contenu en avant sur la page d'accueil",
+        "description": "Sélectionnez le contenu à mettre en valeur sur la page d'accueil.",
+        "closeModal": "Fermer la fenêtre",
+        "close": "Fermer",
+        "contentTypeLabel": "Type de contenu",
+        "types": {
+          "article": "Article",
+          "film": "Film",
+          "music": "Musique",
+          "podcast": "Podcast"
+        },
+        "searchLabel": "Rechercher du contenu",
+        "searchPlaceholder": "Rechercher par titre ou auteur",
+        "feature": "Mettre en avant"
+      },
+      "maintenanceModal": {
+        "title": "Mode maintenance",
+        "description": "Activez le mode maintenance pour désactiver temporairement l'accès des utilisateurs à la plateforme.",
+        "closeModal": "Fermer la fenêtre",
+        "close": "Fermer",
+        "enableLabel": "Activer le mode maintenance",
+        "enableHint": "Les utilisateurs verront une page de maintenance.",
+        "messageLabel": "Message de maintenance",
+        "messagePlaceholder": "Nous effectuons actuellement une maintenance planifiée ...",
+        "durationLabel": "Durée estimée",
+        "durations": {
+          "thirtyMinutes": "30 minutes",
+          "oneHour": "1 heure",
+          "twoHours": "2 heures",
+          "threeHours": "3 heures"
+        },
+        "enable": "Activer la maintenance"
       }
     }
   }
