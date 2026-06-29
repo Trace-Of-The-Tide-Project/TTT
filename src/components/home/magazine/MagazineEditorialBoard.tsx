@@ -347,12 +347,13 @@ function WriterCardLink({
   id: string | null | undefined;
   children: React.ReactNode;
 }) {
+  const t = useTranslations("Home.magazine.editorialBoard");
   if (!id) return <>{children}</>;
   return (
     <Link
       href={`/writers/${encodeURIComponent(id)}`}
       className="contents"
-      aria-label="View writer"
+      aria-label={t("viewWriter")}
     >
       {children}
     </Link>

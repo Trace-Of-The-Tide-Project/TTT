@@ -402,6 +402,9 @@ function CollabCard({
                 fontWeight: 400,
                 fontSize: `calc((clamp(9px, 4.6cqw, 13px)) * var(--mag-fs, 1))`,
                 lineHeight: 1,
+                // Fixed light color: these labels are overlaid on the dark/gold
+                // FRAME_86 band image, which does not re-theme — a themed text
+                // token would flip dark and vanish in light/tide.
                 color: "#d6d6d6",
               }}
             >
@@ -501,8 +504,8 @@ function CollabCard({
             minWidth: "80px",
             height: "24px",
             padding: "4px 12px",
-            backgroundColor: "#333333",
-            color: "#FFFFFF",
+            backgroundColor: "var(--tott-home-badge-bg)",
+            color: "var(--tott-home-text-strong)",
             fontFamily: "'Inter', var(--font-sans, sans-serif)",
             fontWeight: 500,
             fontSize: `calc((12px) * var(--mag-fs, 1))`,
