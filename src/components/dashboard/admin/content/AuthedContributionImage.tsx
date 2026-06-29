@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { contributionFileProxyUrl } from "@/services/contributions.service";
 
@@ -16,6 +17,7 @@ type AuthedContributionImageProps = {
  * Falls back to the public bucket URL for `https://` refs.
  */
 export function AuthedContributionImage({ path, alt = "", className }: AuthedContributionImageProps) {
+  const t = useTranslations("Dashboard.contentLibrary.image");
   const [src, setSrc] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
 
@@ -109,8 +111,8 @@ export function AuthedContributionImage({ path, alt = "", className }: AuthedCon
     return (
       <div
         className={`flex items-center justify-center bg-[var(--tott-dash-input-bg)] text-xs text-[var(--tott-muted)] ${className ?? ""}`}
-        title="Could not load image"
-        aria-label={alt || "Image unavailable"}
+        title={t("loadError")}
+        aria-label={alt || t("unavailable")}
       >
         <svg
           width="32"

@@ -170,7 +170,15 @@
           }
         }
       },
-      "superAdminRoleName": "Superadministrador"
+      "superAdminRoleName": "Superadministrador",
+      "detailModal": {
+        "closeModalAria": "Cerrar ventana",
+        "closeAria": "Cerrar",
+        "rejectAria": "Rechazar",
+        "approveAria": "Aprobar",
+        "viewAll": "Ver todo",
+        "close": "Cerrar"
+      }
     },
     "contentLibrary": {
       "tabs": {
@@ -242,7 +250,28 @@
       },
       "toasts": {
         "statusUpdated": "\"{title}\" actualizado",
-        "statusUpdateFailed": "No se pudo actualizar el estado"
+        "statusUpdateFailed": "No se pudo actualizar el estado",
+        "deleted": "\"{title}\" eliminado",
+        "deleteFailed": "No se pudo eliminar"
+      },
+      "deleteDialog": {
+        "title": "Eliminar contribución",
+        "description": "¿Eliminar \"{title}\"? Esta acción no se puede deshacer.",
+        "confirm": "Eliminar",
+        "confirmBusy": "Eliminando…"
+      },
+      "filters": {
+        "title": "Filtros",
+        "clearAll": "Borrar todo",
+        "submittedAfter": "Enviado después de",
+        "collectionContains": "La colección contiene",
+        "collectionPlaceholder": "p. ej. Patrimonio 2025",
+        "onlyWithFiles": "Solo entradas con archivos",
+        "done": "Listo"
+      },
+      "image": {
+        "loadError": "No se pudo cargar la imagen",
+        "unavailable": "Imagen no disponible"
       }
     },
     "cmsEditor": {

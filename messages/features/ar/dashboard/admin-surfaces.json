@@ -170,7 +170,15 @@
           }
         }
       },
-      "superAdminRoleName": "مسؤول أعلى"
+      "superAdminRoleName": "مسؤول أعلى",
+      "detailModal": {
+        "closeModalAria": "إغلاق النافذة",
+        "closeAria": "إغلاق",
+        "rejectAria": "رفض",
+        "approveAria": "موافقة",
+        "viewAll": "عرض الكل",
+        "close": "إغلاق"
+      }
     },
     "contentLibrary": {
       "tabs": {
@@ -242,7 +250,28 @@
       },
       "toasts": {
         "statusUpdated": "تم تحديث \"{title}\"",
-        "statusUpdateFailed": "تعذّر تحديث الحالة"
+        "statusUpdateFailed": "تعذّر تحديث الحالة",
+        "deleted": "تم حذف \"{title}\"",
+        "deleteFailed": "تعذّر الحذف"
+      },
+      "deleteDialog": {
+        "title": "حذف المساهمة",
+        "description": "هل تريد حذف \"{title}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+        "confirm": "حذف",
+        "confirmBusy": "جارٍ الحذف…"
+      },
+      "filters": {
+        "title": "عوامل التصفية",
+        "clearAll": "مسح الكل",
+        "submittedAfter": "مُرسلة بعد",
+        "collectionContains": "المجموعة تحتوي على",
+        "collectionPlaceholder": "مثال: تراث 2025",
+        "onlyWithFiles": "العناصر التي تحتوي على ملفات فقط",
+        "done": "تم"
+      },
+      "image": {
+        "loadError": "تعذّر تحميل الصورة",
+        "unavailable": "الصورة غير متوفرة"
       }
     },
     "cmsEditor": {

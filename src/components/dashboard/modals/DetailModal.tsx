@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { XIcon } from "@/components/ui/icons";
 
 type DetailModalItem = {
@@ -38,10 +39,12 @@ export function DetailModal({
   description,
   badge,
   items,
-  viewAllLabel = "View All",
+  viewAllLabel,
   viewAllHref,
   onViewAll,
 }: DetailModalProps) {
+  const t = useTranslations("Dashboard.rolesPermissions.detailModal");
+  const resolvedViewAllLabel = viewAllLabel ?? t("viewAll");
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -67,7 +70,7 @@ export function DetailModal({
         type="button"
         className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
         onClick={onClose}
-        aria-label="Close modal"
+        aria-label={t("closeModalAria")}
       />
 
       <div className="relative mx-4 w-full max-w-lg rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6">
@@ -93,7 +96,7 @@ export function DetailModal({
             type="button"
             onClick={onClose}
             className="shrink-0 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
-            aria-label="Close"
+            aria-label={t("closeAria")}
           >
             <XIcon />
           </button>
@@ -115,7 +118,7 @@ export function DetailModal({
                   <button
                     type="button"
                     className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] text-[var(--tott-dash-control-fg)] transition-colors hover:border-red-800 hover:text-red-400"
-                    aria-label="Reject"
+                    aria-label={t("rejectAria")}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M18 6L6 18M6 6l12 12" />
@@ -124,7 +127,7 @@ export function DetailModal({
                   <button
                     type="button"
                     className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-icon-bg)] text-[var(--tott-dash-control-fg)] transition-colors hover:border-emerald-800 hover:text-emerald-400"
-                    aria-label="Approve"
+                    aria-label={t("approveAria")}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12" />
@@ -162,7 +165,7 @@ export function DetailModal({
                 className="block w-full rounded-lg py-3 text-center text-sm font-medium text-[var(--tott-on-accent)] transition-colors hover:opacity-90"
                 style={{ backgroundColor: "var(--tott-accent-gold)" }}
               >
-                {viewAllLabel}
+                {resolvedViewAllLabel}
               </a>
             ) : (
               <button
@@ -171,7 +174,7 @@ export function DetailModal({
                 className="w-full rounded-lg py-3 text-sm font-medium text-[var(--tott-on-accent)] transition-colors hover:opacity-90"
                 style={{ backgroundColor: "var(--tott-accent-gold)" }}
               >
-                {viewAllLabel}
+                {resolvedViewAllLabel}
               </button>
             )}
           </div>
@@ -184,7 +187,7 @@ export function DetailModal({
             onClick={onClose}
             className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
           >
-            Close
+            {t("close")}
           </button>
         </div>
       </div>

@@ -170,7 +170,15 @@
           }
         }
       },
-      "superAdminRoleName": "Super Admin"
+      "superAdminRoleName": "Super Admin",
+      "detailModal": {
+        "closeModalAria": "Close modal",
+        "closeAria": "Close",
+        "rejectAria": "Reject",
+        "approveAria": "Approve",
+        "viewAll": "View All",
+        "close": "Close"
+      }
     },
     "contentLibrary": {
       "tabs": {
@@ -242,7 +250,28 @@
       },
       "toasts": {
         "statusUpdated": "Updated \"{title}\"",
-        "statusUpdateFailed": "Failed to update status"
+        "statusUpdateFailed": "Failed to update status",
+        "deleted": "Deleted \"{title}\"",
+        "deleteFailed": "Failed to delete"
+      },
+      "deleteDialog": {
+        "title": "Delete contribution",
+        "description": "Delete \"{title}\"? This cannot be undone.",
+        "confirm": "Delete",
+        "confirmBusy": "Deleting…"
+      },
+      "filters": {
+        "title": "Filters",
+        "clearAll": "Clear all",
+        "submittedAfter": "Submitted after",
+        "collectionContains": "Collection contains",
+        "collectionPlaceholder": "e.g. Heritage 2025",
+        "onlyWithFiles": "Only entries with files",
+        "done": "Done"
+      },
+      "image": {
+        "loadError": "Could not load image",
+        "unavailable": "Image unavailable"
       }
     },
     "cmsEditor": {

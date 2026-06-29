@@ -568,12 +568,12 @@ export function ContentLibraryContent() {
     setDeleteError(null);
     deleteMutation.mutate(target.id, {
       onSuccess: () => {
-        toast.success(`Deleted "${target.title}"`);
+        toast.success(t("toasts.deleted", { title: target.title }));
         setDeleteTarget(null);
       },
-      onError: (e) => setDeleteError(formatApiError(e, "Failed to delete")),
+      onError: (e) => setDeleteError(formatApiError(e, t("toasts.deleteFailed"))),
     });
-  }, [deleteTarget, deleteMutation]);
+  }, [deleteTarget, deleteMutation, t]);
 
   return (
     <div className="space-y-6 px-3 py-4 sm:px-4 sm:py-6">
@@ -586,14 +586,14 @@ export function ContentLibraryContent() {
 
       <ConfirmDialog
         open={deleteTarget != null}
-        title="Delete contribution"
+        title={t("deleteDialog.title")}
         description={
           deleteTarget
-            ? `Delete "${deleteTarget.title}"? This cannot be undone.`
+            ? t("deleteDialog.description", { title: deleteTarget.title })
             : undefined
         }
-        confirmLabel="Delete"
-        confirmBusyLabel="Deleting…"
+        confirmLabel={t("deleteDialog.confirm")}
+        confirmBusyLabel={t("deleteDialog.confirmBusy")}
         destructive
         busy={deleteMutation.isPending}
         error={deleteError}
@@ -925,6 +925,7 @@ function ContentAdvancedFilterPopover({
   onHasFilesChange: (v: boolean) => void;
   label: string;
 }) {
+  const t = useTranslations("Dashboard.contentLibrary.filters");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -991,21 +992,21 @@ function ContentAdvancedFilterPopover({
           className="absolute right-0 top-full z-30 mt-2 w-80 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] p-4 shadow-lg"
         >
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-sm font-semibold text-foreground">Filters</p>
+            <p className="text-sm font-semibold text-foreground">{t("title")}</p>
             {activeCount > 0 ? (
               <button
                 type="button"
                 onClick={clearAll}
                 className="text-xs font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
               >
-                Clear all
+                {t("clearAll")}
               </button>
             ) : null}
           </div>
 
           <div className="mb-3 flex flex-col gap-1.5">
             <label className="text-[11px] font-medium uppercase tracking-wide text-[var(--tott-dash-gold-label)]">
-              Submitted after
+              {t("submittedAfter")}
             </label>
             <input
               type="date"
@@ -1017,13 +1018,13 @@ function ContentAdvancedFilterPopover({
 
           <div className="mb-3 flex flex-col gap-1.5">
             <label className="text-[11px] font-medium uppercase tracking-wide text-[var(--tott-dash-gold-label)]">
-              Collection contains
+              {t("collectionContains")}
             </label>
             <input
               type="text"
               value={collection}
               onChange={(e) => onCollectionChange(e.target.value)}
-              placeholder="e.g. Heritage 2025"
+              placeholder={t("collectionPlaceholder")}
               className={inputClass}
             />
           </div>
@@ -1036,7 +1037,7 @@ function ContentAdvancedFilterPopover({
                 onChange={(e) => onHasFilesChange(e.target.checked)}
                 className="h-4 w-4 rounded border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]"
               />
-              <span>Only entries with files</span>
+              <span>{t("onlyWithFiles")}</span>
             </label>
           </div>
 
@@ -1046,7 +1047,7 @@ function ContentAdvancedFilterPopover({
               onClick={() => setOpen(false)}
               className="rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
             >
-              Done
+              {t("done")}
             </button>
           </div>
         </div>
