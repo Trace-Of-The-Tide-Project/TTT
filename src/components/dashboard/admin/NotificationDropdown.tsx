@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "@/i18n/navigation";
 import { BellIcon } from "@/components/ui/icons";
-import { useTheme } from "@/components/providers/ThemeProvider";
 import {
   useNotifications,
   useUnreadNotificationCount,
@@ -110,14 +109,11 @@ function Skeleton() {
 }
 
 export function NotificationDropdown() {
-  const { isDark } = useTheme();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const iconColor = "var(--tott-stat-icon)";
-  const iconBtn = isDark
-    ? "hover:opacity-80"
-    : "hover:opacity-80";
+  const iconBtn = "hover:opacity-80";
 
   const user = useAuthUser();
   const { data: unreadCountData } = useUnreadNotificationCount(user?.id, {

@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { useTheme } from "@/components/providers/ThemeProvider";
 import { theme } from "@/lib/theme";
 import { LogOutIcon } from "@/components/ui/icons";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -20,7 +19,6 @@ type SidebarUserProps = {
 export function SidebarUser({ collapsed = false }: SidebarUserProps) {
   const router = useRouter();
   const t = useTranslations("Dashboard.sidebarUser");
-  const { isDark } = useTheme();
   const { user, logout } = useAuth();
   const name = user?.full_name || user?.username;
   const email = user?.email;
@@ -45,11 +43,7 @@ export function SidebarUser({ collapsed = false }: SidebarUserProps) {
         <button
           type="button"
           onClick={handleLogout}
-          className={
-            isDark
-              ? "text-[var(--tott-muted)] transition-colors hover:text-foreground"
-              : "text-[var(--tott-muted)] transition-colors hover:text-foreground"
-          }
+          className="text-[var(--tott-muted)] transition-colors hover:text-foreground"
           aria-label={t("signOut")}
           title={t("signOut")}
         >
@@ -68,18 +62,14 @@ export function SidebarUser({ collapsed = false }: SidebarUserProps) {
         {getInitial(name, email)}
       </span>
       <span
-        className={`flex-1 truncate text-sm font-medium ${isDark ? "text-foreground" : "text-foreground"}`}
+        className="flex-1 truncate text-sm font-medium text-foreground"
       >
         {displayName}
       </span>
       <button
         type="button"
         onClick={handleLogout}
-        className={
-          isDark
-            ? "shrink-0 text-[var(--tott-muted)] transition-colors hover:text-foreground"
-            : "shrink-0 text-[var(--tott-muted)] transition-colors hover:text-foreground"
-        }
+        className="shrink-0 text-[var(--tott-muted)] transition-colors hover:text-foreground"
         aria-label={t("signOut")}
       >
         <LogOutIcon />

@@ -110,13 +110,13 @@ export default function ProfileDashboardPage() {
           <div className="flex gap-2">
             <Link
               href="/profile/settings"
-              className="rounded-lg border border-gray-700 px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-white"
+              className="rounded-lg border border-[var(--tott-card-border)] px-4 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
             >
               {tProfile("editProfile")}
             </Link>
             <button
               type="button"
-              className="rounded-lg px-4 py-2 text-sm font-medium text-[#1a1a1a] transition-opacity hover:opacity-90"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-[var(--tott-on-accent)] transition-opacity hover:opacity-90"
               style={{ backgroundColor: theme.accentGold }}
             >
               {tProfile("createArticle")}

@@ -1,7 +1,6 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { useTheme } from "@/components/providers/ThemeProvider";
 import { theme } from "@/lib/theme";
 
 export type RecentListItem = {
@@ -20,11 +19,9 @@ type RecentListProps = {
 };
 
 export function RecentList({ heading, viewAllHref, items }: RecentListProps) {
-  const { isDark } = useTheme();
-  const viewAllClass = isDark
-    ? "rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
-    : "rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground";
-  const rowHover = isDark ? "hover:bg-[var(--tott-dash-ghost-hover)]" : "hover:bg-[var(--tott-elevated-hover)]";
+  const viewAllClass =
+    "rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground";
+  const rowHover = "hover:bg-[var(--tott-dash-ghost-hover)]";
 
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-panel-bg)]">
@@ -36,7 +33,7 @@ export function RecentList({ heading, viewAllHref, items }: RecentListProps) {
           </Link>
         )}
       </div>
-      <div className={isDark ? "divide-y divide-[var(--tott-card-border)]" : "divide-y divide-[var(--tott-card-border)]"}>
+      <div className="divide-y divide-[var(--tott-card-border)]">
         {items.map((item) => {
           const content = (
             <div className="flex items-center gap-3 px-5 py-3.5">
