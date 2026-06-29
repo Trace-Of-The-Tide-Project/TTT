@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { XIcon } from "@/components/ui/icons";
 import { BADGE_ICON_OPTIONS } from "@/components/dashboard/admin/system-settings/badge-icon-options";
 import type { BadgeIconId } from "@/lib/dashboard/system-settings-constants";
@@ -65,6 +66,7 @@ export function BadgeFormModal({
   initialNameI18n,
   onSave,
 }: BadgeFormModalProps) {
+  const t = useTranslations("Dashboard.systemSettings");
   const [iconId, setIconId] = useState<BadgeIconId>(DEFAULT_ICON);
   const [name, setName] = useState("");
   const [milestone, setMilestone] = useState("");
@@ -112,10 +114,10 @@ export function BadgeFormModal({
 
   if (!open) return null;
 
-  const title = mode === "add" ? "Create Badge" : "Edit Badge";
+  const title = mode === "add" ? t("badgeModal.addTitle") : t("badgeModal.editTitle");
   const subtitle =
-    mode === "add" ? "Create a new achievement badge" : "Update the badge details";
-  const primaryLabel = mode === "add" ? "Create Badge" : "Save Changes";
+    mode === "add" ? t("badgeModal.addSubtitle") : t("badgeModal.editSubtitle");
+  const primaryLabel = mode === "add" ? t("badgeModal.createLabel") : t("saveChanges");
   const titleId = "badge-form-modal-title";
 
   const submit = () => {
@@ -136,7 +138,7 @@ export function BadgeFormModal({
         type="button"
         className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
         onClick={onClose}
-        aria-label="Close modal"
+        aria-label={t("modal.closeModal")}
       />
 
       <div
@@ -156,7 +158,7 @@ export function BadgeFormModal({
             type="button"
             onClick={onClose}
             className="rounded-lg p-2 text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
-            aria-label="Close"
+            aria-label={t("modal.close")}
           >
             <span className="[&_svg]:h-5 [&_svg]:w-5">
               <XIcon />
@@ -166,7 +168,7 @@ export function BadgeFormModal({
 
         <div className="space-y-5 px-6 py-5">
           <div>
-            <p className="text-sm font-medium text-foreground">Icon</p>
+            <p className="text-sm font-medium text-foreground">{t("badgeModal.iconLabel")}</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {BADGE_ICON_OPTIONS.map(({ id, Icon }) => (
                 <button
@@ -176,7 +178,7 @@ export function BadgeFormModal({
                   className={`flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[var(--tott-muted)] transition-colors ${
                     iconId === id ? "border-[var(--tott-accent-gold)]" : "border-[var(--tott-card-border)] hover:border-[var(--tott-card-border)]"
                   }`}
-                  aria-label={`Select icon ${id}`}
+                  aria-label={t("badgeModal.selectIconAria", { id })}
                   aria-pressed={iconId === id}
                 >
                   <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
@@ -189,28 +191,28 @@ export function BadgeFormModal({
 
           <div>
             <label htmlFor="badge-name" className="block text-sm font-medium text-foreground">
-              Badge Name
+              {t("badgeModal.nameLabel")}
             </label>
             <input
               id="badge-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder={mode === "add" ? "e.g Top Contributor" : undefined}
+              placeholder={mode === "add" ? t("badgeModal.namePlaceholder") : undefined}
               className={inputClass}
             />
           </div>
 
           <div>
             <label htmlFor="badge-milestone" className="block text-sm font-medium text-foreground">
-              Milestone
+              {t("badgeModal.milestoneLabel")}
             </label>
             <input
               id="badge-milestone"
               type="text"
               value={milestone}
               onChange={(e) => setMilestone(e.target.value)}
-              placeholder={mode === "add" ? "e.g +100 Contributions" : undefined}
+              placeholder={mode === "add" ? t("badgeModal.milestonePlaceholder") : undefined}
               className={inputClass}
             />
           </div>
@@ -231,7 +233,7 @@ export function BadgeFormModal({
             onClick={onClose}
             className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
           >
-            Cancel
+            {t("modal.cancel")}
           </button>
           <button
             type="button"

@@ -365,7 +365,7 @@ export function SystemSettingsContent() {
             <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("categories.subtitle")}</p>
             <div className="mt-6 space-y-3">
               {categories.length === 0 && (
-                <p className="text-sm text-[var(--tott-muted)]">No categories yet.</p>
+                <p className="text-sm text-[var(--tott-muted)]">{tSettings("categories.empty")}</p>
               )}
               {categories.map((cat) => (
                 <div
@@ -415,7 +415,7 @@ export function SystemSettingsContent() {
             <h2 className="text-lg font-bold text-foreground">{tSettings("tags.title")}</h2>
             <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("tags.subtitle")}</p>
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-              {tags.length === 0 && <p className="text-sm text-[var(--tott-muted)] col-span-2">No tags yet.</p>}
+              {tags.length === 0 && <p className="text-sm text-[var(--tott-muted)] col-span-2">{tSettings("tags.empty")}</p>}
               {tags.map((tag) => (
                 <div
                   key={tag.id}
@@ -453,7 +453,7 @@ export function SystemSettingsContent() {
             <h2 className="text-lg font-bold text-foreground">{tSettings("badges.title")}</h2>
             <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("badges.subtitle")}</p>
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-              {badges.length === 0 && <p className="text-sm text-[var(--tott-muted)] col-span-2">No badges yet.</p>}
+              {badges.length === 0 && <p className="text-sm text-[var(--tott-muted)] col-span-2">{tSettings("badges.empty")}</p>}
               {badges.map((badge) => (
                 <div
                   key={badge.id}
@@ -484,7 +484,7 @@ export function SystemSettingsContent() {
             <h2 className="text-lg font-bold text-foreground">{tSettings("email.title")}</h2>
             <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("email.subtitle")}</p>
             <div className="mt-6 space-y-4">
-              {emailTemplates.length === 0 && <p className="text-sm text-[var(--tott-muted)]">No templates yet.</p>}
+              {emailTemplates.length === 0 && <p className="text-sm text-[var(--tott-muted)]">{tSettings("email.empty")}</p>}
               {emailTemplates.map((tpl) => (
                 <div
                   key={tpl.id}
@@ -575,7 +575,7 @@ export function SystemSettingsContent() {
                   style={{ backgroundColor: ACCENT }}
                 >
                   <SaveIcon />
-                  {savingLocalisation ? "Saving…" : tSettings("saveChanges")}
+                  {savingLocalisation ? tSettings("saving") : tSettings("saveChanges")}
                 </button>
               </div>
             </div>
@@ -629,7 +629,7 @@ export function SystemSettingsContent() {
                   style={{ backgroundColor: ACCENT }}
                 >
                   <SaveIcon />
-                  {savingGuidelines ? "Saving…" : tSettings("saveChanges")}
+                  {savingGuidelines ? tSettings("saving") : tSettings("saveChanges")}
                 </button>
               </div>
             </div>

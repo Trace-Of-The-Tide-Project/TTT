@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { theme } from "@/lib/theme";
 
@@ -19,6 +20,7 @@ type RecentListProps = {
 };
 
 export function RecentList({ heading, viewAllHref, items }: RecentListProps) {
+  const t = useTranslations("Dashboard.layout");
   const viewAllClass =
     "rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground";
   const rowHover = "hover:bg-[var(--tott-dash-ghost-hover)]";
@@ -29,7 +31,7 @@ export function RecentList({ heading, viewAllHref, items }: RecentListProps) {
         <h3 className="text-sm font-semibold text-foreground">{heading}</h3>
         {viewAllHref && (
           <Link href={viewAllHref} className={viewAllClass}>
-            View all
+            {t("viewAll")}
           </Link>
         )}
       </div>

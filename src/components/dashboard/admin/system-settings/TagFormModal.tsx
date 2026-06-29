@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { XIcon } from "@/components/ui/icons";
 import { routing } from "@/i18n/routing";
 import { EXTENDED_TRANSLATIONS_ENABLED } from "@/services/translations.service";
@@ -55,6 +56,7 @@ export function TagFormModal({
   initialNameI18n,
   onSave,
 }: TagFormModalProps) {
+  const t = useTranslations("Dashboard.systemSettings");
   const [label, setLabel] = useState("");
   const [i18n, setI18n] = useState<Record<string, string>>({});
 
@@ -91,16 +93,16 @@ export function TagFormModal({
 
   if (!open) return null;
 
-  const title = mode === "add" ? "Add Tag" : "Edit Tag";
+  const title = mode === "add" ? t("tagModal.addTitle") : t("tagModal.editTitle");
   const subtitle =
-    mode === "add" ? "Create a new content tag" : "Update the tag details";
-  const primaryLabel = mode === "add" ? "Create Tag" : "Save Changes";
+    mode === "add" ? t("tagModal.addSubtitle") : t("tagModal.editSubtitle");
+  const primaryLabel = mode === "add" ? t("tagModal.createLabel") : t("saveChanges");
   const titleId = "tag-form-modal-title";
 
   const submit = () => {
-    const t = label.trim();
-    if (!t) return;
-    onSave({ id: tagId, label: t, name_i18n: buildNameI18n(t, i18n) });
+    const trimmed = label.trim();
+    if (!trimmed) return;
+    onSave({ id: tagId, label: trimmed, name_i18n: buildNameI18n(trimmed, i18n) });
     onClose();
   };
 
@@ -114,7 +116,7 @@ export function TagFormModal({
         type="button"
         className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
         onClick={onClose}
-        aria-label="Close modal"
+        aria-label={t("modal.closeModal")}
       />
 
       <div
@@ -134,7 +136,7 @@ export function TagFormModal({
             type="button"
             onClick={onClose}
             className="rounded-lg p-2 text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
-            aria-label="Close"
+            aria-label={t("modal.close")}
           >
             <span className="[&_svg]:h-5 [&_svg]:w-5">
               <XIcon />
@@ -144,14 +146,14 @@ export function TagFormModal({
 
         <div className="px-6 py-5">
           <label htmlFor="tag-label" className="block text-sm font-medium text-foreground">
-            Tag Name
+            {t("tagModal.nameLabel")}
           </label>
           <input
             id="tag-label"
             type="text"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            placeholder={mode === "add" ? "e.g Featured" : undefined}
+            placeholder={mode === "add" ? t("tagModal.namePlaceholder") : undefined}
             className="mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
           />
           {EXTENDED_TRANSLATIONS_ENABLED ? (
@@ -172,7 +174,7 @@ export function TagFormModal({
             onClick={onClose}
             className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
           >
-            Cancel
+            {t("modal.cancel")}
           </button>
           <button
             type="button"

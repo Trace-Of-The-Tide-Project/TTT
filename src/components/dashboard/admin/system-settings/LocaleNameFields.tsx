@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { routing } from "@/i18n/routing";
 
 /**
@@ -36,16 +37,19 @@ export function LocaleNameFields({
   inputClassName,
   labelClassName,
 }: Props) {
+  const t = useTranslations("Dashboard.systemSettings.localeFields");
   const otherLocales = routing.locales.filter((loc) => loc !== defaultLocale);
 
   return (
     <div className="space-y-3 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset,transparent)] p-3">
       <p className="text-xs font-semibold uppercase tracking-wider text-[var(--tott-dash-gold-label)]">
-        Other languages
+        {t("otherLanguages")}
       </p>
       {otherLocales.map((loc) => (
         <div key={loc}>
-          <label className={labelClassName}>{LANGUAGE_LABELS[loc] ?? loc.toUpperCase()}</label>
+          <label className={labelClassName}>
+            {loc in LANGUAGE_LABELS ? t(`languages.${loc}`) : loc.toUpperCase()}
+          </label>
           <input
             type="text"
             dir={loc === "ar" ? "rtl" : "ltr"}
@@ -56,7 +60,7 @@ export function LocaleNameFields({
         </div>
       ))}
       <p className="text-[11px] text-[var(--tott-muted)]">
-        Leave a language blank to fall back to the default name above.
+        {t("fallbackHint")}
       </p>
     </div>
   );
