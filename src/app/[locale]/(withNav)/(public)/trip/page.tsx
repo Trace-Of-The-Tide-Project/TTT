@@ -53,7 +53,7 @@ export default function TripPage() {
               <h2 className="mb-4 text-lg font-semibold text-foreground">
                 {t("aboutTitle")}
               </h2>
-              <p className="text-sm leading-relaxed text-gray-400">
+              <p className="text-sm leading-relaxed text-[color:var(--tott-home-text-muted)]">
                 {TRIP_ABOUT}
               </p>
             </div>

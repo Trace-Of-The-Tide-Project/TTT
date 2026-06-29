@@ -3,7 +3,7 @@ import { ContributionPageLayout } from "@/components/contribute/ContributionPage
 import { OpenCallForm } from "@/components/open-call/OpenCallForm";
 
 const SANS = "'Inter', var(--font-sans, sans-serif)";
-const META_TEXT = "#A3A3A3";
+const META_TEXT = "var(--tott-home-text-muted)";
 const META_SHADOW = "0px 1px 2px rgba(0, 0, 0, 0.24)";
 const TAG_GOLD = "#DBC99E";
 const TAG_INK = "#332217";
@@ -20,7 +20,7 @@ function MetaDot() {
         fontWeight: 500,
         fontSize: "12px",
         lineHeight: "16px",
-        color: "rgba(255, 255, 255, 0.24)",
+        color: "var(--tott-home-text-muted)",
         textShadow: META_SHADOW,
       }}
     >

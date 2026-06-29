@@ -37,7 +37,7 @@ export default function OpenCallByIdPage() {
   if (phase === "loading") {
     return (
       <div
-        className="flex min-h-screen items-center justify-center text-sm text-gray-500"
+        className="flex min-h-screen items-center justify-center text-sm text-[color:var(--tott-home-text-muted)]"
         style={{ backgroundColor: theme.pageBackground }}
       >
         {t("loading")}
@@ -54,10 +54,10 @@ export default function OpenCallByIdPage() {
         <h1 className="text-xl font-semibold">
           {phase === "missing" ? t("errorNotFoundTitle") : t("errorLoadTitle")}
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-[color:var(--tott-home-text-muted)]">
           {phase === "missing" ? t("errorMissingBody") : t("errorLoadBody")}
         </p>
-        <Link href="/content" className="text-sm font-medium text-[color:var(--tott-accent-gold)] hover:underline">
+        <Link href="/content" className="text-sm font-medium text-[color:var(--tott-home-eyebrow)] hover:underline">
           {t("backToContent")}
         </Link>
       </div>
@@ -87,11 +87,11 @@ export default function OpenCallByIdPage() {
   const titleBlock = (
     <div className="flex flex-col" style={{ gap: "24px" }}>
       <div className="flex flex-col gap-5">
-        <div className="flex flex-wrap items-center gap-3 text-sm text-gray-400">
+        <div className="flex flex-wrap items-center gap-3 text-sm text-[color:var(--tott-home-text-muted)]">
           {openCall.category && (
             <span
               className="rounded px-2.5 py-0.5 text-xs font-semibold uppercase"
-              style={{ backgroundColor: theme.accentGold, color: "#1a1a1a" }}
+              style={{ backgroundColor: theme.accentGold, color: "var(--tott-on-accent)" }}
             >
               {openCall.category}
             </span>
