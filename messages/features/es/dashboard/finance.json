@@ -18,7 +18,8 @@
         "status": {
           "completed": "Completada",
           "pending": "Pendiente"
-        }
+        },
+        "empty": "No se encontraron donaciones."
       },
       "payouts": {
         "title": "Pagos pendientes",
@@ -33,13 +34,16 @@
         "status": {
           "pending": "Pendiente",
           "underReview": "En revisión"
-        }
+        },
+        "empty": "No se encontraron pagos."
       },
       "suspicious": {
         "title": "Actividad sospechosa",
         "subtitle": "Transacciones marcadas que requieren revisión",
         "investigate": "Investigar",
-        "block": "Bloquear"
+        "block": "Bloquear",
+        "empty": "No hay actividad sospechosa.",
+        "unknown": "Desconocido"
       },
       "invoices": {
         "comingSoon": "Las facturas estarán disponibles próximamente."
@@ -48,6 +52,12 @@
         "rowAria": "Acciones de la fila",
         "viewDetails": "Ver detalles",
         "refund": "Reembolsar"
+      },
+      "common": {
+        "loading": "Cargando…",
+        "prev": "← Anterior",
+        "next": "Siguiente →",
+        "pageInfo": "Página {page} de {totalPages}"
       }
     }
   }

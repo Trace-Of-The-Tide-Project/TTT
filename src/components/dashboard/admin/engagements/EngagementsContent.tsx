@@ -67,7 +67,7 @@ function CommentCard({
 
   const authorName = comment.author
     ? comment.author.full_name || comment.author.username
-    : "Unknown";
+    : t("unknownAuthor");
 
   return (
     <div className="flex gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-4">
@@ -430,7 +430,7 @@ export function EngagementsContent() {
           {/* Comment list */}
           <div className="space-y-4">
             {commentsQuery.isLoading && (
-              <p className="py-12 text-center text-[var(--tott-muted)]">Loading...</p>
+              <p className="py-12 text-center text-[var(--tott-muted)]">{t("common.loading")}</p>
             )}
             {comments.map((comment) => (
               <CommentCard
@@ -453,7 +453,7 @@ export function EngagementsContent() {
         <>
           <div className="space-y-4">
             {discussionsQuery.isLoading && (
-              <p className="py-12 text-center text-[var(--tott-muted)]">Loading...</p>
+              <p className="py-12 text-center text-[var(--tott-muted)]">{t("common.loading")}</p>
             )}
             {discussions.map((discussion) => (
               <TrendingDiscussionCard
@@ -506,7 +506,7 @@ export function EngagementsContent() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {badgesQuery.isLoading && (
-              <p className="py-12 text-center text-[var(--tott-muted)] col-span-2">Loading...</p>
+              <p className="py-12 text-center text-[var(--tott-muted)] col-span-2">{t("common.loading")}</p>
             )}
             {badges.map((badge) => (
               <BadgeCard

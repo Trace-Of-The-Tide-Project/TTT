@@ -261,9 +261,9 @@ export function FinanceContent() {
           <p className="mt-1 text-sm text-[var(--tott-muted)]">{tp("subtitle")}</p>
 
           {payoutsLoading ? (
-            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">Loading…</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">{t("common.loading")}</p>
           ) : payouts.length === 0 ? (
-            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">No payouts found.</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">{tp("empty")}</p>
           ) : (
             <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--tott-card-border)]">
               <div className="grid grid-cols-[1.3fr_0.8fr_1fr_0.9fr_1fr] items-center bg-[var(--tott-dash-surface)] px-6 py-4 text-sm border-b border-[var(--tott-card-border)]">
@@ -334,15 +334,15 @@ export function FinanceContent() {
                 disabled={payoutsMeta.page <= 1}
                 className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-[var(--tott-muted)]"
               >
-                ← Prev
+                {t("common.prev")}
               </button>
-              <span className="text-xs text-[var(--tott-muted)]">Page {payoutsMeta.page} of {payoutsMeta.totalPages}</span>
+              <span className="text-xs text-[var(--tott-muted)]">{t("common.pageInfo", { page: payoutsMeta.page, totalPages: payoutsMeta.totalPages })}</span>
               <button
                 onClick={() => loadPayouts(payoutsMeta.page + 1)}
                 disabled={payoutsMeta.page >= payoutsMeta.totalPages}
                 className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-[var(--tott-muted)]"
               >
-                Next →
+                {t("common.next")}
               </button>
             </div>
           )}
@@ -355,9 +355,9 @@ export function FinanceContent() {
           <p className="mt-1 text-sm text-[var(--tott-muted)]">{ts("subtitle")}</p>
 
           {fraudLoading ? (
-            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">Loading…</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">{t("common.loading")}</p>
           ) : fraudFlags.length === 0 ? (
-            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">No suspicious activity.</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">{ts("empty")}</p>
           ) : (
             <div className="mt-6 space-y-4">
               {fraudFlags.map((item) => (
@@ -372,7 +372,7 @@ export function FinanceContent() {
                     <div>
                       <p className="text-base font-semibold text-foreground capitalize">{item.flag_type.replace(/_/g, " ")}</p>
                       <p className="mt-1 text-sm text-[var(--tott-muted)]">
-                        {item.user_email ?? "Unknown"}{item.amount ? ` • ${fmt(item.amount)}` : ""} • {fmtDate(item.created_at)}
+                        {item.user_email ?? ts("unknown")}{item.amount ? ` • ${fmt(item.amount)}` : ""} • {fmtDate(item.created_at)}
                         {item.severity && <span className="ml-2 capitalize text-xs text-red-400">{item.severity}</span>}
                       </p>
                     </div>
@@ -417,9 +417,9 @@ export function FinanceContent() {
           <p className="mt-1 text-sm text-[var(--tott-muted)]">{td("subtitle")}</p>
 
           {donationsLoading ? (
-            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">Loading…</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">{t("common.loading")}</p>
           ) : donations.length === 0 ? (
-            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">No donations found.</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">{td("empty")}</p>
           ) : (
             <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--tott-card-border)]">
               <div className="grid grid-cols-[1.4fr_1fr_0.8fr_0.9fr_0.9fr_56px] items-center bg-[var(--tott-dash-surface)] px-6 py-4 text-sm border-b border-[var(--tott-card-border)]">
@@ -465,15 +465,15 @@ export function FinanceContent() {
                 disabled={donationsMeta.page <= 1}
                 className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-[var(--tott-muted)]"
               >
-                ← Prev
+                {t("common.prev")}
               </button>
-              <span className="text-xs text-[var(--tott-muted)]">Page {donationsMeta.page} of {donationsMeta.totalPages}</span>
+              <span className="text-xs text-[var(--tott-muted)]">{t("common.pageInfo", { page: donationsMeta.page, totalPages: donationsMeta.totalPages })}</span>
               <button
                 onClick={() => loadDonations(donationsMeta.page + 1)}
                 disabled={donationsMeta.page >= donationsMeta.totalPages}
                 className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-[var(--tott-muted)]"
               >
-                Next →
+                {t("common.next")}
               </button>
             </div>
           )}

@@ -19,7 +19,10 @@
         "menuAria": "Más acciones",
         "view": "Ver",
         "edit": "Editar",
-        "delete": "Eliminar"
+        "delete": "Eliminar",
+        "flag": "Marcar",
+        "unflag": "Desmarcar",
+        "unknownAuthor": "Desconocido"
       },
       "trending": {
         "commentsCount": "{count, plural, one {# comentario} other {# comentarios}}",
@@ -78,6 +81,9 @@
         "criteriaPlaceholder": "¿Cuándo debe otorgarse esta insignia?",
         "cancel": "Cancelar",
         "submit": "Otorgar insignia"
+      },
+      "common": {
+        "loading": "Cargando..."
       }
     }
   }

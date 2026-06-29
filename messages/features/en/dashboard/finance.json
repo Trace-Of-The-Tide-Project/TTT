@@ -18,7 +18,8 @@
         "status": {
           "completed": "Completed",
           "pending": "Pending"
-        }
+        },
+        "empty": "No donations found."
       },
       "payouts": {
         "title": "Pending Payouts",
@@ -33,13 +34,16 @@
         "status": {
           "pending": "Pending",
           "underReview": "Under Review"
-        }
+        },
+        "empty": "No payouts found."
       },
       "suspicious": {
         "title": "Suspicious Activity",
         "subtitle": "Flagged transactions requiring review",
         "investigate": "Investigate",
-        "block": "Block"
+        "block": "Block",
+        "empty": "No suspicious activity.",
+        "unknown": "Unknown"
       },
       "invoices": {
         "comingSoon": "Invoices are coming soon."
@@ -48,6 +52,12 @@
         "rowAria": "Row actions",
         "viewDetails": "View details",
         "refund": "Refund"
+      },
+      "common": {
+        "loading": "Loading…",
+        "prev": "← Prev",
+        "next": "Next →",
+        "pageInfo": "Page {page} of {totalPages}"
       }
     }
   }

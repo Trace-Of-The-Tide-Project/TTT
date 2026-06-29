@@ -19,7 +19,10 @@
         "menuAria": "المزيد من الإجراءات",
         "view": "عرض",
         "edit": "تعديل",
-        "delete": "حذف"
+        "delete": "حذف",
+        "flag": "إبلاغ",
+        "unflag": "إلغاء الإبلاغ",
+        "unknownAuthor": "غير معروف"
       },
       "trending": {
         "commentsCount": "{count, plural, one {تعليق واحد} other {# تعليق}}",
@@ -78,6 +81,9 @@
         "criteriaPlaceholder": "متى تُمنح هذه الشارة؟",
         "cancel": "إلغاء",
         "submit": "منح الشارة"
+      },
+      "common": {
+        "loading": "جارٍ التحميل..."
       }
     }
   }
