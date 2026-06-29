@@ -132,14 +132,14 @@ export function AdminBooksPageContent() {
                 <Link
                   href={`/admin/books/${book.id}/edit`}
                   className="rounded p-1 text-[var(--tott-muted)] hover:text-foreground"
-                  title="Edit"
+                  title={t("rowActions.edit")}
                 >
                   <PenLineIcon />
                 </Link>
                 <button
                   onClick={() => openDelete(book)}
                   className="rounded p-1 text-[var(--tott-muted)] hover:text-red-400"
-                  title="Delete"
+                  title={t("rowActions.delete")}
                 >
                   <TrashIcon />
                 </button>
@@ -156,7 +156,7 @@ export function AdminBooksPageContent() {
             onClick={() => setPage((p) => p - 1)}
             className="disabled:opacity-40"
           >
-            ← Prev
+            ← {t("pagination.prev")}
           </button>
           <span>
             {safePage} / {totalPages}
@@ -166,7 +166,7 @@ export function AdminBooksPageContent() {
             onClick={() => setPage((p) => p + 1)}
             className="disabled:opacity-40"
           >
-            Next →
+            {t("pagination.next")} →
           </button>
         </div>
       )}

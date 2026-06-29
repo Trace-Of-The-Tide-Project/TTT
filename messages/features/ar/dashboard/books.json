@@ -31,10 +31,19 @@
           "confirm": "حذف",
           "confirmBusy": "جارٍ الحذف…",
           "cancel": "إلغاء"
+        },
+        "rowActions": {
+          "edit": "تعديل",
+          "delete": "حذف"
+        },
+        "pagination": {
+          "prev": "السابق",
+          "next": "التالي"
         }
       },
       "form": {
         "createTitle": "إضافة كتاب جديد",
+        "loading": "جارٍ تحميل الكتاب…",
         "createDescription": "الكتاب عمل منشور مستقل (مع ملف PDF وسعر اختياريَّين) يظهر في صفحة الكتب العامة. لإصدار من المجلة استخدم «عدد»، ولمقال واحد استخدم «المحتوى».",
         "editTitle": "تعديل الكتاب",
         "saving": "جارٍ الحفظ…",
@@ -85,12 +94,44 @@
           "fr": "الفرنسية",
           "de": "الألمانية"
         },
+        "sections": {
+          "details": "تفاصيل الكتاب",
+          "pricing": "التسعير",
+          "media": "الوسائط"
+        },
+        "hints": {
+          "priceFree": "اتركه فارغاً لجعله مجانياً",
+          "coverUrl": "أو الصق رابط صورة مباشرةً",
+          "pdfUrl": "أو الصق رابط PDF مباشرةً"
+        },
         "upload": {
           "coverUpload": "رفع صورة الغلاف",
           "coverUploading": "جارٍ الرفع…",
           "pdfUpload": "رفع PDF",
           "pdfUploading": "جارٍ الرفع…",
-          "pdfUploaded": "تم رفع PDF ✓"
+          "pdfUploaded": "تم رفع PDF ✓",
+          "coverAlt": "معاينة الغلاف",
+          "change": "تغيير",
+          "coverHint": "انقر لرفع صورة الغلاف",
+          "coverFormats": "JPG، PNG، WebP — السحب والإفلات مدعوم",
+          "pdfHint": "انقر لرفع ملف PDF أو مستند Word",
+          "pdfFormats": "PDF، DOC، DOCX — السحب والإفلات مدعوم",
+          "uploadingFile": "جارٍ رفع الملف…",
+          "fileReady": "✓ جاهز",
+          "fileFallback": "تم رفع الملف",
+          "replace": "استبدال"
+        },
+        "toast": {
+          "coverUploading": "جارٍ رفع صورة الغلاف…",
+          "coverUploaded": "تم رفع صورة الغلاف",
+          "coverUploadFailed": "فشل رفع صورة الغلاف",
+          "fileUploading": "جارٍ رفع الملف…",
+          "fileUploaded": "تم رفع الملف",
+          "fileUploadFailed": "فشل رفع الملف",
+          "saving": "جارٍ حفظ الكتاب…",
+          "saved": "تم حفظ الكتاب",
+          "created": "تم إنشاء الكتاب",
+          "saveFailed": "فشل حفظ الكتاب"
         },
         "translation": {
           "banner": "إضافة ترجمة — اكتب نسخة هذه اللغة بالأسفل.",

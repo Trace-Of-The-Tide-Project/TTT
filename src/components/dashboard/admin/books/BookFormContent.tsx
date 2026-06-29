@@ -70,6 +70,7 @@ function CoverUploadZone({
   uploading: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
+  const t = useTranslations("Dashboard.books.form");
   const id = useId();
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -95,7 +96,7 @@ function CoverUploadZone({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={resolveArticleMediaSrc(value)}
-          alt="Cover preview"
+          alt={t("upload.coverAlt")}
           className="h-36 w-24 rounded-lg object-cover border border-[var(--tott-card-border)] shadow-md"
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
         />
@@ -103,7 +104,7 @@ function CoverUploadZone({
           htmlFor={id}
           className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50 opacity-0 hover:opacity-100 transition-opacity cursor-pointer text-xs font-medium text-white text-center px-2"
         >
-          Change
+          {t("upload.change")}
           <input
             id={id}
             ref={inputRef}
@@ -140,7 +141,7 @@ function CoverUploadZone({
       {uploading ? (
         <div className="flex flex-col items-center gap-2 py-6">
           <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--tott-card-border)] border-t-[var(--tott-accent-gold)]" />
-          <span className="text-xs text-[var(--tott-muted)]">Uploading…</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("upload.coverUploading")}</span>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-1 py-6 px-4 text-center pointer-events-none">
@@ -149,8 +150,8 @@ function CoverUploadZone({
             <circle cx="8.5" cy="8.5" r="1.5" />
             <polyline points="21 15 16 10 5 21" />
           </svg>
-          <span className="text-xs font-medium text-[var(--tott-muted)] mt-1">Click to upload cover image</span>
-          <span className="text-[10px] text-[var(--tott-muted)]">JPG, PNG, WebP — drag & drop supported</span>
+          <span className="text-xs font-medium text-[var(--tott-muted)] mt-1">{t("upload.coverHint")}</span>
+          <span className="text-[10px] text-[var(--tott-muted)]">{t("upload.coverFormats")}</span>
         </div>
       )}
     </label>
@@ -167,6 +168,7 @@ function PdfUploadZone({
   uploading: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
+  const t = useTranslations("Dashboard.books.form");
   const id = useId();
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -196,10 +198,10 @@ function PdfUploadZone({
           <line x1="16" y1="17" x2="8" y2="17" />
           <polyline points="10 9 9 9 8 9" />
         </svg>
-        <span className="flex-1 truncate text-xs text-[var(--tott-muted)]">{value.split("/").pop()?.split("?")[0] || "File uploaded"}</span>
-        <span className="shrink-0 rounded-full bg-green-500/15 px-2 py-0.5 text-[10px] font-medium text-green-400">✓ Ready</span>
+        <span className="flex-1 truncate text-xs text-[var(--tott-muted)]">{value.split("/").pop()?.split("?")[0] || t("upload.fileFallback")}</span>
+        <span className="shrink-0 rounded-full bg-green-500/15 px-2 py-0.5 text-[10px] font-medium text-green-400">{t("upload.fileReady")}</span>
         <label htmlFor={id} className="shrink-0 cursor-pointer text-[10px] text-[var(--tott-muted)] hover:text-[var(--tott-muted)] underline">
-          Replace
+          {t("upload.replace")}
           <input id={id} ref={inputRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={onChange} />
         </label>
       </div>
@@ -229,7 +231,7 @@ function PdfUploadZone({
       {uploading ? (
         <div className="flex flex-col items-center gap-2 py-5">
           <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--tott-card-border)] border-t-[var(--tott-accent-gold)]" />
-          <span className="text-xs text-[var(--tott-muted)]">Uploading file…</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("upload.uploadingFile")}</span>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-1 py-5 px-4 text-center pointer-events-none">
@@ -238,8 +240,8 @@ function PdfUploadZone({
             <polyline points="14 2 14 8 20 8" />
             <line x1="16" y1="13" x2="8" y2="13" />
           </svg>
-          <span className="text-xs font-medium text-[var(--tott-muted)] mt-1">Click to upload PDF or Word document</span>
-          <span className="text-[10px] text-[var(--tott-muted)]">PDF, DOC, DOCX — drag & drop supported</span>
+          <span className="text-xs font-medium text-[var(--tott-muted)] mt-1">{t("upload.pdfHint")}</span>
+          <span className="text-[10px] text-[var(--tott-muted)]">{t("upload.pdfFormats")}</span>
         </div>
       )}
     </label>
@@ -353,9 +355,9 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         // The signed URL previews immediately; the backend collapses it to
         // the stable storage path when the book is saved.
         const url = await mutationToast(() => uploadFileToUrl(file), {
-          loading: "Uploading cover image…",
-          success: "Cover image uploaded",
-          error: "Cover image upload failed",
+          loading: t("toast.coverUploading"),
+          success: t("toast.coverUploaded"),
+          error: t("toast.coverUploadFailed"),
         });
         setForm((prev) => ({ ...prev, cover_image: url }));
       } catch {
@@ -364,7 +366,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         setCoverUploading(false);
       }
     },
-    [],
+    [t],
   );
 
   const handlePdfUpload = useCallback(
@@ -377,9 +379,9 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         // The backend collapses the signed URL to the stable storage path
         // when the book is saved, and re-signs it fresh on read.
         const url = await mutationToast(() => uploadFileToUrl(file), {
-          loading: "Uploading file…",
-          success: "File uploaded",
-          error: "File upload failed",
+          loading: t("toast.fileUploading"),
+          success: t("toast.fileUploaded"),
+          error: t("toast.fileUploadFailed"),
         });
         setForm((prev) => ({ ...prev, pdf_url: url }));
       } catch {
@@ -388,7 +390,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         setPdfUploading(false);
       }
     },
-    [],
+    [t],
   );
 
   const buildPayload = (): BookPayload => ({
@@ -428,17 +430,17 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
       const payload = buildPayload();
       if (isEdit && bookId) {
         mutationToast(() => updateMutation.mutateAsync({ bookId, payload }), {
-          loading: "Saving book…",
-          success: "Book saved",
-          error: "Failed to save book",
+          loading: t("toast.saving"),
+          success: t("toast.saved"),
+          error: t("toast.saveFailed"),
         })
           .then(() => router.push("/admin/books"))
           .catch(() => {});
       } else {
         mutationToast(() => createMutation.mutateAsync(payload), {
-          loading: "Saving book…",
-          success: "Book created",
-          error: "Failed to save book",
+          loading: t("toast.saving"),
+          success: t("toast.created"),
+          error: t("toast.saveFailed"),
         })
           .then(() => router.push("/admin/books"))
           .catch(() => {});
@@ -457,7 +459,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
 
   if (isEdit && bookQuery.isPending) {
     return (
-      <div className="my-4 mx-10 text-sm text-[var(--tott-muted)]">Loading book…</div>
+      <div className="my-4 mx-10 text-sm text-[var(--tott-muted)]">{t("loading")}</div>
     );
   }
 
@@ -514,7 +516,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         {/* ── Section 1: Core info ── */}
         <div className={sectionClass}>
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
-            Book details
+            {t("sections.details")}
           </p>
 
           {/* Title */}
@@ -581,13 +583,13 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         {/* ── Section 2: Pricing ── */}
         <div className={sectionClass}>
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
-            Pricing
+            {t("sections.pricing")}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2">
               <label className={labelClass}>{t("fields.price")}</label>
               <input type="number" step="0.01" min="0" className={inputClass} placeholder={t("fields.pricePlaceholder")} value={form.price} onChange={set("price")} />
-              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">Leave blank to mark as free</p>
+              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.priceFree")}</p>
             </div>
             <div>
               <label className={labelClass}>{t("fields.currency")}</label>
@@ -603,7 +605,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         {/* ── Section 3: Media uploads ── */}
         <div className={sectionClass}>
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
-            Media
+            {t("sections.media")}
           </p>
 
           {/* Cover image */}
@@ -623,7 +625,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
                 value={form.cover_image}
                 onChange={set("cover_image")}
               />
-              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">Or paste an image URL directly</p>
+              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.coverUrl")}</p>
             </div>
           </div>
 
@@ -644,7 +646,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
                 value={form.pdf_url}
                 onChange={set("pdf_url")}
               />
-              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">Or paste a PDF URL directly</p>
+              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.pdfUrl")}</p>
             </div>
           </div>
         </div>

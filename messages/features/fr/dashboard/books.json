@@ -31,10 +31,19 @@
           "confirm": "Supprimer",
           "confirmBusy": "Suppression…",
           "cancel": "Annuler"
+        },
+        "rowActions": {
+          "edit": "Modifier",
+          "delete": "Supprimer"
+        },
+        "pagination": {
+          "prev": "Précédent",
+          "next": "Suivant"
         }
       },
       "form": {
         "createTitle": "Ajouter un nouveau livre",
+        "loading": "Chargement du livre…",
         "createDescription": "Un livre est une œuvre publiée autonome (avec PDF et prix optionnels) affichée sur la page publique des Livres. Pour une édition du magazine, utilisez un Numéro ; pour un seul article, utilisez Contenu.",
         "editTitle": "Modifier le livre",
         "saving": "Enregistrement…",
@@ -85,12 +94,44 @@
           "fr": "Français",
           "de": "Allemand"
         },
+        "sections": {
+          "details": "Détails du livre",
+          "pricing": "Tarification",
+          "media": "Médias"
+        },
+        "hints": {
+          "priceFree": "Laisser vide pour marquer comme gratuit",
+          "coverUrl": "Ou collez directement l'URL d'une image",
+          "pdfUrl": "Ou collez directement l'URL d'un PDF"
+        },
         "upload": {
           "coverUpload": "Télécharger l'image de couverture",
           "coverUploading": "Téléchargement…",
           "pdfUpload": "Télécharger le PDF",
           "pdfUploading": "Téléchargement…",
-          "pdfUploaded": "PDF téléchargé ✓"
+          "pdfUploaded": "PDF téléchargé ✓",
+          "coverAlt": "Aperçu de la couverture",
+          "change": "Changer",
+          "coverHint": "Cliquez pour télécharger l'image de couverture",
+          "coverFormats": "JPG, PNG, WebP — glisser-déposer pris en charge",
+          "pdfHint": "Cliquez pour télécharger un PDF ou un document Word",
+          "pdfFormats": "PDF, DOC, DOCX — glisser-déposer pris en charge",
+          "uploadingFile": "Téléchargement du fichier…",
+          "fileReady": "✓ Prêt",
+          "fileFallback": "Fichier téléchargé",
+          "replace": "Remplacer"
+        },
+        "toast": {
+          "coverUploading": "Téléchargement de l'image de couverture…",
+          "coverUploaded": "Image de couverture téléchargée",
+          "coverUploadFailed": "Échec du téléchargement de l'image de couverture",
+          "fileUploading": "Téléchargement du fichier…",
+          "fileUploaded": "Fichier téléchargé",
+          "fileUploadFailed": "Échec du téléchargement du fichier",
+          "saving": "Enregistrement du livre…",
+          "saved": "Livre enregistré",
+          "created": "Livre créé",
+          "saveFailed": "Échec de l'enregistrement du livre"
         },
         "translation": {
           "banner": "Ajout d'une traduction — rédigez la version de cette langue ci-dessous.",

@@ -31,10 +31,19 @@
           "confirm": "Eliminar",
           "confirmBusy": "Eliminando…",
           "cancel": "Cancelar"
+        },
+        "rowActions": {
+          "edit": "Editar",
+          "delete": "Eliminar"
+        },
+        "pagination": {
+          "prev": "Anterior",
+          "next": "Siguiente"
         }
       },
       "form": {
         "createTitle": "Añadir nuevo libro",
+        "loading": "Cargando libro…",
         "createDescription": "Un libro es una obra publicada independiente (con PDF y precio opcionales) que se muestra en la página pública de Libros. Para una edición de la revista usa un Número; para un solo artículo usa Contenido.",
         "editTitle": "Editar libro",
         "saving": "Guardando…",
@@ -85,12 +94,44 @@
           "fr": "Francés",
           "de": "Alemán"
         },
+        "sections": {
+          "details": "Detalles del libro",
+          "pricing": "Precio",
+          "media": "Multimedia"
+        },
+        "hints": {
+          "priceFree": "Dejar en blanco para marcarlo como gratis",
+          "coverUrl": "O pega directamente la URL de una imagen",
+          "pdfUrl": "O pega directamente la URL de un PDF"
+        },
         "upload": {
           "coverUpload": "Subir imagen de portada",
           "coverUploading": "Subiendo…",
           "pdfUpload": "Subir PDF",
           "pdfUploading": "Subiendo…",
-          "pdfUploaded": "PDF subido ✓"
+          "pdfUploaded": "PDF subido ✓",
+          "coverAlt": "Vista previa de la portada",
+          "change": "Cambiar",
+          "coverHint": "Haz clic para subir la imagen de portada",
+          "coverFormats": "JPG, PNG, WebP — arrastrar y soltar admitido",
+          "pdfHint": "Haz clic para subir un PDF o documento de Word",
+          "pdfFormats": "PDF, DOC, DOCX — arrastrar y soltar admitido",
+          "uploadingFile": "Subiendo archivo…",
+          "fileReady": "✓ Listo",
+          "fileFallback": "Archivo subido",
+          "replace": "Reemplazar"
+        },
+        "toast": {
+          "coverUploading": "Subiendo imagen de portada…",
+          "coverUploaded": "Imagen de portada subida",
+          "coverUploadFailed": "Error al subir la imagen de portada",
+          "fileUploading": "Subiendo archivo…",
+          "fileUploaded": "Archivo subido",
+          "fileUploadFailed": "Error al subir el archivo",
+          "saving": "Guardando libro…",
+          "saved": "Libro guardado",
+          "created": "Libro creado",
+          "saveFailed": "Error al guardar el libro"
         },
         "translation": {
           "banner": "Añadiendo una traducción: escribe la versión de este idioma abajo.",
