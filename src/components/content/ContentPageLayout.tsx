@@ -185,7 +185,7 @@ export function ContentPageLayout({
             {isOpenCall && (openCallId || articleId) && (
               <SpringLink
                 href={`/open-calls/${openCallId || articleId}`}
-                className="inline-flex w-fit items-center gap-2 rounded-lg px-8 py-3 text-sm font-semibold text-black"
+                className="inline-flex w-fit items-center gap-2 rounded-lg px-8 py-3 text-sm font-semibold text-[var(--tott-on-accent)]"
                 style={{ backgroundColor: theme.accentGold }}
               >
                 Join Call

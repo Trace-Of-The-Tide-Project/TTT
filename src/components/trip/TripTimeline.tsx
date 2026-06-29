@@ -91,7 +91,7 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
           className={`flex-1 cursor-pointer py-3 text-center text-sm font-medium transition-colors ${
             tab === "timeline"
               ? "bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]"
-              : "bg-transparent text-gray-500 hover:text-foreground"
+              : "bg-transparent text-[color:var(--tott-home-text-muted)] hover:text-foreground"
           }`}
         >
           Trip timeline
@@ -102,7 +102,7 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
           className={`flex-1 cursor-pointer py-3 text-center text-sm font-medium transition-colors ${
             tab === "map"
               ? "bg-[var(--tott-well-bg)] text-[color:var(--tott-panel-text)]"
-              : "bg-transparent text-gray-500 hover:text-foreground"
+              : "bg-transparent text-[color:var(--tott-home-text-muted)] hover:text-foreground"
           }`}
         >
           Route map
@@ -119,7 +119,7 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
                 {i > 0 && (
                   <>
                     <div
-                      className="w-px border-l-2 border-dashed border-gray-600"
+                      className="w-px border-l-2 border-dashed border-[color:var(--tott-card-border)]"
                       style={{ height: "3rem" }}
                       aria-hidden
                     />
@@ -128,7 +128,7 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
                 )}
                 {/* Number badge */}
                 <div
-                  className="z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-600 text-sm font-medium text-[color:var(--tott-panel-text)]"
+                  className="z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[color:var(--tott-card-border)] text-sm font-medium text-[color:var(--tott-panel-text)]"
                   style={{ backgroundColor: "var(--tott-well-bg)" }}
                 >
                   {i + 1}
@@ -136,14 +136,14 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
                 {/* Gap */}
                 <div className="h-3" aria-hidden />
                 {/* Line below — stretches to fill remaining height */}
-                <div className="w-px flex-1 border-l-2 border-dashed border-gray-600" aria-hidden />
+                <div className="w-px flex-1 border-l-2 border-dashed border-[color:var(--tott-card-border)]" aria-hidden />
               </div>
 
               {/* Content */}
               <div className="min-w-0 flex-1 pb-4" style={{ paddingTop: i === 0 ? "0" : "3rem" }}>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
                   <h3 className="text-base font-semibold text-foreground">{entry.title}</h3>
-                  <div className="flex items-center gap-3 text-xs text-gray-500">
+                  <div className="flex items-center gap-3 text-xs text-[color:var(--tott-home-text-muted)]">
                     <span className="flex items-center gap-1">
                       <CalendarSmall />
                       {entry.date}
@@ -155,7 +155,7 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
                   </div>
                 </div>
 
-                <p className="mt-2 text-sm leading-relaxed text-gray-400">
+                <p className="mt-2 text-sm leading-relaxed text-[color:var(--tott-home-text-muted)]">
                   <RichContent html={entry.description} variant="inline" />
                 </p>
 
@@ -171,7 +171,7 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
                 ) : null}
 
                 {entry.location && (
-                  <p className="mt-3 flex items-center gap-1.5 text-xs text-gray-500">
+                  <p className="mt-3 flex items-center gap-1.5 text-xs text-[color:var(--tott-home-text-muted)]">
                     <PinSmall />
                     {entry.location}
                   </p>
@@ -184,7 +184,7 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
 
       {tab === "map" &&
         (mapSlot ?? (
-          <div className="relative overflow-hidden rounded-xl border border-gray-700/30">
+          <div className="relative overflow-hidden rounded-xl border border-[color:var(--tott-card-border)]">
             <div
               className="relative h-72 w-full sm:h-80"
               style={{

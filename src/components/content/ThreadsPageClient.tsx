@@ -106,7 +106,7 @@ function ThreadByIdLoader({ id }: { id: string }) {
   if (phase === "loading") {
     return (
       <div
-        className="flex min-h-[50vh] items-center justify-center px-6 text-sm text-gray-500"
+        className="flex min-h-[50vh] items-center justify-center px-6 text-sm text-[var(--tott-home-text-muted)]"
         style={{ backgroundColor: theme.homeSurface }}
       >
         {t("threads.loading")}
@@ -214,7 +214,7 @@ export function ThreadsPageClient() {
     <Suspense
       fallback={
         <div
-          className="flex min-h-[50vh] items-center justify-center text-sm text-gray-500"
+          className="flex min-h-[50vh] items-center justify-center text-sm text-[var(--tott-home-text-muted)]"
           style={{ backgroundColor: theme.homeSurface }}
         >
           Loading…

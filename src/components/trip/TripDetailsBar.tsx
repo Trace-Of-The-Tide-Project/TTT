@@ -80,9 +80,9 @@ export function TripDetailsBar({ items }: TripDetailsBarProps) {
     >
       {items.map((item, i) => (
         <div key={i} className="flex flex-col items-center gap-2 text-center">
-          <span className="text-gray-400">{item.icon}</span>
+          <span className="text-[color:var(--tott-home-text-muted)]">{item.icon}</span>
           <div>
-            <p className="text-xs text-gray-500">{item.label}</p>
+            <p className="text-xs text-[color:var(--tott-home-text-muted)]">{item.label}</p>
             <p className="text-sm font-medium text-[color:var(--tott-panel-text)]">{item.value}</p>
           </div>
         </div>

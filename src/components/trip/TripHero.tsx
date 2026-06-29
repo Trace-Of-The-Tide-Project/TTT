@@ -33,7 +33,7 @@ export function TripHero({ image, title, price, difficulty, from, to }: TripHero
           <div className="flex items-center gap-3">
             <span
               className="rounded-full px-3 py-1 text-xs font-semibold"
-              style={{ backgroundColor: theme.accentGold, color: "#1a1a1a" }}
+              style={{ backgroundColor: theme.accentGold, color: "var(--tott-on-accent)" }}
             >
               {price}
             </span>

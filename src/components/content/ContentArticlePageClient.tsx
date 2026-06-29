@@ -210,7 +210,7 @@ function ArticleByIdLoader({ id }: { id: string }) {
   if (phase === "loading") {
     return (
       <div
-        className="flex min-h-[50vh] items-center justify-center px-6 text-sm text-gray-500"
+        className="flex min-h-[50vh] items-center justify-center px-6 text-sm text-[var(--tott-home-text-muted)]"
         style={{ backgroundColor: theme.homeSurface }}
       >
         {t("article.loading")}
@@ -308,7 +308,7 @@ export function ContentArticlePageClient({
     <Suspense
       fallback={
         <div
-          className="flex min-h-[50vh] items-center justify-center text-sm text-gray-500"
+          className="flex min-h-[50vh] items-center justify-center text-sm text-[var(--tott-home-text-muted)]"
           style={{ backgroundColor: theme.homeSurface }}
         >
           Loading…

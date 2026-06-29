@@ -194,7 +194,7 @@ export function Navbar() {
             className={`hidden lg:flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${
               isDark
                 ? "border-[color:var(--tott-card-border)] text-gray-400 hover:text-white"
-                : "border-gray-200 text-gray-500 hover:text-gray-900"
+                : "border-[color:var(--tott-card-border)] text-[color:var(--tott-muted)] hover:text-foreground"
             }`}
             style={{ backgroundColor: chipBg }}
             aria-label={t(themeAriaKey)}
@@ -224,7 +224,7 @@ export function Navbar() {
                   className={`inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ${
                     isDark
                       ? "text-gray-200 hover:text-white"
-                      : "text-gray-700 hover:text-gray-900"
+                      : "text-[color:var(--tott-muted)] hover:text-foreground"
                   }`}
                   style={{ borderColor }}
                 >
@@ -240,9 +240,7 @@ export function Navbar() {
 
                 {isUserDropdownOpen && (
                   <div
-                    className={`absolute right-0 top-full z-50 mt-1 w-44 rounded-lg border py-1 shadow-lg ${
-                      isDark ? "border-[color:var(--tott-card-border)] bg-[color:var(--tott-dash-surface-inset)]" : "border-gray-200 bg-white"
-                    }`}
+                    className="absolute right-0 top-full z-50 mt-1 w-44 rounded-lg border border-[color:var(--tott-card-border)] bg-[color:var(--tott-dash-surface-inset)] py-1 shadow-lg"
                   >
                     {userIsAdmin && (
                       <Link
@@ -251,7 +249,7 @@ export function Navbar() {
                         className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
                           isDark
                             ? "text-gray-300 hover:bg-white/5 hover:text-white"
-                            : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            : "text-[color:var(--tott-muted)] hover:bg-[color:var(--tott-dash-surface-2)] hover:text-foreground"
                         }`}
                       >
                         {t("dashboard")}
@@ -263,7 +261,7 @@ export function Navbar() {
                       className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
                         isDark
                           ? "text-gray-300 hover:bg-white/5 hover:text-white"
-                          : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                          : "text-[color:var(--tott-muted)] hover:bg-[color:var(--tott-dash-surface-2)] hover:text-foreground"
                       }`}
                     >
                       {t("profile")}
@@ -274,7 +272,7 @@ export function Navbar() {
                       className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
                         isDark
                           ? "text-gray-300 hover:bg-white/5 hover:text-white"
-                          : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                          : "text-[color:var(--tott-muted)] hover:bg-[color:var(--tott-dash-surface-2)] hover:text-foreground"
                       }`}
                     >
                       {t("myLibrary")}
@@ -285,7 +283,7 @@ export function Navbar() {
                       className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
                         isDark
                           ? "text-gray-300 hover:bg-white/5 hover:text-white"
-                          : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                          : "text-[color:var(--tott-muted)] hover:bg-[color:var(--tott-dash-surface-2)] hover:text-foreground"
                       }`}
                     >
                       {t("cart")}
@@ -296,7 +294,7 @@ export function Navbar() {
                       className={`flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors ${
                         isDark
                           ? "text-gray-300 hover:bg-white/5 hover:text-white"
-                          : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                          : "text-[color:var(--tott-muted)] hover:bg-[color:var(--tott-dash-surface-2)] hover:text-foreground"
                       }`}
                     >
                       <LogOutIcon />
@@ -312,7 +310,7 @@ export function Navbar() {
               <Link
                 href="/auth/login"
                 className={`hidden lg:inline-flex items-center rounded-md border px-4 py-2 text-sm font-medium transition-colors ${
-                  isDark ? "text-white hover:text-white/90" : "text-gray-900 hover:text-gray-700"
+                  isDark ? "text-white hover:text-white/90" : "text-foreground hover:text-foreground/80"
                 }`}
                 style={{ borderColor, backgroundColor: chipBg }}
               >
@@ -335,7 +333,7 @@ export function Navbar() {
             type="button"
             onClick={() => setIsMobileMenuOpen(true)}
             className={`flex lg:hidden h-10 w-10 shrink-0 items-center justify-center rounded-lg border transition-colors ${
-              isDark ? "text-white hover:text-white/90" : "text-gray-800 hover:text-gray-950"
+              isDark ? "text-white hover:text-white/90" : "text-foreground hover:text-foreground/80"
             }`}
             style={{ borderColor, backgroundColor: chipBg }}
             aria-label={t("openMenu")}
@@ -367,15 +365,15 @@ export function Navbar() {
           } ${isDark ? "border-[color:var(--tott-card-border)] bg-[color:var(--tott-home-surface)]" : "border-[var(--tott-card-border)] bg-[var(--background)]"}`}
         >
           <div
-            className={`flex flex-col gap-1 border-b p-4 ${isDark ? "border-[color:var(--tott-card-border)]" : "border-gray-200"}`}
+            className="flex flex-col gap-1 border-b border-[color:var(--tott-card-border)] p-4"
           >
             <div className="flex items-center justify-between gap-2">
-              <span className={`font-medium ${isDark ? "text-white" : "text-gray-900"}`}>{t("menu")}</span>
+              <span className="font-medium text-foreground">{t("menu")}</span>
               <button
                 type="button"
                 onClick={closeMobileMenu}
                 className={`rounded-md p-2 transition-colors ${
-                  isDark ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"
+                  isDark ? "text-gray-400 hover:text-white" : "text-[color:var(--tott-muted)] hover:text-foreground"
                 }`}
                 style={{ backgroundColor: chipBg }}
                 aria-label={t("closeMenu")}
@@ -408,7 +406,7 @@ export function Navbar() {
               </Link>
             ) : null}
 
-            <span className={`my-2 h-px w-full ${isDark ? "bg-[color:var(--tott-card-border)]" : "bg-gray-200"}`} />
+            <span className="my-2 h-px w-full bg-[color:var(--tott-card-border)]" />
 
             <div className={`flex flex-col gap-2 rounded-md px-4 py-3`}>
               <div className={`flex items-center gap-2 ${navMuted}`}>
@@ -459,7 +457,7 @@ export function Navbar() {
                   type="button"
                   onClick={handleLogout}
                   className={`flex items-center justify-center gap-2 rounded-md px-4 py-3 transition-colors ${
-                    isDark ? "text-white" : "text-gray-900"
+                    isDark ? "text-white" : "text-foreground"
                   }`}
                   style={{ backgroundColor: chipBg }}
                 >
@@ -473,7 +471,7 @@ export function Navbar() {
                   href="/auth/login"
                   onClick={closeMobileMenu}
                   className={`flex items-center justify-center gap-2 rounded-md px-4 py-3 transition-colors ${
-                    isDark ? "text-white" : "text-gray-900"
+                    isDark ? "text-white" : "text-foreground"
                   }`}
                   style={{ backgroundColor: chipBg }}
                 >
@@ -490,7 +488,7 @@ export function Navbar() {
               </>
             )}
 
-            <span className={`my-2 h-px w-full ${isDark ? "bg-[color:var(--tott-card-border)]" : "bg-gray-200"}`} />
+            <span className="my-2 h-px w-full bg-[color:var(--tott-card-border)]" />
 
             {/* Theme toggle — kept in mobile drawer */}
             <button

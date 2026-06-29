@@ -131,7 +131,7 @@ export function ThreadsPageLayout({
                 {mainPublishedDate && (
                   <>
                     <span>{t("published")}: {mainPublishedDate}</span>
-                    <span className="text-gray-600">·</span>
+                    <span className="text-[var(--tott-muted)]">·</span>
                   </>
                 )}
                 {mainReadingTime && <span>{mainReadingTime}</span>}

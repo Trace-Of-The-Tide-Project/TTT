@@ -28,7 +28,7 @@ const TripPreviewRouteMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-80 items-center justify-center rounded-xl border border-gray-700/30 text-sm text-gray-500">
+      <div className="flex h-80 items-center justify-center rounded-xl border border-[color:var(--tott-card-border)] text-sm text-[color:var(--tott-home-text-muted)]">
         Loading map…
       </div>
     ),
@@ -158,7 +158,7 @@ export function TripDetailContent({ tripId }: TripDetailContentProps) {
   if (!tripId.trim()) {
     return (
       <div
-        className="flex min-h-[50vh] items-center justify-center text-gray-400"
+        className="flex min-h-[50vh] items-center justify-center text-[color:var(--tott-home-text-muted)]"
         style={{ backgroundColor: theme.pageBackground }}
       >
         Invalid trip link.
@@ -169,7 +169,7 @@ export function TripDetailContent({ tripId }: TripDetailContentProps) {
   if (trip === undefined) {
     return (
       <div
-        className="flex min-h-[50vh] items-center justify-center text-gray-400"
+        className="flex min-h-[50vh] items-center justify-center text-[color:var(--tott-home-text-muted)]"
         style={{ backgroundColor: theme.pageBackground }}
       >
         Loading trip…
@@ -181,8 +181,8 @@ export function TripDetailContent({ tripId }: TripDetailContentProps) {
     return (
       <div className="mx-auto max-w-lg px-6 py-20 text-center" style={{ backgroundColor: theme.pageBackground }}>
         <h1 className="text-xl font-semibold text-foreground">Trip not found</h1>
-        <p className="mt-2 text-sm text-gray-400">This trip may have been removed or the link is incorrect.</p>
-        <Link href="/trip" className="mt-8 inline-block text-sm font-medium text-[#CBA158] hover:underline">
+        <p className="mt-2 text-sm text-[color:var(--tott-home-text-muted)]">This trip may have been removed or the link is incorrect.</p>
+        <Link href="/trip" className="mt-8 inline-block text-sm font-medium text-[color:var(--tott-home-eyebrow)] hover:underline">
           View sample trip
         </Link>
       </div>
@@ -243,10 +243,10 @@ export function TripDetailContent({ tripId }: TripDetailContentProps) {
                 <RichContent
                   html={trip.description}
                   variant="block"
-                  className="text-sm leading-relaxed text-gray-400"
+                  className="text-sm leading-relaxed text-[color:var(--tott-home-text-muted)]"
                 />
               ) : (
-                <p className="text-sm leading-relaxed text-gray-400">
+                <p className="text-sm leading-relaxed text-[color:var(--tott-home-text-muted)]">
                   No description provided.
                 </p>
               )}
