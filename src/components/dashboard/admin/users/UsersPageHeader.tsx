@@ -30,7 +30,7 @@ export function UsersPageHeader() {
               type="button"
               onClick={() => setAddOpen(true)}
               className="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors sm:w-auto sm:py-2"
-              style={{ backgroundColor: "#C9A96E", color: "#000" }}
+              style={{ backgroundColor: "var(--tott-accent-gold)", color: "var(--tott-on-accent)" }}
             >
               <PlusIcon />
               {t("addUser")}

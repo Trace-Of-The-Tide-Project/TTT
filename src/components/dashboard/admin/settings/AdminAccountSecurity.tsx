@@ -32,7 +32,7 @@ export function AdminAccountSecurity() {
         <div className="mt-6 flex flex-col gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]/40 p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-foreground">{t("deactivateTitle")}</p>
-            <p className="mt-2 text-sm text-gray-500">{t("deactivateDescription")}</p>
+            <p className="mt-2 text-sm text-[var(--tott-muted)]">{t("deactivateDescription")}</p>
           </div>
           <button
             type="button"

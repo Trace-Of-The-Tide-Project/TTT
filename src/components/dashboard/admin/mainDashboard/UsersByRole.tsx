@@ -75,7 +75,7 @@ export function UsersByRole({ roles, totalValue, viewAllHref }: UsersByRoleProps
                   className="h-full rounded-full transition-all duration-500"
                   style={{
                     width: `${role.percentage}%`,
-                    background: "linear-gradient(to right, rgba(203,161,88,0.35), var(--tott-dash-gold-label))",
+                    background: "linear-gradient(to right, color-mix(in srgb, var(--tott-accent-gold) 35%, transparent), var(--tott-dash-gold-label))",
                   }}
                 />
               </div>

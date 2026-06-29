@@ -304,12 +304,12 @@ export function UsersManagementContent() {
           <>
             <span
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-              style={{ backgroundColor: "#DBC99E", color: theme.bgDark }}
+              style={{ backgroundColor: "var(--tott-gold-chip-bg)", color: theme.bgDark }}
             >
               {initialsFromUser(user)}
             </span>
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium" style={{ color: "#DBC99E" }}>
+              <p className="truncate text-sm font-medium" style={{ color: "var(--tott-dash-gold-text)" }}>
                 {displayName(user)}
               </p>
               <p
@@ -773,12 +773,12 @@ function UserCardNarrow({
         <div className="flex min-w-0 items-center gap-3">
           <span
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-            style={{ backgroundColor: "#DBC99E", color: theme.bgDark }}
+            style={{ backgroundColor: "var(--tott-gold-chip-bg)", color: theme.bgDark }}
           >
             {initialsFromUser(user)}
           </span>
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium" style={{ color: "#DBC99E" }}>
+            <p className="truncate text-sm font-medium" style={{ color: "var(--tott-dash-gold-text)" }}>
               {displayName(user)}
             </p>
             <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]" title={user.email}>

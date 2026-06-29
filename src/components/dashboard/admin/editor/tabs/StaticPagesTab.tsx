@@ -19,7 +19,7 @@ export function StaticPagesTab() {
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
       {loading && pages.length === 0 ? (
-        <p className="py-12 text-center text-sm text-gray-500">{t("loading")}</p>
+        <p className="py-12 text-center text-sm text-[var(--tott-muted)]">{t("loading")}</p>
       ) : (
         <div className="space-y-4">
           {pages.map((page) => (
@@ -33,7 +33,7 @@ export function StaticPagesTab() {
                 </HexIconOutlined>
                 <div>
                   <p className="font-medium text-foreground">{page.title}</p>
-                  <p className="text-xs text-gray-500">{t("lastEdited", { date: formatDate(page.updatedAt, locale) })}</p>
+                  <p className="text-xs text-[var(--tott-muted)]">{t("lastEdited", { date: formatDate(page.updatedAt, locale) })}</p>
                 </div>
               </div>
               <div className="flex shrink-0 items-center gap-2">
@@ -66,7 +66,7 @@ export function StaticPagesTab() {
             </div>
           ))}
           {!loading && pages.length === 0 && (
-            <p className="py-12 text-center text-sm text-gray-500">{t("emptyState")}</p>
+            <p className="py-12 text-center text-sm text-[var(--tott-muted)]">{t("emptyState")}</p>
           )}
         </div>
       )}

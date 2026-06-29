@@ -110,7 +110,7 @@ function RowActions({ onViewDetails }: { onViewDetails?: () => void }) {
         ref={buttonRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+        className="rounded-lg p-2 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
         aria-label={ta("rowAria")}
         aria-haspopup="menu"
         aria-expanded={open}
@@ -130,7 +130,7 @@ function RowActions({ onViewDetails }: { onViewDetails?: () => void }) {
               bottom: menuPos.placeAbove ? window.innerHeight - menuPos.top : undefined,
             }}
           >
-            <div className="mb-1 border-t border-[#3a3a3a]" />
+            <div className="mb-1 border-t border-[var(--tott-card-border)]" />
             <button
               type="button"
               className="w-full rounded-md px-3 py-2 text-start text-sm text-foreground hover:bg-[var(--tott-dash-ghost-hover)]"
@@ -258,20 +258,20 @@ export function FinanceContent() {
       {activeTab === "payouts" ? (
         <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 lg:p-8">
           <h2 className="text-2xl font-semibold text-foreground">{tp("title")}</h2>
-          <p className="mt-1 text-sm text-gray-500">{tp("subtitle")}</p>
+          <p className="mt-1 text-sm text-[var(--tott-muted)]">{tp("subtitle")}</p>
 
           {payoutsLoading ? (
-            <p className="mt-8 text-center text-sm text-gray-500">Loading…</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">Loading…</p>
           ) : payouts.length === 0 ? (
-            <p className="mt-8 text-center text-sm text-gray-500">No payouts found.</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">No payouts found.</p>
           ) : (
             <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--tott-card-border)]">
               <div className="grid grid-cols-[1.3fr_0.8fr_1fr_0.9fr_1fr] items-center bg-[var(--tott-dash-surface)] px-6 py-4 text-sm border-b border-[var(--tott-card-border)]">
-                <div className="text-sm text-[#CBA158]">{tp("colCreator")}</div>
-                <div className="text-sm text-[#CBA158]">{tp("colAmount")}</div>
-                <div className="text-sm text-[#CBA158]">{tp("colRequested")}</div>
-                <div className="text-sm text-[#CBA158]">{tp("colStatus")}</div>
-                <div className="text-end text-sm text-[#CBA158]">{tp("colActions")}</div>
+                <div className="text-sm text-[var(--tott-accent-gold)]">{tp("colCreator")}</div>
+                <div className="text-sm text-[var(--tott-accent-gold)]">{tp("colAmount")}</div>
+                <div className="text-sm text-[var(--tott-accent-gold)]">{tp("colRequested")}</div>
+                <div className="text-sm text-[var(--tott-accent-gold)]">{tp("colStatus")}</div>
+                <div className="text-end text-sm text-[var(--tott-accent-gold)]">{tp("colActions")}</div>
               </div>
 
               <div className="divide-y divide-[var(--tott-card-border)]">
@@ -282,10 +282,10 @@ export function FinanceContent() {
                   >
                     <div>
                       <p className="text-sm font-medium text-foreground">{row.creator_name ?? "—"}</p>
-                      <p className="text-xs text-gray-500">{row.creator_email ?? ""}</p>
+                      <p className="text-xs text-[var(--tott-muted)]">{row.creator_email ?? ""}</p>
                     </div>
-                    <div className="text-sm text-gray-500">{fmt(row.amount, row.currency)}</div>
-                    <div className="text-sm text-gray-400">{fmtDate(row.created_at)}</div>
+                    <div className="text-sm text-[var(--tott-muted)]">{fmt(row.amount, row.currency)}</div>
+                    <div className="text-sm text-[var(--tott-muted)]">{fmtDate(row.created_at)}</div>
                     <div
                       className={`text-sm font-medium capitalize ${
                         row.status === "pending" ? "text-[#F59E0B]" : row.status === "approved" ? "text-emerald-400" : "text-blue-400"
@@ -332,15 +332,15 @@ export function FinanceContent() {
               <button
                 onClick={() => loadPayouts(payoutsMeta.page - 1)}
                 disabled={payoutsMeta.page <= 1}
-                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-gray-400"
+                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-[var(--tott-muted)]"
               >
                 ← Prev
               </button>
-              <span className="text-xs text-gray-500">Page {payoutsMeta.page} of {payoutsMeta.totalPages}</span>
+              <span className="text-xs text-[var(--tott-muted)]">Page {payoutsMeta.page} of {payoutsMeta.totalPages}</span>
               <button
                 onClick={() => loadPayouts(payoutsMeta.page + 1)}
                 disabled={payoutsMeta.page >= payoutsMeta.totalPages}
-                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-gray-400"
+                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-[var(--tott-muted)]"
               >
                 Next →
               </button>
@@ -352,12 +352,12 @@ export function FinanceContent() {
       ) : activeTab === "suspicious" ? (
         <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 lg:p-8">
           <h2 className="text-2xl font-semibold text-foreground">{ts("title")}</h2>
-          <p className="mt-1 text-sm text-gray-500">{ts("subtitle")}</p>
+          <p className="mt-1 text-sm text-[var(--tott-muted)]">{ts("subtitle")}</p>
 
           {fraudLoading ? (
-            <p className="mt-8 text-center text-sm text-gray-500">Loading…</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">Loading…</p>
           ) : fraudFlags.length === 0 ? (
-            <p className="mt-8 text-center text-sm text-gray-500">No suspicious activity.</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">No suspicious activity.</p>
           ) : (
             <div className="mt-6 space-y-4">
               {fraudFlags.map((item) => (
@@ -366,12 +366,12 @@ export function FinanceContent() {
                   className="flex items-center justify-between gap-6 rounded-2xl border border-red-500/60 bg-[var(--tott-dash-surface)] px-6 py-5"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-gray-300">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[var(--tott-muted)]">
                       <AlertTriangleIcon />
                     </div>
                     <div>
                       <p className="text-base font-semibold text-foreground capitalize">{item.flag_type.replace(/_/g, " ")}</p>
-                      <p className="mt-1 text-sm text-gray-500">
+                      <p className="mt-1 text-sm text-[var(--tott-muted)]">
                         {item.user_email ?? "Unknown"}{item.amount ? ` • ${fmt(item.amount)}` : ""} • {fmtDate(item.created_at)}
                         {item.severity && <span className="ml-2 capitalize text-xs text-red-400">{item.severity}</span>}
                       </p>
@@ -406,7 +406,7 @@ export function FinanceContent() {
 
       /* ── INVOICES ── */
       ) : activeTab === "invoices" ? (
-        <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-10 text-center text-gray-500">
+        <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-10 text-center text-[var(--tott-muted)]">
           {t("invoices.comingSoon")}
         </div>
 
@@ -414,20 +414,20 @@ export function FinanceContent() {
       ) : (
         <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 lg:p-8">
           <h2 className="text-2xl font-semibold text-foreground">{td("title")}</h2>
-          <p className="mt-1 text-sm text-gray-500">{td("subtitle")}</p>
+          <p className="mt-1 text-sm text-[var(--tott-muted)]">{td("subtitle")}</p>
 
           {donationsLoading ? (
-            <p className="mt-8 text-center text-sm text-gray-500">Loading…</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">Loading…</p>
           ) : donations.length === 0 ? (
-            <p className="mt-8 text-center text-sm text-gray-500">No donations found.</p>
+            <p className="mt-8 text-center text-sm text-[var(--tott-muted)]">No donations found.</p>
           ) : (
             <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--tott-card-border)]">
               <div className="grid grid-cols-[1.4fr_1fr_0.8fr_0.9fr_0.9fr_56px] items-center bg-[var(--tott-dash-surface)] px-6 py-4 text-sm border-b border-[var(--tott-card-border)]">
-                <div className="text-sm text-[#CBA158]">{td("colDonor")}</div>
-                <div className="text-sm text-[#CBA158]">{td("colRecipient")}</div>
-                <div className="text-sm text-[#CBA158]">{td("colAmount")}</div>
-                <div className="text-sm text-[#CBA158]">{td("colDate")}</div>
-                <div className="text-sm text-[#CBA158]">{td("colStatus")}</div>
+                <div className="text-sm text-[var(--tott-accent-gold)]">{td("colDonor")}</div>
+                <div className="text-sm text-[var(--tott-accent-gold)]">{td("colRecipient")}</div>
+                <div className="text-sm text-[var(--tott-accent-gold)]">{td("colAmount")}</div>
+                <div className="text-sm text-[var(--tott-accent-gold)]">{td("colDate")}</div>
+                <div className="text-sm text-[var(--tott-accent-gold)]">{td("colStatus")}</div>
                 <div />
               </div>
 
@@ -439,11 +439,11 @@ export function FinanceContent() {
                   >
                     <div>
                       <p className="text-sm font-medium text-foreground">{row.donor_name ?? "—"}</p>
-                      <p className="text-xs text-gray-500">{row.donor_email ?? ""}</p>
+                      <p className="text-xs text-[var(--tott-muted)]">{row.donor_email ?? ""}</p>
                     </div>
-                    <div className="text-sm text-gray-200">{row.recipient_name ?? "—"}</div>
-                    <div className="text-sm text-gray-500">{fmt(row.amount, row.currency)}</div>
-                    <div className="text-sm text-gray-400">{fmtDate(row.created_at)}</div>
+                    <div className="text-sm text-foreground">{row.recipient_name ?? "—"}</div>
+                    <div className="text-sm text-[var(--tott-muted)]">{fmt(row.amount, row.currency)}</div>
+                    <div className="text-sm text-[var(--tott-muted)]">{fmtDate(row.created_at)}</div>
                     <div
                       className={`text-sm font-medium capitalize ${
                         row.status === "completed" ? "text-emerald-400" : "text-[#F59E0B]"
@@ -463,15 +463,15 @@ export function FinanceContent() {
               <button
                 onClick={() => loadDonations(donationsMeta.page - 1)}
                 disabled={donationsMeta.page <= 1}
-                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-gray-400"
+                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-[var(--tott-muted)]"
               >
                 ← Prev
               </button>
-              <span className="text-xs text-gray-500">Page {donationsMeta.page} of {donationsMeta.totalPages}</span>
+              <span className="text-xs text-[var(--tott-muted)]">Page {donationsMeta.page} of {donationsMeta.totalPages}</span>
               <button
                 onClick={() => loadDonations(donationsMeta.page + 1)}
                 disabled={donationsMeta.page >= donationsMeta.totalPages}
-                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-gray-400"
+                className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30 border border-[var(--tott-card-border)] text-[var(--tott-muted)]"
               >
                 Next →
               </button>

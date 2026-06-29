@@ -108,7 +108,7 @@ export function AuthedContributionImage({ path, alt = "", className }: AuthedCon
   if (status === "error" || !src) {
     return (
       <div
-        className={`flex items-center justify-center bg-[var(--tott-dash-input-bg)] text-xs text-gray-500 ${className ?? ""}`}
+        className={`flex items-center justify-center bg-[var(--tott-dash-input-bg)] text-xs text-[var(--tott-muted)] ${className ?? ""}`}
         title="Could not load image"
         aria-label={alt || "Image unavailable"}
       >

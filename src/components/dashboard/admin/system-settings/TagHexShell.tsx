@@ -42,7 +42,7 @@ export function TagHexShell({ children }: { children: ReactNode }) {
           strokeWidth="1.5"
         />
       </svg>
-      <span className="relative z-10 flex items-center justify-center text-[#E8DDC0] [&>svg]:h-[18px] [&>svg]:w-[18px]">
+      <span className="relative z-10 flex items-center justify-center text-[var(--tott-dash-gold-text)] [&>svg]:h-[18px] [&>svg]:w-[18px]">
         {children}
       </span>
     </div>

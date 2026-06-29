@@ -22,8 +22,8 @@ export function SettingsToggle({ checked, onChange, id, "aria-label": ariaLabel 
       aria-checked={checked}
       aria-label={ariaLabel}
       onClick={() => onChange(!checked)}
-      className={`relative h-7 w-12 shrink-0 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A96E] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--tott-dash-surface-inset)] ${
-        checked ? "bg-[#C9A96E]" : "bg-[var(--tott-dash-control-bg)]"
+      className={`relative h-7 w-12 shrink-0 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tott-accent-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--tott-dash-surface-inset)] ${
+        checked ? "bg-[var(--tott-accent-gold)]" : "bg-[var(--tott-dash-control-bg)]"
       }`}
     >
       <span
@@ -52,7 +52,7 @@ export function SettingsRow({ title, description, control, showDivider = true }:
     >
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-foreground">{title}</p>
-        <p className="mt-1 text-sm text-gray-500">{description}</p>
+        <p className="mt-1 text-sm text-[var(--tott-muted)]">{description}</p>
       </div>
       <div className="flex shrink-0 justify-end sm:justify-start">{control}</div>
     </div>

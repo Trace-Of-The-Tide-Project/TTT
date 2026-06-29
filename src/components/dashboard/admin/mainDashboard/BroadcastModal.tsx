@@ -60,14 +60,14 @@ export function BroadcastModal({ open, onClose }: BroadcastModalProps) {
                 info
               </span>
             </div>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">
               Send a message to all users or a specific role group.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+            className="shrink-0 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
             aria-label="Close"
           >
             <XIcon />
@@ -83,15 +83,15 @@ export function BroadcastModal({ open, onClose }: BroadcastModalProps) {
               <select
                 value={audience}
                 onChange={(e) => setAudience(e.target.value)}
-                className="w-full appearance-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-2.5 pl-5 pr-10 text-sm outline-none transition-colors focus:border-gray-500"
-              style={{ color: "#6b7280" }}
+                className="w-full appearance-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-2.5 pl-5 pr-10 text-sm outline-none transition-colors focus:border-[var(--tott-accent-gold)]"
+              style={{ color: "var(--tott-muted)" }}
               >
                 <option value="All Users">All Users</option>
               <option value="Authors Only">Authors Only</option>
               <option value="Editors Only">Editors Only</option>
               <option value="Contributors Only">Contributors Only</option>
               </select>
-              <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
+              <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
@@ -108,8 +108,8 @@ export function BroadcastModal({ open, onClose }: BroadcastModalProps) {
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="Enter Broadcast subject..."
-              className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
-              style={{ color: "#6b7280" }}
+              className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-accent-gold)]"
+              style={{ color: "var(--tott-muted)" }}
             />
           </div>
 
@@ -122,8 +122,8 @@ export function BroadcastModal({ open, onClose }: BroadcastModalProps) {
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Write your Broadcast message..."
               rows={5}
-              className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
-              style={{ color: "#6b7280" }}
+              className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-accent-gold)]"
+              style={{ color: "var(--tott-muted)" }}
             />
           </div>
 
@@ -131,14 +131,14 @@ export function BroadcastModal({ open, onClose }: BroadcastModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-foreground"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
             >
               Close
             </button>
             <button
               type="submit"
-              className="flex items-center gap-2 rounded-lg px-6 py-2 text-sm font-medium text-black transition-colors hover:opacity-90"
-              style={{ backgroundColor: "#CBA158" }}
+              className="flex items-center gap-2 rounded-lg px-6 py-2 text-sm font-medium text-[var(--tott-on-accent)] transition-colors hover:opacity-90"
+              style={{ backgroundColor: "var(--tott-accent-gold)" }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13" />

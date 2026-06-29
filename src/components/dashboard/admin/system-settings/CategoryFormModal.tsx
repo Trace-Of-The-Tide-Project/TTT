@@ -133,7 +133,7 @@ export function CategoryFormModal({
   };
 
   const inputClass =
-    "mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none";
+    "mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none";
   const labelClass = "block text-sm font-medium text-foreground";
 
   return (
@@ -156,7 +156,7 @@ export function CategoryFormModal({
             <h2 id={titleId} className="text-lg font-bold text-foreground">
               {title}
             </h2>
-            <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{subtitle}</p>
           </div>
           <button
             type="button"
@@ -181,7 +181,7 @@ export function CategoryFormModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={mode === "add" ? "e.g Documentary" : undefined}
-              className="mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+              className="mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
             />
           </div>
           <div>
@@ -194,9 +194,9 @@ export function CategoryFormModal({
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
               placeholder={mode === "add" ? "e.g documentary" : undefined}
-              className="mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+              className="mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
             />
-            <p className="mt-1.5 text-xs text-gray-500">URL-friendly identifier: /…</p>
+            <p className="mt-1.5 text-xs text-[var(--tott-muted)]">URL-friendly identifier: /…</p>
           </div>
           {EXTENDED_TRANSLATIONS_ENABLED ? (
             <LocaleNameFields
@@ -220,7 +220,7 @@ export function CategoryFormModal({
             type="button"
             onClick={submit}
             disabled={!name.trim() || !slugWithoutSlash(slug)}
-            className="rounded-lg px-5 py-2.5 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg px-5 py-2.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             style={{ backgroundColor: ACCENT }}
           >
             {primaryLabel}

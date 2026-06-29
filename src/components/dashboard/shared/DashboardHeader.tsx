@@ -43,13 +43,13 @@ export function DashboardHeader({
         <div>
           <h1 className="text-xl font-bold text-foreground sm:text-2xl">{profile?.name ?? title}</h1>
           {profile?.meta && (
-            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--tott-muted)]">
               {profile.meta.map((m, i) => (
                 <span key={i}>{m}</span>
               ))}
             </div>
           )}
-          {!profile && subtitle && <p className="mt-1 text-sm text-gray-500">{subtitle}</p>}
+          {!profile && subtitle && <p className="mt-1 text-sm text-[var(--tott-muted)]">{subtitle}</p>}
         </div>
       </div>
       {(actions || lastUpdated) && (

@@ -121,14 +121,14 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
       )}
 
       {loading ? (
-        <div className="rounded-lg border border-[var(--tott-card-border)] px-5 py-12 text-center text-sm text-gray-500">
+        <div className="rounded-lg border border-[var(--tott-card-border)] px-5 py-12 text-center text-sm text-[var(--tott-muted)]">
           {t("management.loading")}
         </div>
       ) : (
         <ChamferedPanel className="px-3 pb-4 pt-4 min-[504px]:px-6 min-[504px]:pb-6 min-[504px]:pt-6">
           {/* Search bar — lives inside the panel above the table */}
           <div className="relative mb-4">
-            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
               <SearchIcon />
             </span>
             <input
@@ -136,7 +136,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("management.searchPlaceholder")}
-              className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500"
+              className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]"
             />
           </div>
 
@@ -145,7 +145,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
 
           {/* Wide layout — ≥504px: 7-column grid */}
           {pageRows.length === 0 ? (
-            <div className="border-x border-y border-[var(--tott-card-border)] px-5 py-10 text-center text-sm text-gray-500">
+            <div className="border-x border-y border-[var(--tott-card-border)] px-5 py-10 text-center text-sm text-[var(--tott-muted)]">
               {search.trim() ? t("management.empty.noMatch") : t("management.empty.none")}
             </div>
           ) : (
@@ -196,7 +196,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
                         <button
                           type="button"
                           onClick={() => onPreview(trip)}
-                          className="text-gray-500 transition-colors hover:text-foreground"
+                          className="text-[var(--tott-muted)] transition-colors hover:text-foreground"
                           aria-label={t("management.previewAria", { title: trip.title })}
                         >
                           <EyeIcon />
@@ -231,7 +231,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
                           <button
                             type="button"
                             onClick={() => onPreview(trip)}
-                            className="text-gray-500 transition-colors hover:text-foreground"
+                            className="text-[var(--tott-muted)] transition-colors hover:text-foreground"
                             aria-label={t("management.previewAria", { title: trip.title })}
                           >
                             <EyeIcon />
@@ -240,7 +240,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
                             type="button"
                             disabled={deletingId === trip.id}
                             onClick={() => onDelete(trip.id)}
-                            className="text-gray-500 transition-colors hover:text-red-400 disabled:opacity-40"
+                            className="text-[var(--tott-muted)] transition-colors hover:text-red-400 disabled:opacity-40"
                             aria-label={t("management.deleteAria", { title: trip.title })}
                           >
                             <TrashIcon />
@@ -284,7 +284,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
           {/* Pagination — lives inside the panel below the table */}
           {filtered.length > 0 ? (
             <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm">
-              <span className="text-gray-500">
+              <span className="text-[var(--tott-muted)]">
                 {t("management.pagination.showing", {
                   from: fromRow,
                   to: toRow,
@@ -296,7 +296,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
                   type="button"
                   disabled={safePage <= 1}
                   onClick={() => setPage((p) => p - 1)}
-                  className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-gray-400 transition-colors hover:text-foreground disabled:opacity-40"
+                  className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
                 >
                   {t("management.pagination.previous")}
                 </button>
@@ -304,7 +304,7 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
                   type="button"
                   disabled={safePage >= totalPages}
                   onClick={() => setPage((p) => p + 1)}
-                  className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-gray-400 transition-colors hover:text-foreground disabled:opacity-40"
+                  className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
                 >
                   {t("management.pagination.next")}
                 </button>

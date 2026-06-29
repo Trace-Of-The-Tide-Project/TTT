@@ -22,7 +22,7 @@ function NavFooterToggle({ checked, onChange }: { checked: boolean; onChange: (v
       style={checked ? { backgroundColor: theme.accentGoldFocus } : undefined}
     >
       <span
-        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${checked ? "left-6" : "left-1"}`}
+        className={`absolute top-1 h-4 w-4 rounded-full bg-[var(--tott-dash-surface)] transition-all ${checked ? "left-6" : "left-1"}`}
       />
     </button>
   );
@@ -168,11 +168,11 @@ export function NavigationsFooterTab() {
         aria-label={t("headerNavGroupLabel")}
       >
         <h3 className="text-sm font-semibold text-foreground">{t("headerNavTitle")}</h3>
-        <p className="mt-1 text-xs text-gray-500">{t("headerNavDescription")}</p>
+        <p className="mt-1 text-xs text-[var(--tott-muted)]">{t("headerNavDescription")}</p>
         <div className="mt-4 space-y-4">
           {navLinks.map((link) => (
             <div key={link.id} className="flex min-w-0 items-center gap-3">
-              <span className="cursor-grab text-gray-500" aria-label={t("reorderLabel")}>
+              <span className="cursor-grab text-[var(--tott-muted)]" aria-label={t("reorderLabel")}>
                 <GripVerticalIcon />
               </span>
               <input
@@ -180,14 +180,14 @@ export function NavigationsFooterTab() {
                 placeholder={t("textPlaceholder")}
                 value={link.text}
                 onChange={(e) => updateNavLink(link.id, "text", e.target.value)}
-                className="min-w-0 flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                className="min-w-0 flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="/path"
                 value={link.path}
                 onChange={(e) => updateNavLink(link.id, "path", e.target.value)}
-                className="min-w-0 flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                className="min-w-0 flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
               />
               <NavFooterToggle
                 checked={link.enabled}
@@ -216,7 +216,7 @@ export function NavigationsFooterTab() {
         aria-label={t("footerGroupLabel")}
       >
         <h3 className="text-sm font-semibold text-foreground">{t("footerTitle")}</h3>
-        <p className="mt-1 text-xs text-gray-500">{t("footerDescription")}</p>
+        <p className="mt-1 text-xs text-[var(--tott-muted)]">{t("footerDescription")}</p>
         <div className="mt-4 space-y-4">
           <div>
             <label className="mb-1.5 block text-xs font-medium text-foreground">{t("footerTextLabel")}</label>
@@ -225,7 +225,7 @@ export function NavigationsFooterTab() {
               rows={3}
               value={footerText}
               onChange={(e) => setFooterText(e.target.value)}
-              className="w-full resize-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+              className="w-full resize-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
             />
           </div>
           <div>
@@ -236,21 +236,21 @@ export function NavigationsFooterTab() {
                 placeholder={t("twitterPlaceholder")}
                 value={twitter}
                 onChange={(e) => setTwitter(e.target.value)}
-                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
               />
               <input
                 type="text"
                 placeholder={t("instagramPlaceholder")}
                 value={instagram}
                 onChange={(e) => setInstagram(e.target.value)}
-                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
               />
               <input
                 type="text"
                 placeholder={t("linkedinPlaceholder")}
                 value={linkedin}
                 onChange={(e) => setLinkedin(e.target.value)}
-                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
               />
             </div>
           </div>

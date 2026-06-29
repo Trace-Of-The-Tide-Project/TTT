@@ -18,7 +18,7 @@ export function SecurityPageToolbar() {
       <div className="flex flex-wrap items-center justify-end gap-3">
         <button
           type="button"
-          className="inline-flex h-[40px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-[#111] whitespace-nowrap transition-opacity hover:opacity-90"
+          className="inline-flex h-[40px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-[var(--tott-on-accent)] whitespace-nowrap transition-opacity hover:opacity-90"
           style={{ backgroundColor: ACCENT }}
         >
           <span className="[&_svg]:h-4 [&_svg]:w-4">
@@ -40,7 +40,7 @@ export function SecurityPageToolbar() {
               <span className="text-[var(--tott-stat-icon)]">
                 <Icon />
               </span>
-              <span className="text-center text-xs text-gray-500">{t(`stats.${stat.id}`)}</span>
+              <span className="text-center text-xs text-[var(--tott-muted)]">{t(`stats.${stat.id}`)}</span>
               <span className="text-2xl font-bold text-foreground">{t(`statValues.${stat.id}`)}</span>
             </div>
           );

@@ -127,7 +127,7 @@ export function BadgeFormModal({
   };
 
   const inputClass =
-    "mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none";
+    "mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none";
   const labelClass = "block text-sm font-medium text-foreground";
 
   return (
@@ -150,7 +150,7 @@ export function BadgeFormModal({
             <h2 id={titleId} className="text-lg font-bold text-foreground">
               {title}
             </h2>
-            <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{subtitle}</p>
           </div>
           <button
             type="button"
@@ -173,8 +173,8 @@ export function BadgeFormModal({
                   key={id}
                   type="button"
                   onClick={() => setIconId(id)}
-                  className={`flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-gray-500 transition-colors ${
-                    iconId === id ? "border-[#E8DDC0]" : "border-[var(--tott-card-border)] hover:border-[var(--tott-card-border)]"
+                  className={`flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[var(--tott-muted)] transition-colors ${
+                    iconId === id ? "border-[var(--tott-accent-gold)]" : "border-[var(--tott-card-border)] hover:border-[var(--tott-card-border)]"
                   }`}
                   aria-label={`Select icon ${id}`}
                   aria-pressed={iconId === id}
@@ -237,7 +237,7 @@ export function BadgeFormModal({
             type="button"
             onClick={submit}
             disabled={!name.trim() || !milestone.trim()}
-            className="rounded-lg px-5 py-2.5 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg px-5 py-2.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             style={{ backgroundColor: ACCENT }}
           >
             {primaryLabel}

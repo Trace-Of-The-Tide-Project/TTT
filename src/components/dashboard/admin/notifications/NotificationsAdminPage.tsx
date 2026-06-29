@@ -27,7 +27,7 @@ export function NotificationsAdminPage() {
   );
 
   const tabBtn =
-    "rounded-lg px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A96E] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--tott-dash-surface-inset)]";
+    "rounded-lg px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tott-accent-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--tott-dash-surface-inset)]";
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
@@ -38,7 +38,7 @@ export function NotificationsAdminPage() {
           className={`${tabBtn} ${
             tab === "settings"
               ? "bg-[var(--tott-dash-control-bg)] text-foreground"
-              : "text-gray-500 hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
+              : "text-[var(--tott-muted)] hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
           }`}
         >
           {t("settings")}
@@ -49,7 +49,7 @@ export function NotificationsAdminPage() {
           className={`${tabBtn} ${
             tab === "inbox"
               ? "bg-[var(--tott-dash-control-bg)] text-foreground"
-              : "text-gray-500 hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
+              : "text-[var(--tott-muted)] hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
           }`}
         >
           {t("inbox")}

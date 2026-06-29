@@ -148,23 +148,23 @@ export function SupportersContent() {
           {[...Array(4)].map((_, i) => (
             <ChamferedPanel key={i} className="px-4 py-4 animate-pulse">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gray-800 shrink-0" />
+                <div className="h-10 w-10 rounded-full bg-[var(--tott-dash-surface-2)] shrink-0" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-3 w-32 rounded bg-gray-800" />
-                  <div className="h-2 w-20 rounded bg-gray-800" />
+                  <div className="h-3 w-32 rounded bg-[var(--tott-dash-surface-2)]" />
+                  <div className="h-2 w-20 rounded bg-[var(--tott-dash-surface-2)]" />
                 </div>
               </div>
             </ChamferedPanel>
           ))}
         </div>
       ) : isError ? (
-        <div className="flex items-center justify-center py-12 text-sm text-gray-500">
+        <div className="flex items-center justify-center py-12 text-sm text-[var(--tott-muted)]">
           Could not load supporters. Please try again.
         </div>
       ) : supporters.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 py-16">
           <p className="text-sm text-[var(--tott-muted)]">No supporters yet.</p>
-          <p className="text-xs text-gray-600">Your supporters will appear here once they contribute.</p>
+          <p className="text-xs text-[var(--tott-muted)]">Your supporters will appear here once they contribute.</p>
         </div>
       ) : (
         <>
@@ -186,16 +186,16 @@ export function SupportersContent() {
                         {initials}
                       </span>
                       <div>
-                        <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
+                        <p className="text-sm font-medium" style={{ color: theme.accentGoldFocus }}>
                           {name}
                         </p>
-                        <p className="text-xs text-gray-500">{formatRelativeTime(entry.createdAt)}</p>
+                        <p className="text-xs text-[var(--tott-muted)]">{formatRelativeTime(entry.createdAt)}</p>
                       </div>
                     </div>
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
                       <div className="flex flex-col items-start sm:items-end">
-                        <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
+                        <p className="text-sm font-medium" style={{ color: theme.accentGoldFocus }}>
                           ${entry.amount}
                         </p>
                         <p className="text-xs capitalize text-foreground">{typeLabel(entry.type)}</p>
@@ -223,18 +223,18 @@ export function SupportersContent() {
                 type="button"
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-gray-400 transition-colors hover:border-gray-500 hover:text-white disabled:opacity-30 disabled:cursor-default"
+                className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground disabled:opacity-30 disabled:cursor-default"
               >
                 ← Prev
               </button>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[var(--tott-muted)]">
                 {page} / {totalPages}
               </span>
               <button
                 type="button"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-gray-400 transition-colors hover:border-gray-500 hover:text-white disabled:opacity-30 disabled:cursor-default"
+                className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground disabled:opacity-30 disabled:cursor-default"
               >
                 Next →
               </button>

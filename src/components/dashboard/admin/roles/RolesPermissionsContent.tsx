@@ -78,7 +78,7 @@ function RoleHierarchyHex({ children }: { children: ReactNode }) {
       </svg>
       <span
         className="relative z-10 flex items-center justify-center [&>svg]:h-5 [&>svg]:w-5"
-        style={{ color: "#E8DDC0" }}
+        style={{ color: "var(--tott-dash-gold-text)" }}
       >
         {children}
       </span>
@@ -148,7 +148,7 @@ function EditorAppActionsDropdown({
         type="button"
         onClick={() => setIsOpen((o) => !o)}
         className="rounded-full p-2 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
-        style={{ backgroundColor: "#333", color: "#A3A3A3" }}
+        style={{ backgroundColor: "var(--tott-dash-control-bg)", color: "var(--tott-muted)" }}
         aria-label={t("menuAria")}
         aria-expanded={isOpen}
       >
@@ -226,7 +226,7 @@ function EditorApplications() {
   const handleReject = (id: string) => rejectMutation.mutate(id);
 
   const statusBadgeStyle = (s: EditorAppStatus) => {
-    if (s === "pending") return "rounded-md bg-[#444] px-3 py-1 text-sm font-medium text-foreground";
+    if (s === "pending") return "rounded-md bg-[var(--tott-dash-surface-2)] px-3 py-1 text-sm font-medium text-foreground";
     if (s === "approved")
       return "rounded-md bg-emerald-600/80 px-3 py-1 text-sm font-medium text-foreground";
     return "rounded-md bg-red-600/80 px-3 py-1 text-sm font-medium text-foreground";
@@ -236,7 +236,7 @@ function EditorApplications() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="relative flex-1 max-w-md">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
             <SearchIcon />
           </span>
           <input
@@ -244,7 +244,7 @@ function EditorApplications() {
             placeholder={te("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+            className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
           />
         </div>
         <div className="flex gap-2">
@@ -255,8 +255,8 @@ function EditorApplications() {
               onClick={() => handleStatusChange(f.value)}
               className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
                 statusFilter === f.value
-                  ? "border-[#555] bg-[var(--tott-dash-control-bg)] text-foreground"
-                  : "border-[var(--tott-card-border)] bg-transparent text-gray-400 hover:text-foreground"
+                  ? "border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] text-foreground"
+                  : "border-[var(--tott-card-border)] bg-transparent text-[var(--tott-muted)] hover:text-foreground"
               }`}
             >
               {f.label} (
@@ -285,7 +285,7 @@ function EditorApplications() {
               </div>
               <div className="flex min-w-0 flex-1 flex-col leading-tight">
                 <p className="font-semibold text-foreground">{app.name}</p>
-                <p className="text-sm text-gray-500">{app.email}</p>
+                <p className="text-sm text-[var(--tott-muted)]">{app.email}</p>
               </div>
               <div className="flex shrink-0 flex-wrap items-center gap-2">
                 <span className={statusBadgeStyle(app.status)}>
@@ -329,7 +329,7 @@ function EditorApplications() {
               </div>
             </div>
             {/* Details in separate row so they don't wrap */}
-            <p className="mt-1 flex items-center gap-1.5 pl-16 text-sm text-gray-400">
+            <p className="mt-1 flex items-center gap-1.5 pl-16 text-sm text-[var(--tott-muted)]">
               <span className="flex h-4 w-4 shrink-0 items-center justify-center [&>svg]:h-4 [&>svg]:w-4">
                 <ClockIcon />
               </span>
@@ -344,10 +344,10 @@ function EditorApplications() {
       </div>
 
       {loadingApps && applications.length === 0 && (
-        <p className="py-12 text-center text-gray-500">{te("loading")}</p>
+        <p className="py-12 text-center text-[var(--tott-muted)]">{te("loading")}</p>
       )}
       {!loadingApps && filtered.length === 0 && (
-        <p className="py-12 text-center text-gray-500">{te("empty")}</p>
+        <p className="py-12 text-center text-[var(--tott-muted)]">{te("empty")}</p>
       )}
     </div>
   );
@@ -403,7 +403,7 @@ function PermissionsMatrix() {
     <div className="space-y-4">
       <div>
         <h3 className="text-lg font-bold text-foreground">{tm("title")}</h3>
-        <p className="mt-1 text-sm text-gray-500">{tm("subtitle")}</p>
+        <p className="mt-1 text-sm text-[var(--tott-muted)]">{tm("subtitle")}</p>
       </div>
       <div className="overflow-x-auto">
         <ChamferedTable
@@ -475,11 +475,11 @@ export function RolesPermissionsContent() {
                     className="relative flex min-w-0 flex-1 flex-col items-center justify-center gap-3 px-4 py-6"
                   >
                     <ChamferedFrame />
-                    <span style={{ color: "#E8DDC0" }}>
+                    <span style={{ color: "var(--tott-dash-gold-text)" }}>
                       <Icon />
                     </span>
                     <span className="text-2xl font-bold text-foreground">{stat.value}</span>
-                    <span className="text-center text-sm text-gray-500">
+                    <span className="text-center text-sm text-[var(--tott-muted)]">
                       {(tr as (key: string) => string)(`stats.${stat.id}`)}
                     </span>
                   </div>
@@ -491,7 +491,7 @@ export function RolesPermissionsContent() {
             <div className="relative p-6">
               <ChamferedFrame />
               <h3 className="text-lg font-bold text-foreground">{tr("hierarchy.title")}</h3>
-              <p className="mt-1 text-sm text-gray-500">{tr("hierarchy.subtitle")}</p>
+              <p className="mt-1 text-sm text-[var(--tott-muted)]">{tr("hierarchy.subtitle")}</p>
               <div className="mt-6 flex flex-nowrap items-center justify-center gap-0 overflow-x-auto">
                 {roleHierarchy.map((role, index) => {
                   const Icon = role.icon;
@@ -512,7 +512,7 @@ export function RolesPermissionsContent() {
                         <button
                           type="button"
                           onClick={() => setConfigureRoleOpen(true)}
-                          className="flex flex-col items-center gap-2 rounded-xl p-1 transition-colors hover:bg-white/6 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8DDC0]/40"
+                          className="flex flex-col items-center gap-2 rounded-xl p-1 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tott-gold-chip-bg)]/40"
                           aria-label={tr("hierarchy.configureSuperAdminAria")}
                         >
                           {inner}
@@ -522,14 +522,14 @@ export function RolesPermissionsContent() {
                       )}
                       {index < roleHierarchy.length - 1 && (
                         <div
-                          className="mx-2 h-1 w-12 shrink-0 overflow-hidden rounded-full bg-[#222] sm:mx-4 sm:w-12"
+                          className="mx-2 h-1 w-12 shrink-0 overflow-hidden rounded-full bg-[var(--tott-dash-surface-2)] sm:mx-4 sm:w-12"
                           aria-hidden
                         >
                           <div
                             className="h-full w-full rounded-full"
                             style={{
                               background:
-                                "linear-gradient(to right, rgba(203,161,88,0.35), #CBA158)",
+                                "linear-gradient(to right, rgba(203,161,88,0.35), var(--tott-accent-gold))",
                             }}
                           />
                         </div>

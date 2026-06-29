@@ -26,18 +26,18 @@ export function AnalyticsPageHeader() {
           <>
             <button
               type="button"
-              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 text-sm font-medium text-gray-200 transition-colors hover:bg-[#151515]"
+              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-elevated-hover)]"
             >
-              <span className="[&_svg]:h-4 [&_svg]:w-4 text-gray-400">
+              <span className="[&_svg]:h-4 [&_svg]:w-4 text-[var(--tott-muted)]">
                 <CalendarIcon />
               </span>
               {t("last30Days")}
-              <span className="ms-1 text-gray-500">▾</span>
+              <span className="ms-1 text-[var(--tott-muted)]">▾</span>
             </button>
 
             <button
               type="button"
-              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-[#111] whitespace-nowrap"
+              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-[var(--tott-on-accent)] whitespace-nowrap"
               style={{ backgroundColor: theme.accentGoldFocus }}
             >
               <span className="[&_svg]:h-4 [&_svg]:w-4">
@@ -55,7 +55,7 @@ export function AnalyticsPageHeader() {
             <EyeIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">2.4M</span>
-          <span className="text-xs text-gray-500">{t("cards.pageViews")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("cards.pageViews")}</span>
           <span className="text-xs text-emerald-400">↗ 18%</span>
         </div>
 
@@ -64,7 +64,7 @@ export function AnalyticsPageHeader() {
             <UserCheckIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">68%</span>
-          <span className="text-xs text-gray-500">{t("cards.userRetention")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("cards.userRetention")}</span>
           <span className="text-xs text-emerald-400">↗ 5%</span>
         </div>
 
@@ -73,7 +73,7 @@ export function AnalyticsPageHeader() {
             <ClockIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">8m 42s</span>
-          <span className="text-xs text-gray-500">{t("cards.avgSession")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("cards.avgSession")}</span>
           <span className="text-xs text-emerald-400">↗ 12%</span>
         </div>
 
@@ -82,7 +82,7 @@ export function AnalyticsPageHeader() {
             <TrendingUpIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">32%</span>
-          <span className="text-xs text-gray-500">{t("cards.bounceRate")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("cards.bounceRate")}</span>
           <span className="text-xs text-red-400">↘ 3%</span>
         </div>
       </div>

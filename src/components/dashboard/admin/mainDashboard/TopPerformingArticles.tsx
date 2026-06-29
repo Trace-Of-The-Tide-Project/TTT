@@ -34,15 +34,15 @@ export function TopPerformingArticles({ items }: TopPerformingArticlesProps) {
               <MapPinIcon />
             </HexIconOutlined>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium" style={{ color: "#C9A96E" }}>
+              <p className="truncate text-sm font-medium" style={{ color: "var(--tott-accent-gold)" }}>
                 {entry.title}
               </p>
             </div>
             <div className="flex shrink-0 flex-col items-end gap-0.5">
               {entry.contributors !== undefined && (
-                <p className="text-xs text-gray-400">{t("contributorsCount", { count: entry.contributors })}</p>
+                <p className="text-xs text-[var(--tott-muted)]">{t("contributorsCount", { count: entry.contributors })}</p>
               )}
-              <p className="text-xs text-gray-400">{t("viewsCount", { count: entry.views })}</p>
+              <p className="text-xs text-[var(--tott-muted)]">{t("viewsCount", { count: entry.views })}</p>
             </div>
             {entry.trend && (
               <span

@@ -73,7 +73,7 @@ export function AdminBooksPageContent() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-lg font-semibold text-foreground">{t("pageTitle")}</h1>
-          <p className="text-xs text-gray-500">{t("pageSubtitle")}</p>
+          <p className="text-xs text-[var(--tott-muted)]">{t("pageSubtitle")}</p>
         </div>
         <Link
           href="/admin/books/create"
@@ -90,7 +90,7 @@ export function AdminBooksPageContent() {
           placeholder={t("searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-sm rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500"
+          className="w-full max-w-sm rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]"
         />
       </div>
 
@@ -105,12 +105,12 @@ export function AdminBooksPageContent() {
         </div>
 
         {loading && (
-          <div className="px-4 py-8 text-center text-sm text-gray-500">
+          <div className="px-4 py-8 text-center text-sm text-[var(--tott-muted)]">
             {t("loading")}
           </div>
         )}
         {!loading && pageRows.length === 0 && (
-          <div className="px-4 py-8 text-center text-sm text-gray-500">
+          <div className="px-4 py-8 text-center text-sm text-[var(--tott-muted)]">
             {search ? t("empty.noMatch") : t("empty.none")}
           </div>
         )}
@@ -121,9 +121,9 @@ export function AdminBooksPageContent() {
               className="grid grid-cols-[32%_22%_14%_14%_18%] items-center border-t border-[var(--tott-card-border)] px-4 py-3 text-sm hover:bg-[var(--tott-elevated)]"
             >
               <span className="truncate font-medium">{book.title}</span>
-              <span className="truncate text-gray-400">{book.author ?? "—"}</span>
-              <span className="text-gray-400">{book.language ?? "—"}</span>
-              <span className="text-gray-400">
+              <span className="truncate text-[var(--tott-muted)]">{book.author ?? "—"}</span>
+              <span className="text-[var(--tott-muted)]">{book.language ?? "—"}</span>
+              <span className="text-[var(--tott-muted)]">
                 {book.price == null
                   ? t("price.free")
                   : `${book.currency ?? "USD"} ${book.price}`}
@@ -131,14 +131,14 @@ export function AdminBooksPageContent() {
               <div className="flex justify-end gap-2">
                 <Link
                   href={`/admin/books/${book.id}/edit`}
-                  className="rounded p-1 text-gray-400 hover:text-foreground"
+                  className="rounded p-1 text-[var(--tott-muted)] hover:text-foreground"
                   title="Edit"
                 >
                   <PenLineIcon />
                 </Link>
                 <button
                   onClick={() => openDelete(book)}
-                  className="rounded p-1 text-gray-400 hover:text-red-400"
+                  className="rounded p-1 text-[var(--tott-muted)] hover:text-red-400"
                   title="Delete"
                 >
                   <TrashIcon />
@@ -150,7 +150,7 @@ export function AdminBooksPageContent() {
       </ChamferedPanel>
 
       {totalPages > 1 && (
-        <div className="mt-3 flex items-center justify-end gap-2 text-xs text-gray-400">
+        <div className="mt-3 flex items-center justify-end gap-2 text-xs text-[var(--tott-muted)]">
           <button
             disabled={safePage <= 1}
             onClick={() => setPage((p) => p - 1)}
@@ -175,7 +175,7 @@ export function AdminBooksPageContent() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div className="w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-xl">
             <h2 className="mb-2 text-base font-semibold">{t("delete.title")}</h2>
-            <p className="mb-4 text-sm text-gray-400">
+            <p className="mb-4 text-sm text-[var(--tott-muted)]">
               {t("delete.description", { title: deleteTarget.title })}
             </p>
             {deleteError && (
@@ -185,7 +185,7 @@ export function AdminBooksPageContent() {
               <button
                 onClick={closeDelete}
                 disabled={deleteBusy}
-                className="rounded-lg px-4 py-1.5 text-sm text-gray-400 hover:text-foreground disabled:opacity-40"
+                className="rounded-lg px-4 py-1.5 text-sm text-[var(--tott-muted)] hover:text-foreground disabled:opacity-40"
               >
                 {t("delete.cancel")}
               </button>

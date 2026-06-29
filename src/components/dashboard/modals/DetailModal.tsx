@@ -86,13 +86,13 @@ export function DetailModal({
               )}
             </div>
             {description && (
-              <p className="mt-1 text-sm text-gray-500">{description}</p>
+              <p className="mt-1 text-sm text-[var(--tott-muted)]">{description}</p>
             )}
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+            className="shrink-0 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
             aria-label="Close"
           >
             <XIcon />
@@ -108,7 +108,7 @@ export function DetailModal({
             >
               <div className="min-w-0 flex-1 overflow-hidden">
                 <p className="truncate text-sm font-medium text-foreground">{item.title}</p>
-                <p className="mt-0.5 truncate text-xs text-gray-500">{item.subtitle}</p>
+                <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]">{item.subtitle}</p>
               </div>
               {item.processButtons ? (
                 <div className="flex shrink-0 items-center gap-2">
@@ -134,7 +134,7 @@ export function DetailModal({
               ) : item.actionHref ? (
                 <a
                   href={item.actionHref}
-                  className="shrink-0 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-gray-500"
+                  className="shrink-0 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-card-border)]"
                   style={item.actionColor ? { color: item.actionColor } : undefined}
                 >
                   {item.actionLabel}
@@ -143,7 +143,7 @@ export function DetailModal({
                 <button
                   type="button"
                   onClick={item.onAction}
-                  className="shrink-0 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-gray-500"
+                  className="shrink-0 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-xs font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-card-border)]"
                   style={item.actionColor ? { color: item.actionColor } : undefined}
                 >
                   {item.actionLabel}
@@ -159,8 +159,8 @@ export function DetailModal({
             {viewAllHref ? (
               <a
                 href={viewAllHref}
-                className="block w-full rounded-lg py-3 text-center text-sm font-medium text-black transition-colors hover:opacity-90"
-                style={{ backgroundColor: "#CBA158" }}
+                className="block w-full rounded-lg py-3 text-center text-sm font-medium text-[var(--tott-on-accent)] transition-colors hover:opacity-90"
+                style={{ backgroundColor: "var(--tott-accent-gold)" }}
               >
                 {viewAllLabel}
               </a>
@@ -168,8 +168,8 @@ export function DetailModal({
               <button
                 type="button"
                 onClick={onViewAll}
-                className="w-full rounded-lg py-3 text-sm font-medium text-black transition-colors hover:opacity-90"
-                style={{ backgroundColor: "#CBA158" }}
+                className="w-full rounded-lg py-3 text-sm font-medium text-[var(--tott-on-accent)] transition-colors hover:opacity-90"
+                style={{ backgroundColor: "var(--tott-accent-gold)" }}
               >
                 {viewAllLabel}
               </button>
@@ -182,7 +182,7 @@ export function DetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-gray-500 hover:text-foreground"
+            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-[var(--tott-dash-control-fg)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
           >
             Close
           </button>

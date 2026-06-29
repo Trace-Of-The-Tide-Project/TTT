@@ -128,7 +128,7 @@ const LOCALE_LABEL: Record<HomeLocale, string> = {
 };
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none";
 
 // `label` of null means the human label comes from the `variants.default`
 // translation key. D01/D02/D03 are identifiers and stay verbatim, while
@@ -159,8 +159,8 @@ function VariantPicker({
             onClick={() => onChange(opt.value)}
             className={`flex flex-col items-center gap-1 rounded-lg border px-3 py-3 text-center transition-colors ${
               active
-                ? "border-[#C9A96E] bg-[#C9A96E]/15 text-[#C9A96E]"
-                : "border-[var(--tott-card-border)] text-gray-400 hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
+                ? "border-[var(--tott-accent-gold)] bg-[var(--tott-accent-gold)]/15 text-[var(--tott-accent-gold)]"
+                : "border-[var(--tott-card-border)] text-[var(--tott-muted)] hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
             }`}
           >
             <span className="text-sm font-semibold">
@@ -218,7 +218,7 @@ export function HomePageEditorContent() {
 
   if (isPending || !page) {
     return (
-      <div className="flex items-center justify-center py-20 text-sm text-gray-500">
+      <div className="flex items-center justify-center py-20 text-sm text-[var(--tott-muted)]">
         {t("loading")}
       </div>
     );
@@ -258,12 +258,12 @@ export function HomePageEditorContent() {
             type="button"
             onClick={() => publishPage.mutate(page.id)}
             disabled={publishPage.isPending}
-            className="rounded-lg border border-[#C9A96E]/40 bg-[#C9A96E]/20 px-3 py-1.5 text-xs font-medium text-[#C9A96E] hover:bg-[#C9A96E]/30 disabled:opacity-50"
+            className="rounded-lg border border-[var(--tott-accent-gold)]/40 bg-[var(--tott-accent-gold)]/20 px-3 py-1.5 text-xs font-medium text-[var(--tott-accent-gold)] hover:bg-[var(--tott-accent-gold)]/30 disabled:opacity-50"
           >
             {publishPage.isPending ? t("publishing") : t("publish")}
           </button>
         </div>
-        <p className="mt-1 text-xs text-gray-500">{t("listHelper")}</p>
+        <p className="mt-1 text-xs text-[var(--tott-muted)]">{t("listHelper")}</p>
         <div className="mt-4 flex flex-col gap-2">
           {sections.map((section) => {
             const isSel = section.id === (selected?.id ?? null);
@@ -272,10 +272,10 @@ export function HomePageEditorContent() {
                 key={section.id}
                 onClick={() => setSelectedId(section.id)}
                 className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-3 transition-colors hover:bg-[var(--tott-dash-control-hover)] ${
-                  isSel ? "border-[#C9A96E]" : "border-[var(--tott-card-border)]"
+                  isSel ? "border-[var(--tott-accent-gold)]" : "border-[var(--tott-card-border)]"
                 }`}
               >
-                <span className={`flex-1 text-sm font-medium ${isSel ? "text-[#C9A96E]" : "text-foreground"}`}>
+                <span className={`flex-1 text-sm font-medium ${isSel ? "text-[var(--tott-accent-gold)]" : "text-foreground"}`}>
                   {sectionLabel(section)}
                 </span>
                 <button
@@ -285,7 +285,7 @@ export function HomePageEditorContent() {
                     toggleSection.mutate({ pageId: page.id, sectionId: section.id });
                   }}
                   className={`rounded p-1.5 hover:bg-[var(--tott-dash-ghost-hover)] ${
-                    section.is_visible ? "text-gray-400" : "text-gray-600 opacity-40"
+                    section.is_visible ? "text-[var(--tott-muted)]" : "text-[var(--tott-muted)] opacity-40"
                   }`}
                   aria-label={section.is_visible ? t("hideSection") : t("showSection")}
                 >
@@ -322,7 +322,7 @@ export function HomePageEditorContent() {
                   type="button"
                   onClick={handleSave}
                   disabled={saving}
-                  className="rounded-lg border border-[#C9A96E]/40 bg-[#C9A96E]/20 px-3 py-1.5 text-xs font-medium text-[#C9A96E] hover:bg-[#C9A96E]/30 disabled:opacity-50"
+                  className="rounded-lg border border-[var(--tott-accent-gold)]/40 bg-[var(--tott-accent-gold)]/20 px-3 py-1.5 text-xs font-medium text-[var(--tott-accent-gold)] hover:bg-[var(--tott-accent-gold)]/30 disabled:opacity-50"
                 >
                   {saving ? t("saving") : t("save")}
                 </button>
@@ -339,8 +339,8 @@ export function HomePageEditorContent() {
                     onClick={() => setActiveLocale(loc)}
                     className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                       activeLocale === loc
-                        ? "bg-[#C9A96E]/20 text-[#C9A96E]"
-                        : "text-gray-400 hover:bg-[var(--tott-dash-control-hover)]"
+                        ? "bg-[var(--tott-accent-gold)]/20 text-[var(--tott-accent-gold)]"
+                        : "text-[var(--tott-muted)] hover:bg-[var(--tott-dash-control-hover)]"
                     }`}
                   >
                     {LOCALE_LABEL[loc]}
@@ -380,7 +380,7 @@ export function HomePageEditorContent() {
 
               {schema.flat.length > 0 ? (
                 <div className="mt-2 border-t border-[var(--tott-card-border)] pt-4">
-                  <p className="mb-3 text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--tott-muted)]">
                     {t("sharedAllLanguages")}
                   </p>
                   {schema.flat.map((f) => (
@@ -408,7 +408,7 @@ export function HomePageEditorContent() {
             </div>
           </>
         ) : (
-          <div className="flex h-full items-center justify-center py-20 text-sm text-gray-500">
+          <div className="flex h-full items-center justify-center py-20 text-sm text-[var(--tott-muted)]">
             {t("emptyState")}
           </div>
         )}

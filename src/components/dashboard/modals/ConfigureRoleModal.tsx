@@ -9,7 +9,7 @@ import {
   type ConfigurePermissionId,
 } from "@/lib/dashboard/roles-constants";
 
-const TOGGLE_GOLD = "#E8DDC0";
+const TOGGLE_GOLD = "var(--tott-gold-chip-bg)";
 
 function initialAllEnabled(): Record<ConfigurePermissionId, boolean> {
   return Object.fromEntries(
@@ -88,7 +88,7 @@ export function ConfigureRoleModal({
             <h2 id="configure-role-title" className="text-lg font-bold text-foreground">
               {t("title", { role: resolvedRoleName })}
             </h2>
-            <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("subtitle")}</p>
           </div>
           <button
             type="button"
@@ -110,7 +110,7 @@ export function ConfigureRoleModal({
                   <p className="font-semibold text-foreground">
                     {(t as (key: string) => string)(`rows.${row.id}.title`)}
                   </p>
-                  <p className="mt-0.5 text-sm text-gray-500">
+                  <p className="mt-0.5 text-sm text-[var(--tott-muted)]">
                     {(t as (key: string) => string)(`rows.${row.id}.description`)}
                   </p>
                 </div>
@@ -135,7 +135,7 @@ export function ConfigureRoleModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-5 py-2.5 text-sm font-semibold text-gray-900 transition-opacity hover:opacity-90"
+            className="rounded-lg px-5 py-2.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90"
             style={{ backgroundColor: TOGGLE_GOLD }}
           >
             {t("save")}

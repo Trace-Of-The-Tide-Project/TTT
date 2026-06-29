@@ -68,14 +68,14 @@ export function UserPicker({
         }}
         placeholder={t("searchPlaceholder")}
         disabled={disabled}
-        className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-[var(--tott-gold)]/60 transition-colors"
+        className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-gold)]/60 transition-colors"
       />
       <div className="max-h-56 overflow-y-auto rounded-lg border border-[var(--tott-card-border)]">
         {usersQuery.isPending && (
-          <p className="px-3 py-3 text-xs text-gray-500">{t("searching")}</p>
+          <p className="px-3 py-3 text-xs text-[var(--tott-muted)]">{t("searching")}</p>
         )}
         {!usersQuery.isPending && results.length === 0 && (
-          <p className="px-3 py-3 text-xs text-gray-500">{t("noResults")}</p>
+          <p className="px-3 py-3 text-xs text-[var(--tott-muted)]">{t("noResults")}</p>
         )}
         {results.map((u) => {
           const name = u.full_name?.trim() || u.username?.trim() || u.email;

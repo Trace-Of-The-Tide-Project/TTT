@@ -182,10 +182,10 @@ export function ProfileAnalytics() {
                 <div key={i} className="relative px-5 py-4 animate-pulse">
                   <ChamferedFrame />
                   <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-full bg-gray-800 shrink-0" />
+                    <div className="h-14 w-14 rounded-full bg-[var(--tott-dash-surface-2)] shrink-0" />
                     <div className="flex-1 space-y-2">
-                      <div className="h-3 w-2/3 rounded bg-gray-800" />
-                      <div className="h-2 w-1/3 rounded bg-gray-800" />
+                      <div className="h-3 w-2/3 rounded bg-[var(--tott-dash-surface-2)]" />
+                      <div className="h-2 w-1/3 rounded bg-[var(--tott-dash-surface-2)]" />
                     </div>
                   </div>
                 </div>
@@ -198,7 +198,7 @@ export function ProfileAnalytics() {
                 <BarChartIcon />
               </span>
               <p className="text-sm text-[var(--tott-muted)]">{t("noPublishedArticlesYet")}</p>
-              <p className="text-xs text-gray-600">{t("publishFirstArticleHint")}</p>
+              <p className="text-xs text-[var(--tott-muted)]">{t("publishFirstArticleHint")}</p>
             </div>
           ) : (
             <div className="flex flex-col gap-3">
@@ -224,11 +224,11 @@ export function ProfileAnalytics() {
                         <Link
                           href={`/admin/articles/${article.id}`}
                           className="block truncate text-sm font-medium transition-colors hover:text-[var(--tott-dash-gold-text)]"
-                          style={{ color: "#C9A96E" }}
+                          style={{ color: "var(--tott-accent-gold-focus)" }}
                         >
                           {article.title}
                         </Link>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-gray-500">
+                        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-[var(--tott-muted)]">
                           {pubDate && <span>{pubDate}</span>}
                           {article.contributors > 0 && (
                             <span>· {t("contributorsCount", { count: article.contributors })}</span>
@@ -236,7 +236,7 @@ export function ProfileAnalytics() {
                         </div>
 
                         {/* View bar */}
-                        <div className="mt-2.5 h-1 w-full rounded-full bg-gray-800">
+                        <div className="mt-2.5 h-1 w-full rounded-full bg-[var(--tott-dash-surface-2)]">
                           <div
                             className="h-full rounded-full transition-all duration-700"
                             style={{
@@ -251,7 +251,7 @@ export function ProfileAnalytics() {
                       <div className="shrink-0 flex flex-col items-end gap-1">
                         <span className="text-sm font-semibold text-foreground">
                           {formatNumber(article.view_count)}
-                          <span className="ml-1 text-xs font-normal text-gray-500">{t("views")}</span>
+                          <span className="ml-1 text-xs font-normal text-[var(--tott-muted)]">{t("views")}</span>
                         </span>
                         <span
                           className="flex items-center gap-0.5 text-xs font-medium"

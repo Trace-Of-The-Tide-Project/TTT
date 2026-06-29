@@ -86,16 +86,16 @@ function CommentCard({
             </span>
           )}
         </p>
-        <p className="mt-1 text-sm text-gray-400 line-clamp-2">{comment.content}</p>
-        <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-gray-500">
+        <p className="mt-1 text-sm text-[var(--tott-muted)] line-clamp-2">{comment.content}</p>
+        <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-[var(--tott-muted)]">
           <span className="flex items-center gap-1.5">
-            <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
+            <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "var(--tott-dash-gold-text)" }}>
               <HeartIcon />
             </span>
             {comment.likes}
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
+            <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "var(--tott-dash-gold-text)" }}>
               <MessageSquareIcon />
             </span>
             {t("replies", { count: comment.replies })}
@@ -108,7 +108,7 @@ function CommentCard({
           type="button"
           onClick={() => setIsOpen((o) => !o)}
           className="rounded p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
-          style={{ color: "#A3A3A3" }}
+          style={{ color: "var(--tott-muted)" }}
           aria-label={t("menuAria")}
         >
           <MoreDotsIcon />
@@ -164,15 +164,15 @@ function TrendingDiscussionCard({
         </div>
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-foreground">{discussion.title}</p>
-          <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-500">
+          <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-[var(--tott-muted)]">
             <span className="inline-flex items-center gap-1.5">
-              <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
+              <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "var(--tott-dash-gold-text)" }}>
                 <MessageSquareIcon />
               </span>
               {t("commentsCount", { count: discussion.comment_count })}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
+              <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: "var(--tott-dash-gold-text)" }}>
                 <UsersIcon />
               </span>
               {t("participantsCount", { count: discussion.participant_count })}
@@ -185,7 +185,7 @@ function TrendingDiscussionCard({
         <button
           type="button"
           onClick={onView}
-          className="inline-flex h-[40px] w-[120px] items-center justify-center gap-2 rounded-md border border-[#555] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] whitespace-nowrap"
+          className="inline-flex h-[40px] w-[120px] items-center justify-center gap-2 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] whitespace-nowrap"
         >
           <EyeIcon />
           {t("view")}
@@ -193,7 +193,7 @@ function TrendingDiscussionCard({
         <button
           type="button"
           onClick={onToggleLocked}
-          className="inline-flex h-[40px] w-[120px] items-center justify-center gap-2 rounded-md border border-[#555] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] whitespace-nowrap"
+          className="inline-flex h-[40px] w-[120px] items-center justify-center gap-2 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] whitespace-nowrap"
           aria-label={discussion.is_locked ? t("unlockDiscussionAria") : t("lockDiscussionAria")}
         >
           <LockIcon />
@@ -225,19 +225,19 @@ function BadgeCard({ badge, onAward }: { badge: Badge; onAward: () => void }) {
       <div className="flex items-start gap-4">
         <div
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]"
-          style={{ color: "#E8DDC0" }}
+          style={{ color: "var(--tott-dash-gold-text)" }}
         >
           {icon}
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-base font-semibold text-foreground">{badge.name}</p>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-[var(--tott-muted)]">
             {t("recipients", { count: badge.recipient_count })}
           </p>
         </div>
       </div>
 
-      <p className="mt-4 line-clamp-2 text-sm text-gray-500">
+      <p className="mt-4 line-clamp-2 text-sm text-[var(--tott-muted)]">
         <RichContent html={badge.description} variant="inline" />
       </p>
 
@@ -390,7 +390,7 @@ export function EngagementsContent() {
           {/* Search and filters */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <div className="relative flex-1 max-w-md">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
                 <SearchIcon />
               </span>
               <input
@@ -398,7 +398,7 @@ export function EngagementsContent() {
                 placeholder={t("comments.searchPlaceholder")}
                 value={commentSearch}
                 onChange={(e) => setCommentSearch(e.target.value)}
-                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
               />
             </div>
             <div className="flex gap-2">
@@ -407,8 +407,8 @@ export function EngagementsContent() {
                 onClick={() => setFilter("all")}
                 className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
                   filter === "all"
-                    ? "border-[#555] bg-[var(--tott-dash-control-bg)] text-foreground"
-                    : "border-[var(--tott-card-border)] bg-transparent text-gray-400 hover:text-foreground"
+                    ? "border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] text-foreground"
+                    : "border-[var(--tott-card-border)] bg-transparent text-[var(--tott-muted)] hover:text-foreground"
                 }`}
               >
                 {t("filter.all")}
@@ -418,8 +418,8 @@ export function EngagementsContent() {
                 onClick={() => setFilter("flagged")}
                 className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
                   filter === "flagged"
-                    ? "border-[#555] bg-[var(--tott-dash-control-bg)] text-foreground"
-                    : "border-[var(--tott-card-border)] bg-transparent text-gray-400 hover:text-foreground"
+                    ? "border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] text-foreground"
+                    : "border-[var(--tott-card-border)] bg-transparent text-[var(--tott-muted)] hover:text-foreground"
                 }`}
               >
                 {t("filter.flagged", { count: flaggedCount })}
@@ -430,7 +430,7 @@ export function EngagementsContent() {
           {/* Comment list */}
           <div className="space-y-4">
             {commentsQuery.isLoading && (
-              <p className="py-12 text-center text-gray-500">Loading...</p>
+              <p className="py-12 text-center text-[var(--tott-muted)]">Loading...</p>
             )}
             {comments.map((comment) => (
               <CommentCard
@@ -444,7 +444,7 @@ export function EngagementsContent() {
           </div>
 
           {!commentsQuery.isLoading && comments.length === 0 && (
-            <p className="py-12 text-center text-gray-500">{t("comments.emptyFiltered")}</p>
+            <p className="py-12 text-center text-[var(--tott-muted)]">{t("comments.emptyFiltered")}</p>
           )}
         </>
       )}
@@ -453,7 +453,7 @@ export function EngagementsContent() {
         <>
           <div className="space-y-4">
             {discussionsQuery.isLoading && (
-              <p className="py-12 text-center text-gray-500">Loading...</p>
+              <p className="py-12 text-center text-[var(--tott-muted)]">Loading...</p>
             )}
             {discussions.map((discussion) => (
               <TrendingDiscussionCard
@@ -472,7 +472,7 @@ export function EngagementsContent() {
           </div>
 
           {!discussionsQuery.isLoading && discussions.length === 0 && (
-            <p className="py-12 text-center text-gray-500">{t("trending.empty")}</p>
+            <p className="py-12 text-center text-[var(--tott-muted)]">{t("trending.empty")}</p>
           )}
         </>
       )}
@@ -481,7 +481,7 @@ export function EngagementsContent() {
         <>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div className="relative flex-1">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
                 <SearchIcon />
               </span>
               <input
@@ -489,14 +489,14 @@ export function EngagementsContent() {
                 placeholder={t("badges.searchPlaceholder")}
                 value={badgeSearch}
                 onChange={(e) => setBadgeSearch(e.target.value)}
-                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
               />
             </div>
 
             <button
               type="button"
               onClick={() => setCreateBadgeOpen(true)}
-              className="inline-flex h-[42px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-[#111] whitespace-nowrap"
+              className="inline-flex h-[42px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-[var(--tott-on-accent)] whitespace-nowrap"
               style={{ backgroundColor: theme.accentGoldFocus }}
             >
               <PlusIcon />
@@ -506,7 +506,7 @@ export function EngagementsContent() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {badgesQuery.isLoading && (
-              <p className="py-12 text-center text-gray-500 col-span-2">Loading...</p>
+              <p className="py-12 text-center text-[var(--tott-muted)] col-span-2">Loading...</p>
             )}
             {badges.map((badge) => (
               <BadgeCard
@@ -521,7 +521,7 @@ export function EngagementsContent() {
           </div>
 
           {!badgesQuery.isLoading && badges.length === 0 && (
-            <p className="py-12 text-center text-gray-500">{t("badges.emptySearch")}</p>
+            <p className="py-12 text-center text-[var(--tott-muted)]">{t("badges.emptySearch")}</p>
           )}
         </>
       )}

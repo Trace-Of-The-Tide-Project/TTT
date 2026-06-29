@@ -115,12 +115,12 @@ export function CreateMessageTemplateModal({ open, onClose, onCreate }: CreateMe
         <div className="mb-5 flex items-start justify-between border-b border-[var(--tott-card-border)] pb-5">
           <div>
             <h2 className="text-lg font-bold text-foreground">{tc("title")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{tc("subtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{tc("subtitle")}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+            className="shrink-0 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
             aria-label={tc("closeAria")}
           >
             <XIcon />
@@ -147,7 +147,7 @@ export function CreateMessageTemplateModal({ open, onClose, onCreate }: CreateMe
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={tc("namePlaceholder")}
-              className="h-[44px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
+              className="h-[44px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]"
             />
           </div>
 
@@ -158,12 +158,12 @@ export function CreateMessageTemplateModal({ open, onClose, onCreate }: CreateMe
                 ref={categoryButtonRef}
                 type="button"
                 onClick={() => setCategoryOpen((v) => !v)}
-                className="flex h-[44px] w-full items-center justify-between rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground outline-none transition-colors focus:border-gray-500"
+                className="flex h-[44px] w-full items-center justify-between rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground outline-none transition-colors focus:border-[var(--tott-card-border)]"
                 aria-haspopup="listbox"
                 aria-expanded={categoryOpen}
               >
-                <span className="text-gray-200">{(tc as (key: string) => string)(`categories.${category}`)}</span>
-                <span className="text-gray-500">
+                <span className="text-foreground">{(tc as (key: string) => string)(`categories.${category}`)}</span>
+                <span className="text-[var(--tott-muted)]">
                   <ChevronDownIcon />
                 </span>
               </button>
@@ -198,7 +198,7 @@ export function CreateMessageTemplateModal({ open, onClose, onCreate }: CreateMe
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder={tc("subjectPlaceholder")}
-              className="h-[44px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
+              className="h-[44px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]"
             />
           </div>
 
@@ -209,11 +209,11 @@ export function CreateMessageTemplateModal({ open, onClose, onCreate }: CreateMe
               onChange={(e) => setBody(e.target.value)}
               placeholder={tc("bodyPlaceholder")}
               rows={5}
-              className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-3 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
+              className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-3 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]"
             />
-            <p className="mt-2 text-xs text-gray-500">
+            <p className="mt-2 text-xs text-[var(--tott-muted)]">
               {tc("variablesHint")}{" "}
-              <span className="text-gray-400">{tc("variablesList")}</span>
+              <span className="text-[var(--tott-muted)]">{tc("variablesList")}</span>
             </p>
           </div>
 
@@ -221,14 +221,14 @@ export function CreateMessageTemplateModal({ open, onClose, onCreate }: CreateMe
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-foreground"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
             >
               {tc("cancel")}
             </button>
             <button
               type="submit"
               disabled={!canSubmit}
-              className="rounded-lg px-6 py-2 text-sm font-medium text-black transition-colors disabled:opacity-50"
+              className="rounded-lg px-6 py-2 text-sm font-medium text-[var(--tott-on-accent)] transition-colors disabled:opacity-50"
               style={{ backgroundColor: theme.accentGoldFocus }}
             >
               {tc("submit")}

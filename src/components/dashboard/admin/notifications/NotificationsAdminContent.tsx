@@ -150,7 +150,7 @@ export function NotificationsAdminContent() {
 
   if (!user?.id) {
     return (
-      <div className="px-4 py-12 text-center text-sm text-gray-500 sm:px-6 md:px-8">
+      <div className="px-4 py-12 text-center text-sm text-[var(--tott-muted)] sm:px-6 md:px-8">
         {nt("signInRequired")}
       </div>
     );
@@ -158,11 +158,11 @@ export function NotificationsAdminContent() {
 
   return (
     <div className="mx-auto max-w-full space-y-4 px-3 py-4 sm:space-y-6 sm:px-4 sm:py-6 md:px-6 md:py-8 lg:px-8">
-      <p className="text-xs text-gray-500">{nt("accountHint")}</p>
+      <p className="text-xs text-[var(--tott-muted)]">{nt("accountHint")}</p>
 
       <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:gap-4">
         <div className="relative min-w-0 flex-1">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
             <SearchIcon />
           </span>
           <input
@@ -170,7 +170,7 @@ export function NotificationsAdminContent() {
             placeholder={nt("searchPlaceholder")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="w-full min-w-0 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-3 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none sm:pr-4"
+            className="w-full min-w-0 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-3 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none sm:pr-4"
           />
         </div>
         <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-stretch sm:gap-2 lg:items-center">
@@ -232,13 +232,13 @@ export function NotificationsAdminContent() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={5} className="px-5 py-12 text-center text-gray-500">
+                <td colSpan={5} className="px-5 py-12 text-center text-[var(--tott-muted)]">
                   {nt("loading")}
                 </td>
               </tr>
             ) : rows.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-5 py-12 text-center text-gray-500">
+                <td colSpan={5} className="px-5 py-12 text-center text-[var(--tott-muted)]">
                   {nt("empty")}
                 </td>
               </tr>
@@ -251,12 +251,12 @@ export function NotificationsAdminContent() {
                   <td className="max-w-[280px] px-3 py-2.5 text-foreground sm:max-w-md sm:px-4 sm:py-3">
                     <p className="line-clamp-2 text-sm">{n.message}</p>
                   </td>
-                  <td className="px-2 py-2.5 text-gray-400 sm:px-4 sm:py-3">{notifyTypeLabel(nt, n.type)}</td>
-                  <td className="px-2 py-2.5 text-gray-400 sm:px-4 sm:py-3">{notifyStatusLabel(nt, n.status)}</td>
-                  <td className="px-2 py-2.5 text-gray-400 sm:px-4 sm:py-3">
+                  <td className="px-2 py-2.5 text-[var(--tott-muted)] sm:px-4 sm:py-3">{notifyTypeLabel(nt, n.type)}</td>
+                  <td className="px-2 py-2.5 text-[var(--tott-muted)] sm:px-4 sm:py-3">{notifyStatusLabel(nt, n.status)}</td>
+                  <td className="px-2 py-2.5 text-[var(--tott-muted)] sm:px-4 sm:py-3">
                     {n.user?.full_name?.trim() || n.user?.username || "—"}
                   </td>
-                  <td className="whitespace-nowrap px-2 py-2.5 text-xs text-gray-500 sm:px-4 sm:py-3 sm:text-sm">
+                  <td className="whitespace-nowrap px-2 py-2.5 text-xs text-[var(--tott-muted)] sm:px-4 sm:py-3 sm:text-sm">
                     {formatUserLastActiveRelativeLocalized(n.created_at, nowMs, locale)}
                   </td>
                 </tr>
@@ -267,7 +267,7 @@ export function NotificationsAdminContent() {
       </div>
 
       <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
-        <p className="text-center text-sm text-gray-500 sm:text-left">
+        <p className="text-center text-sm text-[var(--tott-muted)] sm:text-left">
           {nt("pagination.summary", {
             start: meta.total === 0 ? 0 : startItem,
             end: endItem,
@@ -283,7 +283,7 @@ export function NotificationsAdminContent() {
           >
             {nt("pagination.previous")}
           </button>
-          <span className="min-w-26 shrink-0 text-center text-xs text-gray-500 sm:min-w-0">
+          <span className="min-w-26 shrink-0 text-center text-xs text-[var(--tott-muted)] sm:min-w-0">
             {nt("pagination.pageOf", { page: effectivePage, totalPages })}
           </span>
           <button

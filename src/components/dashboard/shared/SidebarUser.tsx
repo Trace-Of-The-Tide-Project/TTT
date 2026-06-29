@@ -47,8 +47,8 @@ export function SidebarUser({ collapsed = false }: SidebarUserProps) {
           onClick={handleLogout}
           className={
             isDark
-              ? "text-gray-500 transition-colors hover:text-foreground"
-              : "text-gray-500 transition-colors hover:text-gray-900"
+              ? "text-[var(--tott-muted)] transition-colors hover:text-foreground"
+              : "text-[var(--tott-muted)] transition-colors hover:text-foreground"
           }
           aria-label={t("signOut")}
           title={t("signOut")}
@@ -68,7 +68,7 @@ export function SidebarUser({ collapsed = false }: SidebarUserProps) {
         {getInitial(name, email)}
       </span>
       <span
-        className={`flex-1 truncate text-sm font-medium ${isDark ? "text-foreground" : "text-gray-900"}`}
+        className={`flex-1 truncate text-sm font-medium ${isDark ? "text-foreground" : "text-foreground"}`}
       >
         {displayName}
       </span>
@@ -77,8 +77,8 @@ export function SidebarUser({ collapsed = false }: SidebarUserProps) {
         onClick={handleLogout}
         className={
           isDark
-            ? "shrink-0 text-gray-500 transition-colors hover:text-foreground"
-            : "shrink-0 text-gray-500 transition-colors hover:text-gray-900"
+            ? "shrink-0 text-[var(--tott-muted)] transition-colors hover:text-foreground"
+            : "shrink-0 text-[var(--tott-muted)] transition-colors hover:text-foreground"
         }
         aria-label={t("signOut")}
       >

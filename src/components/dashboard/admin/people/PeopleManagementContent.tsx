@@ -118,7 +118,7 @@ export function PeopleManagementContent() {
                   {nameInitials(p.full_name)}
                 </span>
               )}
-              <p className="truncate text-sm font-medium" style={{ color: "#DBC99E" }}>
+              <p className="truncate text-sm font-medium text-[var(--tott-accent-gold)]">
                 {p.full_name}
               </p>
             </>
@@ -156,7 +156,7 @@ export function PeopleManagementContent() {
           <>
             <Link
               href={`/admin/people/${p.id}/edit`}
-              className="rounded p-1 text-gray-400 hover:text-foreground"
+              className="rounded p-1 text-[var(--tott-muted)] hover:text-foreground"
               title={t("list.edit")}
             >
               <PenLineIcon />
@@ -164,7 +164,7 @@ export function PeopleManagementContent() {
             <button
               type="button"
               onClick={() => openDelete(p)}
-              className="rounded p-1 text-gray-400 hover:text-red-400"
+              className="rounded p-1 text-[var(--tott-muted)] hover:text-red-400"
               title={t("list.delete")}
             >
               <TrashIcon />
@@ -194,7 +194,7 @@ export function PeopleManagementContent() {
         placeholder={t("list.searchPlaceholder")}
         value={searchInput}
         onChange={(e) => setSearchInput(e.target.value)}
-        className="w-full max-w-sm rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500"
+        className="w-full max-w-sm rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]"
       />
 
       {loadError && (
@@ -221,7 +221,7 @@ export function PeopleManagementContent() {
       />
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-end gap-2 text-xs text-gray-400">
+        <div className="flex items-center justify-end gap-2 text-xs text-[var(--tott-muted)]">
           <button
             type="button"
             disabled={loading || effectivePage <= 1}
@@ -247,11 +247,10 @@ export function PeopleManagementContent() {
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div
-            className="w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] p-6 shadow-xl"
-            style={{ backgroundColor: "var(--tott-dash-bg, #1a1a1a)" }}
+            className="w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-xl"
           >
             <h2 className="mb-2 text-base font-semibold">{t("list.deleteModal.title")}</h2>
-            <p className="mb-4 text-sm text-gray-400">
+            <p className="mb-4 text-sm text-[var(--tott-muted)]">
               {t("list.deleteModal.description", { name: deleteTarget.full_name })}
             </p>
             {deleteError && <p className="mb-3 text-xs text-red-400">{deleteError}</p>}
@@ -260,7 +259,7 @@ export function PeopleManagementContent() {
                 type="button"
                 onClick={() => { if (!deleteBusy) { setDeleteTarget(null); setDeleteError(null); } }}
                 disabled={deleteBusy}
-                className="rounded-lg px-4 py-1.5 text-sm text-gray-400 hover:text-foreground disabled:opacity-40"
+                className="rounded-lg px-4 py-1.5 text-sm text-[var(--tott-muted)] hover:text-foreground disabled:opacity-40"
               >
                 {t("list.deleteModal.cancel")}
               </button>

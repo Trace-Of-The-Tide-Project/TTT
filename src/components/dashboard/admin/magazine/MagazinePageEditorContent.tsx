@@ -110,7 +110,7 @@ export function MagazinePageEditorContent() {
 
   if (isLoading || !page) {
     return (
-      <div className="flex h-64 items-center justify-center text-sm text-gray-500">
+      <div className="flex h-64 items-center justify-center text-sm text-[var(--tott-muted)]">
         {t("loading")}
       </div>
     );
@@ -121,12 +121,12 @@ export function MagazinePageEditorContent() {
       <header className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
-          <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
+          <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("subtitle")}</p>
         </div>
         <div className="flex items-center gap-3">
           {activeDraftState?.isDirty ? (
-            <span className="flex items-center gap-1.5 text-xs font-medium text-[#C9A96E]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#C9A96E]" />
+            <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--tott-accent-gold)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--tott-accent-gold)]" />
               {t("unsavedChanges")}
             </span>
           ) : null}
@@ -151,7 +151,7 @@ export function MagazinePageEditorContent() {
               });
             }}
             disabled={publishPage.isPending}
-            className="rounded-lg border border-[#C9A96E] bg-[#C9A96E] px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="rounded-lg border border-[var(--tott-accent-gold)] bg-[var(--tott-accent-gold)] px-4 py-2 text-sm font-medium text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {publishPage.isPending
               ? t("publishing")
@@ -165,7 +165,7 @@ export function MagazinePageEditorContent() {
       <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
         {/* Section rail */}
         <aside>
-          <h3 className="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500">
+          <h3 className="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--tott-muted)]">
             {t("sectionsHeading")}
           </h3>
           <ul className="mt-3 flex flex-col">
@@ -178,19 +178,19 @@ export function MagazinePageEditorContent() {
                   {isActive ? (
                     <span
                       aria-hidden
-                      className="absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full bg-[#C9A96E]"
+                      className="absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full bg-[var(--tott-accent-gold)]"
                     />
                   ) : null}
                   <div
                     className={`flex items-center gap-2 rounded-md pl-3 pr-2 py-2 transition-colors ${
-                      isActive ? "bg-[#C9A96E]/8" : "hover:bg-[var(--tott-dash-control-hover)]"
+                      isActive ? "bg-[var(--tott-accent-gold)]/8" : "hover:bg-[var(--tott-dash-control-hover)]"
                     }`}
                   >
                     <button
                       type="button"
                       onClick={() => setActiveSection(row.key)}
                       className={`flex-1 truncate text-left text-[13px] font-medium ${
-                        isActive ? "text-[#C9A96E]" : "text-foreground"
+                        isActive ? "text-[var(--tott-accent-gold)]" : "text-foreground"
                       }`}
                     >
                       {t(row.labelKey)}
@@ -206,7 +206,7 @@ export function MagazinePageEditorContent() {
                       }
                       aria-label={visible ? t("hideSection") : t("showSection")}
                       className={`shrink-0 rounded p-1 transition-opacity hover:opacity-80 ${
-                        visible ? "text-gray-400" : "text-gray-600 opacity-40"
+                        visible ? "text-[var(--tott-muted)]" : "text-[var(--tott-muted)] opacity-40"
                       }`}
                     >
                       <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">
@@ -226,7 +226,7 @@ export function MagazinePageEditorContent() {
             const activeRecord = sectionsByKey.get(activeSection);
             if (!activeRecord) {
               return (
-                <div className="rounded-xl border border-[var(--tott-card-border)] p-12 text-center text-sm text-gray-500">
+                <div className="rounded-xl border border-[var(--tott-card-border)] p-12 text-center text-sm text-[var(--tott-muted)]">
                   {t("comingSoonBody")}
                 </div>
               );
@@ -407,7 +407,7 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="mb-1.5 block text-xs font-medium text-gray-400">{label}</label>
+      <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">{label}</label>
       {children}
     </div>
   );
@@ -426,7 +426,7 @@ function FontSizeField({
   const current = clampFontScale(value);
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
         {t("label")}
       </span>
       <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
@@ -453,7 +453,7 @@ function FontSizeField({
 }
 
 const INPUT_CLASS =
-  "w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-600 focus:border-[#C9A96E]/60 focus:outline-none focus:ring-1 focus:ring-[#C9A96E]/30 transition";
+  "w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-accent-gold)]/60 focus:outline-none focus:ring-1 focus:ring-[var(--tott-accent-gold)]/30 transition";
 
 function TextInput({
   value,
@@ -536,7 +536,7 @@ function EditorToolbar({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
           <h3 className="truncate text-base font-semibold text-foreground">{title}</h3>
-          <p className="mt-0.5 truncate text-xs text-gray-500">{subtitle}</p>
+          <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]">{subtitle}</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
@@ -560,7 +560,7 @@ function EditorToolbar({
             type="button"
             onClick={onReset}
             disabled={!isDirty}
-            className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground disabled:opacity-30 disabled:hover:bg-transparent"
+            className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground disabled:opacity-30 disabled:hover:bg-transparent"
           >
             <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">
               <RefreshCwIcon />
@@ -571,7 +571,7 @@ function EditorToolbar({
             type="button"
             onClick={onSave}
             disabled={!isDirty || isSaving}
-            className="rounded-md bg-[#C9A96E] px-4 py-1.5 text-xs font-semibold text-black transition-opacity hover:opacity-90 disabled:opacity-30"
+            className="rounded-md bg-[var(--tott-accent-gold)] px-4 py-1.5 text-xs font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:opacity-30"
           >
             {isSaving ? t("saving") : t("save")}
           </button>
@@ -627,10 +627,10 @@ function PreviewFrame({ locale, children }: { locale: MagazineLocale; children: 
   return (
     <div className="flex w-full flex-col gap-2 py-2">
       <div className="flex w-full items-center justify-between px-1">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--tott-muted)]">
           {t("previewHeading")}
         </span>
-        <span className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+        <span className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
           {locale}
         </span>
       </div>
@@ -643,7 +643,7 @@ function PreviewFrame({ locale, children }: { locale: MagazineLocale; children: 
           <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#28C840]/70" />
-          <span className="ml-3 truncate rounded bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[10px] font-mono text-gray-500">
+          <span className="ml-3 truncate rounded bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[10px] font-mono text-[var(--tott-muted)]">
             /magazine
           </span>
         </div>
@@ -708,7 +708,7 @@ function FormCard({ children }: { children: React.ReactNode }) {
 function FieldGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500">
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--tott-muted)]">
         {label}
       </p>
       <div className="space-y-3">{children}</div>
@@ -1152,7 +1152,7 @@ function SupportEditor({ section, onSave, isSaving, registerDraftState }: Editor
                 rtl={isRtl}
               />
             </FieldGroup>
-            <div className="rounded-lg border border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-gray-500">
+            <div className="rounded-lg border border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-[var(--tott-muted)]">
               {t("curationNote")}
             </div>
           </div>

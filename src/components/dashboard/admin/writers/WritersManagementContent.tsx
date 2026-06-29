@@ -155,7 +155,7 @@ export function WritersManagementContent() {
                 </span>
               )}
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium" style={{ color: "#DBC99E" }}>
+                <p className="truncate text-sm font-medium text-[var(--tott-accent-gold)]">
                   {writerRowName(w)}
                 </p>
                 <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]">
@@ -225,7 +225,7 @@ export function WritersManagementContent() {
           >
             <span
               className={[
-                "absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all",
+                "absolute top-0.5 h-4 w-4 rounded-full bg-[var(--tott-dash-surface)] transition-all",
                 w.featured ? "start-4" : "start-0.5",
               ].join(" ")}
             />
@@ -242,7 +242,7 @@ export function WritersManagementContent() {
           <>
             <Link
               href={`/admin/writers/${w.id}/edit`}
-              className="rounded p-1 text-gray-400 hover:text-foreground"
+              className="rounded p-1 text-[var(--tott-muted)] hover:text-foreground"
               title={t("edit")}
             >
               <PenLineIcon />
@@ -250,7 +250,7 @@ export function WritersManagementContent() {
             <button
               type="button"
               onClick={() => openDelete(w)}
-              className="rounded p-1 text-gray-400 hover:text-red-400"
+              className="rounded p-1 text-[var(--tott-muted)] hover:text-red-400"
               title={t("delete.confirm")}
             >
               <TrashIcon />
@@ -282,7 +282,7 @@ export function WritersManagementContent() {
         placeholder={t("searchPlaceholder")}
         value={searchInput}
         onChange={(e) => setSearchInput(e.target.value)}
-        className="w-full max-w-sm rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500"
+        className="w-full max-w-sm rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]"
       />
 
       {loadError && (
@@ -313,7 +313,7 @@ export function WritersManagementContent() {
       />
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-end gap-2 text-xs text-gray-400">
+        <div className="flex items-center justify-end gap-2 text-xs text-[var(--tott-muted)]">
           <button
             type="button"
             disabled={loading || effectivePage <= 1}
@@ -344,7 +344,7 @@ export function WritersManagementContent() {
             <h2 className="mb-2 text-base font-semibold">
               {t("delete.title")}
             </h2>
-            <p className="mb-4 text-sm text-gray-400">
+            <p className="mb-4 text-sm text-[var(--tott-muted)]">
               {t("delete.description", { name: writerRowName(deleteTarget) })}
             </p>
             {deleteError && (
@@ -359,7 +359,7 @@ export function WritersManagementContent() {
                   setDeleteError(null);
                 }}
                 disabled={deleteBusy}
-                className="rounded-lg px-4 py-1.5 text-sm text-gray-400 hover:text-foreground disabled:opacity-40"
+                className="rounded-lg px-4 py-1.5 text-sm text-[var(--tott-muted)] hover:text-foreground disabled:opacity-40"
               >
                 {t("delete.cancel")}
               </button>

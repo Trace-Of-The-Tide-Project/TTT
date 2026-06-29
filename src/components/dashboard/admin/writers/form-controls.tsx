@@ -102,17 +102,17 @@ export function AvatarUploadZone({
       {uploading ? (
         <div className="flex flex-col items-center gap-2 py-6">
           <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--tott-card-border)] border-t-[var(--tott-gold)]" />
-          <span className="text-xs text-gray-400">{labels.uploading}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{labels.uploading}</span>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-1 py-6 px-4 text-center pointer-events-none">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--tott-muted)]">
             <rect x="3" y="3" width="18" height="18" rx="2" />
             <circle cx="8.5" cy="8.5" r="1.5" />
             <polyline points="21 15 16 10 5 21" />
           </svg>
-          <span className="text-xs font-medium text-gray-300 mt-1">{labels.click}</span>
-          <span className="text-[10px] text-gray-500">{labels.hint}</span>
+          <span className="text-xs font-medium text-[var(--tott-muted)] mt-1">{labels.click}</span>
+          <span className="text-[10px] text-[var(--tott-muted)]">{labels.hint}</span>
         </div>
       )}
     </label>
@@ -156,7 +156,7 @@ export function ThemesInput({
                 type="button"
                 disabled={disabled}
                 onClick={() => onChange(value.filter((v) => v !== theme))}
-                className="text-gray-400 hover:text-red-400 disabled:opacity-40"
+                className="text-[var(--tott-muted)] hover:text-red-400 disabled:opacity-40"
                 aria-label={`Remove ${theme}`}
               >
                 ×
@@ -178,7 +178,7 @@ export function ThemesInput({
         }}
         onBlur={addDraft}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-[var(--tott-gold)]/60 transition-colors"
+        className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-gold)]/60 transition-colors"
       />
     </div>
   );

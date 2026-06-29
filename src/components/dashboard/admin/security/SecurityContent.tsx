@@ -36,7 +36,7 @@ interface AuditEntry {
   details?: Record<string, unknown>;
 }
 
-const ACCENT = "#E8DDC0";
+const ACCENT = "var(--tott-gold-chip-bg)";
 
 const SECURITY_TABS = [
   { id: "roles" as const, icon: ShieldIcon },
@@ -93,7 +93,7 @@ export function SecurityContent() {
     setSessions((prev) => prev.filter((s) => s.is_current));
   };
 
-  const tabIconClass = "text-[#E8DDC0] [&_svg]:h-4 [&_svg]:w-4";
+  const tabIconClass = "text-[var(--tott-dash-gold-text)] [&_svg]:h-4 [&_svg]:w-4";
 
   const sessionColumns = [
     t("sessions.columns.user"),
@@ -134,7 +134,7 @@ export function SecurityContent() {
         {activeTab === "roles" && (
           <div className="mt-6">
             <h2 className="text-lg font-bold text-foreground">{t("tabs.roles")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{t("roles.intro")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("roles.intro")}</p>
             <div className="mt-6 space-y-3">
               {securityAdminRoles.map((role) => (
                 <div
@@ -144,7 +144,7 @@ export function SecurityContent() {
                   <ChamferedFrame />
                   <div className="flex min-w-0 flex-1 items-start gap-4">
                     <div
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-[#E8DDC0]"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-[var(--tott-dash-gold-text)]"
                       aria-hidden
                     >
                       <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
@@ -153,10 +153,10 @@ export function SecurityContent() {
                     </div>
                     <div className="min-w-0">
                       <p className="font-semibold text-foreground">{t(`roles.${role.id}.title`)}</p>
-                      <span className="mt-1 inline-block rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-2.5 py-0.5 text-xs text-gray-400">
+                      <span className="mt-1 inline-block rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-2.5 py-0.5 text-xs text-[var(--tott-muted)]">
                         {t(`roles.${role.id}.userBadge`)}
                       </span>
-                      <p className="mt-2 text-sm text-gray-500">{t(`roles.${role.id}.description`)}</p>
+                      <p className="mt-2 text-sm text-[var(--tott-muted)]">{t(`roles.${role.id}.description`)}</p>
                     </div>
                   </div>
                   <button
@@ -180,12 +180,12 @@ export function SecurityContent() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h2 className="text-lg font-bold text-foreground">{t("tabs.sessions")}</h2>
-                <p className="mt-1 text-sm text-gray-500">{t("sessions.intro")}</p>
+                <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("sessions.intro")}</p>
               </div>
               <button
                 type="button"
                 onClick={endAllOtherSessions}
-                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90"
                 style={{ backgroundColor: ACCENT }}
               >
                 <span className="[&_svg]:h-4 [&_svg]:w-4">
@@ -202,7 +202,7 @@ export function SecurityContent() {
                     {sessionColumns.map((h) => (
                       <th
                         key={h || "actions"}
-                        className={`px-4 py-3 text-xs font-semibold uppercase tracking-wide text-[#E8DDC0] ${
+                        className={`px-4 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--tott-dash-gold-text)] ${
                           h === "" ? "w-24 text-end" : ""
                         }`}
                       >
@@ -214,7 +214,7 @@ export function SecurityContent() {
                 <tbody className="divide-y divide-[var(--tott-card-border)]">
                   {sessions.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-sm text-gray-500">No active sessions.</td>
+                      <td colSpan={7} className="px-4 py-8 text-center text-sm text-[var(--tott-muted)]">No active sessions.</td>
                     </tr>
                   )}
                   {sessions.map((row) => (
@@ -222,18 +222,18 @@ export function SecurityContent() {
                       <td className="px-4 py-3 font-semibold text-foreground">
                         {row.is_current ? "You (current)" : "User"}
                       </td>
-                      <td className="px-4 py-3 text-gray-400">{row.ip_address ?? "—"}</td>
-                      <td className="px-4 py-3 text-gray-400">—</td>
-                      <td className="px-4 py-3 text-gray-400 text-xs truncate max-w-[160px]">{row.user_agent ?? "—"}</td>
-                      <td className="px-4 py-3 text-gray-400 text-xs">
+                      <td className="px-4 py-3 text-[var(--tott-muted)]">{row.ip_address ?? "—"}</td>
+                      <td className="px-4 py-3 text-[var(--tott-muted)]">—</td>
+                      <td className="px-4 py-3 text-[var(--tott-muted)] text-xs truncate max-w-[160px]">{row.user_agent ?? "—"}</td>
+                      <td className="px-4 py-3 text-[var(--tott-muted)] text-xs">
                         {row.created_at ? new Date(row.created_at).toLocaleDateString() : "—"}
                       </td>
-                      <td className={`px-4 py-3 font-medium text-sm ${row.is_current ? "text-emerald-400" : "text-gray-500"}`}>
+                      <td className={`px-4 py-3 font-medium text-sm ${row.is_current ? "text-emerald-400" : "text-[var(--tott-muted)]"}`}>
                         {row.is_current ? t("sessions.status.current") : t("sessions.status.idle")}
                       </td>
                       <td className="px-4 py-3 text-end">
                         {row.is_current ? (
-                          <span className="text-xs text-gray-600">—</span>
+                          <span className="text-xs text-[var(--tott-muted)]">—</span>
                         ) : (
                           <button
                             type="button"
@@ -255,19 +255,19 @@ export function SecurityContent() {
         {activeTab === "settings" && (
           <div className="mt-6">
             <h2 className="text-lg font-bold text-foreground">{t("tabs.settings")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{t("controlPanel.settingsTabSubtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("controlPanel.settingsTabSubtitle")}</p>
 
             <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
               <div className="relative p-5 sm:p-6">
                 <ChamferedFrame />
                 <h3 className="text-base font-bold text-foreground">{t("controlPanel.authenticationCardTitle")}</h3>
-                <p className="mt-1 text-sm text-gray-500">{t("controlPanel.authenticationCardSubtitle")}</p>
+                <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("controlPanel.authenticationCardSubtitle")}</p>
 
                 <div className="mt-6 space-y-5 border-t border-[var(--tott-card-border)] pt-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="font-medium text-foreground">{t("controlPanel.require2faTitle")}</p>
-                      <p className="mt-0.5 text-sm text-gray-500">{t("controlPanel.require2faDescription")}</p>
+                      <p className="mt-0.5 text-sm text-[var(--tott-muted)]">{t("controlPanel.require2faDescription")}</p>
                     </div>
                     <PermissionToggle
                       checked={require2fa}
@@ -279,12 +279,12 @@ export function SecurityContent() {
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="font-medium text-foreground">{t("controlPanel.sessionTimeoutShortLabel")}</p>
-                      <p className="mt-0.5 text-sm text-gray-500">{t("controlPanel.sessionTimeoutShortDescription")}</p>
+                      <p className="mt-0.5 text-sm text-[var(--tott-muted)]">{t("controlPanel.sessionTimeoutShortDescription")}</p>
                     </div>
                     <select
                       value={sessionTimeout}
                       onChange={(e) => setSessionTimeout(e.target.value as SessionTimeoutKey)}
-                      className="w-full max-w-[200px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2 text-sm text-foreground focus:border-[#555] focus:outline-none sm:w-auto"
+                      className="w-full max-w-[200px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2 text-sm text-foreground focus:border-[var(--tott-card-border)] focus:outline-none sm:w-auto"
                     >
                       {SESSION_TIMEOUT_KEYS.map((key) => (
                         <option key={key} value={key}>
@@ -297,7 +297,7 @@ export function SecurityContent() {
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="font-medium text-foreground">{t("controlPanel.lockoutTitle")}</p>
-                      <p className="mt-0.5 text-sm text-gray-500">{t("controlPanel.lockoutDescription")}</p>
+                      <p className="mt-0.5 text-sm text-[var(--tott-muted)]">{t("controlPanel.lockoutDescription")}</p>
                     </div>
                     <input
                       type="number"
@@ -305,7 +305,7 @@ export function SecurityContent() {
                       max={20}
                       value={lockoutAttempts}
                       onChange={(e) => setLockoutAttempts(Number(e.target.value) || 5)}
-                      className="w-full max-w-[100px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2 text-sm text-foreground focus:border-[#555] focus:outline-none"
+                      className="w-full max-w-[100px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2 text-sm text-foreground focus:border-[var(--tott-card-border)] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -314,13 +314,13 @@ export function SecurityContent() {
               <div className="relative p-5 sm:p-6">
                 <ChamferedFrame />
                 <h3 className="text-base font-bold text-foreground">{t("controlPanel.systemControlsTitle")}</h3>
-                <p className="mt-1 text-sm text-gray-500">{t("controlPanel.systemControlsSubtitle")}</p>
+                <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("controlPanel.systemControlsSubtitle")}</p>
 
                 <div className="mt-6 space-y-5 border-t border-[var(--tott-card-border)] pt-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="font-medium text-foreground">{t("controlPanel.maintenanceTitle")}</p>
-                      <p className="mt-0.5 text-sm text-gray-500">{t("controlPanel.maintenanceDescription")}</p>
+                      <p className="mt-0.5 text-sm text-[var(--tott-muted)]">{t("controlPanel.maintenanceDescription")}</p>
                     </div>
                     <PermissionToggle
                       checked={maintenanceMode}
@@ -332,7 +332,7 @@ export function SecurityContent() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="font-medium text-foreground">{t("controlPanel.ipWhitelistTitle")}</p>
-                      <p className="mt-0.5 text-sm text-gray-500">{t("controlPanel.ipWhitelistDescription")}</p>
+                      <p className="mt-0.5 text-sm text-[var(--tott-muted)]">{t("controlPanel.ipWhitelistDescription")}</p>
                     </div>
                     <PermissionToggle
                       checked={ipWhitelist}
@@ -345,7 +345,7 @@ export function SecurityContent() {
                     type="button"
                     className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-3 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
                   >
-                    <span className="text-[#E8DDC0] [&_svg]:h-4 [&_svg]:w-4">
+                    <span className="text-[var(--tott-dash-gold-text)] [&_svg]:h-4 [&_svg]:w-4">
                       <DownloadIcon />
                     </span>
                     {t("settings.backup")}
@@ -359,10 +359,10 @@ export function SecurityContent() {
         {activeTab === "logs" && (
           <div className="mt-6">
             <h2 className="text-lg font-bold text-foreground">{t("tabs.logs")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{t("logs.intro")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("logs.intro")}</p>
             <div className="mt-6 space-y-3">
               {auditLogs.length === 0 && (
-                <p className="text-center text-sm text-gray-500 py-8">No audit logs yet.</p>
+                <p className="text-center text-sm text-[var(--tott-muted)] py-8">No audit logs yet.</p>
               )}
               {auditLogs.map((entry) => {
                 const isDelete = entry.action === "DELETE";
@@ -374,7 +374,7 @@ export function SecurityContent() {
                     }`}
                   >
                     <div
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[#E8DDC0]"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[var(--tott-dash-gold-text)]"
                       aria-hidden
                     >
                       <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
@@ -385,11 +385,11 @@ export function SecurityContent() {
                       <p className="font-semibold text-foreground capitalize">
                         {entry.action} {entry.entity_type?.replace(/_/g, " ")}
                       </p>
-                      <p className="mt-0.5 text-sm text-gray-500">
+                      <p className="mt-0.5 text-sm text-[var(--tott-muted)]">
                         {entry.user?.full_name ?? entry.user?.username ?? "System"}
                       </p>
                     </div>
-                    <p className="shrink-0 text-sm text-gray-500">
+                    <p className="shrink-0 text-sm text-[var(--tott-muted)]">
                       {entry.created_at ? new Date(entry.created_at).toLocaleString() : "—"}
                     </p>
                   </div>

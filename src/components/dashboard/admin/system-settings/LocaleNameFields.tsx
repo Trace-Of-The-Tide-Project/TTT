@@ -55,7 +55,7 @@ export function LocaleNameFields({
           />
         </div>
       ))}
-      <p className="text-[11px] text-gray-500">
+      <p className="text-[11px] text-[var(--tott-muted)]">
         Leave a language blank to fall back to the default name above.
       </p>
     </div>

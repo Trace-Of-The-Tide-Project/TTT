@@ -113,11 +113,11 @@ export function TranslationsPanel({
             <a
               key={loc}
               href={createHref(loc)}
-              className={`${base} text-gray-600 hover:text-gray-400`}
+              className={`${base} text-[var(--tott-muted)] hover:text-[var(--tott-muted)]`}
               title={t("addTranslation")}
             >
               {loc}
-              <span className="ml-0.5 text-[9px] leading-none text-gray-500">+</span>
+              <span className="ml-0.5 text-[9px] leading-none text-[var(--tott-muted)]">+</span>
             </a>
           );
         })}
@@ -128,7 +128,7 @@ export function TranslationsPanel({
         <button
           type="button"
           onClick={handleAddAll}
-          className="rounded-md border border-[var(--tott-card-border)] px-2.5 py-1 text-[11px] font-medium text-gray-400 transition-colors hover:border-gray-500 hover:text-foreground"
+          className="rounded-md border border-[var(--tott-card-border)] px-2.5 py-1 text-[11px] font-medium text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
           title={missingLocales.map((l) => l.toUpperCase()).join(", ")}
         >
           {t("addAll")}

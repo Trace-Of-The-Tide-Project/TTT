@@ -136,7 +136,7 @@ function ContentActionsDropdown({
         type="button"
         onClick={() => setIsOpen((o) => !o)}
         className="rounded p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
-        style={{ color: "#A3A3A3" }}
+        style={{ color: "var(--tott-muted)" }}
         aria-label={ta("menuAria")}
         aria-expanded={isOpen}
       >
@@ -255,7 +255,7 @@ function ContributionDetailModal({
             </HexIconOutlined>
             <div>
               <h2 className="text-base font-bold text-foreground">{item.title}</h2>
-              <div className="mt-0.5 flex items-center gap-2 text-xs text-gray-500">
+              <div className="mt-0.5 flex items-center gap-2 text-xs text-[var(--tott-muted)]">
                 {item.type?.name && <span>{item.type.name}</span>}
                 <span
                   className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase"
@@ -272,7 +272,7 @@ function ContributionDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+            className="rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
             aria-label={td("closeAria")}
           >
             <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -287,8 +287,8 @@ function ContributionDetailModal({
           {/* Description */}
           {item.description && (
             <div>
-              <h3 className="mb-1.5 text-xs font-semibold uppercase text-gray-500">{td("description")}</h3>
-              <p className="text-sm leading-relaxed text-gray-300">{item.description}</p>
+              <h3 className="mb-1.5 text-xs font-semibold uppercase text-[var(--tott-muted)]">{td("description")}</h3>
+              <p className="text-sm leading-relaxed text-[var(--tott-muted)]">{item.description}</p>
             </div>
           )}
 
@@ -310,7 +310,7 @@ function ContributionDetailModal({
           {/* Files */}
           {(item.files ?? []).length > 0 && (
             <div>
-              <h3 className="mb-2 text-xs font-semibold uppercase text-gray-500">
+              <h3 className="mb-2 text-xs font-semibold uppercase text-[var(--tott-muted)]">
                 {td("filesHeading", { count: (item.files ?? []).length })}
               </h3>
               <div className="space-y-2">
@@ -358,7 +358,7 @@ function ContributionDetailModal({
                       <div className="flex items-center justify-between px-4 py-2.5">
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-foreground">{f.file_name}</p>
-                          <p className="text-[11px] text-gray-500">
+                          <p className="text-[11px] text-[var(--tott-muted)]">
                             {f.mime_type} &middot; {formatFileSize(f.file_size)}
                             {f.duration ? ` \u00b7 ${f.duration}` : ""}
                           </p>
@@ -374,14 +374,14 @@ function ContributionDetailModal({
           {/* Collections */}
           {item.collections.length > 0 && (
             <div>
-              <h3 className="mb-2 text-xs font-semibold uppercase text-gray-500">
+              <h3 className="mb-2 text-xs font-semibold uppercase text-[var(--tott-muted)]">
                 {td("collectionsHeading", { count: item.collections.length })}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {item.collections.map((c) => (
                   <span
                     key={c.id}
-                    className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1 text-xs text-gray-300"
+                    className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1 text-xs text-[var(--tott-muted)]"
                   >
                     {c.name}
                   </span>
@@ -396,7 +396,7 @@ function ContributionDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-foreground"
+            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
           >
             {td("close")}
           </button>
@@ -410,7 +410,7 @@ function ContributionDetailModal({
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] px-3 py-2">
-      <span className="text-[10px] font-medium uppercase text-gray-500">{label}</span>
+      <span className="text-[10px] font-medium uppercase text-[var(--tott-muted)]">{label}</span>
       <p className="mt-0.5 truncate text-sm text-foreground">{value}</p>
     </div>
   );
@@ -624,7 +624,7 @@ export function ContentLibraryContent() {
       {/* Search and filters */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <div className="relative max-w-md flex-1">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
             <SearchIcon />
           </span>
           <input
@@ -632,7 +632,7 @@ export function ContentLibraryContent() {
             placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+            className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
           />
         </div>
         <div className="flex items-center justify-center gap-2">
@@ -669,11 +669,11 @@ export function ContentLibraryContent() {
 
       {/* Content */}
       {loading ? (
-        <div className="rounded-xl border border-[var(--tott-card-border)] px-5 py-16 text-center text-sm text-gray-500">
+        <div className="rounded-xl border border-[var(--tott-card-border)] px-5 py-16 text-center text-sm text-[var(--tott-muted)]">
           {t("loading")}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl border border-[var(--tott-card-border)] px-5 py-16 text-center text-sm text-gray-500">
+        <div className="rounded-xl border border-[var(--tott-card-border)] px-5 py-16 text-center text-sm text-[var(--tott-muted)]">
           {search.trim() || activeTab !== "all" ? t("emptyFiltered") : t("emptyNone")}
         </div>
       ) : (
@@ -689,7 +689,7 @@ export function ContentLibraryContent() {
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-foreground">{item.title}</p>
                     {item.description && (
-                      <p className="mt-0.5 whitespace-pre-wrap break-words text-xs text-gray-500">
+                      <p className="mt-0.5 whitespace-pre-wrap break-words text-xs text-[var(--tott-muted)]">
                         {item.description}
                       </p>
                     )}
@@ -698,7 +698,7 @@ export function ContentLibraryContent() {
                     <button
                       type="button"
                       onClick={() => setPreviewItem(item)}
-                      className="rounded p-1.5 text-gray-500 transition-colors hover:text-foreground"
+                      className="rounded p-1.5 text-[var(--tott-muted)] transition-colors hover:text-foreground"
                       aria-label={t("table.viewItemAria", { title: item.title })}
                     >
                       <EyeIcon />
@@ -706,7 +706,7 @@ export function ContentLibraryContent() {
                     <ContentActionsDropdown contentId={item.id} currentStatus={item.status} onAction={handleRowAction} />
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-400">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--tott-muted)]">
                   {item.type?.name && <span>{item.type.name}</span>}
                   <span>{item.user?.full_name ?? item.contributor_name ?? "—"}</span>
                   <span
@@ -721,8 +721,8 @@ export function ContentLibraryContent() {
                   <span>{formatDate(item.submission_date, locale)}</span>
                 </div>
                 {item.collections.length > 0 && (
-                  <p className="mt-2 text-xs text-gray-500">
-                    <span className="font-semibold text-gray-400">{t("table.collection")}: </span>
+                  <p className="mt-2 text-xs text-[var(--tott-muted)]">
+                    <span className="font-semibold text-[var(--tott-muted)]">{t("table.collection")}: </span>
                     {item.collections.map((c) => c.name).join(", ")}
                   </p>
                 )}
@@ -760,7 +760,7 @@ export function ContentLibraryContent() {
                   header: t("table.type"),
                   width: "1fr",
                   headerClassName: `${headerCellClass} whitespace-nowrap`,
-                  cellClassName: `${cellBase} text-gray-400`,
+                  cellClassName: `${cellBase} text-[var(--tott-muted)]`,
                   cell: (item) => (
                     <span className="min-w-0 truncate" title={item.type?.name ?? ""}>
                       {item.type?.name ?? "—"}
@@ -772,7 +772,7 @@ export function ContentLibraryContent() {
                   header: t("table.contributor"),
                   width: "1.2fr",
                   headerClassName: headerCellClass,
-                  cellClassName: `${cellBase} text-gray-400`,
+                  cellClassName: `${cellBase} text-[var(--tott-muted)]`,
                   cell: (item) => {
                     const text =
                       item.user?.full_name ?? item.contributor_name ?? "—";
@@ -803,7 +803,7 @@ export function ContentLibraryContent() {
                   header: t("table.files"),
                   width: "0.7fr",
                   headerClassName: `${headerCellClass} whitespace-nowrap`,
-                  cellClassName: `${cellBase} whitespace-nowrap text-gray-400`,
+                  cellClassName: `${cellBase} whitespace-nowrap text-[var(--tott-muted)]`,
                   cell: (item) =>
                     (item.files ?? []).length > 0
                       ? t("table.fileCount", { count: (item.files ?? []).length })
@@ -814,7 +814,7 @@ export function ContentLibraryContent() {
                   header: t("table.collection"),
                   width: "1.2fr",
                   headerClassName: headerCellClass,
-                  cellClassName: `${cellBase} text-gray-400`,
+                  cellClassName: `${cellBase} text-[var(--tott-muted)]`,
                   cell: (item) => {
                     const text =
                       item.collections.length > 0
@@ -832,7 +832,7 @@ export function ContentLibraryContent() {
                   header: t("table.submitted"),
                   width: "1fr",
                   headerClassName: `${headerCellClass} whitespace-nowrap`,
-                  cellClassName: `${cellBase} whitespace-nowrap text-gray-400`,
+                  cellClassName: `${cellBase} whitespace-nowrap text-[var(--tott-muted)]`,
                   cell: (item) => formatDate(item.submission_date, locale),
                 },
                 {
@@ -846,7 +846,7 @@ export function ContentLibraryContent() {
                       <button
                         type="button"
                         onClick={() => setPreviewItem(item)}
-                        className="rounded p-1.5 text-gray-500 transition-colors hover:text-foreground"
+                        className="rounded p-1.5 text-[var(--tott-muted)] transition-colors hover:text-foreground"
                         aria-label={t("table.viewItemAria", { title: item.title })}
                       >
                         <EyeIcon />
@@ -872,7 +872,7 @@ export function ContentLibraryContent() {
       {/* Pagination */}
       {!loading && meta && meta.total > 0 && (
         <div className="flex flex-col items-center gap-3 text-sm sm:flex-row sm:justify-between">
-          <span className="text-gray-500">
+          <span className="text-[var(--tott-muted)]">
             {t("pagination.summary", { page, totalPages, total: meta.total })}
           </span>
           <div className="flex gap-2">
@@ -880,7 +880,7 @@ export function ContentLibraryContent() {
               type="button"
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-gray-400 transition-colors hover:text-foreground disabled:opacity-40"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
             >
               {t("pagination.previous")}
             </button>
@@ -888,7 +888,7 @@ export function ContentLibraryContent() {
               type="button"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-gray-400 transition-colors hover:text-foreground disabled:opacity-40"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
             >
               {t("pagination.next")}
             </button>
@@ -967,7 +967,7 @@ function ContentAdvancedFilterPopover({
         aria-expanded={open}
         aria-label={label}
         title={label}
-        className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-gray-400 transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--tott-muted)]"
+        className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--tott-muted)]"
       >
         <FilterIcon />
         {activeCount > 0 ? (

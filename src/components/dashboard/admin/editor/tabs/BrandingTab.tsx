@@ -116,7 +116,7 @@ export function BrandingTab() {
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
       <h3 className="text-sm font-semibold text-foreground">{t("title")}</h3>
-      <p className="mt-1 text-xs text-gray-500">{t("subtitle")}</p>
+      <p className="mt-1 text-xs text-[var(--tott-muted)]">{t("subtitle")}</p>
       <div className="mt-6 space-y-6">
         {/* Logo */}
         <div>
@@ -151,8 +151,8 @@ export function BrandingTab() {
             onDragLeave={() => setLogoDragging(false)}
             className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 transition-colors ${
               logoDragging
-                ? "border-[#C9A96E] bg-[var(--tott-dash-surface-inset)]"
-                : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[#555]"
+                ? "border-[var(--tott-accent-gold)] bg-[var(--tott-dash-surface-inset)]"
+                : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[var(--tott-card-border)]"
             }`}
           >
             {logoPreview ? (
@@ -168,17 +168,17 @@ export function BrandingTab() {
                   unoptimized
                   className="mx-auto max-h-24 w-auto object-contain"
                 />
-                <p className="mt-2 text-xs text-gray-400">{logoFile?.name ?? t("savedLogo")}</p>
+                <p className="mt-2 text-xs text-[var(--tott-muted)]">{logoFile?.name ?? t("savedLogo")}</p>
               </div>
             ) : (
               <>
-                <span className="text-gray-500 [&_svg]:h-10 [&_svg]:w-10">
+                <span className="text-[var(--tott-muted)] [&_svg]:h-10 [&_svg]:w-10">
                   <CloudUploadIcon />
                 </span>
                 <p className="mt-2 text-sm text-foreground">
                   {t("uploadPrompt")}
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-[var(--tott-muted)]">
                   {t("logoFormats")}
                 </p>
               </>
@@ -219,8 +219,8 @@ export function BrandingTab() {
             onDragLeave={() => setFaviconDragging(false)}
             className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 transition-colors ${
               faviconDragging
-                ? "border-[#C9A96E] bg-[var(--tott-dash-surface-inset)]"
-                : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[#555]"
+                ? "border-[var(--tott-accent-gold)] bg-[var(--tott-dash-surface-inset)]"
+                : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[var(--tott-card-border)]"
             }`}
           >
             {faviconPreview ? (
@@ -233,17 +233,17 @@ export function BrandingTab() {
                   unoptimized
                   className="mx-auto max-h-16 w-auto object-contain"
                 />
-                <p className="mt-2 text-xs text-gray-400">{faviconFile?.name ?? t("savedFavicon")}</p>
+                <p className="mt-2 text-xs text-[var(--tott-muted)]">{faviconFile?.name ?? t("savedFavicon")}</p>
               </div>
             ) : (
               <>
-                <span className="text-gray-500 [&_svg]:h-10 [&_svg]:w-10">
+                <span className="text-[var(--tott-muted)] [&_svg]:h-10 [&_svg]:w-10">
                   <CloudUploadIcon />
                 </span>
                 <p className="mt-2 text-sm text-foreground">
                   {t("uploadPrompt")}
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-[var(--tott-muted)]">
                   {t("faviconFormats")}
                 </p>
               </>
@@ -266,7 +266,7 @@ export function BrandingTab() {
               value={primaryColor}
               onChange={(e) => setPrimaryColor(e.target.value)}
               placeholder="#CBA158"
-              className="flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+              className="flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
             />
           </div>
         </div>

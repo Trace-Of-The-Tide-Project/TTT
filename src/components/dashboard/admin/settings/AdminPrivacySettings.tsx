@@ -44,7 +44,7 @@ export function AdminPrivacySettings() {
   }
 
   const selectClass =
-    "min-w-[9.5rem] cursor-pointer appearance-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] py-2.5 pl-3 pr-9 text-sm text-foreground outline-none focus:border-[#C9A96E]";
+    "min-w-[9.5rem] cursor-pointer appearance-none rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] py-2.5 pl-3 pr-9 text-sm text-foreground outline-none focus:border-[var(--tott-accent-gold)]";
 
   const handleSave = useCallback(() => {
     setSaveState("saving");
@@ -71,7 +71,7 @@ export function AdminPrivacySettings() {
         <h1 className="text-lg font-bold text-foreground">{t("pageTitle")}</h1>
 
         {loading ? (
-          <p className="mt-6 text-sm text-gray-500">{t("loading")}</p>
+          <p className="mt-6 text-sm text-[var(--tott-muted)]">{t("loading")}</p>
         ) : isError ? (
           <p className="mt-6 text-sm text-[var(--tott-dash-negative)]" role="alert">
             {t("loadError")}
@@ -101,7 +101,7 @@ export function AdminPrivacySettings() {
                     </option>
                   ))}
                 </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
                   <ChevronDownIcon />
                 </span>
               </div>
@@ -154,7 +154,7 @@ export function AdminPrivacySettings() {
             type="button"
             onClick={handleSave}
             disabled={loading || saveState === "saving"}
-            className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-lg py-3.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             style={{ backgroundColor: saveState === "error" ? "#ef4444" : theme.accentGold }}
           >
             {saveLabel}

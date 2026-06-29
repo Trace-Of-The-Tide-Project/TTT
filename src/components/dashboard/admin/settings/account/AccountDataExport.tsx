@@ -15,7 +15,7 @@ export function AccountDataExport() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <h2 className="text-lg font-bold text-foreground">{t("export.title")}</h2>
-          <p className="mt-1 text-sm text-gray-500">{t("export.subtitle")}</p>
+          <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("export.subtitle")}</p>
         </div>
         <button
           type="button"

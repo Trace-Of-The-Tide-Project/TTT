@@ -24,6 +24,10 @@ html {
   --foreground: #ededed;
   /** Primary brand gold — CTAs, main links in auth */
   --tott-accent-gold: #cba158;
+  /** Alias: many components reference `--tott-gold`, which was never defined
+   * (so gold silently broke). Resolves lazily to the active theme's accent
+   * gold, so a single definition here is correct under light/dark/tide. */
+  --tott-gold: var(--tott-accent-gold);
   /** Slightly lighter gold for focus rings, borders, checkboxes */
   --tott-accent-gold-focus: #c9a96e;
   /** Ink placed on top of filled accents (buttons, avatars). Black on gold here;

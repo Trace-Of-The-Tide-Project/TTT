@@ -92,7 +92,7 @@ export function ReportsContent() {
           <>
             <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="relative flex-1">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#E8DDC0]">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-dash-gold-text)]">
                   <SearchIcon />
                 </span>
                 <input
@@ -100,7 +100,7 @@ export function ReportsContent() {
                   placeholder={t("searchPlaceholder")}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                  className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
                 />
               </div>
               <div className="flex flex-wrap gap-2">
@@ -111,8 +111,8 @@ export function ReportsContent() {
                     onClick={() => setFilter(f)}
                     className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
                       filter === f
-                        ? "border-[#555] bg-[var(--tott-dash-control-bg)] text-foreground"
-                        : "border-[var(--tott-card-border)] bg-transparent text-gray-400 hover:text-foreground"
+                        ? "border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] text-foreground"
+                        : "border-[var(--tott-card-border)] bg-transparent text-[var(--tott-muted)] hover:text-foreground"
                     }`}
                   >
                     {t(`filters.${f}`)}
@@ -132,23 +132,23 @@ export function ReportsContent() {
                   />
                 ))}
                 {reportsQuery.isLoading && (
-                  <p className="py-8 text-center text-sm text-gray-500">{t("loading")}</p>
+                  <p className="py-8 text-center text-sm text-[var(--tott-muted)]">{t("loading")}</p>
                 )}
                 {!reportsQuery.isLoading && filteredReports.length === 0 && (
-                  <p className="py-8 text-center text-sm text-gray-500">{t("emptyFiltered")}</p>
+                  <p className="py-8 text-center text-sm text-[var(--tott-muted)]">{t("emptyFiltered")}</p>
                 )}
               </div>
 
-              <div className="flex min-h-[360px] flex-col items-center justify-center rounded-2xl border border-[var(--tott-card-border)] bg-[#0f0f0f] px-6 py-12 text-center">
+              <div className="flex min-h-[360px] flex-col items-center justify-center rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] px-6 py-12 text-center">
                 {selected ? (
                   <div className="w-full max-w-md text-start">
                     <h3 className="text-lg font-semibold text-foreground">{selected.title}</h3>
-                    <p className="mt-2 text-sm text-gray-500">{selected.timeAgo}</p>
-                    <p className="mt-4 text-sm text-gray-400">
+                    <p className="mt-2 text-sm text-[var(--tott-muted)]">{selected.timeAgo}</p>
+                    <p className="mt-4 text-sm text-[var(--tott-muted)]">
                       {t("reportedBy")} <span className="text-foreground">{selected.reporter}</span>
                     </p>
                     <div className="mt-4 flex flex-wrap gap-2">
-                      <span className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1 text-xs text-gray-300">
+                      <span className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1 text-xs text-[var(--tott-muted)]">
                         {t(`typeLabels.${reportTypeKey(selected.typeLabel)}`)}
                       </span>
                       <span
@@ -164,10 +164,10 @@ export function ReportsContent() {
                   </div>
                 ) : (
                   <>
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[#E8DDC0]">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[var(--tott-dash-gold-text)]">
                       <FlagIcon />
                     </div>
-                    <p className="mt-4 text-sm text-gray-500">{t("selectPrompt")}</p>
+                    <p className="mt-4 text-sm text-[var(--tott-muted)]">{t("selectPrompt")}</p>
                   </>
                 )}
               </div>
@@ -177,11 +177,11 @@ export function ReportsContent() {
           // Reported-users is not yet a backend feature — there is no user-reports
           // table or endpoint (moderation stats return usersReported: 0). Show an
           // honest empty state instead of fabricated sample data.
-          <div className="mt-6 flex min-h-[200px] flex-col items-center justify-center rounded-2xl border border-[var(--tott-card-border)] bg-[#0f0f0f] px-6 py-12 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[#E8DDC0]">
+          <div className="mt-6 flex min-h-[200px] flex-col items-center justify-center rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] px-6 py-12 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[var(--tott-dash-gold-text)]">
               <FlagIcon />
             </div>
-            <p className="mt-4 text-sm text-gray-500">{t("users.empty")}</p>
+            <p className="mt-4 text-sm text-[var(--tott-muted)]">{t("users.empty")}</p>
           </div>
         ) : (
           <AuditLogSection entries={auditEntries} loading={auditQuery.isLoading} />
@@ -206,16 +206,16 @@ function AuditLogSection({
   return (
     <div className="mt-6">
       <h2 className="text-lg font-bold text-foreground sm:text-xl">{t("title")}</h2>
-      <p className="mt-1 text-sm text-[#a0a0a0]">{t("subtitle")}</p>
+      <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("subtitle")}</p>
       <div className="mt-6 space-y-3">
         {entries.map((entry) => (
           <AuditLogCard key={entry.id} entry={entry} />
         ))}
         {loading && (
-          <p className="py-8 text-center text-sm text-gray-500">{t("loading")}</p>
+          <p className="py-8 text-center text-sm text-[var(--tott-muted)]">{t("loading")}</p>
         )}
         {!loading && entries.length === 0 && (
-          <p className="py-8 text-center text-sm text-gray-500">{t("empty")}</p>
+          <p className="py-8 text-center text-sm text-[var(--tott-muted)]">{t("empty")}</p>
         )}
       </div>
     </div>
@@ -228,12 +228,12 @@ function AuditLogCard({ entry }: { entry: ModerationAuditRow }) {
       className="flex items-center gap-4 px-4 py-4 sm:gap-5 sm:px-5 sm:py-4"
       style={{
         clipPath: AUDIT_CARD_CLIP,
-        backgroundColor: "#1a1a1a",
+        backgroundColor: "var(--tott-elevated)",
         boxShadow: "inset 0 0 0 1px var(--tott-card-border)",
       }}
     >
       <div
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-[#E8DDC0]"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-[var(--tott-dash-gold-text)]"
         aria-hidden
       >
         <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]">
@@ -242,9 +242,9 @@ function AuditLogCard({ entry }: { entry: ModerationAuditRow }) {
       </div>
       <div className="min-w-0 flex-1">
         <p className="font-semibold text-foreground">{entry.title}</p>
-        <p className="mt-0.5 text-sm text-[#a0a0a0]">{entry.meta}</p>
+        <p className="mt-0.5 text-sm text-[var(--tott-muted)]">{entry.meta}</p>
       </div>
-      <p className="shrink-0 text-end text-sm text-[#a0a0a0]">{entry.timeAgo}</p>
+      <p className="shrink-0 text-end text-sm text-[var(--tott-muted)]">{entry.timeAgo}</p>
     </div>
   );
 }
@@ -265,22 +265,22 @@ function ReportListCard({
       onClick={onSelect}
       className={`w-full rounded-xl border px-4 py-4 text-start transition-colors ${
         selected
-          ? "border-[#5a4a2a] bg-[#151515]"
-          : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] hover:bg-[#151515]"
+          ? "border-[var(--tott-accent-gold)] bg-[var(--tott-elevated)]"
+          : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] hover:bg-[var(--tott-elevated-hover)]"
       }`}
     >
       <div className="flex gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[#E8DDC0]">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] text-[var(--tott-dash-gold-text)]">
           <AlertTriangleIcon />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-foreground">{report.title}</p>
-          <p className="mt-1 text-xs text-gray-500">{report.timeAgo}</p>
-          <p className="mt-2 text-xs text-gray-400">
-            {t("reportedBy")} <span className="text-gray-300">{report.reporter}</span>
+          <p className="mt-1 text-xs text-[var(--tott-muted)]">{report.timeAgo}</p>
+          <p className="mt-2 text-xs text-[var(--tott-muted)]">
+            {t("reportedBy")} <span className="text-[var(--tott-muted)]">{report.reporter}</span>
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
-            <span className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[11px] text-gray-400">
+            <span className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[11px] text-[var(--tott-muted)]">
               {t(`typeLabels.${reportTypeKey(report.typeLabel)}`)}
             </span>
             <span

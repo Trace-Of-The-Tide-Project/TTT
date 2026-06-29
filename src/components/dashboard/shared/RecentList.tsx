@@ -22,9 +22,9 @@ type RecentListProps = {
 export function RecentList({ heading, viewAllHref, items }: RecentListProps) {
   const { isDark } = useTheme();
   const viewAllClass = isDark
-    ? "rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-gray-400 transition-colors hover:border-gray-500 hover:text-foreground"
-    : "rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-600 transition-colors hover:border-gray-400 hover:text-gray-900";
-  const rowHover = isDark ? "hover:bg-[var(--tott-dash-ghost-hover)]" : "hover:bg-gray-100";
+    ? "rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
+    : "rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground";
+  const rowHover = isDark ? "hover:bg-[var(--tott-dash-ghost-hover)]" : "hover:bg-[var(--tott-elevated-hover)]";
 
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-panel-bg)]">
@@ -36,7 +36,7 @@ export function RecentList({ heading, viewAllHref, items }: RecentListProps) {
           </Link>
         )}
       </div>
-      <div className={isDark ? "divide-y divide-gray-800/60" : "divide-y divide-gray-200"}>
+      <div className={isDark ? "divide-y divide-[var(--tott-card-border)]" : "divide-y divide-[var(--tott-card-border)]"}>
         {items.map((item) => {
           const content = (
             <div className="flex items-center gap-3 px-5 py-3.5">
@@ -54,7 +54,7 @@ export function RecentList({ heading, viewAllHref, items }: RecentListProps) {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm text-foreground">{item.title}</p>
                 {item.subtitle && (
-                  <p className="truncate text-xs text-gray-500">{item.subtitle}</p>
+                  <p className="truncate text-xs text-[var(--tott-muted)]">{item.subtitle}</p>
                 )}
               </div>
               {item.trailing && (
@@ -70,7 +70,7 @@ export function RecentList({ heading, viewAllHref, items }: RecentListProps) {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="shrink-0 text-gray-600"
+                  className="shrink-0 text-[var(--tott-muted)]"
                 >
                   <polyline points="9 18 15 12 9 6" />
                 </svg>

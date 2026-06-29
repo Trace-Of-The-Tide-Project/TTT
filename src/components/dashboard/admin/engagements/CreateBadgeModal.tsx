@@ -116,7 +116,7 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+            className="shrink-0 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
             aria-label={tc("closeAria")}
           >
             <XIcon />
@@ -170,8 +170,8 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={tc("namePlaceholder")}
-              className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
-              style={{ color: "#e5e7eb" }}
+              className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]"
+              style={{ color: "var(--foreground)" }}
             />
           </div>
 
@@ -184,15 +184,15 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
                 ref={roleButtonRef}
                 type="button"
                 onClick={() => setRoleMenuOpen((v) => !v)}
-                className="flex w-full items-center justify-between rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm outline-none transition-colors focus:border-gray-500"
-                style={{ color: role ? "#e5e7eb" : "#6b7280" }}
+                className="flex w-full items-center justify-between rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm outline-none transition-colors focus:border-[var(--tott-card-border)]"
+                style={{ color: role ? "var(--foreground)" : "var(--tott-muted)" }}
                 aria-haspopup="listbox"
                 aria-expanded={roleMenuOpen}
               >
                 <span className="truncate">
                   {role ? (tc as (key: string) => string)(`roles.${role}`) : tc("rolePlaceholder")}
                 </span>
-                <span className="text-gray-500">
+                <span className="text-[var(--tott-muted)]">
                   <svg
                     width="14"
                     height="14"
@@ -234,7 +234,7 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-foreground">
-              {tc("reasonLabel")} <span className="text-gray-500">{tc("optional")}</span>
+              {tc("reasonLabel")} <span className="text-[var(--tott-muted)]">{tc("optional")}</span>
             </label>
             <EditorRegistryProvider>
               <div className="mb-2 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
@@ -254,14 +254,14 @@ export function CreateBadgeModal({ open, onClose, onCreate }: CreateBadgeModalPr
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-foreground"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
             >
               {tc("cancel")}
             </button>
             <button
               type="submit"
               disabled={!canSubmit}
-              className="rounded-lg px-6 py-2 text-sm font-medium text-black transition-colors disabled:opacity-50"
+              className="rounded-lg px-6 py-2 text-sm font-medium text-[var(--tott-on-accent)] transition-colors disabled:opacity-50"
               style={{ backgroundColor: theme.accentGoldFocus }}
             >
               {tc("submit")}
