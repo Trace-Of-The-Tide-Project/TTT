@@ -13,6 +13,19 @@
       },
       "vsLastMonth": "vs last month",
       "vsYesterday": "vs yesterday"
+    },
+    "topbar": {
+      "help": "Help",
+      "newCount": "{count} new",
+      "markAllRead": "Mark all read",
+      "allCaughtUp": "You're all caught up!",
+      "noNotifications": "No notifications right now.",
+      "viewAllNotifications": "View all notifications",
+      "secondsAgo": "{count}s ago",
+      "minutesAgo": "{count}m ago",
+      "hoursAgo": "{count}h ago",
+      "daysAgo": "{count}d ago",
+      "monthsAgo": "{count}mo ago"
     }
   }
 }

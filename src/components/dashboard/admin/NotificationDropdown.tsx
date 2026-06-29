@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { BellIcon } from "@/components/ui/icons";
 import {
@@ -16,17 +17,19 @@ import { useAuthUser } from "@/components/providers/AuthProvider";
 import { theme } from "@/lib/theme";
 
 
-function timeAgo(iso: string): string {
+type TimeTranslate = (key: string, values?: Record<string, number>) => string;
+
+function timeAgo(iso: string, t: TimeTranslate): string {
   const diff = Date.now() - new Date(iso).getTime();
   const secs = Math.floor(diff / 1000);
-  if (secs < 60) return `${secs}s ago`;
+  if (secs < 60) return t("secondsAgo", { count: secs });
   const mins = Math.floor(secs / 60);
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 60) return t("minutesAgo", { count: mins });
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t("hoursAgo", { count: hours });
   const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
-  return `${Math.floor(days / 30)}mo ago`;
+  if (days < 30) return t("daysAgo", { count: days });
+  return t("monthsAgo", { count: Math.floor(days / 30) });
 }
 
 /** Notification-type accents resolve to theme-aware CSS vars. */
@@ -44,6 +47,7 @@ function NotifRow({
   n: NotificationListItem;
   onRead: (id: string) => void;
 }) {
+  const t = useTranslations("Dashboard.topbar");
   const isUnread = n.status === "unread";
   const typeColor = TYPE_COLORS[n.type] ?? TYPE_COLORS.system;
   return (
@@ -82,7 +86,7 @@ function NotifRow({
                 {n.type}
               </span>
               <span className="text-xs" style={{ color: "var(--tott-muted)" }}>
-                {timeAgo(n.created_at)}
+                {timeAgo(n.created_at, t)}
               </span>
             </div>
           </div>
@@ -109,6 +113,7 @@ function Skeleton() {
 }
 
 export function NotificationDropdown() {
+  const t = useTranslations("Dashboard.topbar");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -151,7 +156,7 @@ export function NotificationDropdown() {
         onClick={() => setOpen((o) => !o)}
         className={`relative p-2 transition-colors ${iconBtn}`}
         style={{ color: iconColor }}
-        aria-label="Notifications"
+        aria-label={t("notifications")}
         aria-expanded={open}
         aria-haspopup="true"
       >
@@ -187,13 +192,13 @@ export function NotificationDropdown() {
             style={{ borderColor: "var(--tott-card-border)" }}
           >
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-foreground">Notifications</span>
+              <span className="text-sm font-semibold text-foreground">{t("notifications")}</span>
               {unreadCount > 0 && (
                 <span
                   className="rounded-full px-1.5 py-0.5 text-[10px] font-bold text-white"
                   style={{ backgroundColor: "var(--tott-status-coral)" }}
                 >
-                  {unreadCount} new
+                  {t("newCount", { count: unreadCount })}
                 </span>
               )}
             </div>
@@ -204,7 +209,7 @@ export function NotificationDropdown() {
                 className="text-xs transition-colors hover:opacity-80"
                 style={{ color: theme.accentGold }}
               >
-                Mark all read
+                {t("markAllRead")}
               </button>
             )}
           </div>
@@ -216,9 +221,9 @@ export function NotificationDropdown() {
             ) : items.length === 0 ? (
               <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
                 <span className="text-2xl">🔔</span>
-                <p className="text-sm font-medium text-foreground">You&apos;re all caught up!</p>
+                <p className="text-sm font-medium text-foreground">{t("allCaughtUp")}</p>
                 <p className="text-xs" style={{ color: "var(--tott-muted)" }}>
-                  No notifications right now.
+                  {t("noNotifications")}
                 </p>
               </div>
             ) : (
@@ -241,7 +246,7 @@ export function NotificationDropdown() {
               className="flex items-center justify-between text-xs font-medium transition-colors hover:opacity-80"
               style={{ color: theme.accentGold }}
             >
-              View all notifications
+              {t("viewAllNotifications")}
               <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
               </svg>

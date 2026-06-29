@@ -26,7 +26,7 @@ export function AdminTopbar() {
         <button
           type="button"
           className="p-2 text-[var(--tott-stat-icon)] transition-colors hover:opacity-80"
-          aria-label="Help"
+          aria-label={t("help")}
         >
           <HelpCircleIcon />
         </button>

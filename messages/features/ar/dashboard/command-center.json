@@ -13,6 +13,19 @@
       },
       "vsLastMonth": "مقارنة بالشهر الماضي",
       "vsYesterday": "مقارنة بالأمس"
+    },
+    "topbar": {
+      "help": "مساعدة",
+      "newCount": "{count} جديدة",
+      "markAllRead": "تحديد الكل كمقروء",
+      "allCaughtUp": "أنت على اطّلاع بكل شيء!",
+      "noNotifications": "لا توجد إشعارات حالياً.",
+      "viewAllNotifications": "عرض كل الإشعارات",
+      "secondsAgo": "منذ {count} ث",
+      "minutesAgo": "منذ {count} د",
+      "hoursAgo": "منذ {count} س",
+      "daysAgo": "منذ {count} ي",
+      "monthsAgo": "منذ {count} شهر"
     }
   }
 }
