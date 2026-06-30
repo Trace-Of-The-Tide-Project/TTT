@@ -38,4 +38,8 @@ export const TRANSLATION_ROUTES: Partial<Record<TranslatableType, TranslationRou
     edit: (id) => `/admin/people/${id}/edit`,
     create: "/admin/people/create",
   },
+  collection: {
+    edit: (id) => `/admin/collections/${id}/edit`,
+    create: "/admin/collections/create",
+  },
 };

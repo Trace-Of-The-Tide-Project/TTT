@@ -1,3 +1,4 @@
+import { api } from "./api";
 import { serverGet } from "@/lib/api/isomorphic-fetch";
 
 export type CollectionItem = {
@@ -5,6 +6,8 @@ export type CollectionItem = {
   name: string;
   description?: string | null;
   cover_image?: string | null;
+  language?: string | null;
+  translation_group_id?: string | null;
 };
 
 export type CollectionDetail = {
@@ -13,8 +16,21 @@ export type CollectionDetail = {
   description?: string | null;
   cover_image?: string | null;
   language?: string | null;
+  translation_group_id?: string | null;
   creator?: { id: string; username?: string; full_name?: string | null } | null;
   created_date?: string | null;
+};
+
+/** POST/PATCH /collections body. `language` + `translation_of` link a
+ *  new-language version into a translation group (create-only). */
+export type CollectionInput = {
+  name: string;
+  description?: string | null;
+  cover_image?: string | null;
+  /** Version language (en|ar|es|fr); defaults to `en` on the backend. */
+  language?: string | null;
+  /** Id of the source collection this is a translation of (create-only). */
+  translation_of?: string | null;
 };
 
 export type CollectionsListMeta = {
@@ -44,6 +60,8 @@ export type GetCollectionsParams = {
   search?: string;
   sortBy?: string;
   order?: string;
+  /** Filter to a single language version (en|ar|es|fr). */
+  language?: string;
 };
 
 /** GET /collections — public list (paginated). */
@@ -65,4 +83,53 @@ function unwrapCollectionDetail(raw: unknown): CollectionDetail | null {
 export async function getCollectionById(id: string): Promise<CollectionDetail | null> {
   const data = await serverGet<unknown>(`/collections/${encodeURIComponent(id)}`);
   return unwrapCollectionDetail(data);
+}
+
+// ── Admin (client-side, authenticated via the proxy) ───────────────
+
+/** Admin list — includes language + translation_group_id per item. */
+export async function listCollectionsAdmin(
+  params?: GetCollectionsParams,
+): Promise<CollectionItem[]> {
+  const { data } = await api.get<unknown>("/collections", { params });
+  return unwrapCollectionsData(data);
+}
+
+/** Admin — fetch a single collection by id (client). */
+export async function getCollectionByIdAdmin(
+  id: string,
+): Promise<CollectionDetail | null> {
+  try {
+    const { data } = await api.get<unknown>(
+      `/collections/${encodeURIComponent(id)}`,
+    );
+    return unwrapCollectionDetail(data);
+  } catch {
+    return null;
+  }
+}
+
+/** Admin — create a collection. POST /collections */
+export async function createCollection(
+  payload: CollectionInput,
+): Promise<CollectionDetail | null> {
+  const { data } = await api.post<unknown>("/collections", payload);
+  return unwrapCollectionDetail(data);
+}
+
+/** Admin — update a collection. PATCH /collections/:id (never moves language). */
+export async function updateCollection(
+  id: string,
+  payload: Partial<Omit<CollectionInput, "language" | "translation_of">>,
+): Promise<CollectionDetail | null> {
+  const { data } = await api.patch<unknown>(
+    `/collections/${encodeURIComponent(id)}`,
+    payload,
+  );
+  return unwrapCollectionDetail(data);
+}
+
+/** Admin — delete a collection. DELETE /collections/:id */
+export async function deleteCollection(id: string): Promise<void> {
+  await api.delete(`/collections/${encodeURIComponent(id)}`);
 }
