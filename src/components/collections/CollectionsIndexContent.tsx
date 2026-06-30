@@ -57,7 +57,7 @@ export function CollectionsIndexContent({ collections }: { collections: Collecti
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("searchPlaceholder")}
-              className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-[var(--tott-muted)]"
+              className="w-full border-0 bg-transparent p-0 text-sm text-foreground shadow-none outline-none focus:ring-0 placeholder:text-[var(--tott-muted)]"
             />
           </label>
         </div>
@@ -89,7 +89,7 @@ export function CollectionsIndexContent({ collections }: { collections: Collecti
         </div>
       </div>
 
-      <ShareYourStory />
+      <ShareYourStory surface={theme.homeSurface} />
     </main>
   );
 }
