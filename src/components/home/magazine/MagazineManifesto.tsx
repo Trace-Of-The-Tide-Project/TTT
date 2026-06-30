@@ -93,7 +93,13 @@ export function MagazineManifesto({
   // "Our Philosophy" heading — large display heading.
   const headingClass =
     "text-3xl font-medium tracking-tight sm:text-4xl md:text-[calc(2.5rem*var(--mag-fs,1))] lg:text-5xl";
-  const headingStyle = { color: "var(--tott-home-text-strong)" } as const;
+  // Per-section text alignment from the CMS. Applied directly to each text
+  // element (not just via container inheritance) so it reliably wins over
+  // the prose/RTL defaults.
+  const headingStyle: React.CSSProperties = {
+    color: "var(--tott-home-text-strong)",
+    textAlign,
+  };
 
   // Sub-section headings — Vision / Mission / Editorial Values fixed at
   // 20px (text-xl) per the design.
@@ -104,19 +110,23 @@ export function MagazineManifesto({
   //   letter-spacing: -0.005em. Color is now theme-aware so the text
   //   stays legible on both the dark and light page surfaces.
   const bodyClass = "w-full";
-  const bodyTypoStyle = {
+  const bodyTypoStyle: React.CSSProperties = {
     fontWeight: 400,
     fontSize: `calc((clamp(0.875rem, 0.5vw + 0.75rem, 1rem)) * var(--mag-fs, 1))`,
     lineHeight: 1.6,
     letterSpacing: "-0.005em",
     color: "var(--tott-home-text-strong)",
-  } as const;
+    textAlign,
+  };
 
   // Symmetric horizontal padding — small on mobile, scales up on
   // larger screens. Capped earlier so xl screens don't squeeze the text
   // into a narrow column. Same scale as ExploreSpaces below.
   const textIndent = "px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32";
-  const bodyStrongStyle = { color: "var(--tott-home-text-strong)" } as const;
+  const bodyStrongStyle: React.CSSProperties = {
+    color: "var(--tott-home-text-strong)",
+    textAlign,
+  };
 
   return (
     <div
@@ -224,6 +234,7 @@ export function MagazineManifesto({
                   lineHeight: 1.55,
                   color: "var(--tott-home-text-strong)",
                   maxWidth: "930px",
+                  textAlign,
                 }}
               >
                 {t(key)}
@@ -268,6 +279,8 @@ export function MagazineManifesto({
                 letterSpacing: "-0.005em",
                 color: "var(--tott-home-text-heading)",
                 margin: 0,
+                width: "100%",
+                textAlign,
               }}
             >
               <RichContent
