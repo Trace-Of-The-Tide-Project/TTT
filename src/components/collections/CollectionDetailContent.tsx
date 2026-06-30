@@ -162,7 +162,7 @@ export function CollectionDetailContent({ collection }: { collection: Collection
         </div>
       </div>
 
-      <ShareYourStory />
+      <ShareYourStory surface={theme.homeSurface} />
     </div>
   );
 }
