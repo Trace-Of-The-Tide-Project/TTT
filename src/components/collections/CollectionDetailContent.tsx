@@ -87,14 +87,13 @@ export function CollectionDetailContent({ collection }: { collection: Collection
           ]}
         />
 
-        {/* Cover — only rendered when the collection actually has one, so a
-            cover-less collection doesn't show a giant empty placeholder slab. */}
-        {collection.coverImage && (
-          <div
-            className="mt-6 overflow-hidden rounded-2xl border"
-            style={{ borderColor: theme.cardBorder }}
-          >
-            <div className="relative aspect-[1392/483] w-full bg-[var(--tott-well-bg)]">
+        {/* Cover */}
+        <div
+          className="mt-6 overflow-hidden rounded-2xl border"
+          style={{ borderColor: theme.cardBorder }}
+        >
+          <div className="relative aspect-[1392/483] w-full bg-[var(--tott-well-bg)]">
+            {collection.coverImage && (
               <Image
                 src={collection.coverImage}
                 alt={collection.name}
@@ -103,9 +102,9 @@ export function CollectionDetailContent({ collection }: { collection: Collection
                 sizes="100vw"
                 priority
               />
-            </div>
+            )}
           </div>
-        )}
+        </div>
 
         {/* Header row */}
         <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
