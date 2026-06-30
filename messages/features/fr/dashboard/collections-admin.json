@@ -1,0 +1,58 @@
+{
+  "Dashboard": {
+    "collections": {
+      "list": {
+        "pageTitle": "Collections",
+        "addNew": "Ajouter une collection",
+        "searchPlaceholder": "Rechercher des collections…",
+        "loading": "Chargement…",
+        "empty": {
+          "none": "Aucune collection pour l’instant.",
+          "noMatch": "Aucune collection ne correspond à votre recherche."
+        },
+        "edit": "Modifier",
+        "delete": "Supprimer"
+      },
+      "form": {
+        "backToList": "Collections",
+        "createTitle": "Ajouter une collection",
+        "editTitle": "Modifier la collection",
+        "loading": "Chargement…",
+        "cancel": "Annuler",
+        "saving": "Enregistrement…",
+        "save": "Enregistrer les modifications",
+        "create": "Créer",
+        "fields": {
+          "name": "Nom",
+          "namePlaceholder": "p. ex. Patrimoine culturel",
+          "description": "Description",
+          "descriptionPlaceholder": "Une brève description de la collection",
+          "coverImage": "URL de l’image de couverture",
+          "coverImagePlaceholder": "https://… ou la clé d’un fichier importé"
+        },
+        "translation": {
+          "banner": "Ajout de la version {language}",
+          "ofOriginal": "Traduction de : {name}"
+        }
+      },
+      "errors": {
+        "nameRequired": "Le nom est obligatoire.",
+        "createFailed": "Impossible de créer la collection.",
+        "updateFailed": "Impossible de mettre à jour la collection.",
+        "deleteFailed": "Impossible de supprimer la collection."
+      },
+      "toasts": {
+        "created": "Collection créée",
+        "updated": "Collection mise à jour",
+        "deleted": "Collection supprimée"
+      },
+      "deleteModal": {
+        "title": "Supprimer la collection",
+        "description": "Supprimer « {name} » ? Cette action est irréversible.",
+        "cancel": "Annuler",
+        "confirm": "Supprimer",
+        "confirmBusy": "Suppression…"
+      }
+    }
+  }
+}

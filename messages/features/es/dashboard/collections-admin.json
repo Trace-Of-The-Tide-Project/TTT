@@ -1,0 +1,58 @@
+{
+  "Dashboard": {
+    "collections": {
+      "list": {
+        "pageTitle": "Colecciones",
+        "addNew": "Añadir colección",
+        "searchPlaceholder": "Buscar colecciones…",
+        "loading": "Cargando…",
+        "empty": {
+          "none": "Aún no hay colecciones.",
+          "noMatch": "Ninguna colección coincide con tu búsqueda."
+        },
+        "edit": "Editar",
+        "delete": "Eliminar"
+      },
+      "form": {
+        "backToList": "Colecciones",
+        "createTitle": "Añadir colección",
+        "editTitle": "Editar colección",
+        "loading": "Cargando…",
+        "cancel": "Cancelar",
+        "saving": "Guardando…",
+        "save": "Guardar cambios",
+        "create": "Crear",
+        "fields": {
+          "name": "Nombre",
+          "namePlaceholder": "p. ej. Patrimonio cultural",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Una breve descripción de la colección",
+          "coverImage": "URL de la imagen de portada",
+          "coverImagePlaceholder": "https://… o la clave de un recurso subido"
+        },
+        "translation": {
+          "banner": "Añadiendo la versión en {language}",
+          "ofOriginal": "Traducción de: {name}"
+        }
+      },
+      "errors": {
+        "nameRequired": "El nombre es obligatorio.",
+        "createFailed": "No se pudo crear la colección.",
+        "updateFailed": "No se pudo actualizar la colección.",
+        "deleteFailed": "No se pudo eliminar la colección."
+      },
+      "toasts": {
+        "created": "Colección creada",
+        "updated": "Colección actualizada",
+        "deleted": "Colección eliminada"
+      },
+      "deleteModal": {
+        "title": "Eliminar colección",
+        "description": "¿Eliminar «{name}»? Esta acción no se puede deshacer.",
+        "cancel": "Cancelar",
+        "confirm": "Eliminar",
+        "confirmBusy": "Eliminando…"
+      }
+    }
+  }
+}
