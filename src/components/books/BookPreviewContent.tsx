@@ -688,7 +688,7 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
         )}
       </div>
 
-      <ShareYourStory tShare={t} surface="var(--tott-home-surface)" />
+      <ShareYourStory tShare={t} />
     </main>
   );
 }

@@ -356,7 +356,7 @@ export function BookReviewsContent({
         </ul>
       </div>
 
-      <ShareYourStory surface="var(--tott-home-surface)" />
+      <ShareYourStory />
     </main>
   );
 }
