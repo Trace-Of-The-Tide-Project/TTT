@@ -426,6 +426,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
             manifesto: (
               <MagazineManifesto
                 fontScale={cmsCopy.manifesto?.fontScale}
+                textAlign={cmsCopy.manifesto?.textAlign}
                 philosophyHeadingOverride={manifestoLocale.philosophyHeading}
                 philosophyQuoteOverride={manifestoLocale.philosophyQuote}
                 visionHeadingOverride={manifestoLocale.visionHeading}

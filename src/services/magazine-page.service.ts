@@ -95,6 +95,20 @@ export type ManifestoLocaleFields = {
   valuesHeading?: string;
   closingQuote?: string;
 };
+/** Text alignment for prose sections. Direction-relative (`start`/`end`)
+ *  so it reads correctly under both LTR and RTL locales. Unset = `start`. */
+export type MagazineTextAlign = "start" | "center" | "end" | "justify";
+
+/** Validate a stored value into a supported alignment, else undefined. */
+export function readTextAlign(
+  cfg: Record<string, unknown> | null,
+): MagazineTextAlign | undefined {
+  const v = cfg?.textAlign;
+  return v === "start" || v === "center" || v === "end" || v === "justify"
+    ? v
+    : undefined;
+}
+
 export type ManifestoConfig = {
   copy: Localized<ManifestoLocaleFields>;
   banner?: string;
@@ -102,6 +116,8 @@ export type ManifestoConfig = {
   bannerHidden?: boolean;
   /** Per-section text scale (1 = current sizes). */
   fontScale?: number;
+  /** Per-section text alignment (unset = start). */
+  textAlign?: MagazineTextAlign;
 };
 export const EMPTY_MANIFESTO_CONFIG: ManifestoConfig = { copy: {} };
 
@@ -306,6 +322,7 @@ export function parseManifestoConfig(
     banner: typeof cfg.banner === "string" ? cfg.banner : undefined,
     bannerHidden: cfg.bannerHidden === true,
     fontScale: readFontScale(cfg),
+    textAlign: readTextAlign(cfg),
   };
 }
 

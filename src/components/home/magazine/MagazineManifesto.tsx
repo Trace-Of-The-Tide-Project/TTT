@@ -66,6 +66,8 @@ export type MagazineManifestoProps = {
   bannerHidden?: boolean;
   /** Per-section text scale (1 = current sizes). */
   fontScale?: number;
+  /** Per-section text alignment (unset = start; direction-aware). */
+  textAlign?: "start" | "center" | "end" | "justify";
 };
 
 export function MagazineManifesto({
@@ -80,6 +82,7 @@ export function MagazineManifesto({
   bannerOverride,
   bannerHidden,
   fontScale = 1,
+  textAlign,
 }: MagazineManifestoProps = {}) {
   const t = useTranslations("Home.magazine.manifesto");
   const tr = (key: string, override?: string) =>
@@ -118,7 +121,9 @@ export function MagazineManifesto({
   return (
     <div
       className="grid gap-10 sm:gap-12"
-      style={{ ["--mag-fs"]: fontScale } as React.CSSProperties}
+      style={
+        { ["--mag-fs"]: fontScale, textAlign } as React.CSSProperties
+      }
     >
       {/* Silk banner — wide, no overlay text, matches the rounded-corner
           card from the comp. Hidden when the admin disables it. */}

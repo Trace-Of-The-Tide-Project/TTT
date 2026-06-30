@@ -43,6 +43,7 @@ import {
   type HeroConfig,
   type HeroLocaleFields,
   type ManifestoConfig,
+  type MagazineTextAlign,
   type ManifestoLocaleFields,
   type FounderQuoteConfig,
   type FounderQuoteLocaleFields,
@@ -444,6 +445,52 @@ function FontSizeField({
               }`}
             >
               {t(p.key)}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** Per-section text-alignment buttons (start / center / end / justify).
+ *  Direction-relative so it reads correctly under LTR and RTL. */
+const TEXT_ALIGN_OPTIONS: { key: string; value: MagazineTextAlign }[] = [
+  { key: "start", value: "start" },
+  { key: "center", value: "center" },
+  { key: "end", value: "end" },
+  { key: "justify", value: "justify" },
+];
+
+function TextAlignField({
+  value,
+  onChange,
+}: {
+  value: MagazineTextAlign | undefined;
+  onChange: (v: MagazineTextAlign) => void;
+}) {
+  const t = useTranslations("Dashboard.magazinePageEditor.textAlign");
+  const current = value ?? "start";
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
+        {t("label")}
+      </span>
+      <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
+        {TEXT_ALIGN_OPTIONS.map((o) => {
+          const active = current === o.value;
+          return (
+            <button
+              key={o.key}
+              type="button"
+              onClick={() => onChange(o.value)}
+              className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                active
+                  ? "bg-[var(--tott-dash-surface-inset)] text-foreground shadow-sm"
+                  : "text-[var(--tott-tab-inactive)] hover:text-foreground"
+              }`}
+            >
+              {t(o.key)}
             </button>
           );
         })}
@@ -914,6 +961,10 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
                 />
                 {t("fields.bannerHidden")}
               </label>
+              <TextAlignField
+                value={draft.textAlign}
+                onChange={(v) => setDraft((prev) => ({ ...prev, textAlign: v }))}
+              />
             </FieldGroup>
           </div>
         </FormCard>
@@ -922,6 +973,7 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
       <PreviewFrame locale={activeLocale}>
         <MagazineManifesto
           fontScale={draft.fontScale}
+          textAlign={draft.textAlign}
           philosophyHeadingOverride={localeFields.philosophyHeading}
           philosophyQuoteOverride={localeFields.philosophyQuote}
           visionHeadingOverride={localeFields.visionHeading}

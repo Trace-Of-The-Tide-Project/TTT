@@ -416,6 +416,13 @@
         "default": "Default",
         "large": "Large",
         "xl": "Extra large"
+      },
+      "textAlign": {
+        "label": "Alignment",
+        "start": "Start",
+        "center": "Center",
+        "end": "End",
+        "justify": "Justify"
       }
     }
   }
