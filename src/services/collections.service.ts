@@ -85,6 +85,40 @@ export async function getCollectionById(id: string): Promise<CollectionDetail | 
   return unwrapCollectionDetail(data);
 }
 
+export type CollectionVersion = {
+  id: string;
+  language: string;
+  title?: string | null;
+};
+
+/** GET /collections/:id/translations — every version in the group (any id in
+ *  the group resolves the whole set). Server-safe. Empty array on failure. */
+export async function getCollectionTranslations(
+  id: string,
+): Promise<CollectionVersion[]> {
+  try {
+    const raw = await serverGet<unknown>(
+      `/collections/${encodeURIComponent(id)}/translations`,
+    );
+    const body =
+      raw && typeof raw === "object" && "data" in raw
+        ? (raw as { data?: unknown }).data
+        : raw;
+    const o = (body ?? {}) as Record<string, unknown>;
+    const versions = (o.versions ?? o.translations ?? []) as unknown;
+    if (!Array.isArray(versions)) return [];
+    return versions.filter(
+      (v): v is CollectionVersion =>
+        v != null &&
+        typeof v === "object" &&
+        typeof (v as CollectionVersion).id === "string" &&
+        typeof (v as CollectionVersion).language === "string",
+    );
+  } catch {
+    return [];
+  }
+}
+
 // ── Admin (client-side, authenticated via the proxy) ───────────────
 
 /** Admin list — includes language + translation_group_id per item. */

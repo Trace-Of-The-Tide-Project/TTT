@@ -3,7 +3,10 @@ import {
   isUsableArticleMediaRef,
   resolveArticleMediaSrc,
 } from "@/lib/content/article-media-url";
-import { getCollectionById } from "@/services/collections.service";
+import {
+  getCollectionById,
+  getCollectionTranslations,
+} from "@/services/collections.service";
 import { getCollectionArticles } from "@/services/articles.service";
 import { collectionItemHref } from "@/lib/content/collection-item-href";
 import {
@@ -30,13 +33,36 @@ function formatDate(iso: string | null | undefined): string {
 }
 
 export default async function CollectionDetailPage({ params }: PageProps) {
-  const { id } = await params;
+  const { id, locale } = await params;
 
   const [collection, itemsResult] = await Promise.all([
     getCollectionById(id),
     getCollectionArticles(id, { limit: 50 }),
   ]);
   if (!collection) return notFound();
+
+  // Localize the title/description to the active locale when a translated
+  // version of this collection exists — so even a direct/bookmarked link to
+  // the original (e.g. /ar/collections/<en-id>) reads in Arabic. The items
+  // stay tied to the URL collection (which owns them); only the framing copy
+  // swaps. Falls back silently to the original when no version matches.
+  let name = collection.name;
+  let description = collection.description?.trim() || "";
+  let cover = collection.cover_image;
+  if (collection.language && collection.language !== locale) {
+    const versions = await getCollectionTranslations(
+      collection.translation_group_id ?? id,
+    );
+    const match = versions.find((v) => v.language === locale && v.id !== collection.id);
+    if (match) {
+      const localized = await getCollectionById(match.id);
+      if (localized) {
+        name = localized.name || name;
+        description = localized.description?.trim() || description;
+        cover = localized.cover_image || cover;
+      }
+    }
+  }
 
   const items: CollectionRowItem[] = itemsResult.articles.map((a) => ({
     id: a.id,
@@ -52,9 +78,9 @@ export default async function CollectionDetailPage({ params }: PageProps) {
 
   const vm: CollectionDetailViewModel = {
     id: collection.id,
-    name: collection.name,
-    description: collection.description?.trim() || "",
-    coverImage: resolveCover(collection.cover_image),
+    name,
+    description,
+    coverImage: resolveCover(cover),
     items,
     currentYear: new Date().getFullYear(),
   };
