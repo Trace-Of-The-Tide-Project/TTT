@@ -182,7 +182,7 @@ html {
     --tott-card-border: #d1d5db;
     --tott-panel-bg: #f3f4f6;
     --tott-panel-text: #111827;
-    --tott-well-bg: #e5e7eb;
+    --tott-well-bg: #efebe2;
     --tott-auth-band-gradient: #ffffff;
     --tott-auth-hex-outer: #d8d2c6;
     --tott-auth-hex-inner: #faf9f7;
@@ -265,7 +265,7 @@ html[data-theme="light"] {
   --tott-card-border: #d1d5db;
   --tott-panel-bg: #f3f4f6;
   --tott-panel-text: #111827;
-  --tott-well-bg: #e5e7eb;
+  --tott-well-bg: #efebe2;
   --tott-auth-band-gradient: #ffffff;
   --tott-auth-hex-outer: #d8d2c6;
   --tott-auth-hex-inner: #faf9f7;
