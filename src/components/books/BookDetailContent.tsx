@@ -34,6 +34,8 @@ export type BookDetail = {
   currency: string;
   isFree: boolean;
   isOwned: boolean;
+  printEnabled: boolean;
+  printPrice: number | null;
 };
 
 export type BookReviewItem = {
@@ -61,7 +63,15 @@ export function BookDetailContent({ book, reviews }: { book: BookDetail; reviews
         <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-[260px_minmax(0,1fr)] min-[1600px]:gap-12 min-[1600px]:md:grid-cols-[340px_minmax(0,1fr)]">
           <div className="mx-auto flex w-full flex-col md:mx-0" style={{ maxWidth: "360px", gap: "12px" }}>
             <BookHexCover src={book.coverImage} alt={book.title} />
-            <BookActionButtons bookId={book.id} price={book.price} currency={book.currency} isFree={book.isFree} isOwnedInitial={book.isOwned} />
+            <BookActionButtons
+              bookId={book.id}
+              price={book.price}
+              currency={book.currency}
+              isFree={book.isFree}
+              isOwnedInitial={book.isOwned}
+              printEnabled={book.printEnabled}
+              printPrice={book.printPrice}
+            />
             <Link
               href={`/books/${book.id}/preview`}
               className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90 min-[1600px]:h-14! min-[1600px]:text-base!"

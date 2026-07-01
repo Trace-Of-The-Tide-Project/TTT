@@ -35,6 +35,10 @@ export type Book = {
   is_free?: boolean;
   /** True when the current (authenticated) caller owns this paid book. */
   is_owned?: boolean;
+  /** Whether a physical copy can be purchased. */
+  print_enabled?: boolean | null;
+  /** Price of the physical copy; separate from the digital `price`. */
+  print_price?: number | string | null;
 };
 
 export type BookReview = {
@@ -207,6 +211,8 @@ export type BookPayload = {
   page_count?: number | null;
   price?: number | null;
   currency?: string | null;
+  print_enabled?: boolean | null;
+  print_price?: number | null;
   magazine_id?: string | null;
   created_by?: string | null;
   /** On create only: id of the book this is a translation of. */

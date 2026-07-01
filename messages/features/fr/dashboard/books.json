@@ -41,6 +41,29 @@
           "next": "Suivant"
         }
       },
+      "tabs": {
+        "books": "Livres",
+        "printOrders": "Commandes imprimées"
+      },
+      "printOrders": {
+        "loading": "Chargement des commandes imprimées…",
+        "empty": "Aucune commande imprimée pour le moment.",
+        "trackingPlaceholder": "Numéro de suivi",
+        "markShipped": "Marquer comme expédié",
+        "headers": {
+          "book": "Livre",
+          "buyer": "Acheteur",
+          "address": "Adresse de livraison",
+          "status": "Statut",
+          "actions": "Actions"
+        },
+        "statuses": {
+          "all": "Tous",
+          "pending": "En attente",
+          "shipped": "Expédié",
+          "cancelled": "Annulé"
+        }
+      },
       "form": {
         "createTitle": "Ajouter un nouveau livre",
         "loading": "Chargement du livre…",
@@ -84,6 +107,9 @@
           "pricePlaceholder": "ex. 9.99",
           "currency": "Devise",
           "currencyPlaceholder": "ex. USD",
+          "printEnabled": "Vendre un exemplaire physique",
+          "printPrice": "Prix de l'exemplaire physique",
+          "printPricePlaceholder": "ex. 19.99",
           "magazine_id": "ID du magazine (optionnel)",
           "magazine_idPlaceholder": "Laisser vide si non lié à un magazine"
         },
@@ -101,6 +127,7 @@
         },
         "hints": {
           "priceFree": "Laisser vide pour marquer comme gratuit",
+          "printPriceCurrency": "Facturé dans la devise définie ci-dessus",
           "coverUrl": "Ou collez directement l'URL d'une image",
           "pdfUrl": "Ou collez directement l'URL d'un PDF"
         },

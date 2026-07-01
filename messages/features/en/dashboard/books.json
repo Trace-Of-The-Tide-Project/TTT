@@ -41,6 +41,29 @@
           "next": "Next"
         }
       },
+      "tabs": {
+        "books": "Books",
+        "printOrders": "Print orders"
+      },
+      "printOrders": {
+        "loading": "Loading print orders…",
+        "empty": "No print orders yet.",
+        "trackingPlaceholder": "Tracking number",
+        "markShipped": "Mark shipped",
+        "headers": {
+          "book": "Book",
+          "buyer": "Buyer",
+          "address": "Shipping address",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "statuses": {
+          "all": "All",
+          "pending": "Pending",
+          "shipped": "Shipped",
+          "cancelled": "Cancelled"
+        }
+      },
       "form": {
         "createTitle": "Add New Book",
         "loading": "Loading book…",
@@ -84,6 +107,9 @@
           "pricePlaceholder": "e.g. 9.99",
           "currency": "Currency",
           "currencyPlaceholder": "e.g. USD",
+          "printEnabled": "Sell a physical copy",
+          "printPrice": "Print price",
+          "printPricePlaceholder": "e.g. 19.99",
           "magazine_id": "Magazine ID (optional)",
           "magazine_idPlaceholder": "Leave blank if not magazine-linked"
         },
@@ -101,6 +127,7 @@
         },
         "hints": {
           "priceFree": "Leave blank to mark as free",
+          "printPriceCurrency": "Charged in the currency set above",
           "coverUrl": "Or paste an image URL directly",
           "pdfUrl": "Or paste a PDF URL directly"
         },

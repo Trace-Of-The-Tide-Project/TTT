@@ -41,6 +41,29 @@
           "next": "التالي"
         }
       },
+      "tabs": {
+        "books": "الكتب",
+        "printOrders": "طلبات الطباعة"
+      },
+      "printOrders": {
+        "loading": "جارٍ تحميل طلبات الطباعة…",
+        "empty": "لا توجد طلبات طباعة بعد.",
+        "trackingPlaceholder": "رقم التتبع",
+        "markShipped": "تحديد كمُرسل",
+        "headers": {
+          "book": "الكتاب",
+          "buyer": "المشتري",
+          "address": "عنوان الشحن",
+          "status": "الحالة",
+          "actions": "الإجراءات"
+        },
+        "statuses": {
+          "all": "الكل",
+          "pending": "قيد الانتظار",
+          "shipped": "تم الشحن",
+          "cancelled": "ملغى"
+        }
+      },
       "form": {
         "createTitle": "إضافة كتاب جديد",
         "loading": "جارٍ تحميل الكتاب…",
@@ -84,6 +107,9 @@
           "pricePlaceholder": "مثال: 9.99",
           "currency": "العملة",
           "currencyPlaceholder": "مثال: USD",
+          "printEnabled": "بيع نسخة ورقية",
+          "printPrice": "سعر النسخة الورقية",
+          "printPricePlaceholder": "مثال: 19.99",
           "magazine_id": "معرّف المجلة (اختياري)",
           "magazine_idPlaceholder": "اتركه فارغاً إذا لم يكن مرتبطاً بمجلة"
         },
@@ -101,6 +127,7 @@
         },
         "hints": {
           "priceFree": "اتركه فارغاً لجعله مجانياً",
+          "printPriceCurrency": "يُحتسب بالعملة المحددة أعلاه",
           "coverUrl": "أو الصق رابط صورة مباشرةً",
           "pdfUrl": "أو الصق رابط PDF مباشرةً"
         },

@@ -128,6 +128,28 @@ export async function checkOwnership(bookId: string): Promise<boolean> {
   }
 }
 
+/**
+ * POST /commerce/checkout/print/:bookId — create a Stripe Checkout Session to
+ * purchase a physical copy of a book (collects shipping address) and return
+ * the hosted-page URL.
+ */
+export async function createPrintCheckout(
+  bookId: string,
+  locale?: string,
+): Promise<string> {
+  const safeLocale =
+    locale && (routing.locales as readonly string[]).includes(locale)
+      ? locale
+      : routing.defaultLocale;
+  const { data } = await api.post<unknown>(
+    `/commerce/checkout/print/${encodeURIComponent(bookId)}`,
+    { locale: safeLocale },
+  );
+  const inner = unwrap<{ url?: string }>(data);
+  if (!inner?.url) throw new Error("Checkout did not return a URL");
+  return inner.url;
+}
+
 /** GET /commerce/entitlements/check-article?article_id= */
 export async function checkArticleOwnership(articleId: string): Promise<boolean> {
   try {

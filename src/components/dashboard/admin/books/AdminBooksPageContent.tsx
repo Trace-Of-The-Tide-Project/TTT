@@ -8,12 +8,17 @@ import { useBooks } from "@/hooks/queries/books";
 import { useDeleteBook } from "@/hooks/mutations/books";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import { ChamferedCap } from "@/components/ui/ChamferedCap";
+import { PrintOrdersPanel } from "./PrintOrdersPanel";
 import type { Book } from "@/services/books.service";
 
 const ROWS_PER_PAGE = 10;
+const TABS = ["books", "printOrders"] as const;
+type Tab = (typeof TABS)[number];
 
 export function AdminBooksPageContent() {
   const t = useTranslations("Dashboard.books.list");
+  const tTabs = useTranslations("Dashboard.books");
+  const [tab, setTab] = useState<Tab>("books");
 
   const booksQuery = useBooks();
   const books: Book[] = useMemo(() => booksQuery.data ?? [], [booksQuery.data]);
@@ -75,15 +80,36 @@ export function AdminBooksPageContent() {
           <h1 className="text-lg font-semibold text-foreground">{t("pageTitle")}</h1>
           <p className="text-xs text-[var(--tott-muted)]">{t("pageSubtitle")}</p>
         </div>
-        <Link
-          href="/admin/books/create"
-          className="flex items-center gap-1.5 rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-3 py-1.5 text-xs font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 transition-colors"
-        >
-          <PlusIcon />
-          {t("addNew")}
-        </Link>
+        {tab === "books" ? (
+          <Link
+            href="/admin/books/create"
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-3 py-1.5 text-xs font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 transition-colors"
+          >
+            <PlusIcon />
+            {t("addNew")}
+          </Link>
+        ) : null}
       </div>
 
+      <div className="mb-4 flex w-full max-w-sm gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
+        {TABS.map((id) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => setTab(id)}
+            className={`flex-1 rounded-md px-3 py-2 text-xs font-medium transition-all ${
+              tab === id
+                ? "bg-[var(--tott-dash-control-bg)] text-foreground"
+                : "bg-transparent text-[var(--tott-tab-inactive)] hover:text-[var(--tott-tab-inactive-hover)]"
+            }`}
+          >
+            {tTabs(`tabs.${id}`)}
+          </button>
+        ))}
+      </div>
+
+      {tab === "printOrders" ? <PrintOrdersPanel /> : (
+      <>
       <div className="mb-3">
         <input
           type="text"
@@ -169,6 +195,8 @@ export function AdminBooksPageContent() {
             {t("pagination.next")} →
           </button>
         </div>
+      )}
+      </>
       )}
 
       {deleteTarget && (

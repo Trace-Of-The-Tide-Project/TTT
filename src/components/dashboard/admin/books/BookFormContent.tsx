@@ -39,6 +39,8 @@ type FormState = {
   page_count: string;
   price: string;
   currency: string;
+  print_enabled: boolean;
+  print_price: string;
   magazine_id: string;
 };
 
@@ -57,6 +59,8 @@ const EMPTY: FormState = {
   page_count: "",
   price: "",
   currency: "USD",
+  print_enabled: false,
+  print_price: "",
   magazine_id: "",
 };
 
@@ -301,6 +305,8 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
       page_count: b.page_count != null ? String(b.page_count) : "",
       price: b.price != null ? String(b.price) : "",
       currency: b.currency ?? "USD",
+      print_enabled: Boolean(b.print_enabled),
+      print_price: b.print_price != null ? String(b.print_price) : "",
       magazine_id: b.magazine_id ?? "",
     });
     setSeeded(true);
@@ -410,6 +416,8 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
     page_count: form.page_count ? parseInt(form.page_count, 10) : null,
     price: form.price ? parseFloat(form.price) : null,
     currency: form.currency || null,
+    print_enabled: form.print_enabled,
+    print_price: form.print_price ? parseFloat(form.print_price) : null,
     magazine_id: form.magazine_id || null,
     created_by: currentUser?.id ?? null,
     // Link into the source's translation group (create-only, flag-gated).
@@ -596,6 +604,24 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
               <input type="text" className={inputClass} placeholder={t("fields.currencyPlaceholder")} value={form.currency} onChange={set("currency")} />
             </div>
           </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm text-foreground">
+              <input
+                type="checkbox"
+                checked={form.print_enabled}
+                onChange={(e) => setForm((prev) => ({ ...prev, print_enabled: e.target.checked }))}
+                className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+              />
+              {t("fields.printEnabled")}
+            </label>
+          </div>
+          {form.print_enabled ? (
+            <div>
+              <label className={labelClass}>{t("fields.printPrice")}</label>
+              <input type="number" step="0.01" min="0" className={inputClass} placeholder={t("fields.printPricePlaceholder")} value={form.print_price} onChange={set("print_price")} />
+              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.printPriceCurrency")}</p>
+            </div>
+          ) : null}
           <div>
             <label className={labelClass}>{t("fields.magazine_id")}</label>
             <input type="text" className={inputClass} placeholder={t("fields.magazine_idPlaceholder")} value={form.magazine_id} onChange={set("magazine_id")} />

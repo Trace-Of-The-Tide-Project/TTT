@@ -41,6 +41,29 @@
           "next": "Siguiente"
         }
       },
+      "tabs": {
+        "books": "Libros",
+        "printOrders": "Pedidos impresos"
+      },
+      "printOrders": {
+        "loading": "Cargando pedidos impresos…",
+        "empty": "Aún no hay pedidos impresos.",
+        "trackingPlaceholder": "Número de seguimiento",
+        "markShipped": "Marcar como enviado",
+        "headers": {
+          "book": "Libro",
+          "buyer": "Comprador",
+          "address": "Dirección de envío",
+          "status": "Estado",
+          "actions": "Acciones"
+        },
+        "statuses": {
+          "all": "Todos",
+          "pending": "Pendiente",
+          "shipped": "Enviado",
+          "cancelled": "Cancelado"
+        }
+      },
       "form": {
         "createTitle": "Añadir nuevo libro",
         "loading": "Cargando libro…",
@@ -84,6 +107,9 @@
           "pricePlaceholder": "ej. 9.99",
           "currency": "Moneda",
           "currencyPlaceholder": "ej. USD",
+          "printEnabled": "Vender una copia física",
+          "printPrice": "Precio de la copia física",
+          "printPricePlaceholder": "ej. 19.99",
           "magazine_id": "ID de revista (opcional)",
           "magazine_idPlaceholder": "Dejar en blanco si no está vinculado a una revista"
         },
@@ -101,6 +127,7 @@
         },
         "hints": {
           "priceFree": "Dejar en blanco para marcarlo como gratis",
+          "printPriceCurrency": "Se cobra en la moneda indicada arriba",
           "coverUrl": "O pega directamente la URL de una imagen",
           "pdfUrl": "O pega directamente la URL de un PDF"
         },
