@@ -23,6 +23,7 @@ import {
   useUpdateMagazineIssue,
   useDeleteMagazineIssue,
 } from "@/hooks/mutations/magazine-issues";
+import { IssueArticlesPanel } from "./IssueArticlesPanel";
 import type {
   MagazineIssue,
   MagazineIssueInput,
@@ -844,6 +845,10 @@ function IssueFormModal({
               onChange={set("description")}
             />
           </div>
+
+          {isEdit && item ? (
+            <IssueArticlesPanel issueId={item.id} magazineId={item.magazine_id ?? null} />
+          ) : null}
 
           <div className="flex justify-end gap-2 border-t border-[var(--tott-card-border)] pt-4">
             <button

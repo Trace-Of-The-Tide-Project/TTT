@@ -150,6 +150,40 @@ export async function deleteMagazineIssue(id: string): Promise<void> {
   await api.delete(`/magazine-issues/${encodeURIComponent(id)}`);
 }
 
+/** Article assigned to an issue, as returned by GET /magazine-issues/:id/articles. */
+export type IssueArticle = {
+  id: string;
+  title: string;
+  status?: string | null;
+  issue_position?: number | null;
+};
+
+function unwrapArticlesList(raw: unknown): IssueArticle[] {
+  if (Array.isArray(raw)) return raw as IssueArticle[];
+  if (raw && typeof raw === "object" && Array.isArray((raw as Record<string, unknown>).data)) {
+    return (raw as Record<string, unknown>).data as IssueArticle[];
+  }
+  return [];
+}
+
+/** Admin — list articles assigned to an issue, in display order. */
+export async function getIssueArticles(issueId: string): Promise<IssueArticle[]> {
+  const { data } = await api.get<unknown>(`/magazine-issues/${encodeURIComponent(issueId)}/articles`);
+  return unwrapArticlesList(data);
+}
+
+/** Admin — persist the full display order for an issue's articles. */
+export async function reorderIssueArticles(
+  issueId: string,
+  articleIds: string[],
+): Promise<IssueArticle[]> {
+  const { data } = await api.patch<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/articles/reorder`,
+    { article_ids: articleIds },
+  );
+  return unwrapArticlesList(data);
+}
+
 export async function getMagazineIssueBySlug(
   slug: string,
 ): Promise<MagazineIssue | null> {

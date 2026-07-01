@@ -286,7 +286,19 @@
           "cancel": "Cancelar",
           "create": "Crear",
           "save": "Guardar",
-          "saving": "Guardando…"
+          "saving": "Guardando…",
+          "articles": {
+            "label": "Artículos en este número",
+            "loading": "Cargando artículos…",
+            "empty": "Aún no se han asignado artículos.",
+            "searchPlaceholder": "Buscar artículos para añadir…",
+            "searching": "Buscando…",
+            "noResults": "No se encontraron artículos",
+            "add": "Añadir",
+            "remove": "Eliminar",
+            "moveUp": "Subir",
+            "moveDown": "Bajar"
+          }
         },
         "delete": {
           "title": "¿Eliminar número?",

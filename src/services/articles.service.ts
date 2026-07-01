@@ -447,6 +447,10 @@ export type UpdateArticlePayload = {
   /** When sent, backend replaces blocks (same shape as create). */
   blocks?: CreateArticleBlock[];
   tag_ids?: string[];
+  /** Magazine issue to assign this article to, or null to unassign. */
+  issue_id?: string | null;
+  /** Parent magazine — normally set alongside issue_id. */
+  magazine_id?: string | null;
 };
 
 function omitUndefined<T extends Record<string, unknown>>(obj: T): Record<string, unknown> {

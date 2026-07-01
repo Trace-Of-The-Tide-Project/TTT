@@ -286,7 +286,19 @@
           "cancel": "Annuler",
           "create": "Créer",
           "save": "Enregistrer",
-          "saving": "Enregistrement…"
+          "saving": "Enregistrement…",
+          "articles": {
+            "label": "Articles de ce numéro",
+            "loading": "Chargement des articles…",
+            "empty": "Aucun article assigné pour le moment.",
+            "searchPlaceholder": "Rechercher des articles à ajouter…",
+            "searching": "Recherche…",
+            "noResults": "Aucun article correspondant",
+            "add": "Ajouter",
+            "remove": "Retirer",
+            "moveUp": "Monter",
+            "moveDown": "Descendre"
+          }
         },
         "delete": {
           "title": "Supprimer le numéro ?",

@@ -286,7 +286,19 @@
           "cancel": "Cancel",
           "create": "Create",
           "save": "Save",
-          "saving": "Saving…"
+          "saving": "Saving…",
+          "articles": {
+            "label": "Articles in this issue",
+            "loading": "Loading articles…",
+            "empty": "No articles assigned yet.",
+            "searchPlaceholder": "Search articles to add…",
+            "searching": "Searching…",
+            "noResults": "No matching articles",
+            "add": "Add",
+            "remove": "Remove",
+            "moveUp": "Move up",
+            "moveDown": "Move down"
+          }
         },
         "delete": {
           "title": "Delete issue?",
