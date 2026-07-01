@@ -123,7 +123,21 @@
         "sections": {
           "details": "Detalles del libro",
           "pricing": "Precio",
+          "chapters": "Capítulos",
           "media": "Multimedia"
+        },
+        "chapters": {
+          "label": "Compilado a partir de",
+          "hint": "Registra de qué artículos se compiló este libro, para seguimiento editorial. El PDF subido arriba sigue siendo el archivo legible.",
+          "loading": "Cargando capítulos…",
+          "empty": "Aún no hay artículos vinculados.",
+          "searchPlaceholder": "Buscar artículos para añadir como capítulo…",
+          "searching": "Buscando…",
+          "noResults": "No se encontraron artículos",
+          "add": "Añadir",
+          "remove": "Eliminar",
+          "moveUp": "Subir",
+          "moveDown": "Bajar"
         },
         "hints": {
           "priceFree": "Dejar en blanco para marcarlo como gratis",

@@ -12,6 +12,7 @@ import { uploadFileToUrl } from "@/services/uploads.service";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { TranslationsPanel } from "@/components/dashboard/admin/translations";
 import { isTranslatableNow } from "@/services/translations.service";
+import { BookChaptersPanel } from "./BookChaptersPanel";
 import type { BookPayload } from "@/services/books.service";
 
 const BOOK_LANGS = ["en", "ar", "es", "fr", "de"] as const;
@@ -627,6 +628,15 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
             <input type="text" className={inputClass} placeholder={t("fields.magazine_idPlaceholder")} value={form.magazine_id} onChange={set("magazine_id")} />
           </div>
         </div>
+
+        {isEdit && bookId ? (
+          <div className={sectionClass}>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
+              {t("sections.chapters")}
+            </p>
+            <BookChaptersPanel bookId={bookId} />
+          </div>
+        ) : null}
 
         {/* ── Section 3: Media uploads ── */}
         <div className={sectionClass}>

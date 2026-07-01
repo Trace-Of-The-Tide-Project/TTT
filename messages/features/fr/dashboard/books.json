@@ -123,7 +123,21 @@
         "sections": {
           "details": "Détails du livre",
           "pricing": "Tarification",
+          "chapters": "Chapitres",
           "media": "Médias"
+        },
+        "chapters": {
+          "label": "Compilé à partir de",
+          "hint": "Indiquez à partir de quels articles ce livre a été compilé, à des fins de suivi éditorial. Le PDF téléversé ci-dessus reste le fichier lisible.",
+          "loading": "Chargement des chapitres…",
+          "empty": "Aucun article lié pour le moment.",
+          "searchPlaceholder": "Rechercher des articles à ajouter comme chapitre…",
+          "searching": "Recherche…",
+          "noResults": "Aucun article correspondant",
+          "add": "Ajouter",
+          "remove": "Retirer",
+          "moveUp": "Monter",
+          "moveDown": "Descendre"
         },
         "hints": {
           "priceFree": "Laisser vide pour marquer comme gratuit",

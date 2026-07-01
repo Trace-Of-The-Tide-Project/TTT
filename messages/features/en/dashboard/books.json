@@ -123,7 +123,21 @@
         "sections": {
           "details": "Book details",
           "pricing": "Pricing",
+          "chapters": "Chapters",
           "media": "Media"
+        },
+        "chapters": {
+          "label": "Compiled from",
+          "hint": "Record which articles this book was compiled from, for editorial tracking. Uploaded PDF above remains the readable file.",
+          "loading": "Loading chapters…",
+          "empty": "No articles linked yet.",
+          "searchPlaceholder": "Search articles to add as a chapter…",
+          "searching": "Searching…",
+          "noResults": "No matching articles",
+          "add": "Add",
+          "remove": "Remove",
+          "moveUp": "Move up",
+          "moveDown": "Move down"
         },
         "hints": {
           "priceFree": "Leave blank to mark as free",
