@@ -264,6 +264,23 @@
             "metaDescriptionPlaceholder": "Meta description",
             "previewUrlStub": "yoursite.com/articles/…"
           }
+        },
+        "contributors": {
+          "panelTitle": "Contributors",
+          "loading": "Loading contributors…",
+          "empty": "No contributors added yet.",
+          "unknownUser": "Unknown user",
+          "add": "Add",
+          "adding": "Adding…",
+          "remove": "Remove",
+          "addFailed": "Failed to add contributor. They may already be linked.",
+          "roles": {
+            "main_contributor": "Main contributor",
+            "co-author": "Co-author",
+            "contributor": "Contributor",
+            "editor": "Editor",
+            "reviewer": "Reviewer"
+          }
         }
       }
     }

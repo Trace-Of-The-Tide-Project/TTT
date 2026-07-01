@@ -18,7 +18,7 @@ import { isTranslatableNow } from "@/services/translations.service";
 import { UserPicker } from "./UserPicker";
 import { AvatarUploadZone, ThemesInput } from "./form-controls";
 
-const CREATOR_KINDS = ["musician", "writer", "visual_artist", "filmmaker"] as const;
+const CREATOR_KINDS = ["musician", "writer", "visual_artist", "filmmaker", "photographer", "translator", "editor", "illustrator"] as const;
 type CreatorKind = (typeof CREATOR_KINDS)[number];
 
 type FormState = {

@@ -264,6 +264,23 @@
             "metaDescriptionPlaceholder": "الوصف الميتا",
             "previewUrlStub": "yoursite.com/articles/…"
           }
+        },
+        "contributors": {
+          "panelTitle": "المساهمون",
+          "loading": "جارٍ تحميل المساهمين…",
+          "empty": "لم تتم إضافة مساهمين بعد.",
+          "unknownUser": "مستخدم غير معروف",
+          "add": "إضافة",
+          "adding": "جارٍ الإضافة…",
+          "remove": "إزالة",
+          "addFailed": "فشل إضافة المساهم. قد يكون مرتبطًا بالفعل.",
+          "roles": {
+            "main_contributor": "المساهم الرئيسي",
+            "co-author": "مؤلف مشارك",
+            "contributor": "مساهم",
+            "editor": "محرر",
+            "reviewer": "مراجع"
+          }
         }
       }
     }

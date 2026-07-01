@@ -102,7 +102,11 @@
           "musician": "Músico",
           "writer": "Escritor",
           "visual_artist": "Artista visual",
-          "filmmaker": "Cineasta"
+          "filmmaker": "Cineasta",
+          "photographer": "Fotógrafo",
+          "translator": "Traductor",
+          "editor": "Editor",
+          "illustrator": "Ilustrador"
         },
         "toasts": {
           "created": "Perfil de escritor creado",

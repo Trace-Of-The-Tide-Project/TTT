@@ -7,6 +7,7 @@ import { EditorToolbar } from "@/components/dashboard/admin/articles/articles-ed
 import { EditorRegistryProvider } from "@/components/dashboard/admin/articles/articles-editor/lib/editor-registry";
 import { ContentBlocks } from "@/components/dashboard/admin/articles/articles-editor/ContentBlocks";
 import { ContentSettings } from "@/components/dashboard/admin/articles/articles-editor/ArticleSettings";
+import { ContributorsPanel } from "@/components/dashboard/admin/articles/articles-editor/ContributorsPanel";
 import { ContentEditorFooter } from "@/components/dashboard/admin/articles/articles-editor/ContentEditorFooter";
 import { ScheduleArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ScheduleArticleModal";
 import { TranslationsPanel } from "@/components/dashboard/admin/translations/TranslationsPanel";
@@ -255,6 +256,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
                 setCoverImage(null);
               }}
             />
+            {isEditMode && articleId ? <ContributorsPanel articleId={articleId} /> : null}
           </aside>
         </div>
 

@@ -264,6 +264,23 @@
             "metaDescriptionPlaceholder": "Méta-description",
             "previewUrlStub": "votresite.com/articles/…"
           }
+        },
+        "contributors": {
+          "panelTitle": "Contributeurs",
+          "loading": "Chargement des contributeurs…",
+          "empty": "Aucun contributeur ajouté pour le moment.",
+          "unknownUser": "Utilisateur inconnu",
+          "add": "Ajouter",
+          "adding": "Ajout…",
+          "remove": "Retirer",
+          "addFailed": "Échec de l'ajout du contributeur. Il est peut-être déjà lié.",
+          "roles": {
+            "main_contributor": "Contributeur principal",
+            "co-author": "Co-auteur",
+            "contributor": "Contributeur",
+            "editor": "Éditeur",
+            "reviewer": "Relecteur"
+          }
         }
       }
     }

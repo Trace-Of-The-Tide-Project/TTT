@@ -25,7 +25,7 @@ import { nameInitials } from "./initials";
 
 const PAGE_LIMIT = 10;
 
-const KNOWN_KINDS = new Set(["musician", "writer", "visual_artist", "filmmaker"]);
+const KNOWN_KINDS = new Set(["musician", "writer", "visual_artist", "filmmaker", "photographer", "translator", "editor", "illustrator"]);
 
 const emptyMeta: WritersListMeta = {
   total: 0,

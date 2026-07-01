@@ -102,7 +102,11 @@
           "musician": "موسيقي",
           "writer": "كاتب",
           "visual_artist": "فنان بصري",
-          "filmmaker": "صانع أفلام"
+          "filmmaker": "صانع أفلام",
+          "photographer": "مصور",
+          "translator": "مترجم",
+          "editor": "محرر",
+          "illustrator": "رسام"
         },
         "toasts": {
           "created": "تم إنشاء ملف الكاتب",
