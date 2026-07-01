@@ -20,6 +20,14 @@
     "breadcrumbCollections": "Collections",
     "fallbackAuthor": "Author",
     "fallbackArticle": "Article",
+    "buyGate": {
+      "heading": "Buy this article",
+      "body": "Purchase this article to read it in full.",
+      "bodyWithPrice": "Purchase this article for {price} to read it in full.",
+      "buy": "Buy now",
+      "redirecting": "Redirecting…",
+      "error": "Could not start checkout. Please try again."
+    },
     "threads": {
       "loading": "Loading thread…",
       "notFound": "Thread not found",

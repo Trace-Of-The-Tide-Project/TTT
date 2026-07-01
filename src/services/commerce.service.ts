@@ -127,3 +127,38 @@ export async function checkOwnership(bookId: string): Promise<boolean> {
     return false;
   }
 }
+
+/** GET /commerce/entitlements/check-article?article_id= */
+export async function checkArticleOwnership(articleId: string): Promise<boolean> {
+  try {
+    const { data } = await api.get<unknown>(
+      "/commerce/entitlements/check-article",
+      { params: { article_id: articleId } },
+    );
+    const inner = unwrap<{ owned?: boolean }>(data);
+    return Boolean(inner?.owned);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * POST /commerce/checkout/article/:id — create a Stripe Checkout Session to
+ * purchase a single paid article and return the hosted-page URL.
+ */
+export async function createArticleCheckout(
+  articleId: string,
+  locale?: string,
+): Promise<string> {
+  const safeLocale =
+    locale && (routing.locales as readonly string[]).includes(locale)
+      ? locale
+      : routing.defaultLocale;
+  const { data } = await api.post<unknown>(
+    `/commerce/checkout/article/${encodeURIComponent(articleId)}`,
+    { locale: safeLocale },
+  );
+  const inner = unwrap<{ url?: string }>(data);
+  if (!inner?.url) throw new Error("Checkout did not return a URL");
+  return inner.url;
+}

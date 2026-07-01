@@ -20,6 +20,14 @@
     "breadcrumbCollections": "المجموعات",
     "fallbackAuthor": "الكاتب",
     "fallbackArticle": "مقالة",
+    "buyGate": {
+      "heading": "اشترِ هذه المقالة",
+      "body": "اشترِ هذه المقالة لقراءتها كاملة.",
+      "bodyWithPrice": "اشترِ هذه المقالة مقابل {price} لقراءتها كاملة.",
+      "buy": "اشترِ الآن",
+      "redirecting": "جارٍ التحويل…",
+      "error": "تعذّر بدء عملية الدفع. حاول مرة أخرى."
+    },
     "threads": {
       "loading": "جارٍ تحميل الخيط…",
       "notFound": "الخيط غير موجود",

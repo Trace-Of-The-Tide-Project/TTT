@@ -256,6 +256,21 @@
             "private": "Privado",
             "public": "Público"
           },
+          "access": {
+            "label": "Acceso",
+            "open": "Abierto (para todos)",
+            "preview": "Vista previa (primeros N bloques gratis)",
+            "subscriber": "Solo suscriptores",
+            "paid": "De pago (comprar este artículo)",
+            "previewCountPlaceholder": "Bloques gratis, p. ej. 2",
+            "pricePlaceholder": "Precio",
+            "hint": {
+              "open": "Cualquiera puede leer el artículo completo.",
+              "preview": "Todos ven los primeros N bloques; el resto queda bloqueado.",
+              "subscriber": "Requiere una suscripción activa para leer.",
+              "paid": "Los lectores deben comprar este artículo individualmente."
+            }
+          },
           "seo": {
             "label": "Vista previa SEO",
             "previewTitlePlaceholder": "Título del artículo",

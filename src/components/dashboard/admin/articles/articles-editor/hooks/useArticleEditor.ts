@@ -20,6 +20,7 @@ import {
   scheduleArticle,
   updateArticle,
   type ArticleLifecycleStatus,
+  type ArticleAccessLevel,
 } from "@/services/articles.service";
 import { useArticle } from "@/hooks/queries/articles";
 import { uploadArticleAssetPath } from "@/services/uploads.service";
@@ -94,7 +95,10 @@ export function useArticleEditor({
   const [translationOf, setTranslationOf] = useState<string | undefined>(initialTranslationOf);
   const [originalTitle, setOriginalTitle] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
-  const [isPremium, setIsPremium] = useState(false);
+  const [accessLevel, setAccessLevel] = useState<ArticleAccessLevel>("open");
+  const [previewBlockCount, setPreviewBlockCount] = useState<number | null>(null);
+  const [price, setPrice] = useState<number | null>(null);
+  const [currency, setCurrency] = useState("USD");
   const [seoTitle, setSeoTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [collectionId, setCollectionId] = useState("");
@@ -152,7 +156,15 @@ export function useArticleEditor({
     setLanguage((a.language || "en").trim() || "en");
     setTranslationOf(a.translation_of?.trim() || undefined);
     setVisibility((a.visibility || "public").toLowerCase() === "private" ? "private" : "public");
-    setIsPremium(a.is_premium ?? false);
+    const level = (a.access_level || "open").trim().toLowerCase();
+    setAccessLevel(
+      (["open", "preview", "subscriber", "paid"] as const).includes(level as ArticleAccessLevel)
+        ? (level as ArticleAccessLevel)
+        : "open",
+    );
+    setPreviewBlockCount(a.preview_block_count ?? null);
+    setPrice(a.price ?? null);
+    setCurrency(a.currency?.trim() || "USD");
     setSeoTitle(a.seo_title?.trim() ?? "");
     setMetaDescription(a.meta_description?.trim() ?? "");
     setCollectionId(a.collection_id?.trim() ?? "");
@@ -264,7 +276,10 @@ export function useArticleEditor({
       category: category.trim(),
       language: language.trim() || undefined,
       visibility,
-      is_premium: isPremium,
+      access_level: accessLevel,
+      preview_block_count: accessLevel === "preview" ? (previewBlockCount ?? undefined) : undefined,
+      price: accessLevel === "paid" ? (price ?? undefined) : undefined,
+      currency: accessLevel === "paid" ? currency : undefined,
       seo_title: seoTitle.trim() || undefined,
       meta_description: metaDescription.trim() || undefined,
       collection_id: cid || undefined,
@@ -274,7 +289,8 @@ export function useArticleEditor({
       translation_of: translationOf || undefined,
     };
   }, [
-    blocks, title, config.contentType, category, language, visibility, isPremium,
+    blocks, title, config.contentType, category, language, visibility,
+    accessLevel, previewBlockCount, price, currency,
     seoTitle, metaDescription, collectionId, tagIds, coverImage, coverFile, translationOf,
   ]);
 
@@ -406,7 +422,10 @@ export function useArticleEditor({
     translationOf,
     originalTitle,
     visibility, setVisibility,
-    isPremium, setIsPremium,
+    accessLevel, setAccessLevel,
+    previewBlockCount, setPreviewBlockCount,
+    price, setPrice,
+    currency, setCurrency,
     seoTitle, setSeoTitle,
     metaDescription, setMetaDescription,
     collectionId, setCollectionId,

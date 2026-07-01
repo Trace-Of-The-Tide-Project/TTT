@@ -99,8 +99,14 @@ type ContentSettingsProps = {
   excludeId?: string;
   visibility: "public" | "private";
   onVisibilityChange: (v: "public" | "private") => void;
-  isPremium?: boolean;
-  onIsPremiumChange?: (v: boolean) => void;
+  accessLevel?: "open" | "preview" | "subscriber" | "paid";
+  onAccessLevelChange?: (v: "open" | "preview" | "subscriber" | "paid") => void;
+  previewBlockCount?: number | null;
+  onPreviewBlockCountChange?: (v: number | null) => void;
+  price?: number | null;
+  onPriceChange?: (v: number | null) => void;
+  currency?: string;
+  onCurrencyChange?: (v: string) => void;
   seoTitle: string;
   onSeoTitleChange: (v: string) => void;
   metaDescription: string;
@@ -145,8 +151,14 @@ export function ContentSettings({
   excludeId,
   visibility,
   onVisibilityChange,
-  isPremium = false,
-  onIsPremiumChange,
+  accessLevel = "open",
+  onAccessLevelChange,
+  previewBlockCount,
+  onPreviewBlockCountChange,
+  price,
+  onPriceChange,
+  currency = "USD",
+  onCurrencyChange,
   seoTitle,
   onSeoTitleChange,
   metaDescription,
@@ -389,15 +401,53 @@ export function ContentSettings({
         </div>
 
         <div>
-          <label className="flex items-center gap-3 cursor-pointer">
+          <SectionLabel icon={<EyeIcon />}>{t("access.label")}</SectionLabel>
+          <FieldSelect
+            value={accessLevel}
+            onChange={(e) =>
+              onAccessLevelChange?.(e.target.value as "open" | "preview" | "subscriber" | "paid")
+            }
+          >
+            <option value="open">{t("access.open")}</option>
+            <option value="preview">{t("access.preview")}</option>
+            <option value="subscriber">{t("access.subscriber")}</option>
+            <option value="paid">{t("access.paid")}</option>
+          </FieldSelect>
+          <p className="mt-1.5 text-xs text-[var(--tott-muted)]">{t(`access.hint.${accessLevel}`)}</p>
+
+          {accessLevel === "preview" ? (
             <input
-              type="checkbox"
-              checked={isPremium}
-              onChange={(e) => onIsPremiumChange?.(e.target.checked)}
-              className="h-4 w-4 rounded border-[var(--tott-card-border)] accent-amber-500"
+              type="number"
+              min={0}
+              value={previewBlockCount ?? ""}
+              onChange={(e) =>
+                onPreviewBlockCountChange?.(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder={t("access.previewCountPlaceholder")}
+              className={`${FIELD_BASE} mt-2`}
             />
-            <span className="text-sm text-[var(--tott-muted)]">Premium (subscribers only)</span>
-          </label>
+          ) : null}
+
+          {accessLevel === "paid" ? (
+            <div className="mt-2 flex gap-2">
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={price ?? ""}
+                onChange={(e) => onPriceChange?.(e.target.value === "" ? null : Number(e.target.value))}
+                placeholder={t("access.pricePlaceholder")}
+                className={FIELD_BASE}
+              />
+              <input
+                type="text"
+                value={currency}
+                onChange={(e) => onCurrencyChange?.(e.target.value.toUpperCase())}
+                maxLength={3}
+                className={`${FIELD_BASE} w-20 text-center`}
+              />
+            </div>
+          ) : null}
         </div>
 
         <div>

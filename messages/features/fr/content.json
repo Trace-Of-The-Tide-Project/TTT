@@ -20,6 +20,14 @@
     "breadcrumbCollections": "Collections",
     "fallbackAuthor": "Auteur",
     "fallbackArticle": "Article",
+    "buyGate": {
+      "heading": "Achetez cet article",
+      "body": "Achetez cet article pour le lire en entier.",
+      "bodyWithPrice": "Achetez cet article pour {price} pour le lire en entier.",
+      "buy": "Acheter maintenant",
+      "redirecting": "Redirection…",
+      "error": "Impossible de démarrer le paiement. Veuillez réessayer."
+    },
     "threads": {
       "loading": "Chargement du fil…",
       "notFound": "Fil introuvable",

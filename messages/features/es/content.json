@@ -20,6 +20,14 @@
     "breadcrumbCollections": "Colecciones",
     "fallbackAuthor": "Autor",
     "fallbackArticle": "Artículo",
+    "buyGate": {
+      "heading": "Compra este artículo",
+      "body": "Compra este artículo para leerlo completo.",
+      "bodyWithPrice": "Compra este artículo por {price} para leerlo completo.",
+      "buy": "Comprar ahora",
+      "redirecting": "Redirigiendo…",
+      "error": "No se pudo iniciar el pago. Inténtalo de nuevo."
+    },
     "threads": {
       "loading": "Cargando hilo…",
       "notFound": "Hilo no encontrado",

@@ -36,7 +36,10 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
     language, setLanguage,
     translationOf, originalTitle,
     visibility, setVisibility,
-    isPremium, setIsPremium,
+    accessLevel, setAccessLevel,
+    previewBlockCount, setPreviewBlockCount,
+    price, setPrice,
+    currency, setCurrency,
     seoTitle, setSeoTitle,
     metaDescription, setMetaDescription,
     collectionId, setCollectionId,
@@ -236,8 +239,14 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
               excludeId={articleId}
               visibility={visibility}
               onVisibilityChange={setVisibility}
-              isPremium={isPremium}
-              onIsPremiumChange={setIsPremium}
+              accessLevel={accessLevel}
+              onAccessLevelChange={setAccessLevel}
+              previewBlockCount={previewBlockCount}
+              onPreviewBlockCountChange={setPreviewBlockCount}
+              price={price}
+              onPriceChange={setPrice}
+              currency={currency}
+              onCurrencyChange={setCurrency}
               seoTitle={seoTitle}
               onSeoTitleChange={setSeoTitle}
               metaDescription={metaDescription}

@@ -28,6 +28,7 @@ import {
 import { useOptionalArticleReadingHeader } from "@/components/layout/ArticleReadingHeaderContext";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import PremiumGate from "@/components/content/PremiumGate";
+import ArticleBuyGate from "@/components/content/ArticleBuyGate";
 
 type DemoArticle = typeof CONTENT_ARTICLE | typeof CONTENT_ARTICLE_FULL;
 
@@ -258,9 +259,17 @@ function ArticleByIdLoader({ id }: { id: string }) {
         relatedContent={liveRelated.length > 0 ? liveRelated : props.relatedContent}
       />
     );
-    return article.is_premium ? (
-      <PremiumGate feature="archive">{layout}</PremiumGate>
-    ) : layout;
+    if (article.locked && article.access_level === "paid") {
+      return (
+        <ArticleBuyGate articleId={article.id} price={article.price} currency={article.currency}>
+          {layout}
+        </ArticleBuyGate>
+      );
+    }
+    if (article.locked || article.is_premium) {
+      return <PremiumGate feature="archive">{layout}</PremiumGate>;
+    }
+    return layout;
   }
 
   return null;
