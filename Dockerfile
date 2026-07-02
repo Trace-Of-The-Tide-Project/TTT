@@ -26,6 +26,7 @@ RUN npm ci --include=dev
 
 # Copy application code
 COPY . .
+RUN chmod +x /app/docker-entrypoint.js
 
 # Build application
 RUN npx next build --experimental-build-mode compile
