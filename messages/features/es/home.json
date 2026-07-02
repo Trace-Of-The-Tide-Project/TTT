@@ -77,7 +77,8 @@
         "categoryArchitecture": "Arquitectura",
         "categoryArt": "Arte",
         "categoryFashion": "Moda",
-        "categoryFilm": "Cine"
+        "categoryFilm": "Cine",
+        "empty": "Aún no hay publicaciones."
       },
       "issues": {
         "issuePrefix": "Número",
@@ -99,7 +100,8 @@
         "zoomOut": "Alejar",
         "fullscreen": "Pantalla completa",
         "share": "Compartir",
-        "more": "Más opciones"
+        "more": "Más opciones",
+        "empty": "Aún no se han publicado números."
       },
       "editorialBoard": {
         "mastheadEyebrow": "Cabecera · 2026",

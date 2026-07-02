@@ -77,7 +77,8 @@
         "categoryArchitecture": "Architecture",
         "categoryArt": "Art",
         "categoryFashion": "Fashion",
-        "categoryFilm": "Film"
+        "categoryFilm": "Film",
+        "empty": "No publications yet."
       },
       "issues": {
         "issuePrefix": "Issue",
@@ -99,7 +100,8 @@
         "zoomOut": "Zoom out",
         "fullscreen": "Fullscreen",
         "share": "Share",
-        "more": "More options"
+        "more": "More options",
+        "empty": "No issues published yet."
       },
       "editorialBoard": {
         "mastheadEyebrow": "Masthead · 2026",

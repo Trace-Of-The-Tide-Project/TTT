@@ -23,21 +23,6 @@ export type MagazineIssuesProps = {
   items: MagazineIssueItem[];
 };
 
-/**
- * Placeholder cards used when the backend returns no published
- * magazine-issues. Mirrors the Figma Variant 3 comp so the Issues
- * tab is never empty during pre-launch.
- */
-const FALLBACK_ITEMS: MagazineIssueItem[] = Array.from({ length: 4 }, (_, i) => ({
-  id: `placeholder-${i}`,
-  title: "The Quiet Revolution",
-  edition: "12",
-  category: "Art & Activism",
-  publishedAt: "2026-03-01T00:00:00.000Z",
-  coverImage: null,
-  slug: null,
-}));
-
 function isValidImageUrl(url: string | null | undefined): url is string {
   if (!url) return false;
   try {
@@ -78,9 +63,16 @@ function prettify(s: string | null | undefined): string {
  */
 export function MagazineIssuesV2({ items }: MagazineIssuesProps) {
   const t = useTranslations("Home.magazine.issues");
-  // Show real, admin-managed issues. The placeholder cards are only a
-  // pre-launch empty state — never mixed in alongside real data.
-  const visible = (items.length > 0 ? items : FALLBACK_ITEMS).slice(0, 4);
+
+  if (items.length === 0) {
+    return (
+      <p className="mx-auto w-full max-w-[1128px] text-center" style={{ color: "var(--tott-home-text-muted)" }}>
+        {t("empty")}
+      </p>
+    );
+  }
+
+  const visible = items.slice(0, 4);
 
   return (
     <div className="mx-auto flex w-full max-w-[1128px] flex-wrap items-stretch justify-center gap-2">

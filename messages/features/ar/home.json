@@ -77,7 +77,8 @@
         "categoryArchitecture": "عمارة",
         "categoryArt": "فنّ",
         "categoryFashion": "أزياء",
-        "categoryFilm": "سينما"
+        "categoryFilm": "سينما",
+        "empty": "لا توجد منشورات بعد."
       },
       "issues": {
         "issuePrefix": "عدد",
@@ -99,7 +100,8 @@
         "zoomOut": "تصغير",
         "fullscreen": "ملء الشاشة",
         "share": "مشاركة",
-        "more": "خيارات أخرى"
+        "more": "خيارات أخرى",
+        "empty": "لم يتم نشر أي أعداد بعد."
       },
       "editorialBoard": {
         "mastheadEyebrow": "هيئة التحرير · 2026",

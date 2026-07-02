@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { BookCover } from "./BookCover";
 
@@ -21,16 +22,6 @@ export type LatestPublishedItem = {
 export type MagazineLatestPublishedProps = {
   items: LatestPublishedItem[];
 };
-
-const FALLBACK_TITLE = "The Architecture of Silence";
-const FALLBACK_DATE = "2026-03-01T00:00:00.000Z";
-
-const FALLBACK_ITEMS: LatestPublishedItem[] = [
-  { id: "pf-art",          category: "Art",          title: FALLBACK_TITLE, author: "", readingTime: 0, coverImage: null, publishedAt: FALLBACK_DATE },
-  { id: "pf-architecture", category: "Architecture", title: FALLBACK_TITLE, author: "", readingTime: 0, coverImage: null, publishedAt: FALLBACK_DATE },
-  { id: "pf-film",         category: "Film",         title: FALLBACK_TITLE, author: "", readingTime: 0, coverImage: null, publishedAt: FALLBACK_DATE },
-  { id: "pf-society",      category: "Society",      title: FALLBACK_TITLE, author: "", readingTime: 0, coverImage: null, publishedAt: FALLBACK_DATE },
-];
 
 function isValidImageUrl(url: string | null | undefined): url is string {
   if (!url) return false;
@@ -63,7 +54,17 @@ function formatMonthYear(iso: string | null | undefined): string {
 export function MagazineLatestPublishedV2({
   items,
 }: MagazineLatestPublishedProps) {
-  const visible = (items.length > 0 ? items : FALLBACK_ITEMS).slice(0, 4);
+  const t = useTranslations("Home.magazine.publications");
+
+  if (items.length === 0) {
+    return (
+      <p className="mx-auto w-full max-w-[840px] text-center" style={{ color: "var(--tott-home-text-muted)" }}>
+        {t("empty")}
+      </p>
+    );
+  }
+
+  const visible = items.slice(0, 4);
 
   return (
     <div

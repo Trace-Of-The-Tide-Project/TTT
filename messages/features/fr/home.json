@@ -77,7 +77,8 @@
         "categoryArchitecture": "Architecture",
         "categoryArt": "Art",
         "categoryFashion": "Mode",
-        "categoryFilm": "Cinéma"
+        "categoryFilm": "Cinéma",
+        "empty": "Aucune publication pour le moment."
       },
       "issues": {
         "issuePrefix": "Numéro",
@@ -99,7 +100,8 @@
         "zoomOut": "Zoom arrière",
         "fullscreen": "Plein écran",
         "share": "Partager",
-        "more": "Plus d'options"
+        "more": "Plus d'options",
+        "empty": "Aucun numéro publié pour le moment."
       },
       "editorialBoard": {
         "mastheadEyebrow": "Ours · 2026",
