@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for trace-of-the-tide on 2026-07-02T13:32:22Z
+# fly.toml app configuration file generated for trace-of-the-tide on 2026-07-02T18:20:49Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -13,7 +13,7 @@ primary_region = 'cdg'
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
   processes = ['app']
 
 [[vm]]
