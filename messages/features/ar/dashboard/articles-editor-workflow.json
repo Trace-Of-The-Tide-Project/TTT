@@ -27,6 +27,8 @@
           "successArticleSubmitted": "تم إرسال المقال",
           "successArticleScheduled": "تم جدولة المقال",
           "imageBlockShort": "صورة",
+          "createAllLanguages": "أنشئ أيضًا مسودات بباقي اللغات",
+          "unsavedChangesConfirm": "لديك تغييرات غير محفوظة. المغادرة دون حفظ؟",
           "validationOpenCallBlocksDraft": "أضف كتلة محتوى واحدة على الأقل بمحتوى.",
           "validationOpenCallBlocksPublish": "النشر يتطلب كتلة محتوى واحدة على الأقل بمحتوى.",
           "validationOpenCallBlocksSchedule": "الجدولة تتطلب كتلة محتوى واحدة على الأقل بمحتوى."

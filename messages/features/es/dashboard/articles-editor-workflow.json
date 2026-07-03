@@ -27,6 +27,8 @@
           "successArticleSubmitted": "Artículo enviado",
           "successArticleScheduled": "Artículo programado",
           "imageBlockShort": "Imagen",
+          "createAllLanguages": "Crear también borradores en los demás idiomas",
+          "unsavedChangesConfirm": "Tienes cambios sin guardar. ¿Salir sin guardar?",
           "validationOpenCallBlocksDraft": "Añade al menos un bloque de contenido con contenido.",
           "validationOpenCallBlocksPublish": "Para publicar se necesita al menos un bloque de contenido con contenido.",
           "validationOpenCallBlocksSchedule": "Para programar se necesita al menos un bloque de contenido con contenido."

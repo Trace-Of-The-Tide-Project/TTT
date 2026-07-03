@@ -4,18 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { XIcon } from "@/components/ui/icons";
 import { routing } from "@/i18n/routing";
-import { EXTENDED_TRANSLATIONS_ENABLED } from "@/services/translations.service";
 import { LocaleNameFields } from "./LocaleNameFields";
 
 const ACCENT = "#E8DDC0";
 
-// See docs/backend-asks-translations.md — name_i18n only sent when the flag is
-// on, so the current backend never receives an unknown column.
+/** name_i18n = canonical default-locale name + any non-empty other-language names. */
 function buildNameI18n(
   defaultName: string,
   others: Record<string, string>,
-): Record<string, string> | undefined {
-  if (!EXTENDED_TRANSLATIONS_ENABLED) return undefined;
+): Record<string, string> {
   const out: Record<string, string> = { [routing.defaultLocale]: defaultName };
   for (const [loc, val] of Object.entries(others)) {
     if (val.trim()) out[loc] = val.trim();
@@ -156,16 +153,14 @@ export function TagFormModal({
             placeholder={mode === "add" ? t("tagModal.namePlaceholder") : undefined}
             className="mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-3 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
           />
-          {EXTENDED_TRANSLATIONS_ENABLED ? (
-            <div className="mt-4">
-              <LocaleNameFields
-                values={i18n}
-                onChange={(loc, val) => setI18n((prev) => ({ ...prev, [loc]: val }))}
-                inputClassName={inputClass}
-                labelClassName={labelClass}
-              />
-            </div>
-          ) : null}
+          <div className="mt-4">
+            <LocaleNameFields
+              values={i18n}
+              onChange={(loc, val) => setI18n((prev) => ({ ...prev, [loc]: val }))}
+              inputClassName={inputClass}
+              labelClassName={labelClass}
+            />
+          </div>
         </div>
 
         <div className="flex justify-end gap-3 border-t border-[var(--tott-card-border)] px-6 py-4">

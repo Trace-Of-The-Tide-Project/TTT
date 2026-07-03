@@ -16,6 +16,7 @@ import {
   type HomeLocale,
   type HomeSectionKey,
 } from "@/services/home-page.service";
+import { LocaleTabs } from "@/components/dashboard/admin/translations";
 
 /**
  * Admin editor for the redesigned homepage. Mirrors the magazine page
@@ -119,13 +120,6 @@ function parseConfig(section: CmsSection | undefined): WorkingConfig {
 function serializeConfig(cfg: WorkingConfig): string {
   return JSON.stringify({ copy: cfg.copy, ...cfg.flat });
 }
-
-const LOCALE_LABEL: Record<HomeLocale, string> = {
-  en: "EN",
-  ar: "AR",
-  fr: "FR",
-  es: "ES",
-};
 
 const inputClass =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none";
@@ -331,21 +325,12 @@ export function HomePageEditorContent() {
 
             {/* Locale tabs */}
             {schema.localized.length > 0 ? (
-              <div className="mt-5 flex gap-1.5">
-                {SUPPORTED_LOCALES.map((loc) => (
-                  <button
-                    key={loc}
-                    type="button"
-                    onClick={() => setActiveLocale(loc)}
-                    className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                      activeLocale === loc
-                        ? "bg-[var(--tott-accent-gold)]/20 text-[var(--tott-dash-gold-text)]"
-                        : "text-[var(--tott-muted)] hover:bg-[var(--tott-dash-control-hover)]"
-                    }`}
-                  >
-                    {LOCALE_LABEL[loc]}
-                  </button>
-                ))}
+              <div className="mt-5">
+                <LocaleTabs
+                  locales={SUPPORTED_LOCALES}
+                  active={activeLocale}
+                  onChange={setActiveLocale}
+                />
               </div>
             ) : null}
 

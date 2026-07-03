@@ -258,6 +258,7 @@
             "subtitlePlaceholder": "Optional subtitle",
             "kind": "Kind",
             "status": "Status",
+            "language": "Language",
             "isPremium": "Premium issue (paid)",
             "fundingGoal": "Funding goal",
             "fundingDeadline": "Funding deadline",
@@ -287,6 +288,11 @@
           "create": "Create",
           "save": "Save",
           "saving": "Saving…",
+          "createAllLanguages": "Also create drafts in the other languages",
+          "discardTitle": "Discard changes?",
+          "discardBody": "You have unsaved changes. Close without saving them?",
+          "discardCancel": "Keep editing",
+          "discardConfirm": "Discard",
           "articles": {
             "label": "Articles in this issue",
             "loading": "Loading articles…",
@@ -310,6 +316,7 @@
         "toast": {
           "saving": "Saving issue…",
           "created": "Issue created.",
+          "createdAll": "Issue created in all languages — translate the drafts when ready.",
           "updated": "Issue updated.",
           "saveError": "Could not save the issue",
           "deleting": "Deleting issue…",

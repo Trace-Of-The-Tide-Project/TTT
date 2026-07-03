@@ -24,6 +24,8 @@ import {
   useDeleteMagazineIssue,
 } from "@/hooks/mutations/magazine-issues";
 import { IssueArticlesPanel } from "./IssueArticlesPanel";
+import { useTranslations as useTranslationGroup } from "@/hooks/queries/translations";
+import { LocaleTabs } from "@/components/dashboard/admin/translations";
 import type {
   MagazineIssue,
   MagazineIssueInput,
@@ -52,6 +54,19 @@ function slugify(input: string): string {
 }
 
 type Tab = (typeof TABS)[number];
+
+/** What the form modal is doing: editing an issue, creating a fresh one, or
+ * creating a new-language version of an existing one. */
+type Editing =
+  | MagazineIssue
+  | "new"
+  | { source: MagazineIssue; language: string };
+
+function isTranslateReq(
+  e: Editing,
+): e is { source: MagazineIssue; language: string } {
+  return typeof e === "object" && "source" in e;
+}
 
 /** Status colors resolve to theme-aware CSS vars (defined in
  *  `globals.css` with light + dark variants). */
@@ -107,7 +122,7 @@ export function PublishedIssuesPanel() {
   const [tab, setTab] = useState<Tab>("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [editing, setEditing] = useState<MagazineIssue | "new" | null>(null);
+  const [editing, setEditing] = useState<Editing | null>(null);
   const [deleting, setDeleting] = useState<MagazineIssue | null>(null);
 
   const counts = useMemo(() => {
@@ -407,13 +422,30 @@ export function PublishedIssuesPanel() {
 
       {editing ? (
         <IssueFormModal
-          item={editing === "new" ? null : editing}
+          key={
+            editing === "new"
+              ? "new"
+              : isTranslateReq(editing)
+                ? `translate-${editing.source.id}-${editing.language}`
+                : editing.id
+          }
+          item={editing === "new" || isTranslateReq(editing) ? null : editing}
+          translateFrom={isTranslateReq(editing) ? editing : null}
           defaultEdition={nextEdition}
           magazineName={magazineName}
           saving={create.isPending || update.isPending || createMagazine.isPending}
           onClose={() => setEditing(null)}
-          onSave={(values) => {
-            const isNew = editing === "new";
+          onOpenVersion={(id) => {
+            // Siblings come from the same admin list (it loads every issue),
+            // so a lookup is enough to jump the modal to that version.
+            const sibling = issues.find((it) => it.id === id);
+            if (sibling) setEditing(sibling);
+          }}
+          onAddTranslation={(source, language) =>
+            setEditing({ source, language })
+          }
+          onSave={(values, allLanguages, langBuffers) => {
+            const isNew = editing === "new" || isTranslateReq(editing);
             mutationToast(
               async () => {
                 if (!isNew) {
@@ -436,19 +468,51 @@ export function PublishedIssuesPanel() {
                 }
                 // slug is required on create (and must be unique); never
                 // regenerated on edit so public deep-links stay stable.
-                return create.mutateAsync({
+                const original = await create.mutateAsync({
                   ...values,
                   magazine_id: magazineId,
                   slug: `${slugify(values.title)}-${Date.now()
                     .toString(36)
                     .slice(-5)}`,
                 });
+                // Optional bulk mode: create the other languages too, all in
+                // one translation group. A language the admin authored via
+                // the chips uses ITS buffered text; untouched ones copy the
+                // original's text as a draft to translate later.
+                if (allLanguages && original?.id) {
+                  const originalLang = (values.language ?? "en").toLowerCase();
+                  for (const loc of LANGS) {
+                    if (loc === originalLang) continue;
+                    const buf = langBuffers?.[loc];
+                    await create.mutateAsync({
+                      ...values,
+                      ...(buf
+                        ? {
+                            title: buf.title.trim() || values.title,
+                            subtitle: buf.subtitle.trim() || null,
+                            excerpt: buf.excerpt.trim() || null,
+                            description: buf.description.trim() || null,
+                          }
+                        : {}),
+                      language: loc,
+                      translation_of: original.id,
+                      status: "draft",
+                      magazine_id: magazineId,
+                      slug: `${slugify(buf?.title.trim() || values.title)}-${loc}-${Date.now()
+                        .toString(36)
+                        .slice(-5)}`,
+                    });
+                  }
+                }
+                return original;
               },
               {
                 loading: t("published.toast.saving"),
-                success: isNew
-                  ? t("published.toast.created")
-                  : t("published.toast.updated"),
+                success: !isNew
+                  ? t("published.toast.updated")
+                  : allLanguages
+                    ? t("published.toast.createdAll")
+                    : t("published.toast.created"),
                 error: t("published.toast.saveError"),
               },
             )
@@ -485,6 +549,7 @@ type FormState = {
   subtitle: string;
   kind: string;
   status: string;
+  language: string;
   is_premium: boolean;
   funding_goal: string;
   funding_deadline: string;
@@ -499,12 +564,16 @@ type FormState = {
 
 type FieldErrors = Partial<Record<"title" | "edition", string>>;
 
+/** The translatable text fields of an issue, buffered per language. */
+type IssueLocalizedText = Pick<FormState, "title" | "subtitle" | "excerpt" | "description">;
+
 function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
   return {
     title: item?.title ?? "",
     subtitle: item?.subtitle ?? "",
     kind: item?.kind ?? "editorial",
     status: normStatus(item?.status ?? "published"),
+    language: item?.language ?? "",
     is_premium: item?.is_premium ?? false,
     funding_goal: item?.funding_goal != null ? String(item.funding_goal) : "",
     funding_deadline: item?.funding_deadline
@@ -525,26 +594,80 @@ function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
 
 function IssueFormModal({
   item,
+  translateFrom,
   defaultEdition,
   magazineName,
   saving,
   onClose,
+  onOpenVersion,
+  onAddTranslation,
   onSave,
 }: {
   item: MagazineIssue | null;
+  /** Set when creating a new-language version: prefill from `source`, save
+   * with `language` + `translation_of`. */
+  translateFrom: { source: MagazineIssue; language: string } | null;
   defaultEdition: number;
   magazineName: string | null;
   saving: boolean;
   onClose: () => void;
-  onSave: (payload: MagazineIssueInput) => void;
+  onOpenVersion: (id: string) => void;
+  onAddTranslation: (source: MagazineIssue, language: string) => void;
+  onSave: (
+    payload: MagazineIssueInput,
+    allLanguages: boolean,
+    langBuffers?: Record<string, IssueLocalizedText>,
+  ) => void;
 }) {
   const t = useTranslations("Dashboard.magazineIssues");
   const locale = useLocale();
   const isEdit = Boolean(item);
-  const [form, setForm] = useState<FormState>(() => toForm(item, defaultEdition));
+  const [form, setForm] = useState<FormState>(() => {
+    const base = toForm(item ?? translateFrom?.source ?? null, defaultEdition);
+    // Language: fixed target for a translation, the issue's own on edit,
+    // defaulting to the admin UI locale on plain create.
+    base.language =
+      translateFrom?.language ??
+      item?.language ??
+      ((LANGS as readonly string[]).includes(locale) ? locale : "en");
+    // A new-language version starts as a draft of the source's content, so a
+    // half-translated issue never goes live on save by accident.
+    return translateFrom ? { ...base, status: "draft" } : base;
+  });
   const [errors, setErrors] = useState<FieldErrors>({});
   const [uploading, setUploading] = useState(false);
+  const [createAll, setCreateAll] = useState(false);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
   const busy = saving || uploading;
+
+  // Per-language text buffers (create mode): the language chips stash what
+  // was typed per locale so the admin can author all versions before one
+  // save. Non-text fields (kind, edition, cover, …) are shared.
+  const langBuffersRef = useRef<Record<string, IssueLocalizedText>>({});
+  const switchFormLanguage = (next: string) => {
+    if (next === form.language) return;
+    langBuffersRef.current[form.language] = {
+      title: form.title,
+      subtitle: form.subtitle,
+      excerpt: form.excerpt,
+      description: form.description,
+    };
+    const buf = langBuffersRef.current[next];
+    // No buffer yet → keep current text as the translation starting point.
+    setForm((prev) => ({ ...prev, language: next, ...(buf ?? {}) }));
+  };
+
+  // Snapshot of the pristine form — anything different means unsaved work,
+  // so closing asks for confirmation instead of silently dropping it.
+  const initialFormRef = useRef<string>("");
+  if (!initialFormRef.current) initialFormRef.current = JSON.stringify(form);
+  const isDirty = JSON.stringify(form) !== initialFormRef.current;
+
+  const requestClose = () => {
+    if (busy) return;
+    if (isDirty) setConfirmDiscard(true);
+    else onClose();
+  };
 
   const set =
     (field: keyof FormState) =>
@@ -608,9 +731,8 @@ function IssueFormModal({
       subtitle: form.subtitle.trim() || null,
       kind: form.kind || null,
       status: form.status || null,
-      language:
-        item?.language ??
-        ((LANGS as readonly string[]).includes(locale) ? locale : "en"),
+      language: form.language,
+      translation_of: translateFrom?.source.id ?? undefined,
       is_premium: form.is_premium,
       cover_image: form.cover_image.trim() || null,
       excerpt: form.excerpt.trim() || null,
@@ -628,7 +750,7 @@ function IssueFormModal({
           ? parseFloat(form.funding_goal)
           : null,
       funding_deadline: isCrowdfunded ? toIso(form.funding_deadline) : null,
-    });
+    }, !isEdit && !translateFrom && createAll, { ...langBuffersRef.current });
   };
 
   const inputClass =
@@ -641,18 +763,40 @@ function IssueFormModal({
       <button
         type="button"
         aria-label={t("published.form.close")}
-        onClick={() => !busy && onClose()}
+        onClick={requestClose}
         className="absolute inset-0 backdrop-blur-md"
         style={{ backgroundColor: "var(--tott-overlay)" }}
       />
       <div className="relative mx-4 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-2xl">
         <div className="mb-4 flex items-start justify-between gap-4">
-          <h2 className="text-base font-bold text-foreground">
-            {isEdit ? t("published.form.editTitle") : t("published.form.createTitle")}
-          </h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-base font-bold text-foreground">
+              {isEdit ? t("published.form.editTitle") : t("published.form.createTitle")}
+              {translateFrom ? (
+                <span className="ms-2 rounded-md bg-[var(--tott-elevated)] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--tott-muted)] align-middle">
+                  {translateFrom.language}
+                </span>
+              ) : null}
+            </h2>
+            {item ? (
+              <IssueTranslationChips
+                item={item}
+                onOpenVersion={onOpenVersion}
+                onAddTranslation={(lang) => onAddTranslation(item, lang)}
+              />
+            ) : !translateFrom ? (
+              // Plain create: same chip row, but it just picks the new
+              // issue's language (no group exists yet to link versions).
+              <LocaleTabs
+                locales={LANGS}
+                active={form.language as (typeof LANGS)[number]}
+                onChange={switchFormLanguage}
+              />
+            ) : null}
+          </div>
           <button
             type="button"
-            onClick={() => !busy && onClose()}
+            onClick={requestClose}
             disabled={busy}
             className="shrink-0 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground disabled:opacity-40"
             aria-label={t("published.form.close")}
@@ -850,10 +994,25 @@ function IssueFormModal({
             <IssueArticlesPanel issueId={item.id} magazineId={item.magazine_id ?? null} />
           ) : null}
 
-          <div className="flex justify-end gap-2 border-t border-[var(--tott-card-border)] pt-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--tott-card-border)] pt-4">
+            {!isEdit && !translateFrom ? (
+              <label className="flex items-center gap-2 text-xs text-[var(--tott-muted)]">
+                <input
+                  type="checkbox"
+                  data-testid="issue-create-all-languages"
+                  checked={createAll}
+                  onChange={(e) => setCreateAll(e.target.checked)}
+                  className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+                />
+                {t("published.form.createAllLanguages")}
+              </label>
+            ) : (
+              <span />
+            )}
+            <div className="flex justify-end gap-2">
             <button
               type="button"
-              onClick={onClose}
+              onClick={requestClose}
               disabled={busy}
               className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
             >
@@ -878,9 +1037,121 @@ function IssueFormModal({
                   ? t("published.form.save")
                   : t("published.form.create")}
             </button>
+            </div>
           </div>
         </form>
+
+        {confirmDiscard ? (
+          <div
+            data-testid="issue-discard-dialog"
+            className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-black/40 p-4 backdrop-blur-sm"
+          >
+            <div className="w-full max-w-xs rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 shadow-2xl">
+              <h3 className="text-sm font-bold text-foreground">
+                {t("published.form.discardTitle")}
+              </h3>
+              <p className="mt-1.5 text-xs text-[var(--tott-muted)]">
+                {t("published.form.discardBody")}
+              </p>
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  type="button"
+                  data-testid="issue-discard-keep"
+                  onClick={() => setConfirmDiscard(false)}
+                  className="rounded-lg px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
+                >
+                  {t("published.form.discardCancel")}
+                </button>
+                <button
+                  type="button"
+                  data-testid="issue-discard-confirm"
+                  onClick={onClose}
+                  className="rounded-lg border px-3 py-1.5 text-xs font-medium transition-opacity hover:opacity-90"
+                  style={{
+                    borderColor: "color-mix(in srgb, var(--tott-status-coral) 60%, transparent)",
+                    backgroundColor: "color-mix(in srgb, var(--tott-status-coral) 18%, transparent)",
+                    color: "var(--tott-status-coral)",
+                  }}
+                >
+                  {t("published.form.discardConfirm")}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Language chips for an issue's translation group, modal-local counterpart of
+ * `TranslationsPanel` (issues have no admin editor route, so chips switch the
+ * open modal instead of navigating).
+ */
+function IssueTranslationChips({
+  item,
+  onOpenVersion,
+  onAddTranslation,
+}: {
+  item: MagazineIssue;
+  onOpenVersion: (id: string) => void;
+  onAddTranslation: (language: string) => void;
+}) {
+  const t = useTranslations("Dashboard.translations");
+  const { data } = useTranslationGroup("issue", item.id);
+  const byLanguage = new Map(
+    (data?.versions ?? []).map((v) => [v.language, v]),
+  );
+  const current = (item.language ?? "en").toLowerCase();
+
+  const base =
+    "rounded-md px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider transition-colors";
+
+  return (
+    <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
+      {LANGS.map((loc) => {
+        if (loc === current) {
+          return (
+            <span
+              key={loc}
+              data-testid={`issue-chip-current-${loc}`}
+              className={`${base} bg-[var(--tott-dash-surface-inset)] text-foreground shadow-sm`}
+              title={t("currentBadge")}
+            >
+              {loc}
+            </span>
+          );
+        }
+        const version = byLanguage.get(loc);
+        if (version) {
+          return (
+            <button
+              key={loc}
+              type="button"
+              data-testid={`issue-chip-open-${loc}`}
+              onClick={() => onOpenVersion(version.id)}
+              className={`${base} text-[var(--tott-tab-inactive)] hover:text-foreground`}
+              title={t("openVersion")}
+            >
+              {loc}
+            </button>
+          );
+        }
+        return (
+          <button
+            key={loc}
+            type="button"
+            data-testid={`issue-chip-add-${loc}`}
+            onClick={() => onAddTranslation(loc)}
+            className={`${base} text-[var(--tott-muted)] hover:text-foreground`}
+            title={t("addTranslation")}
+          >
+            {loc}
+            <span className="ms-0.5 text-[9px] leading-none">+</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

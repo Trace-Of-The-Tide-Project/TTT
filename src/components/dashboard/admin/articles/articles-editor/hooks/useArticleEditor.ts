@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
 import { isAxiosError } from "axios";
 import { type BlockType } from "@/components/dashboard/admin/articles/articles-editor/AvailableBlocks";
 import { type ContentBlock } from "@/components/dashboard/admin/articles/articles-editor/ContentBlocks";
@@ -92,6 +93,16 @@ export function useArticleEditor({
   const [scheduledAt, setScheduledAt] = useState<string | null>(null);
   const [category, setCategory] = useState("");
   const [language, setLanguage] = useState(initialLanguage || "en");
+  // Create-mode option: after saving the original, also create drafts of the
+  // same content in every other locale (one translation group).
+  const [createAllLanguages, setCreateAllLanguages] = useState(false);
+  // Per-language content buffers (create mode): switching the language chip
+  // stashes the current text and restores what was typed for the target
+  // language, so the admin can author all versions before one save. A locale
+  // never visited inherits the active content as its starting point.
+  const languageBuffersRef = useRef<
+    Record<string, { title: string; blocks: ContentBlock[]; seoTitle: string; metaDescription: string }>
+  >({});
   const [translationOf, setTranslationOf] = useState<string | undefined>(initialTranslationOf);
   const [originalTitle, setOriginalTitle] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
@@ -128,6 +139,58 @@ export function useArticleEditor({
       setBlocks(configFromProps.defaultBlocks);
     }
   }, [configFromProps, articleId]);
+
+  /** Chip/select language change. In create mode this swaps the per-language
+   * content buffers; in edit mode it just retags the article's language. */
+  const switchLanguage = useCallback(
+    (next: string) => {
+      if (next === language) return;
+      if (isEditMode) {
+        setLanguage(next);
+        return;
+      }
+      languageBuffersRef.current[language] = { title, blocks, seoTitle, metaDescription };
+      const buf = languageBuffersRef.current[next];
+      if (buf) {
+        setTitle(buf.title);
+        setBlocks(buf.blocks);
+        setSeoTitle(buf.seoTitle);
+        setMetaDescription(buf.metaDescription);
+      }
+      // No buffer yet: keep the current content on screen as the translation
+      // starting point for the new language.
+      setLanguage(next);
+    },
+    [language, isEditMode, title, blocks, seoTitle, metaDescription],
+  );
+
+  // ── Dirty tracking ──
+  // Fingerprint of everything the admin can edit; the baseline is captured
+  // after each hydration (mount, article load, translation prefill) and
+  // anything different afterwards counts as unsaved work.
+  const editorFingerprint = JSON.stringify({
+    title, category, language, visibility, accessLevel, previewBlockCount,
+    price, currency, seoTitle, metaDescription, collectionId, tagIds,
+    coverImage, blocks, workflowStatus,
+  });
+  const dirtyBaselineRef = useRef<string | null>(null);
+  const fingerprintRef = useRef(editorFingerprint);
+  fingerprintRef.current = editorFingerprint;
+  const [rebaselineTick, setRebaselineTick] = useState(0);
+  useEffect(() => {
+    // The rich-text editors normalize their HTML shortly after mounting,
+    // which mutates blocks without any user input. Capture the baseline
+    // after that settles so a freshly loaded article reads as pristine.
+    // ponytail: fixed 1.5s settle window; edits made inside it are absorbed.
+    dirtyBaselineRef.current = null;
+    const id = setTimeout(() => {
+      dirtyBaselineRef.current = fingerprintRef.current;
+    }, 1500);
+    return () => clearTimeout(id);
+  }, [rebaselineTick]);
+  const isDirty =
+    dirtyBaselineRef.current !== null &&
+    dirtyBaselineRef.current !== editorFingerprint;
 
   const articleQuery = useArticle(articleId);
   const articleLoading = isEditMode && articleQuery.isPending;
@@ -179,6 +242,7 @@ export function useArticleEditor({
     setBlocks(
       mapped.length ? mapped : [{ id: crypto.randomUUID(), type: "paragraph", content: "" }],
     );
+    setRebaselineTick((n) => n + 1); // loaded values are the pristine state
   }, [articleQuery.data, loadKey]);
 
   useEffect(() => {
@@ -193,6 +257,7 @@ export function useArticleEditor({
       setCoverImage(a.cover_image ?? null);
       const mapped = articleDetailBlocksToContentBlocks(a.blocks);
       if (mapped.length) setBlocks(mapped);
+      setRebaselineTick((n) => n + 1); // prefilled translation = pristine
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -257,6 +322,10 @@ export function useArticleEditor({
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)));
   }, []);
 
+  const removeBlock = useCallback((id: string) => {
+    setBlocks((prev) => prev.filter((b) => b.id !== id));
+  }, []);
+
   const buildPayload = useCallback(async () => {
     const apiBlocks = await buildArticleBlocksFromEditor(blocks, { onUploading: setMediaUploading });
     let resolvedCover = coverImage;
@@ -294,6 +363,38 @@ export function useArticleEditor({
     seoTitle, metaDescription, collectionId, tagIds, coverImage, coverFile, translationOf,
   ]);
 
+  /** Create-mode bulk option: create drafts in every other locale, linked to
+   * the original's translation group. A locale the admin authored via the
+   * language chips uses ITS buffered content; untouched locales get a copy of
+   * the original. Best effort — a failed sibling never blocks the original. */
+  const createSiblingLanguageVersions = useCallback(
+    async (payload: Awaited<ReturnType<typeof buildPayload>>, originalId: string | null | undefined) => {
+      if (!createAllLanguages || isEditMode || !originalId) return;
+      const originalLang = (payload.language ?? "en").toLowerCase();
+      for (const loc of routing.locales) {
+        if (loc === originalLang) continue;
+        try {
+          const buf = languageBuffersRef.current[loc];
+          const sibling = { ...payload, language: loc, translation_of: originalId };
+          if (buf) {
+            sibling.title = buf.title.trim() || payload.title;
+            const built = await buildArticleBlocksFromEditor(buf.blocks, {
+              onUploading: setMediaUploading,
+            });
+            // All-empty buffer (visited but body untouched) → copy original.
+            sibling.blocks = built.length ? built : payload.blocks;
+            sibling.seo_title = buf.seoTitle.trim() || undefined;
+            sibling.meta_description = buf.metaDescription.trim() || undefined;
+          }
+          await createArticle(sibling);
+        } catch {
+          /* sibling may already exist or fail validation — original stands */
+        }
+      }
+    },
+    [createAllLanguages, isEditMode],
+  );
+
   const handleSaveDraft = useCallback(async () => {
     if (!title.trim()) { setError(tLayout("validationTitle")); return; }
     if (!category.trim()) { setError(tLayout("validationCategory")); return; }
@@ -313,6 +414,7 @@ export function useArticleEditor({
       }
       const res = await createArticle(payload);
       const id = getArticleIdFromCreateResponse(res);
+      await createSiblingLanguageVersions(payload, id);
       notifySuccessAndLeave(tLayout("successDraftSaved"), destinationAfterSave(id));
     } catch (e) {
       setError(translateErr(e));
@@ -322,6 +424,7 @@ export function useArticleEditor({
   }, [
     title, category, buildPayload, notifySuccessAndLeave, destinationAfterSave,
     isEditMode, articleId, workflowStatus, tLayout, translateErr,
+    createSiblingLanguageVersions,
   ]);
 
   const handlePublish = useCallback(async () => {
@@ -346,6 +449,9 @@ export function useArticleEditor({
       const id = getArticleIdFromCreateResponse(res);
       if (!id) { setError(tLayout("errorCreateNoIdPublish")); return; }
       await publishArticle(id);
+      // Siblings stay drafts even when the original publishes — they still
+      // need translating before going live.
+      await createSiblingLanguageVersions(payload, id);
       notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave(id));
     } catch (e) {
       setError(translateErr(e));
@@ -355,6 +461,7 @@ export function useArticleEditor({
   }, [
     workflowStatus, title, category, buildPayload, notifySuccessAndLeave,
     destinationAfterSave, isEditMode, articleId, tLayout, translateErr,
+    createSiblingLanguageVersions,
   ]);
 
   const handleScheduleConfirm = useCallback(
@@ -378,6 +485,7 @@ export function useArticleEditor({
         const id = getArticleIdFromCreateResponse(res);
         if (!id) { setError(tLayout("errorCreateNoIdSchedule")); setScheduleModalOpen(false); return; }
         await scheduleArticle(id, iso);
+        await createSiblingLanguageVersions(payload, id);
         setScheduleModalOpen(false);
         notifySuccessAndLeave(tLayout("successArticleScheduled"), destinationAfterSave(id));
       } catch (e) {
@@ -390,6 +498,7 @@ export function useArticleEditor({
     [
       workflowStatus, title, category, buildPayload, notifySuccessAndLeave,
       destinationAfterSave, isEditMode, articleId, tLayout, translateErr,
+      createSiblingLanguageVersions,
     ],
   );
 
@@ -419,6 +528,9 @@ export function useArticleEditor({
     scheduledAt,
     category, setCategory,
     language, setLanguage,
+    switchLanguage,
+    createAllLanguages, setCreateAllLanguages,
+    isDirty,
     translationOf,
     originalTitle,
     visibility, setVisibility,
@@ -445,6 +557,7 @@ export function useArticleEditor({
     addCoverBlock,
     reorderBlocks,
     updateBlock,
+    removeBlock,
     handleSaveDraft,
     handlePublish,
     handleScheduleConfirm,

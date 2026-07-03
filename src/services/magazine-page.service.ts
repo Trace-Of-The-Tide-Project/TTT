@@ -17,10 +17,11 @@ import {
   type CmsPage,
   type CmsSection,
 } from "./cms.service";
+import { routing } from "@/i18n/routing";
 
 export const MAGAZINE_PAGE_SLUG = "magazine";
 
-export const SUPPORTED_LOCALES = ["en", "ar", "fr", "es"] as const;
+export const SUPPORTED_LOCALES = routing.locales;
 export type MagazineLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export type Localized<T> = Partial<Record<MagazineLocale, T>>;

@@ -11,7 +11,6 @@ import type { PersonProfilePayload } from "@/services/people.service";
 import { formatApiError } from "@/lib/api/error-message";
 import { AvatarUploadZone } from "@/components/dashboard/admin/writers/form-controls";
 import { TranslationsPanel } from "@/components/dashboard/admin/translations";
-import { isTranslatableNow } from "@/services/translations.service";
 import { toast } from "sonner";
 
 type FormState = {
@@ -52,8 +51,7 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
   const t = useTranslations("Dashboard.people");
   const router = useRouter();
   const isEdit = Boolean(personId);
-  const translationsOn = isTranslatableNow("person");
-  const isTranslation = !isEdit && translationsOn && Boolean(translationOf);
+  const isTranslation = !isEdit && Boolean(translationOf);
 
   const personQuery = usePerson(personId);
   const sourceQuery = usePerson(isTranslation ? translationOf : undefined);
@@ -130,10 +128,9 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
     portrait: form.portrait.trim() || null,
     birth_date: form.birth_date || null,
     death_date: form.death_date || null,
-    // Translation-group fields — create-only and flag-gated. `undefined` so
-    // JSON serialization omits the key on the current backend (no such column
-    // yet); `prunePayload` isn't used here.
-    language: !isEdit && translationsOn ? form.language.trim() || undefined : undefined,
+    // Translation-group fields — create-only. `undefined` so JSON
+    // serialization omits the key; `prunePayload` isn't used here.
+    language: !isEdit ? form.language.trim() || undefined : undefined,
     translation_of: isTranslation ? translationOf : undefined,
   });
 
@@ -187,7 +184,7 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
             {isEdit ? t("form.editTitle") : t("form.createTitle")}
           </h1>
         </div>
-        {isEdit && personId && translationsOn ? (
+        {isEdit && personId ? (
           <TranslationsPanel
             contentType="person"
             contentId={personId}

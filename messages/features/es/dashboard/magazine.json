@@ -258,6 +258,7 @@
             "subtitlePlaceholder": "Subtítulo opcional",
             "kind": "Tipo",
             "status": "Estado",
+            "language": "Idioma",
             "isPremium": "Número premium (de pago)",
             "fundingGoal": "Meta de financiación",
             "fundingDeadline": "Fecha límite de financiación",
@@ -287,6 +288,11 @@
           "create": "Crear",
           "save": "Guardar",
           "saving": "Guardando…",
+          "createAllLanguages": "Crear también borradores en los demás idiomas",
+          "discardTitle": "¿Descartar los cambios?",
+          "discardBody": "Tienes cambios sin guardar. ¿Cerrar sin guardarlos?",
+          "discardCancel": "Seguir editando",
+          "discardConfirm": "Descartar",
           "articles": {
             "label": "Artículos en este número",
             "loading": "Cargando artículos…",
@@ -310,6 +316,7 @@
         "toast": {
           "saving": "Guardando número…",
           "created": "Número creado.",
+          "createdAll": "Número creado en todos los idiomas — traduce los borradores cuando quieras.",
           "updated": "Número actualizado.",
           "saveError": "No se pudo guardar el número",
           "deleting": "Eliminando número…",

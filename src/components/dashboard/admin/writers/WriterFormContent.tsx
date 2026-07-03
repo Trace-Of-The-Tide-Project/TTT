@@ -14,7 +14,6 @@ import type { WriterProfilePayload } from "@/services/writers.service";
 import type { AdminUserListItem } from "@/services/users.service";
 import { formatApiError } from "@/lib/api/error-message";
 import { TranslationsPanel } from "@/components/dashboard/admin/translations";
-import { isTranslatableNow } from "@/services/translations.service";
 import { UserPicker } from "./UserPicker";
 import { AvatarUploadZone, ThemesInput } from "./form-controls";
 
@@ -89,10 +88,7 @@ export function WriterFormContent({
   const tTr = useTranslations("Dashboard.translations");
   const router = useRouter();
   const isEdit = Boolean(writerId);
-  // Translation features are flag-gated until the backend ships writer
-  // translation groups (see docs/backend-asks-translations.md).
-  const translationsOn = isTranslatableNow("writer");
-  const isTranslation = !isEdit && translationsOn && Boolean(translationOf);
+  const isTranslation = !isEdit && Boolean(translationOf);
 
   const writerQuery = useWriter(writerId);
   // Source writer to clone fields from when adding a translation.
@@ -243,10 +239,9 @@ export function WriterFormContent({
       monthly_goal: form.monthly_goal.trim()
         ? Number(form.monthly_goal)
         : null,
-      // Translation-group fields — create-only and flag-gated so we never
-      // send columns the backend doesn't yet understand. `prunePayload` drops
-      // them when null (e.g. edit mode).
-      language: !isEdit && translationsOn ? form.language.trim() || null : null,
+      // Translation-group fields — create-only. `prunePayload` drops them
+      // when null (e.g. edit mode).
+      language: !isEdit ? form.language.trim() || null : null,
       translation_of: isTranslation ? (translationOf ?? null) : null,
     };
   };
@@ -401,7 +396,7 @@ export function WriterFormContent({
         <h1 className="text-xl font-semibold text-foreground">
           {isEdit ? t("editTitle") : t("createTitle")}
         </h1>
-        {isEdit && writerId && translationsOn ? (
+        {isEdit && writerId ? (
           <TranslationsPanel
             contentType="writer"
             contentId={writerId}

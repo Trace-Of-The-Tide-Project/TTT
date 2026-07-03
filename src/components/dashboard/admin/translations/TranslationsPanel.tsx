@@ -6,7 +6,6 @@ import { useLocale } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { useTranslations } from "@/hooks/queries/translations";
 import {
-  isTranslatableNow,
   type TranslatableType,
   type TranslationVersion,
 } from "@/services/translations.service";
@@ -27,8 +26,7 @@ type TranslationsPanelProps = {
  * - Missing version: dimmed chip with "+", opens create route (same tab).
  * - "Add all" button: opens the first missing language; the rest stay as chips.
  *
- * Renders nothing when the content type has no admin editor route or its
- * translation support is gated off (pending backend rollout).
+ * Renders nothing when the content type has no admin editor route.
  */
 export function TranslationsPanel({
   contentType,
@@ -53,8 +51,8 @@ export function TranslationsPanel({
     (loc) => loc !== currentLanguage && !byLanguage.has(loc),
   );
 
-  // No editor route, or pending type with the flag off → nothing to show.
-  if (!route || !createPath || !isTranslatableNow(contentType)) return null;
+  // No admin editor route for this type → nothing to show.
+  if (!route || !createPath) return null;
 
   function createHref(loc: string) {
     return `/${locale}${createPath}?language=${loc}&translation_of=${encodeURIComponent(contentId)}`;

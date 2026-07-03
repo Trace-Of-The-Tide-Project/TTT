@@ -6,9 +6,9 @@ import type { TranslatableType } from "@/services/translations.service";
  * prepends `/${locale}` and appends any query string.
  *
  * Articles and open-calls share the same article editor, so both edit at
- * `/admin/articles/edit/:id`. Collections and magazine-issues have no
- * dedicated admin editor route yet, so they are intentionally absent here —
- * {@link TranslationsPanel} renders nothing for a type with no route.
+ * `/admin/articles/edit/:id`. Magazine-issues have no dedicated admin editor
+ * route yet, so they are intentionally absent here — {@link TranslationsPanel}
+ * renders nothing for a type with no route.
  */
 export type TranslationRoute = {
   /** Editor path for an existing version. */

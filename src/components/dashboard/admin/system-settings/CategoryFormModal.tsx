@@ -4,19 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { XIcon } from "@/components/ui/icons";
 import { routing } from "@/i18n/routing";
-import { EXTENDED_TRANSLATIONS_ENABLED } from "@/services/translations.service";
 import { LocaleNameFields } from "./LocaleNameFields";
 
 const ACCENT = "#E8DDC0";
 
-/** name_i18n = canonical default-locale name + any non-empty other-language
- * names. Returned only when the flag is on, so the current backend (no such
- * column) never receives it. See docs/backend-asks-translations.md. */
+/** name_i18n = canonical default-locale name + any non-empty other-language names. */
 function buildNameI18n(
   defaultName: string,
   others: Record<string, string>,
-): Record<string, string> | undefined {
-  if (!EXTENDED_TRANSLATIONS_ENABLED) return undefined;
+): Record<string, string> {
   const out: Record<string, string> = { [routing.defaultLocale]: defaultName };
   for (const [loc, val] of Object.entries(others)) {
     if (val.trim()) out[loc] = val.trim();
@@ -200,14 +196,12 @@ export function CategoryFormModal({
             />
             <p className="mt-1.5 text-xs text-[var(--tott-muted)]">{t("categoryModal.slugHint")}</p>
           </div>
-          {EXTENDED_TRANSLATIONS_ENABLED ? (
-            <LocaleNameFields
-              values={i18n}
-              onChange={(loc, val) => setI18n((prev) => ({ ...prev, [loc]: val }))}
-              inputClassName={inputClass}
-              labelClassName={labelClass}
-            />
-          ) : null}
+          <LocaleNameFields
+            values={i18n}
+            onChange={(loc, val) => setI18n((prev) => ({ ...prev, [loc]: val }))}
+            inputClassName={inputClass}
+            labelClassName={labelClass}
+          />
         </div>
 
         <div className="flex justify-end gap-3 border-t border-[var(--tott-card-border)] px-6 py-4">

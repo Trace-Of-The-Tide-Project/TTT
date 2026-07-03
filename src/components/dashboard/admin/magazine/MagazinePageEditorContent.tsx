@@ -27,6 +27,7 @@ import {
   EditorToolbar as RichTextToolbar,
   EditorRegistryProvider,
 } from "@/components/ui/rich-text";
+import { LocaleTabs } from "@/components/dashboard/admin/translations";
 import { useEnsureMagazinePage } from "@/hooks/queries/cms";
 import { usePublishCmsPage, useToggleCmsSection, useUpdateCmsSection } from "@/hooks/mutations/cms";
 import {
@@ -586,22 +587,11 @@ function EditorToolbar({
           <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]">{subtitle}</p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
-            {SUPPORTED_LOCALES.map((loc) => (
-              <button
-                key={loc}
-                type="button"
-                onClick={() => onLocaleChange(loc)}
-                className={`rounded-md px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider transition-colors ${
-                  activeLocale === loc
-                    ? "bg-[var(--tott-dash-surface-inset)] text-foreground shadow-sm"
-                    : "text-[var(--tott-tab-inactive)] hover:text-foreground"
-                }`}
-              >
-                {loc}
-              </button>
-            ))}
-          </div>
+          <LocaleTabs
+            locales={SUPPORTED_LOCALES}
+            active={activeLocale}
+            onChange={onLocaleChange}
+          />
           <span className="mx-1 h-5 w-px bg-[var(--tott-card-border)]" />
           <button
             type="button"

@@ -31,6 +31,8 @@ type ContentBlocksProps = {
   onAddCoverBlock: () => void;
   /** Move block `activeId` to the position of `overId` (HTML5 drag-and-drop). */
   onReorderBlock: (activeId: string, overId: string) => void;
+  /** Removes the block entirely (action panel trash button). */
+  onRemoveBlock: (id: string) => void;
   config: ContentFormConfig;
   /** When set, overrides `mainMediaEditorCopy(config.contentType)` for hero UI. */
   mainMediaCopy?: MainMediaEditorCopy;
@@ -41,6 +43,7 @@ export function ContentBlocks({
   onUpdateBlock,
   onAddCoverBlock,
   onReorderBlock,
+  onRemoveBlock,
   config,
   mainMediaCopy,
 }: ContentBlocksProps) {
@@ -125,21 +128,14 @@ export function ContentBlocks({
               onChange={(patch) => onUpdateBlock(block.id, patch)}
             />
           </div>
-          {block.type === "divider" ? (
-            <div className="w-10 shrink-0" aria-hidden />
-          ) : block.type !== "paragraph" ? (
-            // Non-paragraph blocks reserve only the column width so right edges
-            // align — no 120px tall action panel inflating the row height.
-            <div className="w-10 shrink-0" aria-hidden />
-          ) : (
-            <div>
+          <div>
               <BlockActions
                 blockId={block.id}
                 isDragging={draggingId === block.id}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 mode={blockActionsModeFor(block.type, block.id, firstImageBlockId)}
-                onDelete={() => onUpdateBlock(block.id, { content: "" })}
+                onDelete={() => onRemoveBlock(block.id)}
                 onCopy={() => {
                   if (typeof navigator === "undefined") return;
                   const html = block.content ?? "";
@@ -163,8 +159,7 @@ export function ContentBlocks({
                   }
                 }}
               />
-            </div>
-          )}
+          </div>
         </div>
       ))}
     </div>

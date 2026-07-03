@@ -13,6 +13,8 @@ import {
 import { ContentEditorFooter } from "./ContentEditorFooter";
 import { EditorToolbar } from "./EditorToolbar";
 import { EditorRegistryProvider } from "./lib/editor-registry";
+import { LocaleTabs } from "@/components/dashboard/admin/translations";
+import { routing } from "@/i18n/routing";
 import { ScheduleArticleModal } from "./modals/ScheduleArticleModal";
 import { buildOpenCallContentBlocksAndMainMedia } from "./lib/build-open-call-payload";
 import { buildArticleBlocksFromEditor } from "./lib/build-api-blocks";
@@ -25,7 +27,7 @@ import { ApplicationFormBuilder } from "./open-call/ApplicationFormBuilder";
 import { ApplicationFormPreview } from "./open-call/ApplicationFormPreview";
 import { invalidateAdminArticlesListCache } from "@/lib/dashboard/admin-articles-list-cache";
 import { useAdminTags } from "@/hooks/queries/admin-tags";
-import { createArticle, getArticleById } from "@/services/articles.service";
+import { createArticle, getArticleById, getArticleIdFromCreateResponse } from "@/services/articles.service";
 import { articleDetailBlocksToContentBlocks } from "@/components/dashboard/admin/articles/articles-editor/lib/api-blocks-to-content-blocks";
 import {
   createOpenCall,
@@ -127,6 +129,12 @@ export function OpenCallEditorLayout({
   const [category, setCategory] = useState("");
   const [translationOf] = useState(initialTranslationOf);
   const [language, setLanguage] = useState(initialLanguage ?? "en");
+  const [createAllLanguages, setCreateAllLanguages] = useState(false);
+  // Per-language content buffers: chip switch stashes the current text and
+  // restores what was typed for the target language (see useArticleEditor).
+  const languageBuffersRef = useRef<
+    Record<string, { title: string; blocks: ContentBlock[]; seoTitle: string; metaDescription: string }>
+  >({});
   const [originalTitle, setOriginalTitle] = useState<string | null>(null);
   // Resolved at mount; also re-fetched inline at save time if still null.
   const existingOpenCallIdRef = useRef<string | null | undefined>(undefined);
@@ -160,6 +168,22 @@ export function OpenCallEditorLayout({
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const switchLanguage = useCallback(
+    (next: string) => {
+      if (next === language) return;
+      languageBuffersRef.current[language] = { title, blocks, seoTitle, metaDescription };
+      const buf = languageBuffersRef.current[next];
+      if (buf) {
+        setTitle(buf.title);
+        setBlocks(buf.blocks);
+        setSeoTitle(buf.seoTitle);
+        setMetaDescription(buf.metaDescription);
+      }
+      setLanguage(next);
+    },
+    [language, title, blocks, seoTitle, metaDescription],
+  );
 
   const addBlock = useCallback((type: BlockType) => {
     setBlocks((prev) => [
@@ -196,6 +220,10 @@ export function OpenCallEditorLayout({
 
   const updateBlock = useCallback((id: string, patch: Partial<ContentBlock>) => {
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)));
+  }, []);
+
+  const removeBlock = useCallback((id: string) => {
+    setBlocks((prev) => prev.filter((b) => b.id !== id));
   }, []);
 
   const { data: adminTagsData = [] } = useAdminTags();
@@ -263,16 +291,28 @@ export function OpenCallEditorLayout({
         coverImage?: string;
         excerpt?: string;
         scheduledAt?: string | null;
+        /** Bulk mode: create this sibling in another language, linked to the
+         * original — optionally with that language's authored text. */
+        asTranslation?: {
+          language: string;
+          of: string;
+          title?: string;
+          seoTitle?: string;
+          metaDescription?: string;
+        };
       } = {},
     ) => {
-      await createArticle({
-        title: title.trim(),
+      const sibTitle = extra.asTranslation?.title?.trim() || title.trim();
+      const sibSeo = extra.asTranslation?.seoTitle?.trim() ?? seoTitle.trim();
+      const sibMeta = extra.asTranslation?.metaDescription?.trim() ?? metaDescription.trim();
+      const res = await createArticle({
+        title: sibTitle,
         content_type: "open_call",
         category: category.trim(),
-        language: apiLanguage(language),
+        language: apiLanguage(extra.asTranslation?.language ?? language),
         visibility,
-        seo_title: seoTitle.trim() || title.trim(),
-        meta_description: metaDescription.trim(),
+        seo_title: sibSeo || sibTitle,
+        meta_description: sibMeta,
         collection_id: collectionId.trim() || undefined,
         tag_ids: tagIds.length ? tagIds : undefined,
         blocks: articleBlocks,
@@ -280,10 +320,49 @@ export function OpenCallEditorLayout({
         cover_image: extra.coverImage,
         excerpt: extra.excerpt,
         scheduled_at: extra.scheduledAt,
-        translation_of: translationOf || undefined,
+        translation_of: extra.asTranslation?.of ?? translationOf ?? undefined,
       });
+      return getArticleIdFromCreateResponse(res);
     },
     [title, category, language, visibility, seoTitle, metaDescription, collectionId, tagIds, translationOf],
+  );
+
+  /** After the original is created: seed draft siblings in the other locales.
+   * They share the open call record (same as the manual translate flow) and
+   * join the original article's translation group. Best effort per sibling. */
+  const createSiblingLanguageVersions = useCallback(
+    async (
+      articleBlocks: Awaited<ReturnType<typeof buildArticleBlocksFromEditor>>,
+      extra: { openCallId?: string; coverImage?: string; excerpt?: string },
+      originalId: string | null,
+    ) => {
+      if (!createAllLanguages || translationOf || !originalId) return;
+      const originalLang = apiLanguage(language);
+      for (const loc of routing.locales) {
+        if (loc === originalLang) continue;
+        try {
+          const buf = languageBuffersRef.current[loc];
+          let sibBlocks = articleBlocks;
+          if (buf) {
+            const built = await buildArticleBlocksFromEditor(buf.blocks, {});
+            if (built.length) sibBlocks = built;
+          }
+          await createArticleFromBlocks(sibBlocks, {
+            ...extra,
+            asTranslation: {
+              language: loc,
+              of: originalId,
+              title: buf?.title,
+              seoTitle: buf?.seoTitle,
+              metaDescription: buf?.metaDescription,
+            },
+          });
+        } catch {
+          /* sibling may already exist — the original stands */
+        }
+      }
+    },
+    [createAllLanguages, translationOf, language, createArticleFromBlocks],
   );
 
   const validateBeforeSubmit = useCallback(() => {
@@ -317,7 +396,8 @@ export function OpenCallEditorLayout({
         return;
       }
       const ocId = await resolveOpenCallId(translationOf, existingOpenCallIdRef, openCall);
-      await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
+      const originalId = await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
+      await createSiblingLanguageVersions(articleBlocks, { openCallId: ocId, coverImage, excerpt }, originalId);
       invalidateAdminArticlesListCache();
       router.push(ADMIN_ARTICLES_PATH);
     } catch (e) {
@@ -325,7 +405,7 @@ export function OpenCallEditorLayout({
     } finally {
       setBusy(false);
     }
-  }, [validateBeforeSubmit, buildPayloads, createArticleFromBlocks, router, translateErr, tLayout, translationOf, existingOpenCallIdRef]);
+  }, [validateBeforeSubmit, buildPayloads, createArticleFromBlocks, createSiblingLanguageVersions, router, translateErr, tLayout, translationOf, existingOpenCallIdRef]);
 
   const handlePublish = useCallback(async () => {
     if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
@@ -347,7 +427,9 @@ export function OpenCallEditorLayout({
         return;
       }
       const ocId = await resolveOpenCallId(translationOf, existingOpenCallIdRef, openCall);
-      await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
+      const originalId = await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
+      // Siblings are plain drafts even when the original publishes.
+      await createSiblingLanguageVersions(articleBlocks, { openCallId: ocId, coverImage, excerpt }, originalId);
       invalidateAdminArticlesListCache();
       router.push(ADMIN_ARTICLES_PATH);
     } catch (e) {
@@ -360,6 +442,7 @@ export function OpenCallEditorLayout({
     validateBeforeSubmit,
     buildPayloads,
     createArticleFromBlocks,
+    createSiblingLanguageVersions,
     router,
     translateErr,
     tLayout,
@@ -390,12 +473,13 @@ export function OpenCallEditorLayout({
           return;
         }
         const ocId = await resolveOpenCallId(translationOf, existingOpenCallIdRef, openCall);
-        await createArticleFromBlocks(articleBlocks, {
+        const originalId = await createArticleFromBlocks(articleBlocks, {
           openCallId: ocId,
           coverImage,
           excerpt,
           scheduledAt: iso,
         });
+        await createSiblingLanguageVersions(articleBlocks, { openCallId: ocId, coverImage, excerpt }, originalId);
         invalidateAdminArticlesListCache();
         setScheduleModalOpen(false);
         router.push(ADMIN_ARTICLES_PATH);
@@ -411,6 +495,7 @@ export function OpenCallEditorLayout({
       validateBeforeSubmit,
       buildPayloads,
       createArticleFromBlocks,
+      createSiblingLanguageVersions,
       router,
       translateErr,
       tLayout,
@@ -438,6 +523,27 @@ export function OpenCallEditorLayout({
           <EditorToolbar />
         </div>
       ) : null}
+
+      {/* Create mode: chips pick the language the open call is written in
+          (kept in sync with the settings panel's language select). */}
+      <div className="mb-4 flex flex-wrap items-center justify-end gap-3 border-b border-[var(--tott-card-border)] pb-4 shrink-0">
+        {!translationOf ? (
+          <label className="flex items-center gap-2 text-xs text-[var(--tott-muted)]">
+            <input
+              type="checkbox"
+              checked={createAllLanguages}
+              onChange={(e) => setCreateAllLanguages(e.target.checked)}
+              className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+            />
+            {tLayout("createAllLanguages")}
+          </label>
+        ) : null}
+        <LocaleTabs
+          locales={routing.locales}
+          active={language as (typeof routing.locales)[number]}
+          onChange={switchLanguage}
+        />
+      </div>
 
       <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
         <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
@@ -468,6 +574,7 @@ export function OpenCallEditorLayout({
             onUpdateBlock={updateBlock}
             onAddCoverBlock={addCoverBlock}
             onReorderBlock={reorderBlocks}
+            onRemoveBlock={removeBlock}
             config={localizedConfig}
             mainMediaCopy={localizedMainMedia}
           />
@@ -519,7 +626,7 @@ export function OpenCallEditorLayout({
             category={category}
             onCategoryChange={setCategory}
             language={language}
-            onLanguageChange={setLanguage}
+            onLanguageChange={switchLanguage}
             visibility={visibility}
             onVisibilityChange={setVisibility}
             seoTitle={seoTitle}

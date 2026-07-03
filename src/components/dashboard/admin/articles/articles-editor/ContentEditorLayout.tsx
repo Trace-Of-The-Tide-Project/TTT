@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "@/i18n/navigation";
 import { AvailableBlocks } from "@/components/dashboard/admin/articles/articles-editor/AvailableBlocks";
@@ -11,6 +12,8 @@ import { ContributorsPanel } from "@/components/dashboard/admin/articles/article
 import { ContentEditorFooter } from "@/components/dashboard/admin/articles/articles-editor/ContentEditorFooter";
 import { ScheduleArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ScheduleArticleModal";
 import { TranslationsPanel } from "@/components/dashboard/admin/translations/TranslationsPanel";
+import { LocaleTabs } from "@/components/dashboard/admin/translations";
+import { routing } from "@/i18n/routing";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import {
   useArticleEditor,
@@ -33,7 +36,9 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
     workflowStatus, setWorkflowStatus,
     scheduledAt,
     category, setCategory,
-    language, setLanguage,
+    language, switchLanguage,
+    createAllLanguages, setCreateAllLanguages,
+    isDirty,
     translationOf, originalTitle,
     visibility, setVisibility,
     accessLevel, setAccessLevel,
@@ -51,12 +56,44 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
     portalReady,
     mediaUploading,
     successToast, toastEntered,
-    addBlock, addCoverBlock, reorderBlocks, updateBlock,
+    addBlock, addCoverBlock, reorderBlocks, updateBlock, removeBlock,
     handleSaveDraft, handlePublish, handleScheduleConfirm, handleTranslationOfChange,
     setCoverFile, setCoverImage,
   } = useArticleEditor(props);
 
   const { articleId } = props;
+
+  // Unsaved-work guard (create + edit): fingerprint-based dirty flag from the
+  // hook. Covers tab close/refresh (beforeunload) and ALL in-app link clicks
+  // (capture-phase listener beats Next's Link handler, so sidebar navigation
+  // is intercepted too).
+  const hasUnsavedWork = !busy && isDirty;
+
+  useEffect(() => {
+    if (!hasUnsavedWork) return;
+    const beforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    const message = tLayout("unsavedChangesConfirm");
+    const onLinkClick = (e: MouseEvent) => {
+      const anchor = (e.target as HTMLElement).closest?.("a[href]");
+      if (!anchor) return;
+      const href = anchor.getAttribute("href") ?? "";
+      // New tabs and in-page anchors don't lose the editor state.
+      if (anchor.getAttribute("target") === "_blank" || href.startsWith("#")) return;
+      if (!window.confirm(message)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    window.addEventListener("beforeunload", beforeUnload);
+    document.addEventListener("click", onLinkClick, true);
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnload);
+      document.removeEventListener("click", onLinkClick, true);
+    };
+  }, [hasUnsavedWork, tLayout]);
 
   if (isEditMode && articleLoading) {
     return (
@@ -179,7 +216,37 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
               </Link>
             </div>
           </div>
-        ) : null}
+        ) : (
+          /* Create mode: no translation group yet — chips pick the language
+             the new piece is written in (kept in sync with the settings
+             panel's language select). */
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4 shrink-0">
+            <Link
+              href={ADMIN_ARTICLES_PATH}
+              className="text-sm text-[var(--tott-dash-gold-text)] hover:underline"
+            >
+              {tLayout("backToArticles")}
+            </Link>
+            <div className="flex flex-wrap items-center gap-3">
+              {!translationOf ? (
+                <label className="flex items-center gap-2 text-xs text-[var(--tott-muted)]">
+                  <input
+                    type="checkbox"
+                    checked={createAllLanguages}
+                    onChange={(e) => setCreateAllLanguages(e.target.checked)}
+                    className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+                  />
+                  {tLayout("createAllLanguages")}
+                </label>
+              ) : null}
+              <LocaleTabs
+                locales={routing.locales}
+                active={language as (typeof routing.locales)[number]}
+                onChange={switchLanguage}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
           <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
@@ -208,6 +275,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
               onUpdateBlock={updateBlock}
               onAddCoverBlock={addCoverBlock}
               onReorderBlock={reorderBlocks}
+              onRemoveBlock={removeBlock}
               config={localizedConfig}
               mainMediaCopy={localizedMainMedia}
             />
@@ -233,7 +301,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
               category={category}
               onCategoryChange={setCategory}
               language={language}
-              onLanguageChange={setLanguage}
+              onLanguageChange={switchLanguage}
               translationOf={translationOf}
               onTranslationOfChange={handleTranslationOfChange}
               excludeId={articleId}

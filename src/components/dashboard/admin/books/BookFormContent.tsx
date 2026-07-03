@@ -11,7 +11,6 @@ import { mutationToast } from "@/hooks/useMutationToast";
 import { uploadFileToUrl } from "@/services/uploads.service";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { TranslationsPanel } from "@/components/dashboard/admin/translations";
-import { isTranslatableNow } from "@/services/translations.service";
 import { BookChaptersPanel } from "./BookChaptersPanel";
 import type { BookPayload } from "@/services/books.service";
 
@@ -258,8 +257,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
   const router = useRouter();
   const isEdit = Boolean(bookId);
   const currentUser = useAuthUser();
-  const translationsOn = isTranslatableNow("book");
-  const isTranslation = !isEdit && translationsOn && Boolean(translationOf);
+  const isTranslation = !isEdit && Boolean(translationOf);
 
   const initialLanguage = (
     BOOK_LANGS.includes((createLanguage ?? "") as (typeof BOOK_LANGS)[number])
@@ -489,7 +487,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         <h1 className="text-xl font-semibold text-foreground">
           {isEdit ? t("editTitle") : t("createTitle")}
         </h1>
-        {isEdit && bookId && translationsOn ? (
+        {isEdit && bookId ? (
           <TranslationsPanel
             contentType="book"
             contentId={bookId}

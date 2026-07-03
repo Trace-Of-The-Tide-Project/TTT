@@ -27,6 +27,8 @@
           "successArticleSubmitted": "Article submitted",
           "successArticleScheduled": "Article scheduled",
           "imageBlockShort": "Image",
+          "createAllLanguages": "Also create drafts in the other languages",
+          "unsavedChangesConfirm": "You have unsaved changes. Leave without saving?",
           "validationOpenCallBlocksDraft": "Add at least one content block with content.",
           "validationOpenCallBlocksPublish": "Publishing requires at least one content block with content.",
           "validationOpenCallBlocksSchedule": "Scheduling requires at least one content block with content."

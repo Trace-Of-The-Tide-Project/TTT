@@ -258,6 +258,7 @@
             "subtitlePlaceholder": "Sous-titre (facultatif)",
             "kind": "Type",
             "status": "Statut",
+            "language": "Langue",
             "isPremium": "Numéro premium (payant)",
             "fundingGoal": "Objectif de financement",
             "fundingDeadline": "Date limite de financement",
@@ -287,6 +288,11 @@
           "create": "Créer",
           "save": "Enregistrer",
           "saving": "Enregistrement…",
+          "createAllLanguages": "Créer aussi des brouillons dans les autres langues",
+          "discardTitle": "Abandonner les modifications ?",
+          "discardBody": "Vous avez des modifications non enregistrées. Fermer sans les enregistrer ?",
+          "discardCancel": "Continuer l’édition",
+          "discardConfirm": "Abandonner",
           "articles": {
             "label": "Articles de ce numéro",
             "loading": "Chargement des articles…",
@@ -310,6 +316,7 @@
         "toast": {
           "saving": "Enregistrement du numéro…",
           "created": "Numéro créé.",
+          "createdAll": "Numéro créé dans toutes les langues — traduisez les brouillons quand vous êtes prêt.",
           "updated": "Numéro mis à jour.",
           "saveError": "Impossible d’enregistrer le numéro",
           "deleting": "Suppression du numéro…",

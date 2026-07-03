@@ -86,7 +86,7 @@ export function BlockActions({
 }) {
   return (
     <div
-      className="flex h-[120px] w-10 shrink-0 flex-col items-center justify-around self-start rounded-lg bg-[var(--tott-dash-control-bg)] text-[var(--tott-muted)]"
+      className="flex w-10 shrink-0 flex-col items-center self-start rounded-lg bg-[var(--tott-dash-control-bg)] py-1 text-[var(--tott-muted)]"
       style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)" }}
     >
       <div
@@ -131,6 +131,10 @@ export function blockActionsModeFor(
   firstImageBlockId: string | undefined
 ): BlockActionsMode {
   if (blockType === "author-note") {
+    return "delete-only";
+  }
+  // No text content to copy — media/divider blocks only drag and delete.
+  if (["image", "video", "audio", "gallery", "divider"].includes(blockType)) {
     return "delete-only";
   }
   if (blockType === "image" && firstImageBlockId != null && blockId === firstImageBlockId) {
