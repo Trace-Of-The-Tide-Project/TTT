@@ -1,4 +1,5 @@
 import { theme } from "@/lib/theme";
+import { dirFor } from "@/i18n/dir";
 import { SpringLink } from "@/components/motion/SpringLink";
 import HexBackground from "@/components/ui/HexBackground";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
@@ -179,8 +180,13 @@ export function ContentPageLayout({
       {/* Two-column: article body + sidebar */}
       <div className="mx-auto max-w-7xl px-6 pb-8 pt-8 sm:px-10 sm:pb-10 sm:pt-8">
         <div className="flex flex-col gap-10 lg:flex-row lg:gap-8">
-          {/* Left — article body */}
-          <div className="flex min-w-0 flex-1 flex-col gap-8">
+          {/* Left — article body. dir/lang follow the CONTENT language, which
+              can differ from the UI locale (e.g. Arabic piece on English UI). */}
+          <div
+            className="flex min-w-0 flex-1 flex-col gap-8"
+            dir={dirFor(article.language)}
+            lang={article.language}
+          >
             <ContentArticleBody sections={article.sections} />
             {isOpenCall && (openCallId || articleId) && (
               <SpringLink

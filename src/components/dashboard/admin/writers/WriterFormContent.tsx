@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -22,8 +22,9 @@ import {
 } from "@/services/writers.service";
 import type { AdminUserListItem } from "@/services/users.service";
 import { formatApiError } from "@/lib/api/error-message";
-import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import { LanguageFormTabs, TranslationWizard } from "@/components/dashboard/admin/translations";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import type { TranslationWizardReviewLine } from "@/components/dashboard/admin/translations/TranslationWizard";
 import { routing } from "@/i18n/routing";
 import { UserPicker } from "./UserPicker";
 import { AvatarUploadZone, ThemesInput } from "./form-controls";
@@ -148,6 +149,20 @@ export function WriterFormContent({
   const [langLoading, setLangLoading] = useState(false);
   const [seeded, setSeeded] = useState(false);
   const [translationSeeded, setTranslationSeeded] = useState(false);
+
+  // Create-mode wizard: primary step → one step per other locale → review.
+  // Edit mode keeps the free-clicking tab strip (isEdit is always false here
+  // when the wizard applies, since isTranslation also skips it — see render).
+  const wizardLocales = useMemo(
+    () => [initialLang, ...routing.locales.filter((l) => l !== initialLang)],
+    [initialLang],
+  );
+  const [wizardStep, setWizardStep] = useState(0);
+  // Plain create (no ?translation_of=) is the only path that walks the
+  // wizard — edit mode and single-language-translation creation keep the
+  // original one-screen form.
+  const isWizard = !isEdit && !isTranslation;
+  const formRef = useRef<HTMLFormElement>(null);
 
   const form = forms[activeLang] ?? { ...EMPTY, language: activeLang };
 
@@ -279,6 +294,29 @@ export function WriterFormContent({
     return map;
   }, [dirty, primaryLang, versionIds, forms]);
 
+  // Wizard step → active locale (create mode only; not-yet-visited steps
+  // seed the same way opening a tab would).
+  const goToWizardStep = useCallback(
+    (step: number) => {
+      const loc = wizardLocales[step];
+      if (loc && !forms[loc]) {
+        setForms((prev) => ({ ...prev, [loc]: { ...(prev[wizardLocales[0]] ?? EMPTY), language: loc } }));
+      }
+      if (loc) setActiveLang(loc);
+      setWizardStep(step);
+    },
+    [wizardLocales, forms],
+  );
+  const wizardReviewLines: TranslationWizardReviewLine[] = useMemo(
+    () =>
+      wizardLocales.map((loc) => ({
+        locale: loc,
+        label: tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase(),
+        action: loc === wizardLocales[0] || dirty[loc] ? "create" : "skip",
+      })),
+    [wizardLocales, dirty, tTr],
+  );
+
   const handleAvatarUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -386,6 +424,8 @@ export function WriterFormContent({
       const f = forms[loc];
       if (f && !validate(f)) {
         setActiveLang(loc);
+        const stepIdx = wizardLocales.indexOf(loc);
+        if (isWizard && stepIdx >= 0) setWizardStep(stepIdx);
         return;
       }
     }
@@ -530,6 +570,182 @@ export function WriterFormContent({
       "—"
     : null;
 
+  const writerFieldSections = (
+    <>
+      {/* ── Section 1: Writer account ── */}
+      <div className={sectionClass}>
+        <p className={sectionHeadingClass}>{t("sections.account")}</p>
+
+        {isEdit ? (
+          <div>
+            <label className={labelClass}>{t("account.linkedUser")}</label>
+            <p className="text-sm text-foreground">{linkedUserLabel}</p>
+          </div>
+        ) : isTranslation ? (
+          <div>
+            <label className={labelClass}>{t("account.linkedUser")}</label>
+            <p className="text-sm text-foreground">
+              {sourceQuery.data?.user?.full_name?.trim() ||
+                sourceQuery.data?.user?.username?.trim() ||
+                sourceQuery.data?.user_id ||
+                "—"}
+            </p>
+            <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
+              {t("translation.sameAccount")}
+            </p>
+          </div>
+        ) : (
+          <>
+            <UserPicker
+              value={selectedUser}
+              onChange={(u) => { setSelectedUser(u); setUserError(null); }}
+              disabled={busy}
+            />
+            <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
+              {t("account.optionalHint")}
+            </p>
+
+            {userError && (
+              <p className="text-xs text-red-400">{userError}</p>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* ── Section 2: Identity ── */}
+      <div className={sectionClass}>
+        <p className={sectionHeadingClass}>{t("sections.identity")}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>{t("fields.penName")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.penNamePlaceholder")} value={form.pen_name} onChange={set("pen_name")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.headline")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.headlinePlaceholder")} value={form.headline} onChange={set("headline")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.creatorKind")}</label>
+            <select className={inputClass} value={form.creator_kind} onChange={set("creator_kind")}>
+              <option value="">{t("kinds.none")}</option>
+              {CREATOR_KINDS.map((k) => (
+                <option key={k} value={k}>{t(`kinds.${k}`)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.location")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.locationPlaceholder")} value={form.location} onChange={set("location")} />
+          </div>
+        </div>
+        <div>
+          <label className={labelClass}>{t("fields.avatar")}</label>
+          <AvatarUploadZone
+            value={form.avatar_url}
+            previewSrc={avatarPreview}
+            uploading={avatarUploading}
+            onChange={handleAvatarUpload}
+            labels={{
+              uploading: t("upload.uploading"),
+              click: t("upload.click"),
+              hint: t("upload.hint"),
+              change: t("account.clear"),
+            }}
+          />
+          <input
+            type="text"
+            className={`${inputClass} mt-2`}
+            value={form.avatar_url}
+            onChange={(e) => {
+              // A hand-typed ref previews via the resolver, not the stale
+              // signed URL from a prior upload.
+              setAvatarPreview(null);
+              updateForm((prev) => ({ ...prev, avatar_url: e.target.value }));
+            }}
+            placeholder="https://…"
+          />
+          <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("fields.avatarUrlFallback")}</p>
+        </div>
+      </div>
+
+      {/* ── Section 3: About ── */}
+      <div className={sectionClass}>
+        <p className={sectionHeadingClass}>{t("sections.about")}</p>
+        <div>
+          <label className={labelClass}>{t("fields.bioLong")}</label>
+          <textarea className={`${inputClass} min-h-[120px]`} value={form.bio_long} onChange={set("bio_long")} />
+        </div>
+        <div>
+          <label className={labelClass}>{t("fields.quote")}</label>
+          <textarea className={`${inputClass} min-h-[60px]`} value={form.quote} onChange={set("quote")} />
+        </div>
+        <div>
+          <label className={labelClass}>{t("fields.themes")}</label>
+          <ThemesInput
+            value={form.themes}
+            onChange={(themes) => updateForm((prev) => ({ ...prev, themes }))}
+            placeholder={t("fields.themesPlaceholder")}
+            disabled={busy}
+          />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>{t("fields.collaborations")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.collaborationsPlaceholder")} value={form.collaborations} onChange={set("collaborations")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.recognition")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.recognitionPlaceholder")} value={form.recognition} onChange={set("recognition")} />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Section 4: Support & visibility ── */}
+      <div className={sectionClass}>
+        <p className={sectionHeadingClass}>{t("sections.support")}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>{t("fields.monthlyGoal")}</label>
+            <input type="number" min="0" step="1" className={inputClass} value={form.monthly_goal} onChange={set("monthly_goal")} />
+            {fieldError && <p className="mt-1 text-xs text-red-400">{fieldError}</p>}
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.website")}</label>
+            <input type="url" className={inputClass} placeholder="https://…" value={form.social_website} onChange={set("social_website")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.twitter")}</label>
+            <input type="url" className={inputClass} placeholder="https://x.com/…" value={form.social_twitter} onChange={set("social_twitter")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.instagram")}</label>
+            <input type="url" className={inputClass} placeholder="https://instagram.com/…" value={form.social_instagram} onChange={set("social_instagram")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.youtube")}</label>
+            <input type="url" className={inputClass} placeholder="https://youtube.com/…" value={form.social_youtube} onChange={set("social_youtube")} />
+          </div>
+        </div>
+        <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+          <input
+            type="checkbox"
+            checked={form.featured}
+            onChange={(e) =>
+              updateForm((prev) => ({ ...prev, featured: e.target.checked }))
+            }
+            className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+          />
+          {t("fields.featured")}
+        </label>
+        {/* Make the board-visibility consequence explicit — otherwise a new
+            writer is created but never appears publicly, which reads as a bug. */}
+        <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
+          {t("fields.featuredHint")}
+        </p>
+      </div>
+    </>
+  );
+
   return (
     <div className="my-4 mx-auto px-10 pb-12 max-w-4xl">
       <Link
@@ -547,9 +763,9 @@ export function WriterFormContent({
           {isEdit ? t("editTitle") : t("createTitle")}
         </h1>
         {/* Old chip-link flow (?translation_of=) keeps its focused single-
-            language form; everywhere else the admin authors all languages
-            in-form via tabs. */}
-        {!isTranslation ? (
+            language form. Edit mode keeps free-clicking tabs (admin already
+            knows what exists). Plain create walks the wizard below instead. */}
+        {isEdit && !isTranslation ? (
           <LanguageFormTabs
             active={activeLang}
             onSelect={(loc) => void handleSelectLang(loc)}
@@ -579,178 +795,24 @@ export function WriterFormContent({
         </div>
       ) : null}
 
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
-        {/* ── Section 1: Writer account ── */}
-        <div className={sectionClass}>
-          <p className={sectionHeadingClass}>{t("sections.account")}</p>
-
-          {isEdit ? (
-            <div>
-              <label className={labelClass}>{t("account.linkedUser")}</label>
-              <p className="text-sm text-foreground">{linkedUserLabel}</p>
-            </div>
-          ) : isTranslation ? (
-            <div>
-              <label className={labelClass}>{t("account.linkedUser")}</label>
-              <p className="text-sm text-foreground">
-                {sourceQuery.data?.user?.full_name?.trim() ||
-                  sourceQuery.data?.user?.username?.trim() ||
-                  sourceQuery.data?.user_id ||
-                  "—"}
-              </p>
-              <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
-                {t("translation.sameAccount")}
-              </p>
-            </div>
-          ) : (
-            <>
-              <UserPicker
-                value={selectedUser}
-                onChange={(u) => { setSelectedUser(u); setUserError(null); }}
-                disabled={busy}
-              />
-              <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
-                {t("account.optionalHint")}
-              </p>
-
-              {userError && (
-                <p className="text-xs text-red-400">{userError}</p>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* ── Section 2: Identity ── */}
-        <div className={sectionClass}>
-          <p className={sectionHeadingClass}>{t("sections.identity")}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>{t("fields.penName")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.penNamePlaceholder")} value={form.pen_name} onChange={set("pen_name")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.headline")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.headlinePlaceholder")} value={form.headline} onChange={set("headline")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.creatorKind")}</label>
-              <select className={inputClass} value={form.creator_kind} onChange={set("creator_kind")}>
-                <option value="">{t("kinds.none")}</option>
-                {CREATOR_KINDS.map((k) => (
-                  <option key={k} value={k}>{t(`kinds.${k}`)}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.location")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.locationPlaceholder")} value={form.location} onChange={set("location")} />
-            </div>
-          </div>
-          <div>
-            <label className={labelClass}>{t("fields.avatar")}</label>
-            <AvatarUploadZone
-              value={form.avatar_url}
-              previewSrc={avatarPreview}
-              uploading={avatarUploading}
-              onChange={handleAvatarUpload}
-              labels={{
-                uploading: t("upload.uploading"),
-                click: t("upload.click"),
-                hint: t("upload.hint"),
-                change: t("account.clear"),
-              }}
-            />
-            <input
-              type="text"
-              className={`${inputClass} mt-2`}
-              value={form.avatar_url}
-              onChange={(e) => {
-                // A hand-typed ref previews via the resolver, not the stale
-                // signed URL from a prior upload.
-                setAvatarPreview(null);
-                updateForm((prev) => ({ ...prev, avatar_url: e.target.value }));
-              }}
-              placeholder="https://…"
-            />
-            <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("fields.avatarUrlFallback")}</p>
-          </div>
-        </div>
-
-        {/* ── Section 3: About ── */}
-        <div className={sectionClass}>
-          <p className={sectionHeadingClass}>{t("sections.about")}</p>
-          <div>
-            <label className={labelClass}>{t("fields.bioLong")}</label>
-            <textarea className={`${inputClass} min-h-[120px]`} value={form.bio_long} onChange={set("bio_long")} />
-          </div>
-          <div>
-            <label className={labelClass}>{t("fields.quote")}</label>
-            <textarea className={`${inputClass} min-h-[60px]`} value={form.quote} onChange={set("quote")} />
-          </div>
-          <div>
-            <label className={labelClass}>{t("fields.themes")}</label>
-            <ThemesInput
-              value={form.themes}
-              onChange={(themes) => updateForm((prev) => ({ ...prev, themes }))}
-              placeholder={t("fields.themesPlaceholder")}
-              disabled={busy}
-            />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>{t("fields.collaborations")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.collaborationsPlaceholder")} value={form.collaborations} onChange={set("collaborations")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.recognition")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.recognitionPlaceholder")} value={form.recognition} onChange={set("recognition")} />
-            </div>
-          </div>
-        </div>
-
-        {/* ── Section 4: Support & visibility ── */}
-        <div className={sectionClass}>
-          <p className={sectionHeadingClass}>{t("sections.support")}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>{t("fields.monthlyGoal")}</label>
-              <input type="number" min="0" step="1" className={inputClass} value={form.monthly_goal} onChange={set("monthly_goal")} />
-              {fieldError && <p className="mt-1 text-xs text-red-400">{fieldError}</p>}
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.website")}</label>
-              <input type="url" className={inputClass} placeholder="https://…" value={form.social_website} onChange={set("social_website")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.twitter")}</label>
-              <input type="url" className={inputClass} placeholder="https://x.com/…" value={form.social_twitter} onChange={set("social_twitter")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.instagram")}</label>
-              <input type="url" className={inputClass} placeholder="https://instagram.com/…" value={form.social_instagram} onChange={set("social_instagram")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.youtube")}</label>
-              <input type="url" className={inputClass} placeholder="https://youtube.com/…" value={form.social_youtube} onChange={set("social_youtube")} />
-            </div>
-          </div>
-          <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.featured}
-              onChange={(e) =>
-                updateForm((prev) => ({ ...prev, featured: e.target.checked }))
-              }
-              className="h-4 w-4 accent-[var(--tott-accent-gold)]"
-            />
-            {t("fields.featured")}
-          </label>
-          {/* Make the board-visibility consequence explicit — otherwise a new
-              writer is created but never appears publicly, which reads as a bug. */}
-          <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
-            {t("fields.featuredHint")}
-          </p>
-        </div>
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
+        {isWizard ? (
+          <TranslationWizard
+            locales={wizardLocales}
+            step={wizardStep}
+            localeLabel={(loc) => (tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase())}
+            onBack={() => goToWizardStep(Math.max(0, wizardStep - 1))}
+            onSkip={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+            onNext={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+            onConfirm={() => formRef.current?.requestSubmit()}
+            busy={busy}
+            reviewLines={wizardReviewLines}
+          >
+            {writerFieldSections}
+          </TranslationWizard>
+        ) : (
+          writerFieldSections
+        )}
 
         {submitError && (
           <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-2 text-xs text-red-400">
@@ -758,30 +820,32 @@ export function WriterFormContent({
           </p>
         )}
 
-        <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            disabled={busy}
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/60 bg-[var(--tott-accent-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-accent-gold)]/20 disabled:opacity-40 transition-colors"
-          >
-            {busy && (
-              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            )}
-            {busy
-              ? isEdit
-                ? t("saving")
-                : t("creating")
-              : isEdit
-                ? t("save")
-                : t("create")}
-          </button>
-          <Link
-            href="/admin/writers"
-            className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground hover:bg-white/5 transition-colors"
-          >
-            {t("cancel")}
-          </Link>
-        </div>
+        {!isWizard ? (
+          <div className="flex items-center gap-3">
+            <button
+              type="submit"
+              disabled={busy}
+              className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/60 bg-[var(--tott-accent-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-accent-gold)]/20 disabled:opacity-40 transition-colors"
+            >
+              {busy && (
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              )}
+              {busy
+                ? isEdit
+                  ? t("saving")
+                  : t("creating")
+                : isEdit
+                  ? t("save")
+                  : t("create")}
+            </button>
+            <Link
+              href="/admin/writers"
+              className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground hover:bg-white/5 transition-colors"
+            >
+              {t("cancel")}
+            </Link>
+          </div>
+        ) : null}
       </form>
     </div>
   );

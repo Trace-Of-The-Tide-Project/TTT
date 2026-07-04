@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
@@ -19,8 +19,9 @@ import {
 } from "@/hooks/queries/translations";
 import { formatApiError } from "@/lib/api/error-message";
 import { AvatarUploadZone } from "@/components/dashboard/admin/writers/form-controls";
-import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import { LanguageFormTabs, TranslationWizard } from "@/components/dashboard/admin/translations";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import type { TranslationWizardReviewLine } from "@/components/dashboard/admin/translations/TranslationWizard";
 import { routing } from "@/i18n/routing";
 import { toast } from "sonner";
 
@@ -95,6 +96,14 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
   const [translationSeeded, setTranslationSeeded] = useState(false);
   const [uploadingPortrait, setUploadingPortrait] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  const wizardLocales = useMemo(
+    () => [initialLang, ...routing.locales.filter((l) => l !== initialLang)],
+    [initialLang],
+  );
+  const [wizardStep, setWizardStep] = useState(0);
+  const isWizard = !isEdit && !isTranslation;
+  const formRef = useRef<HTMLFormElement>(null);
 
   const form = forms[activeLang] ?? { ...EMPTY, language: activeLang };
 
@@ -190,6 +199,27 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
     return map;
   }, [dirty, primaryLang, versionIds, forms]);
 
+  const goToWizardStep = useCallback(
+    (step: number) => {
+      const loc = wizardLocales[step];
+      if (loc && !forms[loc]) {
+        setForms((prev) => ({ ...prev, [loc]: { ...(prev[wizardLocales[0]] ?? EMPTY), language: loc } }));
+      }
+      if (loc) setActiveLang(loc);
+      setWizardStep(step);
+    },
+    [wizardLocales, forms],
+  );
+  const wizardReviewLines: TranslationWizardReviewLine[] = useMemo(
+    () =>
+      wizardLocales.map((loc) => ({
+        locale: loc,
+        label: tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase(),
+        action: loc === wizardLocales[0] || dirty[loc] ? "create" : "skip",
+      })),
+    [wizardLocales, dirty, tTr],
+  );
+
   const handlePortraitUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -237,6 +267,7 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
     if (!isEdit && primaryForm && !primaryForm.full_name.trim()) {
       setFormError(t("form.errors.fullNameRequired"));
       setActiveLang(primaryLang);
+      if (isWizard) setWizardStep(0);
       return;
     }
 
@@ -315,6 +346,80 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
     }
   };
 
+  const personFieldSections = (
+    <>
+      {/* Identity */}
+      <div className={sectionClass}>
+        <p className={sectionHeadingClass}>{t("form.sections.identity")}</p>
+
+        <div>
+          <label className={labelClass}>{t("form.fields.fullName")} *</label>
+          <input
+            className={inputClass}
+            value={form.full_name}
+            onChange={(e) => set("full_name", e.target.value)}
+            placeholder={t("form.fields.fullNamePlaceholder")}
+            disabled={busy}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>{t("form.fields.birthDate")}</label>
+            <input
+              type="date"
+              className={inputClass}
+              value={form.birth_date}
+              onChange={(e) => set("birth_date", e.target.value)}
+              disabled={busy}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>{t("form.fields.deathDate")}</label>
+            <input
+              type="date"
+              className={inputClass}
+              value={form.death_date}
+              onChange={(e) => set("death_date", e.target.value)}
+              disabled={busy}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className={labelClass}>{t("form.fields.portrait")}</label>
+          <AvatarUploadZone
+            value={form.portrait}
+            uploading={uploadingPortrait}
+            onChange={handlePortraitUpload}
+            labels={{
+              uploading: t("form.upload.uploading"),
+              click: t("form.upload.click"),
+              hint: t("form.upload.hint"),
+              change: t("form.upload.change"),
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Biography */}
+      <div className={sectionClass}>
+        <p className={sectionHeadingClass}>{t("form.sections.biography")}</p>
+        <div>
+          <textarea
+            rows={6}
+            className={inputClass}
+            value={form.biography}
+            onChange={(e) => set("biography", e.target.value)}
+            placeholder={t("form.fields.biographyPlaceholder")}
+            aria-label={t("form.sections.biography")}
+            disabled={busy}
+          />
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-8 px-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -329,7 +434,7 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
             {isEdit ? t("form.editTitle") : t("form.createTitle")}
           </h1>
         </div>
-        {!isTranslation ? (
+        {isEdit && !isTranslation ? (
           <LanguageFormTabs
             active={activeLang}
             onSelect={(loc) => void handleSelectLang(loc)}
@@ -357,76 +462,24 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
       {loadingEdit ? (
         <div className="py-12 text-center text-sm text-[var(--tott-muted)]">{t("form.loading")}</div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Identity */}
-          <div className={sectionClass}>
-            <p className={sectionHeadingClass}>{t("form.sections.identity")}</p>
-
-            <div>
-              <label className={labelClass}>{t("form.fields.fullName")} *</label>
-              <input
-                className={inputClass}
-                value={form.full_name}
-                onChange={(e) => set("full_name", e.target.value)}
-                placeholder={t("form.fields.fullNamePlaceholder")}
-                disabled={busy}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className={labelClass}>{t("form.fields.birthDate")}</label>
-                <input
-                  type="date"
-                  className={inputClass}
-                  value={form.birth_date}
-                  onChange={(e) => set("birth_date", e.target.value)}
-                  disabled={busy}
-                />
-              </div>
-              <div>
-                <label className={labelClass}>{t("form.fields.deathDate")}</label>
-                <input
-                  type="date"
-                  className={inputClass}
-                  value={form.death_date}
-                  onChange={(e) => set("death_date", e.target.value)}
-                  disabled={busy}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className={labelClass}>{t("form.fields.portrait")}</label>
-              <AvatarUploadZone
-                value={form.portrait}
-                uploading={uploadingPortrait}
-                onChange={handlePortraitUpload}
-                labels={{
-                  uploading: t("form.upload.uploading"),
-                  click: t("form.upload.click"),
-                  hint: t("form.upload.hint"),
-                  change: t("form.upload.change"),
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Biography */}
-          <div className={sectionClass}>
-            <p className={sectionHeadingClass}>{t("form.sections.biography")}</p>
-            <div>
-              <textarea
-                rows={6}
-                className={inputClass}
-                value={form.biography}
-                onChange={(e) => set("biography", e.target.value)}
-                placeholder={t("form.fields.biographyPlaceholder")}
-                aria-label={t("form.sections.biography")}
-                disabled={busy}
-              />
-            </div>
-          </div>
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
+          {isWizard ? (
+            <TranslationWizard
+              locales={wizardLocales}
+              step={wizardStep}
+              localeLabel={(loc) => (tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase())}
+              onBack={() => goToWizardStep(Math.max(0, wizardStep - 1))}
+              onSkip={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+              onNext={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+              onConfirm={() => formRef.current?.requestSubmit()}
+              busy={busy}
+              reviewLines={wizardReviewLines}
+            >
+              {personFieldSections}
+            </TranslationWizard>
+          ) : (
+            personFieldSections
+          )}
 
           {formError && (
             <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-3 text-sm text-red-400">
@@ -434,21 +487,23 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-3">
-            <Link
-              href="/admin/people"
-              className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground"
-            >
-              {t("form.cancel")}
-            </Link>
-            <button
-              type="submit"
-              disabled={busy}
-              className="rounded-lg bg-[var(--tott-accent-gold)] px-5 py-2 text-sm font-semibold text-[var(--tott-on-accent)] hover:opacity-90 disabled:opacity-40 transition-opacity"
-            >
-              {busy ? t("form.saving") : isEdit ? t("form.save") : t("form.create")}
-            </button>
-          </div>
+          {!isWizard ? (
+            <div className="flex items-center justify-end gap-3">
+              <Link
+                href="/admin/people"
+                className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground"
+              >
+                {t("form.cancel")}
+              </Link>
+              <button
+                type="submit"
+                disabled={busy}
+                className="rounded-lg bg-[var(--tott-accent-gold)] px-5 py-2 text-sm font-semibold text-[var(--tott-on-accent)] hover:opacity-90 disabled:opacity-40 transition-opacity"
+              >
+                {busy ? t("form.saving") : isEdit ? t("form.save") : t("form.create")}
+              </button>
+            </div>
+          ) : null}
         </form>
       )}
     </div>

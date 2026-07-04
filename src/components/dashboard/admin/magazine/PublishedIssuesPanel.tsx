@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useRef, useState } from "react";
+import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
@@ -25,8 +25,9 @@ import {
   useDeleteMagazineIssue,
 } from "@/hooks/mutations/magazine-issues";
 import { IssueArticlesPanel } from "./IssueArticlesPanel";
-import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import { LanguageFormTabs, TranslationWizard } from "@/components/dashboard/admin/translations";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import type { TranslationWizardReviewLine } from "@/components/dashboard/admin/translations/TranslationWizard";
 import type {
   MagazineIssue,
   MagazineIssueInput,
@@ -627,6 +628,7 @@ function IssueFormModal({
   onSave: (plan: IssueSavePlanEntry[]) => void;
 }) {
   const t = useTranslations("Dashboard.magazineIssues");
+  const tTr = useTranslations("Dashboard.translations");
   const locale = useLocale();
   const isEdit = Boolean(item);
   const isTranslation = !isEdit && Boolean(translateFrom);
@@ -636,6 +638,13 @@ function IssueFormModal({
     item?.language ??
     ((LANGS as readonly string[]).includes(locale) ? locale : "en");
   const primaryLang = item?.language ?? initialLang;
+  const wizardLocales = useMemo(
+    () => [primaryLang, ...LANGS.filter((l) => l !== primaryLang)],
+    [primaryLang],
+  );
+  const [wizardStep, setWizardStep] = useState(0);
+  const isWizard = !isEdit && !isTranslation;
+  const formRef = useRef<HTMLFormElement>(null);
 
   const [activeLang, setActiveLang] = useState(initialLang);
   const [forms, setForms] = useState<Record<string, FormState>>(() => {
@@ -648,7 +657,6 @@ function IssueFormModal({
   const [dirty, setDirty] = useState<Record<string, boolean>>({});
   const [errors, setErrors] = useState<FieldErrors>({});
   const [uploading, setUploading] = useState(false);
-  const [createAll, setCreateAll] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
   const busy = saving || uploading;
 
@@ -667,6 +675,33 @@ function IssueFormModal({
     }
     return map;
   }, [dirty, primaryLang, allVersions, forms]);
+
+  const goToWizardStep = useCallback(
+    (step: number) => {
+      const loc = wizardLocales[step];
+      if (loc && !forms[loc]) {
+        const existing = allVersions[loc];
+        setForms((prev) => ({
+          ...prev,
+          [loc]: existing
+            ? { ...toForm(existing, defaultEdition), language: loc }
+            : { ...(prev[wizardLocales[0]] ?? toForm(null, defaultEdition)), language: loc },
+        }));
+      }
+      if (loc) setActiveLang(loc);
+      setWizardStep(step);
+    },
+    [wizardLocales, forms, allVersions, defaultEdition],
+  );
+  const wizardReviewLines: TranslationWizardReviewLine[] = useMemo(
+    () =>
+      wizardLocales.map((loc) => ({
+        locale: loc,
+        label: tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase(),
+        action: loc === wizardLocales[0] || dirty[loc] ? "create" : "skip",
+      })),
+    [wizardLocales, dirty, tTr],
+  );
 
   const updateForm = (mutate: (prev: FormState) => FormState) => {
     setForms((prev) => {
@@ -801,18 +836,6 @@ function IssueFormModal({
       return { existingId, values };
     });
 
-    // Legacy bulk toggle: fabricate a plan entry for every untouched locale
-    // too, seeded from the primary tab's text (create mode only).
-    if (!isEdit && !translateFrom && createAll) {
-      for (const loc of LANGS) {
-        if (loc === primaryLang || plan.some((p) => p.values.language === loc)) continue;
-        const values = toPayload(form, loc);
-        values.translation_of = undefined; // resolved once the primary exists
-        values.status = "draft";
-        plan.push({ values });
-      }
-    }
-
     onSave(plan);
   };
 
@@ -820,6 +843,192 @@ function IssueFormModal({
     "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground outline-none placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-accent-gold)]";
   const labelClass =
     "mb-1 block text-xs font-medium text-[var(--tott-dash-gold-label)]";
+
+  const issueFieldSections = (
+    <>
+      <div>
+        <label className={labelClass}>{t("published.form.fields.title")} *</label>
+        <input
+          type="text"
+          className={inputClass}
+          value={form.title}
+          onChange={set("title")}
+          placeholder={t("published.form.fields.titlePlaceholder")}
+        />
+        <FieldError message={errors.title} />
+      </div>
+
+      <div>
+        <label className={labelClass}>
+          {t("published.form.fields.subtitle")}
+        </label>
+        <input
+          type="text"
+          className={inputClass}
+          value={form.subtitle}
+          onChange={set("subtitle")}
+          placeholder={t("published.form.fields.subtitlePlaceholder")}
+        />
+      </div>
+
+      {!isEdit ? (
+        <p className="text-xs" style={{ color: "var(--tott-muted)" }}>
+          {magazineName
+            ? t("published.form.publishingTo", { name: magazineName })
+            : t("published.form.publishingToNew")}
+        </p>
+      ) : null}
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className={labelClass}>{t("published.form.fields.kind")}</label>
+          <select className={inputClass} value={form.kind} onChange={set("kind")}>
+            {KINDS.map((k) => (
+              <option key={k} value={k}>
+                {t(`kinds.${k}`)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={labelClass}>{t("published.form.fields.status")}</label>
+          <select className={inputClass} value={form.status} onChange={set("status")}>
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {t(`statuses.${s}`)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={labelClass}>
+            {t("published.form.fields.edition")} *
+          </label>
+          <input
+            type="number"
+            min="0"
+            className={inputClass}
+            value={form.edition}
+            onChange={set("edition")}
+            placeholder={t("published.form.fields.editionPlaceholder")}
+          />
+          <FieldError message={errors.edition} />
+        </div>
+        <div>
+          <label className={labelClass}>{t("published.form.fields.category")}</label>
+          <input
+            type="text"
+            className={inputClass}
+            value={form.category}
+            onChange={set("category")}
+            placeholder={t("published.form.fields.categoryPlaceholder")}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>{t("published.form.fields.pageCount")}</label>
+          <input
+            type="number"
+            min="0"
+            className={inputClass}
+            value={form.page_count}
+            onChange={set("page_count")}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>{t("published.form.fields.publishedAt")}</label>
+          <input
+            type="date"
+            className={inputClass}
+            value={form.published_at}
+            onChange={set("published_at")}
+          />
+        </div>
+      </div>
+
+      {form.kind === "crowdfunded" ? (
+        <div className="grid grid-cols-2 gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] p-3">
+          <div>
+            <label className={labelClass}>
+              {t("published.form.fields.fundingGoal")}
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              className={inputClass}
+              value={form.funding_goal}
+              onChange={set("funding_goal")}
+              placeholder="5000"
+            />
+          </div>
+          <div>
+            <label className={labelClass}>
+              {t("published.form.fields.fundingDeadline")}
+            </label>
+            <input
+              type="date"
+              className={inputClass}
+              value={form.funding_deadline}
+              onChange={set("funding_deadline")}
+            />
+          </div>
+        </div>
+      ) : null}
+
+      <label className="flex items-center gap-2 text-sm text-foreground">
+        <input
+          type="checkbox"
+          checked={form.is_premium}
+          onChange={(e) =>
+            updateForm((prev) => ({ ...prev, is_premium: e.target.checked }))
+          }
+          className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+        />
+        {t("published.form.fields.isPremium")}
+      </label>
+
+      <div>
+        <label className={labelClass}>{t("published.form.fields.coverImage")}</label>
+        <CoverUploadZone
+          value={form.cover_image}
+          uploading={uploading}
+          onChange={handleCoverUpload}
+        />
+        <input
+          type="text"
+          className={`${inputClass} mt-2`}
+          value={form.cover_image}
+          onChange={set("cover_image")}
+          placeholder={t("published.form.fields.coverImagePlaceholder")}
+        />
+      </div>
+
+      <div>
+        <label className={labelClass}>{t("published.form.fields.excerpt")}</label>
+        <textarea
+          rows={2}
+          className={inputClass}
+          value={form.excerpt}
+          onChange={set("excerpt")}
+          placeholder={t("published.form.fields.excerptPlaceholder")}
+        />
+      </div>
+
+      <div>
+        <label className={labelClass}>{t("published.form.fields.description")}</label>
+        <textarea
+          rows={4}
+          className={inputClass}
+          value={form.description}
+          onChange={set("description")}
+        />
+      </div>
+
+      {isEdit && item ? (
+        <IssueArticlesPanel issueId={item.id} magazineId={item.magazine_id ?? null} />
+      ) : null}
+    </>
+  );
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-3 sm:p-4">
@@ -841,7 +1050,7 @@ function IssueFormModal({
                 </span>
               ) : null}
             </h2>
-            {!translateFrom ? (
+            {isEdit && !translateFrom ? (
               <LanguageFormTabs
                 active={activeLang}
                 onSelect={switchFormLanguage}
@@ -867,234 +1076,58 @@ function IssueFormModal({
           {t("published.form.description")}
         </p>
 
-        <form onSubmit={submit} className="space-y-4">
-          <div>
-            <label className={labelClass}>{t("published.form.fields.title")} *</label>
-            <input
-              type="text"
-              className={inputClass}
-              value={form.title}
-              onChange={set("title")}
-              placeholder={t("published.form.fields.titlePlaceholder")}
-            />
-            <FieldError message={errors.title} />
-          </div>
+        <form ref={formRef} onSubmit={submit} className="space-y-4">
+          {isWizard ? (
+            <TranslationWizard
+              locales={wizardLocales}
+              step={wizardStep}
+              localeLabel={(loc) => (tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase())}
+              onBack={() => goToWizardStep(Math.max(0, wizardStep - 1))}
+              onSkip={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+              onNext={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+              onConfirm={() => formRef.current?.requestSubmit()}
+              busy={busy}
+              reviewLines={wizardReviewLines}
+            >
+              {issueFieldSections}
+            </TranslationWizard>
+          ) : (
+            issueFieldSections
+          )}
 
-          <div>
-            <label className={labelClass}>
-              {t("published.form.fields.subtitle")}
-            </label>
-            <input
-              type="text"
-              className={inputClass}
-              value={form.subtitle}
-              onChange={set("subtitle")}
-              placeholder={t("published.form.fields.subtitlePlaceholder")}
-            />
-          </div>
-
-          {!isEdit ? (
-            <p className="text-xs" style={{ color: "var(--tott-muted)" }}>
-              {magazineName
-                ? t("published.form.publishingTo", { name: magazineName })
-                : t("published.form.publishingToNew")}
-            </p>
-          ) : null}
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>{t("published.form.fields.kind")}</label>
-              <select className={inputClass} value={form.kind} onChange={set("kind")}>
-                {KINDS.map((k) => (
-                  <option key={k} value={k}>
-                    {t(`kinds.${k}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>{t("published.form.fields.status")}</label>
-              <select className={inputClass} value={form.status} onChange={set("status")}>
-                {STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {t(`statuses.${s}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>
-                {t("published.form.fields.edition")} *
-              </label>
-              <input
-                type="number"
-                min="0"
-                className={inputClass}
-                value={form.edition}
-                onChange={set("edition")}
-                placeholder={t("published.form.fields.editionPlaceholder")}
-              />
-              <FieldError message={errors.edition} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("published.form.fields.category")}</label>
-              <input
-                type="text"
-                className={inputClass}
-                value={form.category}
-                onChange={set("category")}
-                placeholder={t("published.form.fields.categoryPlaceholder")}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>{t("published.form.fields.pageCount")}</label>
-              <input
-                type="number"
-                min="0"
-                className={inputClass}
-                value={form.page_count}
-                onChange={set("page_count")}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>{t("published.form.fields.publishedAt")}</label>
-              <input
-                type="date"
-                className={inputClass}
-                value={form.published_at}
-                onChange={set("published_at")}
-              />
-            </div>
-          </div>
-
-          {form.kind === "crowdfunded" ? (
-            <div className="grid grid-cols-2 gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] p-3">
-              <div>
-                <label className={labelClass}>
-                  {t("published.form.fields.fundingGoal")}
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  className={inputClass}
-                  value={form.funding_goal}
-                  onChange={set("funding_goal")}
-                  placeholder="5000"
-                />
-              </div>
-              <div>
-                <label className={labelClass}>
-                  {t("published.form.fields.fundingDeadline")}
-                </label>
-                <input
-                  type="date"
-                  className={inputClass}
-                  value={form.funding_deadline}
-                  onChange={set("funding_deadline")}
-                />
+          {!isWizard ? (
+            <div className="flex flex-wrap items-center justify-end gap-3 border-t border-[var(--tott-card-border)] pt-4">
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={requestClose}
+                  disabled={busy}
+                  className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
+                >
+                  {t("published.form.cancel")}
+                </button>
+                <button
+                  type="submit"
+                  disabled={busy}
+                  className="inline-flex items-center gap-2 rounded-lg border px-5 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+                  style={{
+                    borderColor: "color-mix(in srgb, var(--tott-accent-gold) 60%, transparent)",
+                    backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
+                    color: "var(--tott-accent-gold)",
+                  }}
+                >
+                  {busy ? (
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  ) : null}
+                  {busy
+                    ? t("published.form.saving")
+                    : isEdit
+                      ? t("published.form.save")
+                      : t("published.form.create")}
+                </button>
               </div>
             </div>
           ) : null}
-
-          <label className="flex items-center gap-2 text-sm text-foreground">
-            <input
-              type="checkbox"
-              checked={form.is_premium}
-              onChange={(e) =>
-                updateForm((prev) => ({ ...prev, is_premium: e.target.checked }))
-              }
-              className="h-4 w-4 accent-[var(--tott-accent-gold)]"
-            />
-            {t("published.form.fields.isPremium")}
-          </label>
-
-          <div>
-            <label className={labelClass}>{t("published.form.fields.coverImage")}</label>
-            <CoverUploadZone
-              value={form.cover_image}
-              uploading={uploading}
-              onChange={handleCoverUpload}
-            />
-            <input
-              type="text"
-              className={`${inputClass} mt-2`}
-              value={form.cover_image}
-              onChange={set("cover_image")}
-              placeholder={t("published.form.fields.coverImagePlaceholder")}
-            />
-          </div>
-
-          <div>
-            <label className={labelClass}>{t("published.form.fields.excerpt")}</label>
-            <textarea
-              rows={2}
-              className={inputClass}
-              value={form.excerpt}
-              onChange={set("excerpt")}
-              placeholder={t("published.form.fields.excerptPlaceholder")}
-            />
-          </div>
-
-          <div>
-            <label className={labelClass}>{t("published.form.fields.description")}</label>
-            <textarea
-              rows={4}
-              className={inputClass}
-              value={form.description}
-              onChange={set("description")}
-            />
-          </div>
-
-          {isEdit && item ? (
-            <IssueArticlesPanel issueId={item.id} magazineId={item.magazine_id ?? null} />
-          ) : null}
-
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--tott-card-border)] pt-4">
-            {!isEdit && !translateFrom ? (
-              <label className="flex items-center gap-2 text-xs text-[var(--tott-muted)]">
-                <input
-                  type="checkbox"
-                  data-testid="issue-create-all-languages"
-                  checked={createAll}
-                  onChange={(e) => setCreateAll(e.target.checked)}
-                  className="h-4 w-4 accent-[var(--tott-accent-gold)]"
-                />
-                {t("published.form.createAllLanguages")}
-              </label>
-            ) : (
-              <span />
-            )}
-            <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={requestClose}
-              disabled={busy}
-              className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
-            >
-              {t("published.form.cancel")}
-            </button>
-            <button
-              type="submit"
-              disabled={busy}
-              className="inline-flex items-center gap-2 rounded-lg border px-5 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
-              style={{
-                borderColor: "color-mix(in srgb, var(--tott-accent-gold) 60%, transparent)",
-                backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
-                color: "var(--tott-accent-gold)",
-              }}
-            >
-              {busy ? (
-                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              ) : null}
-              {busy
-                ? t("published.form.saving")
-                : isEdit
-                  ? t("published.form.save")
-                  : t("published.form.create")}
-            </button>
-            </div>
-          </div>
         </form>
 
         {confirmDiscard ? (

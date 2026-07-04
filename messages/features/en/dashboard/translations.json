@@ -35,7 +35,17 @@
         "notAdded": "Not added yet",
         "addTranslation": "Add translation",
         "edit": "Edit",
-        "finish": "Finish"
+        "finish": "Finish",
+        "step": "Step {current}/{total}",
+        "reviewStep": "Review before saving",
+        "reviewStepShort": "Review",
+        "clonedNotice": "Fields below are copied from the primary language — edit them to write the {language} version, or leave as-is and Skip.",
+        "willCreate": "Will be created",
+        "willSkip": "Skipped",
+        "back": "Back",
+        "skipLanguage": "Skip for now",
+        "next": "Next",
+        "confirmSave": "Confirm & save"
       }
     }
   }

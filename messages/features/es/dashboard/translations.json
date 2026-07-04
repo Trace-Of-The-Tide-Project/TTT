@@ -35,7 +35,17 @@
         "notAdded": "Aún no añadido",
         "addTranslation": "Añadir traducción",
         "edit": "Editar",
-        "finish": "Finalizar"
+        "finish": "Finalizar",
+        "step": "Paso {current}/{total}",
+        "reviewStep": "Revisar antes de guardar",
+        "reviewStepShort": "Revisar",
+        "clonedNotice": "Los campos de abajo se copiaron del idioma principal — edítalos para escribir la versión en {language}, o déjalos así y pulsa Omitir.",
+        "willCreate": "Se creará",
+        "willSkip": "Omitido",
+        "back": "Atrás",
+        "skipLanguage": "Omitir por ahora",
+        "next": "Siguiente",
+        "confirmSave": "Confirmar y guardar"
       }
     }
   }

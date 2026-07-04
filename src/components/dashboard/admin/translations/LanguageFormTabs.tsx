@@ -21,17 +21,9 @@ type Props = {
   onSelect: (locale: string) => void;
   status: Record<string, LanguageTabStatus>;
   disabled?: boolean;
-  /**
-   * When set, tabs render as real `<a href>` instead of buttons, and clicking
-   * one navigates there instead of calling `onSelect`. For editors (e.g.
-   * articles) where switching language means opening a different record and
-   * an existing capture-phase click listener guards unsaved work on real
-   * anchors — a plain button click would bypass that guard.
-   */
-  hrefFor?: (locale: string) => string | undefined;
 };
 
-export function LanguageFormTabs({ active, onSelect, status, disabled, hrefFor }: Props) {
+export function LanguageFormTabs({ active, onSelect, status, disabled }: Props) {
   const t = useIntl("Dashboard.translations");
 
   return (
@@ -65,20 +57,6 @@ export function LanguageFormTabs({ active, onSelect, status, disabled, hrefFor }
             ) : null}
           </>
         );
-
-        const href = hrefFor?.(loc);
-        if (href && !isActive) {
-          return (
-            <a
-              key={loc}
-              href={href}
-              className={`${base} ${tone}`}
-              title={title}
-            >
-              {badge}
-            </a>
-          );
-        }
 
         return (
           <button

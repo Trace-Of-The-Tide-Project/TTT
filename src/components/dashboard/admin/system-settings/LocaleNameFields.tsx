@@ -8,9 +8,8 @@ import { routing } from "@/i18n/routing";
  *
  * Renders one field per NON-default locale — the modal's existing single name
  * field stays the canonical (default-locale) value, and these populate the
- * other languages of `name_i18n`. Only mounted when the extended-translations
- * flag is on (the backend `name_i18n` column is still pending — see
- * docs/backend-asks-translations.md).
+ * other languages of `name_i18n`, stored in the backend JSONB `name_i18n`
+ * column (migration 023) and resolved per viewer language by the API.
  */
 
 const LANGUAGE_LABELS: Record<string, string> = {

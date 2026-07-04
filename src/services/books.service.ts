@@ -69,6 +69,10 @@ export type GetBooksParams = {
   min_price?: number;
   max_price?: number;
   min_rating?: number;
+  /** "group" collapses translation groups to one book (public feeds). */
+  dedupe?: string;
+  /** Language the dedupe prefers when the group has it (en|ar|es|fr). */
+  viewer_lang?: string;
 };
 
 export type BookPreviewMeta = {

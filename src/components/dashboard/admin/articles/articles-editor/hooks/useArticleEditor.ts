@@ -24,6 +24,8 @@ import {
   type ArticleAccessLevel,
 } from "@/services/articles.service";
 import { useArticle } from "@/hooks/queries/articles";
+import { useTranslations as useTranslationGroup } from "@/hooks/queries/translations";
+import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
 import { uploadArticleAssetPath } from "@/services/uploads.service";
 import { buildArticleBlocksFromEditor } from "../lib/build-api-blocks";
 import { articleDetailBlocksToContentBlocks } from "../lib/api-blocks-to-content-blocks";
@@ -40,6 +42,17 @@ export type ContentEditorLayoutProps = {
 
 const ADMIN_ARTICLES_PATH = "/admin/articles";
 const SUCCESS_TOAST_MS = 3200;
+
+/** Per-locale (translatable) form state — Pattern 2 language tabs. Everything
+ * else (category, tags, cover, access, scheduling) is shared from the primary. */
+type LangForm = {
+  title: string;
+  blocks: ContentBlock[];
+  seoTitle: string;
+  metaDescription: string;
+};
+
+const langFormFingerprint = (f: LangForm) => JSON.stringify(f);
 
 export function useArticleEditor({
   config: configFromProps,
@@ -92,17 +105,20 @@ export function useArticleEditor({
   const [workflowStatus, setWorkflowStatus] = useState<ArticleWorkflowStatus>("draft");
   const [scheduledAt, setScheduledAt] = useState<string | null>(null);
   const [category, setCategory] = useState("");
+  // Primary language of the piece; in edit mode this is the loaded article's
+  // language and never changes with tab switches.
   const [language, setLanguage] = useState(initialLanguage || "en");
-  // Create-mode option: after saving the original, also create drafts of the
-  // same content in every other locale (one translation group).
-  const [createAllLanguages, setCreateAllLanguages] = useState(false);
-  // Per-language content buffers (create mode): switching the language chip
-  // stashes the current text and restores what was typed for the target
-  // language, so the admin can author all versions before one save. A locale
-  // never visited inherits the active content as its starting point.
-  const languageBuffersRef = useRef<
-    Record<string, { title: string; blocks: ContentBlock[]; seoTitle: string; metaDescription: string }>
-  >({});
+  // In-place language tabs (Pattern 2, see LanguageFormTabs docblock): the
+  // ACTIVE tab lives in the regular title/blocks/seo states; inactive tabs are
+  // stashed here on switch. A locale absent from the buffers has never been
+  // opened.
+  const [activeLang, setActiveLang] = useState(initialLanguage || "en");
+  const activeLangRef = useRef(activeLang);
+  activeLangRef.current = activeLang;
+  const languageBuffersRef = useRef<Record<string, LangForm>>({});
+  // Per-locale pristine fingerprints; a tab whose form differs from its
+  // baseline is "dirty" and gets saved as a sibling version.
+  const langBaselineRef = useRef<Record<string, string>>({});
   const [translationOf, setTranslationOf] = useState<string | undefined>(initialTranslationOf);
   const [originalTitle, setOriginalTitle] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
@@ -140,29 +156,113 @@ export function useArticleEditor({
     }
   }, [configFromProps, articleId]);
 
-  /** Chip/select language change. In create mode this swaps the per-language
-   * content buffers; in edit mode it just retags the article's language. */
+  // Live form of the ACTIVE tab (the regular states) + ref for async readers.
+  const liveForm: LangForm = { title, blocks, seoTitle, metaDescription };
+  const liveFormRef = useRef(liveForm);
+  liveFormRef.current = liveForm;
+
+  // Capture a per-tab pristine baseline shortly after a tab is (re)seeded.
+  // ponytail: same 1.5s settle window as the global dirty baseline — rich-text
+  // editors normalize their HTML right after mounting.
+  const [langBaselineTick, setLangBaselineTick] = useState(0);
+  useEffect(() => {
+    const loc = activeLang;
+    if (langBaselineRef.current[loc]) return;
+    const id = setTimeout(() => {
+      langBaselineRef.current[loc] = langFormFingerprint(liveFormRef.current);
+    }, 1500);
+    return () => clearTimeout(id);
+  }, [activeLang, langBaselineTick]);
+
+  // Existing sibling versions of the translation group (edit mode).
+  const groupType = config.contentType === "open-call" ? "open-call" : "article";
+  const groupQuery = useTranslationGroup(groupType, articleId);
+  const versionIds = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const v of groupQuery.data?.versions ?? []) map[v.language] = v.id;
+    return map;
+  }, [groupQuery.data]);
+
+  const applyLangForm = useCallback((f: LangForm) => {
+    setTitle(f.title);
+    setBlocks(f.blocks);
+    setSeoTitle(f.seoTitle);
+    setMetaDescription(f.metaDescription);
+  }, []);
+
+  /** Tab switch (also wired to the settings language select). Stashes the
+   * active tab and restores/seed the target: a previously opened tab restores
+   * its buffer; an existing sibling (edit mode) is lazily fetched; a brand-new
+   * tab keeps the current content on screen as the translation starting point. */
   const switchLanguage = useCallback(
     (next: string) => {
-      if (next === language) return;
-      if (isEditMode) {
-        setLanguage(next);
-        return;
-      }
-      languageBuffersRef.current[language] = { title, blocks, seoTitle, metaDescription };
+      if (next === activeLang || busy) return;
+      languageBuffersRef.current[activeLang] = { title, blocks, seoTitle, metaDescription };
       const buf = languageBuffersRef.current[next];
       if (buf) {
-        setTitle(buf.title);
-        setBlocks(buf.blocks);
-        setSeoTitle(buf.seoTitle);
-        setMetaDescription(buf.metaDescription);
+        applyLangForm(buf);
+      } else if (isEditMode && versionIds[next]) {
+        // Existing sibling never opened this session — fetch it. The current
+        // content stays visible until the fetch lands; if the admin already
+        // started typing in the tab, the fetch never clobbers their work.
+        const cloneFp = langFormFingerprint({ title, blocks, seoTitle, metaDescription });
+        getArticleById(versionIds[next]).then((a) => {
+          if (!a || activeLangRef.current !== next) return;
+          if (langFormFingerprint(liveFormRef.current) !== cloneFp) return;
+          const mapped = articleDetailBlocksToContentBlocks(a.blocks);
+          const f: LangForm = {
+            title: a.title ?? "",
+            blocks: mapped.length
+              ? mapped
+              : [{ id: crypto.randomUUID(), type: "paragraph", content: "" }],
+            seoTitle: a.seo_title?.trim() ?? "",
+            metaDescription: a.meta_description?.trim() ?? "",
+          };
+          applyLangForm(f);
+          // Re-capture the pristine baseline from the fetched content.
+          delete langBaselineRef.current[next];
+          setLangBaselineTick((n) => n + 1);
+        });
       }
-      // No buffer yet: keep the current content on screen as the translation
-      // starting point for the new language.
-      setLanguage(next);
+      // else: clone-in-place — current content is the starting point.
+      setActiveLang(next);
     },
-    [language, isEditMode, title, blocks, seoTitle, metaDescription],
+    [activeLang, busy, title, blocks, seoTitle, metaDescription, isEditMode, versionIds, applyLangForm],
   );
+
+  /** Create mode only: the settings language select re-tags which language is
+   * the PRIMARY (the one required and saved first). Follows the tab switch. */
+  const changePrimaryLanguage = useCallback(
+    (next: string) => {
+      if (isEditMode) return;
+      switchLanguage(next);
+      setLanguage(next.trim() || "en");
+    },
+    [isEditMode, switchLanguage],
+  );
+
+  /** A tab is dirty when its form differs from its pristine baseline. */
+  const langDirtyFor = useCallback(
+    (loc: string): boolean => {
+      const base = langBaselineRef.current[loc];
+      if (!base) return false;
+      const f = loc === activeLangRef.current ? liveFormRef.current : languageBuffersRef.current[loc];
+      return f ? langFormFingerprint(f) !== base : false;
+    },
+    [],
+  );
+
+  // Computed per render so typing updates the dot immediately.
+  const tabStatus: Record<string, LanguageTabStatus> = {};
+  for (const loc of routing.locales) {
+    tabStatus[loc] = langDirtyFor(loc)
+      ? "dirty"
+      : loc === language
+        ? "primary"
+        : versionIds[loc] || languageBuffersRef.current[loc]
+          ? "existing"
+          : "empty";
+  }
 
   // ── Dirty tracking ──
   // Fingerprint of everything the admin can edit; the baseline is captured
@@ -216,7 +316,12 @@ export function useArticleEditor({
     );
     const sat = a.scheduled_at?.trim();
     setScheduledAt(sat && sat.length ? sat : null);
-    setLanguage((a.language || "en").trim() || "en");
+    const loadedLang = (a.language || "en").trim() || "en";
+    setLanguage(loadedLang);
+    setActiveLang(loadedLang);
+    languageBuffersRef.current = {};
+    langBaselineRef.current = {};
+    setLangBaselineTick((n) => n + 1);
     setTranslationOf(a.translation_of?.trim() || undefined);
     setVisibility((a.visibility || "public").toLowerCase() === "private" ? "private" : "public");
     const level = (a.access_level || "open").trim().toLowerCase();
@@ -284,15 +389,11 @@ export function useArticleEditor({
   );
 
   const safeReturnTo = returnTo && returnTo.startsWith("/admin/") ? returnTo : undefined;
+  // Translate wizard retired — sibling languages are authored in-place via the
+  // tabs, so saving always returns to the list (or the caller's return URL).
   const destinationAfterSave = useCallback(
-    (createdId?: string | null) => {
-      if (safeReturnTo) return safeReturnTo;
-      if (!isEditMode && !translationOf && createdId && config.contentType === "article") {
-        return `/admin/articles/translate/${createdId}`;
-      }
-      return ADMIN_ARTICLES_PATH;
-    },
-    [safeReturnTo, isEditMode, translationOf, config.contentType],
+    () => safeReturnTo ?? ADMIN_ARTICLES_PATH,
+    [safeReturnTo],
   );
 
   const addBlock = useCallback((type: BlockType) => {
@@ -326,8 +427,17 @@ export function useArticleEditor({
     setBlocks((prev) => prev.filter((b) => b.id !== id));
   }, []);
 
-  const buildPayload = useCallback(async () => {
-    const apiBlocks = await buildArticleBlocksFromEditor(blocks, { onUploading: setMediaUploading });
+  /** Save always builds from the PRIMARY tab — the active tab may be a sibling. */
+  const getPrimaryForm = useCallback(
+    (): LangForm =>
+      activeLangRef.current === language
+        ? liveFormRef.current
+        : (languageBuffersRef.current[language] ?? liveFormRef.current),
+    [language],
+  );
+
+  const buildPayload = useCallback(async (f: LangForm) => {
+    const apiBlocks = await buildArticleBlocksFromEditor(f.blocks, { onUploading: setMediaUploading });
     let resolvedCover = coverImage;
     if (coverFile) {
       setMediaUploading(true);
@@ -340,7 +450,7 @@ export function useArticleEditor({
     }
     const cid = collectionId.trim();
     return {
-      title: title.trim(),
+      title: f.title.trim(),
       content_type: config.contentType,
       category: category.trim(),
       language: language.trim() || undefined,
@@ -349,8 +459,8 @@ export function useArticleEditor({
       preview_block_count: accessLevel === "preview" ? (previewBlockCount ?? undefined) : undefined,
       price: accessLevel === "paid" ? (price ?? undefined) : undefined,
       currency: accessLevel === "paid" ? currency : undefined,
-      seo_title: seoTitle.trim() || undefined,
-      meta_description: metaDescription.trim() || undefined,
+      seo_title: f.seoTitle.trim() || undefined,
+      meta_description: f.metaDescription.trim() || undefined,
       collection_id: cid || undefined,
       tag_ids: tagIds.length ? tagIds : undefined,
       cover_image: resolvedCover || undefined,
@@ -358,50 +468,62 @@ export function useArticleEditor({
       translation_of: translationOf || undefined,
     };
   }, [
-    blocks, title, config.contentType, category, language, visibility,
+    config.contentType, category, language, visibility,
     accessLevel, previewBlockCount, price, currency,
-    seoTitle, metaDescription, collectionId, tagIds, coverImage, coverFile, translationOf,
+    collectionId, tagIds, coverImage, coverFile, translationOf,
   ]);
 
-  /** Create-mode bulk option: create drafts in every other locale, linked to
-   * the original's translation group. A locale the admin authored via the
-   * language chips uses ITS buffered content; untouched locales get a copy of
-   * the original. Best effort — a failed sibling never blocks the original. */
-  const createSiblingLanguageVersions = useCallback(
-    async (payload: Awaited<ReturnType<typeof buildPayload>>, originalId: string | null | undefined) => {
-      if (!createAllLanguages || isEditMode || !originalId) return;
-      const originalLang = (payload.language ?? "en").toLowerCase();
+  /** After the primary saves: persist each OTHER dirty tab. An existing
+   * sibling version is PATCHed; a new locale is POSTed as a draft linked to
+   * the translation group. Best effort — a failed sibling never blocks the
+   * primary. Siblings stay drafts even when the primary publishes. */
+  const saveDirtySiblings = useCallback(
+    async (payload: Awaited<ReturnType<typeof buildPayload>>, groupId: string | null | undefined) => {
       for (const loc of routing.locales) {
-        if (loc === originalLang) continue;
+        if (loc === language || !langDirtyFor(loc)) continue;
+        const f =
+          loc === activeLangRef.current ? liveFormRef.current : languageBuffersRef.current[loc];
+        if (!f) continue;
         try {
-          const buf = languageBuffersRef.current[loc];
-          const sibling = { ...payload, language: loc, translation_of: originalId };
-          if (buf) {
-            sibling.title = buf.title.trim() || payload.title;
-            const built = await buildArticleBlocksFromEditor(buf.blocks, {
-              onUploading: setMediaUploading,
+          const built = await buildArticleBlocksFromEditor(f.blocks, {
+            onUploading: setMediaUploading,
+          });
+          const sibId = versionIds[loc];
+          if (sibId) {
+            await updateArticle(sibId, {
+              title: f.title.trim() || undefined,
+              blocks: built.length ? built : undefined,
+              seo_title: f.seoTitle.trim() || undefined,
+              meta_description: f.metaDescription.trim() || undefined,
             });
-            // All-empty buffer (visited but body untouched) → copy original.
-            sibling.blocks = built.length ? built : payload.blocks;
-            sibling.seo_title = buf.seoTitle.trim() || undefined;
-            sibling.meta_description = buf.metaDescription.trim() || undefined;
+          } else if (groupId) {
+            await createArticle({
+              ...payload,
+              language: loc,
+              translation_of: groupId,
+              title: f.title.trim() || payload.title,
+              // All-empty tab body → copy the primary's blocks.
+              blocks: built.length ? built : payload.blocks,
+              seo_title: f.seoTitle.trim() || undefined,
+              meta_description: f.metaDescription.trim() || undefined,
+            });
           }
-          await createArticle(sibling);
         } catch {
-          /* sibling may already exist or fail validation — original stands */
+          /* sibling may already exist or fail validation — primary stands */
         }
       }
     },
-    [createAllLanguages, isEditMode],
+    [language, langDirtyFor, versionIds],
   );
 
   const handleSaveDraft = useCallback(async () => {
-    if (!title.trim()) { setError(tLayout("validationTitle")); return; }
+    const pf = getPrimaryForm();
+    if (!pf.title.trim()) { setError(tLayout("validationTitle")); return; }
     if (!category.trim()) { setError(tLayout("validationCategory")); return; }
     setError(null);
     setBusy(true);
     try {
-      const payload = await buildPayload();
+      const payload = await buildPayload(pf);
       if (payload.blocks.length === 0) { setError(tLayout("validationBlocksDraft")); return; }
       if (isEditMode && articleId) {
         const status: ArticleLifecycleStatus =
@@ -409,32 +531,34 @@ export function useArticleEditor({
           : workflowStatus === "published" ? "published"
           : "scheduled";
         await updateArticle(articleId, { ...editPatchFromPayload(payload), status });
+        await saveDirtySiblings(payload, articleId);
         notifySuccessAndLeave(tLayout("successChangesSaved"), destinationAfterSave());
         return;
       }
       const res = await createArticle(payload);
       const id = getArticleIdFromCreateResponse(res);
-      await createSiblingLanguageVersions(payload, id);
-      notifySuccessAndLeave(tLayout("successDraftSaved"), destinationAfterSave(id));
+      await saveDirtySiblings(payload, translationOf ?? id);
+      notifySuccessAndLeave(tLayout("successDraftSaved"), destinationAfterSave());
     } catch (e) {
       setError(translateErr(e));
     } finally {
       if (!pendingDelayedNavRef.current) setBusy(false);
     }
   }, [
-    title, category, buildPayload, notifySuccessAndLeave, destinationAfterSave,
+    getPrimaryForm, category, buildPayload, notifySuccessAndLeave, destinationAfterSave,
     isEditMode, articleId, workflowStatus, tLayout, translateErr,
-    createSiblingLanguageVersions,
+    saveDirtySiblings, translationOf,
   ]);
 
   const handlePublish = useCallback(async () => {
     if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
-    if (!title.trim()) { setError(tLayout("validationTitle")); return; }
+    const pf = getPrimaryForm();
+    if (!pf.title.trim()) { setError(tLayout("validationTitle")); return; }
     if (!category.trim()) { setError(tLayout("validationCategory")); return; }
     setError(null);
     setBusy(true);
     try {
-      const payload = await buildPayload();
+      const payload = await buildPayload(pf);
       if (payload.blocks.length === 0) { setError(tLayout("validationBlocksPublish")); return; }
       if (isEditMode && articleId) {
         await updateArticle(articleId, editPatchFromPayload(payload));
@@ -442,6 +566,7 @@ export function useArticleEditor({
           await publishArticle(articleId);
           initialWasDraftRef.current = false;
         }
+        await saveDirtySiblings(payload, articleId);
         notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave());
         return;
       }
@@ -451,32 +576,34 @@ export function useArticleEditor({
       await publishArticle(id);
       // Siblings stay drafts even when the original publishes — they still
       // need translating before going live.
-      await createSiblingLanguageVersions(payload, id);
-      notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave(id));
+      await saveDirtySiblings(payload, translationOf ?? id);
+      notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave());
     } catch (e) {
       setError(translateErr(e));
     } finally {
       if (!pendingDelayedNavRef.current) setBusy(false);
     }
   }, [
-    workflowStatus, title, category, buildPayload, notifySuccessAndLeave,
+    workflowStatus, getPrimaryForm, category, buildPayload, notifySuccessAndLeave,
     destinationAfterSave, isEditMode, articleId, tLayout, translateErr,
-    createSiblingLanguageVersions,
+    saveDirtySiblings, translationOf,
   ]);
 
   const handleScheduleConfirm = useCallback(
     async (iso: string) => {
       if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
-      if (!title.trim()) { setError(tLayout("validationTitle")); setScheduleModalOpen(false); return; }
+      const pf = getPrimaryForm();
+      if (!pf.title.trim()) { setError(tLayout("validationTitle")); setScheduleModalOpen(false); return; }
       if (!category.trim()) { setError(tLayout("validationCategory")); setScheduleModalOpen(false); return; }
       setError(null);
       setBusy(true);
       try {
-        const payload = await buildPayload();
+        const payload = await buildPayload(pf);
         if (payload.blocks.length === 0) { setError(tLayout("validationBlocksSchedule")); setScheduleModalOpen(false); return; }
         if (isEditMode && articleId) {
           await updateArticle(articleId, { ...editPatchFromPayload(payload), status: "scheduled" });
           await scheduleArticle(articleId, iso);
+          await saveDirtySiblings(payload, articleId);
           setScheduleModalOpen(false);
           notifySuccessAndLeave(tLayout("successArticleScheduled"), destinationAfterSave());
           return;
@@ -485,9 +612,9 @@ export function useArticleEditor({
         const id = getArticleIdFromCreateResponse(res);
         if (!id) { setError(tLayout("errorCreateNoIdSchedule")); setScheduleModalOpen(false); return; }
         await scheduleArticle(id, iso);
-        await createSiblingLanguageVersions(payload, id);
+        await saveDirtySiblings(payload, translationOf ?? id);
         setScheduleModalOpen(false);
-        notifySuccessAndLeave(tLayout("successArticleScheduled"), destinationAfterSave(id));
+        notifySuccessAndLeave(tLayout("successArticleScheduled"), destinationAfterSave());
       } catch (e) {
         setError(translateErr(e));
         setScheduleModalOpen(false);
@@ -496,9 +623,9 @@ export function useArticleEditor({
       }
     },
     [
-      workflowStatus, title, category, buildPayload, notifySuccessAndLeave,
+      workflowStatus, getPrimaryForm, category, buildPayload, notifySuccessAndLeave,
       destinationAfterSave, isEditMode, articleId, tLayout, translateErr,
-      createSiblingLanguageVersions,
+      saveDirtySiblings, translationOf,
     ],
   );
 
@@ -528,8 +655,10 @@ export function useArticleEditor({
     scheduledAt,
     category, setCategory,
     language, setLanguage,
+    activeLang,
     switchLanguage,
-    createAllLanguages, setCreateAllLanguages,
+    changePrimaryLanguage,
+    tabStatus,
     isDirty,
     translationOf,
     originalTitle,

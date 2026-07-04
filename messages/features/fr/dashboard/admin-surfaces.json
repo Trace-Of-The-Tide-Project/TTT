@@ -230,7 +230,8 @@
           "pending": "Marquer en attente",
           "draft": "Déplacer en brouillon",
           "flagged": "Signaler"
-        }
+        },
+        "edit": "Modifier"
       },
       "detail": {
         "closeModalAria": "Fermer la fenêtre",
@@ -272,6 +273,18 @@
       "image": {
         "loadError": "Impossible de charger l'image",
         "unavailable": "Image indisponible"
+      },
+      "editForm": {
+        "title": "Modifier la contribution",
+        "closeAria": "Fermer",
+        "fieldTitle": "Titre",
+        "fieldDescription": "Description",
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "cancel": "Annuler",
+        "toasts": {
+          "saved": "Contribution enregistrée"
+        }
       }
     },
     "cmsEditor": {

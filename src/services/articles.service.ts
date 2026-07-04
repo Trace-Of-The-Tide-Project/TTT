@@ -371,11 +371,29 @@ export async function getArticleById(articleId: string): Promise<ArticleDetail |
   }
 }
 
+export async function getArticleBySlug(slug: string): Promise<ArticleDetail | null> {
+  try {
+    const { data } = await api.get<unknown>(`/articles/slug/${encodeURIComponent(slug)}`);
+    const detail = unwrapArticleDetailPayload(data);
+    if (!detail) return null;
+    return {
+      ...detail,
+      blocks: Array.isArray(detail.blocks) ? detail.blocks : [],
+      tags: Array.isArray(detail.tags) ? detail.tags : [],
+      contributors: Array.isArray(detail.contributors) ? detail.contributors : [],
+    };
+  } catch (e) {
+    if (isAxiosError(e) && e.response?.status === 404) return null;
+    throw e;
+  }
+}
+
 // ── Related articles ───────────────────────────────────────────
 
 export type RelatedArticleItem = {
   id: string;
   title: string;
+  slug?: string | null;
   cover_image?: string | null;
   published_at?: string | null;
   edition?: string | null;
@@ -468,6 +486,8 @@ export type UpdateArticlePayload = {
   preview_block_count?: number | null;
   price?: number | null;
   currency?: string;
+  seo_title?: string;
+  meta_description?: string;
 };
 
 function omitUndefined<T extends Record<string, unknown>>(obj: T): Record<string, unknown> {

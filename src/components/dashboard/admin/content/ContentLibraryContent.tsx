@@ -28,17 +28,28 @@ import {
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   contributionFilePublicUrl,
+  getContribution,
   type ContributionFile,
   type ContributionListItem,
   type ContributionListMeta,
   type ContributionStatusValue,
 } from "@/services/contributions.service";
-import { useContributions } from "@/hooks/queries/contributions";
+import { useContributions, contributionsKeys } from "@/hooks/queries/contributions";
 import {
+  useCreateContribution,
   useDeleteContribution,
+  useUpdateContribution,
   useUpdateContributionStatus,
 } from "@/hooks/mutations/contributions";
 import { formatApiError } from "@/lib/api/error-message";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  useTranslations as useTranslationGroup,
+  translationKeys,
+} from "@/hooks/queries/translations";
+import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import { routing } from "@/i18n/routing";
 
 const ROWS_PER_PAGE = 10;
 
@@ -151,7 +162,10 @@ function ContentActionsDropdown({
               label: string;
               destructive?: boolean;
               divider?: boolean;
-            }[] = [{ id: "view", label: ta("view") }];
+            }[] = [
+              { id: "view", label: ta("view") },
+              { id: "edit", label: ta("edit") },
+            ];
             // One "Set status → X" entry per backend status, skipping the
             // status the item is already in.
             for (const s of SETTABLE_STATUSES) {
@@ -407,6 +421,272 @@ function ContributionDetailModal({
   );
 }
 
+type EditFormState = { title: string; description: string };
+
+/**
+ * In-place multi-language edit modal for a contribution (Pattern 2).
+ * Translatable text (title, description) gets one tab per locale; everything
+ * else (type, files, contributor info, status) stays on the primary record.
+ * Save: PATCH existing versions, POST with translation_of=<primaryId> for new.
+ */
+function ContributionEditModal({
+  item,
+  onClose,
+}: {
+  item: ContributionListItem;
+  onClose: () => void;
+}) {
+  const t = useTranslations("Dashboard.contentLibrary.editForm");
+  const tTr = useTranslations("Dashboard.translations");
+  const qc = useQueryClient();
+
+  const primaryLang = (item.language ?? "en").trim() || "en";
+  const [activeLang, setActiveLang] = useState(primaryLang);
+  const [forms, setForms] = useState<Record<string, EditFormState>>({
+    [primaryLang]: { title: item.title, description: item.description ?? "" },
+  });
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
+  const [langLoading, setLangLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const groupQuery = useTranslationGroup("contribution", item.id);
+  const updateMutation = useUpdateContribution();
+  const createMutation = useCreateContribution();
+  const busy = saving || langLoading;
+
+  // locale → existing version id (includes the item itself).
+  const versionIds = useMemo(() => {
+    const map: Record<string, string> = { [primaryLang]: item.id };
+    for (const v of groupQuery.data?.versions ?? []) map[v.language] = v.id;
+    return map;
+  }, [groupQuery.data, primaryLang, item.id]);
+
+  const form = forms[activeLang] ?? { title: "", description: "" };
+
+  const updateForm = useCallback(
+    (patch: Partial<EditFormState>) => {
+      setForms((prev) => ({
+        ...prev,
+        [activeLang]: { ...(prev[activeLang] ?? { title: "", description: "" }), ...patch },
+      }));
+      setDirty((prev) => (prev[activeLang] ? prev : { ...prev, [activeLang]: true }));
+    },
+    [activeLang],
+  );
+
+  // Tab switch — seed the locale on first open (existing version → fetch,
+  // otherwise clone the primary tab).
+  const handleSelectLang = useCallback(
+    async (loc: string) => {
+      if (loc === activeLang || busy) return;
+      if (!forms[loc]) {
+        const existingId = versionIds[loc];
+        if (existingId && existingId !== item.id) {
+          setLangLoading(true);
+          try {
+            const c = await getContribution(existingId);
+            setForms((prev) =>
+              prev[loc]
+                ? prev
+                : {
+                    ...prev,
+                    [loc]: { title: c?.title ?? "", description: c?.description ?? "" },
+                  },
+            );
+          } finally {
+            setLangLoading(false);
+          }
+        } else {
+          setForms((prev) =>
+            prev[loc]
+              ? prev
+              : { ...prev, [loc]: { ...(prev[primaryLang] ?? { title: "", description: "" }) } },
+          );
+        }
+      }
+      setActiveLang(loc);
+    },
+    [activeLang, busy, forms, versionIds, primaryLang, item.id],
+  );
+
+  const tabStatus = useMemo(() => {
+    const map: Record<string, LanguageTabStatus> = {};
+    for (const loc of routing.locales) {
+      map[loc] = dirty[loc]
+        ? "dirty"
+        : loc === primaryLang
+          ? "primary"
+          : versionIds[loc] || forms[loc]
+            ? "existing"
+            : "empty";
+    }
+    return map;
+  }, [dirty, primaryLang, versionIds, forms]);
+
+  const handleSave = useCallback(async () => {
+    if (busy) return;
+    const dirtyLocales = routing.locales.filter((loc) => dirty[loc] && forms[loc]);
+    if (dirtyLocales.length === 0) {
+      onClose();
+      return;
+    }
+    setSaving(true);
+    const failed: string[] = [];
+    try {
+      // Primary first, then the rest — new versions link to the primary id.
+      const ordered = [
+        ...dirtyLocales.filter((l) => l === primaryLang),
+        ...dirtyLocales.filter((l) => l !== primaryLang),
+      ];
+      for (const loc of ordered) {
+        const f = forms[loc];
+        if (!f || !f.title.trim()) {
+          failed.push(loc);
+          continue;
+        }
+        try {
+          const existingId = versionIds[loc];
+          if (existingId) {
+            await updateMutation.mutateAsync({
+              id: existingId,
+              payload: { title: f.title.trim(), description: f.description },
+            });
+          } else {
+            // POST is multipart (files interceptor) — send FormData. Contributor
+            // identity + consent are inherited from the primary record.
+            const fd = new FormData();
+            fd.append("title", f.title.trim());
+            fd.append("description", f.description);
+            fd.append("language", loc);
+            fd.append("translation_of", item.id);
+            if (item.type_id) fd.append("type_id", item.type_id);
+            fd.append(
+              "contributor_name",
+              item.contributor_name ?? item.user?.full_name ?? "—",
+            );
+            fd.append(
+              "contributor_email",
+              item.contributor_email ?? item.user?.email ?? "unknown@example.com",
+            );
+            fd.append("consent_given", "true");
+            await createMutation.mutateAsync(fd);
+          }
+          setDirty((prev) => ({ ...prev, [loc]: false }));
+        } catch {
+          failed.push(loc);
+        }
+      }
+      qc.invalidateQueries({ queryKey: contributionsKeys.all });
+      qc.invalidateQueries({ queryKey: translationKeys.group("contribution", item.id) });
+      if (failed.length === 0) {
+        toast.success(t("toasts.saved"));
+        onClose();
+      } else {
+        toast.error(
+          tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }),
+        );
+      }
+    } finally {
+      setSaving(false);
+    }
+  }, [busy, dirty, forms, versionIds, primaryLang, item, updateMutation, createMutation, qc, t, tTr, onClose]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  if (typeof document === "undefined") return null;
+
+  const inputClass =
+    "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-accent-gold)]/60 focus:outline-none";
+  const rtlProps = activeLang === "ar" ? ({ dir: "rtl", lang: "ar" } as const) : {};
+
+  return createPortal(
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-3 sm:p-4">
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/45 backdrop-blur-md"
+        onClick={onClose}
+        aria-label={t("closeAria")}
+      />
+      <div
+        className="relative flex max-h-[94vh] w-full max-w-[640px] flex-col overflow-hidden rounded-[20px] border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--tott-card-border)] px-6 py-5">
+          <h2 className="min-w-0 truncate text-base font-bold text-foreground">
+            {t("title")}
+          </h2>
+          <LanguageFormTabs
+            active={activeLang}
+            onSelect={(loc) => void handleSelectLang(loc)}
+            status={tabStatus}
+            disabled={busy}
+          />
+        </div>
+
+        <div className="flex-1 space-y-4 overflow-y-auto px-6 py-5">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-[var(--tott-dash-gold-label)]">
+              {t("fieldTitle")}
+            </label>
+            <input
+              type="text"
+              className={inputClass}
+              value={form.title}
+              onChange={(e) => updateForm({ title: e.target.value })}
+              {...rtlProps}
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-[var(--tott-dash-gold-label)]">
+              {t("fieldDescription")}
+            </label>
+            <textarea
+              className={`${inputClass} min-h-[140px]`}
+              value={form.description}
+              onChange={(e) => updateForm({ description: e.target.value })}
+              {...rtlProps}
+            />
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center justify-end gap-3 border-t border-[var(--tott-card-border)] px-6 py-4">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={busy}
+            className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
+          >
+            {t("cancel")}
+          </button>
+          <button
+            type="button"
+            onClick={() => void handleSave()}
+            disabled={busy}
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/60 bg-[var(--tott-accent-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-dash-gold-text)] transition-colors hover:bg-[var(--tott-accent-gold)]/20 disabled:opacity-40"
+          >
+            {saving && (
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            )}
+            {saving ? t("saving") : t("save")}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] px-3 py-2">
@@ -425,6 +705,7 @@ export function ContentLibraryContent() {
 
   const [page, setPage] = useState(1);
   const [previewItem, setPreviewItem] = useState<ContributionListItem | null>(null);
+  const [editItem, setEditItem] = useState<ContributionListItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ContributionListItem | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
@@ -533,6 +814,10 @@ export function ContentLibraryContent() {
         setPreviewItem(item);
         return;
       }
+      if (actionId === "edit") {
+        setEditItem(item);
+        return;
+      }
       if (actionId.startsWith("status:")) {
         // The backend accepts draft/pending/published/flagged. "Move to draft"
         // is the reversible "archive". See ContributionStatusValue.
@@ -582,6 +867,10 @@ export function ContentLibraryContent() {
           item={previewItem}
           onClose={() => setPreviewItem(null)}
         />
+      )}
+
+      {editItem && (
+        <ContributionEditModal item={editItem} onClose={() => setEditItem(null)} />
       )}
 
       <ConfirmDialog

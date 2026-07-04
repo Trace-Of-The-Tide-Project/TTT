@@ -78,7 +78,7 @@ function toAtriumItem(row: RawArticle): AtriumItem {
     authorName: pickAuthorName(row.author) || null,
     authorAvatar: row.author?.profile?.avatar ?? null,
     type: normalizeContentType(row.content_type),
-    href: previewHrefForContentType(row.content_type ?? undefined, row.id),
+    href: previewHrefForContentType(row.content_type ?? undefined, row.id, row.slug),
     meta: buildMeta(row),
     mediaDuration: row.media_duration ?? null,
   };

@@ -35,7 +35,17 @@
         "notAdded": "لم تُضف بعد",
         "addTranslation": "إضافة ترجمة",
         "edit": "تعديل",
-        "finish": "إنهاء"
+        "finish": "إنهاء",
+        "step": "الخطوة {current}/{total}",
+        "reviewStep": "المراجعة قبل الحفظ",
+        "reviewStepShort": "مراجعة",
+        "clonedNotice": "الحقول أدناه منسوخة من اللغة الأساسية — عدّلها لكتابة نسخة {language}، أو اتركها كما هي واضغط تخطي.",
+        "willCreate": "سيتم إنشاؤه",
+        "willSkip": "تم التخطي",
+        "back": "رجوع",
+        "skipLanguage": "تخطي الآن",
+        "next": "التالي",
+        "confirmSave": "تأكيد الحفظ"
       }
     }
   }

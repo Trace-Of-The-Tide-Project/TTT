@@ -11,7 +11,7 @@ import {
   getCollectionArticles,
   type ArticleDetail,
 } from "@/services/articles.service";
-import { useArticle } from "@/hooks/queries/articles";
+import { useArticle, useArticleBySlug } from "@/hooks/queries/articles";
 import { useRecordArticleView } from "@/hooks/mutations/articles";
 import { theme } from "@/lib/theme";
 import type { ContentPageLayoutProps } from "@/components/content/ContentPageLayout";
@@ -92,7 +92,7 @@ function mapRelated(
       author: a.author?.full_name || a.author?.username || fallbacks.author,
       date: formatShortDate(a.published_at),
       edition: a.edition || a.category || fallbacks.article,
-      href: previewHrefForContentType(a.content_type ?? undefined, a.id),
+      href: previewHrefForContentType(a.content_type ?? undefined, a.id, a.slug),
     }));
 }
 
@@ -115,13 +115,16 @@ function mapCollection(
   };
 }
 
-function ArticleByIdLoader({ id }: { id: string }) {
+function ArticleByIdLoader({ id, slug }: { id?: string; slug?: string }) {
   const t = useTranslations("Content");
   const fallbackAuthor = t("fallbackAuthor");
   const fallbackArticle = t("fallbackArticle");
   const setArticleHeaderMeta = useOptionalArticleReadingHeader()?.setArticleHeaderMeta;
-  const articleQuery = useArticle(id);
+  const idQuery = useArticle(slug ? undefined : id);
+  const slugQuery = useArticleBySlug(slug);
+  const articleQuery = slug ? slugQuery : idQuery;
   const article: ArticleDetail | null = articleQuery.data ?? null;
+  const key = slug ?? id ?? "";
   const phase: "loading" | "ok" | "missing" | "error" = articleQuery.isPending
     ? "loading"
     : articleQuery.error
@@ -140,16 +143,16 @@ function ArticleByIdLoader({ id }: { id: string }) {
   // resets are done during render (React 19's preferred pattern); the
   // ref reset must stay in an effect because refs can't be assigned
   // during render.
-  const [prevId, setPrevId] = useState(id);
-  if (prevId !== id) {
-    setPrevId(id);
+  const [prevId, setPrevId] = useState(key);
+  if (prevId !== key) {
+    setPrevId(key);
     setLiveRelated([]);
     setLiveCollection(null);
     setDisplayViewCount(undefined);
   }
   useEffect(() => {
     recordedIdRef.current = null;
-  }, [id]);
+  }, [key]);
 
   // Seed displayViewCount from the loaded article's view_count
   // synchronously (render-phase prev-value pattern instead of effect).
@@ -168,7 +171,7 @@ function ArticleByIdLoader({ id }: { id: string }) {
   useEffect(() => {
     if (!article) return;
     let cancelled = false;
-    getRelatedArticles(id).then((items) => {
+    getRelatedArticles(article.id).then((items) => {
       if (!cancelled) setLiveRelated(mapRelated(items, { author: fallbackAuthor, article: fallbackArticle }));
     }).catch(() => {});
     if (article.collection_id) {
@@ -179,18 +182,18 @@ function ArticleByIdLoader({ id }: { id: string }) {
     return () => {
       cancelled = true;
     };
-  }, [article, id, fallbackAuthor, fallbackArticle]);
+  }, [article, fallbackAuthor, fallbackArticle]);
 
   useEffect(() => {
     if (phase !== "ok" || !article) return;
-    if (recordedIdRef.current === id) return;
-    recordedIdRef.current = id;
-    recordViewMutation.mutate(id, {
+    if (recordedIdRef.current === article.id) return;
+    recordedIdRef.current = article.id;
+    recordViewMutation.mutate(article.id, {
       onSuccess: (n) => {
         if (n != null) setDisplayViewCount(n);
       },
     });
-  }, [id, phase, article, recordViewMutation]);
+  }, [phase, article, recordViewMutation]);
 
   useEffect(() => {
     if (!setArticleHeaderMeta) return;
@@ -206,7 +209,7 @@ function ArticleByIdLoader({ id }: { id: string }) {
     return () => {
       setArticleHeaderMeta(null);
     };
-  }, [setArticleHeaderMeta, id]);
+  }, [setArticleHeaderMeta, key]);
 
   if (phase === "loading") {
     return (
@@ -278,23 +281,26 @@ function ArticleByIdLoader({ id }: { id: string }) {
 function ContentArticlePageInner({
   demoMedia,
   demoArticle,
+  slug,
 }: {
   demoMedia: ContentPageLayoutProps["media"];
   demoArticle?: DemoArticle;
+  slug?: string;
 }) {
   const searchParams = useSearchParams();
   const setArticleHeaderMeta = useOptionalArticleReadingHeader()?.setArticleHeaderMeta;
   const id = searchParams.get("id")?.trim();
+  const key = slug || id;
 
   useEffect(() => {
-    if (!id && setArticleHeaderMeta) setArticleHeaderMeta(null);
-  }, [id, setArticleHeaderMeta]);
+    if (!key && setArticleHeaderMeta) setArticleHeaderMeta(null);
+  }, [key, setArticleHeaderMeta]);
 
-  if (!id) {
+  if (!key) {
     return <StaticArticleDemo media={demoMedia} article={demoArticle} />;
   }
 
-  return <ArticleByIdLoader id={id} />;
+  return <ArticleByIdLoader id={id} slug={slug} />;
 }
 
 /**
@@ -309,9 +315,11 @@ function ContentArticlePageInner({
 export function ContentArticlePageClient({
   demoMedia = { ...CONTENT_MEDIA_ARTICLE },
   demoArticle,
+  slug,
 }: {
   demoMedia?: ContentPageLayoutProps["media"];
   demoArticle?: DemoArticle;
+  slug?: string;
 } = {}) {
   return (
     <Suspense
@@ -324,7 +332,7 @@ export function ContentArticlePageClient({
         </div>
       }
     >
-      <ContentArticlePageInner demoMedia={demoMedia} demoArticle={demoArticle} />
+      <ContentArticlePageInner demoMedia={demoMedia} demoArticle={demoArticle} slug={slug} />
     </Suspense>
   );
 }

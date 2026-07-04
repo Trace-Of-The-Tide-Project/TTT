@@ -108,10 +108,10 @@ function unwrapList<T>(raw: Envelope<T> | T[] | null): T[] {
   return raw.data ?? [];
 }
 
-async function fetchLatestBooks(): Promise<LatestPublishedItem[]> {
+async function fetchLatestBooks(locale: string): Promise<LatestPublishedItem[]> {
   const raw = await serverGet<{ rows?: RawBook[]; data?: RawBook[] }>(
     "/knowledge/books",
-    { limit: 5, page: 1 },
+    { limit: 5, page: 1, dedupe: "group", viewer_lang: locale },
   );
   const rows: RawBook[] =
     raw?.rows ?? raw?.data ?? (Array.isArray(raw) ? raw : []);
@@ -142,24 +142,29 @@ async function fetchLessReadArticles(locale: string): Promise<LessReadArticleIte
   }));
 }
 
-async function fetchWriters(): Promise<FollowWriterItem[]> {
+async function fetchWriters(locale: string): Promise<FollowWriterItem[]> {
   // Try featured strip first; fall back to the full writers list.
   const featured = await serverGet<Envelope<WriterProfile>>(
     "/writers/featured",
+    { viewer_lang: locale },
   );
   const list = unwrapList(featured);
   if (list.length > 0) return list.map(toWriterItem);
 
   const all = await serverGet<Envelope<WriterProfile>>("/writers", {
     limit: 4,
+    dedupe: "group",
+    viewer_lang: locale,
   });
   return unwrapList(all).slice(0, 4).map(toWriterItem);
 }
 
-async function fetchMagazineIssues(): Promise<MagazineIssueItem[]> {
+async function fetchMagazineIssues(locale: string): Promise<MagazineIssueItem[]> {
   const raw = await serverGet<Envelope<MagazineIssue>>("/magazine-issues", {
     limit: 20,
     status: "published",
+    dedupe: "group",
+    viewer_lang: locale,
   });
   return unwrapList(raw).map((it) => ({
     id: it.id,
@@ -345,10 +350,10 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
     magazineMeta,
     cmsCopy,
   ] = await Promise.all([
-    fetchLatestBooks(),
+    fetchLatestBooks(locale),
     fetchLessReadArticles(locale),
-    fetchWriters(),
-    fetchMagazineIssues(),
+    fetchWriters(locale),
+    fetchMagazineIssues(locale),
     fetchCollaborations(locale),
     fetchMagazineMeta(),
     fetchMagazineCmsCopy(),

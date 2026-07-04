@@ -12,8 +12,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { uploadFileToUrl } from "@/services/uploads.service";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
-import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import { LanguageFormTabs, TranslationWizard } from "@/components/dashboard/admin/translations";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import type { TranslationWizardReviewLine } from "@/components/dashboard/admin/translations/TranslationWizard";
 import {
   useTranslations as useTranslationGroup,
   translationKeys,
@@ -320,6 +321,14 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
   const [coverUploading, setCoverUploading] = useState(false);
   const [pdfUploading, setPdfUploading] = useState(false);
 
+  const wizardLocales = useMemo(
+    () => [initialLang, ...routing.locales.filter((l) => l !== initialLang)],
+    [initialLang],
+  );
+  const [wizardStep, setWizardStep] = useState(0);
+  const isWizard = !isEdit && !isTranslation;
+  const formRef = useRef<HTMLFormElement>(null);
+
   const form = forms[activeLang] ?? { ...EMPTY, language: activeLang as FormState["language"] };
 
   const versionIds = useMemo(() => {
@@ -432,6 +441,30 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
     return map;
   }, [dirty, primaryLang, versionIds, forms]);
 
+  const goToWizardStep = useCallback(
+    (step: number) => {
+      const loc = wizardLocales[step];
+      if (loc && !forms[loc]) {
+        setForms((prev) => ({
+          ...prev,
+          [loc]: { ...(prev[wizardLocales[0]] ?? EMPTY), language: loc as FormState["language"] },
+        }));
+      }
+      if (loc) setActiveLang(loc);
+      setWizardStep(step);
+    },
+    [wizardLocales, forms],
+  );
+  const wizardReviewLines: TranslationWizardReviewLine[] = useMemo(
+    () =>
+      wizardLocales.map((loc) => ({
+        locale: loc,
+        label: t.has(`languages.${loc}`) ? t(`languages.${loc}`) : loc.toUpperCase(),
+        action: loc === wizardLocales[0] || dirty[loc] ? "create" : "skip",
+      })),
+    [wizardLocales, dirty, t],
+  );
+
   const handleCoverUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -521,6 +554,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
     if (!isEdit && primaryForm && !primaryForm.title.trim()) {
       setFieldError(t("errors.titleRequired"));
       setActiveLang(primaryLang);
+      if (isWizard) setWizardStep(0);
       return;
     }
 
@@ -609,6 +643,175 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
     );
   }
 
+  const bookFieldSections = (
+    <>
+      {/* ── Section 1: Core info ── */}
+      <div className={sectionClass}>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
+          {t("sections.details")}
+        </p>
+
+        {/* Title */}
+        <div>
+          <label className={labelClass}>{t("fields.title")} *</label>
+          <input
+            type="text"
+            className={inputClass}
+            placeholder={t("fields.titlePlaceholder")}
+            value={form.title}
+            onChange={set("title")}
+          />
+          {fieldError && (
+            <p className="mt-1 text-xs text-red-400">{fieldError}</p>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>{t("fields.author")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.authorPlaceholder")} value={form.author} onChange={set("author")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.co_authors")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.co_authorsPlaceholder")} value={form.co_authors} onChange={set("co_authors")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.publisher")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.publisherPlaceholder")} value={form.publisher} onChange={set("publisher")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.genre")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.genrePlaceholder")} value={form.genre} onChange={set("genre")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.published_date")}</label>
+            <input type="date" className={inputClass} value={form.published_date} onChange={set("published_date")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.year")}</label>
+            <input type="number" className={inputClass} placeholder={t("fields.yearPlaceholder")} value={form.year} onChange={set("year")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.language")}</label>
+            <select className={inputClass} value={form.language} onChange={set("language")}>
+              <option value="">—</option>
+              {(["en", "ar", "es", "fr", "de"] as const).map((l) => (
+                <option key={l} value={l}>{t(`languages.${l}`)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.page_count")}</label>
+            <input type="number" className={inputClass} placeholder={t("fields.page_countPlaceholder")} value={form.page_count} onChange={set("page_count")} />
+          </div>
+        </div>
+
+        <div>
+          <label className={labelClass}>{t("fields.summary")}</label>
+          <textarea rows={4} className={inputClass} placeholder={t("fields.summaryPlaceholder")} value={form.summary} onChange={set("summary")} />
+        </div>
+      </div>
+
+      {/* ── Section 2: Pricing ── */}
+      <div className={sectionClass}>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
+          {t("sections.pricing")}
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="sm:col-span-2">
+            <label className={labelClass}>{t("fields.price")}</label>
+            <input type="number" step="0.01" min="0" className={inputClass} placeholder={t("fields.pricePlaceholder")} value={form.price} onChange={set("price")} />
+            <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.priceFree")}</p>
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.currency")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.currencyPlaceholder")} value={form.currency} onChange={set("currency")} />
+          </div>
+        </div>
+        <div>
+          <label className="flex items-center gap-2 text-sm text-foreground">
+            <input
+              type="checkbox"
+              checked={form.print_enabled}
+              onChange={(e) => updateForm((prev) => ({ ...prev, print_enabled: e.target.checked }))}
+              className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+            />
+            {t("fields.printEnabled")}
+          </label>
+        </div>
+        {form.print_enabled ? (
+          <div>
+            <label className={labelClass}>{t("fields.printPrice")}</label>
+            <input type="number" step="0.01" min="0" className={inputClass} placeholder={t("fields.printPricePlaceholder")} value={form.print_price} onChange={set("print_price")} />
+            <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.printPriceCurrency")}</p>
+          </div>
+        ) : null}
+        <div>
+          <label className={labelClass}>{t("fields.magazine_id")}</label>
+          <input type="text" className={inputClass} placeholder={t("fields.magazine_idPlaceholder")} value={form.magazine_id} onChange={set("magazine_id")} />
+        </div>
+      </div>
+
+      {isEdit && bookId ? (
+        <div className={sectionClass}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
+            {t("sections.chapters")}
+          </p>
+          <BookChaptersPanel bookId={bookId} />
+        </div>
+      ) : null}
+
+      {/* ── Section 3: Media uploads ── */}
+      <div className={sectionClass}>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
+          {t("sections.media")}
+        </p>
+
+        {/* Cover image */}
+        <div>
+          <label className={labelClass}>{t("fields.cover_image")}</label>
+          <CoverUploadZone
+            value={form.cover_image}
+            uploading={coverUploading}
+            onChange={handleCoverUpload}
+          />
+          {/* Manual URL fallback */}
+          <div className="mt-2">
+            <input
+              type="text"
+              className={inputClass}
+              placeholder={t("fields.cover_imagePlaceholder")}
+              value={form.cover_image}
+              onChange={set("cover_image")}
+            />
+            <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.coverUrl")}</p>
+          </div>
+        </div>
+
+        {/* PDF */}
+        <div>
+          <label className={labelClass}>{t("fields.pdf_url")}</label>
+          <PdfUploadZone
+            value={form.pdf_url}
+            uploading={pdfUploading}
+            onChange={handlePdfUpload}
+          />
+          {/* Manual URL fallback */}
+          <div className="mt-2">
+            <input
+              type="text"
+              className={inputClass}
+              placeholder={t("fields.pdf_urlPlaceholder")}
+              value={form.pdf_url}
+              onChange={set("pdf_url")}
+            />
+            <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.pdfUrl")}</p>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <div className="my-4 mx-auto px-10 pb-12 max-w-4xl">
       {/* Back nav */}
@@ -626,7 +829,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         <h1 className="text-xl font-semibold text-foreground">
           {isEdit ? t("editTitle") : t("createTitle")}
         </h1>
-        {!isTranslation ? (
+        {isEdit && !isTranslation ? (
           <LanguageFormTabs
             active={activeLang}
             onSelect={(loc) => void handleSelectLang(loc)}
@@ -658,172 +861,24 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         </div>
       ) : null}
 
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
-
-        {/* ── Section 1: Core info ── */}
-        <div className={sectionClass}>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
-            {t("sections.details")}
-          </p>
-
-          {/* Title */}
-          <div>
-            <label className={labelClass}>{t("fields.title")} *</label>
-            <input
-              type="text"
-              className={inputClass}
-              placeholder={t("fields.titlePlaceholder")}
-              value={form.title}
-              onChange={set("title")}
-            />
-            {fieldError && (
-              <p className="mt-1 text-xs text-red-400">{fieldError}</p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>{t("fields.author")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.authorPlaceholder")} value={form.author} onChange={set("author")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.co_authors")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.co_authorsPlaceholder")} value={form.co_authors} onChange={set("co_authors")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.publisher")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.publisherPlaceholder")} value={form.publisher} onChange={set("publisher")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.genre")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.genrePlaceholder")} value={form.genre} onChange={set("genre")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.published_date")}</label>
-              <input type="date" className={inputClass} value={form.published_date} onChange={set("published_date")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.year")}</label>
-              <input type="number" className={inputClass} placeholder={t("fields.yearPlaceholder")} value={form.year} onChange={set("year")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.language")}</label>
-              <select className={inputClass} value={form.language} onChange={set("language")}>
-                <option value="">—</option>
-                {(["en", "ar", "es", "fr", "de"] as const).map((l) => (
-                  <option key={l} value={l}>{t(`languages.${l}`)}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.page_count")}</label>
-              <input type="number" className={inputClass} placeholder={t("fields.page_countPlaceholder")} value={form.page_count} onChange={set("page_count")} />
-            </div>
-          </div>
-
-          <div>
-            <label className={labelClass}>{t("fields.summary")}</label>
-            <textarea rows={4} className={inputClass} placeholder={t("fields.summaryPlaceholder")} value={form.summary} onChange={set("summary")} />
-          </div>
-        </div>
-
-        {/* ── Section 2: Pricing ── */}
-        <div className={sectionClass}>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
-            {t("sections.pricing")}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="sm:col-span-2">
-              <label className={labelClass}>{t("fields.price")}</label>
-              <input type="number" step="0.01" min="0" className={inputClass} placeholder={t("fields.pricePlaceholder")} value={form.price} onChange={set("price")} />
-              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.priceFree")}</p>
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.currency")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.currencyPlaceholder")} value={form.currency} onChange={set("currency")} />
-            </div>
-          </div>
-          <div>
-            <label className="flex items-center gap-2 text-sm text-foreground">
-              <input
-                type="checkbox"
-                checked={form.print_enabled}
-                onChange={(e) => updateForm((prev) => ({ ...prev, print_enabled: e.target.checked }))}
-                className="h-4 w-4 accent-[var(--tott-accent-gold)]"
-              />
-              {t("fields.printEnabled")}
-            </label>
-          </div>
-          {form.print_enabled ? (
-            <div>
-              <label className={labelClass}>{t("fields.printPrice")}</label>
-              <input type="number" step="0.01" min="0" className={inputClass} placeholder={t("fields.printPricePlaceholder")} value={form.print_price} onChange={set("print_price")} />
-              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.printPriceCurrency")}</p>
-            </div>
-          ) : null}
-          <div>
-            <label className={labelClass}>{t("fields.magazine_id")}</label>
-            <input type="text" className={inputClass} placeholder={t("fields.magazine_idPlaceholder")} value={form.magazine_id} onChange={set("magazine_id")} />
-          </div>
-        </div>
-
-        {isEdit && bookId ? (
-          <div className={sectionClass}>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
-              {t("sections.chapters")}
-            </p>
-            <BookChaptersPanel bookId={bookId} />
-          </div>
-        ) : null}
-
-        {/* ── Section 3: Media uploads ── */}
-        <div className={sectionClass}>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
-            {t("sections.media")}
-          </p>
-
-          {/* Cover image */}
-          <div>
-            <label className={labelClass}>{t("fields.cover_image")}</label>
-            <CoverUploadZone
-              value={form.cover_image}
-              uploading={coverUploading}
-              onChange={handleCoverUpload}
-            />
-            {/* Manual URL fallback */}
-            <div className="mt-2">
-              <input
-                type="text"
-                className={inputClass}
-                placeholder={t("fields.cover_imagePlaceholder")}
-                value={form.cover_image}
-                onChange={set("cover_image")}
-              />
-              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.coverUrl")}</p>
-            </div>
-          </div>
-
-          {/* PDF */}
-          <div>
-            <label className={labelClass}>{t("fields.pdf_url")}</label>
-            <PdfUploadZone
-              value={form.pdf_url}
-              uploading={pdfUploading}
-              onChange={handlePdfUpload}
-            />
-            {/* Manual URL fallback */}
-            <div className="mt-2">
-              <input
-                type="text"
-                className={inputClass}
-                placeholder={t("fields.pdf_urlPlaceholder")}
-                value={form.pdf_url}
-                onChange={set("pdf_url")}
-              />
-              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.pdfUrl")}</p>
-            </div>
-          </div>
-        </div>
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
+        {isWizard ? (
+          <TranslationWizard
+            locales={wizardLocales}
+            step={wizardStep}
+            localeLabel={(loc) => (t.has(`languages.${loc}`) ? t(`languages.${loc}`) : loc.toUpperCase())}
+            onBack={() => goToWizardStep(Math.max(0, wizardStep - 1))}
+            onSkip={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+            onNext={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+            onConfirm={() => formRef.current?.requestSubmit()}
+            busy={busy}
+            reviewLines={wizardReviewLines}
+          >
+            {bookFieldSections}
+          </TranslationWizard>
+        ) : (
+          bookFieldSections
+        )}
 
         {/* Submit error */}
         {submitError && (
@@ -832,28 +887,30 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
           </p>
         )}
 
-        {/* Actions */}
-        <div className="flex items-center gap-3 pt-1">
-          <button
-            type="submit"
-            disabled={busy}
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/60 bg-[var(--tott-accent-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-accent-gold)]/20 disabled:opacity-40 transition-colors"
-          >
-            {busy && (
-              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            )}
-            {busy
-              ? isEdit ? t("saving") : t("creating")
-              : isEdit ? t("save") : t("create")}
-          </button>
-          <Link
-            href="/admin/books"
-            className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground hover:bg-white/5 transition-colors"
-          >
-            {t("cancel")}
-          </Link>
-        </div>
+        {!isWizard ? (
+          <div className="flex items-center gap-3 pt-1">
+            <button
+              type="submit"
+              disabled={busy}
+              className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/60 bg-[var(--tott-accent-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-accent-gold)]/20 disabled:opacity-40 transition-colors"
+            >
+              {busy && (
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              )}
+              {busy
+                ? isEdit ? t("saving") : t("creating")
+                : isEdit ? t("save") : t("create")}
+            </button>
+            <Link
+              href="/admin/books"
+              className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground hover:bg-white/5 transition-colors"
+            >
+              {t("cancel")}
+            </Link>
+          </div>
+        ) : null}
       </form>
     </div>
   );
 }
+

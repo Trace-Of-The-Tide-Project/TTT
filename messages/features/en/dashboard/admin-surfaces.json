@@ -230,7 +230,8 @@
           "pending": "Mark as pending",
           "draft": "Move to draft",
           "flagged": "Flag"
-        }
+        },
+        "edit": "Edit"
       },
       "detail": {
         "closeModalAria": "Close modal",
@@ -272,6 +273,18 @@
       "image": {
         "loadError": "Could not load image",
         "unavailable": "Image unavailable"
+      },
+      "editForm": {
+        "title": "Edit contribution",
+        "closeAria": "Close",
+        "fieldTitle": "Title",
+        "fieldDescription": "Description",
+        "save": "Save",
+        "saving": "Saving…",
+        "cancel": "Cancel",
+        "toasts": {
+          "saved": "Contribution saved"
+        }
       }
     },
     "cmsEditor": {

@@ -17,22 +17,13 @@ function resolveCover(ref: string | null | undefined): string | null {
 export default async function CollectionsIndexPage() {
   const locale = await getLocale();
 
-  // Prefer the active locale's translated version of each collection, but keep
-  // FULL coverage: start from the originals and swap in a localized version
-  // (matched by translation group) only where one exists. Untranslated
-  // collections still show in their original language rather than disappearing.
-  const [originals, translated] = await Promise.all([
-    getCollections({ limit: 50 }),
-    locale === "en"
-      ? Promise.resolve([])
-      : getCollections({ limit: 50, language: locale }),
-  ]);
-  const byGroup = new Map(
-    translated.map((c) => [c.translation_group_id ?? c.id, c] as const),
-  );
-  const collections = originals.map(
-    (o) => byGroup.get(o.translation_group_id ?? o.id) ?? o,
-  );
+  // One card per translation group: the backend picks the active locale's
+  // version where one exists and falls back to the original otherwise.
+  const collections = await getCollections({
+    limit: 50,
+    dedupe: "group",
+    viewer_lang: locale,
+  });
 
   const cards: CollectionCardData[] = collections.map((c) => ({
     id: c.id,

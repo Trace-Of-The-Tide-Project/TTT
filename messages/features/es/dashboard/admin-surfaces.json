@@ -230,7 +230,8 @@
           "pending": "Marcar como pendiente",
           "draft": "Mover a borrador",
           "flagged": "Marcar"
-        }
+        },
+        "edit": "Editar"
       },
       "detail": {
         "closeModalAria": "Cerrar modal",
@@ -272,6 +273,18 @@
       "image": {
         "loadError": "No se pudo cargar la imagen",
         "unavailable": "Imagen no disponible"
+      },
+      "editForm": {
+        "title": "Editar contribución",
+        "closeAria": "Cerrar",
+        "fieldTitle": "Título",
+        "fieldDescription": "Descripción",
+        "save": "Guardar",
+        "saving": "Guardando…",
+        "cancel": "Cancelar",
+        "toasts": {
+          "saved": "Contribución guardada"
+        }
       }
     },
     "cmsEditor": {

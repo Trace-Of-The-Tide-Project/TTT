@@ -230,7 +230,8 @@
           "pending": "وضع قيد المراجعة",
           "draft": "نقل إلى المسودة",
           "flagged": "الإبلاغ"
-        }
+        },
+        "edit": "تحرير"
       },
       "detail": {
         "closeModalAria": "إغلاق النافذة",
@@ -272,6 +273,18 @@
       "image": {
         "loadError": "تعذّر تحميل الصورة",
         "unavailable": "الصورة غير متوفرة"
+      },
+      "editForm": {
+        "title": "تحرير المساهمة",
+        "closeAria": "إغلاق",
+        "fieldTitle": "العنوان",
+        "fieldDescription": "الوصف",
+        "save": "حفظ",
+        "saving": "جارٍ الحفظ…",
+        "cancel": "إلغاء",
+        "toasts": {
+          "saved": "تم حفظ المساهمة"
+        }
       }
     },
     "cmsEditor": {

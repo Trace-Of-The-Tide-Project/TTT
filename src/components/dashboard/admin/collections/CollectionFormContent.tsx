@@ -1,13 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
-import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import { LanguageFormTabs, TranslationWizard } from "@/components/dashboard/admin/translations";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import type { TranslationWizardReviewLine } from "@/components/dashboard/admin/translations/TranslationWizard";
 import {
   useTranslations as useTranslationGroup,
   translationKeys,
@@ -73,6 +74,14 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
   const [langLoading, setLangLoading] = useState(false);
   const [seeded, setSeeded] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  const wizardLocales = useMemo(
+    () => [initialLang, ...routing.locales.filter((l) => l !== initialLang)],
+    [initialLang],
+  );
+  const [wizardStep, setWizardStep] = useState(0);
+  const isWizard = !isEdit && !isTranslation;
+  const formRef = useRef<HTMLFormElement>(null);
 
   const form = forms[activeLang] ?? { ...EMPTY, language: activeLang };
 
@@ -183,6 +192,27 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
     return map;
   }, [dirty, primaryLang, versionIds, forms]);
 
+  const goToWizardStep = useCallback(
+    (step: number) => {
+      const loc = wizardLocales[step];
+      if (loc && !forms[loc]) {
+        setForms((prev) => ({ ...prev, [loc]: { ...(prev[wizardLocales[0]] ?? EMPTY), language: loc } }));
+      }
+      if (loc) setActiveLang(loc);
+      setWizardStep(step);
+    },
+    [wizardLocales, forms],
+  );
+  const wizardReviewLines: TranslationWizardReviewLine[] = useMemo(
+    () =>
+      wizardLocales.map((loc) => ({
+        locale: loc,
+        label: tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase(),
+        action: loc === wizardLocales[0] || dirty[loc] ? "create" : "skip",
+      })),
+    [wizardLocales, dirty, tTr],
+  );
+
   const busy = langLoading;
   const loadingEdit = (isEdit || isTranslation) && loading;
 
@@ -198,6 +228,7 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
     if (!isEdit && primaryForm && !primaryForm.name.trim()) {
       setFormError(t("errors.nameRequired"));
       setActiveLang(primaryLang);
+      if (isWizard) setWizardStep(0);
       return;
     }
 
@@ -285,6 +316,42 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
     }
   };
 
+  const collectionFieldSection = (
+    <div className={sectionClass}>
+      <div>
+        <label className={labelClass}>{t("form.fields.name")} *</label>
+        <input
+          className={inputClass}
+          value={form.name}
+          onChange={(e) => set("name", e.target.value)}
+          placeholder={t("form.fields.namePlaceholder")}
+          disabled={busy}
+        />
+      </div>
+      <div>
+        <label className={labelClass}>{t("form.fields.description")}</label>
+        <textarea
+          rows={5}
+          className={inputClass}
+          value={form.description}
+          onChange={(e) => set("description", e.target.value)}
+          placeholder={t("form.fields.descriptionPlaceholder")}
+          disabled={busy}
+        />
+      </div>
+      <div>
+        <label className={labelClass}>{t("form.fields.coverImage")}</label>
+        <input
+          className={inputClass}
+          value={form.cover_image}
+          onChange={(e) => set("cover_image", e.target.value)}
+          placeholder={t("form.fields.coverImagePlaceholder")}
+          disabled={busy}
+        />
+      </div>
+    </div>
+  );
+
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-8 px-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -299,7 +366,7 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
             {isEdit ? t("form.editTitle") : t("form.createTitle")}
           </h1>
         </div>
-        {!isTranslation ? (
+        {isEdit && !isTranslation ? (
           <LanguageFormTabs
             active={activeLang}
             onSelect={(loc) => void handleSelectLang(loc)}
@@ -325,40 +392,24 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
       {loadingEdit ? (
         <div className="py-12 text-center text-sm text-[var(--tott-muted)]">{t("form.loading")}</div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className={sectionClass}>
-            <div>
-              <label className={labelClass}>{t("form.fields.name")} *</label>
-              <input
-                className={inputClass}
-                value={form.name}
-                onChange={(e) => set("name", e.target.value)}
-                placeholder={t("form.fields.namePlaceholder")}
-                disabled={busy}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>{t("form.fields.description")}</label>
-              <textarea
-                rows={5}
-                className={inputClass}
-                value={form.description}
-                onChange={(e) => set("description", e.target.value)}
-                placeholder={t("form.fields.descriptionPlaceholder")}
-                disabled={busy}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>{t("form.fields.coverImage")}</label>
-              <input
-                className={inputClass}
-                value={form.cover_image}
-                onChange={(e) => set("cover_image", e.target.value)}
-                placeholder={t("form.fields.coverImagePlaceholder")}
-                disabled={busy}
-              />
-            </div>
-          </div>
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
+          {isWizard ? (
+            <TranslationWizard
+              locales={wizardLocales}
+              step={wizardStep}
+              localeLabel={(loc) => (tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase())}
+              onBack={() => goToWizardStep(Math.max(0, wizardStep - 1))}
+              onSkip={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+              onNext={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+              onConfirm={() => formRef.current?.requestSubmit()}
+              busy={busy}
+              reviewLines={wizardReviewLines}
+            >
+              {collectionFieldSection}
+            </TranslationWizard>
+          ) : (
+            collectionFieldSection
+          )}
 
           {formError && (
             <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-3 text-sm text-red-400">
@@ -366,21 +417,23 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-3">
-            <Link
-              href="/admin/collections"
-              className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground"
-            >
-              {t("form.cancel")}
-            </Link>
-            <button
-              type="submit"
-              disabled={busy}
-              className="rounded-lg bg-[var(--tott-accent-gold)] px-5 py-2 text-sm font-semibold text-[var(--tott-on-accent)] hover:opacity-90 disabled:opacity-40 transition-opacity"
-            >
-              {busy ? t("form.saving") : isEdit ? t("form.save") : t("form.create")}
-            </button>
-          </div>
+          {!isWizard ? (
+            <div className="flex items-center justify-end gap-3">
+              <Link
+                href="/admin/collections"
+                className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground"
+              >
+                {t("form.cancel")}
+              </Link>
+              <button
+                type="submit"
+                disabled={busy}
+                className="rounded-lg bg-[var(--tott-accent-gold)] px-5 py-2 text-sm font-semibold text-[var(--tott-on-accent)] hover:opacity-90 disabled:opacity-40 transition-opacity"
+              >
+                {busy ? t("form.saving") : isEdit ? t("form.save") : t("form.create")}
+              </button>
+            </div>
+          ) : null}
         </form>
       )}
     </div>

@@ -62,6 +62,10 @@ export type GetCollectionsParams = {
   order?: string;
   /** Filter to a single language version (en|ar|es|fr). */
   language?: string;
+  /** "group" collapses translation groups to one item (public feeds). */
+  dedupe?: string;
+  /** Language the dedupe prefers when the group has it (en|ar|es|fr). */
+  viewer_lang?: string;
 };
 
 /** GET /collections — public list (paginated). */

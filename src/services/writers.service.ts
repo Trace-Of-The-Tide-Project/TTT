@@ -73,14 +73,21 @@ export type GetWritersParams = {
   search?: string;
   page?: number;
   limit?: number;
+  /** "group" collapses translation groups to one writer (public feeds). */
+  dedupe?: string;
+  /** Language the dedupe prefers when the group has it (en|ar|es|fr). */
+  viewer_lang?: string;
 };
 
-export async function getFeaturedWriters(): Promise<WriterProfile[]> {
+export async function getFeaturedWriters(
+  viewerLang?: string,
+): Promise<WriterProfile[]> {
+  const params = viewerLang ? { viewer_lang: viewerLang } : undefined;
   if (typeof window === "undefined") {
-    return unwrapList(await serverGet<unknown>("/writers/featured"));
+    return unwrapList(await serverGet<unknown>("/writers/featured", params));
   }
   try {
-    const { data } = await api.get<unknown>("/writers/featured");
+    const { data } = await api.get<unknown>("/writers/featured", { params });
     return unwrapList(data);
   } catch {
     return [];
