@@ -302,12 +302,24 @@ export function UsersManagementContent() {
         cellClassName: "flex min-w-0 items-center gap-3 px-5 py-3",
         cell: (user) => (
           <>
-            <span
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-              style={{ backgroundColor: "var(--tott-gold-chip-bg)", color: theme.bgDark }}
-            >
-              {initialsFromUser(user)}
-            </span>
+            {user.avatar ? (
+              // eslint-disable-next-line @next/next/no-img-element -- small admin thumbnail, varied hosts
+              <img
+                src={user.avatar}
+                alt=""
+                className="h-9 w-9 shrink-0 rounded-full object-cover border border-[var(--tott-card-border)]"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+            ) : (
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                style={{ backgroundColor: "var(--tott-gold-chip-bg)", color: theme.bgDark }}
+              >
+                {initialsFromUser(user)}
+              </span>
+            )}
             <div className="min-w-0">
               <p className="truncate text-sm font-medium" style={{ color: "var(--tott-dash-gold-text)" }}>
                 {displayName(user)}
@@ -772,12 +784,24 @@ function UserCardNarrow({
     <div className="px-3 py-3">
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3">
-          <span
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-            style={{ backgroundColor: "var(--tott-gold-chip-bg)", color: theme.bgDark }}
-          >
-            {initialsFromUser(user)}
-          </span>
+          {user.avatar ? (
+            // eslint-disable-next-line @next/next/no-img-element -- small admin thumbnail, varied hosts
+            <img
+              src={user.avatar}
+              alt=""
+              className="h-9 w-9 shrink-0 rounded-full object-cover border border-[var(--tott-card-border)]"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+          ) : (
+            <span
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+              style={{ backgroundColor: "var(--tott-gold-chip-bg)", color: theme.bgDark }}
+            >
+              {initialsFromUser(user)}
+            </span>
+          )}
           <div className="min-w-0">
             <p className="truncate text-sm font-medium" style={{ color: "var(--tott-dash-gold-text)" }}>
               {displayName(user)}
