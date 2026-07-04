@@ -20,7 +20,7 @@ export const writersKeys = {
 export function useFeaturedWriters() {
   return useQuery({
     queryKey: writersKeys.featured(),
-    queryFn: getFeaturedWriters,
+    queryFn: () => getFeaturedWriters(),
   });
 }
 
