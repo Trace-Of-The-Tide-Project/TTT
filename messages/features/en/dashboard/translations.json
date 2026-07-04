@@ -7,6 +7,12 @@
       "addAll": "Add all",
       "openVersion": "Open",
       "currentBadge": "Current",
+      "tabs": {
+        "unsaved": "Unsaved changes"
+      },
+      "toasts": {
+        "partialFailure": "Some language versions failed to save: {languages}. Your changes are kept — try saving again."
+      },
       "missing": "Not added yet",
       "status": {
         "draft": "Draft",

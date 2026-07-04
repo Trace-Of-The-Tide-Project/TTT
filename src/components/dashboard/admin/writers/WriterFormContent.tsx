@@ -1,19 +1,30 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Link, useRouter } from "@/i18n/navigation";
-import { mutationToast } from "@/hooks/useMutationToast";
-import { useWriter } from "@/hooks/queries/writers";
+import { useWriter, writersKeys } from "@/hooks/queries/writers";
+import {
+  useTranslations as useTranslationGroup,
+  translationKeys,
+} from "@/hooks/queries/translations";
 import {
   useCreateWriterProfile,
   useUpdateWriterProfile,
 } from "@/hooks/mutations/writers";
 import { uploadArticleAssetKeyAndUrl } from "@/services/uploads.service";
-import type { WriterProfilePayload } from "@/services/writers.service";
+import {
+  getWriter,
+  type WriterProfile,
+  type WriterProfilePayload,
+} from "@/services/writers.service";
 import type { AdminUserListItem } from "@/services/users.service";
 import { formatApiError } from "@/lib/api/error-message";
-import { TranslationsPanel } from "@/components/dashboard/admin/translations";
+import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import { routing } from "@/i18n/routing";
 import { UserPicker } from "./UserPicker";
 import { AvatarUploadZone, ThemesInput } from "./form-controls";
 
@@ -60,6 +71,30 @@ const EMPTY: FormState = {
   language: "en",
 };
 
+/** Map an API writer row onto the form's field shape. */
+function seedFromWriter(w: WriterProfile): FormState {
+  const links = w.social_links ?? {};
+  return {
+    pen_name: w.pen_name ?? "",
+    headline: w.headline ?? "",
+    bio_long: w.bio_long ?? "",
+    avatar_url: w.avatar_url ?? "",
+    featured: Boolean(w.featured),
+    creator_kind: (w.creator_kind ?? "") as FormState["creator_kind"],
+    location: w.location ?? "",
+    themes: Array.isArray(w.themes) ? w.themes : [],
+    quote: w.quote ?? "",
+    collaborations: w.collaborations ?? "",
+    recognition: w.recognition ?? "",
+    monthly_goal: w.monthly_goal != null ? String(w.monthly_goal) : "",
+    social_website: links.website ?? "",
+    social_twitter: links.twitter ?? "",
+    social_instagram: links.instagram ?? "",
+    social_youtube: links.youtube ?? "",
+    language: (w.language ?? "en").trim() || "en",
+  };
+}
+
 const inputClass =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-[var(--tott-muted)] outline-none focus:border-[var(--tott-accent-gold)]/60 transition-colors";
 const labelClass =
@@ -87,21 +122,41 @@ export function WriterFormContent({
   const t = useTranslations("Dashboard.writersManagement.form");
   const tTr = useTranslations("Dashboard.translations");
   const router = useRouter();
+  const qc = useQueryClient();
   const isEdit = Boolean(writerId);
   const isTranslation = !isEdit && Boolean(translationOf);
 
   const writerQuery = useWriter(writerId);
   // Source writer to clone fields from when adding a translation.
   const sourceQuery = useWriter(isTranslation ? translationOf : undefined);
+  // Existing language versions in this writer's translation group (edit mode).
+  const groupQuery = useTranslationGroup("writer", writerId);
   const createMutation = useCreateWriterProfile();
   const updateMutation = useUpdateWriterProfile();
 
-  const [form, setForm] = useState<FormState>(() => ({
-    ...EMPTY,
-    language: (createLanguage || "en").trim() || "en",
+  const initialLang = (createLanguage || "en").trim() || "en";
+  // Multi-language authoring: one FormState per opened locale. A locale absent
+  // from `forms` has never been opened; opening it seeds it (existing version →
+  // fetched row, otherwise a clone of the primary tab). `dirty` tracks which
+  // tabs the admin actually touched — untouched tabs never submit.
+  const [activeLang, setActiveLang] = useState(initialLang);
+  const [primaryLang, setPrimaryLang] = useState(initialLang);
+  const [forms, setForms] = useState<Record<string, FormState>>(() => ({
+    [initialLang]: { ...EMPTY, language: initialLang },
   }));
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
+  const [langLoading, setLangLoading] = useState(false);
   const [seeded, setSeeded] = useState(false);
   const [translationSeeded, setTranslationSeeded] = useState(false);
+
+  const form = forms[activeLang] ?? { ...EMPTY, language: activeLang };
+
+  // locale → existing version id (edit mode; includes the loaded writer itself).
+  const versionIds = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const v of groupQuery.data?.versions ?? []) map[v.language] = v.id;
+    return map;
+  }, [groupQuery.data]);
 
   // ── User section state (create mode only) ──
   // A writer profile links to an existing user account; admins do not create
@@ -123,6 +178,7 @@ export function WriterFormContent({
   const busy =
     submitting ||
     avatarUploading ||
+    langLoading ||
     createMutation.isPending ||
     updateMutation.isPending;
 
@@ -130,26 +186,10 @@ export function WriterFormContent({
   useEffect(() => {
     if (!isEdit || seeded || !writerQuery.data) return;
     const w = writerQuery.data;
-    const links = w.social_links ?? {};
-    setForm({
-      pen_name: w.pen_name ?? "",
-      headline: w.headline ?? "",
-      bio_long: w.bio_long ?? "",
-      avatar_url: w.avatar_url ?? "",
-      featured: Boolean(w.featured),
-      creator_kind: (w.creator_kind ?? "") as FormState["creator_kind"],
-      location: w.location ?? "",
-      themes: Array.isArray(w.themes) ? w.themes : [],
-      quote: w.quote ?? "",
-      collaborations: w.collaborations ?? "",
-      recognition: w.recognition ?? "",
-      monthly_goal: w.monthly_goal != null ? String(w.monthly_goal) : "",
-      social_website: links.website ?? "",
-      social_twitter: links.twitter ?? "",
-      social_instagram: links.instagram ?? "",
-      social_youtube: links.youtube ?? "",
-      language: (w.language ?? "en").trim() || "en",
-    });
+    const lang = (w.language ?? "en").trim() || "en";
+    setForms({ [lang]: seedFromWriter(w) });
+    setActiveLang(lang);
+    setPrimaryLang(lang);
     setSeeded(true);
   }, [isEdit, seeded, writerQuery.data]);
 
@@ -159,30 +199,24 @@ export function WriterFormContent({
   // submit (a translation belongs to the same writer), so no UserPicker here.
   useEffect(() => {
     if (!isTranslation || translationSeeded || !sourceQuery.data) return;
-    const w = sourceQuery.data;
-    const links = w.social_links ?? {};
-    setForm((prev) => ({
-      ...prev,
-      pen_name: w.pen_name ?? "",
-      headline: w.headline ?? "",
-      bio_long: w.bio_long ?? "",
-      avatar_url: w.avatar_url ?? "",
-      featured: Boolean(w.featured),
-      creator_kind: (w.creator_kind ?? "") as FormState["creator_kind"],
-      location: w.location ?? "",
-      themes: Array.isArray(w.themes) ? w.themes : [],
-      quote: w.quote ?? "",
-      collaborations: w.collaborations ?? "",
-      recognition: w.recognition ?? "",
-      monthly_goal: w.monthly_goal != null ? String(w.monthly_goal) : "",
-      social_website: links.website ?? "",
-      social_twitter: links.twitter ?? "",
-      social_instagram: links.instagram ?? "",
-      social_youtube: links.youtube ?? "",
-      // keep prev.language — that's the target language from ?language=
-    }));
+    // keep the target language from ?language= — override the source's.
+    setForms({
+      [initialLang]: { ...seedFromWriter(sourceQuery.data), language: initialLang },
+    });
     setTranslationSeeded(true);
-  }, [isTranslation, translationSeeded, sourceQuery.data]);
+  }, [isTranslation, translationSeeded, sourceQuery.data, initialLang]);
+
+  // All setForm-style writes go through here so dirty-tracking can't be missed.
+  const updateForm = useCallback(
+    (mutate: (prev: FormState) => FormState) => {
+      setForms((prev) => {
+        const current = prev[activeLang] ?? { ...EMPTY, language: activeLang };
+        return { ...prev, [activeLang]: mutate(current) };
+      });
+      setDirty((prev) => (prev[activeLang] ? prev : { ...prev, [activeLang]: true }));
+    },
+    [activeLang],
+  );
 
   const set = useCallback(
     (field: keyof FormState) =>
@@ -191,9 +225,59 @@ export function WriterFormContent({
           HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
         >,
       ) =>
-        setForm((prev) => ({ ...prev, [field]: e.target.value })),
-    [],
+        updateForm((prev) => ({ ...prev, [field]: e.target.value })),
+    [updateForm],
   );
+
+  // Tab switch — seed the locale on first open.
+  const handleSelectLang = useCallback(
+    async (loc: string) => {
+      if (loc === activeLang || busy) return;
+      if (!forms[loc]) {
+        const existingId = versionIds[loc];
+        if (existingId) {
+          setLangLoading(true);
+          try {
+            const w = await getWriter(existingId);
+            setForms((prev) =>
+              prev[loc]
+                ? prev
+                : {
+                    ...prev,
+                    [loc]: w
+                      ? seedFromWriter(w)
+                      : { ...(prev[primaryLang] ?? EMPTY), language: loc },
+                  },
+            );
+          } finally {
+            setLangLoading(false);
+          }
+        } else {
+          setForms((prev) =>
+            prev[loc]
+              ? prev
+              : { ...prev, [loc]: { ...(prev[primaryLang] ?? EMPTY), language: loc } },
+          );
+        }
+      }
+      setActiveLang(loc);
+    },
+    [activeLang, busy, forms, versionIds, primaryLang],
+  );
+
+  const tabStatus = useMemo(() => {
+    const map: Record<string, LanguageTabStatus> = {};
+    for (const loc of routing.locales) {
+      map[loc] = dirty[loc]
+        ? "dirty"
+        : loc === primaryLang
+          ? "primary"
+          : versionIds[loc] || forms[loc]
+            ? "existing"
+            : "empty";
+    }
+    return map;
+  }, [dirty, primaryLang, versionIds, forms]);
 
   const handleAvatarUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -206,7 +290,7 @@ export function WriterFormContent({
         // Keep the signed `url` for an immediate preview (the key's public-bucket
         // URL 403s until the backend re-signs it on read).
         const { key, url } = await uploadArticleAssetKeyAndUrl(file);
-        setForm((prev) => ({ ...prev, avatar_url: key }));
+        updateForm((prev) => ({ ...prev, avatar_url: key }));
         setAvatarPreview(url);
       } catch {
         setSubmitError(t("errors.avatarUploadFailed"));
@@ -214,35 +298,36 @@ export function WriterFormContent({
         setAvatarUploading(false);
       }
     },
-    [t],
+    [t, updateForm],
   );
 
-  const buildPayload = (): WriterProfilePayload => {
+  const buildPayload = (
+    f: FormState,
+    opts: { create: boolean; translationOf?: string | null },
+  ): WriterProfilePayload => {
     const links: Record<string, string> = {};
-    if (form.social_website.trim()) links.website = form.social_website.trim();
-    if (form.social_twitter.trim()) links.twitter = form.social_twitter.trim();
-    if (form.social_instagram.trim()) links.instagram = form.social_instagram.trim();
-    if (form.social_youtube.trim()) links.youtube = form.social_youtube.trim();
+    if (f.social_website.trim()) links.website = f.social_website.trim();
+    if (f.social_twitter.trim()) links.twitter = f.social_twitter.trim();
+    if (f.social_instagram.trim()) links.instagram = f.social_instagram.trim();
+    if (f.social_youtube.trim()) links.youtube = f.social_youtube.trim();
     return {
-      pen_name: form.pen_name.trim() || null,
-      headline: form.headline.trim() || null,
-      bio_long: form.bio_long.trim() || null,
-      avatar_url: form.avatar_url.trim() || null,
-      featured: form.featured,
+      pen_name: f.pen_name.trim() || null,
+      headline: f.headline.trim() || null,
+      bio_long: f.bio_long.trim() || null,
+      avatar_url: f.avatar_url.trim() || null,
+      featured: f.featured,
       social_links: Object.keys(links).length > 0 ? links : null,
-      creator_kind: form.creator_kind || null,
-      location: form.location.trim() || null,
-      themes: form.themes.length > 0 ? form.themes : null,
-      quote: form.quote.trim() || null,
-      collaborations: form.collaborations.trim() || null,
-      recognition: form.recognition.trim() || null,
-      monthly_goal: form.monthly_goal.trim()
-        ? Number(form.monthly_goal)
-        : null,
+      creator_kind: f.creator_kind || null,
+      location: f.location.trim() || null,
+      themes: f.themes.length > 0 ? f.themes : null,
+      quote: f.quote.trim() || null,
+      collaborations: f.collaborations.trim() || null,
+      recognition: f.recognition.trim() || null,
+      monthly_goal: f.monthly_goal.trim() ? Number(f.monthly_goal) : null,
       // Translation-group fields — create-only. `prunePayload` drops them
-      // when null (e.g. edit mode).
-      language: !isEdit ? form.language.trim() || null : null,
-      translation_of: isTranslation ? (translationOf ?? null) : null,
+      // when null (e.g. update calls).
+      language: opts.create ? f.language.trim() || null : null,
+      translation_of: opts.create ? (opts.translationOf ?? null) : null,
     };
   };
 
@@ -271,17 +356,12 @@ export function WriterFormContent({
     return out as Partial<WriterProfilePayload>;
   };
 
-  const validate = (): boolean => {
+  const validate = (f: FormState): boolean => {
     setUserError(null);
     setFieldError(null);
     setSubmitError(null);
-    // A translation inherits the original's account — no user step to validate.
-    if (!isEdit && !isTranslation && !selectedUser) {
-      setUserError(t("errors.userRequired"));
-      return false;
-    }
-    if (form.monthly_goal.trim()) {
-      const goal = Number(form.monthly_goal);
+    if (f.monthly_goal.trim()) {
+      const goal = Number(f.monthly_goal);
       if (!Number.isFinite(goal) || goal < 0) {
         setFieldError(t("errors.monthlyGoalInvalid"));
         return false;
@@ -292,60 +372,130 @@ export function WriterFormContent({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (busy || !validate()) return;
+    if (busy) return;
+
+    // Validate every tab that will submit; jump to the first invalid one.
+    const dirtyLocales: string[] = routing.locales.filter(
+      (loc) => dirty[loc] && forms[loc],
+    );
+    const submitLocales =
+      isEdit || dirtyLocales.includes(primaryLang)
+        ? dirtyLocales
+        : [primaryLang, ...dirtyLocales];
+    for (const loc of submitLocales) {
+      const f = forms[loc];
+      if (f && !validate(f)) {
+        setActiveLang(loc);
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
+      const failed: string[] = [];
+
       if (isEdit && writerId) {
-        await mutationToast(
-          () =>
-            updateMutation.mutateAsync({
-              writerId,
-              payload: prunePayload(buildPayload()),
-            }),
-          {
-            loading: t("saving"),
-            success: t("toasts.updated"),
-            error: t("errors.saveFailed"),
-          },
-        );
-        router.push("/admin/writers");
+        // Each dirty tab saves on its own: existing version → PATCH, new → POST
+        // into this writer's translation group.
+        const inheritedUserId =
+          writerQuery.data?.user_id ?? writerQuery.data?.user?.id ?? null;
+        for (const loc of submitLocales) {
+          const f = forms[loc];
+          if (!f) continue;
+          const existingId = loc === primaryLang ? writerId : versionIds[loc];
+          try {
+            if (existingId) {
+              await updateMutation.mutateAsync({
+                writerId: existingId,
+                payload: prunePayload(buildPayload(f, { create: false })),
+              });
+            } else {
+              await createMutation.mutateAsync({
+                ...prunePayload(
+                  buildPayload(f, { create: true, translationOf: writerId }),
+                ),
+                ...(inheritedUserId ? { user_id: inheritedUserId } : {}),
+              });
+            }
+            setDirty((prev) => ({ ...prev, [loc]: false }));
+          } catch {
+            failed.push(loc);
+          }
+        }
+        qc.invalidateQueries({
+          queryKey: translationKeys.group("writer", writerId),
+        });
+        qc.invalidateQueries({ queryKey: writersKeys.all });
+        if (failed.length === 0) {
+          toast.success(t("toasts.updated"));
+          router.push("/admin/writers");
+        } else {
+          toast.error(
+            tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }),
+          );
+        }
         return;
       }
 
-      // Create mode — resolve the user_id strictly per-mode.
-      let userId: string | null = null;
-      if (isTranslation) {
-        // A translation belongs to the same writer as the original.
-        userId =
-          sourceQuery.data?.user_id ?? sourceQuery.data?.user?.id ?? null;
-      } else {
-        userId = selectedUser?.id ?? null;
-      }
-      if (!userId) {
-        setUserError(t("errors.userRequired"));
-        return;
-      }
+      // ── Create mode ──
+      // Resolve the user_id per-mode. Optional: an admin may create a writer
+      // with no linked account and attach one later.
+      const userId = isTranslation
+        ? // A translation belongs to the same writer as the original.
+          (sourceQuery.data?.user_id ?? sourceQuery.data?.user?.id ?? null)
+        : (selectedUser?.id ?? null);
 
+      // The primary tab must save first — the other tabs link to its id.
+      let primaryId: string;
       try {
-        await mutationToast(
-          () =>
-            createMutation.mutateAsync({
-              ...prunePayload(buildPayload()),
-              user_id: userId,
+        const created = await createMutation.mutateAsync({
+          ...prunePayload(
+            buildPayload(forms[primaryLang] ?? form, {
+              create: true,
+              translationOf: isTranslation ? translationOf : null,
             }),
-          {
-            loading: t("saving"),
-            success: t("toasts.created"),
-            error: t("errors.saveFailed"),
-          },
-        );
-        router.push("/admin/writers");
+          ),
+          ...(userId ? { user_id: userId } : {}),
+        });
+        primaryId = created.id;
+        setDirty((prev) => ({ ...prev, [primaryLang]: false }));
       } catch (err) {
         const msg = formatApiError(err, t("errors.saveFailed"));
         if (/already exists/i.test(msg)) {
           setUserError(t("errors.duplicateProfile"));
         }
-        // Non-duplicate errors are already shown by mutationToast's error toast.
+        toast.error(msg);
+        return;
+      }
+
+      for (const loc of submitLocales) {
+        if (loc === primaryLang) continue;
+        const f = forms[loc];
+        if (!f) continue;
+        try {
+          await createMutation.mutateAsync({
+            ...prunePayload(
+              buildPayload(f, { create: true, translationOf: primaryId }),
+            ),
+            ...(userId ? { user_id: userId } : {}),
+          });
+          setDirty((prev) => ({ ...prev, [loc]: false }));
+        } catch {
+          failed.push(loc);
+        }
+      }
+
+      qc.invalidateQueries({ queryKey: writersKeys.all });
+      if (failed.length === 0) {
+        toast.success(t("toasts.created"));
+        router.push("/admin/writers");
+      } else {
+        // Primary saved; failed tabs stay dirty so the admin can retry — but a
+        // retry now targets an existing group, so route through edit mode.
+        toast.error(
+          tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }),
+        );
+        router.push(`/admin/writers/${encodeURIComponent(primaryId)}/edit`);
       }
     } finally {
       setSubmitting(false);
@@ -396,11 +546,15 @@ export function WriterFormContent({
         <h1 className="text-xl font-semibold text-foreground">
           {isEdit ? t("editTitle") : t("createTitle")}
         </h1>
-        {isEdit && writerId ? (
-          <TranslationsPanel
-            contentType="writer"
-            contentId={writerId}
-            currentLanguage={form.language}
+        {/* Old chip-link flow (?translation_of=) keeps its focused single-
+            language form; everywhere else the admin authors all languages
+            in-form via tabs. */}
+        {!isTranslation ? (
+          <LanguageFormTabs
+            active={activeLang}
+            onSelect={(loc) => void handleSelectLang(loc)}
+            status={tabStatus}
+            disabled={busy}
           />
         ) : null}
       </div>
@@ -455,6 +609,9 @@ export function WriterFormContent({
                 onChange={(u) => { setSelectedUser(u); setUserError(null); }}
                 disabled={busy}
               />
+              <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
+                {t("account.optionalHint")}
+              </p>
 
               {userError && (
                 <p className="text-xs text-red-400">{userError}</p>
@@ -511,7 +668,7 @@ export function WriterFormContent({
                 // A hand-typed ref previews via the resolver, not the stale
                 // signed URL from a prior upload.
                 setAvatarPreview(null);
-                setForm((prev) => ({ ...prev, avatar_url: e.target.value }));
+                updateForm((prev) => ({ ...prev, avatar_url: e.target.value }));
               }}
               placeholder="https://…"
             />
@@ -534,7 +691,7 @@ export function WriterFormContent({
             <label className={labelClass}>{t("fields.themes")}</label>
             <ThemesInput
               value={form.themes}
-              onChange={(themes) => setForm((prev) => ({ ...prev, themes }))}
+              onChange={(themes) => updateForm((prev) => ({ ...prev, themes }))}
               placeholder={t("fields.themesPlaceholder")}
               disabled={busy}
             />
@@ -582,7 +739,7 @@ export function WriterFormContent({
               type="checkbox"
               checked={form.featured}
               onChange={(e) =>
-                setForm((prev) => ({ ...prev, featured: e.target.checked }))
+                updateForm((prev) => ({ ...prev, featured: e.target.checked }))
               }
               className="h-4 w-4 accent-[var(--tott-accent-gold)]"
             />

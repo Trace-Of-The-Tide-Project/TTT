@@ -14,6 +14,7 @@ import {
   useUpdateWriterProfile,
   useDeleteWriterProfile,
 } from "@/hooks/mutations/writers";
+import { useCreateAdminUser } from "@/hooks/mutations/users";
 import {
   writerAvatar,
   writerDisplayName,
@@ -22,6 +23,7 @@ import {
 } from "@/services/writers.service";
 import { formatApiError } from "@/lib/api/error-message";
 import { nameInitials } from "./initials";
+import { CreateAccountModal } from "./CreateAccountModal";
 
 const PAGE_LIMIT = 10;
 
@@ -53,6 +55,7 @@ export function WritersManagementContent() {
   const [actionError, setActionError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<WriterProfile | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [accountTarget, setAccountTarget] = useState<WriterProfile | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(
@@ -87,6 +90,8 @@ export function WritersManagementContent() {
 
   const updateMutation = useUpdateWriterProfile();
   const deleteMutation = useDeleteWriterProfile();
+  const createAccountMutation = useCreateAdminUser();
+  const linkAccountMutation = useUpdateWriterProfile();
   const deleteBusy = deleteMutation.isPending;
 
   const toggleFeatured = useCallback(
@@ -202,6 +207,26 @@ export function WritersManagementContent() {
         cell: (w) => (
           <span className="truncate">{w.location?.trim() || "—"}</span>
         ),
+      },
+      {
+        key: "account",
+        header: t("headers.account"),
+        width: "14%",
+        cellClassName: "px-5 py-3 flex items-center min-w-0",
+        cell: (w) =>
+          w.user_id ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
+              {t("account.linked")}
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setAccountTarget(w)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-2.5 py-1 text-xs font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 transition-colors"
+            >
+              {t("account.createAction")}
+            </button>
+          ),
       },
       {
         key: "featured",
@@ -334,6 +359,27 @@ export function WritersManagementContent() {
             {t("pagination.next")}
           </button>
         </div>
+      )}
+
+      {accountTarget && (
+        <CreateAccountModal
+          writer={accountTarget}
+          busy={createAccountMutation.isPending || linkAccountMutation.isPending}
+          onClose={() => setAccountTarget(null)}
+          onSubmit={async ({ full_name, email, password }) => {
+            const user = await createAccountMutation.mutateAsync({
+              full_name,
+              email,
+              password,
+            });
+            await linkAccountMutation.mutateAsync({
+              writerId: accountTarget.id,
+              payload: { user_id: user.id },
+            });
+            toast.success(t("account.created"));
+            setAccountTarget(null);
+          }}
+        />
       )}
 
       {deleteTarget && (

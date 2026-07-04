@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { useLocale } from "next-intl";
 import { createPortal } from "react-dom";
 import { Link } from "@/i18n/navigation";
 import { AvailableBlocks } from "@/components/dashboard/admin/articles/articles-editor/AvailableBlocks";
@@ -11,8 +12,10 @@ import { ContentSettings } from "@/components/dashboard/admin/articles/articles-
 import { ContributorsPanel } from "@/components/dashboard/admin/articles/articles-editor/ContributorsPanel";
 import { ContentEditorFooter } from "@/components/dashboard/admin/articles/articles-editor/ContentEditorFooter";
 import { ScheduleArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ScheduleArticleModal";
-import { TranslationsPanel } from "@/components/dashboard/admin/translations/TranslationsPanel";
-import { LocaleTabs } from "@/components/dashboard/admin/translations";
+import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import { TRANSLATION_ROUTES } from "@/components/dashboard/admin/translations/translation-routes";
+import { useTranslations as useTranslationGroup } from "@/hooks/queries/translations";
 import { routing } from "@/i18n/routing";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import {
@@ -62,6 +65,37 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
   } = useArticleEditor(props);
 
   const { articleId } = props;
+  const locale = useLocale();
+
+  const groupType = config.contentType === "open-call" ? "open-call" : "article";
+  const groupQuery = useTranslationGroup(groupType, articleId);
+  const versionIds = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const v of groupQuery.data?.versions ?? []) map[v.language] = v.id;
+    return map;
+  }, [groupQuery.data]);
+
+  const editorRoute = TRANSLATION_ROUTES[groupType];
+  const editHrefFor = (loc: string): string | undefined => {
+    if (loc === language) return undefined;
+    const id = loc === language ? articleId : versionIds[loc];
+    if (!id || !editorRoute) return undefined;
+    return `/${locale}${editorRoute.edit(id)}`;
+  };
+  const createHrefFor = (loc: string): string | undefined => {
+    if (loc === language || !articleId) return undefined;
+    const createPath = `/admin/articles/create/${config.contentType}`;
+    return `/${locale}${createPath}?language=${loc}&translation_of=${encodeURIComponent(articleId)}`;
+  };
+  const editTabStatus = useMemo(() => {
+    const map: Record<string, LanguageTabStatus> = {};
+    for (const loc of routing.locales) {
+      map[loc] = loc === language ? "primary" : versionIds[loc] ? "existing" : "empty";
+    }
+    return map;
+  }, [language, versionIds]);
+  const editTabHrefFor = (loc: string): string | undefined =>
+    versionIds[loc] || loc === language ? editHrefFor(loc) : createHrefFor(loc);
 
   // Unsaved-work guard (create + edit): fingerprint-based dirty flag from the
   // hook. Covers tab close/refresh (beforeunload) and ALL in-app link clicks
@@ -200,11 +234,11 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
               <span className="text-[var(--tott-muted)]">{tLayout("editArticle")}</span>
             </div>
             <div className="flex items-center gap-3">
-              <TranslationsPanel
-                contentType={config.contentType === "open-call" ? "open-call" : "article"}
-                contentId={articleId}
-                currentLanguage={language}
-                createBasePath={`/admin/articles/create/${config.contentType}`}
+              <LanguageFormTabs
+                active={language}
+                onSelect={() => {}}
+                status={editTabStatus}
+                hrefFor={editTabHrefFor}
               />
               <Link
                 href={previewHrefForContentType(config.contentType, articleId)}
@@ -239,10 +273,15 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
                   {tLayout("createAllLanguages")}
                 </label>
               ) : null}
-              <LocaleTabs
-                locales={routing.locales}
-                active={language as (typeof routing.locales)[number]}
-                onChange={switchLanguage}
+              <LanguageFormTabs
+                active={language}
+                onSelect={switchLanguage}
+                status={Object.fromEntries(
+                  routing.locales.map((loc) => [
+                    loc,
+                    loc === language ? "primary" : "empty",
+                  ]),
+                )}
               />
             </div>
           </div>

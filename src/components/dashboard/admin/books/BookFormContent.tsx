@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
@@ -8,11 +8,21 @@ import { useAuthUser } from "@/components/providers/AuthProvider";
 import { useBook } from "@/hooks/queries/books";
 import { useCreateBook, useUpdateBook } from "@/hooks/mutations/books";
 import { mutationToast } from "@/hooks/useMutationToast";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { uploadFileToUrl } from "@/services/uploads.service";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
-import { TranslationsPanel } from "@/components/dashboard/admin/translations";
+import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import {
+  useTranslations as useTranslationGroup,
+  translationKeys,
+} from "@/hooks/queries/translations";
+import { routing } from "@/i18n/routing";
+import { formatApiError } from "@/lib/api/error-message";
 import { BookChaptersPanel } from "./BookChaptersPanel";
-import type { BookPayload } from "@/services/books.service";
+import { getBookById, type Book, type BookPayload } from "@/services/books.service";
+import { booksKeys } from "@/hooks/queries/books";
 
 const BOOK_LANGS = ["en", "ar", "es", "fr", "de"] as const;
 
@@ -252,9 +262,33 @@ function PdfUploadZone({
   );
 }
 
+function seedFromBook(b: Book): FormState {
+  return {
+    title: b.title ?? "",
+    author: b.author ?? "",
+    co_authors: Array.isArray(b.co_authors) ? b.co_authors.join(", ") : (b.co_authors ?? ""),
+    publisher: b.publisher ?? "",
+    published_date: b.published_date ? b.published_date.slice(0, 10) : "",
+    year: b.year != null ? String(b.year) : "",
+    summary: b.summary ?? "",
+    cover_image: b.cover_image ?? "",
+    pdf_url: b.pdf_url ?? "",
+    genre: b.genre ?? "",
+    language: (b.language ?? "") as FormState["language"],
+    page_count: b.page_count != null ? String(b.page_count) : "",
+    price: b.price != null ? String(b.price) : "",
+    currency: b.currency ?? "USD",
+    print_enabled: Boolean(b.print_enabled),
+    print_price: b.print_price != null ? String(b.print_price) : "",
+    magazine_id: b.magazine_id ?? "",
+  };
+}
+
 export function BookFormContent({ bookId, createLanguage, translationOf }: Props) {
   const t = useTranslations("Dashboard.books.form");
+  const tTr = useTranslations("Dashboard.translations");
   const router = useRouter();
+  const qc = useQueryClient();
   const isEdit = Boolean(bookId);
   const currentUser = useAuthUser();
   const isTranslation = !isEdit && Boolean(translationOf);
@@ -264,13 +298,21 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
       ? createLanguage
       : ""
   ) as FormState["language"];
+  // The tab strip only covers the 4 site locales — "de" is a valid book
+  // language but has no translation-group tab (no admin UI locale for it).
+  const initialLang = initialLanguage || "en";
 
   const bookQuery = useBook(bookId);
   const sourceQuery = useBook(isTranslation ? translationOf : undefined);
-  const [form, setForm] = useState<FormState>(() => ({
-    ...EMPTY,
-    language: initialLanguage,
+  const groupQuery = useTranslationGroup("book", bookId);
+
+  const [activeLang, setActiveLang] = useState<string>(initialLang);
+  const [primaryLang, setPrimaryLang] = useState<string>(initialLang);
+  const [forms, setForms] = useState<Record<string, FormState>>(() => ({
+    [initialLang]: { ...EMPTY, language: initialLanguage },
   }));
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
+  const [langLoading, setLangLoading] = useState(false);
   const [seeded, setSeeded] = useState(false);
   const [translationSeeded, setTranslationSeeded] = useState(false);
   const [fieldError, setFieldError] = useState<string | null>(null);
@@ -278,36 +320,30 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
   const [coverUploading, setCoverUploading] = useState(false);
   const [pdfUploading, setPdfUploading] = useState(false);
 
+  const form = forms[activeLang] ?? { ...EMPTY, language: activeLang as FormState["language"] };
+
+  const versionIds = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const v of groupQuery.data?.versions ?? []) map[v.language] = v.id;
+    return map;
+  }, [groupQuery.data]);
+
   const createMutation = useCreateBook();
   const updateMutation = useUpdateBook();
   const busy =
     createMutation.isPending ||
     updateMutation.isPending ||
     coverUploading ||
-    pdfUploading;
+    pdfUploading ||
+    langLoading;
 
   useEffect(() => {
     if (seeded || !bookQuery.data) return;
     const b = bookQuery.data;
-    setForm({
-      title: b.title ?? "",
-      author: b.author ?? "",
-      co_authors: Array.isArray(b.co_authors) ? b.co_authors.join(", ") : (b.co_authors ?? ""),
-      publisher: b.publisher ?? "",
-      published_date: b.published_date ? b.published_date.slice(0, 10) : "",
-      year: b.year != null ? String(b.year) : "",
-      summary: b.summary ?? "",
-      cover_image: b.cover_image ?? "",
-      pdf_url: b.pdf_url ?? "",
-      genre: b.genre ?? "",
-      language: (b.language ?? "") as FormState["language"],
-      page_count: b.page_count != null ? String(b.page_count) : "",
-      price: b.price != null ? String(b.price) : "",
-      currency: b.currency ?? "USD",
-      print_enabled: Boolean(b.print_enabled),
-      print_price: b.print_price != null ? String(b.print_price) : "",
-      magazine_id: b.magazine_id ?? "",
-    });
+    const lang = (b.language ?? "en").trim() || "en";
+    setForms({ [lang]: seedFromBook(b) });
+    setActiveLang(lang);
+    setPrimaryLang(lang);
     setSeeded(true);
   }, [bookQuery.data, seeded]);
 
@@ -315,29 +351,23 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
   // language already set from `?language=`.
   useEffect(() => {
     if (!isTranslation || translationSeeded || !sourceQuery.data) return;
-    const b = sourceQuery.data;
-    setForm((prev) => ({
-      ...prev,
-      title: b.title ?? "",
-      author: b.author ?? "",
-      co_authors: Array.isArray(b.co_authors)
-        ? b.co_authors.join(", ")
-        : (b.co_authors ?? ""),
-      publisher: b.publisher ?? "",
-      published_date: b.published_date ? b.published_date.slice(0, 10) : "",
-      year: b.year != null ? String(b.year) : "",
-      summary: b.summary ?? "",
-      cover_image: b.cover_image ?? "",
-      pdf_url: b.pdf_url ?? "",
-      genre: b.genre ?? "",
-      page_count: b.page_count != null ? String(b.page_count) : "",
-      price: b.price != null ? String(b.price) : "",
-      currency: b.currency ?? "USD",
-      magazine_id: b.magazine_id ?? "",
-      // language stays as the target version language from `?language=`.
-    }));
+    setForms({
+      [initialLang]: { ...seedFromBook(sourceQuery.data), language: initialLanguage },
+    });
     setTranslationSeeded(true);
-  }, [isTranslation, translationSeeded, sourceQuery.data]);
+  }, [isTranslation, translationSeeded, sourceQuery.data, initialLang, initialLanguage]);
+
+  const updateForm = useCallback(
+    (mutate: (prev: FormState) => FormState) => {
+      setForms((prev) => {
+        const current =
+          prev[activeLang] ?? { ...EMPTY, language: activeLang as FormState["language"] };
+        return { ...prev, [activeLang]: mutate(current) };
+      });
+      setDirty((prev) => (prev[activeLang] ? prev : { ...prev, [activeLang]: true }));
+    },
+    [activeLang],
+  );
 
   const set = useCallback(
     (field: keyof FormState) =>
@@ -346,9 +376,61 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
           HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
         >,
       ) =>
-        setForm((prev) => ({ ...prev, [field]: e.target.value })),
-    [],
+        updateForm((prev) => ({ ...prev, [field]: e.target.value })),
+    [updateForm],
   );
+
+  const handleSelectLang = useCallback(
+    async (loc: string) => {
+      if (loc === activeLang) return;
+      if (!forms[loc]) {
+        const existingId = versionIds[loc];
+        if (existingId) {
+          setLangLoading(true);
+          try {
+            const b = await getBookById(existingId);
+            setForms((prev) =>
+              prev[loc]
+                ? prev
+                : {
+                    ...prev,
+                    [loc]: b
+                      ? seedFromBook(b)
+                      : { ...(prev[primaryLang] ?? EMPTY), language: loc as FormState["language"] },
+                  },
+            );
+          } finally {
+            setLangLoading(false);
+          }
+        } else {
+          setForms((prev) =>
+            prev[loc]
+              ? prev
+              : {
+                  ...prev,
+                  [loc]: { ...(prev[primaryLang] ?? EMPTY), language: loc as FormState["language"] },
+                },
+          );
+        }
+      }
+      setActiveLang(loc);
+    },
+    [activeLang, forms, versionIds, primaryLang],
+  );
+
+  const tabStatus = useMemo(() => {
+    const map: Record<string, LanguageTabStatus> = {};
+    for (const loc of routing.locales) {
+      map[loc] = dirty[loc]
+        ? "dirty"
+        : loc === primaryLang
+          ? "primary"
+          : versionIds[loc] || forms[loc]
+            ? "existing"
+            : "empty";
+    }
+    return map;
+  }, [dirty, primaryLang, versionIds, forms]);
 
   const handleCoverUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -364,14 +446,14 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
           success: t("toast.coverUploaded"),
           error: t("toast.coverUploadFailed"),
         });
-        setForm((prev) => ({ ...prev, cover_image: url }));
+        updateForm((prev) => ({ ...prev, cover_image: url }));
       } catch {
         // error surfaced via toast
       } finally {
         setCoverUploading(false);
       }
     },
-    [t],
+    [t, updateForm],
   );
 
   const handlePdfUpload = useCallback(
@@ -388,74 +470,131 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
           success: t("toast.fileUploaded"),
           error: t("toast.fileUploadFailed"),
         });
-        setForm((prev) => ({ ...prev, pdf_url: url }));
+        updateForm((prev) => ({ ...prev, pdf_url: url }));
       } catch {
         // error surfaced via toast
       } finally {
         setPdfUploading(false);
       }
     },
-    [t],
+    [t, updateForm],
   );
 
-  const buildPayload = (): BookPayload => ({
-    title: form.title,
-    author: form.author || null,
-    co_authors: form.co_authors
-      ? form.co_authors.split(",").map((s) => s.trim()).filter(Boolean)
+  const buildPayload = (
+    f: FormState,
+    opts: { translationOf?: string | null },
+  ): BookPayload => ({
+    title: f.title,
+    author: f.author || null,
+    co_authors: f.co_authors
+      ? f.co_authors.split(",").map((s) => s.trim()).filter(Boolean)
       : null,
-    publisher: form.publisher || null,
-    published_date: form.published_date || null,
-    year: form.year ? parseInt(form.year, 10) : null,
-    summary: form.summary || null,
-    cover_image: form.cover_image || null,
-    pdf_url: form.pdf_url || null,
-    genre: form.genre || null,
-    language: (form.language || null) as BookPayload["language"],
-    page_count: form.page_count ? parseInt(form.page_count, 10) : null,
-    price: form.price ? parseFloat(form.price) : null,
-    currency: form.currency || null,
-    print_enabled: form.print_enabled,
-    print_price: form.print_price ? parseFloat(form.print_price) : null,
-    magazine_id: form.magazine_id || null,
+    publisher: f.publisher || null,
+    published_date: f.published_date || null,
+    year: f.year ? parseInt(f.year, 10) : null,
+    summary: f.summary || null,
+    cover_image: f.cover_image || null,
+    pdf_url: f.pdf_url || null,
+    genre: f.genre || null,
+    language: (f.language || null) as BookPayload["language"],
+    page_count: f.page_count ? parseInt(f.page_count, 10) : null,
+    price: f.price ? parseFloat(f.price) : null,
+    currency: f.currency || null,
+    print_enabled: f.print_enabled,
+    print_price: f.print_price ? parseFloat(f.print_price) : null,
+    magazine_id: f.magazine_id || null,
     created_by: currentUser?.id ?? null,
-    // Link into the source's translation group (create-only, flag-gated).
-    // `undefined` (not null) so JSON serialization omits the key entirely on
-    // the current backend, which has no such column yet.
-    translation_of: isTranslation ? translationOf : undefined,
+    translation_of: opts.translationOf ?? undefined,
   });
 
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      setFieldError(null);
-      setSubmitError(null);
-      if (!form.title.trim()) {
-        setFieldError(t("errors.titleRequired"));
-        return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFieldError(null);
+    setSubmitError(null);
+    if (busy) return;
+
+    const dirtyLocales: string[] = routing.locales.filter((loc) => dirty[loc] && forms[loc]);
+    const submitLocales =
+      isEdit || dirtyLocales.includes(primaryLang) ? dirtyLocales : [primaryLang, ...dirtyLocales];
+
+    const primaryForm = forms[primaryLang];
+    if (!isEdit && primaryForm && !primaryForm.title.trim()) {
+      setFieldError(t("errors.titleRequired"));
+      setActiveLang(primaryLang);
+      return;
+    }
+
+    const failed: string[] = [];
+
+    if (isEdit && bookId) {
+      for (const loc of submitLocales) {
+        const f = forms[loc];
+        if (!f) continue;
+        const existingId = loc === primaryLang ? bookId : versionIds[loc];
+        try {
+          if (existingId) {
+            await updateMutation.mutateAsync({
+              bookId: existingId,
+              payload: buildPayload(f, {}),
+            });
+          } else {
+            await createMutation.mutateAsync(buildPayload(f, { translationOf: bookId }));
+          }
+          setDirty((prev) => ({ ...prev, [loc]: false }));
+        } catch (err) {
+          failed.push(loc);
+          if (loc === primaryLang) {
+            setSubmitError(formatApiError(err, t("toast.saveFailed")));
+          }
+        }
       }
-      const payload = buildPayload();
-      if (isEdit && bookId) {
-        mutationToast(() => updateMutation.mutateAsync({ bookId, payload }), {
-          loading: t("toast.saving"),
-          success: t("toast.saved"),
-          error: t("toast.saveFailed"),
-        })
-          .then(() => router.push("/admin/books"))
-          .catch(() => {});
+      qc.invalidateQueries({ queryKey: translationKeys.group("book", bookId) });
+      qc.invalidateQueries({ queryKey: booksKeys.all });
+      if (failed.length === 0) {
+        toast.success(t("toast.saved"));
+        router.push("/admin/books");
       } else {
-        mutationToast(() => createMutation.mutateAsync(payload), {
-          loading: t("toast.saving"),
-          success: t("toast.created"),
-          error: t("toast.saveFailed"),
-        })
-          .then(() => router.push("/admin/books"))
-          .catch(() => {});
+        toast.error(tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }));
       }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [form, isEdit, bookId, createMutation, updateMutation, router, t],
-  );
+      return;
+    }
+
+    // ── Create mode ──
+    let primaryId: string;
+    try {
+      const created = await createMutation.mutateAsync(
+        buildPayload(forms[primaryLang] ?? form, {
+          translationOf: isTranslation ? translationOf : null,
+        }),
+      );
+      primaryId = created.id;
+      setDirty((prev) => ({ ...prev, [primaryLang]: false }));
+    } catch (err) {
+      setSubmitError(formatApiError(err, t("toast.saveFailed")));
+      return;
+    }
+
+    for (const loc of submitLocales) {
+      if (loc === primaryLang) continue;
+      const f = forms[loc];
+      if (!f) continue;
+      try {
+        await createMutation.mutateAsync(buildPayload(f, { translationOf: primaryId }));
+        setDirty((prev) => ({ ...prev, [loc]: false }));
+      } catch {
+        failed.push(loc);
+      }
+    }
+
+    qc.invalidateQueries({ queryKey: booksKeys.all });
+    if (failed.length === 0) {
+      toast.success(t("toast.created"));
+      router.push("/admin/books");
+    } else {
+      toast.error(tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }));
+      router.push(`/admin/books/${encodeURIComponent(primaryId)}/edit`);
+    }
+  };
 
   const inputClass =
     "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-accent-gold)]/60 transition-colors";
@@ -487,11 +626,12 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         <h1 className="text-xl font-semibold text-foreground">
           {isEdit ? t("editTitle") : t("createTitle")}
         </h1>
-        {isEdit && bookId ? (
-          <TranslationsPanel
-            contentType="book"
-            contentId={bookId}
-            currentLanguage={form.language || undefined}
+        {!isTranslation ? (
+          <LanguageFormTabs
+            active={activeLang}
+            onSelect={(loc) => void handleSelectLang(loc)}
+            status={tabStatus}
+            disabled={busy}
           />
         ) : null}
       </div>
@@ -608,7 +748,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
               <input
                 type="checkbox"
                 checked={form.print_enabled}
-                onChange={(e) => setForm((prev) => ({ ...prev, print_enabled: e.target.checked }))}
+                onChange={(e) => updateForm((prev) => ({ ...prev, print_enabled: e.target.checked }))}
                 className="h-4 w-4 accent-[var(--tott-accent-gold)]"
               />
               {t("fields.printEnabled")}

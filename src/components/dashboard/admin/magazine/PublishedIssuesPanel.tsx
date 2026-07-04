@@ -2,6 +2,7 @@
 
 import { useId, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 import {
   SearchIcon,
   PlusIcon,
@@ -24,8 +25,8 @@ import {
   useDeleteMagazineIssue,
 } from "@/hooks/mutations/magazine-issues";
 import { IssueArticlesPanel } from "./IssueArticlesPanel";
-import { useTranslations as useTranslationGroup } from "@/hooks/queries/translations";
-import { LocaleTabs } from "@/components/dashboard/admin/translations";
+import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
 import type {
   MagazineIssue,
   MagazineIssueInput,
@@ -85,6 +86,7 @@ function normStatus(s: string | null | undefined): string {
 
 export function PublishedIssuesPanel() {
   const t = useTranslations("Dashboard.magazineIssues");
+  const tTr = useTranslations("Dashboard.translations");
   const statusLabel = (s: string) =>
     STATUS_KEYS.includes(s) ? t(`statuses.${s}`) : s;
   const kindLabel = (k: string | null | undefined) => {
@@ -160,6 +162,21 @@ export function PublishedIssuesPanel() {
   const loadError = query.error
     ? formatApiError(query.error, t("published.list.loadError"))
     : null;
+
+  // Every issue sharing the open modal's translation group, keyed by
+  // language — lets the modal's tabs seed from already-loaded data.
+  const editingAllVersions = useMemo(() => {
+    const anchorId =
+      editing && editing !== "new" && !isTranslateReq(editing) ? editing.id : null;
+    if (!anchorId) return {};
+    const map: Record<string, MagazineIssue> = {};
+    for (const it of issues) {
+      if (it.id === anchorId || it.translation_of === anchorId) {
+        map[(it.language ?? "en").toLowerCase()] = it;
+      }
+    }
+    return map;
+  }, [issues, editing]);
 
   return (
     <div className="space-y-4">
@@ -434,90 +451,81 @@ export function PublishedIssuesPanel() {
           defaultEdition={nextEdition}
           magazineName={magazineName}
           saving={create.isPending || update.isPending || createMagazine.isPending}
+          allVersions={editingAllVersions}
           onClose={() => setEditing(null)}
-          onOpenVersion={(id) => {
-            // Siblings come from the same admin list (it loads every issue),
-            // so a lookup is enough to jump the modal to that version.
-            const sibling = issues.find((it) => it.id === id);
-            if (sibling) setEditing(sibling);
-          }}
-          onAddTranslation={(source, language) =>
-            setEditing({ source, language })
-          }
-          onSave={(values, allLanguages, langBuffers) => {
-            const isNew = editing === "new" || isTranslateReq(editing);
-            mutationToast(
-              async () => {
-                if (!isNew) {
-                  return update.mutateAsync({
-                    id: (editing as MagazineIssue).id,
-                    payload: values,
-                  });
-                }
-                // Resolve the parent magazine behind the scenes: reuse
-                // the existing one, else auto-create the default.
-                let magazineId: string | null = magazines[0]?.id ?? null;
-                if (!magazineId) {
-                  const created = await createMagazine.mutateAsync({
-                    name: DEFAULT_MAGAZINE_TITLE,
-                    title: DEFAULT_MAGAZINE_TITLE,
-                    slug: slugify(DEFAULT_MAGAZINE_TITLE),
-                    status: "published",
-                  });
-                  magazineId = created?.id ?? null;
-                }
+          onSave={async (plan) => {
+            let magazineId: string | null = magazines[0]?.id ?? null;
+
+            const savePrimary = async (): Promise<{ id: string } | null> => {
+              const p = plan[0];
+              if (p.existingId) {
+                await update.mutateAsync({ id: p.existingId, payload: p.values });
+                return { id: p.existingId };
+              }
+              if (!magazineId) {
+                const created = await createMagazine.mutateAsync({
+                  name: DEFAULT_MAGAZINE_TITLE,
+                  title: DEFAULT_MAGAZINE_TITLE,
+                  slug: slugify(DEFAULT_MAGAZINE_TITLE),
+                  status: "published",
+                });
+                magazineId = created?.id ?? null;
+              }
+              const created = await create.mutateAsync({
+                ...p.values,
+                magazine_id: magazineId,
                 // slug is required on create (and must be unique); never
                 // regenerated on edit so public deep-links stay stable.
-                const original = await create.mutateAsync({
-                  ...values,
-                  magazine_id: magazineId,
-                  slug: `${slugify(values.title)}-${Date.now()
-                    .toString(36)
-                    .slice(-5)}`,
-                });
-                // Optional bulk mode: create the other languages too, all in
-                // one translation group. A language the admin authored via
-                // the chips uses ITS buffered text; untouched ones copy the
-                // original's text as a draft to translate later.
-                if (allLanguages && original?.id) {
-                  const originalLang = (values.language ?? "en").toLowerCase();
-                  for (const loc of LANGS) {
-                    if (loc === originalLang) continue;
-                    const buf = langBuffers?.[loc];
-                    await create.mutateAsync({
-                      ...values,
-                      ...(buf
-                        ? {
-                            title: buf.title.trim() || values.title,
-                            subtitle: buf.subtitle.trim() || null,
-                            excerpt: buf.excerpt.trim() || null,
-                            description: buf.description.trim() || null,
-                          }
-                        : {}),
-                      language: loc,
-                      translation_of: original.id,
-                      status: "draft",
-                      magazine_id: magazineId,
-                      slug: `${slugify(buf?.title.trim() || values.title)}-${loc}-${Date.now()
-                        .toString(36)
-                        .slice(-5)}`,
-                    });
+                slug: `${slugify(p.values.title)}-${Date.now().toString(36).slice(-5)}`,
+              });
+              return created ? { id: created.id } : null;
+            };
+
+            const isNew = !plan[0].existingId;
+            const failed: string[] = [];
+            try {
+              await mutationToast(
+                async () => {
+                  const primary = await savePrimary();
+                  for (const p of plan.slice(1)) {
+                    try {
+                      if (p.existingId) {
+                        await update.mutateAsync({ id: p.existingId, payload: p.values });
+                      } else if (primary?.id) {
+                        await create.mutateAsync({
+                          ...p.values,
+                          translation_of: primary.id,
+                          magazine_id: magazineId,
+                          slug: `${slugify(p.values.title)}-${p.values.language}-${Date.now()
+                            .toString(36)
+                            .slice(-5)}`,
+                        });
+                      }
+                    } catch {
+                      failed.push(p.values.language ?? "?");
+                    }
                   }
-                }
-                return original;
-              },
-              {
-                loading: t("published.toast.saving"),
-                success: !isNew
-                  ? t("published.toast.updated")
-                  : allLanguages
-                    ? t("published.toast.createdAll")
-                    : t("published.toast.created"),
-                error: t("published.toast.saveError"),
-              },
-            )
-              .then(() => setEditing(null))
-              .catch(() => {});
+                  return primary;
+                },
+                {
+                  loading: t("published.toast.saving"),
+                  success: !isNew
+                    ? t("published.toast.updated")
+                    : plan.length > 1
+                      ? t("published.toast.createdAll")
+                      : t("published.toast.created"),
+                  error: t("published.toast.saveError"),
+                },
+              );
+            } catch {
+              return;
+            }
+            if (failed.length > 0) {
+              toast.error(
+                tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }),
+              );
+            }
+            setEditing(null);
           }}
         />
       ) : null}
@@ -564,9 +572,6 @@ type FormState = {
 
 type FieldErrors = Partial<Record<"title" | "edition", string>>;
 
-/** The translatable text fields of an issue, buffered per language. */
-type IssueLocalizedText = Pick<FormState, "title" | "subtitle" | "excerpt" | "description">;
-
 function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
   return {
     title: item?.title ?? "",
@@ -592,15 +597,20 @@ function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
   };
 }
 
+/** One locale's save intent, assembled by `submit()` for the parent to run. */
+export type IssueSavePlanEntry = {
+  existingId?: string;
+  values: MagazineIssueInput;
+};
+
 function IssueFormModal({
   item,
   translateFrom,
   defaultEdition,
   magazineName,
   saving,
+  allVersions,
   onClose,
-  onOpenVersion,
-  onAddTranslation,
   onSave,
 }: {
   item: MagazineIssue | null;
@@ -610,58 +620,81 @@ function IssueFormModal({
   defaultEdition: number;
   magazineName: string | null;
   saving: boolean;
+  /** Every issue in the same translation group as `item` (edit mode), keyed
+   * by language — lets tab-switching seed from already-loaded data. */
+  allVersions: Record<string, MagazineIssue>;
   onClose: () => void;
-  onOpenVersion: (id: string) => void;
-  onAddTranslation: (source: MagazineIssue, language: string) => void;
-  onSave: (
-    payload: MagazineIssueInput,
-    allLanguages: boolean,
-    langBuffers?: Record<string, IssueLocalizedText>,
-  ) => void;
+  onSave: (plan: IssueSavePlanEntry[]) => void;
 }) {
   const t = useTranslations("Dashboard.magazineIssues");
   const locale = useLocale();
   const isEdit = Boolean(item);
-  const [form, setForm] = useState<FormState>(() => {
+  const isTranslation = !isEdit && Boolean(translateFrom);
+
+  const initialLang =
+    translateFrom?.language ??
+    item?.language ??
+    ((LANGS as readonly string[]).includes(locale) ? locale : "en");
+  const primaryLang = item?.language ?? initialLang;
+
+  const [activeLang, setActiveLang] = useState(initialLang);
+  const [forms, setForms] = useState<Record<string, FormState>>(() => {
     const base = toForm(item ?? translateFrom?.source ?? null, defaultEdition);
-    // Language: fixed target for a translation, the issue's own on edit,
-    // defaulting to the admin UI locale on plain create.
-    base.language =
-      translateFrom?.language ??
-      item?.language ??
-      ((LANGS as readonly string[]).includes(locale) ? locale : "en");
+    base.language = initialLang;
     // A new-language version starts as a draft of the source's content, so a
     // half-translated issue never goes live on save by accident.
-    return translateFrom ? { ...base, status: "draft" } : base;
+    return { [initialLang]: translateFrom ? { ...base, status: "draft" } : base };
   });
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
   const [errors, setErrors] = useState<FieldErrors>({});
   const [uploading, setUploading] = useState(false);
   const [createAll, setCreateAll] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
   const busy = saving || uploading;
 
-  // Per-language text buffers (create mode): the language chips stash what
-  // was typed per locale so the admin can author all versions before one
-  // save. Non-text fields (kind, edition, cover, …) are shared.
-  const langBuffersRef = useRef<Record<string, IssueLocalizedText>>({});
-  const switchFormLanguage = (next: string) => {
-    if (next === form.language) return;
-    langBuffersRef.current[form.language] = {
-      title: form.title,
-      subtitle: form.subtitle,
-      excerpt: form.excerpt,
-      description: form.description,
-    };
-    const buf = langBuffersRef.current[next];
-    // No buffer yet → keep current text as the translation starting point.
-    setForm((prev) => ({ ...prev, language: next, ...(buf ?? {}) }));
+  const form = forms[activeLang] ?? toForm(null, defaultEdition);
+
+  const tabStatus = useMemo(() => {
+    const map: Record<string, LanguageTabStatus> = {};
+    for (const loc of LANGS) {
+      map[loc] = dirty[loc]
+        ? "dirty"
+        : loc === primaryLang
+          ? "primary"
+          : allVersions[loc] || forms[loc]
+            ? "existing"
+            : "empty";
+    }
+    return map;
+  }, [dirty, primaryLang, allVersions, forms]);
+
+  const updateForm = (mutate: (prev: FormState) => FormState) => {
+    setForms((prev) => {
+      const current = prev[activeLang] ?? toForm(null, defaultEdition);
+      return { ...prev, [activeLang]: mutate(current) };
+    });
+    setDirty((prev) => (prev[activeLang] ? prev : { ...prev, [activeLang]: true }));
   };
 
-  // Snapshot of the pristine form — anything different means unsaved work,
+  const switchFormLanguage = (next: string) => {
+    if (next === activeLang) return;
+    if (!forms[next]) {
+      const existing = allVersions[next];
+      setForms((prev) => ({
+        ...prev,
+        [next]: existing
+          ? { ...toForm(existing, defaultEdition), language: next }
+          : { ...(prev[activeLang] ?? toForm(null, defaultEdition)), language: next },
+      }));
+    }
+    setActiveLang(next);
+  };
+
+  // Snapshot of the pristine forms — anything different means unsaved work,
   // so closing asks for confirmation instead of silently dropping it.
   const initialFormRef = useRef<string>("");
-  if (!initialFormRef.current) initialFormRef.current = JSON.stringify(form);
-  const isDirty = JSON.stringify(form) !== initialFormRef.current;
+  if (!initialFormRef.current) initialFormRef.current = JSON.stringify(forms);
+  const isDirty = JSON.stringify(forms) !== initialFormRef.current;
 
   const requestClose = () => {
     if (busy) return;
@@ -677,7 +710,7 @@ function IssueFormModal({
       >,
     ) => {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+      updateForm((prev) => ({ ...prev, [field]: e.target.value }));
     };
 
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -691,12 +724,38 @@ function IssueFormModal({
         success: t("published.form.uploaded"),
         error: t("published.form.uploadError"),
       });
-      setForm((prev) => ({ ...prev, cover_image: url }));
+      updateForm((prev) => ({ ...prev, cover_image: url }));
     } catch {
       /* surfaced via toast */
     } finally {
       setUploading(false);
     }
+  };
+
+  const toPayload = (f: FormState, lang: string): MagazineIssueInput => {
+    const toIso = (ymd: string): string | null => {
+      if (!ymd) return null;
+      const d = new Date(ymd);
+      return Number.isNaN(d.getTime()) ? null : d.toISOString();
+    };
+    const isCrowdfunded = f.kind === "crowdfunded";
+    return {
+      title: f.title.trim(),
+      subtitle: f.subtitle.trim() || null,
+      kind: f.kind || null,
+      status: f.status || null,
+      language: lang,
+      is_premium: f.is_premium,
+      cover_image: f.cover_image.trim() || null,
+      excerpt: f.excerpt.trim() || null,
+      description: f.description.trim() || null,
+      page_count: f.page_count ? parseInt(f.page_count, 10) : null,
+      edition_number: parseInt(f.edition, 10),
+      category: f.category.trim() || null,
+      published_at: toIso(f.published_at),
+      funding_goal: isCrowdfunded && f.funding_goal ? parseFloat(f.funding_goal) : null,
+      funding_deadline: isCrowdfunded ? toIso(f.funding_deadline) : null,
+    };
   };
 
   const submit = (e: React.FormEvent) => {
@@ -708,10 +767,9 @@ function IssueFormModal({
     // number but stays editable.
     const next: FieldErrors = {};
     if (!form.title.trim()) next.title = t("published.form.errors.titleRequired");
-    const editionNum = parseInt(form.edition, 10);
     if (!form.edition.trim()) {
       next.edition = t("published.form.errors.editionRequired");
-    } else if (Number.isNaN(editionNum)) {
+    } else if (Number.isNaN(parseInt(form.edition, 10))) {
       next.edition = t("published.form.errors.editionNumber");
     }
     if (Object.keys(next).length > 0) {
@@ -719,38 +777,43 @@ function IssueFormModal({
       return;
     }
 
-    const toIso = (ymd: string): string | null => {
-      if (!ymd) return null;
-      const d = new Date(ymd);
-      return Number.isNaN(d.getTime()) ? null : d.toISOString();
-    };
-    const isCrowdfunded = form.kind === "crowdfunded";
+    const dirtyLocales: string[] = LANGS.filter((loc) => dirty[loc] && forms[loc]);
+    const submitLocales: string[] =
+      isEdit || dirtyLocales.includes(primaryLang)
+        ? dirtyLocales
+        : [primaryLang, ...dirtyLocales];
+    const orderedLocales = [
+      primaryLang,
+      ...submitLocales.filter((l) => l !== primaryLang),
+    ].filter((l) => submitLocales.includes(l) || l === primaryLang);
 
-    onSave({
-      title: form.title.trim(),
-      subtitle: form.subtitle.trim() || null,
-      kind: form.kind || null,
-      status: form.status || null,
-      language: form.language,
-      translation_of: translateFrom?.source.id ?? undefined,
-      is_premium: form.is_premium,
-      cover_image: form.cover_image.trim() || null,
-      excerpt: form.excerpt.trim() || null,
-      description: form.description.trim() || null,
-      page_count: form.page_count ? parseInt(form.page_count, 10) : null,
-      edition_number: editionNum,
-      category: form.category.trim() || null,
-      // The date input yields "YYYY-MM-DD"; the API stores a full ISO
-      // datetime, so normalize before sending.
-      published_at: toIso(form.published_at),
-      // Crowdfunded issues carry funding goal + deadline; null them out
-      // otherwise so switching kind doesn't leave stale values.
-      funding_goal:
-        isCrowdfunded && form.funding_goal
-          ? parseFloat(form.funding_goal)
-          : null,
-      funding_deadline: isCrowdfunded ? toIso(form.funding_deadline) : null,
-    }, !isEdit && !translateFrom && createAll, { ...langBuffersRef.current });
+    const plan: IssueSavePlanEntry[] = orderedLocales.map((loc) => {
+      const f = forms[loc] ?? form;
+      const existingId =
+        loc === primaryLang ? item?.id : allVersions[loc]?.id;
+      const values = toPayload(f, loc);
+      if (!existingId && loc !== primaryLang) {
+        values.translation_of = item?.id ?? translateFrom?.source.id;
+        values.status = "draft";
+      } else if (!existingId && isTranslation) {
+        values.translation_of = translateFrom?.source.id;
+      }
+      return { existingId, values };
+    });
+
+    // Legacy bulk toggle: fabricate a plan entry for every untouched locale
+    // too, seeded from the primary tab's text (create mode only).
+    if (!isEdit && !translateFrom && createAll) {
+      for (const loc of LANGS) {
+        if (loc === primaryLang || plan.some((p) => p.values.language === loc)) continue;
+        const values = toPayload(form, loc);
+        values.translation_of = undefined; // resolved once the primary exists
+        values.status = "draft";
+        plan.push({ values });
+      }
+    }
+
+    onSave(plan);
   };
 
   const inputClass =
@@ -778,19 +841,12 @@ function IssueFormModal({
                 </span>
               ) : null}
             </h2>
-            {item ? (
-              <IssueTranslationChips
-                item={item}
-                onOpenVersion={onOpenVersion}
-                onAddTranslation={(lang) => onAddTranslation(item, lang)}
-              />
-            ) : !translateFrom ? (
-              // Plain create: same chip row, but it just picks the new
-              // issue's language (no group exists yet to link versions).
-              <LocaleTabs
-                locales={LANGS}
-                active={form.language as (typeof LANGS)[number]}
-                onChange={switchFormLanguage}
+            {!translateFrom ? (
+              <LanguageFormTabs
+                active={activeLang}
+                onSelect={switchFormLanguage}
+                status={tabStatus}
+                disabled={busy}
               />
             ) : null}
           </div>
@@ -946,7 +1002,7 @@ function IssueFormModal({
               type="checkbox"
               checked={form.is_premium}
               onChange={(e) =>
-                setForm((prev) => ({ ...prev, is_premium: e.target.checked }))
+                updateForm((prev) => ({ ...prev, is_premium: e.target.checked }))
               }
               className="h-4 w-4 accent-[var(--tott-accent-gold)]"
             />
@@ -1080,78 +1136,6 @@ function IssueFormModal({
           </div>
         ) : null}
       </div>
-    </div>
-  );
-}
-
-/**
- * Language chips for an issue's translation group, modal-local counterpart of
- * `TranslationsPanel` (issues have no admin editor route, so chips switch the
- * open modal instead of navigating).
- */
-function IssueTranslationChips({
-  item,
-  onOpenVersion,
-  onAddTranslation,
-}: {
-  item: MagazineIssue;
-  onOpenVersion: (id: string) => void;
-  onAddTranslation: (language: string) => void;
-}) {
-  const t = useTranslations("Dashboard.translations");
-  const { data } = useTranslationGroup("issue", item.id);
-  const byLanguage = new Map(
-    (data?.versions ?? []).map((v) => [v.language, v]),
-  );
-  const current = (item.language ?? "en").toLowerCase();
-
-  const base =
-    "rounded-md px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider transition-colors";
-
-  return (
-    <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
-      {LANGS.map((loc) => {
-        if (loc === current) {
-          return (
-            <span
-              key={loc}
-              data-testid={`issue-chip-current-${loc}`}
-              className={`${base} bg-[var(--tott-dash-surface-inset)] text-foreground shadow-sm`}
-              title={t("currentBadge")}
-            >
-              {loc}
-            </span>
-          );
-        }
-        const version = byLanguage.get(loc);
-        if (version) {
-          return (
-            <button
-              key={loc}
-              type="button"
-              data-testid={`issue-chip-open-${loc}`}
-              onClick={() => onOpenVersion(version.id)}
-              className={`${base} text-[var(--tott-tab-inactive)] hover:text-foreground`}
-              title={t("openVersion")}
-            >
-              {loc}
-            </button>
-          );
-        }
-        return (
-          <button
-            key={loc}
-            type="button"
-            data-testid={`issue-chip-add-${loc}`}
-            onClick={() => onAddTranslation(loc)}
-            className={`${base} text-[var(--tott-muted)] hover:text-foreground`}
-            title={t("addTranslation")}
-          >
-            {loc}
-            <span className="ms-0.5 text-[9px] leading-none">+</span>
-          </button>
-        );
-      })}
     </div>
   );
 }

@@ -13,7 +13,7 @@ import {
 import { ContentEditorFooter } from "./ContentEditorFooter";
 import { EditorToolbar } from "./EditorToolbar";
 import { EditorRegistryProvider } from "./lib/editor-registry";
-import { LocaleTabs } from "@/components/dashboard/admin/translations";
+import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
 import { routing } from "@/i18n/routing";
 import { ScheduleArticleModal } from "./modals/ScheduleArticleModal";
 import { buildOpenCallContentBlocksAndMainMedia } from "./lib/build-open-call-payload";
@@ -538,10 +538,15 @@ export function OpenCallEditorLayout({
             {tLayout("createAllLanguages")}
           </label>
         ) : null}
-        <LocaleTabs
-          locales={routing.locales}
-          active={language as (typeof routing.locales)[number]}
-          onChange={switchLanguage}
+        <LanguageFormTabs
+          active={language}
+          onSelect={switchLanguage}
+          status={Object.fromEntries(
+            routing.locales.map((loc) => [
+              loc,
+              loc === language ? "primary" : "empty",
+            ]),
+          )}
         />
       </div>
 

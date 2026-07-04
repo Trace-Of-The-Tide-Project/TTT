@@ -7,6 +7,12 @@
       "addAll": "Tout ajouter",
       "openVersion": "Ouvrir",
       "currentBadge": "Actuelle",
+      "tabs": {
+        "unsaved": "Modifications non enregistrées"
+      },
+      "toasts": {
+        "partialFailure": "Certaines versions linguistiques n'ont pas pu être enregistrées : {languages}. Vos modifications sont conservées — réessayez d'enregistrer."
+      },
       "missing": "Pas encore ajoutée",
       "status": {
         "draft": "Brouillon",

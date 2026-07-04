@@ -7,6 +7,12 @@
       "addAll": "إضافة الكل",
       "openVersion": "فتح",
       "currentBadge": "الحالية",
+      "tabs": {
+        "unsaved": "تغييرات غير محفوظة"
+      },
+      "toasts": {
+        "partialFailure": "تعذّر حفظ بعض النسخ اللغوية: {languages}. تغييراتك محفوظة مؤقتًا — حاول الحفظ مجددًا."
+      },
       "missing": "لم تُضَف بعد",
       "status": {
         "draft": "مسودة",

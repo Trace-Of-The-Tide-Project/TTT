@@ -1,16 +1,27 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
-import { usePerson } from "@/hooks/queries/people";
+import { usePerson, peopleKeys } from "@/hooks/queries/people";
 import { useCreatePerson, useUpdatePerson } from "@/hooks/mutations/people";
 import { uploadArticleAssetPath } from "@/services/uploads.service";
-import type { PersonProfilePayload } from "@/services/people.service";
+import {
+  getPerson,
+  type PersonProfile,
+  type PersonProfilePayload,
+} from "@/services/people.service";
+import {
+  useTranslations as useTranslationGroup,
+  translationKeys,
+} from "@/hooks/queries/translations";
 import { formatApiError } from "@/lib/api/error-message";
 import { AvatarUploadZone } from "@/components/dashboard/admin/writers/form-controls";
-import { TranslationsPanel } from "@/components/dashboard/admin/translations";
+import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import { routing } from "@/i18n/routing";
 import { toast } from "sonner";
 
 type FormState = {
@@ -31,6 +42,17 @@ const EMPTY: FormState = {
   language: "en",
 };
 
+function seedFromPerson(p: PersonProfile): FormState {
+  return {
+    full_name: p.full_name ?? "",
+    biography: p.biography ?? "",
+    portrait: p.portrait ?? "",
+    birth_date: p.birth_date ? p.birth_date.slice(0, 10) : "",
+    death_date: p.death_date ? p.death_date.slice(0, 10) : "",
+    language: (p.language ?? "en").trim() || "en",
+  };
+}
+
 const inputClass =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-accent-gold)]/60 transition-colors";
 const labelClass = "text-xs font-medium text-[var(--tott-dash-gold-label)] mb-1 block";
@@ -49,36 +71,47 @@ type Props = {
 
 export function PersonFormContent({ personId, createLanguage, translationOf }: Props) {
   const t = useTranslations("Dashboard.people");
+  const tTr = useTranslations("Dashboard.translations");
   const router = useRouter();
+  const qc = useQueryClient();
   const isEdit = Boolean(personId);
   const isTranslation = !isEdit && Boolean(translationOf);
 
   const personQuery = usePerson(personId);
   const sourceQuery = usePerson(isTranslation ? translationOf : undefined);
+  const groupQuery = useTranslationGroup("person", personId);
   const createMutation = useCreatePerson();
   const updateMutation = useUpdatePerson();
 
-  const [form, setForm] = useState<FormState>(() => ({
-    ...EMPTY,
-    language: (createLanguage || "en").trim() || "en",
+  const initialLang = (createLanguage || "en").trim() || "en";
+  const [activeLang, setActiveLang] = useState(initialLang);
+  const [primaryLang, setPrimaryLang] = useState(initialLang);
+  const [forms, setForms] = useState<Record<string, FormState>>(() => ({
+    [initialLang]: { ...EMPTY, language: initialLang },
   }));
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
+  const [langLoading, setLangLoading] = useState(false);
   const [seeded, setSeeded] = useState(false);
   const [translationSeeded, setTranslationSeeded] = useState(false);
   const [uploadingPortrait, setUploadingPortrait] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
+  const form = forms[activeLang] ?? { ...EMPTY, language: activeLang };
+
+  const versionIds = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const v of groupQuery.data?.versions ?? []) map[v.language] = v.id;
+    return map;
+  }, [groupQuery.data]);
+
   // Seed form from existing record in edit mode.
   useEffect(() => {
     if (!isEdit || seeded || !personQuery.data) return;
     const p = personQuery.data;
-    setForm({
-      full_name: p.full_name ?? "",
-      biography: p.biography ?? "",
-      portrait: p.portrait ?? "",
-      birth_date: p.birth_date ? p.birth_date.slice(0, 10) : "",
-      death_date: p.death_date ? p.death_date.slice(0, 10) : "",
-      language: (p.language ?? "en").trim() || "en",
-    });
+    const lang = (p.language ?? "en").trim() || "en";
+    setForms({ [lang]: seedFromPerson(p) });
+    setActiveLang(lang);
+    setPrimaryLang(lang);
     setSeeded(true);
   }, [isEdit, seeded, personQuery.data]);
 
@@ -86,24 +119,76 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
   // language already set from `?language=`.
   useEffect(() => {
     if (!isTranslation || translationSeeded || !sourceQuery.data) return;
-    const p = sourceQuery.data;
-    setForm((prev) => ({
-      ...prev,
-      full_name: p.full_name ?? "",
-      biography: p.biography ?? "",
-      portrait: p.portrait ?? "",
-      birth_date: p.birth_date ? p.birth_date.slice(0, 10) : "",
-      death_date: p.death_date ? p.death_date.slice(0, 10) : "",
-      // language stays as the target version language.
-    }));
+    setForms({
+      [initialLang]: { ...seedFromPerson(sourceQuery.data), language: initialLang },
+    });
     setTranslationSeeded(true);
-  }, [isTranslation, translationSeeded, sourceQuery.data]);
+  }, [isTranslation, translationSeeded, sourceQuery.data, initialLang]);
+
+  const updateForm = useCallback(
+    (mutate: (prev: FormState) => FormState) => {
+      setForms((prev) => {
+        const current = prev[activeLang] ?? { ...EMPTY, language: activeLang };
+        return { ...prev, [activeLang]: mutate(current) };
+      });
+      setDirty((prev) => (prev[activeLang] ? prev : { ...prev, [activeLang]: true }));
+    },
+    [activeLang],
+  );
 
   const set = useCallback(
-    (key: keyof FormState, value: string) =>
-      setForm((prev) => ({ ...prev, [key]: value })),
-    [],
+    (key: keyof FormState, value: string) => updateForm((prev) => ({ ...prev, [key]: value })),
+    [updateForm],
   );
+
+  const handleSelectLang = useCallback(
+    async (loc: string) => {
+      if (loc === activeLang) return;
+      if (!forms[loc]) {
+        const existingId = versionIds[loc];
+        if (existingId) {
+          setLangLoading(true);
+          try {
+            const p = await getPerson(existingId);
+            setForms((prev) =>
+              prev[loc]
+                ? prev
+                : {
+                    ...prev,
+                    [loc]: p
+                      ? seedFromPerson(p)
+                      : { ...(prev[primaryLang] ?? EMPTY), language: loc },
+                  },
+            );
+          } finally {
+            setLangLoading(false);
+          }
+        } else {
+          setForms((prev) =>
+            prev[loc]
+              ? prev
+              : { ...prev, [loc]: { ...(prev[primaryLang] ?? EMPTY), language: loc } },
+          );
+        }
+      }
+      setActiveLang(loc);
+    },
+    [activeLang, forms, versionIds, primaryLang],
+  );
+
+  const tabStatus = useMemo(() => {
+    const map: Record<string, LanguageTabStatus> = {};
+    for (const loc of routing.locales) {
+      map[loc] = dirty[loc]
+        ? "dirty"
+        : loc === primaryLang
+          ? "primary"
+          : versionIds[loc] || forms[loc]
+            ? "existing"
+            : "empty";
+    }
+    return map;
+  }, [dirty, primaryLang, versionIds, forms]);
 
   const handlePortraitUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,53 +207,113 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
     [set, t],
   );
 
-  const buildPayload = (): PersonProfilePayload => ({
-    full_name: form.full_name.trim(),
-    biography: form.biography.trim() || null,
-    portrait: form.portrait.trim() || null,
-    birth_date: form.birth_date || null,
-    death_date: form.death_date || null,
-    // Translation-group fields — create-only. `undefined` so JSON
-    // serialization omits the key; `prunePayload` isn't used here.
-    language: !isEdit ? form.language.trim() || undefined : undefined,
-    translation_of: isTranslation ? translationOf : undefined,
+  const buildPayload = (
+    f: FormState,
+    opts: { create: boolean; translationOf?: string | null },
+  ): PersonProfilePayload => ({
+    full_name: f.full_name.trim(),
+    biography: f.biography.trim() || null,
+    portrait: f.portrait.trim() || null,
+    birth_date: f.birth_date || null,
+    death_date: f.death_date || null,
+    language: opts.create ? f.language.trim() || undefined : undefined,
+    translation_of: opts.create ? (opts.translationOf ?? undefined) : undefined,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const busy =
+    createMutation.isPending || updateMutation.isPending || uploadingPortrait || langLoading;
+  const loadingEdit = isEdit && personQuery.isPending;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
+    if (busy) return;
 
-    if (!form.full_name.trim()) {
+    const dirtyLocales: string[] = routing.locales.filter((loc) => dirty[loc] && forms[loc]);
+    const submitLocales =
+      isEdit || dirtyLocales.includes(primaryLang) ? dirtyLocales : [primaryLang, ...dirtyLocales];
+
+    const primaryForm = forms[primaryLang];
+    if (!isEdit && primaryForm && !primaryForm.full_name.trim()) {
       setFormError(t("form.errors.fullNameRequired"));
+      setActiveLang(primaryLang);
       return;
     }
 
-    const payload = buildPayload();
+    const failed: string[] = [];
 
     if (isEdit && personId) {
-      updateMutation.mutate(
-        { personId, payload },
-        {
-          onSuccess: () => {
-            toast.success(t("form.toasts.updated"));
-            router.push("/admin/people");
-          },
-          onError: (err) => setFormError(formatApiError(err, t("form.errors.updateFailed"))),
-        },
+      for (const loc of submitLocales) {
+        const f = forms[loc];
+        if (!f) continue;
+        const existingId = loc === primaryLang ? personId : versionIds[loc];
+        try {
+          if (existingId) {
+            await updateMutation.mutateAsync({
+              personId: existingId,
+              payload: buildPayload(f, { create: false }),
+            });
+          } else {
+            await createMutation.mutateAsync(
+              buildPayload(f, { create: true, translationOf: personId }),
+            );
+          }
+          setDirty((prev) => ({ ...prev, [loc]: false }));
+        } catch (err) {
+          failed.push(loc);
+          if (loc === primaryLang) {
+            setFormError(formatApiError(err, t("form.errors.updateFailed")));
+          }
+        }
+      }
+      qc.invalidateQueries({ queryKey: translationKeys.group("person", personId) });
+      qc.invalidateQueries({ queryKey: peopleKeys.all });
+      if (failed.length === 0) {
+        toast.success(t("form.toasts.updated"));
+        router.push("/admin/people");
+      } else {
+        toast.error(tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }));
+      }
+      return;
+    }
+
+    // ── Create mode ──
+    let primaryId: string;
+    try {
+      const created = await createMutation.mutateAsync(
+        buildPayload(forms[primaryLang] ?? form, {
+          create: true,
+          translationOf: isTranslation ? translationOf : null,
+        }),
       );
+      primaryId = created.id;
+      setDirty((prev) => ({ ...prev, [primaryLang]: false }));
+    } catch (err) {
+      setFormError(formatApiError(err, t("form.errors.createFailed")));
+      return;
+    }
+
+    for (const loc of submitLocales) {
+      if (loc === primaryLang) continue;
+      const f = forms[loc];
+      if (!f) continue;
+      try {
+        await createMutation.mutateAsync(buildPayload(f, { create: true, translationOf: primaryId }));
+        setDirty((prev) => ({ ...prev, [loc]: false }));
+      } catch {
+        failed.push(loc);
+      }
+    }
+
+    qc.invalidateQueries({ queryKey: peopleKeys.all });
+    if (failed.length === 0) {
+      toast.success(t("form.toasts.created"));
+      router.push("/admin/people");
     } else {
-      createMutation.mutate(payload, {
-        onSuccess: () => {
-          toast.success(t("form.toasts.created"));
-          router.push("/admin/people");
-        },
-        onError: (err) => setFormError(formatApiError(err, t("form.errors.createFailed"))),
-      });
+      toast.error(tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }));
+      router.push(`/admin/people/${encodeURIComponent(primaryId)}/edit`);
     }
   };
-
-  const busy = createMutation.isPending || updateMutation.isPending || uploadingPortrait;
-  const loadingEdit = isEdit && personQuery.isPending;
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 py-8 px-4">
@@ -184,11 +329,12 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
             {isEdit ? t("form.editTitle") : t("form.createTitle")}
           </h1>
         </div>
-        {isEdit && personId ? (
-          <TranslationsPanel
-            contentType="person"
-            contentId={personId}
-            currentLanguage={form.language}
+        {!isTranslation ? (
+          <LanguageFormTabs
+            active={activeLang}
+            onSelect={(loc) => void handleSelectLang(loc)}
+            status={tabStatus}
+            disabled={busy}
           />
         ) : null}
       </div>

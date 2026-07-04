@@ -7,6 +7,12 @@
       "addAll": "Añadir todas",
       "openVersion": "Abrir",
       "currentBadge": "Actual",
+      "tabs": {
+        "unsaved": "Cambios sin guardar"
+      },
+      "toasts": {
+        "partialFailure": "No se pudieron guardar algunas versiones de idioma: {languages}. Tus cambios se conservan — intenta guardar de nuevo."
+      },
       "missing": "Aún no añadida",
       "status": {
         "draft": "Borrador",
