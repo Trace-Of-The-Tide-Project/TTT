@@ -136,7 +136,7 @@ export function WritersManagementContent() {
       {
         key: "writer",
         header: t("headers.writer"),
-        width: "26%",
+        width: "22%",
         cellClassName: "flex min-w-0 items-center gap-3 px-5 py-3",
         cell: (w) => {
           const avatar = writerAvatar(w);
@@ -174,7 +174,7 @@ export function WritersManagementContent() {
       {
         key: "headline",
         header: t("headers.headline"),
-        width: "24%",
+        width: "20%",
         cellClassName:
           "px-5 py-3 text-sm text-[var(--tott-muted)] flex items-center min-w-0",
         cell: (w) => (
@@ -184,7 +184,7 @@ export function WritersManagementContent() {
       {
         key: "kind",
         header: t("headers.kind"),
-        width: "12%",
+        width: "10%",
         cell: (w) =>
           w.creator_kind ? (
             <span className="inline-flex max-w-full rounded-full bg-[var(--tott-elevated)] px-2.5 py-1 text-xs font-medium text-foreground">
@@ -201,7 +201,7 @@ export function WritersManagementContent() {
       {
         key: "location",
         header: t("headers.location"),
-        width: "14%",
+        width: "12%",
         cellClassName:
           "px-5 py-3 text-sm text-[var(--tott-muted)] flex items-center min-w-0",
         cell: (w) => (
@@ -211,7 +211,7 @@ export function WritersManagementContent() {
       {
         key: "account",
         header: t("headers.account"),
-        width: "14%",
+        width: "12%",
         cellClassName: "px-5 py-3 flex items-center min-w-0",
         cell: (w) =>
           w.user_id ? (
@@ -231,7 +231,7 @@ export function WritersManagementContent() {
       {
         key: "featured",
         header: t("headers.featured"),
-        width: "12%",
+        width: "10%",
         align: "center",
         cellClassName: "px-5 py-3 flex items-center justify-center",
         cell: (w) => (
@@ -260,7 +260,7 @@ export function WritersManagementContent() {
       {
         key: "actions",
         header: "",
-        width: "12%",
+        width: "14%",
         align: "end",
         cellClassName: "flex items-center justify-end gap-2 px-3 py-3",
         cell: (w) => (
