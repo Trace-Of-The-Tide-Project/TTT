@@ -39,6 +39,7 @@ export async function readSessionUser(): Promise<AuthUser | null> {
       username: u.username,
       full_name: typeof u.full_name === "string" ? u.full_name : undefined,
       email: u.email,
+      avatar_url: typeof u.avatar_url === "string" ? u.avatar_url : null,
       roles: Array.isArray(u.roles) ? u.roles.filter((r): r is string => typeof r === "string") : undefined,
     };
   } catch {
@@ -53,6 +54,7 @@ function serializeUser(user: AuthUser): string {
       username: user.username,
       full_name: user.full_name,
       email: user.email,
+      avatar_url: user.avatar_url,
       roles: user.roles,
     }),
   );
@@ -67,6 +69,11 @@ export function writeSessionCookies(
   if (tokens.refreshToken) {
     response.cookies.set(REFRESH_TOKEN_COOKIE, tokens.refreshToken, REFRESH_COOKIE_OPTIONS);
   }
+  response.cookies.set(AUTH_USER_COOKIE, serializeUser(user), USER_COOKIE_OPTIONS);
+}
+
+/** Re-syncs just the user-snapshot cookie (tokens untouched) after a live `/auth/me` refetch. */
+export function writeSessionUserCookie(response: NextResponse, user: AuthUser): void {
   response.cookies.set(AUTH_USER_COOKIE, serializeUser(user), USER_COOKIE_OPTIONS);
 }
 

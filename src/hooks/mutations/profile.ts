@@ -5,12 +5,16 @@ import {
   type UpdateProfileInput,
 } from "@/services/profile.service";
 import { profileKeys } from "@/hooks/queries/profile";
+import { emitAuthStateChanged } from "@/services/auth.service";
 
 export function useUpdateProfile() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (input: UpdateProfileInput) => updateProfile(input),
-    onSuccess: () => qc.invalidateQueries({ queryKey: profileKeys.detail() }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: profileKeys.detail() });
+      emitAuthStateChanged();
+    },
   });
 }
 

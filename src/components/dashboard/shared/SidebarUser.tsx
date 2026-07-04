@@ -12,6 +12,31 @@ function getInitial(name?: string | null, email?: string | null): string {
   return "A";
 }
 
+function AvatarBadge({
+  avatarUrl,
+  initial,
+  className,
+}: {
+  avatarUrl: string | null | undefined;
+  initial: string;
+  className: string;
+}) {
+  if (avatarUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- signed, short-lived URL; not worth next/image's remote-pattern config
+      <img src={avatarUrl} alt="" className={`${className} object-cover`} />
+    );
+  }
+  return (
+    <span
+      className={`flex items-center justify-center font-bold ${className}`}
+      style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
+    >
+      {initial}
+    </span>
+  );
+}
+
 type SidebarUserProps = {
   collapsed?: boolean;
 };
@@ -33,13 +58,13 @@ export function SidebarUser({ collapsed = false }: SidebarUserProps) {
   if (collapsed) {
     return (
       <div className="flex flex-col items-center gap-3 px-2 py-4">
-        <span
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold"
-          style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
-          title={displayName}
-        >
-          {getInitial(name, email)}
-        </span>
+        <div title={displayName}>
+          <AvatarBadge
+            avatarUrl={user?.avatar_url}
+            initial={getInitial(name, email)}
+            className="h-10 w-10 shrink-0 rounded-full text-sm overflow-hidden"
+          />
+        </div>
         <button
           type="button"
           onClick={handleLogout}
@@ -55,12 +80,11 @@ export function SidebarUser({ collapsed = false }: SidebarUserProps) {
 
   return (
     <div className="flex items-center gap-3 px-3 py-4">
-      <span
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold"
-        style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
-      >
-        {getInitial(name, email)}
-      </span>
+      <AvatarBadge
+        avatarUrl={user?.avatar_url}
+        initial={getInitial(name, email)}
+        className="h-10 w-10 shrink-0 rounded-full text-sm overflow-hidden"
+      />
       <span
         className="flex-1 truncate text-sm font-medium text-foreground"
       >

@@ -87,7 +87,8 @@ export function parseSocialLinks(raw: unknown): ProfileSocialLinks {
 }
 
 function normalizeProfile(raw: unknown): ProfileData {
-  const o = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const top = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const o = (top.data && typeof top.data === "object" ? top.data : top) as Record<string, unknown>;
   const p = (o.profile && typeof o.profile === "object"
     ? o.profile
     : {}) as Record<string, unknown>;

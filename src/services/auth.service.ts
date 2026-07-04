@@ -14,7 +14,7 @@ import { api } from "./api";
  */
 export const AUTH_STATE_CHANGED_EVENT = "tot:auth-state-changed";
 
-function emitAuthStateChanged(): void {
+export function emitAuthStateChanged(): void {
   if (typeof window === "undefined") return;
   window.dispatchEvent(new Event(AUTH_STATE_CHANGED_EVENT));
 }

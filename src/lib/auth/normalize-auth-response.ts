@@ -59,8 +59,21 @@ function normalizeUser(u: Record<string, unknown>): AuthUser | null {
     username,
     email,
     full_name: pickString(u, "full_name", "fullName") ?? undefined,
+    avatar_url: pickString(u, "avatar_url", "avatarUrl"),
     roles: Array.isArray(u.roles)
       ? u.roles.filter((r): r is string => typeof r === "string")
       : undefined,
   };
+}
+
+/**
+ * Normalizes `/auth/me` responses. The backend's global interceptor wraps every
+ * response as `{ status, results, data }`, and `data` here IS the user object
+ * directly (no nested `user` key, unlike login/signup).
+ */
+export function normalizeMeBody(raw: unknown): AuthUser | null {
+  if (!raw || typeof raw !== "object") return null;
+  const top = raw as Record<string, unknown>;
+  const inner = isRecord(top.data) ? top.data : top;
+  return normalizeUser(inner);
 }

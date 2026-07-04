@@ -37,6 +37,31 @@ function getInitial(name: string | null | undefined, email: string | null | unde
   return "A";
 }
 
+function AvatarBadge({
+  avatarUrl,
+  initial,
+  className,
+}: {
+  avatarUrl: string | null | undefined;
+  initial: string;
+  className: string;
+}) {
+  if (avatarUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- signed, short-lived URL; not worth next/image's remote-pattern config
+      <img src={avatarUrl} alt="" className={`${className} object-cover`} />
+    );
+  }
+  return (
+    <span
+      className={`flex items-center justify-center font-semibold ${className}`}
+      style={{ backgroundColor: "var(--tott-accent-gold-focus, #c9a96e)", color: theme.bgDark }}
+    >
+      {initial}
+    </span>
+  );
+}
+
 export function Navbar() {
   const t = useTranslations("Navbar");
   const router = useRouter();
@@ -207,13 +232,14 @@ export function Navbar() {
               {/* Mobile: avatar link */}
               <Link
                 href="/profile"
-                className="flex lg:hidden h-9 w-9 shrink-0 items-center justify-center rounded-full transition-opacity hover:opacity-90"
-                style={{ backgroundColor: "var(--tott-accent-gold-focus, #c9a96e)" }}
+                className="flex lg:hidden h-9 w-9 shrink-0 rounded-full transition-opacity hover:opacity-90 overflow-hidden"
                 aria-label={t("profile")}
               >
-                <span className="text-sm font-semibold" style={{ color: theme.bgDark }}>
-                  {getInitial(user.full_name || user.username, user.email)}
-                </span>
+                <AvatarBadge
+                  avatarUrl={user.avatar_url}
+                  initial={getInitial(user.full_name || user.username, user.email)}
+                  className="h-9 w-9 rounded-full text-sm"
+                />
               </Link>
 
               {/* Desktop: user dropdown button */}
@@ -228,12 +254,11 @@ export function Navbar() {
                   }`}
                   style={{ borderColor }}
                 >
-                  <span
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-                    style={{ backgroundColor: "var(--tott-accent-gold-focus, #c9a96e)", color: theme.bgDark }}
-                  >
-                    {getInitial(user.full_name || user.username, user.email)}
-                  </span>
+                  <AvatarBadge
+                    avatarUrl={user.avatar_url}
+                    initial={getInitial(user.full_name || user.username, user.email)}
+                    className="h-6 w-6 shrink-0 rounded-full text-xs overflow-hidden"
+                  />
                   <span>{displayName}</span>
                   <ChevronDownSmallIcon />
                 </button>
@@ -431,12 +456,11 @@ export function Navbar() {
                   onClick={closeMobileMenu}
                   className={`flex items-center gap-3 rounded-md px-4 py-3 transition-colors ${navMuted} ${navRowHover}`}
                 >
-                  <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-medium"
-                    style={{ backgroundColor: "var(--tott-accent-gold-focus, #c9a96e)", color: theme.bgDark }}
-                  >
-                    {getInitial(user.full_name || user.username, user.email)}
-                  </span>
+                  <AvatarBadge
+                    avatarUrl={user.avatar_url}
+                    initial={getInitial(user.full_name || user.username, user.email)}
+                    className="h-8 w-8 shrink-0 rounded-full text-sm overflow-hidden"
+                  />
                   <span>{displayName}</span>
                 </Link>
                 <Link
