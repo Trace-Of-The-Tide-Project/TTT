@@ -531,21 +531,23 @@ function CarouselCard({
           className="flex flex-wrap items-center justify-center"
           style={{ gap: "4px 8px", maxWidth: 228 }}
         >
-          <span className="inline-flex items-center" style={{ gap: 4 }}>
-            <Avatar name={author} />
-            <span
-              style={{
-                fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                fontWeight: 400,
-                fontSize: 12,
-                lineHeight: "16px",
-                color: TEXT_META,
-                textShadow: "var(--tott-home-text-shadow)",
-              }}
-            >
-              {author}
+          {title !== author ? (
+            <span className="inline-flex items-center" style={{ gap: 4 }}>
+              <Avatar name={author} />
+              <span
+                style={{
+                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                  fontWeight: 400,
+                  fontSize: 12,
+                  lineHeight: "16px",
+                  color: TEXT_META,
+                  textShadow: "var(--tott-home-text-shadow)",
+                }}
+              >
+                {author}
+              </span>
             </span>
-          </span>
+          ) : null}
 
           {date ? (
             <span className="inline-flex items-center" style={{ gap: 4 }}>
@@ -648,6 +650,7 @@ function RolePill({ label }: { label: string }) {
             lineHeight: "16px",
             color: TEXT_STRONG,
             padding: "0 4px",
+            whiteSpace: "nowrap",
           }}
         >
           {label}

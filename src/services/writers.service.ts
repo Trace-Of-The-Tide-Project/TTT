@@ -183,13 +183,15 @@ function unwrapProfileFull(raw: unknown): WriterProfileFull | null {
  * Returns the composed About + stats payload, or null on 404 / error. */
 export async function getWriterProfileFull(
   id: string,
+  viewerLang?: string,
 ): Promise<WriterProfileFull | null> {
   const path = `/writers/${encodeURIComponent(id)}/profile-full`;
+  const params = viewerLang ? { viewer_lang: viewerLang } : undefined;
   if (typeof window === "undefined") {
-    return unwrapProfileFull(await serverGet<unknown>(path));
+    return unwrapProfileFull(await serverGet<unknown>(path, params));
   }
   try {
-    const { data } = await api.get<unknown>(path);
+    const { data } = await api.get<unknown>(path, { params });
     return unwrapProfileFull(data);
   } catch {
     return null;
@@ -197,10 +199,11 @@ export async function getWriterProfileFull(
 }
 
 /** Pick the best display name from the writer record (falls back
- * through profile.display_name → user.full_name → username). */
+ * through profile.display_name → pen_name → user.full_name → username). */
 export function writerDisplayName(w: WriterProfile): string {
   return (
     w.display_name?.trim() ||
+    w.pen_name?.trim() ||
     w.user?.profile?.display_name?.trim() ||
     w.user?.full_name?.trim() ||
     w.user?.username?.trim() ||

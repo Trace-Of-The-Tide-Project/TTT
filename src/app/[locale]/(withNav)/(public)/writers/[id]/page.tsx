@@ -63,9 +63,9 @@ function buildView(p: WriterProfileFull, fallbackName: string, avatar: string | 
 }
 
 export default async function WriterDetailPage({ params }: PageProps) {
-  const { id } = await params;
+  const { id, locale } = await params;
 
-  const full = await getWriterProfileFull(id);
+  const full = await getWriterProfileFull(id, locale);
 
   if (full) {
     const avatar = full.avatar_url?.trim()
