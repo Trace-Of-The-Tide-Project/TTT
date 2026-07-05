@@ -188,7 +188,7 @@ function mapIssue(i: Record<string, unknown>): HomeIssue {
     fundingRaised: num(i.funding_raised),
     fundingDeadline: str(i.funding_deadline),
     href: slug
-      ? `/magazine-issues/${encodeURIComponent(slug)}`
+      ? `/magazine-issues/${slug}`
       : `/magazine-issues`,
   };
 }

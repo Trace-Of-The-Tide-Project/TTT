@@ -15,6 +15,6 @@ export function previewHrefForContentType(
   if (t === "audio") return `/content/audio?id=${id}`;
   if (t === "gallery") return `/content/gallery?id=${id}`;
   if (t === "thread") return `/content/threads?id=${id}`;
-  if (slug) return `/content/article/${encodeURIComponent(slug)}`;
+  if (slug) return `/content/article/${slug}`;
   return `/content/article?id=${id}`;
 }

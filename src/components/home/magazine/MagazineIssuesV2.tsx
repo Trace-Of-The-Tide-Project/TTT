@@ -104,7 +104,7 @@ function BookCard({
   // Deep-link to the issue detail page when we have a slug; otherwise
   // fall back to the Open Issues index so visitors can browse.
   const href = item.slug
-    ? `/magazine-issues/${encodeURIComponent(item.slug)}`
+    ? `/magazine-issues/${item.slug}`
     : "/open-issues";
   const imgSrc = isValidImageUrl(item.coverImage) ? item.coverImage : FALLBACK_IMAGE;
 
