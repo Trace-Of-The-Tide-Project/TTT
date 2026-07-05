@@ -32,6 +32,10 @@ type Props = {
   onSkip: () => void;
   onNext: () => void;
   onConfirm: () => void;
+  /** Jump directly to a step (progress-strip tab click). Form state for
+   * every step already lives in the parent's `forms` map, so switching is
+   * a pure read — nothing is lost. */
+  onStepClick: (step: number) => void;
   /** Disables all navigation (submit in flight). */
   busy?: boolean;
   /** Current language step's field section(s) — untouched form JSX. */
@@ -48,6 +52,7 @@ export function TranslationWizard({
   onSkip,
   onNext,
   onConfirm,
+  onStepClick,
   busy,
   children,
   reviewLines,
@@ -59,45 +64,63 @@ export function TranslationWizard({
 
   return (
     <div className="space-y-5">
-      {/* Progress strip — each segment labeled with its locale code so the
-          admin can see what's ahead, not just how far along they are. */}
-      <div className="flex items-center gap-1.5">
-        {locales.map((loc, i) => (
-          <div key={loc} className="flex-1 space-y-1">
-            <div
-              className={`rounded-full h-1 transition-colors ${
-                i < step || isReview
-                  ? "bg-[var(--tott-accent-gold)]"
-                  : i === step
-                    ? "bg-[var(--tott-accent-gold)]/50"
-                    : "bg-[var(--tott-card-border)]"
-              }`}
-            />
-            <p
-              className={`text-center text-[10px] font-semibold uppercase tracking-wider transition-colors ${
-                i === step && !isReview
-                  ? "text-[var(--tott-dash-gold-text)]"
-                  : "text-[var(--tott-muted)]"
-              }`}
-            >
-              {loc}
-            </p>
-          </div>
-        ))}
-        <div className="flex-1 space-y-1">
-          <div
-            className={`rounded-full h-1 transition-colors ${
-              isReview ? "bg-[var(--tott-accent-gold)]" : "bg-[var(--tott-card-border)]"
-            }`}
-          />
-          <p
-            className={`text-center text-[10px] font-semibold uppercase tracking-wider transition-colors ${
-              isReview ? "text-[var(--tott-dash-gold-text)]" : "text-[var(--tott-muted)]"
-            }`}
-          >
-            {t("reviewStepShort")}
-          </p>
-        </div>
+      {/* Numbered-circle stepper — connecting line shows overall progress,
+          each node is independently clickable (state for every step already
+          lives in the parent, so jumping is a pure read). */}
+      <div className="flex items-center">
+        {[...locales, "__review"].map((loc, i) => {
+          const isLast = i === locales.length;
+          const done = i < step || (isLast && isReview);
+          const active = i === step;
+          return (
+            <div key={loc} className={isLast ? "flex items-center" : "flex flex-1 items-center"}>
+              <button
+                type="button"
+                onClick={() => onStepClick(i)}
+                disabled={busy}
+                className="group flex flex-col items-center gap-1.5 disabled:cursor-not-allowed"
+              >
+                <span
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold transition-all ${
+                    done
+                      ? "bg-[var(--tott-accent-gold)] text-black"
+                      : active
+                        ? "border-2 border-[var(--tott-accent-gold)] text-[var(--tott-dash-gold-text)] bg-[var(--tott-elevated)]"
+                        : "border border-[var(--tott-card-border)] text-[var(--tott-muted)] bg-transparent group-hover:border-[var(--tott-muted)]"
+                  }`}
+                >
+                  {done ? (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : isLast ? (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
+                  ) : (
+                    i + 1
+                  )}
+                </span>
+                <span
+                  className={`text-[10px] font-semibold uppercase tracking-wider transition-colors ${
+                    active ? "text-[var(--tott-dash-gold-text)]" : "text-[var(--tott-muted)]"
+                  }`}
+                >
+                  {isLast ? t("reviewStepShort") : loc}
+                </span>
+              </button>
+              {!isLast && (
+                <div className="mx-1 h-0.5 flex-1 self-start mt-4 rounded-full overflow-hidden bg-[var(--tott-card-border)]">
+                  <div
+                    className={`h-full rounded-full bg-[var(--tott-accent-gold)] transition-all duration-300 ${
+                      i < step ? "w-full" : "w-0"
+                    }`}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Prominent current-step heading — not a small caption easy to miss. */}

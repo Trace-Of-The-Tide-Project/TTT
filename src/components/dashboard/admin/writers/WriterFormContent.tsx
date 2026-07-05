@@ -804,6 +804,7 @@ export function WriterFormContent({
             onBack={() => goToWizardStep(Math.max(0, wizardStep - 1))}
             onSkip={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
             onNext={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+            onStepClick={goToWizardStep}
             onConfirm={() => formRef.current?.requestSubmit()}
             busy={busy}
             reviewLines={wizardReviewLines}
