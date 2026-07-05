@@ -63,6 +63,11 @@
         "threads": "خيط مميّز"
       },
       "manifesto": "بيتٌ واحد، خمس غرف — اختر كيف تقرأ الأرشيف.",
+      "scrollCue": "مرّر للنزول",
+      "gatewaysEyebrow": "فهرس الأرشيف",
+      "curatedEyebrow": "مما جاء به المدّ",
+      "mosaicQuote": "ما يعيده البحر، نحفظه.",
+      "newsletterEyebrow": "رسالة في زجاجة",
       "gatewaysHeading": "ادخل حسب الصيغة",
       "types": {
         "article": "مقالات",

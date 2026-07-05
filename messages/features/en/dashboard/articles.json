@@ -48,6 +48,10 @@
             "scheduled": "Scheduled"
           },
           "justNow": "Just now",
+          "translationsTooltip": "+{count, plural, one {# translation} other {# translations}}",
+          "toggleTranslations": "Show or hide other language versions",
+          "needsTranslation": "Needs translation",
+          "needsTranslationTooltip": "No {locale} version of this piece yet",
           "lastUpdated": "Last Updated",
           "views": "Views",
           "supporters": "Supporters",

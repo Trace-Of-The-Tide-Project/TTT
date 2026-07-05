@@ -63,6 +63,11 @@
         "threads": "Featured Thread"
       },
       "manifesto": "One house, five rooms — choose how you want to read the archive.",
+      "scrollCue": "Scroll to descend",
+      "gatewaysEyebrow": "Archive index",
+      "curatedEyebrow": "Brought in by the tide",
+      "mosaicQuote": "What the sea returns, we keep.",
+      "newsletterEyebrow": "A message in a bottle",
       "gatewaysHeading": "Enter by format",
       "types": {
         "article": "Articles",

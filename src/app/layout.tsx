@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Sans_Arabic, IBM_Plex_Mono } from "next/font/google";
+import { IBM_Plex_Sans, IBM_Plex_Sans_Arabic, IBM_Plex_Mono, IBM_Plex_Serif } from "next/font/google";
 import { hasLocale } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -23,6 +23,12 @@ const plexArabic = IBM_Plex_Sans_Arabic({
 const plexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+const plexSerif = IBM_Plex_Serif({
+  variable: "--font-plex-serif",
+  subsets: ["latin", "latin-ext"],
   weight: ["400", "500", "600"],
 });
 
@@ -56,7 +62,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <body
-        className={`${plexSans.variable} ${plexArabic.variable} ${plexMono.variable} min-h-screen bg-background text-foreground antialiased`}
+        className={`${plexSans.variable} ${plexArabic.variable} ${plexMono.variable} ${plexSerif.variable} min-h-screen bg-background text-foreground antialiased`}
         suppressHydrationWarning
       >
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />

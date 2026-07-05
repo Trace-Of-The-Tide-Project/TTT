@@ -132,6 +132,7 @@ export function mapArticleListItemToTableRow(a: ArticleListItem): ArticleRow {
     title: articleListItemDisplayTitle(a),
     content_type: a.content_type || "article",
     language: a.language || "en",
+    translationGroupId: a.translation_group_id || a.translation_of || null,
     status,
     statusColor,
     updatedAtIso: a.updatedAt,

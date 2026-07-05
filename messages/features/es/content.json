@@ -63,6 +63,11 @@
         "threads": "Hilo destacado"
       },
       "manifesto": "Una casa, cinco salas: elige cómo quieres leer el archivo.",
+      "scrollCue": "Desplázate para descender",
+      "gatewaysEyebrow": "Índice del archivo",
+      "curatedEyebrow": "Traído por la marea",
+      "mosaicQuote": "Lo que el mar devuelve, lo guardamos.",
+      "newsletterEyebrow": "Un mensaje en una botella",
       "gatewaysHeading": "Entra por formato",
       "types": {
         "article": "Artículos",

@@ -1,3 +1,4 @@
+import { getLocale } from "next-intl/server";
 import HexBackground from "@/components/ui/HexBackground";
 import { serverGet } from "@/lib/api/isomorphic-fetch";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
@@ -97,11 +98,17 @@ type AtriumData = {
  * by content_type (no per-type list endpoint), so one fetch + in-memory
  * bucketing powers the hero, gateway counts/peeks, and curated strip.
  * serverGet swallows errors → null → the whole page renders its empty states.
+ *
+ * dedupe=group + viewer_lang picks one row per translation group in the
+ * viewer's language (falling back to newest) — same pattern as every other
+ * public list page (writers, magazine, collections, books, community).
  */
-async function fetchAtriumData(): Promise<AtriumData> {
+async function fetchAtriumData(locale: string): Promise<AtriumData> {
   const raw = await serverGet<Envelope<RawArticle>>("/articles", {
     limit: 40,
     status: "published",
+    dedupe: "group",
+    viewer_lang: locale,
   });
   const rows = raw?.data ?? [];
   const items = rows.map(toAtriumItem);
@@ -130,7 +137,8 @@ async function fetchAtriumData(): Promise<AtriumData> {
 // ─── Page ───────────────────────────────────────────────────────────
 
 export default async function ContentHubPage() {
-  const { hero, gateways, curated } = await fetchAtriumData();
+  const locale = await getLocale();
+  const { hero, gateways, curated } = await fetchAtriumData(locale);
 
   return (
     <main

@@ -63,6 +63,11 @@
         "threads": "Fil à la une"
       },
       "manifesto": "Une maison, cinq salles — choisissez comment lire les archives.",
+      "scrollCue": "Faites défiler pour descendre",
+      "gatewaysEyebrow": "Index des archives",
+      "curatedEyebrow": "Apporté par la marée",
+      "mosaicQuote": "Ce que la mer rend, nous le gardons.",
+      "newsletterEyebrow": "Un message dans une bouteille",
       "gatewaysHeading": "Entrez par format",
       "types": {
         "article": "Articles",

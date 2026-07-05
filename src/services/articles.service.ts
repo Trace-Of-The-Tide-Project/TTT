@@ -182,6 +182,7 @@ export type ArticleListItem = {
   author_id: string;
   collection_id: string | null;
   translation_of: string | null;
+  translation_group_id?: string | null;
   createdAt: string;
   updatedAt: string;
   author: ArticleListAuthor;

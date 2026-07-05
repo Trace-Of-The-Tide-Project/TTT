@@ -471,6 +471,53 @@ html[data-theme="tide"] {
   --color-foreground: var(--foreground);
   --font-sans: var(--font-plex-arabic), var(--font-plex-sans), system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  /* Plex Serif has no Arabic glyphs — Arabic falls through to Plex Arabic. */
+  --font-serif: var(--font-plex-serif), var(--font-plex-arabic), Georgia, serif;
+}
+
+/* /content hub ("The Tideline") ambient loops — pure CSS so reduced-motion
+   is a single media query, no JS guards. */
+@keyframes tott-kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.07); }
+}
+.tott-kenburns {
+  animation: tott-kenburns 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Inner strip is 200% wide with a 2-period wave; -50% translate loops seamlessly. */
+@keyframes tott-tide-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.tott-tide-drift {
+  animation: tott-tide-drift 18s linear infinite;
+}
+
+@keyframes tott-scroll-cue {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+.tott-scroll-cue {
+  animation: tott-scroll-cue 2.2s ease-in-out infinite;
+}
+
+@keyframes tott-bottle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.tott-bottle-float {
+  animation: tott-bottle-float 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tott-kenburns,
+  .tott-tide-drift,
+  .tott-scroll-cue,
+  .tott-bottle-float {
+    animation: none;
+  }
 }
 
 /* Auth card shell: subtle fade-up on first paint (see AuthHexFrame). */
