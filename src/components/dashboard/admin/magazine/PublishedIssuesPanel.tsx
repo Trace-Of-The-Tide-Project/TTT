@@ -1086,6 +1086,7 @@ function IssueFormModal({
               onSkip={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
               onNext={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
               onConfirm={() => formRef.current?.requestSubmit()}
+              onStepClick={goToWizardStep}
               busy={busy}
               reviewLines={wizardReviewLines}
             >
