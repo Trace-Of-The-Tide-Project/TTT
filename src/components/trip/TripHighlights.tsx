@@ -1,4 +1,5 @@
 import { theme } from "@/lib/theme";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 type TripHighlightsProps = {
   highlights: string[];
@@ -27,7 +28,7 @@ export function TripHighlights({ highlights }: TripHighlightsProps) {
   const right = highlights.slice(midpoint);
 
   return (
-    <div>
+    <RevealOnScroll>
       <h2 className="mb-4 text-lg font-semibold text-foreground">
         Trip highlights
       </h2>
@@ -45,6 +46,6 @@ export function TripHighlights({ highlights }: TripHighlightsProps) {
           </ul>
         ))}
       </div>
-    </div>
+    </RevealOnScroll>
   );
 }

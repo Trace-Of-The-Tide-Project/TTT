@@ -15,6 +15,8 @@ import type {
   WorkshopDetail,
 } from "@/services/workshops.service";
 import { getWorkshop } from "@/services/workshops.service";
+import { motion } from "motion/react";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 
 const HERO_ICON = "/images/writing-room/workshops-icon.svg";
 const JOIN_ROOM_ICON = "/images/writing-room/join-room-icon.svg";
@@ -228,13 +230,17 @@ export function WorkshopsContent({
           >
             {t("currentHeading")}
           </h2>
-          <ul
+          <motion.ul
             className="grid grid-cols-1 md:grid-cols-2"
             style={{
               marginTop: "clamp(32px, 2vw + 0.5rem, 96px)",
               gap: "clamp(16px, 1.4vw + 0.4rem, 80px)",
               padding: "clamp(0px, 0.6vw, 24px) clamp(0px, 0.8vw, 32px) 0",
             }}
+            variants={staggerParent}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
           >
             {workshops.length === 0 ? (
               <li
@@ -254,7 +260,13 @@ export function WorkshopsContent({
               </li>
             ) : (
               workshops.map((w) => (
-                <li key={w.id} className="flex">
+                <motion.li
+                  key={w.id}
+                  className="flex"
+                  variants={staggerChild}
+                  transition={springs.gentle}
+                  whileHover={{ y: -4 }}
+                >
                   <WorkshopCard
                     title={w.title || t("cardTitle")}
                     body={w.body || t("cardBody")}
@@ -265,10 +277,10 @@ export function WorkshopsContent({
                     ctaLabel={t("explore")}
                     onExplore={() => openDetail(w)}
                   />
-                </li>
+                </motion.li>
               ))
             )}
-          </ul>
+          </motion.ul>
 
           <div
             className="flex justify-center"

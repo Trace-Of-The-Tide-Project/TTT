@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { SegmentedControl, type SegmentedControlOption } from "@/components/ui/SegmentedControl";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 const TAB_IDS = ["manifesto", "publications", "issues", "editorialBoard", "support"] as const;
 type TabId = (typeof TAB_IDS)[number];
@@ -134,21 +136,40 @@ export function MagazineTabs({
             Manifesto stack uses the original stacked slots; every other
             tab prefers its standalone override (the Figma variant
             redesign) and falls back to the stacked slot when missing. */}
-        {active === "manifesto" ? (
-          <div className="grid gap-20 sm:gap-24 md:gap-28">
-            {visibleTabIds
-              .filter((id) => slots[id] !== undefined)
-              .map((id) => (
-                <div key={id} className="min-w-0">
-                  {slots[id]}
-                </div>
-              ))}
-          </div>
-        ) : (
-          <div className="min-w-0">
-            {standaloneSlots[active] ?? slots[active]}
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={active}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+          >
+            {active === "manifesto" ? (
+              <div className="grid gap-20 sm:gap-24 md:gap-28">
+                {visibleTabIds
+                  .filter((id) => slots[id] !== undefined)
+                  .map((id) => (
+                    <div key={id} className="min-w-0">
+                      {/* Publications self-staggers its cards (MagazineLatestPublished);
+                          wrapping it too would double-animate. Every other stacked
+                          section reveals as a whole block on scroll. */}
+                      {id === "publications" ? (
+                        slots[id]
+                      ) : (
+                        <RevealOnScroll>{slots[id]}</RevealOnScroll>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <div className="min-w-0">
+                <RevealOnScroll>
+                  {standaloneSlots[active] ?? slots[active]}
+                </RevealOnScroll>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );

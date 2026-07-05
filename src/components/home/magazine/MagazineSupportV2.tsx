@@ -1,9 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { staggerParent, staggerChild, revealItem } from "@/lib/motion";
 import type { MagazineIssueItem } from "./MagazineIssuesV2";
 
 // Figma "Icon Wrapper" assets — 56×64 chamfered hex with the glyph
@@ -91,26 +93,38 @@ function CreateOrFundSection({ t }: { t: ReturnType<typeof useTranslations> }) {
         <SectionHeading>{t("ctaHeading")}</SectionHeading>
         <Body className="max-w-[442px] text-center">{t("ctaBody")}</Body>
       </div>
-      <div className="flex flex-col gap-6 px-4 py-4 md:flex-row md:px-10">
-        <CornerFrame className="flex-1">
-          <CtaCard
-            iconSrc={ICON_START_ISSUE}
-            title={t("startIssueTitle")}
-            body={t("startIssueBody")}
-            buttonLabel={t("startIssueButton")}
-            href="/start-an-issue"
-          />
-        </CornerFrame>
-        <CornerFrame className="flex-1">
-          <CtaCard
-            iconSrc={ICON_FUND_ISSUE}
-            title={t("supportIssueTitle")}
-            body={t("supportIssueBody")}
-            buttonLabel={t("supportIssueButton")}
-            href="/open-issues"
-          />
-        </CornerFrame>
-      </div>
+      {/* The two CTA cards reveal one after another as the section
+          scrolls into view. */}
+      <motion.div
+        className="flex flex-col gap-6 px-4 py-4 md:flex-row md:px-10"
+        variants={staggerParent}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+      >
+        <motion.div className="flex-1" variants={staggerChild} transition={revealItem}>
+          <CornerFrame className="flex-1">
+            <CtaCard
+              iconSrc={ICON_START_ISSUE}
+              title={t("startIssueTitle")}
+              body={t("startIssueBody")}
+              buttonLabel={t("startIssueButton")}
+              href="/start-an-issue"
+            />
+          </CornerFrame>
+        </motion.div>
+        <motion.div className="flex-1" variants={staggerChild} transition={revealItem}>
+          <CornerFrame className="flex-1">
+            <CtaCard
+              iconSrc={ICON_FUND_ISSUE}
+              title={t("supportIssueTitle")}
+              body={t("supportIssueBody")}
+              buttonLabel={t("supportIssueButton")}
+              href="/open-issues"
+            />
+          </CornerFrame>
+        </motion.div>
+      </motion.div>
     </CornerFrame>
   );
 }
@@ -232,18 +246,29 @@ function HowSupportWorksSection({ t }: { t: ReturnType<typeof useTranslations> }
           into a continuous line — there's a small gap between rows
           matching the Figma layout. */}
       <div className="w-full max-w-[780px]">
-        <div className="flex flex-col" style={{ gap: 16 }}>
+        {/* Each step reveals on its own, one after another, as the
+            timeline scrolls into view — so the reader takes in the
+            process one piece at a time. */}
+        <motion.div
+          className="flex flex-col"
+          style={{ gap: 16 }}
+          variants={staggerParent}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+        >
           {steps.map((s, i) => (
-            <StepRow
-              key={s.n}
-              side={i % 2 === 0 ? "left" : "right"}
-              number={s.n}
-              title={s.title}
-              body={s.body}
-              iconSrc={s.iconSrc}
-            />
+            <motion.div key={s.n} variants={staggerChild} transition={revealItem}>
+              <StepRow
+                side={i % 2 === 0 ? "left" : "right"}
+                number={s.n}
+                title={s.title}
+                body={s.body}
+                iconSrc={s.iconSrc}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   );
@@ -423,13 +448,20 @@ function YourImpactSection({ t }: { t: ReturnType<typeof useTranslations> }) {
       </div>
 
       {/* Body — Figma "Body" 1317×289: row, justify-center,
-          align-items flex-start, padding 16 40, gap 24. */}
-      <div
+          align-items flex-start, padding 16 40, gap 24.
+          Each impact card reveals on its own, one after another, as the
+          row scrolls into view. */}
+      <motion.div
         className="flex flex-col items-stretch justify-center sm:grid sm:grid-cols-2 md:grid-cols-4"
         style={{ gap: 24, padding: "16px 40px" }}
+        variants={staggerParent}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
       >
         {items.map((it, i) => (
-          <CornerFrame key={i}>
+          <motion.div key={i} variants={staggerChild} transition={revealItem}>
+          <CornerFrame>
             {/* Form body — Figma 252×212 with padding 0 40, gap 16,
                 items center. Outer 24 top/bottom mirrors the Figma
                 top/bottom corner rows so the chamfered frame sits at
@@ -484,8 +516,9 @@ function YourImpactSection({ t }: { t: ReturnType<typeof useTranslations> }) {
               </div>
             </div>
           </CornerFrame>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </CornerFrame>
   );
 }
@@ -510,7 +543,15 @@ function OpenIssuesSection({
         <SectionHeading>{t("openHeading")}</SectionHeading>
         <Body className="max-w-[442px] text-center">{t("openBody")}</Body>
       </div>
-      <div className="grid grid-cols-1 gap-6 px-4 py-4 md:grid-cols-3 md:px-10">
+      {/* Each open-issue card reveals on its own, one after another, as
+          the row scrolls into view. */}
+      <motion.div
+        className="grid grid-cols-1 gap-6 px-4 py-4 md:grid-cols-3 md:px-10"
+        variants={staggerParent}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+      >
         {slots.map((issue, i) => {
           const title = issue?.title?.trim() || t("openIssueTitle");
           const body = issue?.excerpt?.trim() || t("openIssueBody");
@@ -519,20 +560,26 @@ function OpenIssuesSection({
           // they can pick an issue from the list.
           const href = "/open-issues";
           return (
-            <CornerFrame key={issue?.id ?? i}>
-              <OpenIssueCard
-                pill={t("openPill")}
-                title={title}
-                body={body}
-                progress={t("openProgress")}
-                supporters={t("openSupporters")}
-                buttonLabel={t("openButton")}
-                href={href}
-              />
-            </CornerFrame>
+            <motion.div
+              key={issue?.id ?? i}
+              variants={staggerChild}
+              transition={revealItem}
+            >
+              <CornerFrame>
+                <OpenIssueCard
+                  pill={t("openPill")}
+                  title={title}
+                  body={body}
+                  progress={t("openProgress")}
+                  supporters={t("openSupporters")}
+                  buttonLabel={t("openButton")}
+                  href={href}
+                />
+              </CornerFrame>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
     </CornerFrame>
   );
 }
@@ -698,43 +745,49 @@ function WhatWeFundSection({ t }: { t: ReturnType<typeof useTranslations> }) {
   // padding 16/40, gap 24, 4-up grid on md+) so the four card columns
   // align horizontally with the Your Impact columns above.
   return (
-    <div
+    <motion.div
       className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4"
       style={{ gap: 24, padding: "16px 40px" }}
+      variants={staggerParent}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-80px" }}
     >
       {items.map((it, i) => (
-        <CornerFrame key={i}>
-          <div
-            className="flex flex-col items-center"
-            style={{
-              // Body padding mirrors the top/bottom corner-row chrome
-              // (24) + 40 L/R per Figma `Form` Body.
-              padding: "24px 40px",
-              gap: 8,
-            }}
-          >
-            <IconInline>{it.icon}</IconInline>
-            {/* Figma `Frame 52` — label wrapper. */}
-            <div className="w-full" style={{ height: 24 }}>
-              <p
-                style={{
-                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                  fontWeight: 500,
-                  fontSize: 16,
-                  lineHeight: "24px",
-                  letterSpacing: "-0.01em",
-                  color: TEXT_STRONG,
-                  margin: 0,
-                  textAlign: "center",
-                }}
-              >
-                {it.label}
-              </p>
+        <motion.div key={i} variants={staggerChild} transition={revealItem}>
+          <CornerFrame>
+            <div
+              className="flex flex-col items-center"
+              style={{
+                // Body padding mirrors the top/bottom corner-row chrome
+                // (24) + 40 L/R per Figma `Form` Body.
+                padding: "24px 40px",
+                gap: 8,
+              }}
+            >
+              <IconInline>{it.icon}</IconInline>
+              {/* Figma `Frame 52` — label wrapper. */}
+              <div className="w-full" style={{ height: 24 }}>
+                <p
+                  style={{
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontWeight: 500,
+                    fontSize: 16,
+                    lineHeight: "24px",
+                    letterSpacing: "-0.01em",
+                    color: TEXT_STRONG,
+                    margin: 0,
+                    textAlign: "center",
+                  }}
+                >
+                  {it.label}
+                </p>
+              </div>
             </div>
-          </div>
-        </CornerFrame>
+          </CornerFrame>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }
 

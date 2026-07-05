@@ -4,6 +4,8 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { motion } from "motion/react";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 
 const TEXT_STRONG = "var(--tott-home-text-strong)";
 const TEXT_MUTED = "var(--tott-home-text-muted)";
@@ -60,9 +62,21 @@ export function DictionaryIndexContent({
             {t("empty")}
           </p>
         ) : (
-          <ul className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <motion.ul
+            className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            variants={staggerParent}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+          >
             {entries.map((d) => (
-              <li key={d.id} className="flex">
+              <motion.li
+                key={d.id}
+                className="flex"
+                variants={staggerChild}
+                transition={springs.gentle}
+                whileHover={{ y: -4 }}
+              >
                 <Link
                   href={`/dictionary/${encodeURIComponent(d.id)}`}
                   className="relative flex w-full flex-col transition-opacity hover:opacity-90"
@@ -98,9 +112,9 @@ export function DictionaryIndexContent({
                     </p>
                   ) : null}
                 </Link>
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         )}
       </div>
     </main>

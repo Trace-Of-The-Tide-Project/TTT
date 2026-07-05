@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { SupportIssueModal } from "@/components/open-issues/SupportIssueModal";
@@ -160,16 +162,25 @@ export function OpenIssuesContent({
             {t("emptyState")}
           </p>
         ) : (
-          <ul
+          <motion.ul
             className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
             style={{
               gap: "24px",
               padding: 0,
               listStyle: "none",
             }}
+            variants={staggerParent}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
           >
             {issues.map((issue) => (
-              <li key={issue.id}>
+              <motion.li
+                key={issue.id}
+                variants={staggerChild}
+                transition={springs.gentle}
+                whileHover={{ y: -4 }}
+              >
                 <IssueCardView
                   issue={issue}
                   onSupport={() => setActiveIssue(issue)}
@@ -182,9 +193,9 @@ export function OpenIssuesContent({
                   }
                   ctaLabel={t("supportCta")}
                 />
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         )}
       </div>
 

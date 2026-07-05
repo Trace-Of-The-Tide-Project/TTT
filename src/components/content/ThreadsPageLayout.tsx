@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import HexBackground from "@/components/ui/HexBackground";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { ContentBreadcrumb } from "./related/ContentBreadcrumb";
@@ -139,9 +141,20 @@ export function ThreadsPageLayout({
             </div>
 
             {/* Timeline */}
-            <div className="pl-2">
+            <motion.div
+              className="pl-2"
+              variants={staggerParent}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+            >
               {visibleEntries.map((entry, index) => (
-                <div key={index} className="relative flex gap-4">
+                <motion.div
+                  key={index}
+                  variants={staggerChild}
+                  transition={springs.gentle}
+                  className="relative flex gap-4"
+                >
                   {/* Left rail: line + number + line */}
                   <div className="flex w-10 shrink-0 flex-col items-center">
                     {/* Line above + gap (skip for first entry) */}
@@ -226,7 +239,7 @@ export function ThreadsPageLayout({
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
 
               {/* Show more / Show less */}
@@ -254,7 +267,7 @@ export function ThreadsPageLayout({
                   )}
                 </div>
               )}
-            </div>
+            </motion.div>
           </div>
 
           {/* Right — sidebar: author only, no contributors */}

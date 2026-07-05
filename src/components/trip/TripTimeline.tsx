@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { motion } from "motion/react";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import { RichContent } from "@/components/ui/rich-text/RichContent";
 
 type TimelineEntry = {
@@ -110,9 +112,19 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
       </div>
 
       {tab === "timeline" && (
-        <div>
+        <motion.div
+          variants={staggerParent}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+        >
           {entries.map((entry, i) => (
-            <div key={i} className="flex gap-5">
+            <motion.div
+              key={i}
+              className="flex gap-5"
+              variants={staggerChild}
+              transition={springs.gentle}
+            >
               {/* Left rail: line + number + line */}
               <div className="flex w-10 shrink-0 flex-col items-center">
                 {/* Line above + gap (skip for first entry) */}
@@ -177,9 +189,9 @@ export function TripTimeline({ entries, mapSlot }: TripTimelineProps) {
                   </p>
                 )}
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
 
       {tab === "map" &&

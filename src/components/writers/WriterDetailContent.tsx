@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { FollowButton } from "@/components/writers/FollowButton";
 
 const TEXT_STRONG = "var(--tott-home-text-strong)";
@@ -213,6 +214,7 @@ export function WriterDetailContent({ writer }: { writer: WriterDetailView }) {
 
         {/* About — left-aligned info rows */}
         {hasAbout ? (
+          <RevealOnScroll>
           <div
             className="mx-auto mt-10 max-w-md space-y-3 rounded-xl px-5 py-5"
             style={{ border: `1px solid ${CARD_BORDER}` }}
@@ -233,10 +235,12 @@ export function WriterDetailContent({ writer }: { writer: WriterDetailView }) {
               />
             ) : null}
           </div>
+          </RevealOnScroll>
         ) : null}
 
         {/* Social links */}
         {writer.socials.length > 0 ? (
+          <RevealOnScroll>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             {writer.socials.map((s) => (
               <a
@@ -256,6 +260,7 @@ export function WriterDetailContent({ writer }: { writer: WriterDetailView }) {
               </a>
             ))}
           </div>
+          </RevealOnScroll>
         ) : null}
 
         <div className="mt-12 flex justify-center">

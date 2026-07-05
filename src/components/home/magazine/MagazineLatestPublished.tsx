@@ -1,8 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { staggerParent, staggerChild, springs, revealItem } from "@/lib/motion";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { FirstWordGold } from "./FirstWordGold";
 import { BookCover } from "./BookCover";
 
@@ -57,7 +60,7 @@ export function MagazineLatestPublished({
       aria-labelledby="latest-published-heading"
       className="px-4 sm:px-6 md:px-8"
     >
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <RevealOnScroll className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2
             id="latest-published-heading"
@@ -81,12 +84,22 @@ export function MagazineLatestPublished({
           {t("viewMore")}
           <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
         </Link>
-      </div>
+      </RevealOnScroll>
 
-      <ul className="mt-8 flex flex-wrap justify-center gap-4 sm:gap-5">
+      <motion.ul
+        className="mt-8 flex flex-wrap justify-center gap-4 sm:gap-5"
+        variants={staggerParent}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ delayChildren: 0.12, staggerChildren: 0.1 }}
+      >
         {items.map((item) => (
-          <li
+          <motion.li
             key={item.id}
+            variants={staggerChild}
+            transition={revealItem}
+            whileHover={{ y: -6, transition: springs.snappy }}
             className="flex basis-[calc(50%-0.5rem)] flex-col items-stretch sm:basis-[170px] sm:max-w-[192px]"
           >
             <PublishedCardLink id={item.id}>
@@ -148,9 +161,9 @@ export function MagazineLatestPublished({
               </p>
             </div>
             </PublishedCardLink>
-          </li>
+          </motion.li>
         ))}
-      </ul>
+      </motion.ul>
     </section>
   );
 }

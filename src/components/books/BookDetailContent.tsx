@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { BookHexCover } from "@/components/books/BookHexCover";
 import { BookActionButtons, BookDownloadLink } from "@/components/books/BookPurchaseActions";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { BookDetailBreadcrumb, DataRow, CategoryChip, AvatarCircle, AvatarStack, formatCoAuthors, DATA_VALUE_STYLE } from "./detail/BookMeta";
 import { ReviewsSection, PartialStar } from "./reviews/BookReviews";
 import { BookDetailBanner } from "./detail/BookDetailBanner";
@@ -162,20 +163,22 @@ export function BookDetailContent({ book, reviews }: { book: BookDetail; reviews
             </div>
 
             {book.excerpt ? (
-              <section className="flex flex-col" style={{ gap: "8px" }}>
-                <h2
-                  className="min-[1600px]:text-[22px]!"
-                  style={{ fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)", fontWeight: 500, fontSize: "16px", lineHeight: "24px", color: "var(--tott-home-text-muted)", margin: 0 }}
-                >
-                  Description
-                </h2>
-                <p
-                  className="min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
-                  style={{ fontFamily: "'Inter', var(--font-sans, sans-serif)", fontWeight: 400, fontSize: "14px", lineHeight: "20px", letterSpacing: "-0.005em", color: "var(--tott-home-text-strong)", textShadow: "var(--tott-home-text-shadow)", margin: 0, overflowWrap: "anywhere", wordBreak: "break-word" }}
-                >
-                  {book.excerpt}
-                </p>
-              </section>
+              <RevealOnScroll>
+                <section className="flex flex-col" style={{ gap: "8px" }}>
+                  <h2
+                    className="min-[1600px]:text-[22px]!"
+                    style={{ fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)", fontWeight: 500, fontSize: "16px", lineHeight: "24px", color: "var(--tott-home-text-muted)", margin: 0 }}
+                  >
+                    Description
+                  </h2>
+                  <p
+                    className="min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
+                    style={{ fontFamily: "'Inter', var(--font-sans, sans-serif)", fontWeight: 400, fontSize: "14px", lineHeight: "20px", letterSpacing: "-0.005em", color: "var(--tott-home-text-strong)", textShadow: "var(--tott-home-text-shadow)", margin: 0, overflowWrap: "anywhere", wordBreak: "break-word" }}
+                  >
+                    {book.excerpt}
+                  </p>
+                </section>
+              </RevealOnScroll>
             ) : null}
 
             <ReviewsSection

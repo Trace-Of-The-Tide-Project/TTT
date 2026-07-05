@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { RichContent } from "@/components/ui/rich-text/RichContent";
+import { Parallax } from "@/components/motion/Parallax";
 
 type MagazineHeroProps = {
   /** Path to the hero artwork — defaults to the design SVG bundled in /public. */
@@ -85,16 +86,21 @@ export function MagazineHero({
           className="relative w-full overflow-hidden rounded-[20px]"
           style={{ aspectRatio: "1392 / 483" }}
         >
-          <Image
-            src={artworkSrc}
-            alt={t("imageAlt")}
-            fill
-            priority
-            sizes="(min-width: 1392px) 1392px, 100vw"
-            className="select-none object-cover"
-            draggable={false}
-            unoptimized={artworkUnoptimized}
-          />
+          {/* Scroll-linked parallax: the silk artwork drifts vertically as
+              the hero passes through the viewport, giving the banner depth.
+              The overlay copy below is a sibling and stays static. */}
+          <Parallax className="absolute inset-0" distance={28}>
+            <Image
+              src={artworkSrc}
+              alt={t("imageAlt")}
+              fill
+              priority
+              sizes="(min-width: 1392px) 1392px, 100vw"
+              className="select-none object-cover"
+              draggable={false}
+              unoptimized={artworkUnoptimized}
+            />
+          </Parallax>
 
           {/* Content overlay — only enabled at lg+ where the artwork is
               tall enough (≥350px) to comfortably hold the headline and

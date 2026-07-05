@@ -1,6 +1,7 @@
 import { theme } from "@/lib/theme";
 import { dirFor } from "@/i18n/dir";
 import { SpringLink } from "@/components/motion/SpringLink";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import HexBackground from "@/components/ui/HexBackground";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { ContentBreadcrumb } from "./related/ContentBreadcrumb";
@@ -222,7 +223,9 @@ export function ContentPageLayout({
       </div>
 
       {/* Related content */}
-      <RelatedContent items={relatedContent} />
+      <RevealOnScroll>
+        <RelatedContent items={relatedContent} />
+      </RevealOnScroll>
 
       {/* Share your story */}
       <ShareYourStory surface={theme.homeSurface} />

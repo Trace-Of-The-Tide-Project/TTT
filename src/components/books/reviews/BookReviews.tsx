@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Link, useRouter } from "@/i18n/navigation";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import { useSubmitBookReview } from "@/hooks/mutations/book-reviews";
 import { formatApiError } from "@/lib/api/error-message";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
@@ -333,9 +335,16 @@ export function ReviewsSection({
         </p>
       ) : null}
 
-      <ul className="mt-4 flex flex-col" style={{ gap: "16px" }}>
+      <motion.ul
+        className="mt-4 flex flex-col"
+        style={{ gap: "16px" }}
+        variants={staggerParent}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+      >
         {reviews.map((r) => (
-          <li key={r.id} className="flex items-start" style={{ gap: "8px" }}>
+          <motion.li key={r.id} variants={staggerChild} transition={springs.gentle} className="flex items-start" style={{ gap: "8px" }}>
             <ReviewAvatar initial={r.author} />
             <div className="flex min-w-0 flex-1 flex-col" style={{ gap: "8px" }}>
               <div className="flex items-start" style={{ gap: "8px" }}>
@@ -376,9 +385,9 @@ export function ReviewsSection({
                 {r.body}
               </p>
             </div>
-          </li>
+          </motion.li>
         ))}
-      </ul>
+      </motion.ul>
     </section>
   );
 }
