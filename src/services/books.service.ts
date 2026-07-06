@@ -250,6 +250,20 @@ export async function deleteBook(id: string): Promise<void> {
   await api.delete(`/knowledge/books/${encodeURIComponent(id)}`);
 }
 
+/**
+ * POST /knowledge/books/:id/link-translation — merges `id`'s translation
+ * group into `targetId`'s group. For legacy books whose per-language rows
+ * were never linked (created before translation groups existed).
+ */
+export async function linkBookTranslation(
+  id: string,
+  targetId: string,
+): Promise<void> {
+  await api.post(`/knowledge/books/${encodeURIComponent(id)}/link-translation`, {
+    target_id: targetId,
+  });
+}
+
 /** GET /knowledge/books/:id/preview — public, paginated page images for the flipbook reader. */
 export async function getBookPreview(
   bookId: string,

@@ -143,7 +143,8 @@
           "priceFree": "Dejar en blanco para marcarlo como gratis",
           "printPriceCurrency": "Se cobra en la moneda indicada arriba",
           "coverUrl": "O pega directamente la URL de una imagen",
-          "pdfUrl": "O pega directamente la URL de un PDF"
+          "pdfUrl": "O pega directamente la URL de un PDF",
+          "languageLocked": "El idioma queda bloqueado tras la creación. Usa las pestañas de arriba para añadir otra versión de idioma."
         },
         "upload": {
           "coverUpload": "Subir imagen de portada",
@@ -177,6 +178,14 @@
         "translation": {
           "banner": "Añadiendo una traducción: escribe la versión de este idioma abajo.",
           "ofOriginal": "Traducción de «{name}»"
+        },
+        "linkTranslation": {
+          "label": "¿Este idioma ya existe como libro aparte? Vincúlalo aquí en vez de crear uno nuevo.",
+          "searchPlaceholder": "Buscar libros por título…",
+          "hint": "Vincula el grupo de traducción de este libro con el que elijas — los idiomas pasan a ser pestañas en ambos libros.",
+          "searching": "Buscando…",
+          "none": "No hay libros coincidentes",
+          "linkFailed": "Error al vincular el libro"
         }
       }
     }

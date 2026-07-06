@@ -143,7 +143,8 @@
           "priceFree": "Leave blank to mark as free",
           "printPriceCurrency": "Charged in the currency set above",
           "coverUrl": "Or paste an image URL directly",
-          "pdfUrl": "Or paste a PDF URL directly"
+          "pdfUrl": "Or paste a PDF URL directly",
+          "languageLocked": "Language is locked after creation. Use the tabs above to add another language version."
         },
         "upload": {
           "coverUpload": "Upload cover image",
@@ -177,6 +178,14 @@
         "translation": {
           "banner": "Adding a translation — write this language's version below.",
           "ofOriginal": "Translation of “{name}”"
+        },
+        "linkTranslation": {
+          "label": "This language already exists as a separate book? Link it here instead of creating a new one.",
+          "searchPlaceholder": "Search books by title…",
+          "hint": "Links this book's translation group to the one you pick — the languages become tabs on both books.",
+          "searching": "Searching…",
+          "none": "No matching books",
+          "linkFailed": "Failed to link book"
         }
       }
     }

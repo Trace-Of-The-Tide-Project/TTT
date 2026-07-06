@@ -22,6 +22,7 @@ import {
 import { routing } from "@/i18n/routing";
 import { formatApiError } from "@/lib/api/error-message";
 import { BookChaptersPanel } from "./BookChaptersPanel";
+import { LinkBookTranslationPicker } from "./LinkBookTranslationPicker";
 import { getBookById, type Book, type BookPayload } from "@/services/books.service";
 import { booksKeys } from "@/hooks/queries/books";
 
@@ -693,12 +694,21 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
           </div>
           <div>
             <label className={labelClass}>{t("fields.language")}</label>
-            <select className={inputClass} value={form.language} onChange={set("language")}>
+            <select
+              className={`${inputClass} disabled:opacity-60 disabled:cursor-not-allowed`}
+              value={form.language}
+              onChange={set("language")}
+              disabled={isEdit}
+              title={isEdit ? t("hints.languageLocked") : undefined}
+            >
               <option value="">—</option>
               {(["en", "ar", "es", "fr", "de"] as const).map((l) => (
                 <option key={l} value={l}>{t(`languages.${l}`)}</option>
               ))}
             </select>
+            {isEdit ? (
+              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.languageLocked")}</p>
+            ) : null}
           </div>
           <div>
             <label className={labelClass}>{t("fields.page_count")}</label>
@@ -838,6 +848,29 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
           />
         ) : null}
       </div>
+
+      {isEdit && !isTranslation && activeLang !== primaryLang && !versionIds[activeLang] ? (
+        <div className="mb-6 max-w-2xl rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] p-4">
+          <p className="mb-2 text-xs font-medium text-[var(--tott-dash-gold-text)]">
+            {t("linkTranslation.label")}
+          </p>
+          <LinkBookTranslationPicker
+            bookId={bookId as string}
+            onLinked={async () => {
+              const loc = activeLang;
+              const { data } = await groupQuery.refetch();
+              const linkedId = data?.versions.find((v) => v.language === loc)?.id;
+              const b = linkedId ? await getBookById(linkedId) : null;
+              setForms((prev) => ({
+                ...prev,
+                [loc]: b ? seedFromBook(b) : prev[loc],
+              }));
+              setDirty((prev) => ({ ...prev, [loc]: false }));
+            }}
+          />
+        </div>
+      ) : null}
+
       {/* Clarify what a book is vs an issue/article — admins were unsure which
           form to use for which kind of content. */}
       <p className="mb-6 max-w-2xl text-xs leading-relaxed text-[var(--tott-muted)]">

@@ -143,7 +143,8 @@
           "priceFree": "Laisser vide pour marquer comme gratuit",
           "printPriceCurrency": "Facturé dans la devise définie ci-dessus",
           "coverUrl": "Ou collez directement l'URL d'une image",
-          "pdfUrl": "Ou collez directement l'URL d'un PDF"
+          "pdfUrl": "Ou collez directement l'URL d'un PDF",
+          "languageLocked": "La langue est verrouillée après création. Utilisez les onglets ci-dessus pour ajouter une autre version linguistique."
         },
         "upload": {
           "coverUpload": "Télécharger l'image de couverture",
@@ -177,6 +178,14 @@
         "translation": {
           "banner": "Ajout d'une traduction — rédigez la version de cette langue ci-dessous.",
           "ofOriginal": "Traduction de «{name}»"
+        },
+        "linkTranslation": {
+          "label": "Cette langue existe déjà comme livre séparé ? Liez-la ici plutôt que d'en créer un nouveau.",
+          "searchPlaceholder": "Rechercher des livres par titre…",
+          "hint": "Lie le groupe de traduction de ce livre à celui que vous choisissez — les langues deviennent des onglets sur les deux livres.",
+          "searching": "Recherche…",
+          "none": "Aucun livre correspondant",
+          "linkFailed": "Échec de la liaison du livre"
         }
       }
     }
