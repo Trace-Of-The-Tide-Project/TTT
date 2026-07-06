@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { Parallax } from "@/components/motion/Parallax";
+import { ScrollFadeOut } from "@/components/motion/ScrollFadeOut";
 
 type MagazineHeroProps = {
   /** Path to the hero artwork — defaults to the design SVG bundled in /public. */
@@ -106,22 +107,24 @@ export function MagazineHero({
               tall enough (≥350px) to comfortably hold the headline and
               CTAs without crowding. */}
           <div className="pointer-events-none absolute inset-0 z-10 hidden flex-col items-start justify-end px-10 pb-12 text-start lg:flex lg:px-16 lg:pb-20">
-            <HeroCopy
-              t={t}
-              title={title}
-              subtitle={subtitle}
-              primaryCtaLabel={primaryCtaLabel}
-              secondaryCtaLabel={secondaryCtaLabel}
-              primaryHref={primaryHref}
-              secondaryHref={secondaryHref}
-              tone="overlay"
-              className="pointer-events-auto"
-            />
+            <ScrollFadeOut className="w-full">
+              <HeroCopy
+                t={t}
+                title={title}
+                subtitle={subtitle}
+                primaryCtaLabel={primaryCtaLabel}
+                secondaryCtaLabel={secondaryCtaLabel}
+                primaryHref={primaryHref}
+                secondaryHref={secondaryHref}
+                tone="overlay"
+                className="pointer-events-auto"
+              />
+            </ScrollFadeOut>
           </div>
         </div>
 
         {/* Content card — shown below the artwork on <lg viewports. */}
-        <div className="mt-6 lg:hidden">
+        <ScrollFadeOut className="mt-6 lg:hidden" lift={40}>
           <HeroCopy
             t={t}
             title={title}
@@ -132,7 +135,7 @@ export function MagazineHero({
             secondaryHref={secondaryHref}
             tone="stacked"
           />
-        </div>
+        </ScrollFadeOut>
       </div>
     </section>
   );

@@ -208,7 +208,21 @@ function HowSupportWorksSection({ t }: { t: ReturnType<typeof useTranslations> }
 
   return (
     <div className="flex w-full flex-col items-center" style={{ gap: 24 }}>
-      <div className="flex flex-col items-center" style={{ gap: 8 }}>
+      {/* Sticky-pinned heading: the process title pins just below the tab
+          bar while the four steps scroll up beneath it — a single pinned
+          "scene" for the section. The surface background masks steps as
+          they pass behind it; if sticky isn't honored it simply scrolls
+          normally (graceful fallback). */}
+      <div
+        className="sticky z-20 flex w-full flex-col items-center"
+        style={{
+          gap: 8,
+          top: 72,
+          paddingTop: 12,
+          paddingBottom: 12,
+          backgroundColor: "var(--tott-home-surface)",
+        }}
+      >
         {/* 64×72 chamfered heart hex — Figma-exported asset with the
             inset gold glow + 1px gradient stroke baked in. */}
         <Image
