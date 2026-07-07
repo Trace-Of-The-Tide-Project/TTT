@@ -122,11 +122,22 @@ export function WritersManagementContent() {
   }, []);
 
   const displayWriters = useMemo<DisplayWriter[]>(() => {
+    // Collect every version of a group. The server may send each writer's
+    // siblings inlined under `translations` (dedupe=group) OR as separate rows
+    // (no dedupe) — fold both into one member list, deduped by id, so grouping
+    // works either way.
     const byGroup = new Map<string, WriterProfile[]>();
-    for (const w of writers) {
+    const seen = new Set<string>();
+    const add = (w: WriterProfile) => {
       const gid = w.translation_group_id ?? w.id;
       if (!byGroup.has(gid)) byGroup.set(gid, []);
+      if (seen.has(w.id)) return;
+      seen.add(w.id);
       byGroup.get(gid)!.push(w);
+    };
+    for (const w of writers) {
+      add(w);
+      for (const sib of w.translations ?? []) add(sib);
     }
     const stamp = (w: WriterProfile) => w.updatedAt ?? w.createdAt ?? "";
     const out: DisplayWriter[] = [];
