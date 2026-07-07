@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -11,8 +11,6 @@ import { FollowButton } from "@/components/writers/FollowButton";
 // reads as the same component on both pages.
 const WRITER_CARD = "/images/home/Image-2.png";
 const WRITER_TOP_ICON = "/images/home/Icon-4.svg";
-const FILLER = "/images/home/Content Grid Filler.png";
-const GHOST_WIDTH = 138;
 
 // Mask the bottom 164-px fade overlay to the silk-hex silhouette so
 // the rectangular gradient corners don't darken adjacent cards in
@@ -143,8 +141,6 @@ export function MagazineEditorialBoardV2({
         cardTitlePlaceholder={t("writerCardTitle")}
         authorPlaceholder={t("writerAuthor")}
         rolePlaceholder={t("rolePlaceholder")}
-        previousLabel={t("previousSlide")}
-        nextLabel={t("nextSlide")}
       />
 
       {SHOW_OUR_PEOPLE ? (
@@ -225,165 +221,35 @@ function BoardHeader({
   );
 }
 
-/* ─────────────────────────── Carousel ─────────────────────────── */
+/* ─────────────────────────── Grid ─────────────────────────── */
 function Carousel({
   writers,
   cardTitlePlaceholder,
   authorPlaceholder,
   rolePlaceholder,
-  previousLabel,
-  nextLabel,
 }: {
   writers: FollowWriterItem[];
   cardTitlePlaceholder: string;
   authorPlaceholder: string;
   rolePlaceholder: string;
-  previousLabel: string;
-  nextLabel: string;
 }) {
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-
-  // The arrows + side ghost-fades only make sense when the row has more cards
-  // than fit on screen (they signal "scroll for more"). With everything
-  // visible they're misleading, so show them only when the row overflows and
-  // centre the cards otherwise.
-  const [overflowing, setOverflowing] = useState(false);
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const measure = () => setOverflowing(el.scrollWidth - el.clientWidth > 1);
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [writers.length]);
-
-  const scrollBy = (dx: number) => {
-    scrollRef.current?.scrollBy({ left: dx, behavior: "smooth" });
-  };
-
+  // Responsive grid: cards wrap onto new rows. auto-fit + minmax keeps
+  // the CARD_W column width and fills as many columns as fit, centred.
   return (
-    // Carousel mechanics are pinned to LTR: the row is scrolled with
-    // scrollBy({ left }) and the prev/next arrows + ghost gradients are
-    // positioned with physical left/right offsets. Under RTL the flex
-    // row reverses and scrollLeft inverts, so the arrows scroll the
-    // wrong way and cards shift. dir="ltr" keeps the scroll + arrows
-    // consistent; the card content is centre-aligned so Arabic still
-    // renders correctly. No-op on LTR locales.
-    <div dir="ltr" className="relative w-full">
-      {/* Side ghost gradients — only when the row overflows, so the
-          peeking next/previous hex signals there's more to scroll. */}
-      {overflowing ? (
-        <>
-          <div
-            aria-hidden
-            className="pointer-events-none absolute top-0 z-10 hidden sm:block"
-            style={{
-              left: -GHOST_WIDTH - 16,
-              width: GHOST_WIDTH,
-              height: CARD_H,
-            }}
-          >
-            <Image
-              src={FILLER}
-              alt=""
-              fill
-              className="select-none object-cover"
-              // The filler PNG is a baked dark gradient; invert it on light
-              // themes (sand/Tide) so the fade blends instead of showing black.
-              style={{ transform: "scaleX(-1)", filter: "var(--tott-image-invert)" }}
-              sizes={`${GHOST_WIDTH}px`}
-              draggable={false}
-            />
-          </div>
-          <div
-            aria-hidden
-            className="pointer-events-none absolute top-0 z-10 hidden sm:block"
-            style={{
-              right: -GHOST_WIDTH - 16,
-              width: GHOST_WIDTH,
-              height: CARD_H,
-            }}
-          >
-            <Image
-              src={FILLER}
-              alt=""
-              fill
-              className="select-none object-cover"
-              style={{ filter: "var(--tott-image-invert)" }}
-              sizes={`${GHOST_WIDTH}px`}
-              draggable={false}
-            />
-          </div>
-        </>
-      ) : null}
-
-      {/* Scrollable card row. Centred when everything fits; left-aligned
-          (scrollable) once it overflows. */}
-      <div
-        ref={scrollRef}
-        className="flex w-full overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{
-          gap: 8,
-          padding: "0 4px",
-          scrollSnapType: "x mandatory",
-          justifyContent: overflowing ? "flex-start" : "center",
-        }}
-      >
-        {writers.map((w) => (
-          <div
-            key={w.id}
-            className="shrink-0"
-            style={{ width: CARD_W, scrollSnapAlign: "start" }}
-          >
-            <CarouselCard
-              writer={w}
-              cardTitlePlaceholder={cardTitlePlaceholder}
-              authorPlaceholder={authorPlaceholder}
-              rolePlaceholder={rolePlaceholder}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Slide-navigator buttons — only when the row overflows; with all
-          cards visible there's nothing to scroll to. */}
-      {overflowing ? (
-        <>
-          <button
-            type="button"
-            aria-label={previousLabel}
-            onClick={() => scrollBy(-(CARD_W + 8))}
-            className="absolute z-20 hidden h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 sm:flex"
-            style={{
-              left: -72,
-              top: (CARD_H - 40) / 2,
-              backgroundColor: "var(--tott-panel-bg)",
-              border: "1px solid var(--tott-card-border)",
-              color: "var(--tott-home-text-strong)",
-              boxShadow: "var(--tott-home-text-shadow)",
-            }}
-          >
-            <ArrowIcon direction="left" />
-          </button>
-          <button
-            type="button"
-            aria-label={nextLabel}
-            onClick={() => scrollBy(CARD_W + 8)}
-            className="absolute z-20 hidden h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 sm:flex"
-            style={{
-              right: -72,
-              top: (CARD_H - 40) / 2,
-              backgroundColor: "var(--tott-panel-bg)",
-              border: "1px solid var(--tott-card-border)",
-              color: "var(--tott-home-text-strong)",
-              boxShadow: "var(--tott-home-text-shadow)",
-            }}
-          >
-            <ArrowIcon direction="right" />
-          </button>
-        </>
-      ) : null}
+    <div
+      className="flex w-full flex-wrap justify-center"
+      style={{ gap: 8 }}
+    >
+      {writers.map((w) => (
+        <div key={w.id} style={{ width: CARD_W }}>
+          <CarouselCard
+            writer={w}
+            cardTitlePlaceholder={cardTitlePlaceholder}
+            authorPlaceholder={authorPlaceholder}
+            rolePlaceholder={rolePlaceholder}
+          />
+        </div>
+      ))}
     </div>
   );
 }
@@ -408,11 +274,35 @@ function CarouselCard({
     ? `/writers/${encodeURIComponent(writer.id)}`
     : "/writing-room";
 
+  // Cursor-follow 3D tilt. Map pointer position within the card to a
+  // rotateX/Y (max ±MAX_TILT deg); reset to flat on leave. CSS can't read
+  // cursor coords, so this is the minimum JS needed.
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const MAX_TILT = 8;
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5; // -0.5..0.5
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    setTilt({ x: -py * 2 * MAX_TILT, y: px * 2 * MAX_TILT });
+  };
+  const onLeave = () => setTilt({ x: 0, y: 0 });
+
   return (
     <div className="flex flex-col items-center" style={{ width: CARD_W }}>
     <div
-      className="relative block w-full transition-opacity hover:opacity-90"
-      style={{ height: CARD_H, width: CARD_W }}
+      ref={cardRef}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      className="relative block w-full transition-[transform,opacity] duration-150 ease-out hover:opacity-90"
+      style={{
+        height: CARD_H,
+        width: CARD_W,
+        transform: `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        transformStyle: "preserve-3d",
+      }}
     >
       {/* Stretched navigation link — covers the whole card. */}
       <Link
@@ -867,22 +757,6 @@ function PeopleHexCard({ label, count }: { label: string; count: number }) {
 }
 
 /* ─────────────────────────── inline icons ─────────────────────────── */
-function ArrowIcon({ direction }: { direction: "left" | "right" }) {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d={direction === "left"
-          ? "M15 6l-6 6 6 6"
-          : "M9 6l6 6-6 6"}
-        stroke={TEXT_STRONG}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function CalendarIcon() {
   // Figma "Vector": 1.25px white-80% stroke + 0px 1px 2px black-32%
   // drop shadow. Applied via filter so the shadow follows the icon's
