@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { TripHero } from "@/components/trip/TripHero";
 import { TripDetailsBar, DEFAULT_TRIP_ICONS } from "@/components/trip/TripDetailsBar";
@@ -24,6 +25,7 @@ const DETAILS = TRIP_DETAILS.map((d) => ({
 }));
 
 export default function TripPage() {
+  const t = useTranslations("Dashboard.applicationForm.tripBooking");
   return (
     <div className="min-h-screen w-full" style={{ backgroundColor: theme.pageBackground }}>
       {/* Hero */}
@@ -49,9 +51,9 @@ export default function TripPage() {
             {/* About */}
             <div>
               <h2 className="mb-4 text-lg font-semibold text-foreground">
-                About this trip
+                {t("aboutTitle")}
               </h2>
-              <p className="text-sm leading-relaxed text-gray-400">
+              <p className="text-sm leading-relaxed text-[color:var(--tott-home-text-muted)]">
                 {TRIP_ABOUT}
               </p>
             </div>

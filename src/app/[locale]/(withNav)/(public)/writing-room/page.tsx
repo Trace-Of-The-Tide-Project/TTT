@@ -1,3 +1,4 @@
+import { getLocale } from "next-intl/server";
 import { serverGet } from "@/lib/api/isomorphic-fetch";
 import {
   isUsableArticleMediaRef,
@@ -80,12 +81,15 @@ function mapDictionaryEntry(e: RawDictionaryEntry): DictionaryItem {
 }
 
 export default async function WritingRoomPage() {
+  const locale = await getLocale();
   const [rawArticles, rawFeaturedDict, rawDict] = await Promise.all([
     serverGet<Envelope<RawArticle>>("/articles", {
       limit: 8,
       status: "published",
       sortBy: "published_at",
       order: "DESC",
+      dedupe: "group",
+      viewer_lang: locale,
     }),
     serverGet<Envelope<RawDictionaryEntry>>("/dictionary/featured", {
       limit: 6,

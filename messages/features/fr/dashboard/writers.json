@@ -7,15 +7,55 @@
         "edit": "Modifier",
         "searchPlaceholder": "Rechercher par nom de plume, titre, biographie…",
         "loading": "Chargement des profils d'écrivains…",
-        "empty": { "none": "Aucun profil d'écrivain pour le moment.", "noMatch": "Aucun profil ne correspond à votre recherche." },
-        "headers": { "writer": "Écrivain", "headline": "Titre", "kind": "Discipline", "location": "Lieu", "featured": "À la une" },
+        "empty": {
+          "none": "Aucun profil d'écrivain pour le moment.",
+          "noMatch": "Aucun profil ne correspond à votre recherche."
+        },
+        "headers": {
+          "writer": "Écrivain",
+          "headline": "Titre",
+          "kind": "Discipline",
+          "location": "Lieu",
+          "account": "Compte",
+          "featured": "À la une"
+        },
+        "account": {
+          "linked": "A un compte",
+          "createAction": "Créer un compte",
+          "createTitle": "Créer un compte d'écrivain",
+          "fullName": "Nom complet",
+          "email": "Email",
+          "tempPassword": "Mot de passe temporaire",
+          "cancel": "Annuler",
+          "create": "Créer",
+          "creating": "Création…",
+          "created": "Compte créé et lié",
+          "createFailed": "Échec de la création du compte"
+        },
         "featuredOn": "À la une — visible sur le bandeau d'accueil",
         "featuredOff": "Pas à la une",
-        "toasts": { "featuredOn": "Écrivain ajouté au bandeau à la une", "featuredOff": "Écrivain retiré du bandeau à la une" },
-        "errors": { "loadFailed": "Échec du chargement des profils", "updateFailed": "Échec de la mise à jour du profil", "deleteFailed": "Échec de la suppression du profil" },
+        "toasts": {
+          "featuredOn": "Écrivain ajouté au bandeau à la une",
+          "featuredOff": "Écrivain retiré du bandeau à la une"
+        },
+        "errors": {
+          "loadFailed": "Échec du chargement des profils",
+          "updateFailed": "Échec de la mise à jour du profil",
+          "deleteFailed": "Échec de la suppression du profil"
+        },
         "tryAgain": "Réessayer",
-        "pagination": { "pageOf": "Page {page} sur {totalPages}", "previous": "Précédent", "next": "Suivant" },
-        "delete": { "title": "Supprimer le profil d'écrivain", "description": "Supprimer le profil \"{name}\" ? Cette action est irréversible.", "cancel": "Annuler", "confirm": "Supprimer", "confirmBusy": "Suppression…" }
+        "pagination": {
+          "pageOf": "Page {page} sur {totalPages}",
+          "previous": "Précédent",
+          "next": "Suivant"
+        },
+        "delete": {
+          "title": "Supprimer le profil d'écrivain",
+          "description": "Supprimer le profil \"{name}\" ? Cette action est irréversible.",
+          "cancel": "Annuler",
+          "confirm": "Supprimer",
+          "confirmBusy": "Suppression…"
+        }
       },
       "form": {
         "createTitle": "Créer un profil d'écrivain",
@@ -23,7 +63,12 @@
         "backToList": "Retour aux profils d'écrivains",
         "loading": "Chargement du profil d'écrivain…",
         "notFound": "Profil d'écrivain introuvable.",
-        "sections": { "account": "Compte de l'écrivain", "identity": "Identité", "about": "À propos", "support": "Soutien et visibilité" },
+        "sections": {
+          "account": "Compte de l'écrivain",
+          "identity": "Identité",
+          "about": "À propos",
+          "support": "Soutien et visibilité"
+        },
         "account": {
           "modeExisting": "Utilisateur existant",
           "modeNew": "Nouvel écrivain",
@@ -32,6 +77,7 @@
           "noResults": "Aucun utilisateur trouvé.",
           "clear": "Changer",
           "linkedUser": "Utilisateur lié",
+          "optionalHint": "Facultatif — vous pouvez créer cet auteur sans compte utilisateur et le lier plus tard.",
           "fullName": "Nom complet",
           "email": "Email",
           "tempPassword": "Mot de passe temporaire",
@@ -66,9 +112,30 @@
           "featured": "Afficher dans le bandeau des écrivains à la une",
           "featuredHint": "Les écrivains à la une apparaissent sur la page publique du Magazine → Comité éditorial. Laissez décoché pour garder le profil masqué du tableau."
         },
-        "kinds": { "none": "—", "musician": "Musicien", "writer": "Écrivain", "visual_artist": "Artiste visuel", "filmmaker": "Cinéaste" },
-        "toasts": { "created": "Profil d'écrivain créé", "updated": "Profil d'écrivain mis à jour" },
-        "created": { "title": "Profil d'écrivain créé", "description": "Partagez ces identifiants avec l'écrivain maintenant — le mot de passe temporaire ne sera plus affiché.", "copyInvite": "Copier le message de connexion", "inviteCopied": "Copié !", "emailHint": "Aucun e-mail n'est envoyé automatiquement — collez ce message à l'écrivain.", "inviteTemplate": "Vous avez été ajouté comme écrivain sur Trace of the Tide.\n\nConnexion : {url}\nE-mail : {email}\nMot de passe temporaire : {password}\n\nVeuillez changer votre mot de passe après votre première connexion.", "continue": "Aller aux profils d'écrivains" },
+        "kinds": {
+          "none": "—",
+          "musician": "Musicien",
+          "writer": "Écrivain",
+          "visual_artist": "Artiste visuel",
+          "filmmaker": "Cinéaste",
+          "photographer": "Photographe",
+          "translator": "Traducteur",
+          "editor": "Éditeur",
+          "illustrator": "Illustrateur"
+        },
+        "toasts": {
+          "created": "Profil d'écrivain créé",
+          "updated": "Profil d'écrivain mis à jour"
+        },
+        "created": {
+          "title": "Profil d'écrivain créé",
+          "description": "Partagez ces identifiants avec l'écrivain maintenant — le mot de passe temporaire ne sera plus affiché.",
+          "copyInvite": "Copier le message de connexion",
+          "inviteCopied": "Copié !",
+          "emailHint": "Aucun e-mail n'est envoyé automatiquement — collez ce message à l'écrivain.",
+          "inviteTemplate": "Vous avez été ajouté comme écrivain sur Trace of the Tide.\n\nConnexion : {url}\nE-mail : {email}\nMot de passe temporaire : {password}\n\nVeuillez changer votre mot de passe après votre première connexion.",
+          "continue": "Aller aux profils d'écrivains"
+        },
         "errors": {
           "userRequired": "Sélectionnez un utilisateur ou créez-en un nouveau.",
           "fullNameRequired": "Le nom complet est requis.",
@@ -85,7 +152,16 @@
         "save": "Enregistrer les modifications",
         "saving": "Enregistrement…",
         "cancel": "Annuler",
-        "upload": { "uploading": "Téléversement…", "click": "Cliquez pour téléverser un avatar", "hint": "JPG, PNG, WebP — glisser-déposer pris en charge" }
+        "upload": {
+          "uploading": "Téléversement…",
+          "click": "Cliquez pour téléverser un avatar",
+          "hint": "JPG, PNG, WebP — glisser-déposer pris en charge"
+        },
+        "translation": {
+          "banner": "Ajout d'une traduction — rédigez la version de cette langue ci-dessous.",
+          "ofOriginal": "Traduction de «{name}»",
+          "sameAccount": "Liée au compte de l'auteur d'origine."
+        }
       }
     }
   }

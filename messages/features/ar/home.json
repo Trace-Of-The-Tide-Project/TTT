@@ -77,13 +77,16 @@
         "categoryArchitecture": "عمارة",
         "categoryArt": "فنّ",
         "categoryFashion": "أزياء",
-        "categoryFilm": "سينما"
+        "categoryFilm": "سينما",
+        "empty": "لا توجد منشورات بعد."
       },
       "issues": {
         "issuePrefix": "عدد",
         "readOnline": "اقرأ على الإنترنت",
         "galleryHeading": "المعرض البصري",
         "gallerySubtitle": "Lorem ipsum dolor sit amet adipiscing elit.",
+        "emptyTitle": "لا توجد أعداد منشورة بعد",
+        "emptyBody": "ستظهر أعداد المجلة الجديدة هنا فور نشرها.",
         "viewMore": "عرض المزيد",
         "searchPlaceholder": "ابحث في المحتوى...",
         "filterAll": "عرض الكل",
@@ -99,7 +102,8 @@
         "zoomOut": "تصغير",
         "fullscreen": "ملء الشاشة",
         "share": "مشاركة",
-        "more": "خيارات أخرى"
+        "more": "خيارات أخرى",
+        "empty": "لم يتم نشر أي أعداد بعد."
       },
       "editorialBoard": {
         "mastheadEyebrow": "هيئة التحرير · 2026",
@@ -134,7 +138,8 @@
         "writerAuthor": "كاتب",
         "writerEdition": "إصدار",
         "founderQuote": "«الثقافة ليست ترفًا — بل هي الهواء الذي نفهم به ما يعنيه أن نكون أحياء.»",
-        "founderName": "مي أحمد، المؤسِّسة"
+        "founderName": "مي أحمد، المؤسِّسة",
+        "viewWriter": "عرض الكاتب"
       },
       "support": {
         "heading": "تعاونات حديثة",
@@ -280,6 +285,7 @@
       "pages": "{count} صفحة",
       "downloadPdf": "تنزيل ملف PDF",
       "buyNow": "اشترِ الآن",
+      "buyPrint": "شراء نسخة ورقية",
       "preview": "معاينة",
       "reviewsHeading": "المراجعات",
       "seeAllReviews": "عرض كل المراجعات",

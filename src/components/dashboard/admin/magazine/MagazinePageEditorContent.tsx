@@ -27,11 +27,15 @@ import {
   EditorToolbar as RichTextToolbar,
   EditorRegistryProvider,
 } from "@/components/ui/rich-text";
+import { LocaleTabs } from "@/components/dashboard/admin/translations";
 import { useEnsureMagazinePage } from "@/hooks/queries/cms";
 import { usePublishCmsPage, useToggleCmsSection, useUpdateCmsSection } from "@/hooks/mutations/cms";
 import {
   MAGAZINE_SECTION_TYPES,
   SUPPORTED_LOCALES,
+  MAGAZINE_FONT_PRESETS,
+  DEFAULT_FONT_SCALE,
+  clampFontScale,
   parseHeroConfig,
   parseManifestoConfig,
   parseFounderConfig,
@@ -40,6 +44,7 @@ import {
   type HeroConfig,
   type HeroLocaleFields,
   type ManifestoConfig,
+  type MagazineTextAlign,
   type ManifestoLocaleFields,
   type FounderQuoteConfig,
   type FounderQuoteLocaleFields,
@@ -107,7 +112,7 @@ export function MagazinePageEditorContent() {
 
   if (isLoading || !page) {
     return (
-      <div className="flex h-64 items-center justify-center text-sm text-gray-500">
+      <div className="flex h-64 items-center justify-center text-sm text-[var(--tott-muted)]">
         {t("loading")}
       </div>
     );
@@ -118,12 +123,12 @@ export function MagazinePageEditorContent() {
       <header className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
-          <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
+          <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("subtitle")}</p>
         </div>
         <div className="flex items-center gap-3">
           {activeDraftState?.isDirty ? (
-            <span className="flex items-center gap-1.5 text-xs font-medium text-[#C9A96E]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#C9A96E]" />
+            <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--tott-dash-gold-text)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--tott-accent-gold)]" />
               {t("unsavedChanges")}
             </span>
           ) : null}
@@ -148,7 +153,7 @@ export function MagazinePageEditorContent() {
               });
             }}
             disabled={publishPage.isPending}
-            className="rounded-lg border border-[#C9A96E] bg-[#C9A96E] px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="rounded-lg border border-[var(--tott-accent-gold)] bg-[var(--tott-accent-gold)] px-4 py-2 text-sm font-medium text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {publishPage.isPending
               ? t("publishing")
@@ -162,7 +167,7 @@ export function MagazinePageEditorContent() {
       <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
         {/* Section rail */}
         <aside>
-          <h3 className="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500">
+          <h3 className="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--tott-muted)]">
             {t("sectionsHeading")}
           </h3>
           <ul className="mt-3 flex flex-col">
@@ -175,19 +180,19 @@ export function MagazinePageEditorContent() {
                   {isActive ? (
                     <span
                       aria-hidden
-                      className="absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full bg-[#C9A96E]"
+                      className="absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full bg-[var(--tott-accent-gold)]"
                     />
                   ) : null}
                   <div
                     className={`flex items-center gap-2 rounded-md pl-3 pr-2 py-2 transition-colors ${
-                      isActive ? "bg-[#C9A96E]/8" : "hover:bg-[var(--tott-dash-control-hover)]"
+                      isActive ? "bg-[var(--tott-accent-gold)]/8" : "hover:bg-[var(--tott-dash-control-hover)]"
                     }`}
                   >
                     <button
                       type="button"
                       onClick={() => setActiveSection(row.key)}
                       className={`flex-1 truncate text-left text-[13px] font-medium ${
-                        isActive ? "text-[#C9A96E]" : "text-foreground"
+                        isActive ? "text-[var(--tott-dash-gold-text)]" : "text-foreground"
                       }`}
                     >
                       {t(row.labelKey)}
@@ -203,7 +208,7 @@ export function MagazinePageEditorContent() {
                       }
                       aria-label={visible ? t("hideSection") : t("showSection")}
                       className={`shrink-0 rounded p-1 transition-opacity hover:opacity-80 ${
-                        visible ? "text-gray-400" : "text-gray-600 opacity-40"
+                        visible ? "text-[var(--tott-muted)]" : "text-[var(--tott-muted)] opacity-40"
                       }`}
                     >
                       <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">
@@ -223,7 +228,7 @@ export function MagazinePageEditorContent() {
             const activeRecord = sectionsByKey.get(activeSection);
             if (!activeRecord) {
               return (
-                <div className="rounded-xl border border-[var(--tott-card-border)] p-12 text-center text-sm text-gray-500">
+                <div className="rounded-xl border border-[var(--tott-card-border)] p-12 text-center text-sm text-[var(--tott-muted)]">
                   {t("comingSoonBody")}
                 </div>
               );
@@ -311,6 +316,8 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
+        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
+        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
 
       <EditorRegistryProvider>
@@ -385,6 +392,7 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
 
       <PreviewFrame locale={activeLocale}>
         <MagazineHero
+          fontScale={draft.fontScale}
           artwork={draft.artwork || undefined}
           title={localeFields.title}
           subtitle={localeFields.subtitle}
@@ -401,14 +409,99 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="mb-1.5 block text-xs font-medium text-gray-400">{label}</label>
+      <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">{label}</label>
       {children}
     </div>
   );
 }
 
+/** Per-section text-size preset buttons. Sets the section config's
+ * `fontScale`; "Default" (1×) matches the site's current sizing. */
+function FontSizeField({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (scale: number) => void;
+}) {
+  const t = useTranslations("Dashboard.magazinePageEditor.fontSize");
+  const current = clampFontScale(value);
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
+        {t("label")}
+      </span>
+      <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
+        {MAGAZINE_FONT_PRESETS.map((p) => {
+          const active = Math.abs(current - p.scale) < 0.001;
+          return (
+            <button
+              key={p.key}
+              type="button"
+              onClick={() => onChange(p.scale)}
+              className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                active
+                  ? "bg-[var(--tott-dash-surface-inset)] text-foreground shadow-sm"
+                  : "text-[var(--tott-tab-inactive)] hover:text-foreground"
+              }`}
+            >
+              {t(p.key)}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** Per-section text-alignment buttons (start / center / end / justify).
+ *  Direction-relative so it reads correctly under LTR and RTL. */
+const TEXT_ALIGN_OPTIONS: { key: string; value: MagazineTextAlign }[] = [
+  { key: "start", value: "start" },
+  { key: "center", value: "center" },
+  { key: "end", value: "end" },
+  { key: "justify", value: "justify" },
+];
+
+function TextAlignField({
+  value,
+  onChange,
+}: {
+  value: MagazineTextAlign | undefined;
+  onChange: (v: MagazineTextAlign) => void;
+}) {
+  const t = useTranslations("Dashboard.magazinePageEditor.textAlign");
+  const current = value ?? "start";
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
+        {t("label")}
+      </span>
+      <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
+        {TEXT_ALIGN_OPTIONS.map((o) => {
+          const active = current === o.value;
+          return (
+            <button
+              key={o.key}
+              type="button"
+              onClick={() => onChange(o.value)}
+              className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                active
+                  ? "bg-[var(--tott-dash-surface-inset)] text-foreground shadow-sm"
+                  : "text-[var(--tott-tab-inactive)] hover:text-foreground"
+              }`}
+            >
+              {t(o.key)}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 const INPUT_CLASS =
-  "w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-600 focus:border-[#C9A96E]/60 focus:outline-none focus:ring-1 focus:ring-[#C9A96E]/30 transition";
+  "w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-accent-gold)]/60 focus:outline-none focus:ring-1 focus:ring-[var(--tott-accent-gold)]/30 transition";
 
 function TextInput({
   value,
@@ -471,6 +564,8 @@ function EditorToolbar({
   isSaving,
   onReset,
   onSave,
+  fontScale,
+  onFontScaleChange,
 }: {
   title: string;
   subtitle: string;
@@ -480,6 +575,8 @@ function EditorToolbar({
   isSaving: boolean;
   onReset: () => void;
   onSave: () => void;
+  fontScale?: number;
+  onFontScaleChange?: (scale: number) => void;
 }) {
   const t = useTranslations("Dashboard.magazinePageEditor.hero");
   return (
@@ -487,31 +584,20 @@ function EditorToolbar({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
           <h3 className="truncate text-base font-semibold text-foreground">{title}</h3>
-          <p className="mt-0.5 truncate text-xs text-gray-500">{subtitle}</p>
+          <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]">{subtitle}</p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
-            {SUPPORTED_LOCALES.map((loc) => (
-              <button
-                key={loc}
-                type="button"
-                onClick={() => onLocaleChange(loc)}
-                className={`rounded-md px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider transition-colors ${
-                  activeLocale === loc
-                    ? "bg-[var(--tott-dash-surface-inset)] text-foreground shadow-sm"
-                    : "text-[var(--tott-tab-inactive)] hover:text-foreground"
-                }`}
-              >
-                {loc}
-              </button>
-            ))}
-          </div>
+          <LocaleTabs
+            locales={SUPPORTED_LOCALES}
+            active={activeLocale}
+            onChange={onLocaleChange}
+          />
           <span className="mx-1 h-5 w-px bg-[var(--tott-card-border)]" />
           <button
             type="button"
             onClick={onReset}
             disabled={!isDirty}
-            className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground disabled:opacity-30 disabled:hover:bg-transparent"
+            className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground disabled:opacity-30 disabled:hover:bg-transparent"
           >
             <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">
               <RefreshCwIcon />
@@ -522,12 +608,20 @@ function EditorToolbar({
             type="button"
             onClick={onSave}
             disabled={!isDirty || isSaving}
-            className="rounded-md bg-[#C9A96E] px-4 py-1.5 text-xs font-semibold text-black transition-opacity hover:opacity-90 disabled:opacity-30"
+            className="rounded-md bg-[var(--tott-accent-gold)] px-4 py-1.5 text-xs font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:opacity-30"
           >
             {isSaving ? t("saving") : t("save")}
           </button>
         </div>
       </div>
+      {onFontScaleChange ? (
+        <div className="mt-3 border-t border-[var(--tott-card-border)] pt-3">
+          <FontSizeField
+            value={fontScale ?? DEFAULT_FONT_SCALE}
+            onChange={onFontScaleChange}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -570,10 +664,10 @@ function PreviewFrame({ locale, children }: { locale: MagazineLocale; children: 
   return (
     <div className="flex w-full flex-col gap-2 py-2">
       <div className="flex w-full items-center justify-between px-1">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--tott-muted)]">
           {t("previewHeading")}
         </span>
-        <span className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+        <span className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
           {locale}
         </span>
       </div>
@@ -586,7 +680,7 @@ function PreviewFrame({ locale, children }: { locale: MagazineLocale; children: 
           <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#28C840]/70" />
-          <span className="ml-3 truncate rounded bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[10px] font-mono text-gray-500">
+          <span className="ml-3 truncate rounded bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[10px] font-mono text-[var(--tott-muted)]">
             /magazine
           </span>
         </div>
@@ -651,7 +745,7 @@ function FormCard({ children }: { children: React.ReactNode }) {
 function FieldGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500">
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--tott-muted)]">
         {label}
       </p>
       <div className="space-y-3">{children}</div>
@@ -770,6 +864,8 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
+        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
+        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
 
       <EditorRegistryProvider>
@@ -855,6 +951,10 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
                 />
                 {t("fields.bannerHidden")}
               </label>
+              <TextAlignField
+                value={draft.textAlign}
+                onChange={(v) => setDraft((prev) => ({ ...prev, textAlign: v }))}
+              />
             </FieldGroup>
           </div>
         </FormCard>
@@ -862,6 +962,8 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
 
       <PreviewFrame locale={activeLocale}>
         <MagazineManifesto
+          fontScale={draft.fontScale}
+          textAlign={draft.textAlign}
           philosophyHeadingOverride={localeFields.philosophyHeading}
           philosophyQuoteOverride={localeFields.philosophyQuote}
           visionHeadingOverride={localeFields.visionHeading}
@@ -907,6 +1009,8 @@ function FounderQuoteEditor({ section, onSave, isSaving, registerDraftState }: E
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
+        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
+        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
 
       <EditorRegistryProvider>
@@ -955,6 +1059,7 @@ function FounderQuoteEditor({ section, onSave, isSaving, registerDraftState }: E
 
       <PreviewFrame locale={activeLocale}>
         <MagazineEditorialBoard
+          fontScale={draft.fontScale}
           lessReadArticles={[]}
           writers={[]}
           founder={{
@@ -972,7 +1077,7 @@ function FounderQuoteEditor({ section, onSave, isSaving, registerDraftState }: E
 function NewsletterCopyEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.newsletterCopy");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
-  const { draft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
+  const { draft, setDraft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
     useLocalizedDraft<NewsletterCopyLocaleFields, NewsletterCopyConfig>(
       section,
       parseNewsletterConfig
@@ -991,6 +1096,8 @@ function NewsletterCopyEditor({ section, onSave, isSaving, registerDraftState }:
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
+        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
+        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
       <EditorRegistryProvider>
         <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
@@ -1016,7 +1123,7 @@ function NewsletterCopyEditor({ section, onSave, isSaving, registerDraftState }:
       </EditorRegistryProvider>
 
       <PreviewFrame locale={activeLocale}>
-        <MagazineNewsletter titleOverride={localeFields.title} bodyOverride={localeFields.body} />
+        <MagazineNewsletter fontScale={draft.fontScale} titleOverride={localeFields.title} bodyOverride={localeFields.body} />
       </PreviewFrame>
     </>
   );
@@ -1047,7 +1154,7 @@ const PREVIEW_COLLABS_PLACEHOLDER = [
 function SupportEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.support");
   const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
-  const { draft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
+  const { draft, setDraft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
     useLocalizedDraft<SupportLocaleFields, SupportConfig>(section, parseSupportConfig);
   useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
   const isRtl = RTL_LOCALES.has(activeLocale);
@@ -1063,6 +1170,8 @@ function SupportEditor({ section, onSave, isSaving, registerDraftState }: Editor
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
+        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
+        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
       <EditorRegistryProvider>
         <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
@@ -1085,7 +1194,7 @@ function SupportEditor({ section, onSave, isSaving, registerDraftState }: Editor
                 rtl={isRtl}
               />
             </FieldGroup>
-            <div className="rounded-lg border border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-gray-500">
+            <div className="rounded-lg border border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-[var(--tott-muted)]">
               {t("curationNote")}
             </div>
           </div>
@@ -1094,6 +1203,7 @@ function SupportEditor({ section, onSave, isSaving, registerDraftState }: Editor
 
       <PreviewFrame locale={activeLocale}>
         <MagazineSupport
+          fontScale={draft.fontScale}
           collaborations={PREVIEW_COLLABS_PLACEHOLDER}
           headingOverride={localeFields.heading}
           subheadingOverride={localeFields.subheading}

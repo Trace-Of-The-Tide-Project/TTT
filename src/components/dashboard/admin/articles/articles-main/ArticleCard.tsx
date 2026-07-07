@@ -40,7 +40,7 @@ function HexIcon({ children, size = "md" }: { children: React.ReactNode; size?: 
           strokeWidth="1"
         />
       </svg>
-      <span className={`relative text-gray-400 ${iconScale}`}>{children}</span>
+      <span className={`relative text-[var(--tott-muted)] ${iconScale}`}>{children}</span>
     </div>
   );
 }
@@ -84,14 +84,14 @@ export function ArticleCard({
   const headlineClass = "flex flex-wrap items-baseline gap-x-2 gap-y-0.5";
   const labelClass = "text-xs font-medium text-foreground";
   const titleClass = "truncate text-sm font-medium";
-  const detailClass = compact ? "mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-gray-500" : "mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-gray-500";
+  const detailClass = compact ? "mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-[var(--tott-muted)]" : "mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-[var(--tott-muted)]";
 
   return (
     <SpringCard className={cardClass}>
       <ChamferedFrame />
       <div className={`relative flex min-w-0 flex-1 items-center ${contentGap}`}>
         <div className="shrink-0 self-center">
-          {useHexIcon ? <HexIcon size={compact ? "sm" : "md"}>{icon}</HexIcon> : <span className={compact ? "text-gray-400" : "text-foreground"}>{icon}</span>}
+          {useHexIcon ? <HexIcon size={compact ? "sm" : "md"}>{icon}</HexIcon> : <span className={compact ? "text-[var(--tott-muted)]" : "text-foreground"}>{icon}</span>}
         </div>
         <div className="min-w-0 flex-1">
           <div className={headlineClass}>
@@ -102,7 +102,7 @@ export function ArticleCard({
           </div>
           <div className={detailClass}>
             {subtitleIcon ? (
-              <span className="inline-flex items-center text-gray-500">{subtitleIcon}</span>
+              <span className="inline-flex items-center text-[var(--tott-muted)]">{subtitleIcon}</span>
             ) : null}
             <span>{subtitle}</span>
             {views && (

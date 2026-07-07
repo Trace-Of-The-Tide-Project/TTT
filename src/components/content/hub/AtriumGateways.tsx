@@ -1,19 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
-import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { useLocale, useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import { Link } from "@/i18n/navigation";
 import { ChamferedSurface } from "@/components/ui/ChamferedSurface";
 import { ChevronRightIcon } from "@/components/ui/icons";
-import { SpringLink } from "@/components/motion/SpringLink";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { StaggerContainer } from "@/components/motion/StaggerContainer";
 import { StaggerItem } from "@/components/motion/StaggerItem";
-import { springs } from "@/lib/motion";
 import { GatewayIcon } from "./atrium-icons";
-import { formatDuration, type GatewayData, type GatewayType } from "./atrium-types";
+import { safeImage } from "./atrium-image";
+import { formatDuration, type AtriumItem, type GatewayData, type GatewayType } from "./atrium-types";
 
 /** gold = written/editorial spine; tide = media/ambient rooms. */
 const ACCENT_BY_TYPE: Record<GatewayType, string> = {
@@ -29,45 +27,46 @@ type AtriumGatewaysProps = {
 };
 
 /**
- * THE SIGNATURE — an accordion of chamfered octagons. Each of the five
- * content rooms is a tall tile that springs wider on hover/focus while its
- * neighbors recede, revealing a 2-up peek of that room's newest items. The
- * active tile's gold/tide hairline brightens; a sliding marker (layoutId)
- * tracks it and auto-mirrors in RTL. Tiles always render + link even when a
- * room is empty. Reduced motion collapses the morph to opacity/border only.
+ * THE SIGNATURE — the five rooms as a vertical archive index: full-width
+ * strata bands, each with an oversized index numeral, the room name in
+ * display serif, and an accent hairline in the room's color. Hover/focus
+ * expands the band (pure CSS grid-rows trick, no JS) to reveal a peek of the
+ * room's newest items. Whole band is clickable via a stretched link; on
+ * mobile the peek is hidden and the band is one big tap target.
  */
 export function AtriumGateways({ gateways }: AtriumGatewaysProps) {
   const t = useTranslations("Content");
-  const [active, setActive] = useState<number | null>(null);
-  const reduce = useReducedMotion();
+  // Gradient hairlines use physical directions — flip for RTL so each one
+  // fades away from the text edge (same trick as AtriumManifesto).
+  const isRtl = useLocale() === "ar";
 
   return (
-    <section className="relative w-full px-4 py-12 sm:px-6 md:px-8">
+    <section className="relative w-full px-4 py-16 sm:px-6 md:px-8">
       <div className="mx-auto w-full max-w-[1392px]">
         <RevealOnScroll>
+          <p
+            className="font-mono text-xs uppercase tracking-[0.22em]"
+            style={{ color: theme.accentGold }}
+          >
+            {t("hub.gatewaysEyebrow")}
+          </p>
           <h2
-            className="text-2xl font-semibold tracking-tight sm:text-3xl"
-            style={{ color: "var(--tott-home-text-strong)" }}
+            className="mt-3 font-serif font-medium tracking-tight"
+            style={{
+              fontSize: "clamp(1.875rem, 3.5vw, 2.75rem)",
+              color: "var(--tott-home-text-strong)",
+            }}
           >
             {t("hub.gatewaysHeading")}
           </h2>
         </RevealOnScroll>
 
         <StaggerContainer
-          className="mt-8 flex flex-col gap-4 lg:flex-row lg:items-stretch"
-          onMouseLeave={() => setActive(null)}
+          className="mt-10 flex flex-col border-b"
+          style={{ borderColor: theme.cardBorder }}
         >
           {gateways.map((gateway, i) => (
-            <GatewayTile
-              key={gateway.type}
-              gateway={gateway}
-              active={active === i}
-              dimmed={active !== null && active !== i}
-              reduce={!!reduce}
-              onActivate={() => setActive(i)}
-              onDeactivate={() => setActive((cur) => (cur === i ? null : cur))}
-              t={t}
-            />
+            <StrataBand key={gateway.type} gateway={gateway} index={i} isRtl={isRtl} t={t} />
           ))}
         </StaggerContainer>
       </div>
@@ -75,164 +74,144 @@ export function AtriumGateways({ gateways }: AtriumGatewaysProps) {
   );
 }
 
-function GatewayTile({
+function StrataBand({
   gateway,
-  active,
-  dimmed,
-  reduce,
-  onActivate,
-  onDeactivate,
+  index,
+  isRtl,
   t,
 }: {
   gateway: GatewayData;
-  active: boolean;
-  dimmed: boolean;
-  reduce: boolean;
-  onActivate: () => void;
-  onDeactivate: () => void;
+  index: number;
+  isRtl: boolean;
   t: ReturnType<typeof useTranslations>;
 }) {
   const accent = ACCENT_BY_TYPE[gateway.type];
-  const hasItems = gateway.items.length > 0;
-
-  // Reduced motion: change only opacity, never width/scale.
-  const flex = reduce ? 1 : active ? 2.4 : dimmed ? 0.85 : 1;
-  const scale = reduce || !dimmed ? 1 : 0.97;
-  const opacity = dimmed ? 0.78 : 1;
+  const hairline = `linear-gradient(${isRtl ? "to left" : "to right"}, ${accent}, transparent 70%)`;
 
   return (
-    <StaggerItem className="lg:min-w-0 lg:flex-1">
-      <motion.div
-        className="relative h-full"
-        animate={{ flex, scale, opacity }}
-        transition={springs.morph}
-        onMouseEnter={onActivate}
-        onFocus={onActivate}
-        onBlur={onDeactivate}
-        // Focus-within drives the same reveal for keyboard users.
-        tabIndex={-1}
+    <StaggerItem>
+      <div
+        className="group relative border-t py-6 sm:py-8"
+        style={{ borderColor: theme.cardBorder }}
       >
-        <ChamferedSurface
-          chamfer={20}
-          borderColor={active ? accent : theme.cardBorder}
-          className="h-full"
-        >
-          <div
-            className="relative flex h-full min-h-[200px] flex-col p-6 lg:min-h-[320px]"
-            style={{ backgroundColor: "var(--tott-home-surface)" }}
+        {/* Accent hairline riding the band's top edge; brightens on hover/focus. */}
+        <span
+          aria-hidden
+          className="absolute -top-px start-0 h-px w-full opacity-40 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100"
+          style={{ background: hairline }}
+        />
+
+        <div className="grid grid-cols-[auto_1fr] items-baseline gap-x-5 sm:gap-x-10">
+          {/* Oversized index numeral — Latin digits deliberately (archive
+              plate aesthetic, consistent across locales). */}
+          <span
+            aria-hidden
+            className="select-none font-mono leading-none"
+            style={{
+              fontSize: "clamp(2.5rem, 7vw, 5.5rem)",
+              color: accent,
+              opacity: 0.18,
+            }}
           >
-            {/* Accent marker — stays mounted on every tile (so motion always
-                has an element to animate; no unmount pop) and grows in from
-                the leading edge on the active one. Inset start-6/top-3 so the
-                bar clears the chamfered corner. */}
-            <motion.span
-              aria-hidden
-              className="absolute start-6 top-3 h-1"
-              style={{ backgroundColor: accent }}
-              initial={false}
-              animate={{ width: active ? 48 : 0, opacity: active ? 1 : 0 }}
-              transition={springs.morph}
-            />
+            {String(index + 1).padStart(2, "0")}
+          </span>
 
-            <Link
-              href={gateway.href}
-              className="flex items-center gap-4 outline-none"
-            >
-              <span
-                className="inline-flex [&>svg]:h-10 [&>svg]:w-10"
-                style={{ color: accent }}
-              >
-                <GatewayIcon type={gateway.type} />
-              </span>
-              <span className="flex flex-col">
-                <span
-                  className="text-lg font-semibold tracking-tight"
-                  style={{ color: "var(--tott-home-text-strong)" }}
-                >
-                  {t(`hub.types.${gateway.type}`)}
-                </span>
-                <span
-                  className="text-xs"
-                  style={{ color: "var(--tott-home-text-muted)" }}
-                >
-                  {gateway.count != null
-                    ? t(`hub.count.${gateway.type}`, { count: gateway.count })
-                    : t(`hub.typeDesc.${gateway.type}`)}
-                </span>
-              </span>
-            </Link>
-
-            {/* Reveal layer — shown when active (or always, on the stacked
-                narrow layout where there is room). */}
-            {active && hasItems ? (
-              <GatewayPeek gateway={gateway} accent={accent} />
-            ) : null}
-
-            {/* Empty room → designed copy, never a blank tile. */}
-            {active && !hasItems ? (
-              <p
-                className="mt-6 text-sm"
-                style={{ color: "var(--tott-home-text-muted)" }}
-              >
-                {t("hub.gatewayEmpty")}
-              </p>
-            ) : null}
-
-            <div className="mt-auto pt-6">
-              <SpringLink
+          <div className="min-w-0">
+            <div className="flex items-baseline justify-between gap-4">
+              {/* Stretched link — covers the whole band (after:inset-0 resolves
+                  against the band's `relative`). Peek links sit above at z-10. */}
+              <Link
                 href={gateway.href}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold"
+                className="font-serif font-medium tracking-tight outline-none transition-colors after:absolute after:inset-0 after:content-[''] focus-visible:underline"
+                style={{
+                  fontSize: "clamp(1.5rem, 3.5vw, 2.75rem)",
+                  color: "var(--tott-home-text-strong)",
+                }}
+              >
+                {t(`hub.types.${gateway.type}`)}
+              </Link>
+              <span
+                className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold sm:inline-flex"
                 style={{ color: accent }}
               >
                 {t("hub.enter")}
                 <span className="inline-flex [&>svg]:h-4 [&>svg]:w-4 rtl:-scale-x-100">
                   <ChevronRightIcon />
                 </span>
-              </SpringLink>
+              </span>
+            </div>
+
+            <p className="mt-1 text-sm" style={{ color: "var(--tott-home-text-muted)" }}>
+              {gateway.count != null
+                ? t(`hub.count.${gateway.type}`, { count: gateway.count })
+                : t(`hub.typeDesc.${gateway.type}`)}
+            </p>
+
+            {/* Peek — desktop only, pure-CSS expand via the grid-rows 0fr→1fr
+                trick. Keyboard reveal via group-focus-within. */}
+            <div className="hidden grid-rows-[0fr] transition-[grid-template-rows] duration-300 group-hover:grid-rows-[1fr] group-focus-within:grid-rows-[1fr] motion-reduce:transition-none lg:grid">
+              <div className="min-h-0 overflow-hidden">
+                <div className="flex gap-8 pt-6">
+                  {gateway.items.slice(0, 2).map((item) => (
+                    <PeekItem key={item.id} item={item} accent={accent} />
+                  ))}
+                  {gateway.items.length === 0 ? (
+                    <p className="pb-1 text-sm" style={{ color: "var(--tott-home-text-muted)" }}>
+                      {t("hub.gatewayEmpty")}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
             </div>
           </div>
-        </ChamferedSurface>
-      </motion.div>
+        </div>
+      </div>
     </StaggerItem>
   );
 }
 
-/** Type-aware 2-up peek so the five rooms feel genuinely different. */
-function GatewayPeek({
-  gateway,
-  accent,
-}: {
-  gateway: GatewayData;
-  accent: string;
-}) {
+function PeekItem({ item, accent }: { item: AtriumItem; accent: string }) {
+  const cover = safeImage(item.coverImage);
+  const duration = formatDuration(item.mediaDuration);
+
   return (
-    <StaggerContainer className="mt-6 flex flex-col gap-3">
-      {gateway.items.slice(0, 2).map((item) => {
-        const duration = formatDuration(item.mediaDuration);
-        return (
-          <StaggerItem key={item.id}>
-            <Link
-              href={item.href}
-              className="group block border-s-2 ps-3"
-              style={{ borderColor: `color-mix(in srgb, ${accent} 60%, transparent)` }}
+    <Link
+      href={item.href}
+      className="relative z-10 flex max-w-sm items-center gap-4 outline-none focus-visible:underline"
+    >
+      <ChamferedSurface chamfer={10} borderColor={theme.cardBorder} className="w-36 shrink-0">
+        <div className="relative w-full" style={{ aspectRatio: "16 / 10" }}>
+          {cover ? (
+            <Image
+              src={cover.src}
+              alt=""
+              fill
+              sizes="144px"
+              className="object-cover"
+              unoptimized={cover.unoptimized}
+            />
+          ) : (
+            <div
+              className="absolute inset-0 flex items-center justify-center"
+              style={{ backgroundColor: "var(--tott-panel-bg)" }}
             >
-              <span
-                className="line-clamp-2 text-sm font-medium leading-snug"
-                style={{ color: "var(--tott-home-text-strong)" }}
-              >
-                {item.title}
-              </span>
-              <span
-                className="mt-1 flex items-center gap-2 text-xs"
-                style={{ color: "var(--tott-home-text-muted)" }}
-              >
-                {/* Audio/video carry a runtime; written rooms carry meta. */}
-                {duration ? <span>{duration}</span> : item.meta ? <span>{item.meta}</span> : null}
-              </span>
-            </Link>
-          </StaggerItem>
-        );
-      })}
-    </StaggerContainer>
+              <GatewayIcon type={item.type} className="opacity-30 [&>svg]:h-6 [&>svg]:w-6" />
+            </div>
+          )}
+        </div>
+      </ChamferedSurface>
+      <span className="flex min-w-0 flex-col">
+        <span
+          className="line-clamp-2 text-sm font-medium leading-snug"
+          style={{ color: "var(--tott-home-text-strong)" }}
+        >
+          {item.title}
+        </span>
+        <span className="mt-1 text-xs" style={{ color: "var(--tott-home-text-muted)" }}>
+          {duration ?? item.meta ?? null}
+        </span>
+        <span aria-hidden className="mt-2 h-px w-8" style={{ backgroundColor: accent }} />
+      </span>
+    </Link>
   );
 }

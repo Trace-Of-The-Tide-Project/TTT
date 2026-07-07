@@ -75,7 +75,7 @@ export function ContentArticleHeader({
         {articleId && <BookmarkButton articleId={articleId} />}
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-white/65">
+      <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-[var(--tott-home-text-muted)]">
         {edition && (
           <span
             className="mr-1 inline-flex items-center justify-center rounded-md px-2 py-1 text-xs font-medium leading-4"
@@ -90,7 +90,7 @@ export function ContentArticleHeader({
         )}
         {category && (
           <>
-            <span className="text-white/40">·</span>
+            <span className="text-[var(--tott-muted)]">·</span>
             <span className="inline-flex items-center gap-1">
               {metaIcons && <FolderIcon />}
               {metaIcons ? category : `${t("category")}: ${category}`}
@@ -99,7 +99,7 @@ export function ContentArticleHeader({
         )}
         {publishedDate && (
           <>
-            <span className="text-white/40">·</span>
+            <span className="text-[var(--tott-muted)]">·</span>
             <span className="inline-flex items-center gap-1">
               {metaIcons && <CalendarIcon />}
               {t("published")}: {publishedDate}
@@ -108,7 +108,7 @@ export function ContentArticleHeader({
         )}
         {readingTime && (
           <>
-            <span className="text-white/40">·</span>
+            <span className="text-[var(--tott-muted)]">·</span>
             <span className="inline-flex items-center gap-1">
               {metaIcons && <ClockIcon />}
               {metaIcons ? readingTime : `${t("readingTime")}: ${readingTime}`}
@@ -117,7 +117,7 @@ export function ContentArticleHeader({
         )}
         {viewCount != null && viewCount >= 0 && (
           <>
-            <span className="text-white/40">·</span>
+            <span className="text-[var(--tott-muted)]">·</span>
             <span>{formatViewCount(viewCount)}</span>
           </>
         )}

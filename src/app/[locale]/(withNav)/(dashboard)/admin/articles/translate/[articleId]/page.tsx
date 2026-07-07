@@ -1,10 +1,12 @@
-import { TranslationWizard } from "@/components/dashboard/admin/articles/articles-editor/TranslationWizard";
+import { redirect } from "@/i18n/navigation";
 
 type PageProps = {
-  params: Promise<{ articleId: string }>;
+  params: Promise<{ locale: string; articleId: string }>;
 };
 
+/** The translate hub was retired — the article editor now has in-place
+ * language tabs. Old links land on the edit page instead. */
 export default async function AdminTranslateArticlePage({ params }: PageProps) {
-  const { articleId } = await params;
-  return <TranslationWizard articleId={articleId} />;
+  const { locale, articleId } = await params;
+  redirect({ href: `/admin/articles/edit/${articleId}`, locale });
 }

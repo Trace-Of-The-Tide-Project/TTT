@@ -1,0 +1,22 @@
+{
+  "Dashboard": {
+    "cmsBranding": {
+      "title": "Configuración de marca",
+      "subtitle": "Logotipo, colores y tipografía.",
+      "logoLabel": "Logotipo",
+      "logoPreviewAlt": "Vista previa del logotipo",
+      "savedLogo": "Logotipo guardado",
+      "faviconLabel": "Favicon",
+      "faviconPreviewAlt": "Vista previa del favicon",
+      "savedFavicon": "Favicon guardado",
+      "uploadPrompt": "Arrastra y suelta los archivos aquí, o haz clic para explorar",
+      "logoFormats": "Formatos admitidos: JPG, PNG, WebP, SVG, GIF (máx. 20 MB)",
+      "faviconFormats": "Formatos admitidos: PNG, WebP, SVG, ICO (máx. 20 MB)",
+      "primaryColorLabel": "Color principal",
+      "saving": "Guardando…",
+      "saved": "Guardado",
+      "errorRetry": "Error — reintentar",
+      "save": "Guardar marca"
+    }
+  }
+}

@@ -6,7 +6,7 @@ import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import { RichTextEditor, EditorToolbar, EditorRegistryProvider } from "@/components/ui/rich-text";
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]";
 
 type TripBasicInfoProps = {
   title: string;
@@ -54,7 +54,7 @@ export function TripBasicInfo({
       <div className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-gray-400">
+            <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
               {t("tripTitle")}
             </label>
             <input
@@ -66,7 +66,7 @@ export function TripBasicInfo({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-gray-400">
+            <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
               {t("moderatorName")}
             </label>
             <input
@@ -80,7 +80,7 @@ export function TripBasicInfo({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-gray-400">
+          <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
             {t("description")}
           </label>
           <EditorRegistryProvider>
@@ -98,7 +98,7 @@ export function TripBasicInfo({
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-gray-400">
+          <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
             {t("highlights")}
           </label>
           <div className="space-y-2">
@@ -114,7 +114,7 @@ export function TripBasicInfo({
                 <button
                   type="button"
                   onClick={() => removeHighlight(idx)}
-                  className="shrink-0 text-gray-500 hover:text-foreground"
+                  className="shrink-0 text-[var(--tott-muted)] hover:text-foreground"
                   aria-label={t("removeHighlightAria", { number: idx + 1 })}
                 >
                   <svg
@@ -135,7 +135,7 @@ export function TripBasicInfo({
           <button
             type="button"
             onClick={addHighlight}
-            className="mt-2 w-full rounded-lg border border-dashed border-[var(--tott-card-border)] py-2 text-sm text-gray-400 hover:border-gray-400 hover:text-foreground"
+            className="mt-2 w-full rounded-lg border border-dashed border-[var(--tott-card-border)] py-2 text-sm text-[var(--tott-muted)] hover:border-[var(--tott-card-border)] hover:text-foreground"
           >
             {t("addHighlight")}
           </button>

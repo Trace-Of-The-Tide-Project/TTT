@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   getArticleById,
+  getArticleBySlug,
   getArticles,
   getCollectionArticles,
   getMyArticles,
@@ -14,6 +15,7 @@ export const articlesKeys = {
   myList: (params?: { status?: string; limit?: number; offset?: number }) =>
     ["articles", "my", params ?? {}] as const,
   byId: (id: string) => ["articles", "byId", id] as const,
+  bySlug: (slug: string) => ["articles", "bySlug", slug] as const,
   related: (id: string) => ["articles", "related", id] as const,
   inCollection: (collectionId: string) =>
     ["articles", "collection", collectionId] as const,
@@ -37,6 +39,16 @@ export function useArticle(articleId: string | null | undefined) {
     enabled: Boolean(articleId),
     // Editor populates form state from this query; a background refetch on
     // window focus would wipe unsaved edits.
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
+  });
+}
+
+export function useArticleBySlug(slug: string | null | undefined) {
+  return useQuery({
+    queryKey: articlesKeys.bySlug(slug ?? ""),
+    queryFn: () => getArticleBySlug(slug as string),
+    enabled: Boolean(slug),
     refetchOnWindowFocus: false,
     staleTime: Infinity,
   });

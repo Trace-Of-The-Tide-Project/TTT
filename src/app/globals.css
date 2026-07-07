@@ -24,11 +24,17 @@ html {
   --foreground: #ededed;
   /** Primary brand gold — CTAs, main links in auth */
   --tott-accent-gold: #cba158;
+  /** Alias: many components reference `--tott-gold`, which was never defined
+   * (so gold silently broke). Resolves lazily to the active theme's accent
+   * gold, so a single definition here is correct under light/dark/tide. */
+  --tott-gold: var(--tott-accent-gold);
   /** Slightly lighter gold for focus rings, borders, checkboxes */
   --tott-accent-gold-focus: #c9a96e;
   /** Ink placed on top of filled accents (buttons, avatars). Black on gold here;
    * tide overrides to sand so deep-sea accents stay legible. */
   --tott-on-accent: #000000;
+  /** Text/icons over photos & video (image overlays). Constant light — images do not re-theme. */
+  --tott-on-media: #ffffff;
   /** Home hero heading words + CTA slab — gold on light/dark, brand blues on tide. */
   --tott-hero-accent: #c9a96e;
   --tott-hero-accent-2: #bd9352;
@@ -164,6 +170,8 @@ html {
     --tott-accent-gold: #cba158;
     --tott-accent-gold-focus: #c9a96e;
     --tott-on-accent: #000000;
+    /** Text/icons over photos & video (image overlays). Constant light — images do not re-theme. */
+    --tott-on-media: #ffffff;
     --tott-hero-accent: #c9a96e;
     --tott-hero-accent-2: #bd9352;
     --tott-hero-cta-ink: #332217;
@@ -245,6 +253,8 @@ html[data-theme="light"] {
   --tott-accent-gold: #cba158;
   --tott-accent-gold-focus: #c9a96e;
   --tott-on-accent: #000000;
+  /** Text/icons over photos & video (image overlays). Constant light — images do not re-theme. */
+  --tott-on-media: #ffffff;
   --tott-hero-accent: #c9a96e;
   --tott-hero-accent-2: #bd9352;
   --tott-hero-cta-ink: #332217;
@@ -350,6 +360,8 @@ html[data-theme="tide"] {
   --tott-accent-gold-focus: #0a4f7a;
   /** Ink placed on top of filled accents (buttons, avatars) — sand for legibility. */
   --tott-on-accent: #fbe9d2;
+  /** Text/icons over photos & video (image overlays). Constant light — images do not re-theme. */
+  --tott-on-media: #ffffff;
   /** Home hero heading words + CTA slab — deep sea + wave on sand (replaces gold). */
   --tott-hero-accent: #003d66;
   --tott-hero-accent-2: #2f8aa0;
@@ -459,6 +471,53 @@ html[data-theme="tide"] {
   --color-foreground: var(--foreground);
   --font-sans: var(--font-plex-arabic), var(--font-plex-sans), system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  /* Plex Serif has no Arabic glyphs — Arabic falls through to Plex Arabic. */
+  --font-serif: var(--font-plex-serif), var(--font-plex-arabic), Georgia, serif;
+}
+
+/* /content hub ("The Tideline") ambient loops — pure CSS so reduced-motion
+   is a single media query, no JS guards. */
+@keyframes tott-kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.07); }
+}
+.tott-kenburns {
+  animation: tott-kenburns 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Inner strip is 200% wide with a 2-period wave; -50% translate loops seamlessly. */
+@keyframes tott-tide-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.tott-tide-drift {
+  animation: tott-tide-drift 18s linear infinite;
+}
+
+@keyframes tott-scroll-cue {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+.tott-scroll-cue {
+  animation: tott-scroll-cue 2.2s ease-in-out infinite;
+}
+
+@keyframes tott-bottle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.tott-bottle-float {
+  animation: tott-bottle-float 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tott-kenburns,
+  .tott-tide-drift,
+  .tott-scroll-cue,
+  .tott-bottle-float {
+    animation: none;
+  }
 }
 
 /* Auth card shell: subtle fade-up on first paint (see AuthHexFrame). */

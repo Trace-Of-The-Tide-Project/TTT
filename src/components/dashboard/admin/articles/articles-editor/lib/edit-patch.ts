@@ -8,6 +8,9 @@ export function editPatchFromPayload(payload: CreateArticlePayload) {
     cover_image: payload.cover_image ?? null,
     blocks: payload.blocks,
     tag_ids: payload.tag_ids,
-    is_premium: payload.is_premium ?? false,
+    access_level: payload.access_level ?? "open",
+    preview_block_count: payload.preview_block_count ?? null,
+    price: payload.price ?? null,
+    currency: payload.currency,
   };
 }

@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { motion } from "motion/react";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import HexBackground from "@/components/ui/HexBackground";
 import { SearchIcon } from "@/components/ui/icons";
 import { FeaturedHexCard } from "@/components/content/related/FeaturedHexCard";
@@ -212,13 +214,24 @@ export function WritersShowContent({
               ) : null}
             </div>
           ) : (
-            <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            <motion.ul
+              className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
+              variants={staggerParent}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+            >
               {cards.map((c) => (
-                <li key={c.id} className="h-full">
+                <motion.li
+                  key={c.id}
+                  variants={staggerChild}
+                  transition={springs.gentle}
+                  className="h-full"
+                >
                   <WriterShowCard data={c} />
-                </li>
+                </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           )}
         </div>
       </div>

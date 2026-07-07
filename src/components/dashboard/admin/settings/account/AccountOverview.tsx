@@ -23,8 +23,8 @@ function InfoRow({ icon, label, children }: InfoRowProps) {
   return (
     <div className="flex items-center justify-between gap-4 border-b border-[var(--tott-card-border)] py-4 last:border-b-0">
       <div className="flex min-w-0 items-center gap-3">
-        <span className="shrink-0 text-gray-500">{icon}</span>
-        <span className="text-sm text-gray-400">{label}</span>
+        <span className="shrink-0 text-[var(--tott-muted)]">{icon}</span>
+        <span className="text-sm text-[var(--tott-muted)]">{label}</span>
       </div>
       <div className="min-w-0 text-right text-sm font-medium text-foreground">{children}</div>
     </div>
@@ -62,7 +62,7 @@ export function AccountOverview() {
     <section className={settingsCardClass} style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.04) inset" }}>
       <div className="mb-2">
         <h2 className="text-lg font-bold text-foreground">{t("overview.title")}</h2>
-        <p className="mt-1 text-sm text-gray-500">{t("overview.subtitle")}</p>
+        <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("overview.subtitle")}</p>
       </div>
 
       <div className="mt-4">
@@ -103,7 +103,7 @@ export function AccountOverview() {
               {roles.map((r) => (
                 <span
                   key={r}
-                  className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-2 py-0.5 text-xs capitalize text-gray-300"
+                  className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-2 py-0.5 text-xs capitalize text-[var(--tott-muted)]"
                 >
                   {r}
                 </span>

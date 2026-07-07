@@ -2,18 +2,20 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { api } from '@/services/api';
 import type { UserSubscription } from '@/lib/api/subscriptions';
 
-const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  active:   { label: 'Active',   color: '#22c55e' },
-  trialing: { label: 'Trial',    color: '#6db3ae' },
-  past_due: { label: 'Past Due', color: '#f59e0b' },
-  cancelled:{ label: 'Cancelled',color: '#ef4444' },
-  expired:  { label: 'Expired',  color: '#666'    },
+const STATUS_COLORS: Record<string, { color: string }> = {
+  active:   { color: '#22c55e' },
+  trialing: { color: '#6db3ae' },
+  past_due: { color: '#f59e0b' },
+  cancelled:{ color: '#ef4444' },
+  expired:  { color: '#666'    },
 };
 
 export default function SubscriptionSettingsPage() {
+  const t = useTranslations('Dashboard.subscriptions');
   const [sub, setSub] = useState<UserSubscription | null | undefined>(undefined);
   const [portalLoading, setPortalLoading] = useState(false);
   const searchParams = useSearchParams();
@@ -33,7 +35,7 @@ export default function SubscriptionSettingsPage() {
       const res = await api.post('/subscriptions/portal');
       router.push(res.data.url ?? res.data.data?.url);
     } catch {
-      alert('Could not open billing portal. Please try again.');
+      alert(t('settings.portalError'));
     } finally {
       setPortalLoading(false);
     }
@@ -42,22 +44,22 @@ export default function SubscriptionSettingsPage() {
   if (sub === undefined) {
     return (
       <main className="max-w-xl mx-auto px-4 py-16 text-center">
-        <p style={{ color: '#555', fontSize: 14 }}>Loading…</p>
+        <p style={{ color: 'var(--tott-muted)', fontSize: 14 }}>{t('loading')}</p>
       </main>
     );
   }
 
-  const status = sub ? STATUS_LABELS[sub.status] : null;
+  const status = sub ? STATUS_COLORS[sub.status] : null;
 
   return (
     <main className="max-w-xl mx-auto px-4 py-14">
 
       {/* ── PAGE TITLE ── */}
-      <p className="text-xs uppercase tracking-[3px] mb-2" style={{ color: '#cba158' }}>
-        Account
+      <p className="text-xs uppercase tracking-[3px] mb-2" style={{ color: 'var(--tott-dash-gold-label)' }}>
+        {t('settings.eyebrow')}
       </p>
-      <h1 className="text-2xl font-bold mb-8" style={{ color: '#ededed' }}>
-        Subscription
+      <h1 className="text-2xl font-bold mb-8" style={{ color: 'var(--foreground)' }}>
+        {t('settings.title')}
       </h1>
 
       {/* ── SUCCESS BANNER ── */}
@@ -66,13 +68,13 @@ export default function SubscriptionSettingsPage() {
           className="flex items-start gap-3 rounded-xl px-5 py-4 mb-6"
           style={{ background: 'rgba(203,161,88,0.08)', border: '1px solid rgba(203,161,88,0.3)' }}
         >
-          <span style={{ color: '#cba158', fontSize: 18, lineHeight: 1.4 }}>✦</span>
+          <span style={{ color: 'var(--tott-accent-gold)', fontSize: 18, lineHeight: 1.4 }}>✦</span>
           <div>
-            <p className="font-semibold text-sm mb-0.5" style={{ color: '#cba158' }}>
-              You&apos;re now subscribed!
+            <p className="font-semibold text-sm mb-0.5" style={{ color: 'var(--tott-accent-gold)' }}>
+              {t('settings.successTitle')}
             </p>
-            <p className="text-xs leading-relaxed" style={{ color: '#888' }}>
-              Welcome aboard. You now have full access to everything included in your plan.
+            <p className="text-xs leading-relaxed" style={{ color: 'var(--tott-muted)' }}>
+              {t('settings.successBody')}
             </p>
           </div>
         </div>
@@ -82,19 +84,19 @@ export default function SubscriptionSettingsPage() {
       {sub ? (
         <div
           className="rounded-xl p-6 flex flex-col gap-5"
-          style={{ border: '1px solid #2a2a2a', background: '#141414' }}
+          style={{ border: '1px solid var(--tott-card-border)', background: 'var(--tott-elevated)' }}
         >
           {/* Plan + status row */}
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[2px] mb-1" style={{ color: '#cba158' }}>
-                Current plan
+              <p className="text-xs uppercase tracking-[2px] mb-1" style={{ color: 'var(--tott-dash-gold-label)' }}>
+                {t('settings.currentPlan')}
               </p>
-              <p className="text-lg font-bold" style={{ color: '#ededed' }}>
-                {sub.plan?.display_name ?? 'Subscription'}
+              <p className="text-lg font-bold" style={{ color: 'var(--foreground)' }}>
+                {sub.plan?.display_name ?? t('settings.title')}
               </p>
-              <p className="text-xs mt-0.5 capitalize" style={{ color: '#555' }}>
-                {sub.source} subscription
+              <p className="text-xs mt-0.5 capitalize" style={{ color: 'var(--tott-muted)' }}>
+                {t('settings.sourceSubscription', { source: sub.source })}
               </p>
             </div>
             {status && (
@@ -102,18 +104,18 @@ export default function SubscriptionSettingsPage() {
                 className="text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full flex-shrink-0"
                 style={{ background: `${status.color}18`, color: status.color, border: `1px solid ${status.color}40` }}
               >
-                {status.label}
+                {t(`status.${sub.status}`)}
               </span>
             )}
           </div>
 
           {/* Renewal / expiry */}
           {sub.current_period_end && (
-            <div style={{ borderTop: '1px solid #1e1e1e', paddingTop: 16 }}>
-              <p className="text-xs" style={{ color: '#555' }}>
-                {sub.cancel_at_period_end ? 'Access until' : 'Renews on'}
+            <div style={{ borderTop: '1px solid var(--tott-card-border)', paddingTop: 16 }}>
+              <p className="text-xs" style={{ color: 'var(--tott-muted)' }}>
+                {sub.cancel_at_period_end ? t('settings.accessUntil') : t('settings.renewsOn')}
               </p>
-              <p className="text-sm font-semibold mt-0.5" style={{ color: '#ccc' }}>
+              <p className="text-sm font-semibold mt-0.5" style={{ color: 'var(--foreground)' }}>
                 {new Date(sub.current_period_end).toLocaleDateString(undefined, {
                   year: 'numeric', month: 'long', day: 'numeric',
                 })}
@@ -127,9 +129,11 @@ export default function SubscriptionSettingsPage() {
               className="rounded-lg px-4 py-3 text-xs leading-relaxed"
               style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', color: '#f59e0b' }}
             >
-              Grace period ends {new Date(sub.grace_period_end).toLocaleDateString(undefined, {
-                year: 'numeric', month: 'long', day: 'numeric',
-              })}. Renew to keep access.
+              {t('settings.gracePeriod', {
+                date: new Date(sub.grace_period_end).toLocaleDateString(undefined, {
+                  year: 'numeric', month: 'long', day: 'numeric',
+                }),
+              })}
             </div>
           )}
 
@@ -139,9 +143,9 @@ export default function SubscriptionSettingsPage() {
               onClick={handlePortal}
               disabled={portalLoading}
               className="w-full py-3 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ border: '1px solid #2e2e2e', background: 'transparent', color: '#aaa' }}
+              style={{ border: '1px solid var(--tott-card-border)', background: 'transparent', color: 'var(--tott-muted)' }}
             >
-              {portalLoading ? 'Opening…' : 'Manage Subscription'}
+              {portalLoading ? t('settings.opening') : t('settings.manage')}
             </button>
           )}
         </div>
@@ -149,17 +153,17 @@ export default function SubscriptionSettingsPage() {
         /* ── NO SUBSCRIPTION ── */
         <div
           className="rounded-xl p-8 text-center flex flex-col items-center gap-4"
-          style={{ border: '1px solid #2a2a2a', background: '#141414' }}
+          style={{ border: '1px solid var(--tott-card-border)', background: 'var(--tott-elevated)' }}
         >
-          <p className="text-sm" style={{ color: '#666' }}>
-            You don&apos;t have an active subscription.
+          <p className="text-sm" style={{ color: 'var(--tott-muted)' }}>
+            {t('settings.noSubscription')}
           </p>
           <Link
             href="/subscribe"
             className="inline-block px-6 py-3 rounded-lg text-sm font-semibold transition-colors"
-            style={{ background: '#cba158', color: '#000' }}
+            style={{ background: 'var(--tott-accent-gold)', color: 'var(--tott-on-accent)' }}
           >
-            View Plans
+            {t('settings.viewPlans')}
           </Link>
         </div>
       )}

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useAddToCart, useCreateCheckout } from "@/hooks/mutations/commerce";
-import { checkOwnership } from "@/services/commerce.service";
+import { checkOwnership, createPrintCheckout } from "@/services/commerce.service";
 import { getBookDownloadUrl } from "@/services/books.service";
 import { formatApiError } from "@/lib/api/error-message";
 import { DownloadIcon } from "@/components/ui/icons";
@@ -56,12 +56,16 @@ export function BookActionButtons({
   currency,
   isFree,
   isOwnedInitial,
+  printEnabled,
+  printPrice,
 }: {
   bookId: string;
   price: number | null;
   currency: string;
   isFree: boolean;
   isOwnedInitial: boolean;
+  printEnabled?: boolean;
+  printPrice?: number | null;
 }) {
   const t = useTranslations("Home.bookDetail");
   const tCommerce = useTranslations("Home.Commerce");
@@ -72,6 +76,53 @@ export function BookActionButtons({
   const [owned, setOwned] = useState(isOwnedInitial);
   const addToCart = useAddToCart();
   const checkout = useCreateCheckout();
+  const [printBusy, setPrintBusy] = useState(false);
+
+  function requireLoginForPrint(): boolean {
+    if (status === "authenticated" && user) return true;
+    const next = encodeURIComponent(`/books/${bookId}`);
+    router.push(`/auth/login?callbackUrl=${next}`);
+    return false;
+  }
+
+  async function handleBuyPrint() {
+    if (!requireLoginForPrint()) return;
+    setPrintBusy(true);
+    try {
+      const url = await createPrintCheckout(bookId, locale);
+      window.location.assign(url);
+    } catch (e) {
+      toast.error(formatApiError(e, tCommerce("checkoutError")));
+      setPrintBusy(false);
+    }
+  }
+
+  const printButton =
+    printEnabled && printPrice != null ? (
+      <button
+        type="button"
+        onClick={handleBuyPrint}
+        disabled={printBusy}
+        className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90 disabled:opacity-60 min-[1600px]:h-14! min-[1600px]:text-base!"
+        style={{
+          height: "40px",
+          padding: "8px",
+          gap: "8px",
+          borderRadius: "8px",
+          backgroundColor: "var(--tott-card-border)",
+          boxShadow: "inset 0px 1px 1px rgba(255, 255, 255, 0.08)",
+          color: "var(--tott-home-text-strong)",
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 400,
+          fontSize: "14px",
+          lineHeight: "20px",
+          letterSpacing: "-0.005em",
+          border: "none",
+        }}
+      >
+        {t("buyPrint")} · {formatPrice(printPrice, currency)}
+      </button>
+    ) : null;
 
   // Re-confirm ownership client-side for paid books once auth resolves — the
   // SSR pass may not have carried the user's cookie reliably.
@@ -96,7 +147,12 @@ export function BookActionButtons({
 
   // ── Owned or free: read/download ──
   if (isFree || owned) {
-    return <DownloadButton bookId={bookId} label={t("readDownload")} />;
+    return (
+      <div className="flex w-full flex-col" style={{ gap: "12px" }}>
+        <DownloadButton bookId={bookId} label={t("readDownload")} />
+        {printButton}
+      </div>
+    );
   }
 
   // ── Paid, not owned ──
@@ -171,6 +227,7 @@ export function BookActionButtons({
       >
         {t("addToCart")}
       </button>
+      {printButton}
     </div>
   );
 }

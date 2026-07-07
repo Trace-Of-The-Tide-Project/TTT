@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
@@ -317,7 +319,7 @@ export function OpenEncountersContent({
           {/* Vertical line connects the leading calendar icons
               through the whole list — absolute-positioned behind
               the rows (z-0) while the EventRows live above (z-10). */}
-          <ul
+          <motion.ul
             id="upcoming-list"
             className="relative flex flex-col"
             style={{
@@ -327,6 +329,10 @@ export function OpenEncountersContent({
               listStyle: "none",
               isolation: "isolate",
             }}
+            variants={staggerParent}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
           >
             <span
               aria-hidden
@@ -363,16 +369,19 @@ export function OpenEncountersContent({
               </li>
             ) : (
               events.map((e, i) => (
-                <li
+                <motion.li
                   key={e.id ?? i}
                   className="relative"
                   style={{ zIndex: 1 }}
+                  variants={staggerChild}
+                  transition={springs.gentle}
+                  whileHover={{ y: -4 }}
                 >
                   <EventRow event={e} joinLabel={t("join")} />
-                </li>
+                </motion.li>
               ))
             )}
-          </ul>
+          </motion.ul>
 
           <div
             className="flex justify-center"

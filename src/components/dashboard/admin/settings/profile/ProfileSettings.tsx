@@ -31,7 +31,7 @@ import type { ProfileData } from "@/services/profile.service";
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-3 text-sm text-foreground placeholder:text-gray-500 outline-none focus:border-[#C9A96E]";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-3 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-accent-gold)]";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -237,12 +237,12 @@ export function ProfileSettings() {
         className="rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]/50 p-6 sm:p-8"
         style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.04) inset" }}
       >
-        <h1 className="text-xs font-medium uppercase tracking-wide text-gray-500">
+        <h1 className="text-xs font-medium uppercase tracking-wide text-[var(--tott-muted)]">
           {t("pageTitle")}
         </h1>
 
         {isPending ? (
-          <p className="mt-6 text-sm text-gray-500">{t("loading")}</p>
+          <p className="mt-6 text-sm text-[var(--tott-muted)]">{t("loading")}</p>
         ) : null}
         {isError ? (
           <p className="mt-6 text-sm text-[var(--tott-dash-negative)]" role="alert">
@@ -252,7 +252,7 @@ export function ProfileSettings() {
 
         <div className="mt-6 flex flex-col gap-4 border-b border-[var(--tott-card-border)] pb-8 sm:flex-row sm:items-center">
           <div
-            className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full text-2xl font-semibold text-[#1a1a1a] sm:h-28 sm:w-28"
+            className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full text-2xl font-semibold text-[var(--tott-on-accent)] sm:h-28 sm:w-28"
             style={{ backgroundColor: theme.accentGold }}
           >
             {avatarUrl ? (
@@ -273,13 +273,13 @@ export function ProfileSettings() {
               />
               <label
                 htmlFor={photoInputId}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-[#C9A96E]/60 hover:bg-[var(--tott-dash-control-hover)]"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-[var(--tott-accent-gold)]/60 hover:bg-[var(--tott-dash-control-hover)]"
               >
                 <CameraIcon />
                 {uploadMutation.isPending ? t("uploading") : t("changePhoto")}
               </label>
             </div>
-            <p className="text-xs text-gray-500 sm:max-w-xs">
+            <p className="text-xs text-[var(--tott-muted)] sm:max-w-xs">
               {t("photoHint")}
               {photoError ? <span className="mt-1 block text-red-400">{photoError}</span> : null}
             </p>
@@ -288,7 +288,7 @@ export function ProfileSettings() {
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2">
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">{t("fullName")}</label>
+            <label className="mb-1.5 block text-xs text-[var(--tott-muted)]">{t("fullName")}</label>
             <input
               type="text"
               value={fullName}
@@ -297,7 +297,7 @@ export function ProfileSettings() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">{t("email")}</label>
+            <label className="mb-1.5 block text-xs text-[var(--tott-muted)]">{t("email")}</label>
             <input
               type="email"
               value={email}
@@ -306,7 +306,7 @@ export function ProfileSettings() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">{t("role")}</label>
+            <label className="mb-1.5 block text-xs text-[var(--tott-muted)]">{t("role")}</label>
             <input
               type="text"
               value={role}
@@ -315,7 +315,7 @@ export function ProfileSettings() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">{t("company")}</label>
+            <label className="mb-1.5 block text-xs text-[var(--tott-muted)]">{t("company")}</label>
             <input
               type="text"
               value={company}
@@ -324,7 +324,7 @@ export function ProfileSettings() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">{t("location")}</label>
+            <label className="mb-1.5 block text-xs text-[var(--tott-muted)]">{t("location")}</label>
             <input
               type="text"
               value={location}
@@ -333,7 +333,7 @@ export function ProfileSettings() {
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">{t("externalLink")}</label>
+            <label className="mb-1.5 block text-xs text-[var(--tott-muted)]">{t("externalLink")}</label>
             <input
               type="text"
               value={externalLink}
@@ -345,7 +345,7 @@ export function ProfileSettings() {
         </div>
 
         <div className="mt-8 border-b border-[var(--tott-card-border)] pb-8">
-          <label className="mb-1.5 block text-xs text-gray-500">{t("biography")}</label>
+          <label className="mb-1.5 block text-xs text-[var(--tott-muted)]">{t("biography")}</label>
           <EditorRegistryProvider>
             <div className="mb-2 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
               <EditorToolbar />
@@ -357,7 +357,7 @@ export function ProfileSettings() {
         </div>
 
         <div className="mt-8">
-          <h2 className="mb-4 text-xs font-medium uppercase tracking-wide text-gray-500">
+          <h2 className="mb-4 text-xs font-medium uppercase tracking-wide text-[var(--tott-muted)]">
             {t("socialLinks")}
           </h2>
           <ul className="flex flex-col gap-3">
@@ -366,7 +366,7 @@ export function ProfileSettings() {
                 key={key}
                 className="flex items-center gap-3 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-2 pr-2 sm:gap-4"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center text-gray-400 [&_svg]:h-[18px] [&_svg]:w-[18px]">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center text-[var(--tott-muted)] [&_svg]:h-[18px] [&_svg]:w-[18px]">
                   <Icon />
                 </span>
                 <input
@@ -374,13 +374,13 @@ export function ProfileSettings() {
                   value={presetUrls[key]}
                   onChange={(e) => setPresetUrls((p) => ({ ...p, [key]: e.target.value }))}
                   placeholder={t(`presets.${key}`)}
-                  className="min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-gray-500"
+                  className="min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-[var(--tott-muted)]"
                   aria-label={t(`presets.${key}`)}
                 />
                 <button
                   type="button"
                   onClick={() => clearPreset(key)}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
                   aria-label={t("removePresetAria", { label: t(`presets.${key}`) })}
                 >
                   <TrashIcon />
@@ -390,10 +390,10 @@ export function ProfileSettings() {
 
             <li
               className={`flex items-center gap-3 rounded-lg border bg-[var(--tott-dash-control-bg)] px-3 py-2 pr-2 sm:gap-4 ${
-                otherFocused ? "border-[#C9A96E]" : "border-[var(--tott-card-border)]"
+                otherFocused ? "border-[var(--tott-accent-gold)]" : "border-[var(--tott-card-border)]"
               }`}
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center text-gray-400 [&_svg]:h-[18px] [&_svg]:w-[18px]">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center text-[var(--tott-muted)] [&_svg]:h-[18px] [&_svg]:w-[18px]">
                 <LinkIcon />
               </span>
               <input
@@ -403,7 +403,7 @@ export function ProfileSettings() {
                 onFocus={() => setOtherFocused(true)}
                 onBlur={() => setOtherFocused(false)}
                 placeholder={t("otherLinkPlaceholder")}
-                className="min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-gray-500"
+                className="min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-[var(--tott-muted)]"
               />
               <span className="h-9 w-9 shrink-0" aria-hidden />
             </li>
@@ -413,7 +413,7 @@ export function ProfileSettings() {
                 key={row.id}
                 className="flex items-center gap-3 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-2 pr-2 sm:gap-4"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center text-gray-400 [&_svg]:h-[18px] [&_svg]:w-[18px]">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center text-[var(--tott-muted)] [&_svg]:h-[18px] [&_svg]:w-[18px]">
                   <LinkIcon />
                 </span>
                 <input
@@ -425,13 +425,13 @@ export function ProfileSettings() {
                     )
                   }
                   placeholder={t("additionalLinkPlaceholder")}
-                  className="min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-gray-500"
+                  className="min-w-0 flex-1 border-0 bg-transparent py-2 text-sm text-foreground outline-none placeholder:text-[var(--tott-muted)]"
                   aria-label={t("additionalLinkAria")}
                 />
                 <button
                   type="button"
                   onClick={() => removeExtra(row.id)}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
                   aria-label={t("removeLinkAria")}
                 >
                   <TrashIcon />
@@ -443,10 +443,10 @@ export function ProfileSettings() {
               <button
                 type="button"
                 onClick={addExtraLink}
-                className="flex w-full items-center justify-between gap-3 rounded-lg border border-dashed border-[var(--tott-card-border)] bg-transparent px-3 py-3 text-left text-sm text-gray-400 transition-colors hover:border-[#C9A96E]/50 hover:text-foreground"
+                className="flex w-full items-center justify-between gap-3 rounded-lg border border-dashed border-[var(--tott-card-border)] bg-transparent px-3 py-3 text-left text-sm text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-accent-gold)]/50 hover:text-foreground"
               >
                 <span>{t("addNewLink")}</span>
-                <span className="flex h-9 w-9 items-center justify-center rounded-md text-[#C9A96E]">
+                <span className="flex h-9 w-9 items-center justify-center rounded-md text-[var(--tott-dash-gold-text)]">
                   <PlusIcon />
                 </span>
               </button>
@@ -465,7 +465,7 @@ export function ProfileSettings() {
             type="button"
             onClick={handleSave}
             disabled={saveState === "saving" || uploadMutation.isPending}
-            className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-lg py-3.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             style={{ backgroundColor: saveState === "error" ? "#ef4444" : theme.accentGold }}
           >
             {saveLabel}

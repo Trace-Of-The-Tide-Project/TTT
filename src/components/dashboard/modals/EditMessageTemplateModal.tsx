@@ -108,12 +108,12 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
         <div className="mb-5 flex items-start justify-between border-b border-[var(--tott-card-border)] pb-5">
           <div>
             <h2 className="text-lg font-bold text-foreground">{te("title")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{te("subtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{te("subtitle")}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+            className="shrink-0 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
             aria-label={te("closeAria")}
           >
             <XIcon />
@@ -141,7 +141,7 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={te("namePlaceholder")}
-              className="h-[44px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
+              className="h-[44px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]"
             />
           </div>
 
@@ -152,12 +152,12 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
                 ref={categoryButtonRef}
                 type="button"
                 onClick={() => setCategoryOpen((v) => !v)}
-                className="flex h-[44px] w-full items-center justify-between rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground outline-none transition-colors focus:border-gray-500"
+                className="flex h-[44px] w-full items-center justify-between rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground outline-none transition-colors focus:border-[var(--tott-card-border)]"
                 aria-haspopup="listbox"
                 aria-expanded={categoryOpen}
               >
-                <span className="text-gray-200">{(te as (key: string) => string)(`categories.${category}`)}</span>
-                <span className="text-gray-500">
+                <span className="text-foreground">{(te as (key: string) => string)(`categories.${category}`)}</span>
+                <span className="text-[var(--tott-muted)]">
                   <ChevronDownIcon />
                 </span>
               </button>
@@ -192,7 +192,7 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder={te("subjectPlaceholder")}
-              className="h-[44px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
+              className="h-[44px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]"
             />
           </div>
 
@@ -203,11 +203,11 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
               onChange={(e) => setBody(e.target.value)}
               placeholder={te("bodyPlaceholder")}
               rows={5}
-              className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-3 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
+              className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-3 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]"
             />
-            <p className="mt-2 text-xs text-gray-500">
+            <p className="mt-2 text-xs text-[var(--tott-muted)]">
               {te("variablesHint")}{" "}
-              <span className="text-gray-400">{te("variablesList")}</span>
+              <span className="text-[var(--tott-muted)]">{te("variablesList")}</span>
             </p>
           </div>
 
@@ -215,14 +215,14 @@ export function EditMessageTemplateModal({ open, template, onClose, onSave }: Ed
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-foreground"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
             >
               {te("cancel")}
             </button>
             <button
               type="submit"
               disabled={!canSubmit}
-              className="rounded-lg px-6 py-2 text-sm font-medium text-black transition-colors disabled:opacity-50"
+              className="rounded-lg px-6 py-2 text-sm font-medium text-[var(--tott-on-accent)] transition-colors disabled:opacity-50"
               style={{ backgroundColor: theme.accentGoldFocus }}
             >
               {te("submit")}

@@ -170,15 +170,23 @@
           }
         }
       },
-      "superAdminRoleName": "مسؤول أعلى"
+      "superAdminRoleName": "مسؤول أعلى",
+      "detailModal": {
+        "closeModalAria": "إغلاق النافذة",
+        "closeAria": "إغلاق",
+        "rejectAria": "رفض",
+        "approveAria": "موافقة",
+        "viewAll": "عرض الكل",
+        "close": "إغلاق"
+      }
     },
     "contentLibrary": {
       "tabs": {
         "all": "كل المحتوى",
         "published": "منشور",
         "pending": "قيد المراجعة",
-        "archived": "مؤرشف",
-        "rejected": "مرفوض"
+        "draft": "مسودة",
+        "flagged": "مُبلَّغ عنه"
       },
       "allTypes": "كل الأنواع",
       "searchPlaceholder": "البحث في المساهمات…",
@@ -201,9 +209,8 @@
       "statusLabels": {
         "published": "منشور",
         "pending": "قيد المراجعة",
-        "archived": "مؤرشف",
-        "rejected": "مرفوض",
-        "draft": "مسودة"
+        "draft": "مسودة",
+        "flagged": "مُبلَّغ عنه"
       },
       "pagination": {
         "summary": "صفحة {page} من {totalPages} · {total} مساهمة",
@@ -217,8 +224,14 @@
       "actions": {
         "menuAria": "المزيد من الإجراءات",
         "view": "عرض",
-        "archive": "أرشفة",
-        "delete": "حذف"
+        "delete": "حذف",
+        "setStatus": {
+          "published": "نشر",
+          "pending": "وضع قيد المراجعة",
+          "draft": "نقل إلى المسودة",
+          "flagged": "الإبلاغ"
+        },
+        "edit": "تحرير"
       },
       "detail": {
         "closeModalAria": "إغلاق النافذة",
@@ -235,6 +248,43 @@
         "filesHeading": "الملفات ({count})",
         "collectionsHeading": "المجموعات ({count})",
         "close": "إغلاق"
+      },
+      "toasts": {
+        "statusUpdated": "تم تحديث \"{title}\"",
+        "statusUpdateFailed": "تعذّر تحديث الحالة",
+        "deleted": "تم حذف \"{title}\"",
+        "deleteFailed": "تعذّر الحذف"
+      },
+      "deleteDialog": {
+        "title": "حذف المساهمة",
+        "description": "هل تريد حذف \"{title}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+        "confirm": "حذف",
+        "confirmBusy": "جارٍ الحذف…"
+      },
+      "filters": {
+        "title": "عوامل التصفية",
+        "clearAll": "مسح الكل",
+        "submittedAfter": "مُرسلة بعد",
+        "collectionContains": "المجموعة تحتوي على",
+        "collectionPlaceholder": "مثال: تراث 2025",
+        "onlyWithFiles": "العناصر التي تحتوي على ملفات فقط",
+        "done": "تم"
+      },
+      "image": {
+        "loadError": "تعذّر تحميل الصورة",
+        "unavailable": "الصورة غير متوفرة"
+      },
+      "editForm": {
+        "title": "تحرير المساهمة",
+        "closeAria": "إغلاق",
+        "fieldTitle": "العنوان",
+        "fieldDescription": "الوصف",
+        "save": "حفظ",
+        "saving": "جارٍ الحفظ…",
+        "cancel": "إلغاء",
+        "toasts": {
+          "saved": "تم حفظ المساهمة"
+        }
       }
     },
     "cmsEditor": {

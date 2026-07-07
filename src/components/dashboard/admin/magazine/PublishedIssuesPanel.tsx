@@ -1,7 +1,8 @@
 "use client";
 
-import { useId, useMemo, useRef, useState } from "react";
+import { useCallback, useId, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 import {
   SearchIcon,
   PlusIcon,
@@ -23,6 +24,10 @@ import {
   useUpdateMagazineIssue,
   useDeleteMagazineIssue,
 } from "@/hooks/mutations/magazine-issues";
+import { IssueArticlesPanel } from "./IssueArticlesPanel";
+import { LanguageFormTabs, TranslationWizard } from "@/components/dashboard/admin/translations";
+import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import type { TranslationWizardReviewLine } from "@/components/dashboard/admin/translations/TranslationWizard";
 import type {
   MagazineIssue,
   MagazineIssueInput,
@@ -52,6 +57,19 @@ function slugify(input: string): string {
 
 type Tab = (typeof TABS)[number];
 
+/** What the form modal is doing: editing an issue, creating a fresh one, or
+ * creating a new-language version of an existing one. */
+type Editing =
+  | MagazineIssue
+  | "new"
+  | { source: MagazineIssue; language: string };
+
+function isTranslateReq(
+  e: Editing,
+): e is { source: MagazineIssue; language: string } {
+  return typeof e === "object" && "source" in e;
+}
+
 /** Status colors resolve to theme-aware CSS vars (defined in
  *  `globals.css` with light + dark variants). */
 const statusColor: Record<string, string> = {
@@ -69,6 +87,7 @@ function normStatus(s: string | null | undefined): string {
 
 export function PublishedIssuesPanel() {
   const t = useTranslations("Dashboard.magazineIssues");
+  const tTr = useTranslations("Dashboard.translations");
   const statusLabel = (s: string) =>
     STATUS_KEYS.includes(s) ? t(`statuses.${s}`) : s;
   const kindLabel = (k: string | null | undefined) => {
@@ -106,7 +125,7 @@ export function PublishedIssuesPanel() {
   const [tab, setTab] = useState<Tab>("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [editing, setEditing] = useState<MagazineIssue | "new" | null>(null);
+  const [editing, setEditing] = useState<Editing | null>(null);
   const [deleting, setDeleting] = useState<MagazineIssue | null>(null);
 
   const counts = useMemo(() => {
@@ -144,6 +163,21 @@ export function PublishedIssuesPanel() {
   const loadError = query.error
     ? formatApiError(query.error, t("published.list.loadError"))
     : null;
+
+  // Every issue sharing the open modal's translation group, keyed by
+  // language — lets the modal's tabs seed from already-loaded data.
+  const editingAllVersions = useMemo(() => {
+    const anchorId =
+      editing && editing !== "new" && !isTranslateReq(editing) ? editing.id : null;
+    if (!anchorId) return {};
+    const map: Record<string, MagazineIssue> = {};
+    for (const it of issues) {
+      if (it.id === anchorId || it.translation_of === anchorId) {
+        map[(it.language ?? "en").toLowerCase()] = it;
+      }
+    }
+    return map;
+  }, [issues, editing]);
 
   return (
     <div className="space-y-4">
@@ -406,53 +440,93 @@ export function PublishedIssuesPanel() {
 
       {editing ? (
         <IssueFormModal
-          item={editing === "new" ? null : editing}
+          key={
+            editing === "new"
+              ? "new"
+              : isTranslateReq(editing)
+                ? `translate-${editing.source.id}-${editing.language}`
+                : editing.id
+          }
+          item={editing === "new" || isTranslateReq(editing) ? null : editing}
+          translateFrom={isTranslateReq(editing) ? editing : null}
           defaultEdition={nextEdition}
           magazineName={magazineName}
           saving={create.isPending || update.isPending || createMagazine.isPending}
+          allVersions={editingAllVersions}
           onClose={() => setEditing(null)}
-          onSave={(values) => {
-            const isNew = editing === "new";
-            mutationToast(
-              async () => {
-                if (!isNew) {
-                  return update.mutateAsync({
-                    id: (editing as MagazineIssue).id,
-                    payload: values,
-                  });
-                }
-                // Resolve the parent magazine behind the scenes: reuse
-                // the existing one, else auto-create the default.
-                let magazineId: string | null = magazines[0]?.id ?? null;
-                if (!magazineId) {
-                  const created = await createMagazine.mutateAsync({
-                    name: DEFAULT_MAGAZINE_TITLE,
-                    title: DEFAULT_MAGAZINE_TITLE,
-                    slug: slugify(DEFAULT_MAGAZINE_TITLE),
-                    status: "published",
-                  });
-                  magazineId = created?.id ?? null;
-                }
+          onSave={async (plan) => {
+            let magazineId: string | null = magazines[0]?.id ?? null;
+
+            const savePrimary = async (): Promise<{ id: string } | null> => {
+              const p = plan[0];
+              if (p.existingId) {
+                await update.mutateAsync({ id: p.existingId, payload: p.values });
+                return { id: p.existingId };
+              }
+              if (!magazineId) {
+                const created = await createMagazine.mutateAsync({
+                  name: DEFAULT_MAGAZINE_TITLE,
+                  title: DEFAULT_MAGAZINE_TITLE,
+                  slug: slugify(DEFAULT_MAGAZINE_TITLE),
+                  status: "published",
+                });
+                magazineId = created?.id ?? null;
+              }
+              const created = await create.mutateAsync({
+                ...p.values,
+                magazine_id: magazineId,
                 // slug is required on create (and must be unique); never
                 // regenerated on edit so public deep-links stay stable.
-                return create.mutateAsync({
-                  ...values,
-                  magazine_id: magazineId,
-                  slug: `${slugify(values.title)}-${Date.now()
-                    .toString(36)
-                    .slice(-5)}`,
-                });
-              },
-              {
-                loading: t("published.toast.saving"),
-                success: isNew
-                  ? t("published.toast.created")
-                  : t("published.toast.updated"),
-                error: t("published.toast.saveError"),
-              },
-            )
-              .then(() => setEditing(null))
-              .catch(() => {});
+                slug: `${slugify(p.values.title)}-${Date.now().toString(36).slice(-5)}`,
+              });
+              return created ? { id: created.id } : null;
+            };
+
+            const isNew = !plan[0].existingId;
+            const failed: string[] = [];
+            try {
+              await mutationToast(
+                async () => {
+                  const primary = await savePrimary();
+                  for (const p of plan.slice(1)) {
+                    try {
+                      if (p.existingId) {
+                        await update.mutateAsync({ id: p.existingId, payload: p.values });
+                      } else if (primary?.id) {
+                        await create.mutateAsync({
+                          ...p.values,
+                          translation_of: primary.id,
+                          magazine_id: magazineId,
+                          slug: `${slugify(p.values.title)}-${p.values.language}-${Date.now()
+                            .toString(36)
+                            .slice(-5)}`,
+                        });
+                      }
+                    } catch {
+                      failed.push(p.values.language ?? "?");
+                    }
+                  }
+                  return primary;
+                },
+                {
+                  loading: t("published.toast.saving"),
+                  success: !isNew
+                    ? t("published.toast.updated")
+                    : plan.length > 1
+                      ? t("published.toast.createdAll")
+                      : t("published.toast.created"),
+                  error: t("published.toast.saveError"),
+                },
+              );
+            } catch {
+              return;
+            }
+            if (failed.length > 0) {
+              toast.error(
+                tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }),
+              );
+            }
+            setEditing(null);
           }}
         />
       ) : null}
@@ -484,6 +558,7 @@ type FormState = {
   subtitle: string;
   kind: string;
   status: string;
+  language: string;
   is_premium: boolean;
   funding_goal: string;
   funding_deadline: string;
@@ -504,6 +579,7 @@ function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
     subtitle: item?.subtitle ?? "",
     kind: item?.kind ?? "editorial",
     status: normStatus(item?.status ?? "published"),
+    language: item?.language ?? "",
     is_premium: item?.is_premium ?? false,
     funding_goal: item?.funding_goal != null ? String(item.funding_goal) : "",
     funding_deadline: item?.funding_deadline
@@ -522,28 +598,144 @@ function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
   };
 }
 
+/** One locale's save intent, assembled by `submit()` for the parent to run. */
+export type IssueSavePlanEntry = {
+  existingId?: string;
+  values: MagazineIssueInput;
+};
+
 function IssueFormModal({
   item,
+  translateFrom,
   defaultEdition,
   magazineName,
   saving,
+  allVersions,
   onClose,
   onSave,
 }: {
   item: MagazineIssue | null;
+  /** Set when creating a new-language version: prefill from `source`, save
+   * with `language` + `translation_of`. */
+  translateFrom: { source: MagazineIssue; language: string } | null;
   defaultEdition: number;
   magazineName: string | null;
   saving: boolean;
+  /** Every issue in the same translation group as `item` (edit mode), keyed
+   * by language — lets tab-switching seed from already-loaded data. */
+  allVersions: Record<string, MagazineIssue>;
   onClose: () => void;
-  onSave: (payload: MagazineIssueInput) => void;
+  onSave: (plan: IssueSavePlanEntry[]) => void;
 }) {
   const t = useTranslations("Dashboard.magazineIssues");
+  const tTr = useTranslations("Dashboard.translations");
   const locale = useLocale();
   const isEdit = Boolean(item);
-  const [form, setForm] = useState<FormState>(() => toForm(item, defaultEdition));
+  const isTranslation = !isEdit && Boolean(translateFrom);
+
+  const initialLang =
+    translateFrom?.language ??
+    item?.language ??
+    ((LANGS as readonly string[]).includes(locale) ? locale : "en");
+  const primaryLang = item?.language ?? initialLang;
+  const wizardLocales = useMemo(
+    () => [primaryLang, ...LANGS.filter((l) => l !== primaryLang)],
+    [primaryLang],
+  );
+  const [wizardStep, setWizardStep] = useState(0);
+  const isWizard = !isEdit && !isTranslation;
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const [activeLang, setActiveLang] = useState(initialLang);
+  const [forms, setForms] = useState<Record<string, FormState>>(() => {
+    const base = toForm(item ?? translateFrom?.source ?? null, defaultEdition);
+    base.language = initialLang;
+    // A new-language version starts as a draft of the source's content, so a
+    // half-translated issue never goes live on save by accident.
+    return { [initialLang]: translateFrom ? { ...base, status: "draft" } : base };
+  });
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
   const [errors, setErrors] = useState<FieldErrors>({});
   const [uploading, setUploading] = useState(false);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
   const busy = saving || uploading;
+
+  const form = forms[activeLang] ?? toForm(null, defaultEdition);
+
+  const tabStatus = useMemo(() => {
+    const map: Record<string, LanguageTabStatus> = {};
+    for (const loc of LANGS) {
+      map[loc] = dirty[loc]
+        ? "dirty"
+        : loc === primaryLang
+          ? "primary"
+          : allVersions[loc] || forms[loc]
+            ? "existing"
+            : "empty";
+    }
+    return map;
+  }, [dirty, primaryLang, allVersions, forms]);
+
+  const goToWizardStep = useCallback(
+    (step: number) => {
+      const loc = wizardLocales[step];
+      if (loc && !forms[loc]) {
+        const existing = allVersions[loc];
+        setForms((prev) => ({
+          ...prev,
+          [loc]: existing
+            ? { ...toForm(existing, defaultEdition), language: loc }
+            : { ...(prev[wizardLocales[0]] ?? toForm(null, defaultEdition)), language: loc },
+        }));
+      }
+      if (loc) setActiveLang(loc);
+      setWizardStep(step);
+    },
+    [wizardLocales, forms, allVersions, defaultEdition],
+  );
+  const wizardReviewLines: TranslationWizardReviewLine[] = useMemo(
+    () =>
+      wizardLocales.map((loc) => ({
+        locale: loc,
+        label: tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase(),
+        action: loc === wizardLocales[0] || dirty[loc] ? "create" : "skip",
+      })),
+    [wizardLocales, dirty, tTr],
+  );
+
+  const updateForm = (mutate: (prev: FormState) => FormState) => {
+    setForms((prev) => {
+      const current = prev[activeLang] ?? toForm(null, defaultEdition);
+      return { ...prev, [activeLang]: mutate(current) };
+    });
+    setDirty((prev) => (prev[activeLang] ? prev : { ...prev, [activeLang]: true }));
+  };
+
+  const switchFormLanguage = (next: string) => {
+    if (next === activeLang) return;
+    if (!forms[next]) {
+      const existing = allVersions[next];
+      setForms((prev) => ({
+        ...prev,
+        [next]: existing
+          ? { ...toForm(existing, defaultEdition), language: next }
+          : { ...(prev[activeLang] ?? toForm(null, defaultEdition)), language: next },
+      }));
+    }
+    setActiveLang(next);
+  };
+
+  // Snapshot of the pristine forms — anything different means unsaved work,
+  // so closing asks for confirmation instead of silently dropping it.
+  const initialFormRef = useRef<string>("");
+  if (!initialFormRef.current) initialFormRef.current = JSON.stringify(forms);
+  const isDirty = JSON.stringify(forms) !== initialFormRef.current;
+
+  const requestClose = () => {
+    if (busy) return;
+    if (isDirty) setConfirmDiscard(true);
+    else onClose();
+  };
 
   const set =
     (field: keyof FormState) =>
@@ -553,7 +745,7 @@ function IssueFormModal({
       >,
     ) => {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+      updateForm((prev) => ({ ...prev, [field]: e.target.value }));
     };
 
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -567,12 +759,38 @@ function IssueFormModal({
         success: t("published.form.uploaded"),
         error: t("published.form.uploadError"),
       });
-      setForm((prev) => ({ ...prev, cover_image: url }));
+      updateForm((prev) => ({ ...prev, cover_image: url }));
     } catch {
       /* surfaced via toast */
     } finally {
       setUploading(false);
     }
+  };
+
+  const toPayload = (f: FormState, lang: string): MagazineIssueInput => {
+    const toIso = (ymd: string): string | null => {
+      if (!ymd) return null;
+      const d = new Date(ymd);
+      return Number.isNaN(d.getTime()) ? null : d.toISOString();
+    };
+    const isCrowdfunded = f.kind === "crowdfunded";
+    return {
+      title: f.title.trim(),
+      subtitle: f.subtitle.trim() || null,
+      kind: f.kind || null,
+      status: f.status || null,
+      language: lang,
+      is_premium: f.is_premium,
+      cover_image: f.cover_image.trim() || null,
+      excerpt: f.excerpt.trim() || null,
+      description: f.description.trim() || null,
+      page_count: f.page_count ? parseInt(f.page_count, 10) : null,
+      edition_number: parseInt(f.edition, 10),
+      category: f.category.trim() || null,
+      published_at: toIso(f.published_at),
+      funding_goal: isCrowdfunded && f.funding_goal ? parseFloat(f.funding_goal) : null,
+      funding_deadline: isCrowdfunded ? toIso(f.funding_deadline) : null,
+    };
   };
 
   const submit = (e: React.FormEvent) => {
@@ -584,10 +802,9 @@ function IssueFormModal({
     // number but stays editable.
     const next: FieldErrors = {};
     if (!form.title.trim()) next.title = t("published.form.errors.titleRequired");
-    const editionNum = parseInt(form.edition, 10);
     if (!form.edition.trim()) {
       next.edition = t("published.form.errors.editionRequired");
-    } else if (Number.isNaN(editionNum)) {
+    } else if (Number.isNaN(parseInt(form.edition, 10))) {
       next.edition = t("published.form.errors.editionNumber");
     }
     if (Object.keys(next).length > 0) {
@@ -595,39 +812,31 @@ function IssueFormModal({
       return;
     }
 
-    const toIso = (ymd: string): string | null => {
-      if (!ymd) return null;
-      const d = new Date(ymd);
-      return Number.isNaN(d.getTime()) ? null : d.toISOString();
-    };
-    const isCrowdfunded = form.kind === "crowdfunded";
+    const dirtyLocales: string[] = LANGS.filter((loc) => dirty[loc] && forms[loc]);
+    const submitLocales: string[] =
+      isEdit || dirtyLocales.includes(primaryLang)
+        ? dirtyLocales
+        : [primaryLang, ...dirtyLocales];
+    const orderedLocales = [
+      primaryLang,
+      ...submitLocales.filter((l) => l !== primaryLang),
+    ].filter((l) => submitLocales.includes(l) || l === primaryLang);
 
-    onSave({
-      title: form.title.trim(),
-      subtitle: form.subtitle.trim() || null,
-      kind: form.kind || null,
-      status: form.status || null,
-      language:
-        item?.language ??
-        ((LANGS as readonly string[]).includes(locale) ? locale : "en"),
-      is_premium: form.is_premium,
-      cover_image: form.cover_image.trim() || null,
-      excerpt: form.excerpt.trim() || null,
-      description: form.description.trim() || null,
-      page_count: form.page_count ? parseInt(form.page_count, 10) : null,
-      edition_number: editionNum,
-      category: form.category.trim() || null,
-      // The date input yields "YYYY-MM-DD"; the API stores a full ISO
-      // datetime, so normalize before sending.
-      published_at: toIso(form.published_at),
-      // Crowdfunded issues carry funding goal + deadline; null them out
-      // otherwise so switching kind doesn't leave stale values.
-      funding_goal:
-        isCrowdfunded && form.funding_goal
-          ? parseFloat(form.funding_goal)
-          : null,
-      funding_deadline: isCrowdfunded ? toIso(form.funding_deadline) : null,
+    const plan: IssueSavePlanEntry[] = orderedLocales.map((loc) => {
+      const f = forms[loc] ?? form;
+      const existingId =
+        loc === primaryLang ? item?.id : allVersions[loc]?.id;
+      const values = toPayload(f, loc);
+      if (!existingId && loc !== primaryLang) {
+        values.translation_of = item?.id ?? translateFrom?.source.id;
+        values.status = "draft";
+      } else if (!existingId && isTranslation) {
+        values.translation_of = translateFrom?.source.id;
+      }
+      return { existingId, values };
     });
+
+    onSave(plan);
   };
 
   const inputClass =
@@ -635,23 +844,224 @@ function IssueFormModal({
   const labelClass =
     "mb-1 block text-xs font-medium text-[var(--tott-dash-gold-label)]";
 
+  const issueFieldSections = (
+    <>
+      <div>
+        <label className={labelClass}>{t("published.form.fields.title")} *</label>
+        <input
+          type="text"
+          className={inputClass}
+          value={form.title}
+          onChange={set("title")}
+          placeholder={t("published.form.fields.titlePlaceholder")}
+        />
+        <FieldError message={errors.title} />
+      </div>
+
+      <div>
+        <label className={labelClass}>
+          {t("published.form.fields.subtitle")}
+        </label>
+        <input
+          type="text"
+          className={inputClass}
+          value={form.subtitle}
+          onChange={set("subtitle")}
+          placeholder={t("published.form.fields.subtitlePlaceholder")}
+        />
+      </div>
+
+      {!isEdit ? (
+        <p className="text-xs" style={{ color: "var(--tott-muted)" }}>
+          {magazineName
+            ? t("published.form.publishingTo", { name: magazineName })
+            : t("published.form.publishingToNew")}
+        </p>
+      ) : null}
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className={labelClass}>{t("published.form.fields.kind")}</label>
+          <select className={inputClass} value={form.kind} onChange={set("kind")}>
+            {KINDS.map((k) => (
+              <option key={k} value={k}>
+                {t(`kinds.${k}`)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={labelClass}>{t("published.form.fields.status")}</label>
+          <select className={inputClass} value={form.status} onChange={set("status")}>
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {t(`statuses.${s}`)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={labelClass}>
+            {t("published.form.fields.edition")} *
+          </label>
+          <input
+            type="number"
+            min="0"
+            className={inputClass}
+            value={form.edition}
+            onChange={set("edition")}
+            placeholder={t("published.form.fields.editionPlaceholder")}
+          />
+          <FieldError message={errors.edition} />
+        </div>
+        <div>
+          <label className={labelClass}>{t("published.form.fields.category")}</label>
+          <input
+            type="text"
+            className={inputClass}
+            value={form.category}
+            onChange={set("category")}
+            placeholder={t("published.form.fields.categoryPlaceholder")}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>{t("published.form.fields.pageCount")}</label>
+          <input
+            type="number"
+            min="0"
+            className={inputClass}
+            value={form.page_count}
+            onChange={set("page_count")}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>{t("published.form.fields.publishedAt")}</label>
+          <input
+            type="date"
+            className={inputClass}
+            value={form.published_at}
+            onChange={set("published_at")}
+          />
+        </div>
+      </div>
+
+      {form.kind === "crowdfunded" ? (
+        <div className="grid grid-cols-2 gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] p-3">
+          <div>
+            <label className={labelClass}>
+              {t("published.form.fields.fundingGoal")}
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              className={inputClass}
+              value={form.funding_goal}
+              onChange={set("funding_goal")}
+              placeholder="5000"
+            />
+          </div>
+          <div>
+            <label className={labelClass}>
+              {t("published.form.fields.fundingDeadline")}
+            </label>
+            <input
+              type="date"
+              className={inputClass}
+              value={form.funding_deadline}
+              onChange={set("funding_deadline")}
+            />
+          </div>
+        </div>
+      ) : null}
+
+      <label className="flex items-center gap-2 text-sm text-foreground">
+        <input
+          type="checkbox"
+          checked={form.is_premium}
+          onChange={(e) =>
+            updateForm((prev) => ({ ...prev, is_premium: e.target.checked }))
+          }
+          className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+        />
+        {t("published.form.fields.isPremium")}
+      </label>
+
+      <div>
+        <label className={labelClass}>{t("published.form.fields.coverImage")}</label>
+        <CoverUploadZone
+          value={form.cover_image}
+          uploading={uploading}
+          onChange={handleCoverUpload}
+        />
+        <input
+          type="text"
+          className={`${inputClass} mt-2`}
+          value={form.cover_image}
+          onChange={set("cover_image")}
+          placeholder={t("published.form.fields.coverImagePlaceholder")}
+        />
+      </div>
+
+      <div>
+        <label className={labelClass}>{t("published.form.fields.excerpt")}</label>
+        <textarea
+          rows={2}
+          className={inputClass}
+          value={form.excerpt}
+          onChange={set("excerpt")}
+          placeholder={t("published.form.fields.excerptPlaceholder")}
+        />
+      </div>
+
+      <div>
+        <label className={labelClass}>{t("published.form.fields.description")}</label>
+        <textarea
+          rows={4}
+          className={inputClass}
+          value={form.description}
+          onChange={set("description")}
+        />
+      </div>
+
+      {isEdit && item ? (
+        <IssueArticlesPanel issueId={item.id} magazineId={item.magazine_id ?? null} />
+      ) : null}
+    </>
+  );
+
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-3 sm:p-4">
       <button
         type="button"
         aria-label={t("published.form.close")}
-        onClick={() => !busy && onClose()}
+        onClick={requestClose}
         className="absolute inset-0 backdrop-blur-md"
         style={{ backgroundColor: "var(--tott-overlay)" }}
       />
       <div className="relative mx-4 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-2xl">
         <div className="mb-4 flex items-start justify-between gap-4">
-          <h2 className="text-base font-bold text-foreground">
-            {isEdit ? t("published.form.editTitle") : t("published.form.createTitle")}
-          </h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-base font-bold text-foreground">
+              {isEdit ? t("published.form.editTitle") : t("published.form.createTitle")}
+              {translateFrom ? (
+                <span className="ms-2 rounded-md bg-[var(--tott-elevated)] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--tott-muted)] align-middle">
+                  {translateFrom.language}
+                </span>
+              ) : null}
+            </h2>
+            {isEdit && !translateFrom ? (
+              <LanguageFormTabs
+                active={activeLang}
+                onSelect={switchFormLanguage}
+                status={tabStatus}
+                disabled={busy}
+              />
+            ) : null}
+          </div>
           <button
             type="button"
-            onClick={() => !busy && onClose()}
+            onClick={requestClose}
             disabled={busy}
             className="shrink-0 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground disabled:opacity-40"
             aria-label={t("published.form.close")}
@@ -666,215 +1076,99 @@ function IssueFormModal({
           {t("published.form.description")}
         </p>
 
-        <form onSubmit={submit} className="space-y-4">
-          <div>
-            <label className={labelClass}>{t("published.form.fields.title")} *</label>
-            <input
-              type="text"
-              className={inputClass}
-              value={form.title}
-              onChange={set("title")}
-              placeholder={t("published.form.fields.titlePlaceholder")}
-            />
-            <FieldError message={errors.title} />
-          </div>
+        <form ref={formRef} onSubmit={submit} className="space-y-4">
+          {isWizard ? (
+            <TranslationWizard
+              locales={wizardLocales}
+              step={wizardStep}
+              localeLabel={(loc) => (tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase())}
+              onBack={() => goToWizardStep(Math.max(0, wizardStep - 1))}
+              onSkip={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+              onNext={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+              onConfirm={() => formRef.current?.requestSubmit()}
+              onStepClick={goToWizardStep}
+              busy={busy}
+              reviewLines={wizardReviewLines}
+            >
+              {issueFieldSections}
+            </TranslationWizard>
+          ) : (
+            issueFieldSections
+          )}
 
-          <div>
-            <label className={labelClass}>
-              {t("published.form.fields.subtitle")}
-            </label>
-            <input
-              type="text"
-              className={inputClass}
-              value={form.subtitle}
-              onChange={set("subtitle")}
-              placeholder={t("published.form.fields.subtitlePlaceholder")}
-            />
-          </div>
-
-          {!isEdit ? (
-            <p className="text-xs" style={{ color: "var(--tott-muted)" }}>
-              {magazineName
-                ? t("published.form.publishingTo", { name: magazineName })
-                : t("published.form.publishingToNew")}
-            </p>
-          ) : null}
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>{t("published.form.fields.kind")}</label>
-              <select className={inputClass} value={form.kind} onChange={set("kind")}>
-                {KINDS.map((k) => (
-                  <option key={k} value={k}>
-                    {t(`kinds.${k}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>{t("published.form.fields.status")}</label>
-              <select className={inputClass} value={form.status} onChange={set("status")}>
-                {STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {t(`statuses.${s}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>
-                {t("published.form.fields.edition")} *
-              </label>
-              <input
-                type="number"
-                min="0"
-                className={inputClass}
-                value={form.edition}
-                onChange={set("edition")}
-                placeholder={t("published.form.fields.editionPlaceholder")}
-              />
-              <FieldError message={errors.edition} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("published.form.fields.category")}</label>
-              <input
-                type="text"
-                className={inputClass}
-                value={form.category}
-                onChange={set("category")}
-                placeholder={t("published.form.fields.categoryPlaceholder")}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>{t("published.form.fields.pageCount")}</label>
-              <input
-                type="number"
-                min="0"
-                className={inputClass}
-                value={form.page_count}
-                onChange={set("page_count")}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>{t("published.form.fields.publishedAt")}</label>
-              <input
-                type="date"
-                className={inputClass}
-                value={form.published_at}
-                onChange={set("published_at")}
-              />
-            </div>
-          </div>
-
-          {form.kind === "crowdfunded" ? (
-            <div className="grid grid-cols-2 gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] p-3">
-              <div>
-                <label className={labelClass}>
-                  {t("published.form.fields.fundingGoal")}
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  className={inputClass}
-                  value={form.funding_goal}
-                  onChange={set("funding_goal")}
-                  placeholder="5000"
-                />
-              </div>
-              <div>
-                <label className={labelClass}>
-                  {t("published.form.fields.fundingDeadline")}
-                </label>
-                <input
-                  type="date"
-                  className={inputClass}
-                  value={form.funding_deadline}
-                  onChange={set("funding_deadline")}
-                />
+          {!isWizard ? (
+            <div className="flex flex-wrap items-center justify-end gap-3 border-t border-[var(--tott-card-border)] pt-4">
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={requestClose}
+                  disabled={busy}
+                  className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
+                >
+                  {t("published.form.cancel")}
+                </button>
+                <button
+                  type="submit"
+                  disabled={busy}
+                  className="inline-flex items-center gap-2 rounded-lg border px-5 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+                  style={{
+                    borderColor: "color-mix(in srgb, var(--tott-accent-gold) 60%, transparent)",
+                    backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
+                    color: "var(--tott-accent-gold)",
+                  }}
+                >
+                  {busy ? (
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  ) : null}
+                  {busy
+                    ? t("published.form.saving")
+                    : isEdit
+                      ? t("published.form.save")
+                      : t("published.form.create")}
+                </button>
               </div>
             </div>
           ) : null}
-
-          <label className="flex items-center gap-2 text-sm text-foreground">
-            <input
-              type="checkbox"
-              checked={form.is_premium}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, is_premium: e.target.checked }))
-              }
-              className="h-4 w-4 accent-[var(--tott-accent-gold)]"
-            />
-            {t("published.form.fields.isPremium")}
-          </label>
-
-          <div>
-            <label className={labelClass}>{t("published.form.fields.coverImage")}</label>
-            <CoverUploadZone
-              value={form.cover_image}
-              uploading={uploading}
-              onChange={handleCoverUpload}
-            />
-            <input
-              type="text"
-              className={`${inputClass} mt-2`}
-              value={form.cover_image}
-              onChange={set("cover_image")}
-              placeholder={t("published.form.fields.coverImagePlaceholder")}
-            />
-          </div>
-
-          <div>
-            <label className={labelClass}>{t("published.form.fields.excerpt")}</label>
-            <textarea
-              rows={2}
-              className={inputClass}
-              value={form.excerpt}
-              onChange={set("excerpt")}
-              placeholder={t("published.form.fields.excerptPlaceholder")}
-            />
-          </div>
-
-          <div>
-            <label className={labelClass}>{t("published.form.fields.description")}</label>
-            <textarea
-              rows={4}
-              className={inputClass}
-              value={form.description}
-              onChange={set("description")}
-            />
-          </div>
-
-          <div className="flex justify-end gap-2 border-t border-[var(--tott-card-border)] pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={busy}
-              className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
-            >
-              {t("published.form.cancel")}
-            </button>
-            <button
-              type="submit"
-              disabled={busy}
-              className="inline-flex items-center gap-2 rounded-lg border px-5 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
-              style={{
-                borderColor: "color-mix(in srgb, var(--tott-accent-gold) 60%, transparent)",
-                backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
-                color: "var(--tott-accent-gold)",
-              }}
-            >
-              {busy ? (
-                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              ) : null}
-              {busy
-                ? t("published.form.saving")
-                : isEdit
-                  ? t("published.form.save")
-                  : t("published.form.create")}
-            </button>
-          </div>
         </form>
+
+        {confirmDiscard ? (
+          <div
+            data-testid="issue-discard-dialog"
+            className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-black/40 p-4 backdrop-blur-sm"
+          >
+            <div className="w-full max-w-xs rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-5 shadow-2xl">
+              <h3 className="text-sm font-bold text-foreground">
+                {t("published.form.discardTitle")}
+              </h3>
+              <p className="mt-1.5 text-xs text-[var(--tott-muted)]">
+                {t("published.form.discardBody")}
+              </p>
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  type="button"
+                  data-testid="issue-discard-keep"
+                  onClick={() => setConfirmDiscard(false)}
+                  className="rounded-lg px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
+                >
+                  {t("published.form.discardCancel")}
+                </button>
+                <button
+                  type="button"
+                  data-testid="issue-discard-confirm"
+                  onClick={onClose}
+                  className="rounded-lg border px-3 py-1.5 text-xs font-medium transition-opacity hover:opacity-90"
+                  style={{
+                    borderColor: "color-mix(in srgb, var(--tott-status-coral) 60%, transparent)",
+                    backgroundColor: "color-mix(in srgb, var(--tott-status-coral) 18%, transparent)",
+                    color: "var(--tott-status-coral)",
+                  }}
+                >
+                  {t("published.form.discardConfirm")}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

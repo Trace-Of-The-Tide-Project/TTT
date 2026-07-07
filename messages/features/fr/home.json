@@ -77,13 +77,16 @@
         "categoryArchitecture": "Architecture",
         "categoryArt": "Art",
         "categoryFashion": "Mode",
-        "categoryFilm": "Cinéma"
+        "categoryFilm": "Cinéma",
+        "empty": "Aucune publication pour le moment."
       },
       "issues": {
         "issuePrefix": "Numéro",
         "readOnline": "Lire en ligne",
         "galleryHeading": "Galerie visuelle",
         "gallerySubtitle": "Lorem ipsum dolor sit amet adipiscing elit.",
+        "emptyTitle": "Aucun numéro publié pour le moment",
+        "emptyBody": "Les nouveaux numéros du magazine apparaîtront ici dès leur publication.",
         "viewMore": "Voir plus",
         "searchPlaceholder": "Rechercher du contenu…",
         "filterAll": "Tout afficher",
@@ -99,7 +102,8 @@
         "zoomOut": "Zoom arrière",
         "fullscreen": "Plein écran",
         "share": "Partager",
-        "more": "Plus d'options"
+        "more": "Plus d'options",
+        "empty": "Aucun numéro publié pour le moment."
       },
       "editorialBoard": {
         "mastheadEyebrow": "Ours · 2026",
@@ -134,7 +138,8 @@
         "writerAuthor": "Auteur",
         "writerEdition": "Édition",
         "founderQuote": "« La culture n'est pas un luxe — elle est l'air même par lequel nous comprenons ce que signifie être vivant. »",
-        "founderName": "Mai Ahmed, Fondatrice"
+        "founderName": "Mai Ahmed, Fondatrice",
+        "viewWriter": "Voir l’auteur"
       },
       "support": {
         "heading": "Collaborations récentes",
@@ -280,6 +285,7 @@
       "pages": "{count} pages",
       "downloadPdf": "Télécharger le fichier PDF",
       "buyNow": "Acheter maintenant",
+      "buyPrint": "Acheter la version imprimée",
       "preview": "Aperçu",
       "reviewsHeading": "Avis",
       "seeAllReviews": "Voir tous les avis",

@@ -5,7 +5,8 @@
       "dashboard": "Panel",
       "adminSettings": "Configuración de administrador",
       "openSidebar": "Abrir barra lateral",
-      "closeSidebar": "Cerrar barra lateral"
+      "closeSidebar": "Cerrar barra lateral",
+      "viewAll": "Ver todo"
     },
     "topbar": {
       "searchPlaceholder": "Buscar usuarios, contenido, configuración…",
@@ -62,7 +63,13 @@
       "createBook": "Añadir libro",
       "writers": "Escritores",
       "allWriters": "Todos los escritores",
-      "createWriter": "Añadir escritor"
+      "createWriter": "Añadir escritor",
+      "people": "Personas",
+      "allPeople": "Todas las personas",
+      "addPerson": "Añadir persona",
+      "subscription": "Suscripción",
+      "subscriptions": "Suscripciones",
+      "collections": "Colecciones"
     },
     "systemSettings": {
       "tabs": {
@@ -83,25 +90,29 @@
         "title": "Categorías de contenido",
         "subtitle": "Gestiona las categorías de clasificación de contenido.",
         "editAria": "Editar {name}",
-        "deleteAria": "Eliminar {name}"
+        "deleteAria": "Eliminar {name}",
+        "empty": "Aún no hay categorías."
       },
       "tags": {
         "add": "Añadir etiqueta",
         "title": "Etiquetas de contenido",
         "subtitle": "Etiquetas especiales para destacar contenido",
         "editAria": "Editar {name}",
-        "deleteAria": "Eliminar {name}"
+        "deleteAria": "Eliminar {name}",
+        "empty": "Aún no hay etiquetas."
       },
       "badges": {
         "add": "Crear insignia",
         "title": "Insignias de logros",
         "subtitle": "Configura las insignias de logros y los hitos de los usuarios.",
-        "editAria": "Editar {name}"
+        "editAria": "Editar {name}",
+        "empty": "Aún no hay insignias."
       },
       "email": {
         "title": "Plantillas de correo electrónico",
         "subtitle": "Personaliza las comunicaciones automáticas por correo electrónico",
-        "editTemplate": "Editar plantilla"
+        "editTemplate": "Editar plantilla",
+        "empty": "Aún no hay plantillas."
       },
       "localisation": {
         "title": "Configuración de idioma",
@@ -137,6 +148,57 @@
         "contentPolicyLabel": "Política de contenido",
         "sampleCommunity": "1. Sé respetuoso con todos los miembros de la comunidad\n2. No se permite el discurso de odio ni la discriminación\n3. Solo contenido original, sin plagio\n4. Acredita las fuentes cuando corresponda\n5. No se permite spam ni autopromoción",
         "sampleContentPolicy": "Todo el contenido debe ser original o estar debidamente licenciado. El material con derechos de autor sin permiso será eliminado. El contenido para adultos debe estar correctamente etiquetado."
+      },
+      "saving": "Guardando…",
+      "modal": {
+        "close": "Cerrar",
+        "closeModal": "Cerrar ventana",
+        "cancel": "Cancelar"
+      },
+      "categoryModal": {
+        "addTitle": "Añadir categoría",
+        "editTitle": "Editar categoría",
+        "addSubtitle": "Crear una nueva categoría de contenido",
+        "editSubtitle": "Actualizar los detalles de la categoría",
+        "createLabel": "Crear categoría",
+        "saveLabel": "Guardar edición",
+        "nameLabel": "Nombre de la categoría",
+        "namePlaceholder": "p. ej. Documental",
+        "slugLabel": "Slug",
+        "slugPlaceholder": "p. ej. documental",
+        "slugHint": "Identificador apto para URL: /…"
+      },
+      "tagModal": {
+        "addTitle": "Añadir etiqueta",
+        "editTitle": "Editar etiqueta",
+        "addSubtitle": "Crear una nueva etiqueta de contenido",
+        "editSubtitle": "Actualizar los detalles de la etiqueta",
+        "createLabel": "Crear etiqueta",
+        "nameLabel": "Nombre de la etiqueta",
+        "namePlaceholder": "p. ej. Destacado"
+      },
+      "badgeModal": {
+        "addTitle": "Crear insignia",
+        "editTitle": "Editar insignia",
+        "addSubtitle": "Crear una nueva insignia de logro",
+        "editSubtitle": "Actualizar los detalles de la insignia",
+        "createLabel": "Crear insignia",
+        "iconLabel": "Icono",
+        "selectIconAria": "Seleccionar icono {id}",
+        "nameLabel": "Nombre de la insignia",
+        "namePlaceholder": "p. ej. Mejor colaborador",
+        "milestoneLabel": "Hito",
+        "milestonePlaceholder": "p. ej. +100 contribuciones"
+      },
+      "localeFields": {
+        "otherLanguages": "Otros idiomas",
+        "fallbackHint": "Deja un idioma en blanco para usar el nombre predeterminado de arriba.",
+        "languages": {
+          "en": "Inglés",
+          "ar": "Árabe",
+          "es": "Español",
+          "fr": "Francés"
+        }
       }
     },
     "placeholders": {

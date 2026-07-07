@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { MagazineTabs, type MagazineTabId, type MagazineTabsProps } from "./MagazineTabs";
 import { MagazineNewsletter, type MagazineNewsletterProps } from "./MagazineNewsletter";
 
@@ -51,12 +52,14 @@ export function MagazineBody({
     <>
       <MagazineTabs {...tabs} active={active} onActiveChange={setActive} />
       {betweenTabsAndNewsletter}
-      <MagazineNewsletter
-        {...newsletter}
-        titleOverride={titleOverride}
-        bodyOverride={bodyOverride}
-        ctaButton={ctaButton}
-      />
+      <RevealOnScroll>
+        <MagazineNewsletter
+          {...newsletter}
+          titleOverride={titleOverride}
+          bodyOverride={bodyOverride}
+          ctaButton={ctaButton}
+        />
+      </RevealOnScroll>
     </>
   );
 }

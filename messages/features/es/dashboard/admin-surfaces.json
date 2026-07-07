@@ -170,15 +170,23 @@
           }
         }
       },
-      "superAdminRoleName": "Superadministrador"
+      "superAdminRoleName": "Superadministrador",
+      "detailModal": {
+        "closeModalAria": "Cerrar ventana",
+        "closeAria": "Cerrar",
+        "rejectAria": "Rechazar",
+        "approveAria": "Aprobar",
+        "viewAll": "Ver todo",
+        "close": "Cerrar"
+      }
     },
     "contentLibrary": {
       "tabs": {
         "all": "Todo el contenido",
         "published": "Publicado",
         "pending": "Pendiente",
-        "archived": "Archivado",
-        "rejected": "Rechazado"
+        "draft": "Borrador",
+        "flagged": "Marcado"
       },
       "allTypes": "Todos los tipos",
       "searchPlaceholder": "Buscar contribuciones...",
@@ -201,9 +209,8 @@
       "statusLabels": {
         "published": "Publicado",
         "pending": "Pendiente",
-        "archived": "Archivado",
-        "rejected": "Rechazado",
-        "draft": "Borrador"
+        "draft": "Borrador",
+        "flagged": "Marcado"
       },
       "pagination": {
         "summary": "Página {page} de {totalPages} · {total, plural, one {# contribución} other {# contribuciones}}",
@@ -217,8 +224,14 @@
       "actions": {
         "menuAria": "Más acciones",
         "view": "Ver",
-        "archive": "Archivar",
-        "delete": "Eliminar"
+        "delete": "Eliminar",
+        "setStatus": {
+          "published": "Publicar",
+          "pending": "Marcar como pendiente",
+          "draft": "Mover a borrador",
+          "flagged": "Marcar"
+        },
+        "edit": "Editar"
       },
       "detail": {
         "closeModalAria": "Cerrar modal",
@@ -235,6 +248,43 @@
         "filesHeading": "Archivos ({count})",
         "collectionsHeading": "Colecciones ({count})",
         "close": "Cerrar"
+      },
+      "toasts": {
+        "statusUpdated": "\"{title}\" actualizado",
+        "statusUpdateFailed": "No se pudo actualizar el estado",
+        "deleted": "\"{title}\" eliminado",
+        "deleteFailed": "No se pudo eliminar"
+      },
+      "deleteDialog": {
+        "title": "Eliminar contribución",
+        "description": "¿Eliminar \"{title}\"? Esta acción no se puede deshacer.",
+        "confirm": "Eliminar",
+        "confirmBusy": "Eliminando…"
+      },
+      "filters": {
+        "title": "Filtros",
+        "clearAll": "Borrar todo",
+        "submittedAfter": "Enviado después de",
+        "collectionContains": "La colección contiene",
+        "collectionPlaceholder": "p. ej. Patrimonio 2025",
+        "onlyWithFiles": "Solo entradas con archivos",
+        "done": "Listo"
+      },
+      "image": {
+        "loadError": "No se pudo cargar la imagen",
+        "unavailable": "Imagen no disponible"
+      },
+      "editForm": {
+        "title": "Editar contribución",
+        "closeAria": "Cerrar",
+        "fieldTitle": "Título",
+        "fieldDescription": "Descripción",
+        "save": "Guardar",
+        "saving": "Guardando…",
+        "cancel": "Cancelar",
+        "toasts": {
+          "saved": "Contribución guardada"
+        }
       }
     },
     "cmsEditor": {

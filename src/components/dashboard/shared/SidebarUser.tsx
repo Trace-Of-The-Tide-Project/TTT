@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { useTheme } from "@/components/providers/ThemeProvider";
 import { theme } from "@/lib/theme";
 import { LogOutIcon } from "@/components/ui/icons";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -13,6 +12,31 @@ function getInitial(name?: string | null, email?: string | null): string {
   return "A";
 }
 
+function AvatarBadge({
+  avatarUrl,
+  initial,
+  className,
+}: {
+  avatarUrl: string | null | undefined;
+  initial: string;
+  className: string;
+}) {
+  if (avatarUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- signed, short-lived URL; not worth next/image's remote-pattern config
+      <img src={avatarUrl} alt="" className={`${className} object-cover`} />
+    );
+  }
+  return (
+    <span
+      className={`flex items-center justify-center font-bold ${className}`}
+      style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
+    >
+      {initial}
+    </span>
+  );
+}
+
 type SidebarUserProps = {
   collapsed?: boolean;
 };
@@ -20,7 +44,6 @@ type SidebarUserProps = {
 export function SidebarUser({ collapsed = false }: SidebarUserProps) {
   const router = useRouter();
   const t = useTranslations("Dashboard.sidebarUser");
-  const { isDark } = useTheme();
   const { user, logout } = useAuth();
   const name = user?.full_name || user?.username;
   const email = user?.email;
@@ -35,21 +58,17 @@ export function SidebarUser({ collapsed = false }: SidebarUserProps) {
   if (collapsed) {
     return (
       <div className="flex flex-col items-center gap-3 px-2 py-4">
-        <span
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold"
-          style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
-          title={displayName}
-        >
-          {getInitial(name, email)}
-        </span>
+        <div title={displayName}>
+          <AvatarBadge
+            avatarUrl={user?.avatar_url}
+            initial={getInitial(name, email)}
+            className="h-10 w-10 shrink-0 rounded-full text-sm overflow-hidden"
+          />
+        </div>
         <button
           type="button"
           onClick={handleLogout}
-          className={
-            isDark
-              ? "text-gray-500 transition-colors hover:text-foreground"
-              : "text-gray-500 transition-colors hover:text-gray-900"
-          }
+          className="text-[var(--tott-muted)] transition-colors hover:text-foreground"
           aria-label={t("signOut")}
           title={t("signOut")}
         >
@@ -61,25 +80,20 @@ export function SidebarUser({ collapsed = false }: SidebarUserProps) {
 
   return (
     <div className="flex items-center gap-3 px-3 py-4">
+      <AvatarBadge
+        avatarUrl={user?.avatar_url}
+        initial={getInitial(name, email)}
+        className="h-10 w-10 shrink-0 rounded-full text-sm overflow-hidden"
+      />
       <span
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold"
-        style={{ backgroundColor: theme.accentGoldFocus, color: theme.bgDark }}
-      >
-        {getInitial(name, email)}
-      </span>
-      <span
-        className={`flex-1 truncate text-sm font-medium ${isDark ? "text-foreground" : "text-gray-900"}`}
+        className="flex-1 truncate text-sm font-medium text-foreground"
       >
         {displayName}
       </span>
       <button
         type="button"
         onClick={handleLogout}
-        className={
-          isDark
-            ? "shrink-0 text-gray-500 transition-colors hover:text-foreground"
-            : "shrink-0 text-gray-500 transition-colors hover:text-gray-900"
-        }
+        className="shrink-0 text-[var(--tott-muted)] transition-colors hover:text-foreground"
         aria-label={t("signOut")}
       >
         <LogOutIcon />

@@ -7,7 +7,7 @@ import { formatArticleListDate } from "@/lib/dashboard/map-articles-list";
 import { useSearchParams } from "next/navigation";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
-import { PlusIcon, MoreDotsIcon } from "@/components/ui/icons";
+import { PlusIcon, MoreDotsIcon, ChevronRightIcon } from "@/components/ui/icons";
 import { ConfirmDeleteArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ConfirmDeleteArticleModal";
 import { useDeleteArticle } from "@/hooks/mutations/articles";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
@@ -32,6 +32,8 @@ export type ArticleRow = {
   content_type: string;
   /** BCP-47 language code, e.g. "en", "ar", "es", "fr" */
   language: string;
+  /** Shared id linking all language versions of the same piece; null if untranslated */
+  translationGroupId: string | null;
   /** Normalized lifecycle key for filtering and i18n labels */
   status: "draft" | "published" | "scheduled";
   statusColor: string;
@@ -39,6 +41,19 @@ export type ArticleRow = {
   updatedAtIso: string;
   views: string;
   supporters: string;
+};
+
+/** ArticleRow enriched for rendering: translation-group primary/child role + display fields. */
+type DisplayRow = ArticleRow & {
+  relativeUpdated: string;
+  isPrimary: boolean;
+  isChild: boolean;
+  /** Count of other language versions; 0 for child rows and untranslated pieces. */
+  siblingCount: number;
+  /** True on the primary row when no version matches the admin's current locale. */
+  missingLocale: boolean;
+  groupExpanded: boolean;
+  groupId: string;
 };
 
 type ArticlesTableProps = {
@@ -233,14 +248,89 @@ export function ArticlesTable({
     });
   }, [rows, activeTab, activeType]);
 
-  const rowsWithRelativeTime = useMemo(
-    () =>
-      filteredRows.map((row) => ({
-        ...row,
-        relativeUpdated: formatArticleListDate(row.updatedAtIso, locale, t("table.justNow")),
-      })),
-    [filteredRows, locale, t],
+  // Group id used for clustering translation siblings: shared translationGroupId,
+  // or the row's own id when it has no translations (never collides with a real group).
+  const groupIdFor = useCallback((row: ArticleRow) => row.translationGroupId ?? row.id, []);
+
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const toggleGroup = useCallback((gid: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(gid)) next.delete(gid);
+      else next.add(gid);
+      return next;
+    });
+  }, []);
+
+  // One group per translated piece: primary is the row matching the admin's
+  // current locale, falling back to the most recently updated version when
+  // no row matches. `missingLocale` flags that the viewer's language has no
+  // version at all, so the admin knows this piece still needs translating.
+  const groups = useMemo(() => {
+    const byGroup = new Map<string, ArticleRow[]>();
+    for (const row of filteredRows) {
+      const gid = groupIdFor(row);
+      if (!byGroup.has(gid)) byGroup.set(gid, []);
+      byGroup.get(gid)!.push(row);
+    }
+    return [...byGroup.entries()].map(([gid, members]) => {
+      const localeMatch = members.find((m) => m.language === locale);
+      const newest = [...members].sort((a, b) => b.updatedAtIso.localeCompare(a.updatedAtIso))[0];
+      const primary = localeMatch ?? newest;
+      const children = members.filter((m) => m.id !== primary.id);
+      return {
+        gid,
+        primary,
+        children,
+        missingLocale: !localeMatch,
+        latestUpdate: newest.updatedAtIso,
+      };
+    });
+  }, [filteredRows, groupIdFor, locale]);
+
+  const sortedGroups = useMemo(
+    () => [...groups].sort((a, b) => b.latestUpdate.localeCompare(a.latestUpdate)),
+    [groups],
   );
+
+  // Flatten to primary row + (if expanded) its children directly beneath,
+  // since ChamferedTable renders a flat row list with no native nesting.
+  const rowsWithRelativeTime = useMemo<DisplayRow[]>(() => {
+    const withMeta = (row: ArticleRow, extra: Omit<DisplayRow, keyof ArticleRow | "relativeUpdated">): DisplayRow => ({
+      ...row,
+      relativeUpdated: formatArticleListDate(row.updatedAtIso, locale, t("table.justNow")),
+      ...extra,
+    });
+    const out: DisplayRow[] = [];
+    for (const group of sortedGroups) {
+      const expanded = expandedGroups.has(group.gid);
+      out.push(
+        withMeta(group.primary, {
+          isPrimary: true,
+          isChild: false,
+          siblingCount: group.children.length,
+          missingLocale: group.missingLocale,
+          groupExpanded: expanded,
+          groupId: group.gid,
+        }),
+      );
+      if (expanded) {
+        for (const child of group.children) {
+          out.push(
+            withMeta(child, {
+              isPrimary: false,
+              isChild: true,
+              siblingCount: 0,
+              missingLocale: false,
+              groupExpanded: expanded,
+              groupId: group.gid,
+            }),
+          );
+        }
+      }
+    }
+    return out;
+  }, [sortedGroups, expandedGroups, locale, t]);
 
   useLayoutEffect(() => {
     if (openMenuId == null) return;
@@ -353,7 +443,7 @@ export function ArticlesTable({
                   <Link
                     role="menuitem"
                     href={previewHrefForContentType(openMenuRow.content_type, openMenuRow.id)}
-                    className="block px-4 py-2 text-sm text-gray-200 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+                    className="block px-4 py-2 text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
                     onClick={closeArticleMenu}
                   >
                     {t("table.preview")}
@@ -363,7 +453,7 @@ export function ArticlesTable({
                   <Link
                     role="menuitem"
                     href={`/admin/articles/edit/${encodeURIComponent(openMenuRow.id)}`}
-                    className="block px-4 py-2 text-sm text-gray-200 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+                    className="block px-4 py-2 text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
                     onClick={closeArticleMenu}
                   >
                     {t("table.edit")}
@@ -436,11 +526,45 @@ export function ArticlesTable({
             headerClassName: headerCellClass,
             cellClassName: bodyCellBase,
             cell: (row) => (
-              <span className="flex items-center gap-2">
-                <span style={{ color: "var(--tott-dash-gold-text)" }}>{row.title}</span>
-                {row.language && row.language !== "en" ? (
-                  <span className="shrink-0 rounded bg-[var(--tott-elevated)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+              <span
+                className="flex items-center gap-2"
+                style={row.isChild ? { paddingInlineStart: "1.5rem" } : undefined}
+              >
+                {row.isPrimary && row.siblingCount > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(row.groupId)}
+                    aria-expanded={row.groupExpanded}
+                    aria-label={t("table.toggleTranslations")}
+                    className={`shrink-0 rounded p-1 text-[var(--tott-dash-gold-label)] transition-transform hover:bg-[var(--tott-dash-ghost-hover)] ${
+                      row.groupExpanded ? "rotate-90" : "rtl:-scale-x-100"
+                    }`}
+                  >
+                    <ChevronRightIcon />
+                  </button>
+                ) : null}
+                <span
+                  className={row.isChild ? "text-[var(--tott-muted)]" : undefined}
+                  style={!row.isChild ? { color: "var(--tott-dash-gold-text)" } : undefined}
+                >
+                  {row.title}
+                </span>
+                {row.language ? (
+                  <span className="shrink-0 rounded bg-[var(--tott-elevated)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
                     {row.language}
+                  </span>
+                ) : null}
+                {row.isPrimary && row.siblingCount > 0 ? (
+                  <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
+                    {t("table.translationsTooltip", { count: row.siblingCount })}
+                  </span>
+                ) : null}
+                {row.isPrimary && row.missingLocale ? (
+                  <span
+                    className="shrink-0 rounded bg-[var(--tott-status-coral)]/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-status-coral)]"
+                    title={t("table.needsTranslationTooltip", { locale })}
+                  >
+                    {t("table.needsTranslation")}
                   </span>
                 ) : null}
               </span>

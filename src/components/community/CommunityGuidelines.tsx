@@ -1,12 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { theme } from "@/lib/theme";
 
 export function CommunityGuidelines({ guidelines }: { guidelines: string[] }) {
   const t = useTranslations("Community");
 
   return (
+    <RevealOnScroll>
     <section className="mt-16">
       <h2
         className="text-2xl font-medium"
@@ -46,5 +48,6 @@ export function CommunityGuidelines({ guidelines }: { guidelines: string[] }) {
         ))}
       </ol>
     </section>
+    </RevealOnScroll>
   );
 }

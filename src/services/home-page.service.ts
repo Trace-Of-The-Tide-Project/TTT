@@ -26,10 +26,11 @@ import {
   type CmsPage,
   type CmsSection,
 } from "./cms.service";
+import { routing } from "@/i18n/routing";
 
 export const HOME_PAGE_SLUG = "home";
 
-export const SUPPORTED_LOCALES = ["en", "ar", "fr", "es"] as const;
+export const SUPPORTED_LOCALES = routing.locales;
 export type HomeLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export type Localized<T> = Partial<Record<HomeLocale, T>>;

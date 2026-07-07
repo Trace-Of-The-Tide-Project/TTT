@@ -1,7 +1,9 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { ChevronRightIcon } from "@/components/ui/icons";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 
 type Contributor = {
   name: string;
@@ -26,10 +28,18 @@ export function ContentContributors({
         {t("contributedCount", { count: contributors.length })}
       </p>
 
-      <ul className="mt-4 space-y-1">
+      <motion.ul
+        className="mt-4 space-y-1"
+        variants={staggerParent}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+      >
         {contributors.map((c, i) => (
-          <li
+          <motion.li
             key={i}
+            variants={staggerChild}
+            transition={springs.gentle}
             className="flex cursor-pointer items-center gap-3 rounded-xl px-2 py-1 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
           >
             <div
@@ -47,9 +57,9 @@ export function ContentContributors({
             <span className="shrink-0 text-[var(--tott-muted)]">
               <ChevronRightIcon />
             </span>
-          </li>
+          </motion.li>
         ))}
-      </ul>
+      </motion.ul>
     </div>
   );
 }

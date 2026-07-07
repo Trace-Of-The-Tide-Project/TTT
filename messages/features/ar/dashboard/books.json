@@ -31,10 +31,42 @@
           "confirm": "حذف",
           "confirmBusy": "جارٍ الحذف…",
           "cancel": "إلغاء"
+        },
+        "rowActions": {
+          "edit": "تعديل",
+          "delete": "حذف"
+        },
+        "pagination": {
+          "prev": "السابق",
+          "next": "التالي"
+        }
+      },
+      "tabs": {
+        "books": "الكتب",
+        "printOrders": "طلبات الطباعة"
+      },
+      "printOrders": {
+        "loading": "جارٍ تحميل طلبات الطباعة…",
+        "empty": "لا توجد طلبات طباعة بعد.",
+        "trackingPlaceholder": "رقم التتبع",
+        "markShipped": "تحديد كمُرسل",
+        "headers": {
+          "book": "الكتاب",
+          "buyer": "المشتري",
+          "address": "عنوان الشحن",
+          "status": "الحالة",
+          "actions": "الإجراءات"
+        },
+        "statuses": {
+          "all": "الكل",
+          "pending": "قيد الانتظار",
+          "shipped": "تم الشحن",
+          "cancelled": "ملغى"
         }
       },
       "form": {
         "createTitle": "إضافة كتاب جديد",
+        "loading": "جارٍ تحميل الكتاب…",
         "createDescription": "الكتاب عمل منشور مستقل (مع ملف PDF وسعر اختياريَّين) يظهر في صفحة الكتب العامة. لإصدار من المجلة استخدم «عدد»، ولمقال واحد استخدم «المحتوى».",
         "editTitle": "تعديل الكتاب",
         "saving": "جارٍ الحفظ…",
@@ -75,6 +107,9 @@
           "pricePlaceholder": "مثال: 9.99",
           "currency": "العملة",
           "currencyPlaceholder": "مثال: USD",
+          "printEnabled": "بيع نسخة ورقية",
+          "printPrice": "سعر النسخة الورقية",
+          "printPricePlaceholder": "مثال: 19.99",
           "magazine_id": "معرّف المجلة (اختياري)",
           "magazine_idPlaceholder": "اتركه فارغاً إذا لم يكن مرتبطاً بمجلة"
         },
@@ -85,12 +120,87 @@
           "fr": "الفرنسية",
           "de": "الألمانية"
         },
+        "sections": {
+          "details": "تفاصيل الكتاب",
+          "pricing": "التسعير",
+          "chapters": "الفصول",
+          "media": "الوسائط",
+          "editions": "الإصدارات"
+        },
+        "chapters": {
+          "label": "مُجمّع من",
+          "hint": "سجّل المقالات التي جُمِّع منها هذا الكتاب لأغراض التتبع التحريري. يبقى ملف PDF المرفوع أعلاه هو الملف القابل للقراءة.",
+          "loading": "جارٍ تحميل الفصول…",
+          "empty": "لا توجد مقالات مرتبطة بعد.",
+          "searchPlaceholder": "ابحث عن مقالات لإضافتها كفصل…",
+          "searching": "جارٍ البحث…",
+          "noResults": "لا توجد مقالات مطابقة",
+          "add": "إضافة",
+          "remove": "إزالة",
+          "moveUp": "تحريك لأعلى",
+          "moveDown": "تحريك لأسفل"
+        },
+        "hints": {
+          "priceFree": "اتركه فارغاً لجعله مجانياً",
+          "printPriceCurrency": "يُحتسب بالعملة المحددة أعلاه",
+          "coverUrl": "أو الصق رابط صورة مباشرةً",
+          "pdfUrl": "أو الصق رابط PDF مباشرةً",
+          "languageLocked": "اللغة مقفلة بعد الإنشاء. استخدم علامات التبويب أعلاه لإضافة نسخة بلغة أخرى.",
+          "sharedFieldLocked": "مشترك بين جميع نسخ اللغات — عدّله من علامة تبويب اللغة الأصلية."
+        },
         "upload": {
           "coverUpload": "رفع صورة الغلاف",
           "coverUploading": "جارٍ الرفع…",
           "pdfUpload": "رفع PDF",
           "pdfUploading": "جارٍ الرفع…",
-          "pdfUploaded": "تم رفع PDF ✓"
+          "pdfUploaded": "تم رفع PDF ✓",
+          "coverAlt": "معاينة الغلاف",
+          "change": "تغيير",
+          "coverHint": "انقر لرفع صورة الغلاف",
+          "coverFormats": "JPG، PNG، WebP — السحب والإفلات مدعوم",
+          "pdfHint": "انقر لرفع ملف PDF أو مستند Word",
+          "pdfFormats": "PDF، DOC، DOCX — السحب والإفلات مدعوم",
+          "uploadingFile": "جارٍ رفع الملف…",
+          "fileReady": "✓ جاهز",
+          "fileFallback": "تم رفع الملف",
+          "replace": "استبدال"
+        },
+        "toast": {
+          "coverUploading": "جارٍ رفع صورة الغلاف…",
+          "coverUploaded": "تم رفع صورة الغلاف",
+          "coverUploadFailed": "فشل رفع صورة الغلاف",
+          "fileUploading": "جارٍ رفع الملف…",
+          "fileUploaded": "تم رفع الملف",
+          "fileUploadFailed": "فشل رفع الملف",
+          "saving": "جارٍ حفظ الكتاب…",
+          "saved": "تم حفظ الكتاب",
+          "created": "تم إنشاء الكتاب",
+          "saveFailed": "فشل حفظ الكتاب"
+        },
+        "translation": {
+          "banner": "إضافة ترجمة — اكتب نسخة هذه اللغة بالأسفل.",
+          "ofOriginal": "ترجمة لـ ”{name}“"
+        },
+        "linkTranslation": {
+          "label": "هذه اللغة موجودة بالفعل ككتاب منفصل؟ اربطها هنا بدلاً من إنشاء كتاب جديد.",
+          "searchPlaceholder": "ابحث عن كتب بالعنوان…",
+          "hint": "يربط مجموعة ترجمة هذا الكتاب بالمجموعة التي تختارها — تصبح اللغات علامات تبويب في كلا الكتابين.",
+          "searching": "جارٍ البحث…",
+          "none": "لا توجد كتب مطابقة",
+          "linkFailed": "فشل ربط الكتاب"
+        },
+        "editions": {
+          "untitled": "بلا عنوان",
+          "pdfAttached": "تم إرفاق PDF",
+          "pdfMissing": "لا يوجد PDF بعد",
+          "addLabel": "إضافة نسخة بلغة أخرى",
+          "badgePrimary": "أساسية",
+          "badge": {
+            "primary": "أساسية",
+            "dirty": "غير محفوظة",
+            "existing": "محفوظة",
+            "empty": "لم تبدأ"
+          }
         }
       }
     }

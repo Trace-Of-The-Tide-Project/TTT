@@ -36,7 +36,7 @@ type RouteContext = { params: Promise<{ path: string[] }> };
 
 async function handle(request: Request, ctx: RouteContext): Promise<Response> {
   const { path } = await ctx.params;
-  const segments = (path ?? []).map(encodeURIComponent).join("/");
+  const segments = (path ?? []).join("/");
   const url = new URL(request.url);
   const upstreamUrl = `${BACKEND_URL}/${segments}${url.search}`;
 

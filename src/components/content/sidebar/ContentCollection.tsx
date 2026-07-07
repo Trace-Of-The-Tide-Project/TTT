@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Grid2x2Icon, CalendarIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 
 type CollectionItem = {
   image: string;
@@ -42,12 +44,20 @@ export function ContentCollection({
         {t("articlesCount", { count: articleCount })} • {duration} {t("ofContent")}
       </p>
 
-      <ul className="-ml-4 mt-4 space-y-3">
+      <motion.ul
+        className="-ml-4 mt-4 space-y-3"
+        variants={staggerParent}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+      >
         {visible.map((item, i) => {
           const isSelected = selectedIndex === i;
           return (
-            <li
+            <motion.li
               key={i}
+              variants={staggerChild}
+              transition={springs.gentle}
               role="button"
               tabIndex={0}
               onClick={() => setSelectedIndex(i)}
@@ -103,10 +113,10 @@ export function ContentCollection({
                   {item.description}
                 </p>
               </div>
-            </li>
+            </motion.li>
           );
         })}
-      </ul>
+      </motion.ul>
 
       <div className="mt-4 flex items-center justify-between text-xs text-[var(--tott-muted)]">
         <span>

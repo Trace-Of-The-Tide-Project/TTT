@@ -12,6 +12,10 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/profile-home.json`),
     import(`../../messages/features/${locale}/dashboard/admin-home.json`),
     import(`../../messages/features/${locale}/dashboard/users-management.json`),
+    import(`../../messages/features/${locale}/dashboard/people.json`),
+    import(`../../messages/features/${locale}/dashboard/collections-admin.json`),
+    import(`../../messages/features/${locale}/dashboard/subscriptions.json`),
+    import(`../../messages/features/${locale}/dashboard/analytics.json`),
     import(`../../messages/features/${locale}/dashboard/trips.json`),
     import(`../../messages/features/${locale}/dashboard/magazine.json`),
     import(`../../messages/features/${locale}/dashboard/open-call-public.json`),
@@ -28,6 +32,10 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/translations.json`),
     /** Large shared surfaces (content library, CMS editor, roles UI). */
     import(`../../messages/features/${locale}/dashboard/admin-surfaces.json`),
+    import(`../../messages/features/${locale}/dashboard/cms-home.json`),
+    import(`../../messages/features/${locale}/dashboard/cms-static.json`),
+    import(`../../messages/features/${locale}/dashboard/cms-branding.json`),
+    import(`../../messages/features/${locale}/dashboard/cms-nav.json`),
     import(`../../messages/features/${locale}/dashboard/books.json`),
     import(`../../messages/features/${locale}/dashboard/writers.json`),
     /**
@@ -55,7 +63,7 @@ async function loadDashboardMessages(locale: AppLocale): Promise<Record<string, 
  */
 export async function loadMessages(locale: AppLocale) {
 
-  const [core, navbar, home, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, collections, subscribe, community, dashboardMerged] = await Promise.all([
+  const [core, navbar, home, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, collections, subscribe, community, legal, dashboardMerged] = await Promise.all([
     import(`../../messages/${locale}.json`),
     import(`../../messages/features/${locale}/navbar.json`),
     import(`../../messages/features/${locale}/home.json`),
@@ -70,6 +78,7 @@ export async function loadMessages(locale: AppLocale) {
     import(`../../messages/features/${locale}/collections.json`),
     import(`../../messages/features/${locale}/subscribe.json`),
     import(`../../messages/features/${locale}/community.json`),
+    import(`../../messages/features/${locale}/legal.json`),
     loadDashboardMessages(locale),
   ]);
 
@@ -88,6 +97,7 @@ export async function loadMessages(locale: AppLocale) {
     ...collections.default,
     ...subscribe.default,
     ...community.default,
+    ...legal.default,
     Dashboard: dashboardMerged,
   } as Record<string, unknown>;
 }

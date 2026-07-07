@@ -19,6 +19,9 @@ export type Book = {
   pdf_url?: string | null;
   genre?: string | null;
   language?: string | null;
+  /** Translation-group id — all language versions of one book share it
+   * (pending backend rollout; see docs/backend-asks-translations.md). */
+  translation_group_id?: string | null;
   page_count?: number | null;
   price?: number | string | null;
   currency?: string | null;
@@ -32,6 +35,10 @@ export type Book = {
   is_free?: boolean;
   /** True when the current (authenticated) caller owns this paid book. */
   is_owned?: boolean;
+  /** Whether a physical copy can be purchased. */
+  print_enabled?: boolean | null;
+  /** Price of the physical copy; separate from the digital `price`. */
+  print_price?: number | string | null;
 };
 
 export type BookReview = {
@@ -62,6 +69,10 @@ export type GetBooksParams = {
   min_price?: number;
   max_price?: number;
   min_rating?: number;
+  /** "group" collapses translation groups to one book (public feeds). */
+  dedupe?: string;
+  /** Language the dedupe prefers when the group has it (en|ar|es|fr). */
+  viewer_lang?: string;
 };
 
 export type BookPreviewMeta = {
@@ -204,8 +215,12 @@ export type BookPayload = {
   page_count?: number | null;
   price?: number | null;
   currency?: string | null;
+  print_enabled?: boolean | null;
+  print_price?: number | null;
   magazine_id?: string | null;
   created_by?: string | null;
+  /** On create only: id of the book this is a translation of. */
+  translation_of?: string | null;
 };
 
 /** POST /knowledge/books — requires JWT + admin role. */
@@ -233,6 +248,20 @@ export async function updateBook(
 /** DELETE /knowledge/books/:id */
 export async function deleteBook(id: string): Promise<void> {
   await api.delete(`/knowledge/books/${encodeURIComponent(id)}`);
+}
+
+/**
+ * POST /knowledge/books/:id/link-translation — merges `id`'s translation
+ * group into `targetId`'s group. For legacy books whose per-language rows
+ * were never linked (created before translation groups existed).
+ */
+export async function linkBookTranslation(
+  id: string,
+  targetId: string,
+): Promise<void> {
+  await api.post(`/knowledge/books/${encodeURIComponent(id)}/link-translation`, {
+    target_id: targetId,
+  });
 }
 
 /** GET /knowledge/books/:id/preview — public, paginated page images for the flipbook reader. */

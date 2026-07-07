@@ -76,7 +76,7 @@ export function AdminNotificationPreferences() {
         <h1 className="text-lg font-bold text-foreground">{t("pageTitle")}</h1>
 
         <div className="mt-8">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">{t("emailSection")}</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--tott-muted)]">{t("emailSection")}</h2>
           <div className="mt-2">
             <SettingsRow
               title={t("articleUpdates")}
@@ -138,7 +138,7 @@ export function AdminNotificationPreferences() {
         </div>
 
         <div className="mt-10">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">{t("pushSection")}</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--tott-muted)]">{t("pushSection")}</h2>
           <div className="mt-2">
             <SettingsRow
               title={t("browserNotifications")}
@@ -157,7 +157,7 @@ export function AdminNotificationPreferences() {
 
         {showEditor ? (
           <div className="mt-10">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--tott-muted)]">
               {t("editorSection")}
             </h2>
             <div className="mt-2">
@@ -215,7 +215,7 @@ export function AdminNotificationPreferences() {
             type="button"
             onClick={handleSave}
             disabled={loading || saveState === "saving"}
-            className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="w-full rounded-lg py-3.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:opacity-50"
             style={{ backgroundColor: saveState === "error" ? "#ef4444" : theme.accentGold }}
           >
             {saveLabel}

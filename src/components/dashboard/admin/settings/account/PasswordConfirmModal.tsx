@@ -6,9 +6,9 @@ import { EyeIcon, EyeOffIcon } from "@/components/ui/icons";
 import { Modal } from "@/components/ui/Modal";
 
 const inputWrapClass =
-  "relative flex items-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] focus-within:border-[#C9A96E]";
+  "relative flex items-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] focus-within:border-[var(--tott-accent-gold)]";
 const inputClass =
-  "w-full border-0 bg-transparent py-3 pl-4 pr-12 text-sm text-foreground placeholder:text-gray-500 outline-none";
+  "w-full border-0 bg-transparent py-3 pl-4 pr-12 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none";
 
 type PasswordConfirmModalProps = {
   open: boolean;
@@ -80,7 +80,7 @@ export function PasswordConfirmModal({
             type="button"
             disabled={busy}
             onClick={handleClose}
-            className="rounded-lg border border-[var(--tott-card-border)] bg-transparent px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
+            className="rounded-lg border border-[var(--tott-card-border)] bg-transparent px-4 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
           >
             {t("modal.cancel")}
           </button>
@@ -96,10 +96,10 @@ export function PasswordConfirmModal({
       }
     >
       <form id="password-confirm-form" onSubmit={handleSubmit} className="space-y-4">
-        <p className="text-sm text-gray-400">{description}</p>
+        <p className="text-sm text-[var(--tott-muted)]">{description}</p>
 
         <div>
-          <label className="mb-1.5 block text-xs text-gray-500">
+          <label className="mb-1.5 block text-xs text-[var(--tott-muted)]">
             {t("modal.passwordLabel")}
           </label>
           <div className={inputWrapClass}>
@@ -115,7 +115,7 @@ export function PasswordConfirmModal({
             <button
               type="button"
               onClick={() => setVisible((v) => !v)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-gray-500 transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
               aria-label={visible ? t("modal.hidePassword") : t("modal.showPassword")}
             >
               {visible ? <EyeOffIcon /> : <EyeIcon />}
@@ -125,7 +125,7 @@ export function PasswordConfirmModal({
 
         {typeToConfirm ? (
           <div>
-            <label className="mb-1.5 block text-xs text-gray-500">
+            <label className="mb-1.5 block text-xs text-[var(--tott-muted)]">
               {t("modal.typeToConfirmLabel", { phrase: typeToConfirm })}
             </label>
             <div className={inputWrapClass}>
@@ -134,7 +134,7 @@ export function PasswordConfirmModal({
                 value={phrase}
                 onChange={(e) => setPhrase(e.target.value)}
                 placeholder={typeToConfirm}
-                className="w-full border-0 bg-transparent px-4 py-3 text-sm text-foreground placeholder:text-gray-500 outline-none"
+                className="w-full border-0 bg-transparent px-4 py-3 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none"
                 autoComplete="off"
               />
             </div>

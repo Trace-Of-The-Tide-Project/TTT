@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { useTheme } from "@/components/providers/ThemeProvider";
 import type { SidebarItemConfig } from "@/lib/dashboard/types";
 import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
 
@@ -20,12 +19,9 @@ export function SidebarItem({ labelKey, href, icon: Icon, badge, onClick, badgeO
   const isActive =
     path === href ||
     ((href !== "/admin" && href !== "/profile") && path.startsWith(`${href}/`));
-  const { isDark } = useTheme();
   const inactive =
     "border border-transparent text-[var(--tott-muted)] " +
-    (isDark
-      ? "hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
-      : "hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground");
+    "hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground";
 
   return (
     <Link

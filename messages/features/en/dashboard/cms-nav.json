@@ -1,0 +1,26 @@
+{
+  "Dashboard": {
+    "cmsNav": {
+      "regionLabel": "Navigations and footer configuration",
+      "headerNavGroupLabel": "Header navigation configuration",
+      "headerNavTitle": "Header Navigation",
+      "headerNavDescription": "Configure main navigation links",
+      "reorderLabel": "Reorder",
+      "textPlaceholder": "Text",
+      "addLink": "Add Link",
+      "footerGroupLabel": "Footer configuration",
+      "footerTitle": "Footer",
+      "footerDescription": "Configure footer content and links",
+      "footerTextLabel": "Footer Text",
+      "footerTextPlaceholder": "© 2024 TTT. All rights reserved.",
+      "socialLinksLabel": "Social Links",
+      "twitterPlaceholder": "Twitter URL",
+      "instagramPlaceholder": "Instagram URL",
+      "linkedinPlaceholder": "LinkedIn URL",
+      "saving": "Saving…",
+      "saved": "Saved",
+      "saveError": "Error — retry",
+      "save": "Save"
+    }
+  }
+}

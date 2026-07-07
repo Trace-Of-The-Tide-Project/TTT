@@ -1,23 +1,35 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Link, useRouter } from "@/i18n/navigation";
-import { mutationToast } from "@/hooks/useMutationToast";
-import { useWriter } from "@/hooks/queries/writers";
+import { useWriter, writersKeys } from "@/hooks/queries/writers";
+import {
+  useTranslations as useTranslationGroup,
+  translationKeys,
+} from "@/hooks/queries/translations";
 import {
   useCreateWriterProfile,
   useUpdateWriterProfile,
 } from "@/hooks/mutations/writers";
-import { useCreateAdminUser } from "@/hooks/mutations/users";
 import { uploadArticleAssetKeyAndUrl } from "@/services/uploads.service";
-import type { WriterProfilePayload } from "@/services/writers.service";
-import type { AdminUserListItem, CreatedAdminUser } from "@/services/users.service";
+import {
+  getWriter,
+  type WriterProfile,
+  type WriterProfilePayload,
+} from "@/services/writers.service";
+import type { AdminUserListItem } from "@/services/users.service";
 import { formatApiError } from "@/lib/api/error-message";
+import { LanguageFormTabs, TranslationWizard } from "@/components/dashboard/admin/translations";
+import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import type { TranslationWizardReviewLine } from "@/components/dashboard/admin/translations/TranslationWizard";
+import { routing } from "@/i18n/routing";
 import { UserPicker } from "./UserPicker";
 import { AvatarUploadZone, ThemesInput } from "./form-controls";
 
-const CREATOR_KINDS = ["musician", "writer", "visual_artist", "filmmaker"] as const;
+const CREATOR_KINDS = ["musician", "writer", "visual_artist", "filmmaker", "photographer", "translator", "editor", "illustrator"] as const;
 type CreatorKind = (typeof CREATOR_KINDS)[number];
 
 type FormState = {
@@ -37,6 +49,7 @@ type FormState = {
   social_twitter: string;
   social_instagram: string;
   social_youtube: string;
+  language: string;
 };
 
 const EMPTY: FormState = {
@@ -56,61 +69,114 @@ const EMPTY: FormState = {
   social_twitter: "",
   social_instagram: "",
   social_youtube: "",
+  language: "en",
 };
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function generateTempPassword(): string {
-  // Unambiguous alphanumerics (no 0/O/1/l/I), 12 chars.
-  const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
-  const bytes = new Uint32Array(12);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes, (b) => chars[b % chars.length]!).join("");
+/** Map an API writer row onto the form's field shape. */
+function seedFromWriter(w: WriterProfile): FormState {
+  const links = w.social_links ?? {};
+  return {
+    pen_name: w.pen_name ?? "",
+    headline: w.headline ?? "",
+    bio_long: w.bio_long ?? "",
+    avatar_url: w.avatar_url ?? "",
+    featured: Boolean(w.featured),
+    creator_kind: (w.creator_kind ?? "") as FormState["creator_kind"],
+    location: w.location ?? "",
+    themes: Array.isArray(w.themes) ? w.themes : [],
+    quote: w.quote ?? "",
+    collaborations: w.collaborations ?? "",
+    recognition: w.recognition ?? "",
+    monthly_goal: w.monthly_goal != null ? String(w.monthly_goal) : "",
+    social_website: links.website ?? "",
+    social_twitter: links.twitter ?? "",
+    social_instagram: links.instagram ?? "",
+    social_youtube: links.youtube ?? "",
+    language: (w.language ?? "en").trim() || "en",
+  };
 }
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-[var(--tott-muted)] outline-none focus:border-[var(--tott-gold)]/60 transition-colors";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-[var(--tott-muted)] outline-none focus:border-[var(--tott-accent-gold)]/60 transition-colors";
 const labelClass =
   "text-xs font-medium text-[var(--tott-dash-gold-label)] mb-1 block";
 const sectionClass =
-  "rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated,#111)] p-5 space-y-4";
+  "rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] p-5 space-y-4";
 const sectionHeadingClass =
   "text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]";
 
-type Props = { writerId?: string };
+type Props = {
+  writerId?: string;
+  /** Create-mode only: ISO code for the version being created (from
+   * `?language=`). */
+  createLanguage?: string;
+  /** Create-mode only: id of the writer this is a translation of (from
+   * `?translation_of=`). */
+  translationOf?: string;
+};
 
-export function WriterFormContent({ writerId }: Props) {
+export function WriterFormContent({
+  writerId,
+  createLanguage,
+  translationOf,
+}: Props) {
   const t = useTranslations("Dashboard.writersManagement.form");
+  const tTr = useTranslations("Dashboard.translations");
   const router = useRouter();
+  const qc = useQueryClient();
   const isEdit = Boolean(writerId);
+  const isTranslation = !isEdit && Boolean(translationOf);
 
   const writerQuery = useWriter(writerId);
+  // Source writer to clone fields from when adding a translation.
+  const sourceQuery = useWriter(isTranslation ? translationOf : undefined);
+  // Existing language versions in this writer's translation group (edit mode).
+  const groupQuery = useTranslationGroup("writer", writerId);
   const createMutation = useCreateWriterProfile();
   const updateMutation = useUpdateWriterProfile();
-  const createUserMutation = useCreateAdminUser();
 
-  const [form, setForm] = useState<FormState>(EMPTY);
+  const initialLang = (createLanguage || "en").trim() || "en";
+  // Multi-language authoring: one FormState per opened locale. A locale absent
+  // from `forms` has never been opened; opening it seeds it (existing version →
+  // fetched row, otherwise a clone of the primary tab). `dirty` tracks which
+  // tabs the admin actually touched — untouched tabs never submit.
+  const [activeLang, setActiveLang] = useState(initialLang);
+  const [primaryLang, setPrimaryLang] = useState(initialLang);
+  const [forms, setForms] = useState<Record<string, FormState>>(() => ({
+    [initialLang]: { ...EMPTY, language: initialLang },
+  }));
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
+  const [langLoading, setLangLoading] = useState(false);
   const [seeded, setSeeded] = useState(false);
+  const [translationSeeded, setTranslationSeeded] = useState(false);
+
+  // Create-mode wizard: primary step → one step per other locale → review.
+  // Edit mode keeps the free-clicking tab strip (isEdit is always false here
+  // when the wizard applies, since isTranslation also skips it — see render).
+  const wizardLocales = useMemo(
+    () => [initialLang, ...routing.locales.filter((l) => l !== initialLang)],
+    [initialLang],
+  );
+  const [wizardStep, setWizardStep] = useState(0);
+  // Plain create (no ?translation_of=) is the only path that walks the
+  // wizard — edit mode and single-language-translation creation keep the
+  // original one-screen form.
+  const isWizard = !isEdit && !isTranslation;
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const form = forms[activeLang] ?? { ...EMPTY, language: activeLang };
+
+  // locale → existing version id (edit mode; includes the loaded writer itself).
+  const versionIds = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const v of groupQuery.data?.versions ?? []) map[v.language] = v.id;
+    return map;
+  }, [groupQuery.data]);
 
   // ── User section state (create mode only) ──
-  const [userMode, setUserMode] = useState<"existing" | "new">("existing");
+  // A writer profile links to an existing user account; admins do not create
+  // login accounts from here.
   const [selectedUser, setSelectedUser] = useState<AdminUserListItem | null>(null);
-  const [newFullName, setNewFullName] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [tempPassword, setTempPassword] = useState("");
-  const [copied, setCopied] = useState(false);
-  const [summaryCopied, setSummaryCopied] = useState(false);
-  const [inviteCopied, setInviteCopied] = useState(false);
-  const [createdUser, setCreatedUser] = useState<CreatedAdminUser | null>(null);
-  /** Password the account was actually created with — the summary must show
-   * this even if tempPassword was regenerated between attempts. */
-  const [createdPassword, setCreatedPassword] = useState<string | null>(null);
-  const [createdSummary, setCreatedSummary] = useState<{ email: string; password: string } | null>(null);
-
-  useEffect(() => {
-    // Generate the password client-side only (avoids SSR/CSR mismatch).
-    if (!isEdit && !tempPassword) setTempPassword(generateTempPassword());
-  }, [isEdit, tempPassword]);
 
   // ── Errors ──
   const [userError, setUserError] = useState<string | null>(null);
@@ -127,35 +193,45 @@ export function WriterFormContent({ writerId }: Props) {
   const busy =
     submitting ||
     avatarUploading ||
+    langLoading ||
     createMutation.isPending ||
-    updateMutation.isPending ||
-    createUserMutation.isPending;
+    updateMutation.isPending;
 
   // ── Edit-mode seeding ──
   useEffect(() => {
     if (!isEdit || seeded || !writerQuery.data) return;
     const w = writerQuery.data;
-    const links = w.social_links ?? {};
-    setForm({
-      pen_name: w.pen_name ?? "",
-      headline: w.headline ?? "",
-      bio_long: w.bio_long ?? "",
-      avatar_url: w.avatar_url ?? "",
-      featured: Boolean(w.featured),
-      creator_kind: (w.creator_kind ?? "") as FormState["creator_kind"],
-      location: w.location ?? "",
-      themes: Array.isArray(w.themes) ? w.themes : [],
-      quote: w.quote ?? "",
-      collaborations: w.collaborations ?? "",
-      recognition: w.recognition ?? "",
-      monthly_goal: w.monthly_goal != null ? String(w.monthly_goal) : "",
-      social_website: links.website ?? "",
-      social_twitter: links.twitter ?? "",
-      social_instagram: links.instagram ?? "",
-      social_youtube: links.youtube ?? "",
-    });
+    const lang = (w.language ?? "en").trim() || "en";
+    setForms({ [lang]: seedFromWriter(w) });
+    setActiveLang(lang);
+    setPrimaryLang(lang);
     setSeeded(true);
   }, [isEdit, seeded, writerQuery.data]);
+
+  // ── Translation-create seeding ──
+  // Clone the source writer's fields so the admin only translates the text,
+  // not re-enter avatars / links / themes. The user account is inherited at
+  // submit (a translation belongs to the same writer), so no UserPicker here.
+  useEffect(() => {
+    if (!isTranslation || translationSeeded || !sourceQuery.data) return;
+    // keep the target language from ?language= — override the source's.
+    setForms({
+      [initialLang]: { ...seedFromWriter(sourceQuery.data), language: initialLang },
+    });
+    setTranslationSeeded(true);
+  }, [isTranslation, translationSeeded, sourceQuery.data, initialLang]);
+
+  // All setForm-style writes go through here so dirty-tracking can't be missed.
+  const updateForm = useCallback(
+    (mutate: (prev: FormState) => FormState) => {
+      setForms((prev) => {
+        const current = prev[activeLang] ?? { ...EMPTY, language: activeLang };
+        return { ...prev, [activeLang]: mutate(current) };
+      });
+      setDirty((prev) => (prev[activeLang] ? prev : { ...prev, [activeLang]: true }));
+    },
+    [activeLang],
+  );
 
   const set = useCallback(
     (field: keyof FormState) =>
@@ -164,8 +240,81 @@ export function WriterFormContent({ writerId }: Props) {
           HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
         >,
       ) =>
-        setForm((prev) => ({ ...prev, [field]: e.target.value })),
-    [],
+        updateForm((prev) => ({ ...prev, [field]: e.target.value })),
+    [updateForm],
+  );
+
+  // Tab switch — seed the locale on first open.
+  const handleSelectLang = useCallback(
+    async (loc: string) => {
+      if (loc === activeLang || busy) return;
+      if (!forms[loc]) {
+        const existingId = versionIds[loc];
+        if (existingId) {
+          setLangLoading(true);
+          try {
+            const w = await getWriter(existingId);
+            setForms((prev) =>
+              prev[loc]
+                ? prev
+                : {
+                    ...prev,
+                    [loc]: w
+                      ? seedFromWriter(w)
+                      : { ...(prev[primaryLang] ?? EMPTY), language: loc },
+                  },
+            );
+          } finally {
+            setLangLoading(false);
+          }
+        } else {
+          setForms((prev) =>
+            prev[loc]
+              ? prev
+              : { ...prev, [loc]: { ...(prev[primaryLang] ?? EMPTY), language: loc } },
+          );
+        }
+      }
+      setActiveLang(loc);
+    },
+    [activeLang, busy, forms, versionIds, primaryLang],
+  );
+
+  const tabStatus = useMemo(() => {
+    const map: Record<string, LanguageTabStatus> = {};
+    for (const loc of routing.locales) {
+      map[loc] = dirty[loc]
+        ? "dirty"
+        : loc === primaryLang
+          ? "primary"
+          : versionIds[loc] || forms[loc]
+            ? "existing"
+            : "empty";
+    }
+    return map;
+  }, [dirty, primaryLang, versionIds, forms]);
+
+  // Wizard step → active locale (create mode only; not-yet-visited steps
+  // seed the same way opening a tab would).
+  const goToWizardStep = useCallback(
+    (step: number) => {
+      const loc = wizardLocales[step];
+      if (loc && !forms[loc]) {
+        setForms((prev) => ({ ...prev, [loc]: { ...(prev[wizardLocales[0]] ?? EMPTY), language: loc } }));
+      }
+      if (loc) setActiveLang(loc);
+      setWizardStep(step);
+    },
+    [wizardLocales, forms],
+  );
+  const wizardReviewLines: TranslationWizardReviewLine[] = useMemo(
+    () =>
+      wizardLocales.map((loc) => ({
+        locale: loc,
+        label: tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase(),
+        action: loc === wizardLocales[0] || dirty[loc] ? "create" : "skip",
+      })),
+    [wizardLocales, dirty, tTr],
   );
 
   const handleAvatarUpload = useCallback(
@@ -179,7 +328,7 @@ export function WriterFormContent({ writerId }: Props) {
         // Keep the signed `url` for an immediate preview (the key's public-bucket
         // URL 403s until the backend re-signs it on read).
         const { key, url } = await uploadArticleAssetKeyAndUrl(file);
-        setForm((prev) => ({ ...prev, avatar_url: key }));
+        updateForm((prev) => ({ ...prev, avatar_url: key }));
         setAvatarPreview(url);
       } catch {
         setSubmitError(t("errors.avatarUploadFailed"));
@@ -187,31 +336,36 @@ export function WriterFormContent({ writerId }: Props) {
         setAvatarUploading(false);
       }
     },
-    [t],
+    [t, updateForm],
   );
 
-  const buildPayload = (): WriterProfilePayload => {
+  const buildPayload = (
+    f: FormState,
+    opts: { create: boolean; translationOf?: string | null },
+  ): WriterProfilePayload => {
     const links: Record<string, string> = {};
-    if (form.social_website.trim()) links.website = form.social_website.trim();
-    if (form.social_twitter.trim()) links.twitter = form.social_twitter.trim();
-    if (form.social_instagram.trim()) links.instagram = form.social_instagram.trim();
-    if (form.social_youtube.trim()) links.youtube = form.social_youtube.trim();
+    if (f.social_website.trim()) links.website = f.social_website.trim();
+    if (f.social_twitter.trim()) links.twitter = f.social_twitter.trim();
+    if (f.social_instagram.trim()) links.instagram = f.social_instagram.trim();
+    if (f.social_youtube.trim()) links.youtube = f.social_youtube.trim();
     return {
-      pen_name: form.pen_name.trim() || null,
-      headline: form.headline.trim() || null,
-      bio_long: form.bio_long.trim() || null,
-      avatar_url: form.avatar_url.trim() || null,
-      featured: form.featured,
+      pen_name: f.pen_name.trim() || null,
+      headline: f.headline.trim() || null,
+      bio_long: f.bio_long.trim() || null,
+      avatar_url: f.avatar_url.trim() || null,
+      featured: f.featured,
       social_links: Object.keys(links).length > 0 ? links : null,
-      creator_kind: form.creator_kind || null,
-      location: form.location.trim() || null,
-      themes: form.themes.length > 0 ? form.themes : null,
-      quote: form.quote.trim() || null,
-      collaborations: form.collaborations.trim() || null,
-      recognition: form.recognition.trim() || null,
-      monthly_goal: form.monthly_goal.trim()
-        ? Number(form.monthly_goal)
-        : null,
+      creator_kind: f.creator_kind || null,
+      location: f.location.trim() || null,
+      themes: f.themes.length > 0 ? f.themes : null,
+      quote: f.quote.trim() || null,
+      collaborations: f.collaborations.trim() || null,
+      recognition: f.recognition.trim() || null,
+      monthly_goal: f.monthly_goal.trim() ? Number(f.monthly_goal) : null,
+      // Translation-group fields — create-only. `prunePayload` drops them
+      // when null (e.g. update calls).
+      language: opts.create ? f.language.trim() || null : null,
+      translation_of: opts.create ? (opts.translationOf ?? null) : null,
     };
   };
 
@@ -240,32 +394,12 @@ export function WriterFormContent({ writerId }: Props) {
     return out as Partial<WriterProfilePayload>;
   };
 
-  const validate = (): boolean => {
+  const validate = (f: FormState): boolean => {
     setUserError(null);
     setFieldError(null);
     setSubmitError(null);
-    if (!isEdit) {
-      if (userMode === "existing" && !selectedUser) {
-        setUserError(t("errors.userRequired"));
-        return false;
-      }
-      if (userMode === "new") {
-        if (!newFullName.trim()) {
-          setUserError(t("errors.fullNameRequired"));
-          return false;
-        }
-        if (!EMAIL_RE.test(newEmail.trim())) {
-          setUserError(t("errors.emailRequired"));
-          return false;
-        }
-        if (tempPassword.length < 6) {
-          setUserError(t("errors.passwordTooShort"));
-          return false;
-        }
-      }
-    }
-    if (form.monthly_goal.trim()) {
-      const goal = Number(form.monthly_goal);
+    if (f.monthly_goal.trim()) {
+      const goal = Number(f.monthly_goal);
       if (!Number.isFinite(goal) || goal < 0) {
         setFieldError(t("errors.monthlyGoalInvalid"));
         return false;
@@ -276,131 +410,135 @@ export function WriterFormContent({ writerId }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (busy || !validate()) return;
+    if (busy) return;
+
+    // Validate every tab that will submit; jump to the first invalid one.
+    const dirtyLocales: string[] = routing.locales.filter(
+      (loc) => dirty[loc] && forms[loc],
+    );
+    const submitLocales =
+      isEdit || dirtyLocales.includes(primaryLang)
+        ? dirtyLocales
+        : [primaryLang, ...dirtyLocales];
+    for (const loc of submitLocales) {
+      const f = forms[loc];
+      if (f && !validate(f)) {
+        setActiveLang(loc);
+        const stepIdx = wizardLocales.indexOf(loc);
+        if (isWizard && stepIdx >= 0) setWizardStep(stepIdx);
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
+      const failed: string[] = [];
+
       if (isEdit && writerId) {
-        await mutationToast(
-          () =>
-            updateMutation.mutateAsync({
-              writerId,
-              payload: prunePayload(buildPayload()),
-            }),
-          {
-            loading: t("saving"),
-            success: t("toasts.updated"),
-            error: t("errors.saveFailed"),
-          },
-        );
-        router.push("/admin/writers");
-        return;
-      }
-
-      // Create mode — resolve the user_id strictly per-mode.
-      let userId: string | null = null;
-      let handoffPassword: string | null = null;
-      if (userMode === "existing") {
-        userId = selectedUser?.id ?? null;
-      } else if (
-        createdUser &&
-        createdUser.email?.toLowerCase() === newEmail.trim().toLowerCase()
-      ) {
-        // This account was already created by a previous attempt — reuse it
-        // so retries never duplicate the user.
-        userId = createdUser.id;
-        handoffPassword = createdPassword;
-      } else {
-        try {
-          const created = await createUserMutation.mutateAsync({
-            full_name: newFullName.trim(),
-            email: newEmail.trim(),
-            password: tempPassword,
-          });
-          setCreatedUser(created);
-          setCreatedPassword(tempPassword);
-          userId = created.id;
-          handoffPassword = tempPassword;
-        } catch (err) {
-          setUserError(formatApiError(err, t("errors.createUserFailed")));
-          return;
+        // Each dirty tab saves on its own: existing version → PATCH, new → POST
+        // into this writer's translation group.
+        const inheritedUserId =
+          writerQuery.data?.user_id ?? writerQuery.data?.user?.id ?? null;
+        for (const loc of submitLocales) {
+          const f = forms[loc];
+          if (!f) continue;
+          const existingId = loc === primaryLang ? writerId : versionIds[loc];
+          try {
+            if (existingId) {
+              await updateMutation.mutateAsync({
+                writerId: existingId,
+                payload: prunePayload(buildPayload(f, { create: false })),
+              });
+            } else {
+              await createMutation.mutateAsync({
+                ...prunePayload(
+                  buildPayload(f, { create: true, translationOf: writerId }),
+                ),
+                ...(inheritedUserId ? { user_id: inheritedUserId } : {}),
+              });
+            }
+            setDirty((prev) => ({ ...prev, [loc]: false }));
+          } catch {
+            failed.push(loc);
+          }
         }
-      }
-      if (!userId) {
-        setUserError(t("errors.userRequired"));
-        return;
-      }
-
-      try {
-        await mutationToast(
-          () =>
-            createMutation.mutateAsync({
-              ...prunePayload(buildPayload()),
-              user_id: userId,
-            }),
-          {
-            loading: t("saving"),
-            success: t("toasts.created"),
-            error: t("errors.saveFailed"),
-          },
-        );
-        if (userMode === "new") {
-          setCreatedSummary({
-            email: newEmail.trim(),
-            password: handoffPassword ?? tempPassword,
-          });
-        } else {
+        qc.invalidateQueries({
+          queryKey: translationKeys.group("writer", writerId),
+        });
+        qc.invalidateQueries({ queryKey: writersKeys.all });
+        if (failed.length === 0) {
+          toast.success(t("toasts.updated"));
           router.push("/admin/writers");
+        } else {
+          toast.error(
+            tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }),
+          );
         }
+        return;
+      }
+
+      // ── Create mode ──
+      // Resolve the user_id per-mode. Optional: an admin may create a writer
+      // with no linked account and attach one later.
+      const userId = isTranslation
+        ? // A translation belongs to the same writer as the original.
+          (sourceQuery.data?.user_id ?? sourceQuery.data?.user?.id ?? null)
+        : (selectedUser?.id ?? null);
+
+      // The primary tab must save first — the other tabs link to its id.
+      let primaryId: string;
+      try {
+        const created = await createMutation.mutateAsync({
+          ...prunePayload(
+            buildPayload(forms[primaryLang] ?? form, {
+              create: true,
+              translationOf: isTranslation ? translationOf : null,
+            }),
+          ),
+          ...(userId ? { user_id: userId } : {}),
+        });
+        primaryId = created.id;
+        setDirty((prev) => ({ ...prev, [primaryLang]: false }));
       } catch (err) {
         const msg = formatApiError(err, t("errors.saveFailed"));
         if (/already exists/i.test(msg)) {
           setUserError(t("errors.duplicateProfile"));
         }
-        // Non-duplicate errors are already shown by mutationToast's error toast.
+        toast.error(msg);
+        return;
+      }
+
+      for (const loc of submitLocales) {
+        if (loc === primaryLang) continue;
+        const f = forms[loc];
+        if (!f) continue;
+        try {
+          await createMutation.mutateAsync({
+            ...prunePayload(
+              buildPayload(f, { create: true, translationOf: primaryId }),
+            ),
+            ...(userId ? { user_id: userId } : {}),
+          });
+          setDirty((prev) => ({ ...prev, [loc]: false }));
+        } catch {
+          failed.push(loc);
+        }
+      }
+
+      qc.invalidateQueries({ queryKey: writersKeys.all });
+      if (failed.length === 0) {
+        toast.success(t("toasts.created"));
+        router.push("/admin/writers");
+      } else {
+        // Primary saved; failed tabs stay dirty so the admin can retry — but a
+        // retry now targets an existing group, so route through edit mode.
+        toast.error(
+          tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }),
+        );
+        router.push(`/admin/writers/${encodeURIComponent(primaryId)}/edit`);
       }
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const copyPassword = async () => {
-    try {
-      await navigator.clipboard.writeText(tempPassword);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* clipboard unavailable — user can select the text manually */
-    }
-  };
-
-  const copySummaryPassword = async () => {
-    if (!createdSummary) return;
-    try {
-      await navigator.clipboard.writeText(createdSummary.password);
-      setSummaryCopied(true);
-      window.setTimeout(() => setSummaryCopied(false), 2000);
-    } catch {
-      /* clipboard unavailable — user can select the text manually */
-    }
-  };
-
-  // There's no backend invite-email endpoint, so the admin hands the writer
-  // their login manually. Build a ready-to-send message (login URL + email +
-  // temp password) they can paste into an email/DM in one click.
-  const copyInviteMessage = async () => {
-    if (!createdSummary) return;
-    const loginUrl = `${window.location.origin}/login`;
-    const message = t("created.inviteTemplate", {
-      url: loginUrl,
-      email: createdSummary.email,
-      password: createdSummary.password,
-    });
-    try {
-      await navigator.clipboard.writeText(message);
-      setInviteCopied(true);
-      window.setTimeout(() => setInviteCopied(false), 2000);
-    } catch {
-      /* clipboard unavailable — user can select the text manually */
     }
   };
 
@@ -432,13 +570,181 @@ export function WriterFormContent({ writerId }: Props) {
       "—"
     : null;
 
-  const modeButtonClass = (active: boolean) =>
-    [
-      "rounded-lg px-4 py-1.5 text-sm font-medium transition-colors",
-      active
-        ? "border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 text-[var(--tott-gold)]"
-        : "border border-[var(--tott-card-border)] text-[var(--tott-muted)] hover:text-foreground",
-    ].join(" ");
+  const writerFieldSections = (
+    <>
+      {/* ── Section 1: Writer account ── */}
+      <div className={sectionClass}>
+        <p className={sectionHeadingClass}>{t("sections.account")}</p>
+
+        {isEdit ? (
+          <div>
+            <label className={labelClass}>{t("account.linkedUser")}</label>
+            <p className="text-sm text-foreground">{linkedUserLabel}</p>
+          </div>
+        ) : isTranslation ? (
+          <div>
+            <label className={labelClass}>{t("account.linkedUser")}</label>
+            <p className="text-sm text-foreground">
+              {sourceQuery.data?.user?.full_name?.trim() ||
+                sourceQuery.data?.user?.username?.trim() ||
+                sourceQuery.data?.user_id ||
+                "—"}
+            </p>
+            <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
+              {t("translation.sameAccount")}
+            </p>
+          </div>
+        ) : (
+          <>
+            <UserPicker
+              value={selectedUser}
+              onChange={(u) => { setSelectedUser(u); setUserError(null); }}
+              disabled={busy}
+            />
+            <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
+              {t("account.optionalHint")}
+            </p>
+
+            {userError && (
+              <p className="text-xs text-red-400">{userError}</p>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* ── Section 2: Identity ── */}
+      <div className={sectionClass}>
+        <p className={sectionHeadingClass}>{t("sections.identity")}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>{t("fields.penName")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.penNamePlaceholder")} value={form.pen_name} onChange={set("pen_name")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.headline")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.headlinePlaceholder")} value={form.headline} onChange={set("headline")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.creatorKind")}</label>
+            <select className={inputClass} value={form.creator_kind} onChange={set("creator_kind")}>
+              <option value="">{t("kinds.none")}</option>
+              {CREATOR_KINDS.map((k) => (
+                <option key={k} value={k}>{t(`kinds.${k}`)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.location")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.locationPlaceholder")} value={form.location} onChange={set("location")} />
+          </div>
+        </div>
+        <div>
+          <label className={labelClass}>{t("fields.avatar")}</label>
+          <AvatarUploadZone
+            value={form.avatar_url}
+            previewSrc={avatarPreview}
+            uploading={avatarUploading}
+            onChange={handleAvatarUpload}
+            labels={{
+              uploading: t("upload.uploading"),
+              click: t("upload.click"),
+              hint: t("upload.hint"),
+              change: t("account.clear"),
+            }}
+          />
+          <input
+            type="text"
+            className={`${inputClass} mt-2`}
+            value={form.avatar_url}
+            onChange={(e) => {
+              // A hand-typed ref previews via the resolver, not the stale
+              // signed URL from a prior upload.
+              setAvatarPreview(null);
+              updateForm((prev) => ({ ...prev, avatar_url: e.target.value }));
+            }}
+            placeholder="https://…"
+          />
+          <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("fields.avatarUrlFallback")}</p>
+        </div>
+      </div>
+
+      {/* ── Section 3: About ── */}
+      <div className={sectionClass}>
+        <p className={sectionHeadingClass}>{t("sections.about")}</p>
+        <div>
+          <label className={labelClass}>{t("fields.bioLong")}</label>
+          <textarea className={`${inputClass} min-h-[120px]`} value={form.bio_long} onChange={set("bio_long")} />
+        </div>
+        <div>
+          <label className={labelClass}>{t("fields.quote")}</label>
+          <textarea className={`${inputClass} min-h-[60px]`} value={form.quote} onChange={set("quote")} />
+        </div>
+        <div>
+          <label className={labelClass}>{t("fields.themes")}</label>
+          <ThemesInput
+            value={form.themes}
+            onChange={(themes) => updateForm((prev) => ({ ...prev, themes }))}
+            placeholder={t("fields.themesPlaceholder")}
+            disabled={busy}
+          />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>{t("fields.collaborations")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.collaborationsPlaceholder")} value={form.collaborations} onChange={set("collaborations")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.recognition")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.recognitionPlaceholder")} value={form.recognition} onChange={set("recognition")} />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Section 4: Support & visibility ── */}
+      <div className={sectionClass}>
+        <p className={sectionHeadingClass}>{t("sections.support")}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>{t("fields.monthlyGoal")}</label>
+            <input type="number" min="0" step="1" className={inputClass} value={form.monthly_goal} onChange={set("monthly_goal")} />
+            {fieldError && <p className="mt-1 text-xs text-red-400">{fieldError}</p>}
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.website")}</label>
+            <input type="url" className={inputClass} placeholder="https://…" value={form.social_website} onChange={set("social_website")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.twitter")}</label>
+            <input type="url" className={inputClass} placeholder="https://x.com/…" value={form.social_twitter} onChange={set("social_twitter")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.instagram")}</label>
+            <input type="url" className={inputClass} placeholder="https://instagram.com/…" value={form.social_instagram} onChange={set("social_instagram")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.youtube")}</label>
+            <input type="url" className={inputClass} placeholder="https://youtube.com/…" value={form.social_youtube} onChange={set("social_youtube")} />
+          </div>
+        </div>
+        <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+          <input
+            type="checkbox"
+            checked={form.featured}
+            onChange={(e) =>
+              updateForm((prev) => ({ ...prev, featured: e.target.checked }))
+            }
+            className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+          />
+          {t("fields.featured")}
+        </label>
+        {/* Make the board-visibility consequence explicit — otherwise a new
+            writer is created but never appears publicly, which reads as a bug. */}
+        <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
+          {t("fields.featuredHint")}
+        </p>
+      </div>
+    </>
+  );
 
   return (
     <div className="my-4 mx-auto px-10 pb-12 max-w-4xl">
@@ -452,241 +758,62 @@ export function WriterFormContent({ writerId }: Props) {
         {t("backToList")}
       </Link>
 
-      <h1 className="mb-6 text-xl font-semibold text-foreground">
-        {isEdit ? t("editTitle") : t("createTitle")}
-      </h1>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-xl font-semibold text-foreground">
+          {isEdit ? t("editTitle") : t("createTitle")}
+        </h1>
+        {/* Old chip-link flow (?translation_of=) keeps its focused single-
+            language form. Edit mode keeps free-clicking tabs (admin already
+            knows what exists). Plain create walks the wizard below instead. */}
+        {isEdit && !isTranslation ? (
+          <LanguageFormTabs
+            active={activeLang}
+            onSelect={(loc) => void handleSelectLang(loc)}
+            status={tabStatus}
+            disabled={busy}
+          />
+        ) : null}
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
-        {/* ── Section 1: Writer account ── */}
-        <div className={sectionClass}>
-          <p className={sectionHeadingClass}>{t("sections.account")}</p>
-
-          {isEdit ? (
-            <div>
-              <label className={labelClass}>{t("account.linkedUser")}</label>
-              <p className="text-sm text-foreground">{linkedUserLabel}</p>
-            </div>
-          ) : (
-            <>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => { setUserMode("existing"); setUserError(null); }}
-                  className={modeButtonClass(userMode === "existing")}
-                >
-                  {t("account.modeExisting")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setUserMode("new"); setUserError(null); }}
-                  className={modeButtonClass(userMode === "new")}
-                >
-                  {t("account.modeNew")}
-                </button>
-              </div>
-
-              {userMode === "existing" && (
-                <UserPicker
-                  value={selectedUser}
-                  onChange={(u) => { setSelectedUser(u); setUserError(null); }}
-                  disabled={busy}
-                />
-              )}
-
-              {userMode === "new" && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className={labelClass}>{t("account.fullName")} *</label>
-                      <input
-                        type="text"
-                        className={inputClass}
-                        value={newFullName}
-                        onChange={(e) => setNewFullName(e.target.value)}
-                        disabled={busy}
-                      />
-                    </div>
-                    <div>
-                      <label className={labelClass}>{t("account.email")} *</label>
-                      <input
-                        type="email"
-                        className={inputClass}
-                        value={newEmail}
-                        onChange={(e) => setNewEmail(e.target.value)}
-                        disabled={busy}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className={labelClass}>{t("account.tempPassword")}</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        readOnly
-                        className={`${inputClass} font-mono`}
-                        value={tempPassword}
-                      />
-                      <button
-                        type="button"
-                        onClick={copyPassword}
-                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground"
-                      >
-                        {copied ? t("account.copied") : t("account.copy")}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setTempPassword(generateTempPassword())}
-                        disabled={busy || (createdUser !== null && (createdUser.email?.toLowerCase() ?? "") === newEmail.trim().toLowerCase())}
-                        className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground disabled:opacity-40"
-                      >
-                        {t("account.regenerate")}
-                      </button>
-                    </div>
-                    <p className="mt-1 text-[10px] text-[var(--tott-muted)]">
-                      {t("account.tempPasswordHint")}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {userError && (
-                <p className="text-xs text-red-400">{userError}</p>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* ── Section 2: Identity ── */}
-        <div className={sectionClass}>
-          <p className={sectionHeadingClass}>{t("sections.identity")}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>{t("fields.penName")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.penNamePlaceholder")} value={form.pen_name} onChange={set("pen_name")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.headline")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.headlinePlaceholder")} value={form.headline} onChange={set("headline")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.creatorKind")}</label>
-              <select className={inputClass} value={form.creator_kind} onChange={set("creator_kind")}>
-                <option value="">{t("kinds.none")}</option>
-                {CREATOR_KINDS.map((k) => (
-                  <option key={k} value={k}>{t(`kinds.${k}`)}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.location")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.locationPlaceholder")} value={form.location} onChange={set("location")} />
-            </div>
-          </div>
-          <div>
-            <label className={labelClass}>{t("fields.avatar")}</label>
-            <AvatarUploadZone
-              value={form.avatar_url}
-              previewSrc={avatarPreview}
-              uploading={avatarUploading}
-              onChange={handleAvatarUpload}
-              labels={{
-                uploading: t("upload.uploading"),
-                click: t("upload.click"),
-                hint: t("upload.hint"),
-                change: t("account.clear"),
-              }}
-            />
-            <input
-              type="text"
-              className={`${inputClass} mt-2`}
-              value={form.avatar_url}
-              onChange={(e) => {
-                // A hand-typed ref previews via the resolver, not the stale
-                // signed URL from a prior upload.
-                setAvatarPreview(null);
-                setForm((prev) => ({ ...prev, avatar_url: e.target.value }));
-              }}
-              placeholder="https://…"
-            />
-            <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("fields.avatarUrlFallback")}</p>
-          </div>
-        </div>
-
-        {/* ── Section 3: About ── */}
-        <div className={sectionClass}>
-          <p className={sectionHeadingClass}>{t("sections.about")}</p>
-          <div>
-            <label className={labelClass}>{t("fields.bioLong")}</label>
-            <textarea className={`${inputClass} min-h-[120px]`} value={form.bio_long} onChange={set("bio_long")} />
-          </div>
-          <div>
-            <label className={labelClass}>{t("fields.quote")}</label>
-            <textarea className={`${inputClass} min-h-[60px]`} value={form.quote} onChange={set("quote")} />
-          </div>
-          <div>
-            <label className={labelClass}>{t("fields.themes")}</label>
-            <ThemesInput
-              value={form.themes}
-              onChange={(themes) => setForm((prev) => ({ ...prev, themes }))}
-              placeholder={t("fields.themesPlaceholder")}
-              disabled={busy}
-            />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>{t("fields.collaborations")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.collaborationsPlaceholder")} value={form.collaborations} onChange={set("collaborations")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.recognition")}</label>
-              <input type="text" className={inputClass} placeholder={t("fields.recognitionPlaceholder")} value={form.recognition} onChange={set("recognition")} />
-            </div>
-          </div>
-        </div>
-
-        {/* ── Section 4: Support & visibility ── */}
-        <div className={sectionClass}>
-          <p className={sectionHeadingClass}>{t("sections.support")}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>{t("fields.monthlyGoal")}</label>
-              <input type="number" min="0" step="1" className={inputClass} value={form.monthly_goal} onChange={set("monthly_goal")} />
-              {fieldError && <p className="mt-1 text-xs text-red-400">{fieldError}</p>}
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.website")}</label>
-              <input type="url" className={inputClass} placeholder="https://…" value={form.social_website} onChange={set("social_website")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.twitter")}</label>
-              <input type="url" className={inputClass} placeholder="https://x.com/…" value={form.social_twitter} onChange={set("social_twitter")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.instagram")}</label>
-              <input type="url" className={inputClass} placeholder="https://instagram.com/…" value={form.social_instagram} onChange={set("social_instagram")} />
-            </div>
-            <div>
-              <label className={labelClass}>{t("fields.youtube")}</label>
-              <input type="url" className={inputClass} placeholder="https://youtube.com/…" value={form.social_youtube} onChange={set("social_youtube")} />
-            </div>
-          </div>
-          <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.featured}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, featured: e.target.checked }))
-              }
-              className="h-4 w-4 accent-[var(--tott-gold)]"
-            />
-            {t("fields.featured")}
-          </label>
-          {/* Make the board-visibility consequence explicit — otherwise a new
-              writer is created but never appears publicly, which reads as a bug. */}
-          <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
-            {t("fields.featuredHint")}
+      {isTranslation ? (
+        <div className="mb-6 max-w-2xl mx-auto rounded-xl border border-[var(--tott-accent-gold)]/30 bg-[var(--tott-accent-gold)]/5 px-4 py-3 text-sm">
+          <p className="font-medium text-[var(--tott-dash-gold-text)]">
+            {tTr.has(`languages.${form.language}`)
+              ? `${tTr(`languages.${form.language}`)} — ${t("translation.banner")}`
+              : t("translation.banner")}
           </p>
+          {sourceQuery.data ? (
+            <p className="mt-1 text-[var(--tott-muted)]">
+              {t("translation.ofOriginal", {
+                name:
+                  sourceQuery.data.pen_name?.trim() ||
+                  sourceQuery.data.user?.full_name?.trim() ||
+                  "—",
+              })}
+            </p>
+          ) : null}
         </div>
+      ) : null}
+
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
+        {isWizard ? (
+          <TranslationWizard
+            locales={wizardLocales}
+            step={wizardStep}
+            localeLabel={(loc) => (tTr.has(`languages.${loc}`) ? tTr(`languages.${loc}`) : loc.toUpperCase())}
+            onBack={() => goToWizardStep(Math.max(0, wizardStep - 1))}
+            onSkip={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+            onNext={() => goToWizardStep(Math.min(wizardLocales.length, wizardStep + 1))}
+            onStepClick={goToWizardStep}
+            onConfirm={() => formRef.current?.requestSubmit()}
+            busy={busy}
+            reviewLines={wizardReviewLines}
+          >
+            {writerFieldSections}
+          </TranslationWizard>
+        ) : (
+          writerFieldSections
+        )}
 
         {submitError && (
           <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-2 text-xs text-red-400">
@@ -694,102 +821,33 @@ export function WriterFormContent({ writerId }: Props) {
           </p>
         )}
 
-        <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            disabled={busy}
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 disabled:opacity-40 transition-colors"
-          >
-            {busy && (
-              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            )}
-            {busy
-              ? isEdit
-                ? t("saving")
-                : t("creating")
-              : isEdit
-                ? t("save")
-                : t("create")}
-          </button>
-          <Link
-            href="/admin/writers"
-            className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground hover:bg-white/5 transition-colors"
-          >
-            {t("cancel")}
-          </Link>
-        </div>
-      </form>
-
-      {createdSummary && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-          onClick={() => router.push("/admin/writers")}
-        >
-          <div
-            className="relative w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
+        {!isWizard ? (
+          <div className="flex items-center gap-3">
             <button
-              type="button"
-              onClick={() => router.push("/admin/writers")}
-              aria-label={t("cancel")}
-              className="absolute right-3 top-3 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-white/5 hover:text-foreground"
+              type="submit"
+              disabled={busy}
+              className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/60 bg-[var(--tott-accent-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-accent-gold)]/20 disabled:opacity-40 transition-colors"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              {busy && (
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              )}
+              {busy
+                ? isEdit
+                  ? t("saving")
+                  : t("creating")
+                : isEdit
+                  ? t("save")
+                  : t("create")}
             </button>
-            <h2 className="mb-2 pr-7 text-base font-semibold text-foreground">
-              {t("created.title")}
-            </h2>
-            <p className="mb-4 text-sm text-[var(--tott-muted)]">
-              {t("created.description")}
-            </p>
-            <div className="space-y-3 mb-5">
-              <div>
-                <label className={labelClass}>{t("account.email")}</label>
-                <p className="text-sm text-foreground">{createdSummary.email}</p>
-              </div>
-              <div>
-                <label className={labelClass}>{t("account.tempPassword")}</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    readOnly
-                    className={`${inputClass} font-mono`}
-                    value={createdSummary.password}
-                  />
-                  <button
-                    type="button"
-                    onClick={copySummaryPassword}
-                    className="shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] hover:text-foreground"
-                  >
-                    {summaryCopied ? t("account.copied") : t("account.copy")}
-                  </button>
-                </div>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={copyInviteMessage}
-              className="mb-2 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] px-5 py-2 text-sm font-medium text-foreground hover:bg-white/5 transition-colors"
+            <Link
+              href="/admin/writers"
+              className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] hover:text-foreground hover:bg-white/5 transition-colors"
             >
-              {inviteCopied ? t("created.inviteCopied") : t("created.copyInvite")}
-            </button>
-            <p className="mb-4 text-[11px] text-[var(--tott-muted)]">
-              {t("created.emailHint")}
-            </p>
-            <button
-              type="button"
-              onClick={() => router.push("/admin/writers")}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 transition-colors"
-            >
-              {t("created.continue")}
-            </button>
+              {t("cancel")}
+            </Link>
           </div>
-        </div>
-      )}
+        ) : null}
+      </form>
     </div>
   );
 }

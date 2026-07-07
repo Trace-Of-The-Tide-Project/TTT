@@ -77,13 +77,16 @@
         "categoryArchitecture": "Architecture",
         "categoryArt": "Art",
         "categoryFashion": "Fashion",
-        "categoryFilm": "Film"
+        "categoryFilm": "Film",
+        "empty": "No publications yet."
       },
       "issues": {
         "issuePrefix": "Issue",
         "readOnline": "Read Online",
         "galleryHeading": "Visual Gallery",
         "gallerySubtitle": "Lorem ipsum dolor sit amet adipiscing elit.",
+        "emptyTitle": "No issues published yet",
+        "emptyBody": "New magazine issues will appear here as soon as they go live.",
         "viewMore": "View more",
         "searchPlaceholder": "Search content...",
         "filterAll": "Show all",
@@ -99,7 +102,8 @@
         "zoomOut": "Zoom out",
         "fullscreen": "Fullscreen",
         "share": "Share",
-        "more": "More options"
+        "more": "More options",
+        "empty": "No issues published yet."
       },
       "editorialBoard": {
         "mastheadEyebrow": "Masthead · 2026",
@@ -134,7 +138,8 @@
         "writerAuthor": "Author",
         "writerEdition": "Edition",
         "founderQuote": "“Culture is not a luxury — it is the very air through which we understand what it means to be alive.”",
-        "founderName": "Mai Ahmed, Founder"
+        "founderName": "Mai Ahmed, Founder",
+        "viewWriter": "View writer"
       },
       "support": {
         "heading": "Recent Collaporations",
@@ -283,6 +288,7 @@
       "addToCart": "Add to cart",
       "addedToCart": "Added to cart",
       "readDownload": "Read / Download",
+      "buyPrint": "Buy print copy",
       "owned": "Owned",
       "preview": "Preview",
       "reviewsHeading": "Reviews",

@@ -188,7 +188,7 @@ function mapIssue(i: Record<string, unknown>): HomeIssue {
     fundingRaised: num(i.funding_raised),
     fundingDeadline: str(i.funding_deadline),
     href: slug
-      ? `/magazine-issues/${encodeURIComponent(slug)}`
+      ? `/magazine-issues/${slug}`
       : `/magazine-issues`,
   };
 }
@@ -271,10 +271,10 @@ export async function fetchHomeData(locale: string): Promise<HomeData> {
     bookClubJson,
   ] = await Promise.all([
     getJson(`/articles?limit=60&dedupe=group&viewer_lang=${locale}`),
-    getJson(`/open-calls/active?limit=12`),
-    getJson(`/magazine-issues?limit=12`),
-    getJson(`/collections?limit=12`),
-    getJson(`/people?limit=12`),
+    getJson(`/open-calls/active?limit=12&dedupe=group&viewer_lang=${locale}`),
+    getJson(`/magazine-issues?limit=12&dedupe=group&viewer_lang=${locale}`),
+    getJson(`/collections?limit=12&dedupe=group&viewer_lang=${locale}`),
+    getJson(`/people?limit=12&dedupe=group&viewer_lang=${locale}`),
     getJson(`/trips?limit=12&status=published`),
     getJson(`/book-club/active`),
   ]);

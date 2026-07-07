@@ -77,13 +77,16 @@
         "categoryArchitecture": "Arquitectura",
         "categoryArt": "Arte",
         "categoryFashion": "Moda",
-        "categoryFilm": "Cine"
+        "categoryFilm": "Cine",
+        "empty": "Aún no hay publicaciones."
       },
       "issues": {
         "issuePrefix": "Número",
         "readOnline": "Leer en línea",
         "galleryHeading": "Galería visual",
         "gallerySubtitle": "Lorem ipsum dolor sit amet adipiscing elit.",
+        "emptyTitle": "Aún no hay números publicados",
+        "emptyBody": "Los nuevos números de la revista aparecerán aquí en cuanto se publiquen.",
         "viewMore": "Ver más",
         "searchPlaceholder": "Buscar contenido...",
         "filterAll": "Mostrar todo",
@@ -99,7 +102,8 @@
         "zoomOut": "Alejar",
         "fullscreen": "Pantalla completa",
         "share": "Compartir",
-        "more": "Más opciones"
+        "more": "Más opciones",
+        "empty": "Aún no se han publicado números."
       },
       "editorialBoard": {
         "mastheadEyebrow": "Cabecera · 2026",
@@ -134,7 +138,8 @@
         "writerAuthor": "Autor",
         "writerEdition": "Edición",
         "founderQuote": "«La cultura no es un lujo: es el aire mismo a través del cual entendemos lo que significa estar vivos.»",
-        "founderName": "Mai Ahmed, Fundadora"
+        "founderName": "Mai Ahmed, Fundadora",
+        "viewWriter": "Ver escritor"
       },
       "support": {
         "heading": "Colaboraciones recientes",
@@ -280,6 +285,7 @@
       "pages": "{count} páginas",
       "downloadPdf": "Descargar archivo PDF",
       "buyNow": "Comprar ahora",
+      "buyPrint": "Comprar copia impresa",
       "preview": "Vista previa",
       "reviewsHeading": "Reseñas",
       "seeAllReviews": "Ver todas las reseñas",

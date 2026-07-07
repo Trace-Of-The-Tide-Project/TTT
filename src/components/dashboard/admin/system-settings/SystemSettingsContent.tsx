@@ -94,6 +94,7 @@ export function SystemSettingsContent() {
         name: c.name as string,
         slug: (c.slug as string) ?? "",
         itemCount: (c.item_count as number) ?? 0,
+        nameI18n: (c.name_i18n as Record<string, string>) ?? undefined,
       })));
     });
   }, []);
@@ -101,7 +102,11 @@ export function SystemSettingsContent() {
   const loadTags = useCallback(() => {
     api.get("/admin/system-settings/tags").then((r: { data: Record<string, unknown> }) => {
       const list = (r.data?.tags ?? []) as Record<string, unknown>[];
-      setTags(list.map((t) => ({ id: t.id as string, label: t.name as string })));
+      setTags(list.map((t) => ({
+        id: t.id as string,
+        label: t.name as string,
+        nameI18n: (t.name_i18n as Record<string, string>) ?? undefined,
+      })));
     });
   }, []);
 
@@ -115,6 +120,7 @@ export function SystemSettingsContent() {
         milestone: b.criteria_type
           ? `${b.criteria_type}:${b.criteria_value ?? ""}`
           : ((b.description as string) ?? ""),
+        nameI18n: (b.name_i18n as Record<string, string>) ?? undefined,
       })));
     });
   }, []);
@@ -162,11 +168,23 @@ export function SystemSettingsContent() {
   useEffect(() => { loadGuidelines(); }, [loadGuidelines]);
 
   // ── Category actions ──
-  const handleCategorySave = async (payload: { id?: string; name: string; slug: string }) => {
+  const handleCategorySave = async (payload: {
+    id?: string;
+    name: string;
+    slug: string;
+    name_i18n?: Record<string, string>;
+  }) => {
+    // name_i18n is only present when the extended-translations flag is on, so
+    // the current backend never receives an unknown column.
+    const body = {
+      name: payload.name,
+      slug: payload.slug,
+      ...(payload.name_i18n ? { name_i18n: payload.name_i18n } : {}),
+    };
     if (categoryModal.type === "add") {
-      await api.post("/admin/system-settings/categories", { name: payload.name, slug: payload.slug });
+      await api.post("/admin/system-settings/categories", body);
     } else if (categoryModal.type === "edit" && payload.id) {
-      await api.patch(`/admin/system-settings/categories/${payload.id}`, { name: payload.name, slug: payload.slug });
+      await api.patch(`/admin/system-settings/categories/${payload.id}`, body);
     }
     loadCategories();
   };
@@ -177,11 +195,19 @@ export function SystemSettingsContent() {
   };
 
   // ── Tag actions ──
-  const handleTagSave = async (payload: { id?: string; label: string }) => {
+  const handleTagSave = async (payload: {
+    id?: string;
+    label: string;
+    name_i18n?: Record<string, string>;
+  }) => {
+    const body = {
+      name: payload.label,
+      ...(payload.name_i18n ? { name_i18n: payload.name_i18n } : {}),
+    };
     if (tagModal.type === "add") {
-      await api.post("/admin/system-settings/tags", { name: payload.label });
+      await api.post("/admin/system-settings/tags", body);
     } else if (tagModal.type === "edit" && payload.id) {
-      await api.patch(`/admin/system-settings/tags/${payload.id}`, { name: payload.label });
+      await api.patch(`/admin/system-settings/tags/${payload.id}`, body);
     }
     loadTags();
   };
@@ -197,6 +223,7 @@ export function SystemSettingsContent() {
     iconId: AchievementBadgeRow["iconId"];
     name: string;
     milestone: string;
+    name_i18n?: Record<string, string>;
   }) => {
     const [criteria_type, criteria_value_str] = payload.milestone.includes(":")
       ? payload.milestone.split(":")
@@ -206,6 +233,7 @@ export function SystemSettingsContent() {
       name: payload.name,
       icon: payload.iconId,
       ...(criteria_type ? { criteria_type, criteria_value: Number(criteria_value_str) || 0 } : { description: payload.milestone }),
+      ...(payload.name_i18n ? { name_i18n: payload.name_i18n } : {}),
     };
 
     if (badgeModal.type === "add") {
@@ -264,7 +292,7 @@ export function SystemSettingsContent() {
   };
 
   const inputShell =
-    "mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-3 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none";
+    "mt-2 w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-3 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none";
 
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
@@ -292,7 +320,7 @@ export function SystemSettingsContent() {
               <button
                 type="button"
                 onClick={() => setCategoryModal({ type: "add" })}
-                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90"
+                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90"
                 style={{ backgroundColor: ACCENT }}
               >
                 <span className="[&_svg]:h-4 [&_svg]:w-4"><PlusIcon /></span>
@@ -306,7 +334,7 @@ export function SystemSettingsContent() {
               <button
                 type="button"
                 onClick={() => setTagModal({ type: "add" })}
-                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90"
+                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90"
                 style={{ backgroundColor: ACCENT }}
               >
                 <span className="[&_svg]:h-4 [&_svg]:w-4"><PlusIcon /></span>
@@ -320,7 +348,7 @@ export function SystemSettingsContent() {
               <button
                 type="button"
                 onClick={() => setBadgeModal({ type: "add" })}
-                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90"
+                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90"
                 style={{ backgroundColor: ACCENT }}
               >
                 <span className="[&_svg]:h-4 [&_svg]:w-4"><PlusIcon /></span>
@@ -334,34 +362,34 @@ export function SystemSettingsContent() {
         {activeTab === "categories" && (
           <div className="mt-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("categories.title")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{tSettings("categories.subtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("categories.subtitle")}</p>
             <div className="mt-6 space-y-3">
               {categories.length === 0 && (
-                <p className="text-sm text-gray-500">No categories yet.</p>
+                <p className="text-sm text-[var(--tott-muted)]">{tSettings("categories.empty")}</p>
               )}
               {categories.map((cat) => (
                 <div
                   key={cat.id}
                   className="flex items-center gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 py-4 sm:gap-5 sm:px-5 sm:py-4"
                 >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-[#E8DDC0]" aria-hidden>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-[var(--tott-dash-gold-text)]" aria-hidden>
                     <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><FolderIcon /></span>
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-foreground">{cat.name}</p>
-                    <p className="mt-0.5 font-mono text-sm text-gray-500">{cat.slug}</p>
+                    <p className="mt-0.5 font-mono text-sm text-[var(--tott-muted)]">{cat.slug}</p>
                   </div>
-                  <span className="hidden shrink-0 text-sm text-gray-500 sm:inline">
+                  <span className="hidden shrink-0 text-sm text-[var(--tott-muted)] sm:inline">
                     {tSettings("itemCount", { count: cat.itemCount })}
                   </span>
                   <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-                    <span className="sm:hidden text-xs text-gray-500">
+                    <span className="sm:hidden text-xs text-[var(--tott-muted)]">
                       {tSettings("itemCount", { count: cat.itemCount })}
                     </span>
                     <button
                       type="button"
                       onClick={() => setCategoryModal({ type: "edit", category: cat })}
-                      className="rounded-lg p-2 text-[#E8DDC0] transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
+                      className="rounded-lg p-2 text-[var(--tott-dash-gold-text)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
                       aria-label={tSettings("categories.editAria", { name: cat.name })}
                     >
                       <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><ContributeIcon /></span>
@@ -369,7 +397,7 @@ export function SystemSettingsContent() {
                     <button
                       type="button"
                       onClick={() => handleCategoryDelete(cat.id)}
-                      className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                      className="rounded-lg p-2 text-[var(--tott-muted)] transition-colors hover:bg-red-500/10 hover:text-red-400"
                       aria-label={tSettings("categories.deleteAria", { name: cat.name })}
                     >
                       <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><TrashIcon /></span>
@@ -385,9 +413,9 @@ export function SystemSettingsContent() {
         {activeTab === "tags" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("tags.title")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{tSettings("tags.subtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("tags.subtitle")}</p>
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-              {tags.length === 0 && <p className="text-sm text-gray-500 col-span-2">No tags yet.</p>}
+              {tags.length === 0 && <p className="text-sm text-[var(--tott-muted)] col-span-2">{tSettings("tags.empty")}</p>}
               {tags.map((tag) => (
                 <div
                   key={tag.id}
@@ -399,7 +427,7 @@ export function SystemSettingsContent() {
                     <button
                       type="button"
                       onClick={() => setTagModal({ type: "edit", tag })}
-                      className="rounded-lg p-2 text-[#E8DDC0] transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
+                      className="rounded-lg p-2 text-[var(--tott-dash-gold-text)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
                       aria-label={tSettings("tags.editAria", { name: tag.label })}
                     >
                       <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><ContributeIcon /></span>
@@ -407,7 +435,7 @@ export function SystemSettingsContent() {
                     <button
                       type="button"
                       onClick={() => handleTagDelete(tag.id)}
-                      className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                      className="rounded-lg p-2 text-[var(--tott-muted)] transition-colors hover:bg-red-500/10 hover:text-red-400"
                       aria-label={tSettings("tags.deleteAria", { name: tag.label })}
                     >
                       <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><TrashIcon /></span>
@@ -423,9 +451,9 @@ export function SystemSettingsContent() {
         {activeTab === "badges" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("badges.title")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{tSettings("badges.subtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("badges.subtitle")}</p>
             <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-              {badges.length === 0 && <p className="text-sm text-gray-500 col-span-2">No badges yet.</p>}
+              {badges.length === 0 && <p className="text-sm text-[var(--tott-muted)] col-span-2">{tSettings("badges.empty")}</p>}
               {badges.map((badge) => (
                 <div
                   key={badge.id}
@@ -434,12 +462,12 @@ export function SystemSettingsContent() {
                   <TagHexShell><BadgeIconRenderer iconId={badge.iconId} /></TagHexShell>
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-foreground">{badge.name}</p>
-                    <p className="mt-0.5 text-sm text-gray-500">{badge.milestone}</p>
+                    <p className="mt-0.5 text-sm text-[var(--tott-muted)]">{badge.milestone}</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setBadgeModal({ type: "edit", badge })}
-                    className="shrink-0 rounded-lg p-2 text-gray-500 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-[#E8DDC0]"
+                    className="shrink-0 rounded-lg p-2 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-[var(--tott-dash-gold-text)]"
                     aria-label={tSettings("badges.editAria", { name: badge.name })}
                   >
                     <span className="[&_svg]:h-[18px] [&_svg]:w-[18px]"><PenLineIcon /></span>
@@ -454,16 +482,16 @@ export function SystemSettingsContent() {
         {activeTab === "email" && (
           <div className="mt-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("email.title")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{tSettings("email.subtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("email.subtitle")}</p>
             <div className="mt-6 space-y-4">
-              {emailTemplates.length === 0 && <p className="text-sm text-gray-500">No templates yet.</p>}
+              {emailTemplates.length === 0 && <p className="text-sm text-[var(--tott-muted)]">{tSettings("email.empty")}</p>}
               {emailTemplates.map((tpl) => (
                 <div
                   key={tpl.id}
                   className="flex items-center justify-between gap-4 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-5 py-5"
                 >
                   <div className="flex min-w-0 items-center gap-4">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-gray-400">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-[var(--tott-muted)]">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                         <path d="M4 6h16v12H4z" />
                         <path d="m4 7 8 6 8-6" />
@@ -471,7 +499,7 @@ export function SystemSettingsContent() {
                     </div>
                     <div className="min-w-0">
                       <p className="truncate text-lg font-semibold text-foreground">{tpl.name}</p>
-                      <p className="mt-1 text-sm text-gray-500">
+                      <p className="mt-1 text-sm text-[var(--tott-muted)]">
                         {tSettings("lastEdited", { date: formatLastEdited(tpl.lastEditedAt) })}
                       </p>
                     </div>
@@ -479,7 +507,7 @@ export function SystemSettingsContent() {
                   <button
                     type="button"
                     onClick={() => { setSelectedEmailTemplate(tpl); setEditEmailOpen(true); }}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2 text-sm font-medium text-gray-200 transition-colors hover:bg-[var(--tott-dash-surface-inset)]"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-surface-inset)]"
                   >
                     <span className="[&_svg]:h-4 [&_svg]:w-4" style={{ color: ACCENT }}><ContributeIcon /></span>
                     {tSettings("email.editTemplate")}
@@ -494,7 +522,7 @@ export function SystemSettingsContent() {
         {activeTab === "localisation" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("localisation.title")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{tSettings("localisation.subtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("localisation.subtitle")}</p>
             <div className="mt-6 space-y-6">
               <div>
                 <p className="text-sm font-semibold text-foreground">{tSettings("localisation.defaultLanguage")}</p>
@@ -526,12 +554,12 @@ export function SystemSettingsContent() {
               <div className="flex items-center justify-between gap-6">
                 <div>
                   <p className="text-sm font-semibold text-foreground">{tSettings("localisation.multiLanguage")}</p>
-                  <p className="mt-1 text-sm text-gray-500">{tSettings("localisation.multiLanguageHint")}</p>
+                  <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("localisation.multiLanguageHint")}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMultiLanguageEnabled((v) => !v)}
-                  className={`relative h-7 w-12 rounded-full border border-[var(--tott-card-border)] transition-colors ${multiLanguageEnabled ? "bg-[#E8DDC0]" : "bg-[var(--tott-dash-surface-inset)]"}`}
+                  className={`relative h-7 w-12 rounded-full border border-[var(--tott-card-border)] transition-colors ${multiLanguageEnabled ? "bg-[var(--tott-gold-chip-bg)]" : "bg-[var(--tott-dash-surface-inset)]"}`}
                   aria-pressed={multiLanguageEnabled}
                   aria-label={tSettings("toggleMultiLanguageAria")}
                 >
@@ -543,11 +571,11 @@ export function SystemSettingsContent() {
                   type="button"
                   onClick={handleSaveLocalisation}
                   disabled={savingLocalisation}
-                  className="inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:opacity-50"
                   style={{ backgroundColor: ACCENT }}
                 >
                   <SaveIcon />
-                  {savingLocalisation ? "Saving…" : tSettings("saveChanges")}
+                  {savingLocalisation ? tSettings("saving") : tSettings("saveChanges")}
                 </button>
               </div>
             </div>
@@ -558,7 +586,7 @@ export function SystemSettingsContent() {
         {activeTab === "guidelines" && (
           <div className="mt-8 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 sm:p-8">
             <h2 className="text-lg font-bold text-foreground">{tSettings("guidelines.title")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{tSettings("guidelines.subtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("guidelines.subtitle")}</p>
             <div className="mt-6 space-y-6">
               <EditorRegistryProvider>
                 <div className="rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
@@ -580,12 +608,12 @@ export function SystemSettingsContent() {
               <div className="flex items-center justify-between gap-6">
                 <div>
                   <p className="text-sm font-semibold text-foreground">{tSettings("localisation.multiLanguage")}</p>
-                  <p className="mt-1 text-sm text-gray-500">{tSettings("localisation.multiLanguageHint")}</p>
+                  <p className="mt-1 text-sm text-[var(--tott-muted)]">{tSettings("localisation.multiLanguageHint")}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMultiLanguageEnabled((v) => !v)}
-                  className={`relative h-7 w-12 rounded-full border border-[var(--tott-card-border)] transition-colors ${multiLanguageEnabled ? "bg-[#E8DDC0]" : "bg-[var(--tott-dash-surface-inset)]"}`}
+                  className={`relative h-7 w-12 rounded-full border border-[var(--tott-card-border)] transition-colors ${multiLanguageEnabled ? "bg-[var(--tott-gold-chip-bg)]" : "bg-[var(--tott-dash-surface-inset)]"}`}
                   aria-pressed={multiLanguageEnabled}
                   aria-label={tSettings("toggleMultiLanguageAria")}
                 >
@@ -597,11 +625,11 @@ export function SystemSettingsContent() {
                   type="button"
                   onClick={handleSaveGuidelines}
                   disabled={savingGuidelines}
-                  className="inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-[#111] transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:opacity-50"
                   style={{ backgroundColor: ACCENT }}
                 >
                   <SaveIcon />
-                  {savingGuidelines ? "Saving…" : tSettings("saveChanges")}
+                  {savingGuidelines ? tSettings("saving") : tSettings("saveChanges")}
                 </button>
               </div>
             </div>
@@ -616,6 +644,7 @@ export function SystemSettingsContent() {
         categoryId={categoryModal.type === "edit" ? categoryModal.category.id : undefined}
         initialName={categoryModal.type === "edit" ? categoryModal.category.name : ""}
         initialSlug={categoryModal.type === "edit" ? categoryModal.category.slug : ""}
+        initialNameI18n={categoryModal.type === "edit" ? categoryModal.category.nameI18n : undefined}
         onSave={handleCategorySave}
       />
 
@@ -625,6 +654,7 @@ export function SystemSettingsContent() {
         mode={tagModal.type === "edit" ? "edit" : "add"}
         tagId={tagModal.type === "edit" ? tagModal.tag.id : undefined}
         initialLabel={tagModal.type === "edit" ? tagModal.tag.label : ""}
+        initialNameI18n={tagModal.type === "edit" ? tagModal.tag.nameI18n : undefined}
         onSave={handleTagSave}
       />
 
@@ -636,6 +666,7 @@ export function SystemSettingsContent() {
         initialIconId={badgeModal.type === "edit" ? badgeModal.badge.iconId : undefined}
         initialName={badgeModal.type === "edit" ? badgeModal.badge.name : ""}
         initialMilestone={badgeModal.type === "edit" ? badgeModal.badge.milestone : ""}
+        initialNameI18n={badgeModal.type === "edit" ? badgeModal.badge.nameI18n : undefined}
         onSave={handleBadgeSave}
       />
 

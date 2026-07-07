@@ -17,6 +17,25 @@
     "published": "النشر",
     "category": "التصنيف",
     "readingTime": "وقت القراءة",
+    "breadcrumbCollections": "المجموعات",
+    "fallbackAuthor": "الكاتب",
+    "fallbackArticle": "مقالة",
+    "buyGate": {
+      "heading": "اشترِ هذه المقالة",
+      "body": "اشترِ هذه المقالة لقراءتها كاملة.",
+      "bodyWithPrice": "اشترِ هذه المقالة مقابل {price} لقراءتها كاملة.",
+      "buy": "اشترِ الآن",
+      "redirecting": "جارٍ التحويل…",
+      "error": "تعذّر بدء عملية الدفع. حاول مرة أخرى."
+    },
+    "threads": {
+      "loading": "جارٍ تحميل الخيط…",
+      "notFound": "الخيط غير موجود",
+      "notFoundBody": "لا يوجد خيط لهذا الرابط.",
+      "backToContent": "العودة إلى المحتوى",
+      "loadError": "تعذّر تحميل الخيط",
+      "loadErrorBody": "تحقّق من اتصالك أو حاول مرة أخرى لاحقًا."
+    },
     "shareTitle": "شاركنا قصتك",
     "shareBody": "كل قصة تهمّ. ساعدنا على حفظ الذاكرة الجمعية من خلال مشاركة تجاربك الشخصية وشهاداتك أو معرفتك بالأحداث التاريخية.",
     "shareCta": "ساهم الآن",
@@ -44,6 +63,11 @@
         "threads": "خيط مميّز"
       },
       "manifesto": "بيتٌ واحد، خمس غرف — اختر كيف تقرأ الأرشيف.",
+      "scrollCue": "مرّر للنزول",
+      "gatewaysEyebrow": "فهرس الأرشيف",
+      "curatedEyebrow": "مما جاء به المدّ",
+      "mosaicQuote": "ما يعيده البحر، نحفظه.",
+      "newsletterEyebrow": "رسالة في زجاجة",
       "gatewaysHeading": "ادخل حسب الصيغة",
       "types": {
         "article": "مقالات",
@@ -76,6 +100,14 @@
       "newsletterPlaceholder": "you@example.com",
       "newsletterCta": "اشترك",
       "newsletterSuccess": "شكرًا لك — أنت الآن على القائمة."
+    },
+    "article": {
+      "loading": "جارٍ تحميل المقال…",
+      "notFound": "المقال غير موجود",
+      "notFoundBody": "لا يوجد مقال لهذا الرابط.",
+      "backToContent": "العودة إلى المحتوى",
+      "loadError": "تعذّر تحميل المقال",
+      "loadErrorBody": "تحقّق من اتصالك أو حاول مرة أخرى لاحقًا."
     }
   }
 }

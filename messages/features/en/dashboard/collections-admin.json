@@ -1,0 +1,58 @@
+{
+  "Dashboard": {
+    "collections": {
+      "list": {
+        "pageTitle": "Collections",
+        "addNew": "Add collection",
+        "searchPlaceholder": "Search collections…",
+        "loading": "Loading…",
+        "empty": {
+          "none": "No collections yet.",
+          "noMatch": "No collections match your search."
+        },
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "form": {
+        "backToList": "Collections",
+        "createTitle": "Add collection",
+        "editTitle": "Edit collection",
+        "loading": "Loading…",
+        "cancel": "Cancel",
+        "saving": "Saving…",
+        "save": "Save changes",
+        "create": "Create",
+        "fields": {
+          "name": "Name",
+          "namePlaceholder": "e.g. Cultural Heritage",
+          "description": "Description",
+          "descriptionPlaceholder": "A short description of the collection",
+          "coverImage": "Cover image URL",
+          "coverImagePlaceholder": "https://… or an uploaded asset key"
+        },
+        "translation": {
+          "banner": "Adding the {language} version",
+          "ofOriginal": "Translation of: {name}"
+        }
+      },
+      "errors": {
+        "nameRequired": "Name is required.",
+        "createFailed": "Could not create the collection.",
+        "updateFailed": "Could not update the collection.",
+        "deleteFailed": "Could not delete the collection."
+      },
+      "toasts": {
+        "created": "Collection created",
+        "updated": "Collection updated",
+        "deleted": "Collection deleted"
+      },
+      "deleteModal": {
+        "title": "Delete collection",
+        "description": "Delete “{name}”? This cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete",
+        "confirmBusy": "Deleting…"
+      }
+    }
+  }
+}

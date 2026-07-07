@@ -10,6 +10,9 @@ import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import { ApplyResidencyModal } from "@/components/residency/ApplyResidencyModal";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { motion } from "motion/react";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 
 // Reuse the workshops' moon glyph (already the Residency icon in
 // the writing-room "Experiences" row) and the same gallery SVGs so
@@ -154,7 +157,7 @@ export function ResidencyContent() {
           }}
         >
           <ChamferedFrame size={24} borderColor="var(--tott-card-border)" />
-          <ul
+          <motion.ul
             className="grid grid-cols-1 md:grid-cols-2"
             style={{
               gap: "clamp(16px, 1vw + 0.3rem, 48px)",
@@ -162,20 +165,33 @@ export function ResidencyContent() {
               margin: 0,
               listStyle: "none",
             }}
+            variants={staggerParent}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
           >
-            <li className="flex">
+            <motion.li
+              className="flex"
+              variants={staggerChild}
+              transition={springs.gentle}
+            >
               <ChecklistCard heading={t("getHeading")} items={getItems} />
-            </li>
-            <li className="flex">
+            </motion.li>
+            <motion.li
+              className="flex"
+              variants={staggerChild}
+              transition={springs.gentle}
+            >
               <ChecklistCard heading={t("idealHeading")} items={idealItems} />
-            </li>
-          </ul>
+            </motion.li>
+          </motion.ul>
         </section>
 
         {/* ── Ready to Begin? CTA ──────────────────────────────
             Frameless section with the shared hex-pattern backdrop
             behind the content — same treatment as the home page's
             "Join our cultural circle" newsletter section. */}
+        <RevealOnScroll>
         <section
           aria-labelledby="ready-heading"
           className="relative overflow-hidden"
@@ -248,6 +264,7 @@ export function ResidencyContent() {
           </button>
           </div>
         </section>
+        </RevealOnScroll>
 
         {/* ── Gallery ───────────────────────────────────────── */}
         <section

@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { BookHexCover } from "@/components/books/BookHexCover";
 import { BookActionButtons, BookDownloadLink } from "@/components/books/BookPurchaseActions";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { BookDetailBreadcrumb, DataRow, CategoryChip, AvatarCircle, AvatarStack, formatCoAuthors, DATA_VALUE_STYLE } from "./detail/BookMeta";
 import { ReviewsSection, PartialStar } from "./reviews/BookReviews";
 import { BookDetailBanner } from "./detail/BookDetailBanner";
@@ -34,6 +35,8 @@ export type BookDetail = {
   currency: string;
   isFree: boolean;
   isOwned: boolean;
+  printEnabled: boolean;
+  printPrice: number | null;
 };
 
 export type BookReviewItem = {
@@ -61,7 +64,15 @@ export function BookDetailContent({ book, reviews }: { book: BookDetail; reviews
         <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-[260px_minmax(0,1fr)] min-[1600px]:gap-12 min-[1600px]:md:grid-cols-[340px_minmax(0,1fr)]">
           <div className="mx-auto flex w-full flex-col md:mx-0" style={{ maxWidth: "360px", gap: "12px" }}>
             <BookHexCover src={book.coverImage} alt={book.title} />
-            <BookActionButtons bookId={book.id} price={book.price} currency={book.currency} isFree={book.isFree} isOwnedInitial={book.isOwned} />
+            <BookActionButtons
+              bookId={book.id}
+              price={book.price}
+              currency={book.currency}
+              isFree={book.isFree}
+              isOwnedInitial={book.isOwned}
+              printEnabled={book.printEnabled}
+              printPrice={book.printPrice}
+            />
             <Link
               href={`/books/${book.id}/preview`}
               className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90 min-[1600px]:h-14! min-[1600px]:text-base!"
@@ -152,20 +163,22 @@ export function BookDetailContent({ book, reviews }: { book: BookDetail; reviews
             </div>
 
             {book.excerpt ? (
-              <section className="flex flex-col" style={{ gap: "8px" }}>
-                <h2
-                  className="min-[1600px]:text-[22px]!"
-                  style={{ fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)", fontWeight: 500, fontSize: "16px", lineHeight: "24px", color: "var(--tott-home-text-muted)", margin: 0 }}
-                >
-                  Description
-                </h2>
-                <p
-                  className="min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
-                  style={{ fontFamily: "'Inter', var(--font-sans, sans-serif)", fontWeight: 400, fontSize: "14px", lineHeight: "20px", letterSpacing: "-0.005em", color: "var(--tott-home-text-strong)", textShadow: "var(--tott-home-text-shadow)", margin: 0, overflowWrap: "anywhere", wordBreak: "break-word" }}
-                >
-                  {book.excerpt}
-                </p>
-              </section>
+              <RevealOnScroll>
+                <section className="flex flex-col" style={{ gap: "8px" }}>
+                  <h2
+                    className="min-[1600px]:text-[22px]!"
+                    style={{ fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)", fontWeight: 500, fontSize: "16px", lineHeight: "24px", color: "var(--tott-home-text-muted)", margin: 0 }}
+                  >
+                    Description
+                  </h2>
+                  <p
+                    className="min-[1600px]:text-[17px]! min-[1600px]:leading-7!"
+                    style={{ fontFamily: "'Inter', var(--font-sans, sans-serif)", fontWeight: 400, fontSize: "14px", lineHeight: "20px", letterSpacing: "-0.005em", color: "var(--tott-home-text-strong)", textShadow: "var(--tott-home-text-shadow)", margin: 0, overflowWrap: "anywhere", wordBreak: "break-word" }}
+                  >
+                    {book.excerpt}
+                  </p>
+                </section>
+              </RevealOnScroll>
             ) : null}
 
             <ReviewsSection

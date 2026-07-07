@@ -21,6 +21,10 @@
       "traceAStory": {
         "title": "Tu historia vale la espera",
         "description": "El espacio para dejar tu propia huella —compartir un recuerdo, un testimonio o una obra de arte— se está puliendo para hacerle justicia. Guarda tus palabras; estamos deseando escucharlas muy pronto."
+      },
+      "home": {
+        "title": "La marea está cambiando",
+        "description": "Estamos rediseñando la forma de entrar al archivo. Hasta que se asiente la nueva orilla, la revista y todo lo que contiene siguen abiertos para explorar."
       }
     }
   }

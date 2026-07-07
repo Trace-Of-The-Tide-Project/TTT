@@ -1,3 +1,4 @@
+import { getLocale } from "next-intl/server";
 import {
   isUsableArticleMediaRef,
   resolveArticleMediaSrc,
@@ -14,7 +15,15 @@ function resolveCover(ref: string | null | undefined): string | null {
 }
 
 export default async function CollectionsIndexPage() {
-  const collections = await getCollections({ limit: 50 });
+  const locale = await getLocale();
+
+  // One card per translation group: the backend picks the active locale's
+  // version where one exists and falls back to the original otherwise.
+  const collections = await getCollections({
+    limit: 50,
+    dedupe: "group",
+    viewer_lang: locale,
+  });
 
   const cards: CollectionCardData[] = collections.map((c) => ({
     id: c.id,

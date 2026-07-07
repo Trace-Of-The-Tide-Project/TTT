@@ -104,6 +104,11 @@ export default async function BookDetailPage({ params }: PageProps) {
     currency: (book.currency ?? "USD").toUpperCase(),
     isFree: book.is_free ?? (book.price == null || Number(book.price) <= 0),
     isOwned: book.is_owned ?? false,
+    printEnabled: Boolean(book.print_enabled),
+    printPrice:
+      book.print_price == null || book.print_price === ""
+        ? null
+        : Number(book.print_price),
   };
 
   const reviewItems: BookReviewItem[] = reviews.map((r) => ({

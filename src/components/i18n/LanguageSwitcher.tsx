@@ -78,8 +78,8 @@ export function LanguageSwitcher({ className, mode = "dropdown" }: Props) {
   };
 
   const current = LOCALE_LABELS[locale] ?? { short: locale.toUpperCase(), native: locale };
-  const dropdownBg = isDark ? "#1a1a1a" : "var(--background)";
-  const dropdownBorder = isDark ? "#333333" : "var(--tott-card-border)";
+  const dropdownBg = isDark ? "var(--tott-panel-bg)" : "var(--background)";
+  const dropdownBorder = "var(--tott-card-border)";
 
   if (mode === "flat") {
     return (
@@ -93,7 +93,7 @@ export function LanguageSwitcher({ className, mode = "dropdown" }: Props) {
               onClick={() => void switchTo(code)}
               className={`rounded px-2.5 py-1 text-xs font-semibold transition-colors ${
                 code === locale
-                  ? "bg-[#C9A96E]/20 text-[#C9A96E]"
+                  ? "bg-[color-mix(in_srgb,var(--tott-accent-gold)_20%,transparent)] text-[var(--tott-home-eyebrow)]"
                   : "text-[var(--tott-muted)] hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
               }`}
               aria-pressed={code === locale}
@@ -138,7 +138,7 @@ export function LanguageSwitcher({ className, mode = "dropdown" }: Props) {
                 onClick={() => { setOpen(false); void switchTo(code); }}
                 className={`flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors ${
                   isActive
-                    ? "text-[#C9A96E]"
+                    ? "text-[var(--tott-home-eyebrow)]"
                     : "text-[var(--tott-muted)] hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
                 }`}
               >

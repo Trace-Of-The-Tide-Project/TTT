@@ -64,6 +64,7 @@
         "title": "قوالب الرسائل",
         "subtitle": "أنشئ وعدّل وأعد استخدام قوالب الرسائل المحفوظة.",
         "createButton": "إنشاء قالب",
+        "emptyState": "لا توجد قوالب بعد",
         "categoryLabels": {
           "onboarding": "التأهيل",
           "payment": "الدفع",
@@ -74,6 +75,7 @@
       },
       "inbox": {
         "searchPlaceholder": "البحث في الرسائل…",
+        "loading": "جارٍ التحميل…",
         "emptyFiltered": "لا رسائل مطابقة للمرشحات.",
         "selectConversation": "اختر محادثة لعرض الرسائل.",
         "threadMenuAria": "المزيد من الإجراءات",

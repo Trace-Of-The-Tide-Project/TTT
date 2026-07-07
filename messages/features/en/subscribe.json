@@ -51,6 +51,10 @@
       "a3": "Yes — upgrade or downgrade at any time from your subscription settings.",
       "q4": "Do you offer gift subscriptions?",
       "a4": "Yes — use the \"Gift a trace\" option in the navigation to give a membership."
+    },
+    "empty": "No subscription plans are available right now.",
+    "error": {
+      "generic": "Something went wrong. Please try again."
     }
   }
 }

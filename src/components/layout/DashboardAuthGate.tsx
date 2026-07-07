@@ -28,9 +28,9 @@ export function DashboardAuthGate({ children }: { children: React.ReactNode }) {
     return (
       <div
         className="flex min-h-screen items-center justify-center"
-        style={{ backgroundColor: "#191919" }}
+        style={{ backgroundColor: "var(--tott-dash-surface)" }}
       >
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-700 border-t-[#C9A96E]" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[color:var(--tott-card-border)] border-t-[color:var(--tott-accent-gold)]" />
       </div>
     );
   }

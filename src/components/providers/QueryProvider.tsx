@@ -92,19 +92,19 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
           // Type meaning is carried by the icon color, not a loud fill.
           classNames: {
             toast:
-              "!rounded-xl !border !border-[var(--tott-card-border)] !bg-[var(--tott-dash-surface)] !text-foreground !shadow-xl",
-            title: "!text-sm !font-medium !text-foreground",
-            description: "!text-[var(--tott-muted)]",
+              "rounded-xl! border! border-[var(--tott-card-border)]! bg-[var(--tott-dash-surface)]! text-foreground! shadow-xl!",
+            title: "text-sm! font-medium! text-foreground!",
+            description: "text-[var(--tott-muted)]!",
             actionButton:
-              "!rounded-lg !bg-[var(--tott-accent-gold)] !text-[var(--tott-auth-btn-text)]",
+              "rounded-lg! bg-[var(--tott-accent-gold)]! text-[var(--tott-auth-btn-text)]!",
             cancelButton:
-              "!rounded-lg !bg-[var(--tott-dash-surface-inset)] !text-foreground",
+              "rounded-lg! bg-[var(--tott-dash-surface-inset)]! text-foreground!",
             closeButton:
-              "!border-[var(--tott-card-border)] !bg-[var(--tott-dash-surface)] !text-[var(--tott-muted)] hover:!text-foreground",
-            success: "[&_[data-icon]]:!text-[var(--tott-status-emerald)]",
-            error: "[&_[data-icon]]:!text-[var(--tott-status-coral)]",
-            warning: "[&_[data-icon]]:!text-[var(--tott-status-amber)]",
-            info: "[&_[data-icon]]:!text-[var(--tott-accent-gold)]",
+              "border-[var(--tott-card-border)]! bg-[var(--tott-dash-surface)]! text-[var(--tott-muted)]! hover:text-foreground!",
+            success: "[&_[data-icon]]:text-[var(--tott-status-emerald)]!",
+            error: "[&_[data-icon]]:text-[var(--tott-status-coral)]!",
+            warning: "[&_[data-icon]]:text-[var(--tott-status-amber)]!",
+            info: "[&_[data-icon]]:text-[var(--tott-accent-gold)]!",
           },
         }}
       />

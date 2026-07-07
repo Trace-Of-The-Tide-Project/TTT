@@ -99,7 +99,7 @@ export default function NotFound404Content({
             className="mt-5 inline-block rounded-xl px-8 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[var(--tott-accent-gold)] focus:ring-offset-2"
             style={{
               backgroundColor: "var(--tott-accent-gold)",
-              color: "#1a1a1a",
+              color: "var(--tott-on-accent)",
             }}
           >
             {cta}

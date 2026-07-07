@@ -78,12 +78,12 @@ export function AwardBadgeModal({ open, badge, onClose, onAward }: AwardBadgeMod
             <h2 className="text-lg font-bold text-foreground">
               {ta("title", { name: badge.name })}
             </h2>
-            <p className="mt-1 text-sm text-gray-500">{badge.description}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{badge.description}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+            className="shrink-0 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
             aria-label={ta("closeAria")}
           >
             <XIcon />
@@ -113,8 +113,8 @@ export function AwardBadgeModal({ open, badge, onClose, onAward }: AwardBadgeMod
               value={userQuery}
               onChange={(e) => setUserQuery(e.target.value)}
               placeholder={ta("userPlaceholder")}
-              className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-gray-500 outline-none transition-colors focus:border-gray-500"
-              style={{ color: "#e5e7eb" }}
+              className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]"
+              style={{ color: "var(--foreground)" }}
             />
           </div>
 
@@ -154,14 +154,14 @@ export function AwardBadgeModal({ open, badge, onClose, onAward }: AwardBadgeMod
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-foreground"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
             >
               {ta("cancel")}
             </button>
             <button
               type="submit"
               disabled={!canSubmit}
-              className="rounded-lg px-6 py-2 text-sm font-medium text-black transition-colors disabled:opacity-50"
+              className="rounded-lg px-6 py-2 text-sm font-medium text-[var(--tott-on-accent)] transition-colors disabled:opacity-50"
               style={{ backgroundColor: theme.accentGoldFocus }}
             >
               {ta("submit")}

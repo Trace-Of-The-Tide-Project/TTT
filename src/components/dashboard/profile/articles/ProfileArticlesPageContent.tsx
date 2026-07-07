@@ -43,7 +43,7 @@ function editArticleHref(id: string): string {
 function DraftedHexIcon() {
   const filterId = "profileDraftedHexInnerShadow";
   return (
-    <svg width="32" height="40" viewBox="0 0 32 40" fill="none" className="shrink-0 text-gray-400" aria-hidden>
+    <svg width="32" height="40" viewBox="0 0 32 40" fill="none" className="shrink-0 text-[var(--tott-muted)]" aria-hidden>
       <defs>
         <filter id={filterId} x="0" y="1.43555" width="32" height="38.1289" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
@@ -67,7 +67,7 @@ function DraftedHexIcon() {
 function ScheduledHexIcon() {
   const filterId = "profileScheduledHexInnerShadow";
   return (
-    <svg width="32" height="40" viewBox="0 0 32 40" fill="none" className="shrink-0 text-gray-400" aria-hidden>
+    <svg width="32" height="40" viewBox="0 0 32 40" fill="none" className="shrink-0 text-[var(--tott-muted)]" aria-hidden>
       <defs>
         <filter id={filterId} x="0" y="1.43555" width="32" height="38.1289" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
           <feFlood floodOpacity="0" result="BackgroundImageFix" />
@@ -218,7 +218,7 @@ export function ProfileArticlesPageContent() {
   if (loading) {
     return (
       <div className="space-y-8 my-4 mx-10">
-        <div className="relative px-5 py-12 text-center text-sm text-gray-500">
+        <div className="relative px-5 py-12 text-center text-sm text-[var(--tott-muted)]">
           <ChamferedFrame />
           {t("loading")}
         </div>

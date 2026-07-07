@@ -20,13 +20,18 @@ export type CreateArticleBlock = {
   metadata?: string | null;
 };
 
+export type ArticleAccessLevel = "open" | "preview" | "subscriber" | "paid";
+
 export type CreateArticlePayload = {
   title: string;
   content_type: string;
   category: string;
   language?: string;
   visibility?: "public" | "private";
-  is_premium?: boolean;
+  access_level?: ArticleAccessLevel;
+  preview_block_count?: number;
+  price?: number;
+  currency?: string;
   seo_title?: string;
   meta_description?: string;
   collection_id?: string;
@@ -91,7 +96,10 @@ function toCreateArticleBody(payload: CreateArticlePayload): Record<string, unkn
   if (payload.scheduled_at != null) body.scheduled_at = payload.scheduled_at;
   if (payload.open_call_id) body.open_call_id = payload.open_call_id;
   if (payload.translation_of) body.translation_of = payload.translation_of;
-  if (payload.is_premium != null) body.is_premium = payload.is_premium;
+  if (payload.access_level) body.access_level = payload.access_level;
+  if (payload.preview_block_count != null) body.preview_block_count = payload.preview_block_count;
+  if (payload.price != null) body.price = payload.price;
+  if (payload.currency) body.currency = payload.currency;
 
   return body;
 }
@@ -174,6 +182,7 @@ export type ArticleListItem = {
   author_id: string;
   collection_id: string | null;
   translation_of: string | null;
+  translation_group_id?: string | null;
   createdAt: string;
   updatedAt: string;
   author: ArticleListAuthor;
@@ -303,6 +312,11 @@ export type ArticleDetail = {
   translation_of?: string | null;
   translation_group_id?: string | null;
   is_premium?: boolean;
+  access_level?: ArticleAccessLevel | string;
+  preview_block_count?: number | null;
+  price?: number | null;
+  currency?: string | null;
+  locked?: boolean;
 };
 
 function unwrapArticleDetailPayload(raw: unknown): ArticleDetail | null {
@@ -358,11 +372,29 @@ export async function getArticleById(articleId: string): Promise<ArticleDetail |
   }
 }
 
+export async function getArticleBySlug(slug: string): Promise<ArticleDetail | null> {
+  try {
+    const { data } = await api.get<unknown>(`/articles/slug/${encodeURIComponent(slug)}`);
+    const detail = unwrapArticleDetailPayload(data);
+    if (!detail) return null;
+    return {
+      ...detail,
+      blocks: Array.isArray(detail.blocks) ? detail.blocks : [],
+      tags: Array.isArray(detail.tags) ? detail.tags : [],
+      contributors: Array.isArray(detail.contributors) ? detail.contributors : [],
+    };
+  } catch (e) {
+    if (isAxiosError(e) && e.response?.status === 404) return null;
+    throw e;
+  }
+}
+
 // ── Related articles ───────────────────────────────────────────
 
 export type RelatedArticleItem = {
   id: string;
   title: string;
+  slug?: string | null;
   cover_image?: string | null;
   published_at?: string | null;
   edition?: string | null;
@@ -447,6 +479,16 @@ export type UpdateArticlePayload = {
   /** When sent, backend replaces blocks (same shape as create). */
   blocks?: CreateArticleBlock[];
   tag_ids?: string[];
+  /** Magazine issue to assign this article to, or null to unassign. */
+  issue_id?: string | null;
+  /** Parent magazine — normally set alongside issue_id. */
+  magazine_id?: string | null;
+  access_level?: ArticleAccessLevel;
+  preview_block_count?: number | null;
+  price?: number | null;
+  currency?: string;
+  seo_title?: string;
+  meta_description?: string;
 };
 
 function omitUndefined<T extends Record<string, unknown>>(obj: T): Record<string, unknown> {

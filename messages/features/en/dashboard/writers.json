@@ -7,15 +7,55 @@
         "edit": "Edit",
         "searchPlaceholder": "Search pen name, headline, bio…",
         "loading": "Loading writer profiles…",
-        "empty": { "none": "No writer profiles yet.", "noMatch": "No writer profiles match your search." },
-        "headers": { "writer": "Writer", "headline": "Headline", "kind": "Discipline", "location": "Location", "featured": "Featured" },
+        "empty": {
+          "none": "No writer profiles yet.",
+          "noMatch": "No writer profiles match your search."
+        },
+        "headers": {
+          "writer": "Writer",
+          "headline": "Headline",
+          "kind": "Discipline",
+          "location": "Location",
+          "account": "Account",
+          "featured": "Featured"
+        },
+        "account": {
+          "linked": "Has account",
+          "createAction": "Create account",
+          "createTitle": "Create writer account",
+          "fullName": "Full name",
+          "email": "Email",
+          "tempPassword": "Temporary password",
+          "cancel": "Cancel",
+          "create": "Create",
+          "creating": "Creating…",
+          "created": "Account created and linked",
+          "createFailed": "Failed to create the account"
+        },
         "featuredOn": "Featured — shown on the homepage strip",
         "featuredOff": "Not featured",
-        "toasts": { "featuredOn": "Writer added to the featured strip", "featuredOff": "Writer removed from the featured strip" },
-        "errors": { "loadFailed": "Failed to load writer profiles", "updateFailed": "Failed to update writer profile", "deleteFailed": "Failed to delete writer profile" },
+        "toasts": {
+          "featuredOn": "Writer added to the featured strip",
+          "featuredOff": "Writer removed from the featured strip"
+        },
+        "errors": {
+          "loadFailed": "Failed to load writer profiles",
+          "updateFailed": "Failed to update writer profile",
+          "deleteFailed": "Failed to delete writer profile"
+        },
         "tryAgain": "Try again",
-        "pagination": { "pageOf": "Page {page} of {totalPages}", "previous": "Previous", "next": "Next" },
-        "delete": { "title": "Delete writer profile", "description": "Delete the writer profile \"{name}\"? This cannot be undone.", "cancel": "Cancel", "confirm": "Delete", "confirmBusy": "Deleting…" }
+        "pagination": {
+          "pageOf": "Page {page} of {totalPages}",
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "delete": {
+          "title": "Delete writer profile",
+          "description": "Delete the writer profile \"{name}\"? This cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Delete",
+          "confirmBusy": "Deleting…"
+        }
       },
       "form": {
         "createTitle": "Create writer profile",
@@ -23,7 +63,12 @@
         "backToList": "Back to writer profiles",
         "loading": "Loading writer profile…",
         "notFound": "Writer profile not found.",
-        "sections": { "account": "Writer account", "identity": "Identity", "about": "About", "support": "Support & visibility" },
+        "sections": {
+          "account": "Writer account",
+          "identity": "Identity",
+          "about": "About",
+          "support": "Support & visibility"
+        },
         "account": {
           "modeExisting": "Existing user",
           "modeNew": "New writer",
@@ -32,6 +77,7 @@
           "noResults": "No users found.",
           "clear": "Change",
           "linkedUser": "Linked user",
+          "optionalHint": "Optional — you can create this writer without a user account and link one later.",
           "fullName": "Full name",
           "email": "Email",
           "tempPassword": "Temporary password",
@@ -66,9 +112,30 @@
           "featured": "Show on the featured writers strip",
           "featuredHint": "Featured writers appear on the public Magazine → Editorial Board. Leave off to keep the profile hidden from the board."
         },
-        "kinds": { "none": "—", "musician": "Musician", "writer": "Writer", "visual_artist": "Visual artist", "filmmaker": "Filmmaker" },
-        "toasts": { "created": "Writer profile created", "updated": "Writer profile updated" },
-        "created": { "title": "Writer profile created", "description": "Share these sign-in details with the writer now — the temporary password will not be shown again.", "copyInvite": "Copy sign-in message", "inviteCopied": "Copied!", "emailHint": "No email is sent automatically — paste this message to the writer.", "inviteTemplate": "You've been added as a writer on Trace of the Tide.\n\nSign in: {url}\nEmail: {email}\nTemporary password: {password}\n\nPlease change your password after you first sign in.", "continue": "Go to writer profiles" },
+        "kinds": {
+          "none": "—",
+          "musician": "Musician",
+          "writer": "Writer",
+          "visual_artist": "Visual artist",
+          "filmmaker": "Filmmaker",
+          "photographer": "Photographer",
+          "translator": "Translator",
+          "editor": "Editor",
+          "illustrator": "Illustrator"
+        },
+        "toasts": {
+          "created": "Writer profile created",
+          "updated": "Writer profile updated"
+        },
+        "created": {
+          "title": "Writer profile created",
+          "description": "Share these sign-in details with the writer now — the temporary password will not be shown again.",
+          "copyInvite": "Copy sign-in message",
+          "inviteCopied": "Copied!",
+          "emailHint": "No email is sent automatically — paste this message to the writer.",
+          "inviteTemplate": "You've been added as a writer on Trace of the Tide.\n\nSign in: {url}\nEmail: {email}\nTemporary password: {password}\n\nPlease change your password after you first sign in.",
+          "continue": "Go to writer profiles"
+        },
         "errors": {
           "userRequired": "Select a user or create a new one.",
           "fullNameRequired": "Full name is required.",
@@ -85,7 +152,16 @@
         "save": "Save changes",
         "saving": "Saving…",
         "cancel": "Cancel",
-        "upload": { "uploading": "Uploading…", "click": "Click to upload avatar", "hint": "JPG, PNG, WebP — drag & drop supported" }
+        "upload": {
+          "uploading": "Uploading…",
+          "click": "Click to upload avatar",
+          "hint": "JPG, PNG, WebP — drag & drop supported"
+        },
+        "translation": {
+          "banner": "Adding a translation — write this language's version below.",
+          "ofOriginal": "Translation of “{name}”",
+          "sameAccount": "Linked to the original's writer account."
+        }
       }
     }
   }

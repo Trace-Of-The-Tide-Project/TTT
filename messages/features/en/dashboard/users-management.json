@@ -107,6 +107,47 @@
             "revokeFailed": "Failed to remove role"
           }
         }
+      },
+      "addUser": {
+        "title": "Add user",
+        "subtitle": "Create a new user account. They can sign in with the email and password you set here.",
+        "back": "Back to users",
+        "fields": {
+          "fullName": "Full name",
+          "email": "Email",
+          "password": "Password",
+          "passwordHint": "Share this password with the user — there is no invite email."
+        },
+        "actions": {
+          "generate": "Generate",
+          "copy": "Copy",
+          "copied": "Copied",
+          "show": "Show",
+          "hide": "Hide",
+          "create": "Create user",
+          "creating": "Creating…",
+          "cancel": "Cancel"
+        },
+        "errors": {
+          "fullNameRequired": "Full name is required.",
+          "emailRequired": "Enter a valid email address.",
+          "passwordTooShort": "Password must be at least 6 characters.",
+          "createFailed": "Could not create the user."
+        },
+        "toasts": {
+          "creating": "Creating user…",
+          "created": "User created"
+        }
+      },
+      "filters": {
+        "title": "Filters",
+        "clearAll": "Clear all",
+        "emailContains": "Email contains",
+        "emailPlaceholder": "e.g. @domain.com",
+        "minContributions": "Min contributions",
+        "joinedAfter": "Joined after",
+        "sortOrder": "Sort order",
+        "done": "Done"
       }
     }
   }

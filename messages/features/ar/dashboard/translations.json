@@ -7,6 +7,12 @@
       "addAll": "إضافة الكل",
       "openVersion": "فتح",
       "currentBadge": "الحالية",
+      "tabs": {
+        "unsaved": "تغييرات غير محفوظة"
+      },
+      "toasts": {
+        "partialFailure": "تعذّر حفظ بعض النسخ اللغوية: {languages}. تغييراتك محفوظة مؤقتًا — حاول الحفظ مجددًا."
+      },
       "missing": "لم تُضَف بعد",
       "status": {
         "draft": "مسودة",
@@ -29,7 +35,17 @@
         "notAdded": "لم تُضف بعد",
         "addTranslation": "إضافة ترجمة",
         "edit": "تعديل",
-        "finish": "إنهاء"
+        "finish": "إنهاء",
+        "step": "الخطوة {current}/{total}",
+        "reviewStep": "المراجعة قبل الحفظ",
+        "reviewStepShort": "مراجعة",
+        "clonedNotice": "الحقول أدناه منسوخة من اللغة الأساسية — عدّلها لكتابة نسخة {language}، أو اتركها كما هي واضغط تخطي.",
+        "willCreate": "سيتم إنشاؤه",
+        "willSkip": "تم التخطي",
+        "back": "رجوع",
+        "skipLanguage": "تخطي الآن",
+        "next": "التالي",
+        "confirmSave": "تأكيد الحفظ"
       }
     }
   }

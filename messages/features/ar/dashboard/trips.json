@@ -48,6 +48,10 @@
           "requestFailed": "فشل الطلب",
           "generic": "حدث خطأ ما"
         },
+        "tabs": {
+          "createTrip": "إنشاء رحلة",
+          "archive": "الأرشيف"
+        },
         "joinForm": {
           "title": "نموذج الانضمام للرحلة",
           "hint": "يرى المسافرون هذا في صفحة الرحلة العامة. نفس أنواع الحقول كطلبات الدعوة المفتوحة؛ إعادة التعيين تستعيد القالب الافتراضي (الاسم، البريد، رسالة اختيارية)."
@@ -55,6 +59,8 @@
         "sidebar": {
           "previewTrip": "معاينة الرحلة",
           "duplicateTrip": "تكرار الرحلة",
+          "resetForm": "إعادة تعيين النموذج",
+          "archiveTrip": "أرشفة الرحلة",
           "archive": "أرشفة"
         },
         "footer": {
@@ -68,6 +74,8 @@
           "startDate": "تاريخ البدء",
           "duration": "المدة",
           "durationHours": "{hours} س",
+          "durationDays": "{count, plural, one {# يوم} other {# أيام}}",
+          "location": "الموقع",
           "lastStop": "المحطة الأخيرة",
           "price": "السعر",
           "placeholder": "—"
@@ -87,11 +95,20 @@
         },
         "details": {
           "heading": "تفاصيل الرحلة",
+          "route": "المسار",
+          "startLocation": "موقع البداية",
+          "startLocationPlaceholder": "مثال: لندن",
+          "endLocation": "موقع النهاية",
+          "endLocationPlaceholder": "مثال: باريس",
+          "startDate": "تاريخ البدء",
+          "durationDays": "المدة",
+          "durationDaysSuffix": "(أيام)",
+          "groupSize": "حجم المجموعة",
+          "openGroup": "مجموعة مفتوحة",
           "category": "التصنيف",
           "categoryRequired": "*",
           "categoryPlaceholder": "مثال: ثقافي، مغامرة",
           "difficulty": "الصعوبة",
-          "startDate": "تاريخ البدء",
           "endDate": "تاريخ الانتهاء",
           "durationHours": "المدة (ساعات)",
           "maxParticipants": "الحد الأقصى للمشاركين",
@@ -107,12 +124,17 @@
           "heading": "التسعير",
           "hint": "الحد الأدنى للمساهمة فقط. في صفحة الرحلة العامة يستخدم المسافرون مقياساً يبدأ من هذا المبلغ ويمكنهم الزيادة دون حد أقصى ثابت في المحرر.",
           "minimumPrice": "الحد الأدنى للسعر",
-          "currency": "العملة"
+          "price": "السعر",
+          "currency": "العملة",
+          "pricePerPerson": "السعر للفرد",
+          "discountPercent": "نسبة الخصم %",
+          "optional": "(اختياري)"
         },
         "languages": {
           "heading": "اللغات",
           "selectLabel": "اختر لغة",
           "selectPlaceholder": "اختر…",
+          "nSelected": "{count} محدد",
           "removeAria": "إزالة {label}",
           "labels": {
             "AR": "العربية",
@@ -126,17 +148,29 @@
         },
         "itinerary": {
           "heading": "المحطات",
+          "addLocation": "إضافة موقع",
+          "dayNumber": "اليوم {number}",
+          "untitledLocation": "موقع بلا عنوان",
+          "route": "المسار",
+          "locationName": "اسم الموقع",
+          "locationPlaceholder": "مثال: شارع بارك",
+          "dateLabel": "التاريخ",
+          "timeLabel": "الوقت",
+          "detailsLabel": "التفاصيل",
+          "latitude": "خط العرض",
+          "longitude": "خط الطول",
+          "descriptionPlaceholder": "ماذا يحدث في هذا الموقع",
+          "removeStopAria": "إزالة المحطة {number}",
+          "duplicateStopAria": "تكرار اليوم {number}",
+          "searchPlaceholder": "ابحث عن مكان…",
+          "searching": "جاري البحث…",
           "addStop": "+ إضافة محطة",
           "stopNumber": "المحطة {number}",
           "stopTitle": "عنوان المحطة",
           "stopTitlePlaceholder": "مثال: نقطة التجمع عند باب يافا",
           "description": "الوصف",
-          "descriptionPlaceholder": "ماذا يحدث في هذه المحطة…",
           "arrivalTime": "وقت الوصول",
-          "durationMinutes": "المدة (دقيقة)",
-          "removeStopAria": "إزالة المحطة {number}",
-          "searchPlaceholder": "ابحث عن مكان…",
-          "searching": "جاري البحث…"
+          "durationMinutes": "المدة (دقيقة)"
         }
       }
     }

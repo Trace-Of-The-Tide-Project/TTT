@@ -9,9 +9,9 @@ import { changePassword } from "@/services/auth.service";
 import { settingsCardClass } from "./SettingsPrimitives";
 
 const inputWrapClass =
-  "relative flex items-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] focus-within:border-[#C9A96E]";
+  "relative flex items-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] focus-within:border-[var(--tott-accent-gold)]";
 const inputClass =
-  "w-full border-0 bg-transparent py-3 pl-4 pr-12 text-sm text-foreground placeholder:text-gray-500 outline-none";
+  "w-full border-0 bg-transparent py-3 pl-4 pr-12 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none";
 
 function EyeOffIcon() {
   return (
@@ -49,7 +49,7 @@ function PasswordField({
 }: PasswordFieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-xs text-gray-500">
+      <label htmlFor={id} className="mb-1.5 block text-xs text-[var(--tott-muted)]">
         {label}
       </label>
       <div className={inputWrapClass}>
@@ -65,7 +65,7 @@ function PasswordField({
         <button
           type="button"
           onClick={onToggleVisible}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-gray-500 transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
           aria-label={visible ? hideLabel : showLabel}
         >
           {visible ? <EyeOffIcon /> : <EyeIcon />}
@@ -213,7 +213,7 @@ export function AdminChangePassword() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-lg py-3.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             style={{ backgroundColor: theme.accentGold }}
           >
             {submitting ? t("submitting") : t("submit")}

@@ -15,6 +15,27 @@
     "relatedDescription": "Explorez davantage notre archive.",
     "viewMore": "Voir plus",
     "published": "Publié",
+    "category": "Catégorie",
+    "readingTime": "Temps de lecture",
+    "breadcrumbCollections": "Collections",
+    "fallbackAuthor": "Auteur",
+    "fallbackArticle": "Article",
+    "buyGate": {
+      "heading": "Achetez cet article",
+      "body": "Achetez cet article pour le lire en entier.",
+      "bodyWithPrice": "Achetez cet article pour {price} pour le lire en entier.",
+      "buy": "Acheter maintenant",
+      "redirecting": "Redirection…",
+      "error": "Impossible de démarrer le paiement. Veuillez réessayer."
+    },
+    "threads": {
+      "loading": "Chargement du fil…",
+      "notFound": "Fil introuvable",
+      "notFoundBody": "Aucun fil n'existe pour ce lien.",
+      "backToContent": "Retour au contenu",
+      "loadError": "Impossible de charger le fil",
+      "loadErrorBody": "Vérifiez votre connexion ou réessayez plus tard."
+    },
     "shareTitle": "Partagez votre histoire",
     "shareBody": "Chaque histoire compte. Aidez-nous à préserver la mémoire collective en partageant vos expériences personnelles, témoignages ou connaissances des événements historiques.",
     "shareCta": "Contribuer maintenant",
@@ -42,6 +63,11 @@
         "threads": "Fil à la une"
       },
       "manifesto": "Une maison, cinq salles — choisissez comment lire les archives.",
+      "scrollCue": "Faites défiler pour descendre",
+      "gatewaysEyebrow": "Index des archives",
+      "curatedEyebrow": "Apporté par la marée",
+      "mosaicQuote": "Ce que la mer rend, nous le gardons.",
+      "newsletterEyebrow": "Un message dans une bouteille",
       "gatewaysHeading": "Entrez par format",
       "types": {
         "article": "Articles",
@@ -74,6 +100,14 @@
       "newsletterPlaceholder": "vous@exemple.com",
       "newsletterCta": "S'abonner",
       "newsletterSuccess": "Merci — vous êtes inscrit."
+    },
+    "article": {
+      "loading": "Chargement de l'article…",
+      "notFound": "Article introuvable",
+      "notFoundBody": "Aucun article n'existe pour ce lien.",
+      "backToContent": "Retour au contenu",
+      "loadError": "Impossible de charger l'article",
+      "loadErrorBody": "Vérifiez votre connexion ou réessayez plus tard."
     }
   }
 }

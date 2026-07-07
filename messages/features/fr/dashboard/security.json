@@ -48,6 +48,9 @@
       },
       "sessions": {
         "intro": "Surveillez et gérez les sessions administrateurs actives.",
+        "empty": "Aucune session active.",
+        "youCurrent": "Vous (actuelle)",
+        "userFallback": "Utilisateur",
         "columns": {
           "user": "Utilisateur",
           "ip": "Adresse IP",
@@ -117,6 +120,8 @@
       },
       "logs": {
         "intro": "Événements récents liés à la sécurité sur la plateforme.",
+        "empty": "Aucun journal d'audit pour le moment.",
+        "systemUser": "Système",
         "entries": {
           "l1": {
             "title": "Connexion réussie",

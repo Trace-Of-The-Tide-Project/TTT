@@ -11,7 +11,6 @@ export default async function BeANeighborPage() {
       description={t("features.beANeighbor.description")}
       ctaLabel={t("shared.ctaLabel")}
       homeLabel={t("shared.homeLabel")}
-      iconKey="person"
     />
   );
 }

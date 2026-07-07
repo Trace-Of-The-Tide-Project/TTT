@@ -18,7 +18,8 @@
         "status": {
           "completed": "مكتمل",
           "pending": "قيد الانتظار"
-        }
+        },
+        "empty": "لا توجد تبرعات."
       },
       "payouts": {
         "title": "مدفوعات قيد الانتظار",
@@ -33,13 +34,16 @@
         "status": {
           "pending": "قيد الانتظار",
           "underReview": "قيد المراجعة"
-        }
+        },
+        "empty": "لا توجد مدفوعات."
       },
       "suspicious": {
         "title": "نشاط مريب",
         "subtitle": "معاملات مُعلَّمة تحتاج مراجعة",
         "investigate": "تحقيق",
-        "block": "حظر"
+        "block": "حظر",
+        "empty": "لا يوجد نشاط مريب.",
+        "unknown": "غير معروف"
       },
       "invoices": {
         "comingSoon": "قسم الفواتير قيد الإعداد."
@@ -48,6 +52,12 @@
         "rowAria": "إجراءات الصف",
         "viewDetails": "عرض التفاصيل",
         "refund": "استرداد"
+      },
+      "common": {
+        "loading": "جارٍ التحميل…",
+        "prev": "→ السابق",
+        "next": "التالي ←",
+        "pageInfo": "صفحة {page} من {totalPages}"
       }
     }
   }

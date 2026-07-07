@@ -17,6 +17,7 @@ export type AdminUserListItem = {
   /** ISO date string for last activity (`last_active_at`, `last_login_at`, etc.). */
   last_active_at: string | null;
   contributions_count: number;
+  avatar: string | null;
 };
 
 export type UsersListMeta = {
@@ -142,6 +143,17 @@ function primaryRole(roles: string[]): string {
   return best;
 }
 
+function avatarFromPayload(o: Record<string, unknown>): string | null {
+  for (const key of ["profile", "userProfile", "UserProfile"]) {
+    const profile = o[key];
+    if (profile && typeof profile === "object") {
+      const avatar = (profile as Record<string, unknown>).avatar;
+      if (typeof avatar === "string" && avatar.trim()) return avatar;
+    }
+  }
+  return null;
+}
+
 function normalizeUserRow(raw: unknown): AdminUserListItem | null {
   if (!raw || typeof raw !== "object") return null;
   const o = raw as Record<string, unknown>;
@@ -180,6 +192,7 @@ function normalizeUserRow(raw: unknown): AdminUserListItem | null {
       "published_articles_count",
       "published_count",
     ]),
+    avatar: avatarFromPayload(o),
   };
 }
 
@@ -277,6 +290,8 @@ export type CreatedAdminUser = {
 };
 
 /** Creates a user account. Backend: POST /users (admin only).
+ * The DTO is a strict whitelist, so send ONLY full_name/email/password —
+ * role/status are set afterwards via the existing Change Role / status actions.
  * Username is auto-generated from the email prefix server-side. */
 export async function createAdminUser(
   payload: CreateAdminUserPayload,

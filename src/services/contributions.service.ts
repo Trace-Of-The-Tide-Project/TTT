@@ -60,6 +60,9 @@ export type ContributionListItem = {
   phone_number: string | null;
   consent_given: boolean;
   open_call_id: string | null;
+  /** ISO language of this version (translation groups, migration 029). */
+  language?: string | null;
+  translation_of?: string | null;
   createdAt: string;
   updatedAt: string;
   user: ContributionUser | null;
@@ -141,6 +144,26 @@ export async function createContribution(formData: FormData): Promise<CreatedCon
   });
 
   return data.data;
+}
+
+/** GET /contributions/:id — single contribution (unwraps optional envelope). */
+export async function getContribution(id: string): Promise<ContributionListItem> {
+  const { data } = await api.get<unknown>(`/contributions/${encodeURIComponent(id)}`);
+  const o = data as Record<string, unknown> | null;
+  return (o && typeof o === "object" && "data" in o ? o.data : data) as ContributionListItem;
+}
+
+export type ContributionUpdatePayload = {
+  title?: string;
+  description?: string;
+};
+
+/** PATCH /contributions/:id — partial update (admin edit form). */
+export async function updateContribution(
+  id: string,
+  payload: ContributionUpdatePayload,
+): Promise<void> {
+  await api.patch(`/contributions/${encodeURIComponent(id)}`, payload);
 }
 
 /** Delete a contribution by ID. */
@@ -232,13 +255,15 @@ export async function submitIssueProposal(
   return createContribution(fd);
 }
 
-/** Possible status values that the backend accepts for a contribution. */
+/** Status values the backend's UpdateContributionStatusDto accepts. There is no
+ * "archived"/"rejected" — sending those returns 400 ("status must be one of the
+ * following values"). "Archive" in the UI maps to `draft` (unpublished,
+ * reversible). Keep this in sync with the backend enum. */
 export type ContributionStatusValue =
+  | "draft"
   | "pending"
   | "published"
-  | "archived"
-  | "rejected"
-  | "draft";
+  | "flagged";
 
 /** Update a contribution's status (used for archive / publish / reject). */
 export async function updateContributionStatus(

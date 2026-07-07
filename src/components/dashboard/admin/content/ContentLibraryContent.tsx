@@ -28,16 +28,28 @@ import {
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   contributionFilePublicUrl,
+  getContribution,
   type ContributionFile,
   type ContributionListItem,
   type ContributionListMeta,
+  type ContributionStatusValue,
 } from "@/services/contributions.service";
-import { useContributions } from "@/hooks/queries/contributions";
+import { useContributions, contributionsKeys } from "@/hooks/queries/contributions";
 import {
+  useCreateContribution,
   useDeleteContribution,
+  useUpdateContribution,
   useUpdateContributionStatus,
 } from "@/hooks/mutations/contributions";
 import { formatApiError } from "@/lib/api/error-message";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  useTranslations as useTranslationGroup,
+  translationKeys,
+} from "@/hooks/queries/translations";
+import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import { routing } from "@/i18n/routing";
 
 const ROWS_PER_PAGE = 10;
 
@@ -64,18 +76,17 @@ function errMessage(e: unknown, requestFailed: string, generic: string): string 
   return generic;
 }
 
-type ContributionStatus = "all" | "pending" | "published" | "archived" | "rejected";
+type ContributionStatus = "all" | "pending" | "published" | "draft" | "flagged";
 
 const TYPE_FILTER_ALL = "__all__";
 
-const TAB_IDS: ContributionStatus[] = ["all", "published", "pending", "archived", "rejected"];
+const TAB_IDS: ContributionStatus[] = ["all", "published", "pending", "draft", "flagged"];
 
 const statusColorMap: Record<string, string> = {
   published: "#2ECC71",
   pending: "#E67E22",
-  archived: "#9CA3AF",
-  rejected: "#ef4444",
   draft: "#3498DB",
+  flagged: "#ef4444",
 };
 
 function statusColor(status: string): string {
@@ -103,11 +114,17 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+// Statuses an admin can set from the row menu — mirrors the backend enum
+// (UpdateContributionStatusDto). "draft" is the reversible "archive".
+const SETTABLE_STATUSES = ["published", "pending", "draft", "flagged"] as const;
+
 function ContentActionsDropdown({
   contentId,
+  currentStatus,
   onAction,
 }: {
   contentId: string;
+  currentStatus?: string;
   onAction?: (actionId: string, contentId: string) => void;
 }) {
   const ta = useTranslations("Dashboard.contentLibrary.actions");
@@ -130,37 +147,57 @@ function ContentActionsDropdown({
         type="button"
         onClick={() => setIsOpen((o) => !o)}
         className="rounded p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
-        style={{ color: "#A3A3A3" }}
+        style={{ color: "var(--tott-muted)" }}
         aria-label={ta("menuAria")}
         aria-expanded={isOpen}
       >
         <MoreDotsIcon />
       </button>
       {isOpen && (
-        <div className="absolute right-0 top-full z-20 mt-1 min-w-[140px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-1 shadow-lg">
-          {(
-            [
-              { id: "view", labelKey: "view" as const },
-              { id: "archive", labelKey: "archive" as const },
-              { id: "delete", labelKey: "delete" as const, destructive: true },
-            ] as const
-          ).map((action) => (
-            <button
-              key={action.id}
-              type="button"
-              onClick={() => {
-                onAction?.(action.id, contentId);
-                setIsOpen(false);
-              }}
-              className={`w-full px-4 py-2 text-left text-sm transition-colors hover:bg-[var(--tott-dash-surface-inset)] ${
-                "destructive" in action && action.destructive
-                  ? "text-red-400 hover:bg-red-500/10"
-                  : "text-foreground"
-              }`}
-            >
-              {ta(action.labelKey)}
-            </button>
-          ))}
+        <div className="absolute end-0 top-full z-20 mt-1 min-w-[160px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-1 shadow-lg">
+          {(() => {
+            const current = (currentStatus ?? "").trim().toLowerCase();
+            const actions: {
+              id: string;
+              label: string;
+              destructive?: boolean;
+              divider?: boolean;
+            }[] = [
+              { id: "view", label: ta("view") },
+              { id: "edit", label: ta("edit") },
+            ];
+            // One "Set status → X" entry per backend status, skipping the
+            // status the item is already in.
+            for (const s of SETTABLE_STATUSES) {
+              if (s === current) continue;
+              actions.push({ id: `status:${s}`, label: ta(`setStatus.${s}`) });
+            }
+            actions.push({
+              id: "delete",
+              label: ta("delete"),
+              destructive: true,
+              divider: true,
+            });
+            return actions.map((action) => (
+              <button
+                key={action.id}
+                type="button"
+                onClick={() => {
+                  onAction?.(action.id, contentId);
+                  setIsOpen(false);
+                }}
+                className={`w-full px-4 py-2 text-start text-sm transition-colors hover:bg-[var(--tott-dash-surface-inset)] ${
+                  action.divider ? "mt-1 border-t border-[var(--tott-card-border)] pt-2" : ""
+                } ${
+                  action.destructive
+                    ? "text-red-400 hover:bg-red-500/10"
+                    : "text-foreground"
+                }`}
+              >
+                {action.label}
+              </button>
+            ));
+          })()}
         </div>
       )}
     </div>
@@ -190,7 +227,7 @@ function ContributionDetailModal({
 
   const statusText = (raw: string) => {
     const k = raw.trim().toLowerCase();
-    if (["published", "pending", "archived", "rejected", "draft"].includes(k)) {
+    if (["published", "pending", "draft", "flagged"].includes(k)) {
       return (ts as (key: string) => string)(`statusLabels.${k}`);
     }
     return capitalize(raw);
@@ -232,7 +269,7 @@ function ContributionDetailModal({
             </HexIconOutlined>
             <div>
               <h2 className="text-base font-bold text-foreground">{item.title}</h2>
-              <div className="mt-0.5 flex items-center gap-2 text-xs text-gray-500">
+              <div className="mt-0.5 flex items-center gap-2 text-xs text-[var(--tott-muted)]">
                 {item.type?.name && <span>{item.type.name}</span>}
                 <span
                   className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase"
@@ -249,7 +286,7 @@ function ContributionDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+            className="rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
             aria-label={td("closeAria")}
           >
             <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -264,8 +301,8 @@ function ContributionDetailModal({
           {/* Description */}
           {item.description && (
             <div>
-              <h3 className="mb-1.5 text-xs font-semibold uppercase text-gray-500">{td("description")}</h3>
-              <p className="text-sm leading-relaxed text-gray-300">{item.description}</p>
+              <h3 className="mb-1.5 text-xs font-semibold uppercase text-[var(--tott-muted)]">{td("description")}</h3>
+              <p className="text-sm leading-relaxed text-[var(--tott-muted)]">{item.description}</p>
             </div>
           )}
 
@@ -287,7 +324,7 @@ function ContributionDetailModal({
           {/* Files */}
           {(item.files ?? []).length > 0 && (
             <div>
-              <h3 className="mb-2 text-xs font-semibold uppercase text-gray-500">
+              <h3 className="mb-2 text-xs font-semibold uppercase text-[var(--tott-muted)]">
                 {td("filesHeading", { count: (item.files ?? []).length })}
               </h3>
               <div className="space-y-2">
@@ -335,7 +372,7 @@ function ContributionDetailModal({
                       <div className="flex items-center justify-between px-4 py-2.5">
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-foreground">{f.file_name}</p>
-                          <p className="text-[11px] text-gray-500">
+                          <p className="text-[11px] text-[var(--tott-muted)]">
                             {f.mime_type} &middot; {formatFileSize(f.file_size)}
                             {f.duration ? ` \u00b7 ${f.duration}` : ""}
                           </p>
@@ -351,14 +388,14 @@ function ContributionDetailModal({
           {/* Collections */}
           {item.collections.length > 0 && (
             <div>
-              <h3 className="mb-2 text-xs font-semibold uppercase text-gray-500">
+              <h3 className="mb-2 text-xs font-semibold uppercase text-[var(--tott-muted)]">
                 {td("collectionsHeading", { count: item.collections.length })}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {item.collections.map((c) => (
                   <span
                     key={c.id}
-                    className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1 text-xs text-gray-300"
+                    className="rounded-full border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1 text-xs text-[var(--tott-muted)]"
                   >
                     {c.name}
                   </span>
@@ -373,9 +410,275 @@ function ContributionDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gray-500 hover:text-foreground"
+            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-6 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
           >
             {td("close")}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+type EditFormState = { title: string; description: string };
+
+/**
+ * In-place multi-language edit modal for a contribution (Pattern 2).
+ * Translatable text (title, description) gets one tab per locale; everything
+ * else (type, files, contributor info, status) stays on the primary record.
+ * Save: PATCH existing versions, POST with translation_of=<primaryId> for new.
+ */
+function ContributionEditModal({
+  item,
+  onClose,
+}: {
+  item: ContributionListItem;
+  onClose: () => void;
+}) {
+  const t = useTranslations("Dashboard.contentLibrary.editForm");
+  const tTr = useTranslations("Dashboard.translations");
+  const qc = useQueryClient();
+
+  const primaryLang = (item.language ?? "en").trim() || "en";
+  const [activeLang, setActiveLang] = useState(primaryLang);
+  const [forms, setForms] = useState<Record<string, EditFormState>>({
+    [primaryLang]: { title: item.title, description: item.description ?? "" },
+  });
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
+  const [langLoading, setLangLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const groupQuery = useTranslationGroup("contribution", item.id);
+  const updateMutation = useUpdateContribution();
+  const createMutation = useCreateContribution();
+  const busy = saving || langLoading;
+
+  // locale → existing version id (includes the item itself).
+  const versionIds = useMemo(() => {
+    const map: Record<string, string> = { [primaryLang]: item.id };
+    for (const v of groupQuery.data?.versions ?? []) map[v.language] = v.id;
+    return map;
+  }, [groupQuery.data, primaryLang, item.id]);
+
+  const form = forms[activeLang] ?? { title: "", description: "" };
+
+  const updateForm = useCallback(
+    (patch: Partial<EditFormState>) => {
+      setForms((prev) => ({
+        ...prev,
+        [activeLang]: { ...(prev[activeLang] ?? { title: "", description: "" }), ...patch },
+      }));
+      setDirty((prev) => (prev[activeLang] ? prev : { ...prev, [activeLang]: true }));
+    },
+    [activeLang],
+  );
+
+  // Tab switch — seed the locale on first open (existing version → fetch,
+  // otherwise clone the primary tab).
+  const handleSelectLang = useCallback(
+    async (loc: string) => {
+      if (loc === activeLang || busy) return;
+      if (!forms[loc]) {
+        const existingId = versionIds[loc];
+        if (existingId && existingId !== item.id) {
+          setLangLoading(true);
+          try {
+            const c = await getContribution(existingId);
+            setForms((prev) =>
+              prev[loc]
+                ? prev
+                : {
+                    ...prev,
+                    [loc]: { title: c?.title ?? "", description: c?.description ?? "" },
+                  },
+            );
+          } finally {
+            setLangLoading(false);
+          }
+        } else {
+          setForms((prev) =>
+            prev[loc]
+              ? prev
+              : { ...prev, [loc]: { ...(prev[primaryLang] ?? { title: "", description: "" }) } },
+          );
+        }
+      }
+      setActiveLang(loc);
+    },
+    [activeLang, busy, forms, versionIds, primaryLang, item.id],
+  );
+
+  const tabStatus = useMemo(() => {
+    const map: Record<string, LanguageTabStatus> = {};
+    for (const loc of routing.locales) {
+      map[loc] = dirty[loc]
+        ? "dirty"
+        : loc === primaryLang
+          ? "primary"
+          : versionIds[loc] || forms[loc]
+            ? "existing"
+            : "empty";
+    }
+    return map;
+  }, [dirty, primaryLang, versionIds, forms]);
+
+  const handleSave = useCallback(async () => {
+    if (busy) return;
+    const dirtyLocales = routing.locales.filter((loc) => dirty[loc] && forms[loc]);
+    if (dirtyLocales.length === 0) {
+      onClose();
+      return;
+    }
+    setSaving(true);
+    const failed: string[] = [];
+    try {
+      // Primary first, then the rest — new versions link to the primary id.
+      const ordered = [
+        ...dirtyLocales.filter((l) => l === primaryLang),
+        ...dirtyLocales.filter((l) => l !== primaryLang),
+      ];
+      for (const loc of ordered) {
+        const f = forms[loc];
+        if (!f || !f.title.trim()) {
+          failed.push(loc);
+          continue;
+        }
+        try {
+          const existingId = versionIds[loc];
+          if (existingId) {
+            await updateMutation.mutateAsync({
+              id: existingId,
+              payload: { title: f.title.trim(), description: f.description },
+            });
+          } else {
+            // POST is multipart (files interceptor) — send FormData. Contributor
+            // identity + consent are inherited from the primary record.
+            const fd = new FormData();
+            fd.append("title", f.title.trim());
+            fd.append("description", f.description);
+            fd.append("language", loc);
+            fd.append("translation_of", item.id);
+            if (item.type_id) fd.append("type_id", item.type_id);
+            fd.append(
+              "contributor_name",
+              item.contributor_name ?? item.user?.full_name ?? "—",
+            );
+            fd.append(
+              "contributor_email",
+              item.contributor_email ?? item.user?.email ?? "unknown@example.com",
+            );
+            fd.append("consent_given", "true");
+            await createMutation.mutateAsync(fd);
+          }
+          setDirty((prev) => ({ ...prev, [loc]: false }));
+        } catch {
+          failed.push(loc);
+        }
+      }
+      qc.invalidateQueries({ queryKey: contributionsKeys.all });
+      qc.invalidateQueries({ queryKey: translationKeys.group("contribution", item.id) });
+      if (failed.length === 0) {
+        toast.success(t("toasts.saved"));
+        onClose();
+      } else {
+        toast.error(
+          tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }),
+        );
+      }
+    } finally {
+      setSaving(false);
+    }
+  }, [busy, dirty, forms, versionIds, primaryLang, item, updateMutation, createMutation, qc, t, tTr, onClose]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  if (typeof document === "undefined") return null;
+
+  const inputClass =
+    "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-accent-gold)]/60 focus:outline-none";
+  const rtlProps = activeLang === "ar" ? ({ dir: "rtl", lang: "ar" } as const) : {};
+
+  return createPortal(
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-3 sm:p-4">
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/45 backdrop-blur-md"
+        onClick={onClose}
+        aria-label={t("closeAria")}
+      />
+      <div
+        className="relative flex max-h-[94vh] w-full max-w-[640px] flex-col overflow-hidden rounded-[20px] border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--tott-card-border)] px-6 py-5">
+          <h2 className="min-w-0 truncate text-base font-bold text-foreground">
+            {t("title")}
+          </h2>
+          <LanguageFormTabs
+            active={activeLang}
+            onSelect={(loc) => void handleSelectLang(loc)}
+            status={tabStatus}
+            disabled={busy}
+          />
+        </div>
+
+        <div className="flex-1 space-y-4 overflow-y-auto px-6 py-5">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-[var(--tott-dash-gold-label)]">
+              {t("fieldTitle")}
+            </label>
+            <input
+              type="text"
+              className={inputClass}
+              value={form.title}
+              onChange={(e) => updateForm({ title: e.target.value })}
+              {...rtlProps}
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-[var(--tott-dash-gold-label)]">
+              {t("fieldDescription")}
+            </label>
+            <textarea
+              className={`${inputClass} min-h-[140px]`}
+              value={form.description}
+              onChange={(e) => updateForm({ description: e.target.value })}
+              {...rtlProps}
+            />
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center justify-end gap-3 border-t border-[var(--tott-card-border)] px-6 py-4">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={busy}
+            className="rounded-lg px-4 py-2 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
+          >
+            {t("cancel")}
+          </button>
+          <button
+            type="button"
+            onClick={() => void handleSave()}
+            disabled={busy}
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/60 bg-[var(--tott-accent-gold)]/10 px-5 py-2 text-sm font-medium text-[var(--tott-dash-gold-text)] transition-colors hover:bg-[var(--tott-accent-gold)]/20 disabled:opacity-40"
+          >
+            {saving && (
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            )}
+            {saving ? t("saving") : t("save")}
           </button>
         </div>
       </div>
@@ -387,7 +690,7 @@ function ContributionDetailModal({
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] px-3 py-2">
-      <span className="text-[10px] font-medium uppercase text-gray-500">{label}</span>
+      <span className="text-[10px] font-medium uppercase text-[var(--tott-muted)]">{label}</span>
       <p className="mt-0.5 truncate text-sm text-foreground">{value}</p>
     </div>
   );
@@ -402,6 +705,7 @@ export function ContentLibraryContent() {
 
   const [page, setPage] = useState(1);
   const [previewItem, setPreviewItem] = useState<ContributionListItem | null>(null);
+  const [editItem, setEditItem] = useState<ContributionListItem | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ContributionListItem | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
@@ -491,7 +795,7 @@ export function ContentLibraryContent() {
 
   const statusLabel = (raw: string) => {
     const k = raw.trim().toLowerCase();
-    if (["published", "pending", "archived", "rejected", "draft"].includes(k)) {
+    if (["published", "pending", "draft", "flagged"].includes(k)) {
       return (t as (key: string) => string)(`statusLabels.${k}`);
     }
     return capitalize(raw);
@@ -499,7 +803,7 @@ export function ContentLibraryContent() {
 
   const totalPages = meta?.totalPages ?? 1;
 
-  const archiveMutation = useUpdateContributionStatus();
+  const statusMutation = useUpdateContributionStatus();
   const deleteMutation = useDeleteContribution();
 
   const handleRowAction = useCallback(
@@ -510,12 +814,21 @@ export function ContentLibraryContent() {
         setPreviewItem(item);
         return;
       }
-      if (actionId === "archive") {
-        archiveMutation.mutate(
-          { id: contentId, status: "archived" },
+      if (actionId === "edit") {
+        setEditItem(item);
+        return;
+      }
+      if (actionId.startsWith("status:")) {
+        // The backend accepts draft/pending/published/flagged. "Move to draft"
+        // is the reversible "archive". See ContributionStatusValue.
+        const status = actionId.slice("status:".length) as ContributionStatusValue;
+        statusMutation.mutate(
+          { id: contentId, status },
           {
-            onSuccess: () => toast.success(`Archived "${item.title}"`),
-            onError: (e) => toast.error(formatApiError(e, "Failed to archive")),
+            onSuccess: () =>
+              toast.success(t("toasts.statusUpdated", { title: item.title })),
+            onError: (e) =>
+              toast.error(formatApiError(e, t("toasts.statusUpdateFailed"))),
           },
         );
         return;
@@ -525,7 +838,7 @@ export function ContentLibraryContent() {
         setDeleteTarget(item);
       }
     },
-    [items, archiveMutation],
+    [items, statusMutation, t],
   );
 
   const closeDeleteDialog = useCallback(() => {
@@ -540,12 +853,12 @@ export function ContentLibraryContent() {
     setDeleteError(null);
     deleteMutation.mutate(target.id, {
       onSuccess: () => {
-        toast.success(`Deleted "${target.title}"`);
+        toast.success(t("toasts.deleted", { title: target.title }));
         setDeleteTarget(null);
       },
-      onError: (e) => setDeleteError(formatApiError(e, "Failed to delete")),
+      onError: (e) => setDeleteError(formatApiError(e, t("toasts.deleteFailed"))),
     });
-  }, [deleteTarget, deleteMutation]);
+  }, [deleteTarget, deleteMutation, t]);
 
   return (
     <div className="space-y-6 px-3 py-4 sm:px-4 sm:py-6">
@@ -556,16 +869,20 @@ export function ContentLibraryContent() {
         />
       )}
 
+      {editItem && (
+        <ContributionEditModal item={editItem} onClose={() => setEditItem(null)} />
+      )}
+
       <ConfirmDialog
         open={deleteTarget != null}
-        title="Delete contribution"
+        title={t("deleteDialog.title")}
         description={
           deleteTarget
-            ? `Delete "${deleteTarget.title}"? This cannot be undone.`
+            ? t("deleteDialog.description", { title: deleteTarget.title })
             : undefined
         }
-        confirmLabel="Delete"
-        confirmBusyLabel="Deleting…"
+        confirmLabel={t("deleteDialog.confirm")}
+        confirmBusyLabel={t("deleteDialog.confirmBusy")}
         destructive
         busy={deleteMutation.isPending}
         error={deleteError}
@@ -596,7 +913,7 @@ export function ContentLibraryContent() {
       {/* Search and filters */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <div className="relative max-w-md flex-1">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
             <SearchIcon />
           </span>
           <input
@@ -604,7 +921,7 @@ export function ContentLibraryContent() {
             placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+            className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
           />
         </div>
         <div className="flex items-center justify-center gap-2">
@@ -641,11 +958,11 @@ export function ContentLibraryContent() {
 
       {/* Content */}
       {loading ? (
-        <div className="rounded-xl border border-[var(--tott-card-border)] px-5 py-16 text-center text-sm text-gray-500">
+        <div className="rounded-xl border border-[var(--tott-card-border)] px-5 py-16 text-center text-sm text-[var(--tott-muted)]">
           {t("loading")}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl border border-[var(--tott-card-border)] px-5 py-16 text-center text-sm text-gray-500">
+        <div className="rounded-xl border border-[var(--tott-card-border)] px-5 py-16 text-center text-sm text-[var(--tott-muted)]">
           {search.trim() || activeTab !== "all" ? t("emptyFiltered") : t("emptyNone")}
         </div>
       ) : (
@@ -661,7 +978,7 @@ export function ContentLibraryContent() {
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-foreground">{item.title}</p>
                     {item.description && (
-                      <p className="mt-0.5 whitespace-pre-wrap break-words text-xs text-gray-500">
+                      <p className="mt-0.5 whitespace-pre-wrap break-words text-xs text-[var(--tott-muted)]">
                         {item.description}
                       </p>
                     )}
@@ -670,15 +987,15 @@ export function ContentLibraryContent() {
                     <button
                       type="button"
                       onClick={() => setPreviewItem(item)}
-                      className="rounded p-1.5 text-gray-500 transition-colors hover:text-foreground"
+                      className="rounded p-1.5 text-[var(--tott-muted)] transition-colors hover:text-foreground"
                       aria-label={t("table.viewItemAria", { title: item.title })}
                     >
                       <EyeIcon />
                     </button>
-                    <ContentActionsDropdown contentId={item.id} onAction={handleRowAction} />
+                    <ContentActionsDropdown contentId={item.id} currentStatus={item.status} onAction={handleRowAction} />
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-400">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--tott-muted)]">
                   {item.type?.name && <span>{item.type.name}</span>}
                   <span>{item.user?.full_name ?? item.contributor_name ?? "—"}</span>
                   <span
@@ -693,8 +1010,8 @@ export function ContentLibraryContent() {
                   <span>{formatDate(item.submission_date, locale)}</span>
                 </div>
                 {item.collections.length > 0 && (
-                  <p className="mt-2 text-xs text-gray-500">
-                    <span className="font-semibold text-gray-400">{t("table.collection")}: </span>
+                  <p className="mt-2 text-xs text-[var(--tott-muted)]">
+                    <span className="font-semibold text-[var(--tott-muted)]">{t("table.collection")}: </span>
                     {item.collections.map((c) => c.name).join(", ")}
                   </p>
                 )}
@@ -732,7 +1049,7 @@ export function ContentLibraryContent() {
                   header: t("table.type"),
                   width: "1fr",
                   headerClassName: `${headerCellClass} whitespace-nowrap`,
-                  cellClassName: `${cellBase} text-gray-400`,
+                  cellClassName: `${cellBase} text-[var(--tott-muted)]`,
                   cell: (item) => (
                     <span className="min-w-0 truncate" title={item.type?.name ?? ""}>
                       {item.type?.name ?? "—"}
@@ -744,7 +1061,7 @@ export function ContentLibraryContent() {
                   header: t("table.contributor"),
                   width: "1.2fr",
                   headerClassName: headerCellClass,
-                  cellClassName: `${cellBase} text-gray-400`,
+                  cellClassName: `${cellBase} text-[var(--tott-muted)]`,
                   cell: (item) => {
                     const text =
                       item.user?.full_name ?? item.contributor_name ?? "—";
@@ -775,7 +1092,7 @@ export function ContentLibraryContent() {
                   header: t("table.files"),
                   width: "0.7fr",
                   headerClassName: `${headerCellClass} whitespace-nowrap`,
-                  cellClassName: `${cellBase} whitespace-nowrap text-gray-400`,
+                  cellClassName: `${cellBase} whitespace-nowrap text-[var(--tott-muted)]`,
                   cell: (item) =>
                     (item.files ?? []).length > 0
                       ? t("table.fileCount", { count: (item.files ?? []).length })
@@ -786,7 +1103,7 @@ export function ContentLibraryContent() {
                   header: t("table.collection"),
                   width: "1.2fr",
                   headerClassName: headerCellClass,
-                  cellClassName: `${cellBase} text-gray-400`,
+                  cellClassName: `${cellBase} text-[var(--tott-muted)]`,
                   cell: (item) => {
                     const text =
                       item.collections.length > 0
@@ -804,7 +1121,7 @@ export function ContentLibraryContent() {
                   header: t("table.submitted"),
                   width: "1fr",
                   headerClassName: `${headerCellClass} whitespace-nowrap`,
-                  cellClassName: `${cellBase} whitespace-nowrap text-gray-400`,
+                  cellClassName: `${cellBase} whitespace-nowrap text-[var(--tott-muted)]`,
                   cell: (item) => formatDate(item.submission_date, locale),
                 },
                 {
@@ -818,12 +1135,12 @@ export function ContentLibraryContent() {
                       <button
                         type="button"
                         onClick={() => setPreviewItem(item)}
-                        className="rounded p-1.5 text-gray-500 transition-colors hover:text-foreground"
+                        className="rounded p-1.5 text-[var(--tott-muted)] transition-colors hover:text-foreground"
                         aria-label={t("table.viewItemAria", { title: item.title })}
                       >
                         <EyeIcon />
                       </button>
-                      <ContentActionsDropdown contentId={item.id} onAction={handleRowAction} />
+                      <ContentActionsDropdown contentId={item.id} currentStatus={item.status} onAction={handleRowAction} />
                     </div>
                   ),
                 },
@@ -844,7 +1161,7 @@ export function ContentLibraryContent() {
       {/* Pagination */}
       {!loading && meta && meta.total > 0 && (
         <div className="flex flex-col items-center gap-3 text-sm sm:flex-row sm:justify-between">
-          <span className="text-gray-500">
+          <span className="text-[var(--tott-muted)]">
             {t("pagination.summary", { page, totalPages, total: meta.total })}
           </span>
           <div className="flex gap-2">
@@ -852,7 +1169,7 @@ export function ContentLibraryContent() {
               type="button"
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-gray-400 transition-colors hover:text-foreground disabled:opacity-40"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
             >
               {t("pagination.previous")}
             </button>
@@ -860,7 +1177,7 @@ export function ContentLibraryContent() {
               type="button"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-gray-400 transition-colors hover:text-foreground disabled:opacity-40"
+              className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2 text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40"
             >
               {t("pagination.next")}
             </button>
@@ -897,6 +1214,7 @@ function ContentAdvancedFilterPopover({
   onHasFilesChange: (v: boolean) => void;
   label: string;
 }) {
+  const t = useTranslations("Dashboard.contentLibrary.filters");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -939,7 +1257,7 @@ function ContentAdvancedFilterPopover({
         aria-expanded={open}
         aria-label={label}
         title={label}
-        className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-gray-400 transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--tott-muted)]"
+        className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-surface-inset)] hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--tott-muted)]"
       >
         <FilterIcon />
         {activeCount > 0 ? (
@@ -963,21 +1281,21 @@ function ContentAdvancedFilterPopover({
           className="absolute right-0 top-full z-30 mt-2 w-80 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] p-4 shadow-lg"
         >
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-sm font-semibold text-foreground">Filters</p>
+            <p className="text-sm font-semibold text-foreground">{t("title")}</p>
             {activeCount > 0 ? (
               <button
                 type="button"
                 onClick={clearAll}
                 className="text-xs font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
               >
-                Clear all
+                {t("clearAll")}
               </button>
             ) : null}
           </div>
 
           <div className="mb-3 flex flex-col gap-1.5">
             <label className="text-[11px] font-medium uppercase tracking-wide text-[var(--tott-dash-gold-label)]">
-              Submitted after
+              {t("submittedAfter")}
             </label>
             <input
               type="date"
@@ -989,13 +1307,13 @@ function ContentAdvancedFilterPopover({
 
           <div className="mb-3 flex flex-col gap-1.5">
             <label className="text-[11px] font-medium uppercase tracking-wide text-[var(--tott-dash-gold-label)]">
-              Collection contains
+              {t("collectionContains")}
             </label>
             <input
               type="text"
               value={collection}
               onChange={(e) => onCollectionChange(e.target.value)}
-              placeholder="e.g. Heritage 2025"
+              placeholder={t("collectionPlaceholder")}
               className={inputClass}
             />
           </div>
@@ -1008,7 +1326,7 @@ function ContentAdvancedFilterPopover({
                 onChange={(e) => onHasFilesChange(e.target.checked)}
                 className="h-4 w-4 rounded border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]"
               />
-              <span>Only entries with files</span>
+              <span>{t("onlyWithFiles")}</span>
             </label>
           </div>
 
@@ -1018,7 +1336,7 @@ function ContentAdvancedFilterPopover({
               onClick={() => setOpen(false)}
               className="rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
             >
-              Done
+              {t("done")}
             </button>
           </div>
         </div>

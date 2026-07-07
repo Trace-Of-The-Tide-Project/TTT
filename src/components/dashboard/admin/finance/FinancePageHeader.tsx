@@ -18,7 +18,7 @@ export function FinancePageHeader() {
         actions={
           <button
             type="button"
-            className="inline-flex h-[40px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-[#111] whitespace-nowrap"
+            className="inline-flex h-[40px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-[var(--tott-on-accent)] whitespace-nowrap"
             style={{ backgroundColor: theme.accentGoldFocus }}
           >
             <span className="[&_svg]:h-4 [&_svg]:w-4">
@@ -35,7 +35,7 @@ export function FinancePageHeader() {
             <DollarSignIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$2,847</span>
-          <span className="text-xs text-gray-500">{t("cards.todaysDonations")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("cards.todaysDonations")}</span>
           <span className="text-xs text-emerald-400">↗ 12%</span>
         </div>
 
@@ -44,7 +44,7 @@ export function FinancePageHeader() {
             <TrendingUpIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$34,892</span>
-          <span className="text-xs text-gray-500">{t("cards.monthlyRevenue")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("cards.monthlyRevenue")}</span>
           <span className="text-xs text-emerald-400">↗ 22%</span>
         </div>
 
@@ -53,8 +53,8 @@ export function FinancePageHeader() {
             <CreditCardIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$2,596</span>
-          <span className="text-xs text-gray-500">{t("cards.pendingPayouts")}</span>
-          <span className="text-xs text-[#CBA158]">{t("cards.pendingCount")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("cards.pendingPayouts")}</span>
+          <span className="text-xs text-[var(--tott-dash-gold-text)]">{t("cards.pendingCount")}</span>
         </div>
 
         <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
@@ -62,8 +62,8 @@ export function FinancePageHeader() {
             <DollarSignIcon />
           </span>
           <span className="text-2xl font-bold text-foreground">$3,489</span>
-          <span className="text-xs text-gray-500">{t("cards.platformFees")}</span>
-          <span className="text-xs text-gray-500">{t("cards.feeRate")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("cards.platformFees")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("cards.feeRate")}</span>
         </div>
       </div>
     </div>

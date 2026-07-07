@@ -53,7 +53,7 @@ export function useRejectIssueProposal() {
   const qc = useQueryClient();
   return useMutation({
     meta: { silent: true },
-    mutationFn: (id: string) => updateContributionStatus(id, "archived"),
+    mutationFn: (id: string) => updateContributionStatus(id, "draft"),
     onSuccess: () => qc.invalidateQueries({ queryKey: contributionsKeys.all }),
   });
 }

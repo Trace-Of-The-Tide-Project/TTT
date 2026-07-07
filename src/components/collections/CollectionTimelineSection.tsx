@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDownIcon, CalendarIcon } from "@/components/ui/icons";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { theme } from "@/lib/theme";
 import { CollectionTimelineRow } from "./CollectionTimelineRow";
 import type { CollectionBucket } from "@/lib/content/collection-buckets";
@@ -35,6 +36,7 @@ export function CollectionTimelineSection({
       : t("dateRangeEmpty");
 
   return (
+    <RevealOnScroll>
     <section
       className="rounded-2xl border"
       style={{ borderColor: theme.cardBorder, backgroundColor: theme.homeSurface }}
@@ -97,5 +99,6 @@ export function CollectionTimelineSection({
         </div>
       )}
     </section>
+    </RevealOnScroll>
   );
 }

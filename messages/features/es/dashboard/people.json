@@ -1,0 +1,85 @@
+{
+  "Dashboard": {
+    "people": {
+      "list": {
+        "pageTitle": "Personas",
+        "addNew": "Añadir persona",
+        "searchPlaceholder": "Buscar personas…",
+        "loading": "Cargando…",
+        "empty": {
+          "none": "Aún no hay personas.",
+          "noMatch": "Ninguna persona coincide con tu búsqueda."
+        },
+        "headers": {
+          "person": "Persona",
+          "lifespan": "Años de vida",
+          "biography": "Biografía"
+        },
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "tryAgain": "Reintentar",
+        "pagination": {
+          "previous": "Anterior",
+          "next": "Siguiente"
+        },
+        "errors": {
+          "loadFailed": "No se pudieron cargar las personas",
+          "deleteFailed": "No se pudo eliminar"
+        },
+        "toasts": {
+          "deleted": "Persona eliminada"
+        },
+        "deleteModal": {
+          "title": "¿Eliminar persona?",
+          "description": "«{name}» se eliminará permanentemente.",
+          "cancel": "Cancelar",
+          "confirm": "Eliminar",
+          "confirmBusy": "Eliminando…"
+        }
+      },
+      "form": {
+        "backToList": "Personas",
+        "createTitle": "Añadir persona",
+        "editTitle": "Editar persona",
+        "loading": "Cargando…",
+        "sections": {
+          "identity": "Identidad",
+          "biography": "Biografía"
+        },
+        "fields": {
+          "fullName": "Nombre completo",
+          "fullNamePlaceholder": "p. ej. Mahmoud Darwish",
+          "birthDate": "Fecha de nacimiento",
+          "deathDate": "Fecha de fallecimiento",
+          "portrait": "Retrato",
+          "biography": "Biografía",
+          "biographyPlaceholder": "Breve resumen biográfico…"
+        },
+        "upload": {
+          "uploading": "Subiendo…",
+          "click": "Haz clic o arrastra una imagen de retrato",
+          "hint": "JPG, PNG, WebP — se recomienda cuadrada",
+          "change": "Cambiar"
+        },
+        "translation": {
+          "banner": "Añadiendo una traducción ({language}): escribe la versión de este idioma abajo.",
+          "ofOriginal": "Traducción de «{name}»"
+        },
+        "errors": {
+          "fullNameRequired": "El nombre completo es obligatorio.",
+          "portraitUploadFailed": "No se pudo subir el retrato",
+          "updateFailed": "No se pudo actualizar",
+          "createFailed": "No se pudo crear"
+        },
+        "toasts": {
+          "updated": "Persona actualizada",
+          "created": "Persona creada"
+        },
+        "cancel": "Cancelar",
+        "saving": "Guardando…",
+        "save": "Guardar cambios",
+        "create": "Crear persona"
+      }
+    }
+  }
+}

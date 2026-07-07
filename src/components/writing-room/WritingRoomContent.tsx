@@ -9,6 +9,8 @@ import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import { SubmitNoteModal } from "@/components/writing-room/SubmitNoteModal";
+import { motion } from "motion/react";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 
 const WRITING_ICON = "/images/writing-room/writing-icon.svg";
 const EXPERIENCES_HONEYCOMB = "/images/writing-room/experiences-honeycomb.svg";
@@ -210,15 +212,25 @@ export function WritingRoomContent({
           >
             {t("experiencesHeading")}
           </h2>
-          <ul
+          <motion.ul
             className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
             style={{
               gap: "clamp(16px, 2.5vw, 24px)",
               padding: "clamp(8px, 2vw, 16px) clamp(0px, 2vw, 16px) 0",
             }}
+            variants={staggerParent}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
           >
             {EXPERIENCES.map((e) => (
-              <li key={e.key} className="flex justify-center">
+              <motion.li
+                key={e.key}
+                className="flex justify-center"
+                variants={staggerChild}
+                transition={springs.gentle}
+                whileHover={{ y: -4 }}
+              >
                 <ExperienceCard
                   icon={e.icon}
                   iconSrc={e.iconSrc}
@@ -227,9 +239,9 @@ export function WritingRoomContent({
                   body={t(`${e.key}Body`)}
                   ctaLabel={t("expEnter")}
                 />
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         </section>
 
         {/* ── Decorative honeycomb (5 image-filled hexes, Figma "Group 11") ───
@@ -293,15 +305,25 @@ export function WritingRoomContent({
           </header>
 
           {dictionary.length > 0 ? (
-            <ul
+            <motion.ul
               className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
               style={{
                 gap: "clamp(16px, 2.5vw, 24px)",
                 padding: "clamp(8px, 2vw, 16px) clamp(0px, 2vw, 16px) 0",
               }}
+              variants={staggerParent}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
             >
               {dictionary.map((d) => (
-                <li key={d.id} className="flex justify-center">
+                <motion.li
+                  key={d.id}
+                  className="flex justify-center"
+                  variants={staggerChild}
+                  transition={springs.gentle}
+                  whileHover={{ y: -4 }}
+                >
                   <Link
                     href={`/dictionary/${encodeURIComponent(d.id)}`}
                     className="flex w-full justify-center transition-opacity hover:opacity-90"
@@ -313,9 +335,9 @@ export function WritingRoomContent({
                       role={d.role}
                     />
                   </Link>
-                </li>
+                </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           ) : null}
 
           {/* ── Action row (Figma "Labels") — gold primary first,

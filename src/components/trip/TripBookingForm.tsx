@@ -80,9 +80,9 @@ export function TripBookingForm({
           {formatTripPriceAmount(selected, currency)}
         </span>
       </div>
-      <div className="flex items-center justify-between gap-2 text-xs text-gray-500">
+      <div className="flex items-center justify-between gap-2 text-xs text-[color:var(--tott-home-text-muted)]">
         <span className="tabular-nums">{formatTripPriceAmount(minNum, currency)}</span>
-        <span className="text-gray-400">{tt("more")}</span>
+        <span className="text-[color:var(--tott-home-text-muted)]">{tt("more")}</span>
       </div>
       <input
         type="range"
@@ -92,7 +92,7 @@ export function TripBookingForm({
         step={step}
         value={selected}
         onChange={(e) => setSelected(parseFloat(e.target.value))}
-        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-[color:var(--tott-card-border)] accent-[#CBA158]"
+        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-[color:var(--tott-card-border)] accent-[var(--tott-accent-gold)]"
         aria-valuemin={minNum}
         aria-valuemax={uiMax}
         aria-valuenow={selected}
@@ -101,7 +101,7 @@ export function TripBookingForm({
     </div>
   ) : (
     <div className="flex items-center justify-between rounded-lg border px-4 py-3" style={wellStyle}>
-      <span className="text-sm text-gray-400">{tt("tripPrice")}</span>
+      <span className="text-sm text-[color:var(--tott-home-text-muted)]">{tt("tripPrice")}</span>
       <span className="text-lg font-bold text-[color:var(--tott-panel-text)]">{summaryLabel}</span>
     </div>
   );
@@ -116,7 +116,7 @@ export function TripBookingForm({
       }}
     >
       <h3 className="text-lg font-semibold text-[color:var(--tott-panel-text)]">{tt("joinTitle")}</h3>
-      <p className="mt-1 text-xs text-gray-400">{tt("joinSubtitle")}</p>
+      <p className="mt-1 text-xs text-[color:var(--tott-home-text-muted)]">{tt("joinSubtitle")}</p>
 
       <div className="mt-5">
         <DynamicOpenCallForm
@@ -125,7 +125,7 @@ export function TripBookingForm({
           showHomeLink={false}
           beforeSubmitSlot={priceSlot}
           afterSubmitSlot={
-            <p className="text-center text-xs text-gray-500">{tt("termsNote")}</p>
+            <p className="text-center text-xs text-[color:var(--tott-home-text-muted)]">{tt("termsNote")}</p>
           }
         />
       </div>

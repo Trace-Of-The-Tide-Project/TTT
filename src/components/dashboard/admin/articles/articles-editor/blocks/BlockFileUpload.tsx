@@ -24,7 +24,7 @@ export function formatFileSize(bytes: number): string {
   return `${shown} ${sizes[i]}`;
 }
 
-const fileRowGlyphClass = "h-5 w-5 shrink-0 text-gray-400";
+const fileRowGlyphClass = "h-5 w-5 shrink-0 text-[var(--tott-muted)]";
 
 export function FileKindGlyph({ file }: { file: File }) {
   const t = (file.type || "").toLowerCase();
@@ -83,11 +83,11 @@ export function SelectedFileRow({ file, onRemove }: { file: File; onRemove: () =
         </span>
       </div>
       <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-        <span className="text-xs text-gray-500 tabular-nums">{formatFileSize(file.size)}</span>
+        <span className="text-xs text-[var(--tott-muted)] tabular-nums">{formatFileSize(file.size)}</span>
         <button
           type="button"
           onClick={onRemove}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-transparent text-gray-400 transition-colors hover:border-[var(--tott-card-border)] hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-transparent text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
           aria-label={`Remove ${file.name}`}
         >
           <TrashIcon />

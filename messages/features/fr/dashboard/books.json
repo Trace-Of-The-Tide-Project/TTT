@@ -31,10 +31,42 @@
           "confirm": "Supprimer",
           "confirmBusy": "Suppression…",
           "cancel": "Annuler"
+        },
+        "rowActions": {
+          "edit": "Modifier",
+          "delete": "Supprimer"
+        },
+        "pagination": {
+          "prev": "Précédent",
+          "next": "Suivant"
+        }
+      },
+      "tabs": {
+        "books": "Livres",
+        "printOrders": "Commandes imprimées"
+      },
+      "printOrders": {
+        "loading": "Chargement des commandes imprimées…",
+        "empty": "Aucune commande imprimée pour le moment.",
+        "trackingPlaceholder": "Numéro de suivi",
+        "markShipped": "Marquer comme expédié",
+        "headers": {
+          "book": "Livre",
+          "buyer": "Acheteur",
+          "address": "Adresse de livraison",
+          "status": "Statut",
+          "actions": "Actions"
+        },
+        "statuses": {
+          "all": "Tous",
+          "pending": "En attente",
+          "shipped": "Expédié",
+          "cancelled": "Annulé"
         }
       },
       "form": {
         "createTitle": "Ajouter un nouveau livre",
+        "loading": "Chargement du livre…",
         "createDescription": "Un livre est une œuvre publiée autonome (avec PDF et prix optionnels) affichée sur la page publique des Livres. Pour une édition du magazine, utilisez un Numéro ; pour un seul article, utilisez Contenu.",
         "editTitle": "Modifier le livre",
         "saving": "Enregistrement…",
@@ -75,6 +107,9 @@
           "pricePlaceholder": "ex. 9.99",
           "currency": "Devise",
           "currencyPlaceholder": "ex. USD",
+          "printEnabled": "Vendre un exemplaire physique",
+          "printPrice": "Prix de l'exemplaire physique",
+          "printPricePlaceholder": "ex. 19.99",
           "magazine_id": "ID du magazine (optionnel)",
           "magazine_idPlaceholder": "Laisser vide si non lié à un magazine"
         },
@@ -85,12 +120,87 @@
           "fr": "Français",
           "de": "Allemand"
         },
+        "sections": {
+          "details": "Détails du livre",
+          "pricing": "Tarification",
+          "chapters": "Chapitres",
+          "media": "Médias",
+          "editions": "Éditions"
+        },
+        "chapters": {
+          "label": "Compilé à partir de",
+          "hint": "Indiquez à partir de quels articles ce livre a été compilé, à des fins de suivi éditorial. Le PDF téléversé ci-dessus reste le fichier lisible.",
+          "loading": "Chargement des chapitres…",
+          "empty": "Aucun article lié pour le moment.",
+          "searchPlaceholder": "Rechercher des articles à ajouter comme chapitre…",
+          "searching": "Recherche…",
+          "noResults": "Aucun article correspondant",
+          "add": "Ajouter",
+          "remove": "Retirer",
+          "moveUp": "Monter",
+          "moveDown": "Descendre"
+        },
+        "hints": {
+          "priceFree": "Laisser vide pour marquer comme gratuit",
+          "printPriceCurrency": "Facturé dans la devise définie ci-dessus",
+          "coverUrl": "Ou collez directement l'URL d'une image",
+          "pdfUrl": "Ou collez directement l'URL d'un PDF",
+          "languageLocked": "La langue est verrouillée après création. Utilisez les onglets ci-dessus pour ajouter une autre version linguistique.",
+          "sharedFieldLocked": "Partagé entre toutes les éditions linguistiques — modifiez-le depuis l'onglet de la langue d'origine."
+        },
         "upload": {
           "coverUpload": "Télécharger l'image de couverture",
           "coverUploading": "Téléchargement…",
           "pdfUpload": "Télécharger le PDF",
           "pdfUploading": "Téléchargement…",
-          "pdfUploaded": "PDF téléchargé ✓"
+          "pdfUploaded": "PDF téléchargé ✓",
+          "coverAlt": "Aperçu de la couverture",
+          "change": "Changer",
+          "coverHint": "Cliquez pour télécharger l'image de couverture",
+          "coverFormats": "JPG, PNG, WebP — glisser-déposer pris en charge",
+          "pdfHint": "Cliquez pour télécharger un PDF ou un document Word",
+          "pdfFormats": "PDF, DOC, DOCX — glisser-déposer pris en charge",
+          "uploadingFile": "Téléchargement du fichier…",
+          "fileReady": "✓ Prêt",
+          "fileFallback": "Fichier téléchargé",
+          "replace": "Remplacer"
+        },
+        "toast": {
+          "coverUploading": "Téléchargement de l'image de couverture…",
+          "coverUploaded": "Image de couverture téléchargée",
+          "coverUploadFailed": "Échec du téléchargement de l'image de couverture",
+          "fileUploading": "Téléchargement du fichier…",
+          "fileUploaded": "Fichier téléchargé",
+          "fileUploadFailed": "Échec du téléchargement du fichier",
+          "saving": "Enregistrement du livre…",
+          "saved": "Livre enregistré",
+          "created": "Livre créé",
+          "saveFailed": "Échec de l'enregistrement du livre"
+        },
+        "translation": {
+          "banner": "Ajout d'une traduction — rédigez la version de cette langue ci-dessous.",
+          "ofOriginal": "Traduction de «{name}»"
+        },
+        "linkTranslation": {
+          "label": "Cette langue existe déjà comme livre séparé ? Liez-la ici plutôt que d'en créer un nouveau.",
+          "searchPlaceholder": "Rechercher des livres par titre…",
+          "hint": "Lie le groupe de traduction de ce livre à celui que vous choisissez — les langues deviennent des onglets sur les deux livres.",
+          "searching": "Recherche…",
+          "none": "Aucun livre correspondant",
+          "linkFailed": "Échec de la liaison du livre"
+        },
+        "editions": {
+          "untitled": "Sans titre",
+          "pdfAttached": "PDF joint",
+          "pdfMissing": "Pas encore de PDF",
+          "addLabel": "Ajouter une autre édition linguistique",
+          "badgePrimary": "Principale",
+          "badge": {
+            "primary": "Principale",
+            "dirty": "Non enregistrée",
+            "existing": "Enregistrée",
+            "empty": "Non commencée"
+          }
         }
       }
     }

@@ -27,6 +27,8 @@
           "successArticleSubmitted": "Article submitted",
           "successArticleScheduled": "Article scheduled",
           "imageBlockShort": "Image",
+          "createAllLanguages": "Also create drafts in the other languages",
+          "unsavedChangesConfirm": "You have unsaved changes. Leave without saving?",
           "validationOpenCallBlocksDraft": "Add at least one content block with content.",
           "validationOpenCallBlocksPublish": "Publishing requires at least one content block with content.",
           "validationOpenCallBlocksSchedule": "Scheduling requires at least one content block with content."
@@ -256,6 +258,21 @@
             "private": "Private",
             "public": "Public"
           },
+          "access": {
+            "label": "Access",
+            "open": "Open (everyone)",
+            "preview": "Preview (first N blocks free)",
+            "subscriber": "Subscribers only",
+            "paid": "Paid (buy this article)",
+            "previewCountPlaceholder": "Free block count, e.g. 2",
+            "pricePlaceholder": "Price",
+            "hint": {
+              "open": "Anyone can read the full article.",
+              "preview": "Everyone sees the first N blocks; the rest is locked.",
+              "subscriber": "Requires an active subscription to read.",
+              "paid": "Readers must purchase this article individually."
+            }
+          },
           "seo": {
             "label": "SEO Preview",
             "previewTitlePlaceholder": "Article Title",
@@ -263,6 +280,23 @@
             "seoTitlePlaceholder": "SEO Title",
             "metaDescriptionPlaceholder": "Meta description",
             "previewUrlStub": "yoursite.com/articles/…"
+          }
+        },
+        "contributors": {
+          "panelTitle": "Contributors",
+          "loading": "Loading contributors…",
+          "empty": "No contributors added yet.",
+          "unknownUser": "Unknown user",
+          "add": "Add",
+          "adding": "Adding…",
+          "remove": "Remove",
+          "addFailed": "Failed to add contributor. They may already be linked.",
+          "roles": {
+            "main_contributor": "Main contributor",
+            "co-author": "Co-author",
+            "contributor": "Contributor",
+            "editor": "Editor",
+            "reviewer": "Reviewer"
           }
         }
       }

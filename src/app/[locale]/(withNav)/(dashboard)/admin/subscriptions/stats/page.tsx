@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { api } from '@/services/api';
 
 interface StatsData {
@@ -12,6 +13,7 @@ interface StatsData {
 }
 
 export default function AdminSubscriptionStatsPage() {
+  const t = useTranslations('Dashboard.subscriptions');
   const [stats, setStats] = useState<StatsData | null>(null);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ export default function AdminSubscriptionStatsPage() {
   if (!stats) {
     return (
       <div className="p-6">
-        <p className="text-sm" style={{ color: '#555' }}>Loading…</p>
+        <p className="text-sm" style={{ color: 'var(--tott-muted)' }}>{t('loading')}</p>
       </div>
     );
   }
@@ -32,9 +34,9 @@ export default function AdminSubscriptionStatsPage() {
   const maxCount = Math.max(...stats.monthly_counts.map((m) => m.count), 1);
 
   const statCards = [
-    { label: 'MRR', value: `$${Number(stats.mrr).toFixed(2)}`, color: '#cba158' },
-    { label: 'Active Subscribers', value: String(stats.active_subscribers), color: '#22c55e' },
-    { label: 'Churn This Month', value: String(stats.churn_this_month), color: '#ef4444' },
+    { label: t('stats.mrr'), value: `$${Number(stats.mrr).toFixed(2)}`, color: '#cba158' },
+    { label: t('stats.activeSubscribers'), value: String(stats.active_subscribers), color: '#22c55e' },
+    { label: t('stats.churn'), value: String(stats.churn_this_month), color: '#ef4444' },
     ...Object.entries(stats.by_plan).map(([plan, count]) => ({
       label: plan,
       value: String(count),
@@ -50,13 +52,13 @@ export default function AdminSubscriptionStatsPage() {
         <a
           href="../subscriptions"
           className="text-xs uppercase tracking-[2px] px-4 py-2 rounded-lg"
-          style={{ border: '1px solid #2a2a2a', color: '#666', background: 'transparent' }}
+          style={{ border: '1px solid var(--tott-card-border)', color: 'var(--tott-muted)', background: 'transparent' }}
         >
-          ← Subscribers
+          ← {t('stats.backToSubscribers')}
         </a>
         <div>
-          <p className="text-xs uppercase tracking-[3px] mb-0.5" style={{ color: '#cba158' }}>Admin</p>
-          <h1 className="text-2xl font-bold" style={{ color: '#ededed' }}>Revenue & Stats</h1>
+          <p className="text-xs uppercase tracking-[3px] mb-0.5" style={{ color: 'var(--tott-dash-gold-label)' }}>{t('admin')}</p>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{t('revenueStats')}</h1>
         </div>
       </div>
 
@@ -66,9 +68,9 @@ export default function AdminSubscriptionStatsPage() {
           <div
             key={label}
             className="rounded-xl p-4"
-            style={{ border: '1px solid #2a2a2a', background: '#141414' }}
+            style={{ border: '1px solid var(--tott-card-border)', background: 'var(--tott-elevated)' }}
           >
-            <p className="text-xs uppercase tracking-wider mb-2" style={{ color: '#555' }}>{label}</p>
+            <p className="text-xs uppercase tracking-wider mb-2" style={{ color: 'var(--tott-muted)' }}>{label}</p>
             <p className="text-3xl font-extrabold" style={{ color }}>{value}</p>
           </div>
         ))}
@@ -77,22 +79,22 @@ export default function AdminSubscriptionStatsPage() {
       {/* ── BAR CHART ── */}
       <div
         className="rounded-xl p-6"
-        style={{ border: '1px solid #2a2a2a', background: '#141414' }}
+        style={{ border: '1px solid var(--tott-card-border)', background: 'var(--tott-elevated)' }}
       >
-        <p className="text-xs uppercase tracking-[3px] mb-6" style={{ color: '#cba158' }}>
-          New Subscribers — Last 6 Months
+        <p className="text-xs uppercase tracking-[3px] mb-6" style={{ color: 'var(--tott-dash-gold-label)' }}>
+          {t('stats.chartTitle')}
         </p>
         <div className="flex items-end gap-3 h-36">
           {stats.monthly_counts.map((m) => {
             const barH = Math.max((m.count / maxCount) * 120, m.count > 0 ? 4 : 0);
             return (
               <div key={m.month} className="flex flex-col items-center flex-1 gap-1.5">
-                <span className="text-xs" style={{ color: '#555' }}>{m.count || ''}</span>
+                <span className="text-xs" style={{ color: 'var(--tott-muted)' }}>{m.count || ''}</span>
                 <div
                   className="w-full rounded-t"
                   style={{ height: `${barH}px`, background: '#cba158', opacity: 0.7 }}
                 />
-                <span className="text-xs" style={{ color: '#555' }}>{m.month.slice(5)}</span>
+                <span className="text-xs" style={{ color: 'var(--tott-muted)' }}>{m.month.slice(5)}</span>
               </div>
             );
           })}

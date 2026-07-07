@@ -1,7 +1,7 @@
 import type { Variants } from "motion/react";
 
 export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 12 },
+  hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0 },
 };
 
@@ -19,8 +19,8 @@ export const staggerParent: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.07,
-      delayChildren: 0.05,
+      staggerChildren: 0.1,
+      delayChildren: 0.06,
     },
   },
 };

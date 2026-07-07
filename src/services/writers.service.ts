@@ -40,6 +40,11 @@ export type WriterProfile = {
   /** Backend DECIMAL — may arrive as a numeric string; coerce with Number()
    * before sending back via WriterProfilePayload. */
   monthly_goal?: number | string | null;
+  /** Translation-group fields (pending backend rollout — see
+   * docs/backend-asks-translations.md). `language` is the ISO code of this
+   * version; all language versions of one writer share `translation_group_id`. */
+  language?: string | null;
+  translation_group_id?: string | null;
   createdAt?: string;
   updatedAt?: string;
   /** When the backend joins the user record onto the writer profile
@@ -68,14 +73,21 @@ export type GetWritersParams = {
   search?: string;
   page?: number;
   limit?: number;
+  /** "group" collapses translation groups to one writer (public feeds). */
+  dedupe?: string;
+  /** Language the dedupe prefers when the group has it (en|ar|es|fr). */
+  viewer_lang?: string;
 };
 
-export async function getFeaturedWriters(): Promise<WriterProfile[]> {
+export async function getFeaturedWriters(
+  viewerLang?: string,
+): Promise<WriterProfile[]> {
+  const params = viewerLang ? { viewer_lang: viewerLang } : undefined;
   if (typeof window === "undefined") {
-    return unwrapList(await serverGet<unknown>("/writers/featured"));
+    return unwrapList(await serverGet<unknown>("/writers/featured", params));
   }
   try {
-    const { data } = await api.get<unknown>("/writers/featured");
+    const { data } = await api.get<unknown>("/writers/featured", { params });
     return unwrapList(data);
   } catch {
     return [];
@@ -171,13 +183,15 @@ function unwrapProfileFull(raw: unknown): WriterProfileFull | null {
  * Returns the composed About + stats payload, or null on 404 / error. */
 export async function getWriterProfileFull(
   id: string,
+  viewerLang?: string,
 ): Promise<WriterProfileFull | null> {
   const path = `/writers/${encodeURIComponent(id)}/profile-full`;
+  const params = viewerLang ? { viewer_lang: viewerLang } : undefined;
   if (typeof window === "undefined") {
-    return unwrapProfileFull(await serverGet<unknown>(path));
+    return unwrapProfileFull(await serverGet<unknown>(path, params));
   }
   try {
-    const { data } = await api.get<unknown>(path);
+    const { data } = await api.get<unknown>(path, { params });
     return unwrapProfileFull(data);
   } catch {
     return null;
@@ -185,10 +199,11 @@ export async function getWriterProfileFull(
 }
 
 /** Pick the best display name from the writer record (falls back
- * through profile.display_name → user.full_name → username). */
+ * through profile.display_name → pen_name → user.full_name → username). */
 export function writerDisplayName(w: WriterProfile): string {
   return (
     w.display_name?.trim() ||
+    w.pen_name?.trim() ||
     w.user?.profile?.display_name?.trim() ||
     w.user?.full_name?.trim() ||
     w.user?.username?.trim() ||
@@ -226,6 +241,11 @@ export type WriterProfilePayload = {
   collaborations?: string | null;
   recognition?: string | null;
   monthly_goal?: number | null;
+  /** ISO code for the version being created/edited (e.g. "ar"). */
+  language?: string | null;
+  /** On create only: id of the source writer this is a translation of. The
+   * backend links both into the same translation group. */
+  translation_of?: string | null;
 };
 
 export type WritersListMeta = {

@@ -21,6 +21,10 @@
       "traceAStory": {
         "title": "Your story is worth the wait",
         "description": "The space to trace your own story — to share a memory, a testimony, or a piece of art — is being polished to do it justice. Hold onto your words; we can't wait to hear them very soon."
+      },
+      "home": {
+        "title": "The tide is turning",
+        "description": "We're reshaping the way you step into the archive. Until the new shore settles, the magazine and everything within remain open to wander."
       }
     }
   }

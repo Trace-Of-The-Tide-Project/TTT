@@ -21,7 +21,7 @@ function StatCard({ icon, value, label }: { icon: React.ReactNode; value: number
       <span className="text-2xl font-bold text-foreground">
         {value === null ? "—" : value.toLocaleString()}
       </span>
-      <span className="text-xs text-gray-500">{label}</span>
+      <span className="text-xs text-[var(--tott-muted)]">{label}</span>
     </div>
   );
 }
@@ -40,7 +40,7 @@ export function MessagingPageHeader() {
         actions={
           <button
             type="button"
-            className="inline-flex h-[40px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-[#111] whitespace-nowrap"
+            className="inline-flex h-[40px] items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-[var(--tott-on-accent)] whitespace-nowrap"
             style={{ backgroundColor: theme.accentGoldFocus }}
           >
             <span className="[&_svg]:h-4 [&_svg]:w-4">

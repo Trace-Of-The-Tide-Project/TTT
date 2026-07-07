@@ -21,7 +21,7 @@ function DangerRow({ title, description, actionLabel, onAction }: DangerRowProps
     <div className="flex flex-col gap-3 border-b border-red-900/30 py-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-foreground">{title}</p>
-        <p className="mt-1 text-sm text-gray-500">{description}</p>
+        <p className="mt-1 text-sm text-[var(--tott-muted)]">{description}</p>
       </div>
       <button
         type="button"
@@ -95,7 +95,7 @@ export function AccountDangerZone() {
         </span>
         <h2 className="text-lg font-bold text-[var(--tott-dash-negative)]">{t("danger.title")}</h2>
       </div>
-      <p className="mb-4 text-sm text-gray-500">{t("danger.subtitle")}</p>
+      <p className="mb-4 text-sm text-[var(--tott-muted)]">{t("danger.subtitle")}</p>
 
       <div>
         <DangerRow

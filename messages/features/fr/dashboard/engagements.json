@@ -19,7 +19,10 @@
         "menuAria": "Plus d'actions",
         "view": "Voir",
         "edit": "Modifier",
-        "delete": "Supprimer"
+        "delete": "Supprimer",
+        "flag": "Signaler",
+        "unflag": "Annuler le signalement",
+        "unknownAuthor": "Inconnu"
       },
       "trending": {
         "commentsCount": "{count, plural, one {# commentaire} other {# commentaires}}",
@@ -78,6 +81,9 @@
         "criteriaPlaceholder": "Quand ce badge doit-il être décerné ?",
         "cancel": "Annuler",
         "submit": "Décerner le badge"
+      },
+      "common": {
+        "loading": "Chargement..."
       }
     }
   }

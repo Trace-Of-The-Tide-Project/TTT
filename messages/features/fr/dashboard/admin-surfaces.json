@@ -170,15 +170,23 @@
           }
         }
       },
-      "superAdminRoleName": "Super Admin"
+      "superAdminRoleName": "Super Admin",
+      "detailModal": {
+        "closeModalAria": "Fermer la fenêtre",
+        "closeAria": "Fermer",
+        "rejectAria": "Rejeter",
+        "approveAria": "Approuver",
+        "viewAll": "Tout voir",
+        "close": "Fermer"
+      }
     },
     "contentLibrary": {
       "tabs": {
         "all": "Tout le contenu",
         "published": "Publié",
         "pending": "En attente",
-        "archived": "Archivé",
-        "rejected": "Rejeté"
+        "draft": "Brouillon",
+        "flagged": "Signalé"
       },
       "allTypes": "Tous les types",
       "searchPlaceholder": "Rechercher des contributions…",
@@ -201,9 +209,8 @@
       "statusLabels": {
         "published": "Publié",
         "pending": "En attente",
-        "archived": "Archivé",
-        "rejected": "Rejeté",
-        "draft": "Brouillon"
+        "draft": "Brouillon",
+        "flagged": "Signalé"
       },
       "pagination": {
         "summary": "Page {page} sur {totalPages} · {total, plural, one {# contribution} other {# contributions}}",
@@ -217,8 +224,14 @@
       "actions": {
         "menuAria": "Plus d'actions",
         "view": "Voir",
-        "archive": "Archiver",
-        "delete": "Supprimer"
+        "delete": "Supprimer",
+        "setStatus": {
+          "published": "Publier",
+          "pending": "Marquer en attente",
+          "draft": "Déplacer en brouillon",
+          "flagged": "Signaler"
+        },
+        "edit": "Modifier"
       },
       "detail": {
         "closeModalAria": "Fermer la fenêtre",
@@ -235,6 +248,43 @@
         "filesHeading": "Fichiers ({count})",
         "collectionsHeading": "Collections ({count})",
         "close": "Fermer"
+      },
+      "toasts": {
+        "statusUpdated": "« {title} » mis à jour",
+        "statusUpdateFailed": "Échec de la mise à jour du statut",
+        "deleted": "« {title} » supprimé",
+        "deleteFailed": "Échec de la suppression"
+      },
+      "deleteDialog": {
+        "title": "Supprimer la contribution",
+        "description": "Supprimer « {title} » ? Cette action est irréversible.",
+        "confirm": "Supprimer",
+        "confirmBusy": "Suppression…"
+      },
+      "filters": {
+        "title": "Filtres",
+        "clearAll": "Tout effacer",
+        "submittedAfter": "Soumis après le",
+        "collectionContains": "La collection contient",
+        "collectionPlaceholder": "ex. Patrimoine 2025",
+        "onlyWithFiles": "Uniquement les entrées avec fichiers",
+        "done": "Terminé"
+      },
+      "image": {
+        "loadError": "Impossible de charger l'image",
+        "unavailable": "Image indisponible"
+      },
+      "editForm": {
+        "title": "Modifier la contribution",
+        "closeAria": "Fermer",
+        "fieldTitle": "Titre",
+        "fieldDescription": "Description",
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "cancel": "Annuler",
+        "toasts": {
+          "saved": "Contribution enregistrée"
+        }
       }
     },
     "cmsEditor": {

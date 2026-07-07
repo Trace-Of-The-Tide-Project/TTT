@@ -68,12 +68,12 @@ function SessionRow({
   return (
     <div className="flex items-center justify-between gap-4 border-b border-[var(--tott-card-border)] py-4 last:border-b-0">
       <div className="flex min-w-0 items-start gap-3">
-        <span className="mt-0.5 shrink-0 text-gray-500">
+        <span className="mt-0.5 shrink-0 text-[var(--tott-muted)]">
           <GlobeIcon />
         </span>
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-foreground">{device}</p>
-          <p className="mt-0.5 truncate text-xs text-gray-500">
+          <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]">
             {session.ip_address || t("sessions.unknownIp")} ·{" "}
             {t("sessions.signedIn", { date: formatDateTime(session.created_at) })}
           </p>
@@ -83,7 +83,7 @@ function SessionRow({
         type="button"
         onClick={() => onRevoke(session.id)}
         disabled={revoking}
-        className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[var(--tott-card-border)] bg-transparent px-3 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:border-red-900/60 hover:bg-red-950/30 hover:text-red-200 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[var(--tott-card-border)] bg-transparent px-3 py-1.5 text-xs font-medium text-[var(--tott-muted)] transition-colors hover:border-red-900/60 hover:bg-red-950/30 hover:text-red-200 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <TrashIcon />
         {t("sessions.revoke")}
@@ -120,7 +120,7 @@ export function AccountSessions() {
       <div className="mb-2 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="text-lg font-bold text-foreground">{t("sessions.title")}</h2>
-          <p className="mt-1 text-sm text-gray-500">{t("sessions.subtitle")}</p>
+          <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("sessions.subtitle")}</p>
         </div>
         <button
           type="button"
@@ -132,17 +132,17 @@ export function AccountSessions() {
         </button>
       </div>
 
-      <p className="mb-2 text-xs text-gray-600">{t("sessions.currentDeviceHint")}</p>
+      <p className="mb-2 text-xs text-[var(--tott-muted)]">{t("sessions.currentDeviceHint")}</p>
 
       <div className="mt-2">
         {isPending ? (
-          <p className="py-6 text-center text-sm text-gray-500">{t("sessions.loading")}</p>
+          <p className="py-6 text-center text-sm text-[var(--tott-muted)]">{t("sessions.loading")}</p>
         ) : isError ? (
           <p className="py-6 text-center text-sm text-[var(--tott-dash-negative)]" role="alert">
             {t("sessions.loadError")}
           </p>
         ) : list.length === 0 ? (
-          <p className="py-6 text-center text-sm text-gray-500">{t("sessions.empty")}</p>
+          <p className="py-6 text-center text-sm text-[var(--tott-muted)]">{t("sessions.empty")}</p>
         ) : (
           list.map((s) => (
             <SessionRow

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 const TEXT_STRONG = "var(--tott-home-text-strong)";
 const TEXT_MUTED = "var(--tott-home-text-muted)";
@@ -115,17 +116,17 @@ export function MagazineIssueDetailContent({
         ) : null}
 
         {issue.description ? (
-          <div
+          <RevealOnScroll
             className="mt-8 whitespace-pre-line text-base leading-relaxed"
             style={{ color: TEXT_STRONG }}
           >
             {issue.description}
-          </div>
+          </RevealOnScroll>
         ) : null}
 
         {/* Stats */}
         {(issue.pageCount || issue.readingTime) ? (
-          <div
+          <RevealOnScroll
             className="mt-8 flex flex-wrap gap-x-8 gap-y-2 text-sm"
             style={{ color: TEXT_MUTED }}
           >
@@ -135,11 +136,11 @@ export function MagazineIssueDetailContent({
             {issue.readingTime ? (
               <span>{t("readTime", { minutes: issue.readingTime })}</span>
             ) : null}
-          </div>
+          </RevealOnScroll>
         ) : null}
 
         {/* Actions */}
-        <div className="mt-10 flex flex-wrap items-center gap-3">
+        <RevealOnScroll className="mt-10 flex flex-wrap items-center gap-3">
           <Link
             href="/open-issues"
             className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium transition-opacity hover:opacity-90"
@@ -158,7 +159,7 @@ export function MagazineIssueDetailContent({
             {t("backToMagazine")}
             <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
           </Link>
-        </div>
+        </RevealOnScroll>
       </div>
     </main>
   );

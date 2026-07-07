@@ -107,6 +107,47 @@
             "revokeFailed": "Échec du retrait du rôle"
           }
         }
+      },
+      "addUser": {
+        "title": "Ajouter un utilisateur",
+        "subtitle": "Créez un nouveau compte utilisateur. Il pourra se connecter avec l'e-mail et le mot de passe définis ici.",
+        "back": "Retour aux utilisateurs",
+        "fields": {
+          "fullName": "Nom complet",
+          "email": "E-mail",
+          "password": "Mot de passe",
+          "passwordHint": "Communiquez ce mot de passe à l'utilisateur : il n'y a pas d'e-mail d'invitation."
+        },
+        "actions": {
+          "generate": "Générer",
+          "copy": "Copier",
+          "copied": "Copié",
+          "show": "Afficher",
+          "hide": "Masquer",
+          "create": "Créer l'utilisateur",
+          "creating": "Création…",
+          "cancel": "Annuler"
+        },
+        "errors": {
+          "fullNameRequired": "Le nom complet est obligatoire.",
+          "emailRequired": "Saisissez une adresse e-mail valide.",
+          "passwordTooShort": "Le mot de passe doit comporter au moins 6 caractères.",
+          "createFailed": "Impossible de créer l'utilisateur."
+        },
+        "toasts": {
+          "creating": "Création de l'utilisateur…",
+          "created": "Utilisateur créé"
+        }
+      },
+      "filters": {
+        "title": "Filtres",
+        "clearAll": "Tout effacer",
+        "emailContains": "L'e-mail contient",
+        "emailPlaceholder": "ex. @domain.com",
+        "minContributions": "Contributions minimales",
+        "joinedAfter": "Inscrit après",
+        "sortOrder": "Ordre de tri",
+        "done": "Terminé"
       }
     }
   }

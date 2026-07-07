@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { isAxiosError } from "axios";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
 import type {
@@ -247,28 +250,30 @@ export function EncounterDetailContent({
               ]}
             />
 
-            <Section heading={t("aboutHeading")}>
-              <p
-                style={{
-                  fontFamily: "'Inter', var(--font-sans, sans-serif)",
-                  fontWeight: 400,
-                  // Figma 16px/24px Inter 400, -0.01em tracking,
-                  // color #F7F7F7 (near-white), text-shadow
-                  // 0px 1px 2px rgba(0,0,0,0.24).
-                  fontSize: "clamp(0.875rem, 0.45vw + 0.65rem, 1.75rem)",
-                  lineHeight: 1.5,
-                  letterSpacing: "-0.01em",
-                  color: "var(--tott-home-text-strong)",
-                  textShadow: "var(--tott-home-text-shadow)",
-                  margin: 0,
-                }}
-              >
-                {aboutBody}
-              </p>
-            </Section>
+            <RevealOnScroll>
+              <Section heading={t("aboutHeading")}>
+                <p
+                  style={{
+                    fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                    fontWeight: 400,
+                    // Figma 16px/24px Inter 400, -0.01em tracking,
+                    // color #F7F7F7 (near-white), text-shadow
+                    // 0px 1px 2px rgba(0,0,0,0.24).
+                    fontSize: "clamp(0.875rem, 0.45vw + 0.65rem, 1.75rem)",
+                    lineHeight: 1.5,
+                    letterSpacing: "-0.01em",
+                    color: "var(--tott-home-text-strong)",
+                    textShadow: "var(--tott-home-text-shadow)",
+                    margin: 0,
+                  }}
+                >
+                  {aboutBody}
+                </p>
+              </Section>
+            </RevealOnScroll>
 
             <Section heading={t("highlightsHeading")}>
-              <ul
+              <motion.ul
                 className="grid grid-cols-1 sm:grid-cols-2"
                 style={{
                   // Figma row gap 16, column gap 40.
@@ -277,12 +282,18 @@ export function EncounterDetailContent({
                   margin: 0,
                   listStyle: "none",
                 }}
+                variants={staggerParent}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
               >
                 {highlights.map((h) => (
-                  <li
+                  <motion.li
                     key={h}
                     className="flex flex-row items-center"
                     style={{ gap: "clamp(8px, 0.4vw + 0.2rem, 16px)" }}
+                    variants={staggerChild}
+                    transition={springs.gentle}
                   >
                     <span
                       aria-hidden
@@ -326,9 +337,9 @@ export function EncounterDetailContent({
                     >
                       {h}
                     </span>
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
             </Section>
 
             {/* Render real schedule rows when the API supplies
@@ -336,28 +347,31 @@ export function EncounterDetailContent({
                 single placeholder card so the layout stays full. */}
             {scheduleRows.length > 0
               ? scheduleRows.map((row, i) => (
-                  <ScheduleCard
-                    key={row.id ?? i}
-                    index={i + 1}
-                    title={row.title || t("scheduleHeading")}
-                    start={formatScheduleStart(row.arrival_time)}
-                    end={formatScheduleEnd(
-                      row.arrival_time,
-                      row.duration_minutes,
-                    )}
-                    body={row.description || t("scheduleBody")}
-                    locationLabel={formatScheduleLocation(row)}
-                  />
+                  <RevealOnScroll key={row.id ?? i}>
+                    <ScheduleCard
+                      index={i + 1}
+                      title={row.title || t("scheduleHeading")}
+                      start={formatScheduleStart(row.arrival_time)}
+                      end={formatScheduleEnd(
+                        row.arrival_time,
+                        row.duration_minutes,
+                      )}
+                      body={row.description || t("scheduleBody")}
+                      locationLabel={formatScheduleLocation(row)}
+                    />
+                  </RevealOnScroll>
                 ))
               : (
-                <ScheduleCard
-                  index={1}
-                  title={t("scheduleHeading")}
-                  start={t("scheduleStart")}
-                  end={t("scheduleEnd")}
-                  body={t("scheduleBody")}
-                  locationLabel={t("scheduleLocation")}
-                />
+                <RevealOnScroll>
+                  <ScheduleCard
+                    index={1}
+                    title={t("scheduleHeading")}
+                    start={t("scheduleStart")}
+                    end={t("scheduleEnd")}
+                    body={t("scheduleBody")}
+                    locationLabel={t("scheduleLocation")}
+                  />
+                </RevealOnScroll>
               )}
           </div>
 
@@ -641,6 +655,7 @@ export function EncounterDetailContent({
         </div>
 
         {/* ── Join the Room ─────────────────────────────────── */}
+        <RevealOnScroll>
         <section
           aria-labelledby="join-room-heading"
           className="relative overflow-hidden"
@@ -731,6 +746,7 @@ export function EncounterDetailContent({
             </div>
           </div>
         </section>
+        </RevealOnScroll>
       </div>
     </main>
   );

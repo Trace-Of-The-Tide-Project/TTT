@@ -8,6 +8,7 @@
     "supporters": "{count, plural, =1 {1 supporter} other {# supporters}}",
     "supportCta": "Support this Issue",
     "emptyState": "No open issues right now — check back soon.",
+    "browseCta": "Browse the magazine",
     "modal": {
       "title": "Support {author}",
       "subtitle": "Give your appreciation for {author}'s great content",

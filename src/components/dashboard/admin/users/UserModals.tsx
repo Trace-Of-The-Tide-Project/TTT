@@ -14,6 +14,7 @@ import {
 import { formatApiError } from "@/lib/api/error-message";
 import {
   useAssignUserRole,
+  useCreateAdminUser,
   useRevokeUserRole,
   useUpdateUser,
   useUpdateUserStatus,
@@ -119,6 +120,16 @@ export function ViewProfileModal({
 const FIELD_CLASS =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-muted)] focus:outline-none";
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function generatePassword(): string {
+  // Unambiguous alphanumerics (no 0/O/1/l/I), 12 chars.
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  const bytes = new Uint32Array(12);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => chars[b % chars.length]!).join("");
+}
+
 export function EditUserModal({
   user,
   onClose,
@@ -213,7 +224,7 @@ export function EditUserModal({
             type="button"
             disabled={busy}
             onClick={onClose}
-            className="rounded-lg border border-[var(--tott-card-border)] bg-transparent px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
+            className="rounded-lg border border-[var(--tott-card-border)] bg-transparent px-4 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
           >
             {t("common.cancel")}
           </button>
@@ -432,6 +443,203 @@ export function ChangeRoleModal({
           </p>
         ) : null}
       </div>
+    </Modal>
+  );
+}
+
+/* ───────────────────────── Add User ───────────────────────── */
+
+export function AddUserModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  const t = useTranslations("Dashboard.usersManagement.addUser");
+  const createUser = useCreateAdminUser();
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Reset the form each time the modal is (re)opened so a previous entry never
+  // lingers behind the backdrop.
+  const [wasOpen, setWasOpen] = useState(false);
+  if (open && !wasOpen) {
+    setWasOpen(true);
+    setFullName("");
+    setEmail("");
+    setPassword("");
+    setShowPassword(false);
+    setCopied(false);
+    setError(null);
+  } else if (!open && wasOpen) {
+    setWasOpen(false);
+  }
+
+  const busy = createUser.isPending;
+
+  const copyPassword = async () => {
+    if (!password) return;
+    try {
+      await navigator.clipboard.writeText(password);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* clipboard unavailable — admin can select the text manually */
+    }
+  };
+
+  const submit = async () => {
+    setError(null);
+    if (!fullName.trim()) {
+      setError(t("errors.fullNameRequired"));
+      return;
+    }
+    if (!EMAIL_RE.test(email.trim())) {
+      setError(t("errors.emailRequired"));
+      return;
+    }
+    if (password.length < 6) {
+      setError(t("errors.passwordTooShort"));
+      return;
+    }
+    try {
+      await createUser.mutateAsync({
+        full_name: fullName.trim(),
+        email: email.trim(),
+        password,
+      });
+      toast.success(t("toasts.created"));
+      onClose();
+    } catch (e) {
+      setError(formatApiError(e, t("errors.createFailed")));
+    }
+  };
+
+  const ghostBtn =
+    "shrink-0 rounded-lg border border-[var(--tott-card-border)] px-3 py-2 text-xs text-[var(--tott-muted)] transition-colors hover:text-foreground disabled:opacity-40";
+
+  return (
+    <Modal
+      open={open}
+      title={t("title")}
+      busy={busy}
+      onClose={onClose}
+      footer={
+        <>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={onClose}
+            className="rounded-lg border border-[var(--tott-card-border)] bg-transparent px-4 py-2 text-sm font-medium text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
+          >
+            {t("actions.cancel")}
+          </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void submit()}
+            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {busy ? t("actions.creating") : t("actions.create")}
+          </button>
+        </>
+      }
+    >
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void submit();
+        }}
+      >
+        <p className="text-sm text-[var(--tott-muted)]">{t("subtitle")}</p>
+
+        <label className="flex flex-col gap-1.5">
+          <span className="text-[11px] font-medium uppercase tracking-wide text-[var(--tott-dash-gold-label)]">
+            {t("fields.fullName")} *
+          </span>
+          <input
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className={FIELD_CLASS}
+            disabled={busy}
+            autoComplete="off"
+          />
+        </label>
+
+        <label className="flex flex-col gap-1.5">
+          <span className="text-[11px] font-medium uppercase tracking-wide text-[var(--tott-dash-gold-label)]">
+            {t("fields.email")} *
+          </span>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={FIELD_CLASS}
+            disabled={busy}
+            autoComplete="off"
+          />
+        </label>
+
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[11px] font-medium uppercase tracking-wide text-[var(--tott-dash-gold-label)]">
+            {t("fields.password")} *
+          </span>
+          <div className="flex items-center gap-2">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${FIELD_CLASS} font-mono`}
+              disabled={busy}
+              autoComplete="new-password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((s) => !s)}
+              className={ghostBtn}
+              disabled={busy}
+            >
+              {showPassword ? t("actions.hide") : t("actions.show")}
+            </button>
+            <button
+              type="button"
+              onClick={copyPassword}
+              className={ghostBtn}
+              disabled={busy || !password}
+            >
+              {copied ? t("actions.copied") : t("actions.copy")}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setPassword(generatePassword());
+                setShowPassword(true);
+              }}
+              className={ghostBtn}
+              disabled={busy}
+            >
+              {t("actions.generate")}
+            </button>
+          </div>
+          <span className="text-[10px] text-[var(--tott-muted)]">
+            {t("fields.passwordHint")}
+          </span>
+        </div>
+
+        {error ? (
+          <p className="rounded-lg border border-red-900/50 bg-red-950/30 px-3 py-2 text-sm text-red-200">
+            {error}
+          </p>
+        ) : null}
+      </form>
     </Modal>
   );
 }

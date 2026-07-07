@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { CloudUploadIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
@@ -11,6 +12,7 @@ import { uploadFileToUrl } from "@/services/uploads.service";
 type SaveState = "idle" | "saving" | "saved" | "error";
 
 export function BrandingTab() {
+  const t = useTranslations("Dashboard.cmsBranding");
   const [primaryColor, setPrimaryColor] = useState<string>(theme.accentGoldFocus);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const faviconInputRef = useRef<HTMLInputElement>(null);
@@ -113,12 +115,12 @@ export function BrandingTab() {
 
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
-      <h3 className="text-sm font-semibold text-foreground">Brand Settings</h3>
-      <p className="mt-1 text-xs text-gray-500">Logo, colors, and typography.</p>
+      <h3 className="text-sm font-semibold text-foreground">{t("title")}</h3>
+      <p className="mt-1 text-xs text-[var(--tott-muted)]">{t("subtitle")}</p>
       <div className="mt-6 space-y-6">
         {/* Logo */}
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-foreground">Logo</label>
+          <label className="mb-1.5 block text-xs font-medium text-foreground">{t("logoLabel")}</label>
           <input
             ref={logoInputRef}
             type="file"
@@ -149,8 +151,8 @@ export function BrandingTab() {
             onDragLeave={() => setLogoDragging(false)}
             className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 transition-colors ${
               logoDragging
-                ? "border-[#C9A96E] bg-[var(--tott-dash-surface-inset)]"
-                : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[#555]"
+                ? "border-[var(--tott-accent-gold)] bg-[var(--tott-dash-surface-inset)]"
+                : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[var(--tott-card-border)]"
             }`}
           >
             {logoPreview ? (
@@ -160,24 +162,24 @@ export function BrandingTab() {
                  *  needed for arbitrary preview sources). */}
                 <Image
                   src={logoPreview}
-                  alt="Logo preview"
+                  alt={t("logoPreviewAlt")}
                   width={240}
                   height={96}
                   unoptimized
                   className="mx-auto max-h-24 w-auto object-contain"
                 />
-                <p className="mt-2 text-xs text-gray-400">{logoFile?.name ?? "Saved logo"}</p>
+                <p className="mt-2 text-xs text-[var(--tott-muted)]">{logoFile?.name ?? t("savedLogo")}</p>
               </div>
             ) : (
               <>
-                <span className="text-gray-500 [&_svg]:h-10 [&_svg]:w-10">
+                <span className="text-[var(--tott-muted)] [&_svg]:h-10 [&_svg]:w-10">
                   <CloudUploadIcon />
                 </span>
                 <p className="mt-2 text-sm text-foreground">
-                  Drag and drop files here, or click to browse
+                  {t("uploadPrompt")}
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Supported formats: JPG, PNG, WebP, SVG, GIF (Max 20MB)
+                <p className="mt-1 text-xs text-[var(--tott-muted)]">
+                  {t("logoFormats")}
                 </p>
               </>
             )}
@@ -186,7 +188,7 @@ export function BrandingTab() {
 
         {/* Favicon */}
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-foreground">Favicon</label>
+          <label className="mb-1.5 block text-xs font-medium text-foreground">{t("faviconLabel")}</label>
           <input
             ref={faviconInputRef}
             type="file"
@@ -217,32 +219,32 @@ export function BrandingTab() {
             onDragLeave={() => setFaviconDragging(false)}
             className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 transition-colors ${
               faviconDragging
-                ? "border-[#C9A96E] bg-[var(--tott-dash-surface-inset)]"
-                : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[#555]"
+                ? "border-[var(--tott-accent-gold)] bg-[var(--tott-dash-surface-inset)]"
+                : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] hover:border-[var(--tott-card-border)]"
             }`}
           >
             {faviconPreview ? (
               <div className="relative w-full overflow-hidden rounded">
                 <Image
                   src={faviconPreview}
-                  alt="Favicon preview"
+                  alt={t("faviconPreviewAlt")}
                   width={64}
                   height={64}
                   unoptimized
                   className="mx-auto max-h-16 w-auto object-contain"
                 />
-                <p className="mt-2 text-xs text-gray-400">{faviconFile?.name ?? "Saved favicon"}</p>
+                <p className="mt-2 text-xs text-[var(--tott-muted)]">{faviconFile?.name ?? t("savedFavicon")}</p>
               </div>
             ) : (
               <>
-                <span className="text-gray-500 [&_svg]:h-10 [&_svg]:w-10">
+                <span className="text-[var(--tott-muted)] [&_svg]:h-10 [&_svg]:w-10">
                   <CloudUploadIcon />
                 </span>
                 <p className="mt-2 text-sm text-foreground">
-                  Drag and drop files here, or click to browse
+                  {t("uploadPrompt")}
                 </p>
-                <p className="mt-1 text-xs text-gray-500">
-                  Supported formats: PNG, WebP, SVG, ICO (Max 20MB)
+                <p className="mt-1 text-xs text-[var(--tott-muted)]">
+                  {t("faviconFormats")}
                 </p>
               </>
             )}
@@ -251,7 +253,7 @@ export function BrandingTab() {
 
         {/* Primary Color */}
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-foreground">Primary Color</label>
+          <label className="mb-1.5 block text-xs font-medium text-foreground">{t("primaryColorLabel")}</label>
           <div className="flex items-center gap-3">
             <input
               type="color"
@@ -264,7 +266,7 @@ export function BrandingTab() {
               value={primaryColor}
               onChange={(e) => setPrimaryColor(e.target.value)}
               placeholder="#CBA158"
-              className="flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+              className="flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
             />
           </div>
         </div>
@@ -283,12 +285,12 @@ export function BrandingTab() {
           }`}
         >
           {saveState === "saving"
-            ? "Saving…"
+            ? t("saving")
             : saveState === "saved"
-              ? "Saved"
+              ? t("saved")
               : saveState === "error"
-                ? "Error — retry"
-                : "Save Branding"}
+                ? t("errorRetry")
+                : t("save")}
         </button>
       </div>
     </div>

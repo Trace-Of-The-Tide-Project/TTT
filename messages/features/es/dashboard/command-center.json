@@ -13,6 +13,19 @@
       },
       "vsLastMonth": "vs el mes pasado",
       "vsYesterday": "vs ayer"
+    },
+    "topbar": {
+      "help": "Ayuda",
+      "newCount": "{count} nuevas",
+      "markAllRead": "Marcar todo como leído",
+      "allCaughtUp": "¡Estás al día!",
+      "noNotifications": "No hay notificaciones ahora mismo.",
+      "viewAllNotifications": "Ver todas las notificaciones",
+      "secondsAgo": "hace {count} s",
+      "minutesAgo": "hace {count} min",
+      "hoursAgo": "hace {count} h",
+      "daysAgo": "hace {count} d",
+      "monthsAgo": "hace {count} mes"
     }
   }
 }

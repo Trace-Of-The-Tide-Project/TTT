@@ -1,101 +1,90 @@
+import { getTranslations } from "next-intl/server";
+
 import { SupportPageLayout } from "@/components/layout/SupportPageLayout";
 
-export default function GdprPage() {
+export default async function GdprPage() {
+  const t = await getTranslations("Legal.gdpr");
+
   return (
-    <SupportPageLayout title="GDPR" subtitle="Effective Date: [Insert Date]">
+    <SupportPageLayout title={t("title")} subtitle={t("subtitle")}>
       <section>
-        <h2 className="mb-4 text-xl font-bold text-foreground">1. Acceptance of Terms</h2>
-        <p className="leading-relaxed text-[color:var(--tott-muted)]">
-          By accessing or using [yourdomain.com], you agree to these Terms of Service and our
-          Privacy Policy. If you do not agree, please do not use the website.
-        </p>
+        <h2 className="mb-4 text-xl font-bold text-foreground">{t("s1.heading")}</h2>
+        <p className="leading-relaxed text-[color:var(--tott-muted)]">{t("s1.body")}</p>
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold text-foreground">2. Use of the Website</h2>
-        <p className="mb-4 leading-relaxed text-[color:var(--tott-muted)]">You agree to:</p>
+        <h2 className="mb-4 text-xl font-bold text-foreground">{t("s2.heading")}</h2>
+        <p className="mb-4 leading-relaxed text-[color:var(--tott-muted)]">
+          {t("s2.intro")}
+        </p>
         <ul className="list-disc space-y-2 pl-6 text-[color:var(--tott-muted)]">
-          <li>Use the site only for lawful, non-commercial purposes</li>
-          <li>Respect intellectual property rights</li>
-          <li>Not interfere with or disrupt the site or servers</li>
+          {(["item1", "item2", "item3"] as const).map((key) => (
+            <li key={key}>{t(`s2.${key}`)}</li>
+          ))}
         </ul>
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold text-foreground">3. User Content</h2>
+        <h2 className="mb-4 text-xl font-bold text-foreground">{t("s3.heading")}</h2>
         <p className="mb-4 leading-relaxed text-[color:var(--tott-muted)]">
-          If you upload or contribute content:
+          {t("s3.intro")}
         </p>
         <ul className="list-disc space-y-2 pl-6 text-[color:var(--tott-muted)]">
-          <li>You retain ownership, but grant us a license to display, share, and archive your content on our platform</li>
-          <li>You must not upload content that is unlawful, defamatory, infringing, or harmful</li>
+          {(["item1", "item2"] as const).map((key) => (
+            <li key={key}>{t(`s3.${key}`)}</li>
+          ))}
         </ul>
         <p className="mt-4 leading-relaxed text-[color:var(--tott-muted)]">
-          We reserve the right to remove any content at our discretion.
+          {t("s3.after")}
         </p>
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold text-foreground">4. Intellectual Property</h2>
-        <p className="leading-relaxed text-[color:var(--tott-muted)]">
-          All content on this website — including text, design, logos, videos, and other media — is
-          either owned by or licensed to us and protected by copyright and intellectual property
-          laws.
-        </p>
+        <h2 className="mb-4 text-xl font-bold text-foreground">{t("s4.heading")}</h2>
+        <p className="leading-relaxed text-[color:var(--tott-muted)]">{t("s4.body")}</p>
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold text-foreground">5. Links to Other Websites</h2>
-        <p className="leading-relaxed text-[color:var(--tott-muted)]">
-          Our site may contain links to third-party websites. We are not responsible for their
-          content, policies, or practices.
-        </p>
+        <h2 className="mb-4 text-xl font-bold text-foreground">{t("s5.heading")}</h2>
+        <p className="leading-relaxed text-[color:var(--tott-muted)]">{t("s5.body")}</p>
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold text-foreground">6. Disclaimers</h2>
-        <p className="leading-relaxed text-[color:var(--tott-muted)]">
-          The content provided is for educational and informational purposes. While we strive for
-          accuracy, we make no warranties about the completeness, reliability, or accuracy of any
-          content.
-        </p>
+        <h2 className="mb-4 text-xl font-bold text-foreground">{t("s6.heading")}</h2>
+        <p className="leading-relaxed text-[color:var(--tott-muted)]">{t("s6.body")}</p>
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold text-foreground">7. Limitation of Liability</h2>
-        <p className="leading-relaxed text-[color:var(--tott-muted)]">
-          We are not liable for any direct, indirect, incidental, or consequential damages arising
-          from your use of this website.
-        </p>
+        <h2 className="mb-4 text-xl font-bold text-foreground">{t("s7.heading")}</h2>
+        <p className="leading-relaxed text-[color:var(--tott-muted)]">{t("s7.body")}</p>
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold text-foreground">8. Modifications</h2>
-        <p className="leading-relaxed text-[color:var(--tott-muted)]">
-          We may update these Terms of Service at any time. Continued use of the site means you
-          accept the revised terms.
-        </p>
+        <h2 className="mb-4 text-xl font-bold text-foreground">{t("s8.heading")}</h2>
+        <p className="leading-relaxed text-[color:var(--tott-muted)]">{t("s8.body")}</p>
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold text-foreground">9. Governing Law</h2>
-        <p className="leading-relaxed text-[color:var(--tott-muted)]">
-          These terms are governed by the laws of [Your Country/State]. Any disputes shall be
-          resolved under the jurisdiction of [Your Jurisdiction].
-        </p>
+        <h2 className="mb-4 text-xl font-bold text-foreground">{t("s9.heading")}</h2>
+        <p className="leading-relaxed text-[color:var(--tott-muted)]">{t("s9.body")}</p>
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-bold text-foreground">10. Contact Us</h2>
+        <h2 className="mb-4 text-xl font-bold text-foreground">{t("s10.heading")}</h2>
         <p className="leading-relaxed text-[color:var(--tott-muted)]">
-          📧 Email:{" "}
-          <a href="mailto:your-email@example.com" className="hover:underline" style={{ color: "var(--tott-accent-gold)" }}>
-            [your-email@example.com]
-          </a>
+          {t.rich("s10.email", {
+            mail: (chunks) => (
+              <a
+                href="mailto:your-email@example.com"
+                className="hover:underline"
+                style={{ color: "var(--tott-accent-gold)" }}
+              >
+                {chunks}
+              </a>
+            ),
+          })}
         </p>
-        <p className="leading-relaxed text-[color:var(--tott-muted)]">
-          📍 Address: [Your Organization, Street Address, City, Country]
-        </p>
+        <p className="leading-relaxed text-[color:var(--tott-muted)]">{t("s10.address")}</p>
       </section>
     </SupportPageLayout>
   );

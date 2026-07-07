@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useLibrary } from "@/hooks/queries/commerce";
@@ -44,10 +46,19 @@ export function LibraryContent() {
           </Link>
         </div>
       ) : (
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.ul
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          variants={staggerParent}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+        >
           {books.map((book) => (
-            <li
+            <motion.li
               key={book.id}
+              variants={staggerChild}
+              transition={springs.gentle}
+              whileHover={{ y: -4 }}
               className="flex flex-col gap-3 rounded-lg border border-[var(--tott-card-border)] p-4"
             >
               <Link
@@ -62,9 +73,9 @@ export function LibraryContent() {
                 </p>
               ) : null}
               <BookDownloadLink bookId={book.id} label={t("read")} />
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </motion.ul>
       )}
     </main>
   );

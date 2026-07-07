@@ -6,12 +6,17 @@ import {
   type MagazineIssueInput,
 } from "@/services/magazine-issues.service";
 import { magazineIssuesKeys } from "@/hooks/queries/magazine-issues";
+import { translationKeys } from "@/hooks/queries/translations";
 
 export function useCreateMagazineIssue() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (payload: MagazineIssueInput) => createMagazineIssue(payload),
-    onSuccess: () => qc.invalidateQueries({ queryKey: magazineIssuesKeys.all }),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: magazineIssuesKeys.all });
+      // A new language version changes its group's translation chips.
+      void qc.invalidateQueries({ queryKey: translationKeys.all });
+    },
     meta: { silent: true },
   });
 }

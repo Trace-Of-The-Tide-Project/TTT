@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { HexPatternBackdrop } from "@/components/home/magazine/HexPatternBackdrop";
@@ -222,9 +224,13 @@ export function BookReviewsContent({
         </div>
 
         {/* Reviews list */}
-        <ul
+        <motion.ul
           className="mt-10 flex flex-col"
           style={{ gap: "20px" }}
+          variants={staggerParent}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
         >
           {reviews.length === 0 ? (
             <p
@@ -241,8 +247,10 @@ export function BookReviewsContent({
             </p>
           ) : (
             reviews.map((r) => (
-              <li
+              <motion.li
                 key={r.id}
+                variants={staggerChild}
+                transition={springs.gentle}
                 className="relative flex items-start"
                 style={{ gap: "12px", padding: "20px 24px" }}
               >
@@ -350,10 +358,10 @@ export function BookReviewsContent({
                     </p>
                   ) : null}
                 </div>
-              </li>
+              </motion.li>
             ))
           )}
-        </ul>
+        </motion.ul>
       </div>
 
       <ShareYourStory />

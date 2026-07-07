@@ -64,6 +64,7 @@
         "title": "Modèles de messages",
         "subtitle": "Créez, modifiez et réutilisez des modèles de messages enregistrés.",
         "createButton": "Créer un modèle",
+        "emptyState": "Aucun modèle pour le moment",
         "categoryLabels": {
           "onboarding": "Intégration",
           "payment": "Paiement",
@@ -74,6 +75,7 @@
       },
       "inbox": {
         "searchPlaceholder": "Rechercher des messages…",
+        "loading": "Chargement…",
         "emptyFiltered": "Aucun message ne correspond à vos filtres.",
         "selectConversation": "Sélectionnez une conversation pour afficher les messages.",
         "threadMenuAria": "Plus d'actions",

@@ -64,6 +64,7 @@
         "title": "Plantillas de mensajes",
         "subtitle": "Crea, edita y reutiliza plantillas de mensajes guardadas.",
         "createButton": "Crear plantilla",
+        "emptyState": "Aún no hay plantillas",
         "categoryLabels": {
           "onboarding": "Incorporación",
           "payment": "Pago",
@@ -74,6 +75,7 @@
       },
       "inbox": {
         "searchPlaceholder": "Buscar mensajes…",
+        "loading": "Cargando…",
         "emptyFiltered": "Ningún mensaje coincide con tus filtros.",
         "selectConversation": "Selecciona una conversación para ver los mensajes.",
         "threadMenuAria": "Más acciones",

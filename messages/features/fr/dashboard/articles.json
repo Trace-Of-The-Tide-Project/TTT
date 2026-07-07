@@ -48,6 +48,10 @@
             "scheduled": "Programmé"
           },
           "justNow": "À l'instant",
+          "translationsTooltip": "+{count, plural, one {# traduction} other {# traductions}}",
+          "toggleTranslations": "Afficher ou masquer les autres versions linguistiques",
+          "needsTranslation": "Traduction requise",
+          "needsTranslationTooltip": "Aucune version en {locale} pour cet article",
           "lastUpdated": "Dernière mise à jour",
           "views": "Vues",
           "supporters": "Soutiens",

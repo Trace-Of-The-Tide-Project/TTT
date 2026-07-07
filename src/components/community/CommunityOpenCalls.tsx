@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import { theme } from "@/lib/theme";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { type OpenCallListItem } from "@/services/open-calls.service";
@@ -90,11 +92,24 @@ export function CommunityOpenCalls({ openCalls }: { openCalls: OpenCallListItem[
         </Link>
       </div>
 
-      <div className="mt-6 grid gap-5 sm:grid-cols-2">
+      <motion.div
+        className="mt-6 grid gap-5 sm:grid-cols-2"
+        variants={staggerParent}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+      >
         {openCalls.map((call) => (
-          <OpenCallCard key={call.id} call={call} cta={t("openCallsCta")} />
+          <motion.div
+            key={call.id}
+            variants={staggerChild}
+            transition={springs.gentle}
+            whileHover={{ y: -4 }}
+          >
+            <OpenCallCard call={call} cta={t("openCallsCta")} />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

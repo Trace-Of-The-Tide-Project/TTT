@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageBubbleIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
@@ -60,18 +60,20 @@ function getInitials(name: string): string {
     .join("") || "?";
 }
 
-function formatRelativeTime(iso: string): string {
+type RelativeTranslate = (key: string, values?: Record<string, number>) => string;
+
+function formatRelativeTime(iso: string, t: RelativeTranslate, locale: string): string {
   if (!iso) return "";
   try {
     const diff = Date.now() - new Date(iso).getTime();
     const mins = Math.floor(diff / 60_000);
-    if (mins < 1) return "just now";
-    if (mins < 60) return `${mins} min${mins !== 1 ? "s" : ""} ago`;
+    if (mins < 1) return t("justNow");
+    if (mins < 60) return t("minutesAgo", { count: mins });
     const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs} hr${hrs !== 1 ? "s" : ""} ago`;
+    if (hrs < 24) return t("hoursAgo", { count: hrs });
     const days = Math.floor(hrs / 24);
-    if (days < 30) return `${days} day${days !== 1 ? "s" : ""} ago`;
-    return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(iso));
+    if (days < 30) return t("daysAgo", { count: days });
+    return new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", year: "numeric" }).format(new Date(iso));
   } catch {
     return "";
   }
@@ -81,6 +83,7 @@ const PAGE_SIZE = 10;
 
 export function SupportersContent() {
   const t = useTranslations("Dashboard.profileSupporters");
+  const locale = useLocale();
   const _qc = useQueryClient();
   const [selectedFilter, setSelectedFilter] = useState<FilterType>("all");
   const [page, setPage] = useState(1);
@@ -148,29 +151,29 @@ export function SupportersContent() {
           {[...Array(4)].map((_, i) => (
             <ChamferedPanel key={i} className="px-4 py-4 animate-pulse">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gray-800 shrink-0" />
+                <div className="h-10 w-10 rounded-full bg-[var(--tott-dash-surface-2)] shrink-0" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-3 w-32 rounded bg-gray-800" />
-                  <div className="h-2 w-20 rounded bg-gray-800" />
+                  <div className="h-3 w-32 rounded bg-[var(--tott-dash-surface-2)]" />
+                  <div className="h-2 w-20 rounded bg-[var(--tott-dash-surface-2)]" />
                 </div>
               </div>
             </ChamferedPanel>
           ))}
         </div>
       ) : isError ? (
-        <div className="flex items-center justify-center py-12 text-sm text-gray-500">
-          Could not load supporters. Please try again.
+        <div className="flex items-center justify-center py-12 text-sm text-[var(--tott-muted)]">
+          {t("loadError")}
         </div>
       ) : supporters.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 py-16">
-          <p className="text-sm text-[var(--tott-muted)]">No supporters yet.</p>
-          <p className="text-xs text-gray-600">Your supporters will appear here once they contribute.</p>
+          <p className="text-sm text-[var(--tott-muted)]">{t("emptyTitle")}</p>
+          <p className="text-xs text-[var(--tott-muted)]">{t("emptySubtitle")}</p>
         </div>
       ) : (
         <>
           <div className="flex flex-col gap-3">
             {supporters.map((entry) => {
-              const name = entry.User?.full_name || entry.User?.username || "Anonymous";
+              const name = entry.User?.full_name || entry.User?.username || t("anonymous");
               const initials = getInitials(name);
               const isThanked = thankedIds.has(entry.id);
               const isThanking = thankMutation.isPending && thankMutation.variables === entry.id;
@@ -186,16 +189,16 @@ export function SupportersContent() {
                         {initials}
                       </span>
                       <div>
-                        <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
+                        <p className="text-sm font-medium" style={{ color: theme.accentGoldFocus }}>
                           {name}
                         </p>
-                        <p className="text-xs text-gray-500">{formatRelativeTime(entry.createdAt)}</p>
+                        <p className="text-xs text-[var(--tott-muted)]">{formatRelativeTime(entry.createdAt, t, locale)}</p>
                       </div>
                     </div>
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
                       <div className="flex flex-col items-start sm:items-end">
-                        <p className="text-sm font-medium" style={{ color: "#C9A96E" }}>
+                        <p className="text-sm font-medium" style={{ color: theme.accentGoldFocus }}>
                           ${entry.amount}
                         </p>
                         <p className="text-xs capitalize text-foreground">{typeLabel(entry.type)}</p>
@@ -207,7 +210,7 @@ export function SupportersContent() {
                         className="flex cursor-pointer items-center justify-center gap-2 self-start rounded-lg bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] disabled:opacity-50 disabled:cursor-default"
                       >
                         <MessageBubbleIcon />
-                        {isThanked ? "Thanked" : isThanking ? "Sending…" : t("thankContributor")}
+                        {isThanked ? t("thanked") : isThanking ? t("sending") : t("thankContributor")}
                       </button>
                     </div>
                   </div>
@@ -223,20 +226,20 @@ export function SupportersContent() {
                 type="button"
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
-                className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-gray-400 transition-colors hover:border-gray-500 hover:text-white disabled:opacity-30 disabled:cursor-default"
+                className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground disabled:opacity-30 disabled:cursor-default"
               >
-                ← Prev
+                ← {t("prev")}
               </button>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[var(--tott-muted)]">
                 {page} / {totalPages}
               </span>
               <button
                 type="button"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-gray-400 transition-colors hover:border-gray-500 hover:text-white disabled:opacity-30 disabled:cursor-default"
+                className="rounded-lg border border-[var(--tott-card-border)] px-3 py-1.5 text-xs text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground disabled:opacity-30 disabled:cursor-default"
               >
-                Next →
+                {t("next")} →
               </button>
             </div>
           )}

@@ -1,0 +1,22 @@
+{
+  "Dashboard": {
+    "cmsBranding": {
+      "title": "إعدادات العلامة",
+      "subtitle": "الشعار والألوان والخطوط.",
+      "logoLabel": "الشعار",
+      "logoPreviewAlt": "معاينة الشعار",
+      "savedLogo": "الشعار المحفوظ",
+      "faviconLabel": "أيقونة الموقع",
+      "faviconPreviewAlt": "معاينة أيقونة الموقع",
+      "savedFavicon": "أيقونة الموقع المحفوظة",
+      "uploadPrompt": "اسحب الملفات وأفلِتها هنا، أو انقر للتصفح",
+      "logoFormats": "الصيغ المدعومة: JPG وPNG وWebP وSVG وGIF (بحد أقصى 20 ميجابايت)",
+      "faviconFormats": "الصيغ المدعومة: PNG وWebP وSVG وICO (بحد أقصى 20 ميجابايت)",
+      "primaryColorLabel": "اللون الأساسي",
+      "saving": "جارٍ الحفظ…",
+      "saved": "تم الحفظ",
+      "errorRetry": "خطأ — أعد المحاولة",
+      "save": "حفظ العلامة"
+    }
+  }
+}

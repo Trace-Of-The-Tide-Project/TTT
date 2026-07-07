@@ -1,0 +1,85 @@
+{
+  "Dashboard": {
+    "people": {
+      "list": {
+        "pageTitle": "Personnes",
+        "addNew": "Ajouter une personne",
+        "searchPlaceholder": "Rechercher des personnes…",
+        "loading": "Chargement…",
+        "empty": {
+          "none": "Aucune personne pour le moment.",
+          "noMatch": "Aucune personne ne correspond à votre recherche."
+        },
+        "headers": {
+          "person": "Personne",
+          "lifespan": "Années de vie",
+          "biography": "Biographie"
+        },
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "tryAgain": "Réessayer",
+        "pagination": {
+          "previous": "Précédent",
+          "next": "Suivant"
+        },
+        "errors": {
+          "loadFailed": "Échec du chargement des personnes",
+          "deleteFailed": "Échec de la suppression"
+        },
+        "toasts": {
+          "deleted": "Personne supprimée"
+        },
+        "deleteModal": {
+          "title": "Supprimer la personne ?",
+          "description": "«{name}» sera définitivement supprimé.",
+          "cancel": "Annuler",
+          "confirm": "Supprimer",
+          "confirmBusy": "Suppression…"
+        }
+      },
+      "form": {
+        "backToList": "Personnes",
+        "createTitle": "Ajouter une personne",
+        "editTitle": "Modifier la personne",
+        "loading": "Chargement…",
+        "sections": {
+          "identity": "Identité",
+          "biography": "Biographie"
+        },
+        "fields": {
+          "fullName": "Nom complet",
+          "fullNamePlaceholder": "p. ex. Mahmoud Darwish",
+          "birthDate": "Date de naissance",
+          "deathDate": "Date de décès",
+          "portrait": "Portrait",
+          "biography": "Biographie",
+          "biographyPlaceholder": "Brève notice biographique…"
+        },
+        "upload": {
+          "uploading": "Téléversement…",
+          "click": "Cliquez ou glissez une image de portrait",
+          "hint": "JPG, PNG, WebP — carré recommandé",
+          "change": "Changer"
+        },
+        "translation": {
+          "banner": "Ajout d'une traduction ({language}) — rédigez la version de cette langue ci-dessous.",
+          "ofOriginal": "Traduction de «{name}»"
+        },
+        "errors": {
+          "fullNameRequired": "Le nom complet est requis.",
+          "portraitUploadFailed": "Échec du téléversement du portrait",
+          "updateFailed": "Échec de la mise à jour",
+          "createFailed": "Échec de la création"
+        },
+        "toasts": {
+          "updated": "Personne mise à jour",
+          "created": "Personne créée"
+        },
+        "cancel": "Annuler",
+        "saving": "Enregistrement…",
+        "save": "Enregistrer les modifications",
+        "create": "Créer la personne"
+      }
+    }
+  }
+}

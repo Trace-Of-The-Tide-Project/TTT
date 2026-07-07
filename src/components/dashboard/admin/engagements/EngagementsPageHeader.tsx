@@ -35,7 +35,7 @@ export function EngagementsPageHeader() {
           <span className="text-2xl font-bold text-foreground">
             {formatNumber(stats?.total_comments)}
           </span>
-          <span className="text-xs text-gray-500">{t("stats.totalComments")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("stats.totalComments")}</span>
         </div>
 
         <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
@@ -45,7 +45,7 @@ export function EngagementsPageHeader() {
           <span className="text-2xl font-bold text-foreground">
             {formatNumber(stats?.total_likes)}
           </span>
-          <span className="text-xs text-gray-500">{t("stats.totalLikes")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("stats.totalLikes")}</span>
         </div>
 
         <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
@@ -55,7 +55,7 @@ export function EngagementsPageHeader() {
           <span className="text-2xl font-bold text-foreground">
             {formatNumber(stats?.active_discussions)}
           </span>
-          <span className="text-xs text-gray-500">{t("stats.activeDiscussions")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("stats.activeDiscussions")}</span>
         </div>
 
         <div className="relative flex flex-col items-center gap-2 px-4 py-7"><ChamferedFrame />
@@ -65,7 +65,7 @@ export function EngagementsPageHeader() {
           <span className="text-2xl font-bold text-foreground">
             {formatNumber(stats?.badges_awarded)}
           </span>
-          <span className="text-xs text-gray-500">{t("stats.badgesAwarded")}</span>
+          <span className="text-xs text-[var(--tott-muted)]">{t("stats.badgesAwarded")}</span>
         </div>
       </div>
     </div>

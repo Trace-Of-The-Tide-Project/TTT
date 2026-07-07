@@ -121,7 +121,7 @@ export function CollectionDetailContent({ collection }: { collection: Collection
           </div>
           <Link
             href="/contribute"
-            className="inline-flex shrink-0 items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-black"
+            className="inline-flex shrink-0 items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-[var(--tott-on-accent)]"
             style={{ backgroundColor: theme.accentGold }}
           >
             <PlusIcon />
@@ -162,7 +162,7 @@ export function CollectionDetailContent({ collection }: { collection: Collection
         </div>
       </div>
 
-      <ShareYourStory />
+      <ShareYourStory surface={theme.homeSurface} />
     </div>
   );
 }

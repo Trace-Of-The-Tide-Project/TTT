@@ -31,10 +31,42 @@
           "confirm": "Delete",
           "confirmBusy": "Deleting…",
           "cancel": "Cancel"
+        },
+        "rowActions": {
+          "edit": "Edit",
+          "delete": "Delete"
+        },
+        "pagination": {
+          "prev": "Prev",
+          "next": "Next"
+        }
+      },
+      "tabs": {
+        "books": "Books",
+        "printOrders": "Print orders"
+      },
+      "printOrders": {
+        "loading": "Loading print orders…",
+        "empty": "No print orders yet.",
+        "trackingPlaceholder": "Tracking number",
+        "markShipped": "Mark shipped",
+        "headers": {
+          "book": "Book",
+          "buyer": "Buyer",
+          "address": "Shipping address",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "statuses": {
+          "all": "All",
+          "pending": "Pending",
+          "shipped": "Shipped",
+          "cancelled": "Cancelled"
         }
       },
       "form": {
         "createTitle": "Add New Book",
+        "loading": "Loading book…",
         "createDescription": "A book is a standalone published work (with an optional PDF and price) shown on the public Books page. For a magazine edition use an Issue; for a single article use Content.",
         "editTitle": "Edit Book",
         "saving": "Saving…",
@@ -75,6 +107,9 @@
           "pricePlaceholder": "e.g. 9.99",
           "currency": "Currency",
           "currencyPlaceholder": "e.g. USD",
+          "printEnabled": "Sell a physical copy",
+          "printPrice": "Print price",
+          "printPricePlaceholder": "e.g. 19.99",
           "magazine_id": "Magazine ID (optional)",
           "magazine_idPlaceholder": "Leave blank if not magazine-linked"
         },
@@ -85,12 +120,87 @@
           "fr": "French",
           "de": "German"
         },
+        "sections": {
+          "details": "Book details",
+          "pricing": "Pricing",
+          "chapters": "Chapters",
+          "media": "Media",
+          "editions": "Editions"
+        },
+        "chapters": {
+          "label": "Compiled from",
+          "hint": "Record which articles this book was compiled from, for editorial tracking. Uploaded PDF above remains the readable file.",
+          "loading": "Loading chapters…",
+          "empty": "No articles linked yet.",
+          "searchPlaceholder": "Search articles to add as a chapter…",
+          "searching": "Searching…",
+          "noResults": "No matching articles",
+          "add": "Add",
+          "remove": "Remove",
+          "moveUp": "Move up",
+          "moveDown": "Move down"
+        },
+        "hints": {
+          "priceFree": "Leave blank to mark as free",
+          "printPriceCurrency": "Charged in the currency set above",
+          "coverUrl": "Or paste an image URL directly",
+          "pdfUrl": "Or paste a PDF URL directly",
+          "languageLocked": "Language is locked after creation. Use the tabs above to add another language version.",
+          "sharedFieldLocked": "Shared across every language edition — edit it on the original language tab."
+        },
         "upload": {
           "coverUpload": "Upload cover image",
           "coverUploading": "Uploading…",
           "pdfUpload": "Upload PDF",
           "pdfUploading": "Uploading…",
-          "pdfUploaded": "PDF uploaded ✓"
+          "pdfUploaded": "PDF uploaded ✓",
+          "coverAlt": "Cover preview",
+          "change": "Change",
+          "coverHint": "Click to upload cover image",
+          "coverFormats": "JPG, PNG, WebP — drag & drop supported",
+          "pdfHint": "Click to upload PDF or Word document",
+          "pdfFormats": "PDF, DOC, DOCX — drag & drop supported",
+          "uploadingFile": "Uploading file…",
+          "fileReady": "✓ Ready",
+          "fileFallback": "File uploaded",
+          "replace": "Replace"
+        },
+        "toast": {
+          "coverUploading": "Uploading cover image…",
+          "coverUploaded": "Cover image uploaded",
+          "coverUploadFailed": "Cover image upload failed",
+          "fileUploading": "Uploading file…",
+          "fileUploaded": "File uploaded",
+          "fileUploadFailed": "File upload failed",
+          "saving": "Saving book…",
+          "saved": "Book saved",
+          "created": "Book created",
+          "saveFailed": "Failed to save book"
+        },
+        "translation": {
+          "banner": "Adding a translation — write this language's version below.",
+          "ofOriginal": "Translation of “{name}”"
+        },
+        "linkTranslation": {
+          "label": "This language already exists as a separate book? Link it here instead of creating a new one.",
+          "searchPlaceholder": "Search books by title…",
+          "hint": "Links this book's translation group to the one you pick — the languages become tabs on both books.",
+          "searching": "Searching…",
+          "none": "No matching books",
+          "linkFailed": "Failed to link book"
+        },
+        "editions": {
+          "untitled": "Untitled",
+          "pdfAttached": "PDF attached",
+          "pdfMissing": "No PDF yet",
+          "addLabel": "Add another language edition",
+          "badgePrimary": "Primary",
+          "badge": {
+            "primary": "Primary",
+            "dirty": "Unsaved",
+            "existing": "Saved",
+            "empty": "Not started"
+          }
         }
       }
     }

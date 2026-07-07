@@ -1,0 +1,85 @@
+{
+  "Dashboard": {
+    "people": {
+      "list": {
+        "pageTitle": "الأشخاص",
+        "addNew": "إضافة شخص",
+        "searchPlaceholder": "ابحث عن الأشخاص…",
+        "loading": "جارٍ التحميل…",
+        "empty": {
+          "none": "لا يوجد أشخاص بعد.",
+          "noMatch": "لا يوجد أشخاص مطابقون لبحثك."
+        },
+        "headers": {
+          "person": "الشخص",
+          "lifespan": "سنوات الحياة",
+          "biography": "السيرة الذاتية"
+        },
+        "edit": "تعديل",
+        "delete": "حذف",
+        "tryAgain": "حاول مجددًا",
+        "pagination": {
+          "previous": "السابق",
+          "next": "التالي"
+        },
+        "errors": {
+          "loadFailed": "تعذّر تحميل الأشخاص",
+          "deleteFailed": "تعذّر الحذف"
+        },
+        "toasts": {
+          "deleted": "تم حذف الشخص"
+        },
+        "deleteModal": {
+          "title": "حذف الشخص؟",
+          "description": "سيتم حذف ”{name}“ نهائيًا.",
+          "cancel": "إلغاء",
+          "confirm": "حذف",
+          "confirmBusy": "جارٍ الحذف…"
+        }
+      },
+      "form": {
+        "backToList": "الأشخاص",
+        "createTitle": "إضافة شخص",
+        "editTitle": "تعديل الشخص",
+        "loading": "جارٍ التحميل…",
+        "sections": {
+          "identity": "الهوية",
+          "biography": "السيرة الذاتية"
+        },
+        "fields": {
+          "fullName": "الاسم الكامل",
+          "fullNamePlaceholder": "مثال: محمود درويش",
+          "birthDate": "تاريخ الميلاد",
+          "deathDate": "تاريخ الوفاة",
+          "portrait": "الصورة الشخصية",
+          "biography": "السيرة الذاتية",
+          "biographyPlaceholder": "ملخّص موجز للسيرة الذاتية…"
+        },
+        "upload": {
+          "uploading": "جارٍ الرفع…",
+          "click": "انقر أو اسحب صورة شخصية",
+          "hint": "JPG، PNG، WebP — يُفضّل أن تكون مربعة",
+          "change": "تغيير"
+        },
+        "translation": {
+          "banner": "إضافة ترجمة ({language}) — اكتب نسخة هذه اللغة بالأسفل.",
+          "ofOriginal": "ترجمة لـ ”{name}“"
+        },
+        "errors": {
+          "fullNameRequired": "الاسم الكامل مطلوب.",
+          "portraitUploadFailed": "تعذّر رفع الصورة الشخصية",
+          "updateFailed": "تعذّر التحديث",
+          "createFailed": "تعذّر الإنشاء"
+        },
+        "toasts": {
+          "updated": "تم تحديث الشخص",
+          "created": "تم إنشاء الشخص"
+        },
+        "cancel": "إلغاء",
+        "saving": "جارٍ الحفظ…",
+        "save": "حفظ التغييرات",
+        "create": "إنشاء شخص"
+      }
+    }
+  }
+}

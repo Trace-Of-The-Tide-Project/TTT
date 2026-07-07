@@ -64,6 +64,7 @@
         "title": "Message templates",
         "subtitle": "Create, edit, and reuse saved message templates.",
         "createButton": "Create template",
+        "emptyState": "No templates yet",
         "categoryLabels": {
           "onboarding": "Onboarding",
           "payment": "Payment",
@@ -74,6 +75,7 @@
       },
       "inbox": {
         "searchPlaceholder": "Search messages…",
+        "loading": "Loading…",
         "emptyFiltered": "No messages match your filters.",
         "selectConversation": "Select a conversation to view messages.",
         "threadMenuAria": "More actions",

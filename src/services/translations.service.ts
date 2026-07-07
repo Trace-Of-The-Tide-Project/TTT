@@ -8,12 +8,16 @@ import { isAxiosError } from "axios";
  * `GET /<type>/:id/translations`.
  */
 
-/** Content types that support translation, mapped to their API path prefix. */
+/** Content types the backend exposes translation groups for. */
 export const TRANSLATABLE_TYPES = {
   article: "articles",
   "open-call": "open-calls",
   collection: "collections",
   issue: "magazine-issues",
+  writer: "writers",
+  book: "knowledge/books",
+  person: "people",
+  contribution: "contributions",
 } as const;
 
 export type TranslatableType = keyof typeof TRANSLATABLE_TYPES;
@@ -25,6 +29,9 @@ export type TranslationVersion = {
   status?: string | null;
   /** `title` for most types, `name` for collections. */
   title?: string | null;
+  /** Books only: whether this edition has a PDF attached. Undefined for
+   * every other content type. */
+  has_pdf?: boolean;
 };
 
 export type TranslationGroup = {

@@ -11,7 +11,6 @@ export default async function GiftATracePage() {
       description={t("features.giftATrace.description")}
       ctaLabel={t("shared.ctaLabel")}
       homeLabel={t("shared.homeLabel")}
-      iconKey="gift"
     />
   );
 }

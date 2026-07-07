@@ -145,7 +145,7 @@ export function TranslationOfPicker({
                   setQuery("");
                   setOpen(false);
                 }}
-                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-white/5"
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-[var(--tott-elevated-hover)]"
               >
                 <span className="flex-1 truncate">{r.title}</span>
                 {r.language ? (

@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { RichContent } from "@/components/ui/rich-text/RichContent";
+import { Parallax } from "@/components/motion/Parallax";
+import { ScrollFadeOut } from "@/components/motion/ScrollFadeOut";
 
 type MagazineHeroProps = {
   /** Path to the hero artwork — defaults to the design SVG bundled in /public. */
@@ -20,6 +22,8 @@ type MagazineHeroProps = {
   primaryHref?: string;
   /** Where the secondary CTA links. */
   secondaryHref?: string;
+  /** Per-section text scale (1 = current sizes). */
+  fontScale?: number;
 };
 
 /**
@@ -66,50 +70,61 @@ export function MagazineHero({
   secondaryCtaLabel,
   primaryHref = "/magazine#magazine-content",
   secondaryHref = "/magazine#newsletter-heading",
+  fontScale = 1,
 }: MagazineHeroProps) {
   const t = useTranslations("Home.magazine.hero");
   const { src: artworkSrc, unoptimized: artworkUnoptimized } =
     safeArtwork(artwork);
 
   return (
-    <section className="relative w-full px-4 pb-10 pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:px-8 md:pb-20 md:pt-32">
+    <section
+      className="relative w-full px-4 pb-10 pt-24 sm:px-6 sm:pb-14 sm:pt-28 md:px-8 md:pb-20 md:pt-32"
+      style={{ ["--mag-fs"]: fontScale } as React.CSSProperties}
+    >
       <div className="relative mx-auto w-full max-w-[1392px]">
         {/* Artwork — natural aspect (1392×483 ≈ 2.88:1). */}
         <div
           className="relative w-full overflow-hidden rounded-[20px]"
           style={{ aspectRatio: "1392 / 483" }}
         >
-          <Image
-            src={artworkSrc}
-            alt={t("imageAlt")}
-            fill
-            priority
-            sizes="(min-width: 1392px) 1392px, 100vw"
-            className="select-none object-cover"
-            draggable={false}
-            unoptimized={artworkUnoptimized}
-          />
+          {/* Scroll-linked parallax: the silk artwork drifts vertically as
+              the hero passes through the viewport, giving the banner depth.
+              The overlay copy below is a sibling and stays static. */}
+          <Parallax className="absolute inset-0" distance={28}>
+            <Image
+              src={artworkSrc}
+              alt={t("imageAlt")}
+              fill
+              priority
+              sizes="(min-width: 1392px) 1392px, 100vw"
+              className="select-none object-cover"
+              draggable={false}
+              unoptimized={artworkUnoptimized}
+            />
+          </Parallax>
 
           {/* Content overlay — only enabled at lg+ where the artwork is
               tall enough (≥350px) to comfortably hold the headline and
               CTAs without crowding. */}
           <div className="pointer-events-none absolute inset-0 z-10 hidden flex-col items-start justify-end px-10 pb-12 text-start lg:flex lg:px-16 lg:pb-20">
-            <HeroCopy
-              t={t}
-              title={title}
-              subtitle={subtitle}
-              primaryCtaLabel={primaryCtaLabel}
-              secondaryCtaLabel={secondaryCtaLabel}
-              primaryHref={primaryHref}
-              secondaryHref={secondaryHref}
-              tone="overlay"
-              className="pointer-events-auto"
-            />
+            <ScrollFadeOut className="w-full">
+              <HeroCopy
+                t={t}
+                title={title}
+                subtitle={subtitle}
+                primaryCtaLabel={primaryCtaLabel}
+                secondaryCtaLabel={secondaryCtaLabel}
+                primaryHref={primaryHref}
+                secondaryHref={secondaryHref}
+                tone="overlay"
+                className="pointer-events-auto"
+              />
+            </ScrollFadeOut>
           </div>
         </div>
 
         {/* Content card — shown below the artwork on <lg viewports. */}
-        <div className="mt-6 lg:hidden">
+        <ScrollFadeOut className="mt-6 lg:hidden" lift={40}>
           <HeroCopy
             t={t}
             title={title}
@@ -120,7 +135,7 @@ export function MagazineHero({
             secondaryHref={secondaryHref}
             tone="stacked"
           />
-        </div>
+        </ScrollFadeOut>
       </div>
     </section>
   );
@@ -179,13 +194,13 @@ function HeroCopy({
   return (
     <div className={`flex w-full flex-col items-start ${className ?? ""}`}>
       <h1
-        className="text-[clamp(1.5rem,4.5vw,3.25rem)] font-medium leading-[1.1] tracking-tight"
+        className="text-[calc(clamp(1.5rem,4.5vw,3.25rem)*var(--mag-fs,1))] font-medium leading-[1.1] tracking-tight"
         style={titleStyle}
       >
         {title?.trim() || t("title")}
       </h1>
       <p
-        className="mt-3 max-w-[60ch] text-[clamp(0.95rem,1.4vw,1.125rem)] leading-relaxed sm:mt-4"
+        className="mt-3 max-w-[60ch] text-[calc(clamp(0.95rem,1.4vw,1.125rem)*var(--mag-fs,1))] leading-relaxed sm:mt-4"
         style={subtitleStyle}
       >
         <RichContent html={subtitle?.trim() || t("subtitle")} variant="inline" />
@@ -193,7 +208,7 @@ function HeroCopy({
       <div className="mt-5 flex flex-wrap items-center gap-3 sm:mt-6 sm:gap-3.5">
         <Link
           href={primaryHref}
-          className="inline-flex items-center justify-center rounded-md px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90 sm:px-6 sm:text-[0.95rem]"
+          className="inline-flex items-center justify-center rounded-md px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90 sm:px-6 sm:text-[calc(0.95rem*var(--mag-fs,1))]"
           style={{
             backgroundColor: "var(--tott-magazine-btn-bg)",
             color: "var(--tott-auth-btn-text)",
@@ -203,7 +218,7 @@ function HeroCopy({
         </Link>
         <Link
           href={secondaryHref}
-          className="inline-flex items-center justify-center rounded-md border px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90 sm:px-6 sm:text-[0.95rem]"
+          className="inline-flex items-center justify-center rounded-md border px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90 sm:px-6 sm:text-[calc(0.95rem*var(--mag-fs,1))]"
           style={secondaryStyle}
         >
           {secondaryCtaLabel?.trim() || t("ctaSecondary")}

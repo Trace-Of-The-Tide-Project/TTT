@@ -47,8 +47,8 @@ export function ContentEditorFooter({
           type="button"
           disabled={disabledPrimary}
           onClick={onPublish}
-          className="flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-          style={{ backgroundColor: "#C9A96E" }}
+          className="flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          style={{ backgroundColor: "var(--tott-accent-gold)" }}
         >
           <CameraIcon />
           {primary}

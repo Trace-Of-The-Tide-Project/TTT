@@ -5,7 +5,8 @@
       "dashboard": "Dashboard",
       "adminSettings": "Admin Settings",
       "openSidebar": "Open sidebar",
-      "closeSidebar": "Close sidebar"
+      "closeSidebar": "Close sidebar",
+      "viewAll": "View all"
     },
     "topbar": {
       "searchPlaceholder": "Search users, content, settings…",
@@ -67,7 +68,8 @@
       "allPeople": "All People",
       "addPerson": "Add Person",
       "subscription": "Subscription",
-      "subscriptions": "Subscriptions"
+      "subscriptions": "Subscriptions",
+      "collections": "Collections"
     },
     "systemSettings": {
       "tabs": {
@@ -88,25 +90,29 @@
         "title": "Content Categories",
         "subtitle": "Manage content classification categories.",
         "editAria": "Edit {name}",
-        "deleteAria": "Delete {name}"
+        "deleteAria": "Delete {name}",
+        "empty": "No categories yet."
       },
       "tags": {
         "add": "Add Tag",
         "title": "Content Tags",
         "subtitle": "Special tags for content highlighting",
         "editAria": "Edit {name}",
-        "deleteAria": "Delete {name}"
+        "deleteAria": "Delete {name}",
+        "empty": "No tags yet."
       },
       "badges": {
         "add": "Create Badge",
         "title": "Achievement Badges",
         "subtitle": "Configure user achievement badges and milestones.",
-        "editAria": "Edit {name}"
+        "editAria": "Edit {name}",
+        "empty": "No badges yet."
       },
       "email": {
         "title": "Email Templates",
         "subtitle": "Customize automated email communications",
-        "editTemplate": "Edit Template"
+        "editTemplate": "Edit Template",
+        "empty": "No templates yet."
       },
       "localisation": {
         "title": "Language Settings",
@@ -142,6 +148,57 @@
         "contentPolicyLabel": "Content Policy",
         "sampleCommunity": "1. Be respectful to all community members\n2. No hate speech or discrimination\n3. Original content only - no plagiarism\n4. Credit sources when applicable\n5. No spam or self-promotion",
         "sampleContentPolicy": "All content must be original or properly licensed. Copyrighted material without permission will be removed. Adult content must be properly tagged."
+      },
+      "saving": "Saving…",
+      "modal": {
+        "close": "Close",
+        "closeModal": "Close modal",
+        "cancel": "Cancel"
+      },
+      "categoryModal": {
+        "addTitle": "Add Category",
+        "editTitle": "Edit Category",
+        "addSubtitle": "Create a new content category",
+        "editSubtitle": "Update the category details",
+        "createLabel": "Create Category",
+        "saveLabel": "Save edit",
+        "nameLabel": "Category Name",
+        "namePlaceholder": "e.g Documentary",
+        "slugLabel": "Slug",
+        "slugPlaceholder": "e.g documentary",
+        "slugHint": "URL-friendly identifier: /…"
+      },
+      "tagModal": {
+        "addTitle": "Add Tag",
+        "editTitle": "Edit Tag",
+        "addSubtitle": "Create a new content tag",
+        "editSubtitle": "Update the tag details",
+        "createLabel": "Create Tag",
+        "nameLabel": "Tag Name",
+        "namePlaceholder": "e.g Featured"
+      },
+      "badgeModal": {
+        "addTitle": "Create Badge",
+        "editTitle": "Edit Badge",
+        "addSubtitle": "Create a new achievement badge",
+        "editSubtitle": "Update the badge details",
+        "createLabel": "Create Badge",
+        "iconLabel": "Icon",
+        "selectIconAria": "Select icon {id}",
+        "nameLabel": "Badge Name",
+        "namePlaceholder": "e.g Top Contributor",
+        "milestoneLabel": "Milestone",
+        "milestonePlaceholder": "e.g +100 Contributions"
+      },
+      "localeFields": {
+        "otherLanguages": "Other languages",
+        "fallbackHint": "Leave a language blank to fall back to the default name above.",
+        "languages": {
+          "en": "English",
+          "ar": "Arabic",
+          "es": "Spanish",
+          "fr": "French"
+        }
       }
     },
     "placeholders": {

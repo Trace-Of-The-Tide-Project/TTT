@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { EyeIcon, RefreshCwIcon } from "@/components/ui/icons";
 import { useEnsureHomePage } from "@/hooks/queries/cms";
 import {
@@ -15,6 +16,7 @@ import {
   type HomeLocale,
   type HomeSectionKey,
 } from "@/services/home-page.service";
+import { LocaleTabs } from "@/components/dashboard/admin/translations";
 
 /**
  * Admin editor for the redesigned homepage. Mirrors the magazine page
@@ -26,12 +28,14 @@ import {
 // ── Field schemas per section ──────────────────────────────────────
 
 type FieldKind = "text" | "textarea";
-type LocalField = { key: string; label: string; kind: FieldKind };
-type FlatField = { key: string; label: string; kind: FieldKind };
+// `labelKey` is a translation key under the Dashboard.cmsHome namespace,
+// resolved with `t(...)` at render time.
+type LocalField = { key: string; labelKey: string; kind: FieldKind };
+type FlatField = { key: string; labelKey: string; kind: FieldKind };
 
 const RAIL_FIELDS: LocalField[] = [
-  { key: "heading", label: "Heading", kind: "text" },
-  { key: "subheading", label: "Subheading", kind: "textarea" },
+  { key: "heading", labelKey: "fields.heading", kind: "text" },
+  { key: "subheading", labelKey: "fields.subheading", kind: "textarea" },
 ];
 
 const SECTION_SCHEMA: Record<
@@ -40,23 +44,23 @@ const SECTION_SCHEMA: Record<
 > = {
   hero: {
     localized: [
-      { key: "eyebrow", label: "Eyebrow", kind: "text" },
-      { key: "title", label: "Title", kind: "text" },
-      { key: "subtitle", label: "Mission subtitle", kind: "textarea" },
-      { key: "primaryCtaLabel", label: "Primary CTA label", kind: "text" },
-      { key: "secondaryCtaLabel", label: "Secondary CTA label", kind: "text" },
+      { key: "eyebrow", labelKey: "fields.eyebrow", kind: "text" },
+      { key: "title", labelKey: "fields.title", kind: "text" },
+      { key: "subtitle", labelKey: "fields.missionSubtitle", kind: "textarea" },
+      { key: "primaryCtaLabel", labelKey: "fields.primaryCtaLabel", kind: "text" },
+      { key: "secondaryCtaLabel", labelKey: "fields.secondaryCtaLabel", kind: "text" },
     ],
     flat: [
-      { key: "artwork", label: "Artwork image URL", kind: "text" },
-      { key: "primaryHref", label: "Primary CTA link", kind: "text" },
-      { key: "secondaryHref", label: "Secondary CTA link", kind: "text" },
-      { key: "variant", label: "Homepage direction", kind: "text" },
+      { key: "artwork", labelKey: "fields.artworkUrl", kind: "text" },
+      { key: "primaryHref", labelKey: "fields.primaryCtaLink", kind: "text" },
+      { key: "secondaryHref", labelKey: "fields.secondaryCtaLink", kind: "text" },
+      { key: "variant", labelKey: "fields.homepageDirection", kind: "text" },
     ],
   },
   spotlight: {
     localized: [
-      { key: "eyebrow", label: "Eyebrow", kind: "text" },
-      { key: "heading", label: "Heading (optional)", kind: "text" },
+      { key: "eyebrow", labelKey: "fields.eyebrow", kind: "text" },
+      { key: "heading", labelKey: "fields.headingOptional", kind: "text" },
     ],
     flat: [],
   },
@@ -68,11 +72,11 @@ const SECTION_SCHEMA: Record<
   bookClub: { localized: RAIL_FIELDS, flat: [] },
   contributeCta: {
     localized: [
-      { key: "heading", label: "Heading", kind: "text" },
-      { key: "body", label: "Body", kind: "textarea" },
-      { key: "ctaLabel", label: "CTA label", kind: "text" },
+      { key: "heading", labelKey: "fields.heading", kind: "text" },
+      { key: "body", labelKey: "fields.body", kind: "textarea" },
+      { key: "ctaLabel", labelKey: "fields.ctaLabel", kind: "text" },
     ],
-    flat: [{ key: "openCallId", label: "Linked open-call id", kind: "text" }],
+    flat: [{ key: "openCallId", labelKey: "fields.openCallId", kind: "text" }],
   },
 };
 
@@ -117,21 +121,17 @@ function serializeConfig(cfg: WorkingConfig): string {
   return JSON.stringify({ copy: cfg.copy, ...cfg.flat });
 }
 
-const LOCALE_LABEL: Record<HomeLocale, string> = {
-  en: "EN",
-  ar: "AR",
-  fr: "FR",
-  es: "ES",
-};
-
 const inputClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-2.5 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none";
 
+// `label` of null means the human label comes from the `variants.default`
+// translation key. D01/D02/D03 are identifiers and stay verbatim, while
+// their human names come from `sublabelKey`.
 const VARIANT_OPTIONS = [
-  { value: "", label: "Default", sublabel: "CMS sections" },
-  { value: "d01", label: "D01", sublabel: "Lattice Refined" },
-  { value: "d02", label: "D02", sublabel: "The Tideline" },
-  { value: "d03", label: "D03", sublabel: "Currents" },
+  { value: "", label: null, sublabelKey: "variants.defaultSub" },
+  { value: "d01", label: "D01", sublabelKey: "variants.d01" },
+  { value: "d02", label: "D02", sublabelKey: "variants.d02" },
+  { value: "d03", label: "D03", sublabelKey: "variants.d03" },
 ] as const;
 
 function VariantPicker({
@@ -141,6 +141,7 @@ function VariantPicker({
   value: string;
   onChange: (v: string) => void;
 }) {
+  const t = useTranslations("Dashboard.cmsHome");
   return (
     <div className="grid grid-cols-4 gap-2">
       {VARIANT_OPTIONS.map((opt) => {
@@ -152,12 +153,16 @@ function VariantPicker({
             onClick={() => onChange(opt.value)}
             className={`flex flex-col items-center gap-1 rounded-lg border px-3 py-3 text-center transition-colors ${
               active
-                ? "border-[#C9A96E] bg-[#C9A96E]/15 text-[#C9A96E]"
-                : "border-[var(--tott-card-border)] text-gray-400 hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
+                ? "border-[var(--tott-accent-gold)] bg-[var(--tott-accent-gold)]/15 text-[var(--tott-dash-gold-text)]"
+                : "border-[var(--tott-card-border)] text-[var(--tott-muted)] hover:bg-[var(--tott-dash-control-hover)] hover:text-foreground"
             }`}
           >
-            <span className="text-sm font-semibold">{opt.label}</span>
-            <span className="text-[10px] leading-tight opacity-70">{opt.sublabel}</span>
+            <span className="text-sm font-semibold">
+              {opt.label ?? t("variants.default")}
+            </span>
+            <span className="text-[10px] leading-tight opacity-70">
+              {t(opt.sublabelKey)}
+            </span>
           </button>
         );
       })}
@@ -166,6 +171,7 @@ function VariantPicker({
 }
 
 export function HomePageEditorContent() {
+  const t = useTranslations("Dashboard.cmsHome");
   const { data: page, isPending } = useEnsureHomePage();
   const updateSection = useUpdateCmsSection();
   const toggleSection = useToggleCmsSection();
@@ -176,6 +182,15 @@ export function HomePageEditorContent() {
         .filter((s) => HOME_SECTION_KEY_BY_TYPE[s.section_type])
         .sort((a, b) => a.section_order - b.section_order)
     : [];
+
+  // The stored CmsSection.title is a single, non-localized DB field, so it
+  // would stay English for every locale. In the admin chrome we instead show
+  // a localized label derived from the (stable) section_type, falling back to
+  // the raw title for any unknown/legacy section.
+  const sectionLabel = (section: CmsSection): string => {
+    const key = HOME_SECTION_KEY_BY_TYPE[section.section_type];
+    return key ? t(`sectionNames.${key}`) : section.title;
+  };
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeLocale, setActiveLocale] = useState<HomeLocale>("en");
@@ -197,8 +212,8 @@ export function HomePageEditorContent() {
 
   if (isPending || !page) {
     return (
-      <div className="flex items-center justify-center py-20 text-sm text-gray-500">
-        Loading homepage editor…
+      <div className="flex items-center justify-center py-20 text-sm text-[var(--tott-muted)]">
+        {t("loading")}
       </div>
     );
   }
@@ -232,20 +247,17 @@ export function HomePageEditorContent() {
       {/* Section list */}
       <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-foreground">Sections</h3>
+          <h3 className="text-sm font-semibold text-foreground">{t("sections")}</h3>
           <button
             type="button"
             onClick={() => publishPage.mutate(page.id)}
             disabled={publishPage.isPending}
-            className="rounded-lg border border-[#C9A96E]/40 bg-[#C9A96E]/20 px-3 py-1.5 text-xs font-medium text-[#C9A96E] hover:bg-[#C9A96E]/30 disabled:opacity-50"
+            className="rounded-lg border border-[var(--tott-accent-gold)]/40 bg-[var(--tott-accent-gold)]/20 px-3 py-1.5 text-xs font-medium text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-accent-gold)]/30 disabled:opacity-50"
           >
-            {publishPage.isPending ? "Publishing…" : "Publish"}
+            {publishPage.isPending ? t("publishing") : t("publish")}
           </button>
         </div>
-        <p className="mt-1 text-xs text-gray-500">
-          Toggle visibility; edit copy per language. Rail contents come live
-          from the archive.
-        </p>
+        <p className="mt-1 text-xs text-[var(--tott-muted)]">{t("listHelper")}</p>
         <div className="mt-4 flex flex-col gap-2">
           {sections.map((section) => {
             const isSel = section.id === (selected?.id ?? null);
@@ -254,11 +266,11 @@ export function HomePageEditorContent() {
                 key={section.id}
                 onClick={() => setSelectedId(section.id)}
                 className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-3 transition-colors hover:bg-[var(--tott-dash-control-hover)] ${
-                  isSel ? "border-[#C9A96E]" : "border-[var(--tott-card-border)]"
+                  isSel ? "border-[var(--tott-accent-gold)]" : "border-[var(--tott-card-border)]"
                 }`}
               >
-                <span className={`flex-1 text-sm font-medium ${isSel ? "text-[#C9A96E]" : "text-foreground"}`}>
-                  {section.title}
+                <span className={`flex-1 text-sm font-medium ${isSel ? "text-[var(--tott-dash-gold-text)]" : "text-foreground"}`}>
+                  {sectionLabel(section)}
                 </span>
                 <button
                   type="button"
@@ -267,9 +279,9 @@ export function HomePageEditorContent() {
                     toggleSection.mutate({ pageId: page.id, sectionId: section.id });
                   }}
                   className={`rounded p-1.5 hover:bg-[var(--tott-dash-ghost-hover)] ${
-                    section.is_visible ? "text-gray-400" : "text-gray-600 opacity-40"
+                    section.is_visible ? "text-[var(--tott-muted)]" : "text-[var(--tott-muted)] opacity-40"
                   }`}
-                  aria-label={section.is_visible ? "Hide section" : "Show section"}
+                  aria-label={section.is_visible ? t("hideSection") : t("showSection")}
                 >
                   <span className="[&_svg]:h-4 [&_svg]:w-4">
                     <EyeIcon />
@@ -287,7 +299,7 @@ export function HomePageEditorContent() {
           <>
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-foreground">
-                {selected.title}
+                {sectionLabel(selected)}
               </h3>
               <div className="flex gap-2">
                 <button
@@ -298,36 +310,27 @@ export function HomePageEditorContent() {
                   <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">
                     <RefreshCwIcon />
                   </span>
-                  Reset
+                  {t("reset")}
                 </button>
                 <button
                   type="button"
                   onClick={handleSave}
                   disabled={saving}
-                  className="rounded-lg border border-[#C9A96E]/40 bg-[#C9A96E]/20 px-3 py-1.5 text-xs font-medium text-[#C9A96E] hover:bg-[#C9A96E]/30 disabled:opacity-50"
+                  className="rounded-lg border border-[var(--tott-accent-gold)]/40 bg-[var(--tott-accent-gold)]/20 px-3 py-1.5 text-xs font-medium text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-accent-gold)]/30 disabled:opacity-50"
                 >
-                  {saving ? "Saving…" : "Save"}
+                  {saving ? t("saving") : t("save")}
                 </button>
               </div>
             </div>
 
             {/* Locale tabs */}
             {schema.localized.length > 0 ? (
-              <div className="mt-5 flex gap-1.5">
-                {SUPPORTED_LOCALES.map((loc) => (
-                  <button
-                    key={loc}
-                    type="button"
-                    onClick={() => setActiveLocale(loc)}
-                    className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                      activeLocale === loc
-                        ? "bg-[#C9A96E]/20 text-[#C9A96E]"
-                        : "text-gray-400 hover:bg-[var(--tott-dash-control-hover)]"
-                    }`}
-                  >
-                    {LOCALE_LABEL[loc]}
-                  </button>
-                ))}
+              <div className="mt-5">
+                <LocaleTabs
+                  locales={SUPPORTED_LOCALES}
+                  active={activeLocale}
+                  onChange={setActiveLocale}
+                />
               </div>
             ) : null}
 
@@ -337,7 +340,7 @@ export function HomePageEditorContent() {
                 return (
                   <div key={f.key}>
                     <label className="mb-1.5 block text-xs font-medium text-foreground">
-                      {f.label}
+                      {t(f.labelKey)}
                     </label>
                     {f.kind === "textarea" ? (
                       <textarea
@@ -362,13 +365,13 @@ export function HomePageEditorContent() {
 
               {schema.flat.length > 0 ? (
                 <div className="mt-2 border-t border-[var(--tott-card-border)] pt-4">
-                  <p className="mb-3 text-xs font-medium uppercase tracking-wide text-gray-500">
-                    Shared (all languages)
+                  <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--tott-muted)]">
+                    {t("sharedAllLanguages")}
                   </p>
                   {schema.flat.map((f) => (
                     <div key={f.key} className="mb-4">
                       <label className="mb-1.5 block text-xs font-medium text-foreground">
-                        {f.label}
+                        {t(f.labelKey)}
                       </label>
                       {f.key === "variant" ? (
                         <VariantPicker
@@ -390,8 +393,8 @@ export function HomePageEditorContent() {
             </div>
           </>
         ) : (
-          <div className="flex h-full items-center justify-center py-20 text-sm text-gray-500">
-            Select a section to edit.
+          <div className="flex h-full items-center justify-center py-20 text-sm text-[var(--tott-muted)]">
+            {t("emptyState")}
           </div>
         )}
       </div>

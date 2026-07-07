@@ -50,7 +50,7 @@ function HexIcon({ children }: { children: React.ReactNode }) {
           strokeWidth="1"
         />
       </svg>
-      <span className="relative text-gray-400">{children}</span>
+      <span className="relative text-[var(--tott-muted)]">{children}</span>
     </div>
   );
 }
@@ -88,12 +88,12 @@ export function AlertsList({ items, onDismissAll }: AlertsListProps) {
                 </HexIcon>
                 <div className="relative min-w-0 flex-1">
                   <p className="text-sm font-medium text-foreground">{item.title}</p>
-                  <p className="mt-0.5 text-xs text-gray-500">{item.description}</p>
+                  <p className="mt-0.5 text-xs text-[var(--tott-muted)]">{item.description}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setActiveAlert(item)}
-                  className="relative shrink-0 text-xs font-medium text-gray-400 transition-colors hover:text-foreground"
+                  className="relative shrink-0 text-xs font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
                 >
                   {item.actionLabel} &rsaquo;
                 </button>

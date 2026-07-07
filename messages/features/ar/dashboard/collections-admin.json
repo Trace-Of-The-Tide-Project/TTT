@@ -1,0 +1,58 @@
+{
+  "Dashboard": {
+    "collections": {
+      "list": {
+        "pageTitle": "المجموعات",
+        "addNew": "إضافة مجموعة",
+        "searchPlaceholder": "ابحث في المجموعات…",
+        "loading": "جارٍ التحميل…",
+        "empty": {
+          "none": "لا توجد مجموعات بعد.",
+          "noMatch": "لا توجد مجموعات تطابق بحثك."
+        },
+        "edit": "تحرير",
+        "delete": "حذف"
+      },
+      "form": {
+        "backToList": "المجموعات",
+        "createTitle": "إضافة مجموعة",
+        "editTitle": "تحرير المجموعة",
+        "loading": "جارٍ التحميل…",
+        "cancel": "إلغاء",
+        "saving": "جارٍ الحفظ…",
+        "save": "حفظ التغييرات",
+        "create": "إنشاء",
+        "fields": {
+          "name": "الاسم",
+          "namePlaceholder": "مثال: التراث الثقافي",
+          "description": "الوصف",
+          "descriptionPlaceholder": "وصف موجز للمجموعة",
+          "coverImage": "رابط صورة الغلاف",
+          "coverImagePlaceholder": "https://… أو مفتاح ملف مرفوع"
+        },
+        "translation": {
+          "banner": "إضافة نسخة {language}",
+          "ofOriginal": "ترجمة لـ: {name}"
+        }
+      },
+      "errors": {
+        "nameRequired": "الاسم مطلوب.",
+        "createFailed": "تعذّر إنشاء المجموعة.",
+        "updateFailed": "تعذّر تحديث المجموعة.",
+        "deleteFailed": "تعذّر حذف المجموعة."
+      },
+      "toasts": {
+        "created": "تم إنشاء المجموعة",
+        "updated": "تم تحديث المجموعة",
+        "deleted": "تم حذف المجموعة"
+      },
+      "deleteModal": {
+        "title": "حذف المجموعة",
+        "description": "حذف «{name}»؟ لا يمكن التراجع عن هذا.",
+        "cancel": "إلغاء",
+        "confirm": "حذف",
+        "confirmBusy": "جارٍ الحذف…"
+      }
+    }
+  }
+}

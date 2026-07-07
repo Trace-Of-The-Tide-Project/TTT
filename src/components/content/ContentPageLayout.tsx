@@ -1,5 +1,7 @@
 import { theme } from "@/lib/theme";
+import { dirFor } from "@/i18n/dir";
 import { SpringLink } from "@/components/motion/SpringLink";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import HexBackground from "@/components/ui/HexBackground";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { ContentBreadcrumb } from "./related/ContentBreadcrumb";
@@ -179,13 +181,18 @@ export function ContentPageLayout({
       {/* Two-column: article body + sidebar */}
       <div className="mx-auto max-w-7xl px-6 pb-8 pt-8 sm:px-10 sm:pb-10 sm:pt-8">
         <div className="flex flex-col gap-10 lg:flex-row lg:gap-8">
-          {/* Left — article body */}
-          <div className="flex min-w-0 flex-1 flex-col gap-8">
+          {/* Left — article body. dir/lang follow the CONTENT language, which
+              can differ from the UI locale (e.g. Arabic piece on English UI). */}
+          <div
+            className="flex min-w-0 flex-1 flex-col gap-8"
+            dir={dirFor(article.language)}
+            lang={article.language}
+          >
             <ContentArticleBody sections={article.sections} />
             {isOpenCall && (openCallId || articleId) && (
               <SpringLink
                 href={`/open-calls/${openCallId || articleId}`}
-                className="inline-flex w-fit items-center gap-2 rounded-lg px-8 py-3 text-sm font-semibold text-black"
+                className="inline-flex w-fit items-center gap-2 rounded-lg px-8 py-3 text-sm font-semibold text-[var(--tott-on-accent)]"
                 style={{ backgroundColor: theme.accentGold }}
               >
                 Join Call
@@ -216,7 +223,9 @@ export function ContentPageLayout({
       </div>
 
       {/* Related content */}
-      <RelatedContent items={relatedContent} />
+      <RevealOnScroll>
+        <RelatedContent items={relatedContent} />
+      </RevealOnScroll>
 
       {/* Share your story */}
       <ShareYourStory surface={theme.homeSurface} />

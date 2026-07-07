@@ -78,6 +78,20 @@
       "deactivateDescription": "بعد تعطيل حسابك، يُخفى ملفك ومقالاتك. يمكنك إعادة التفعيل في أي وقت بتسجيل الدخول.",
       "deactivateButton": "تعطيل الحساب",
       "deactivateConfirm": "هل تريد تعطيل حسابك؟ يُخفى ملفك ومقالاتك حتى تسجّل الدخول مجدداً."
+    },
+    "profileSupporters": {
+      "loadError": "تعذّر تحميل الداعمين. يرجى المحاولة مرة أخرى.",
+      "emptyTitle": "لا يوجد داعمون بعد.",
+      "emptySubtitle": "سيظهر داعموك هنا بمجرد مساهمتهم.",
+      "anonymous": "مجهول",
+      "thanked": "تم الشكر",
+      "sending": "جارٍ الإرسال…",
+      "prev": "السابق",
+      "next": "التالي",
+      "justNow": "الآن",
+      "minutesAgo": "{count, plural, other {منذ # دقيقة}}",
+      "hoursAgo": "{count, plural, other {منذ # ساعة}}",
+      "daysAgo": "{count, plural, other {منذ # يوم}}"
     }
   }
 }

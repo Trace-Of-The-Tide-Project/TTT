@@ -156,9 +156,10 @@ export function FeaturedHexCard({
 
       {chipLabel ? (
         <span
-          className="absolute z-20 inline-flex items-center justify-center"
+          className="absolute z-20 inline-flex items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap"
           style={{
             minWidth: "56px",
+            maxWidth: "152px",
             height: "24px",
             left: "50%",
             transform: "translateX(-50%)",

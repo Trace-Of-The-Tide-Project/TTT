@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { theme } from "@/lib/theme";
 
 const HEX_CLIP =
@@ -42,6 +43,7 @@ export function CommunityStats({
   const t = useTranslations("Community");
 
   return (
+    <RevealOnScroll>
     <section
       className="mt-10 flex flex-wrap gap-x-10 gap-y-5 rounded-2xl border px-6 py-6"
       style={{
@@ -53,5 +55,6 @@ export function CommunityStats({
       <StatChip value={openCalls} label={t("statsOpenCalls", { count: openCalls })} />
       <StatChip value={guidelines} label={t("statsGuidelines", { count: guidelines })} />
     </section>
+    </RevealOnScroll>
   );
 }

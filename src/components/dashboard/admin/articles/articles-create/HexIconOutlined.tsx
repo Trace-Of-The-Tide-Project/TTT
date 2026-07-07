@@ -58,7 +58,7 @@ export function HexIconOutlined({ children, size = "md", className = "" }: HexIc
           strokeWidth="1.2"
         />
       </svg>
-      <span className="relative" style={{ color: "#E1D6BA" }}>
+      <span className="relative" style={{ color: "var(--tott-dash-gold-text)" }}>
         {children}
       </span>
     </div>

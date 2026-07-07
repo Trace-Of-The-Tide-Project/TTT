@@ -542,7 +542,7 @@ export function EditorToolbar() {
 
           return (
             <>
-              <div className="px-3 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+              <div className="px-3 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--tott-muted)]">
                 Bulleted
               </div>
               <PopoverItem
@@ -564,7 +564,7 @@ export function EditorToolbar() {
                 ■ Square
               </PopoverItem>
 
-              <div className="mt-1 px-3 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+              <div className="mt-1 px-3 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--tott-muted)]">
                 Numbered
               </div>
               <PopoverItem
@@ -598,7 +598,7 @@ export function EditorToolbar() {
                 I. Upper roman
               </PopoverItem>
 
-              <div className="mt-1 px-3 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+              <div className="mt-1 px-3 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--tott-muted)]">
                 Checklist
               </div>
               <PopoverItem
@@ -730,7 +730,7 @@ export function EditorToolbar() {
                   close();
                 }
               }}
-              className="w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-2 py-1.5 text-xs text-foreground outline-none focus:border-[#C9A96E]/60"
+              className="w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-2 py-1.5 text-xs text-foreground outline-none focus:border-[var(--tott-accent-gold)]/60"
             />
             <button
               type="button"
@@ -793,7 +793,7 @@ export function EditorToolbar() {
                   close();
                 }
               }}
-              className="mt-2 w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-2 py-1.5 text-xs text-foreground outline-none focus:border-[#C9A96E]/60"
+              className="mt-2 w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-2 py-1.5 text-xs text-foreground outline-none focus:border-[var(--tott-accent-gold)]/60"
             />
           </div>
         )}

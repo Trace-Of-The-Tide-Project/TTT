@@ -108,7 +108,7 @@ export function UserActionsDropdown({ userId, onAction }: UserActionsDropdownPro
         type="button"
         onClick={() => setIsOpen((o) => !o)}
         className="rounded p-1.5 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
-        style={{ color: "#A3A3A3" }}
+        style={{ color: "var(--tott-muted)" }}
         aria-label={t("menuAria")}
         aria-expanded={isOpen}
         aria-haspopup="menu"

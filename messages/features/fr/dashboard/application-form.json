@@ -138,6 +138,7 @@
         "fileDropHint": "Glissez-déposez des fichiers (max {maxFiles}, {types}, jusqu'à {maxSizeMb} Mo)"
       },
       "tripBooking": {
+        "aboutTitle": "À propos de ce voyage",
         "joinTitle": "Rejoindre cette aventure",
         "joinSubtitle": "Réservez votre place pour ce voyage.",
         "chooseContribution": "Choisissez votre contribution",

@@ -1,0 +1,31 @@
+{
+  "Dashboard": {
+    "analyticsExtra": {
+      "allArticlesSubtitle": "اعرض مقالاتك المنشورة وأدِرها.",
+      "allArticlesTitle": "جميع المقالات",
+      "anonymous": "مجهول",
+      "articlesPublished": "المقالات المنشورة",
+      "avgViewsPerArticle": "متوسط المشاهدات / مقالة",
+      "contributorsCount": "{count, plural, zero {لا مساهمين} one {مساهم واحد} two {مساهمان} few {# مساهمين} many {# مساهماً} other {# مساهم}}",
+      "draftArticle": "مسودة مقالة",
+      "loading": "جارٍ التحميل…",
+      "noDataYet": "لا توجد بيانات بعد.",
+      "noPublishedArticlesYet": "لا توجد مقالات منشورة بعد.",
+      "pageSubtitle": "تابع أداء محتواك وجمهورك.",
+      "pageTitle": "التحليلات",
+      "period30d": "آخر 30 يوماً",
+      "period7d": "آخر 7 أيام",
+      "period90d": "آخر 90 يوماً",
+      "periodYear": "آخر سنة",
+      "publishFirstArticleHint": "انشر مقالتك الأولى لرؤية التحليلات هنا.",
+      "publishedArticle": "مقالة منشورة",
+      "topPerformingArticles": "أفضل المقالات أداءً",
+      "totalContributors": "إجمالي المساهمين",
+      "totalViews": "إجمالي المشاهدات",
+      "untitled": "بدون عنوان",
+      "views": "مشاهدة",
+      "viewsColumn": "المشاهدات",
+      "viewsCount": "{count} مشاهدة"
+    }
+  }
+}

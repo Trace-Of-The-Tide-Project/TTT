@@ -48,6 +48,10 @@
             "scheduled": "مجدولة"
           },
           "justNow": "الآن",
+          "translationsTooltip": "+{count, plural, one {# ترجمة} other {# ترجمات}}",
+          "toggleTranslations": "إظهار أو إخفاء النسخ اللغوية الأخرى",
+          "needsTranslation": "بحاجة إلى ترجمة",
+          "needsTranslationTooltip": "لا توجد نسخة بلغة {locale} لهذا المحتوى بعد",
           "lastUpdated": "آخر تحديث",
           "views": "المشاهدات",
           "supporters": "الداعمون",

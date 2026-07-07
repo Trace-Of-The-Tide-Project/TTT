@@ -107,6 +107,47 @@
             "revokeFailed": "No se pudo quitar el rol"
           }
         }
+      },
+      "addUser": {
+        "title": "Añadir usuario",
+        "subtitle": "Crea una nueva cuenta de usuario. Podrá iniciar sesión con el correo y la contraseña que definas aquí.",
+        "back": "Volver a usuarios",
+        "fields": {
+          "fullName": "Nombre completo",
+          "email": "Correo electrónico",
+          "password": "Contraseña",
+          "passwordHint": "Comparte esta contraseña con el usuario: no hay correo de invitación."
+        },
+        "actions": {
+          "generate": "Generar",
+          "copy": "Copiar",
+          "copied": "Copiado",
+          "show": "Mostrar",
+          "hide": "Ocultar",
+          "create": "Crear usuario",
+          "creating": "Creando…",
+          "cancel": "Cancelar"
+        },
+        "errors": {
+          "fullNameRequired": "El nombre completo es obligatorio.",
+          "emailRequired": "Introduce un correo electrónico válido.",
+          "passwordTooShort": "La contraseña debe tener al menos 6 caracteres.",
+          "createFailed": "No se pudo crear el usuario."
+        },
+        "toasts": {
+          "creating": "Creando usuario…",
+          "created": "Usuario creado"
+        }
+      },
+      "filters": {
+        "title": "Filtros",
+        "clearAll": "Borrar todo",
+        "emailContains": "El correo contiene",
+        "emailPlaceholder": "p. ej. @domain.com",
+        "minContributions": "Contribuciones mínimas",
+        "joinedAfter": "Se unió después de",
+        "sortOrder": "Orden de clasificación",
+        "done": "Listo"
       }
     }
   }

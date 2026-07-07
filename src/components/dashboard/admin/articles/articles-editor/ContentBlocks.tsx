@@ -31,6 +31,8 @@ type ContentBlocksProps = {
   onAddCoverBlock: () => void;
   /** Move block `activeId` to the position of `overId` (HTML5 drag-and-drop). */
   onReorderBlock: (activeId: string, overId: string) => void;
+  /** Removes the block entirely (action panel trash button). */
+  onRemoveBlock: (id: string) => void;
   config: ContentFormConfig;
   /** When set, overrides `mainMediaEditorCopy(config.contentType)` for hero UI. */
   mainMediaCopy?: MainMediaEditorCopy;
@@ -41,6 +43,7 @@ export function ContentBlocks({
   onUpdateBlock,
   onAddCoverBlock,
   onReorderBlock,
+  onRemoveBlock,
   config,
   mainMediaCopy,
 }: ContentBlocksProps) {
@@ -94,11 +97,11 @@ export function ContentBlocks({
       {!hasImageBlock ? (
         <div className="rounded-lg border border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]/40 px-4 py-4 sm:px-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-gray-400">{heroCopy.missingHeroBlurb}</p>
+            <p className="text-sm text-[var(--tott-muted)]">{heroCopy.missingHeroBlurb}</p>
             <button
               type="button"
               onClick={onAddCoverBlock}
-              className="shrink-0 rounded-lg border border-[#C9A96E]/50 bg-[var(--tott-dash-control-bg)] px-4 py-2.5 text-sm font-medium text-[#C9A96E] transition-colors hover:border-[#C9A96E] hover:bg-[var(--tott-dash-control-hover)]"
+              className="shrink-0 rounded-lg border border-[var(--tott-accent-gold)]/50 bg-[var(--tott-dash-control-bg)] px-4 py-2.5 text-sm font-medium text-[var(--tott-dash-gold-text)] transition-colors hover:border-[var(--tott-accent-gold)] hover:bg-[var(--tott-dash-control-hover)]"
             >
               {heroCopy.addBlockButton}
             </button>
@@ -112,7 +115,7 @@ export function ContentBlocks({
           onDropCapture={(e) => handleDrop(e, block.id)}
           className={`flex items-start gap-3 rounded-md transition-shadow ${
             dragOverId === block.id && draggingId != null && draggingId !== block.id
-              ? "ring-1 ring-[#C9A96E]/90 ring-offset-2 ring-offset-[#141414]"
+              ? "ring-1 ring-[var(--tott-accent-gold)]/90 ring-offset-2 ring-offset-[var(--tott-elevated)]"
               : ""
           } ${draggingId === block.id ? "opacity-50" : ""}`}
         >
@@ -125,21 +128,14 @@ export function ContentBlocks({
               onChange={(patch) => onUpdateBlock(block.id, patch)}
             />
           </div>
-          {block.type === "divider" ? (
-            <div className="w-10 shrink-0" aria-hidden />
-          ) : block.type !== "paragraph" ? (
-            // Non-paragraph blocks reserve only the column width so right edges
-            // align — no 120px tall action panel inflating the row height.
-            <div className="w-10 shrink-0" aria-hidden />
-          ) : (
-            <div>
+          <div>
               <BlockActions
                 blockId={block.id}
                 isDragging={draggingId === block.id}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 mode={blockActionsModeFor(block.type, block.id, firstImageBlockId)}
-                onDelete={() => onUpdateBlock(block.id, { content: "" })}
+                onDelete={() => onRemoveBlock(block.id)}
                 onCopy={() => {
                   if (typeof navigator === "undefined") return;
                   const html = block.content ?? "";
@@ -163,8 +159,7 @@ export function ContentBlocks({
                   }
                 }}
               />
-            </div>
-          )}
+          </div>
         </div>
       ))}
     </div>

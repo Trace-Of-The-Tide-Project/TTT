@@ -30,9 +30,9 @@ export function PlaceholderPage({ pageKey }: PlaceholderPageProps) {
       <DashboardHeader title={title} subtitle={subtitle} />
       <div className="flex items-center justify-center p-16">
         <div className="text-center">
-          <div className="mb-4 text-5xl text-gray-700">🏗</div>
-          <p className="text-lg font-medium text-gray-500">{t("comingSoon")}</p>
-          <p className="mt-1 text-sm text-gray-600">{t("pageSoon", { title })}</p>
+          <div className="mb-4 text-5xl text-[var(--tott-muted)]">🏗</div>
+          <p className="text-lg font-medium text-[var(--tott-muted)]">{t("comingSoon")}</p>
+          <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("pageSoon", { title })}</p>
         </div>
       </div>
     </div>

@@ -7,6 +7,12 @@
       "addAll": "Tout ajouter",
       "openVersion": "Ouvrir",
       "currentBadge": "Actuelle",
+      "tabs": {
+        "unsaved": "Modifications non enregistrées"
+      },
+      "toasts": {
+        "partialFailure": "Certaines versions linguistiques n'ont pas pu être enregistrées : {languages}. Vos modifications sont conservées — réessayez d'enregistrer."
+      },
       "missing": "Pas encore ajoutée",
       "status": {
         "draft": "Brouillon",
@@ -29,7 +35,17 @@
         "notAdded": "Pas encore ajoutée",
         "addTranslation": "Ajouter une traduction",
         "edit": "Modifier",
-        "finish": "Terminer"
+        "finish": "Terminer",
+        "step": "Étape {current}/{total}",
+        "reviewStep": "Vérifier avant d'enregistrer",
+        "reviewStepShort": "Vérifier",
+        "clonedNotice": "Les champs ci-dessous sont copiés depuis la langue principale — modifiez-les pour rédiger la version {language}, ou laissez-les tels quels et cliquez sur Ignorer.",
+        "willCreate": "Sera créé",
+        "willSkip": "Ignoré",
+        "back": "Retour",
+        "skipLanguage": "Ignorer pour l'instant",
+        "next": "Suivant",
+        "confirmSave": "Confirmer et enregistrer"
       }
     }
   }

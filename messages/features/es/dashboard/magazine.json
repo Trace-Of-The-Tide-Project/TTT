@@ -258,6 +258,7 @@
             "subtitlePlaceholder": "Subtítulo opcional",
             "kind": "Tipo",
             "status": "Estado",
+            "language": "Idioma",
             "isPremium": "Número premium (de pago)",
             "fundingGoal": "Meta de financiación",
             "fundingDeadline": "Fecha límite de financiación",
@@ -286,7 +287,24 @@
           "cancel": "Cancelar",
           "create": "Crear",
           "save": "Guardar",
-          "saving": "Guardando…"
+          "saving": "Guardando…",
+          "createAllLanguages": "Crear también borradores en los demás idiomas",
+          "discardTitle": "¿Descartar los cambios?",
+          "discardBody": "Tienes cambios sin guardar. ¿Cerrar sin guardarlos?",
+          "discardCancel": "Seguir editando",
+          "discardConfirm": "Descartar",
+          "articles": {
+            "label": "Artículos en este número",
+            "loading": "Cargando artículos…",
+            "empty": "Aún no se han asignado artículos.",
+            "searchPlaceholder": "Buscar artículos para añadir…",
+            "searching": "Buscando…",
+            "noResults": "No se encontraron artículos",
+            "add": "Añadir",
+            "remove": "Eliminar",
+            "moveUp": "Subir",
+            "moveDown": "Bajar"
+          }
         },
         "delete": {
           "title": "¿Eliminar número?",
@@ -298,6 +316,7 @@
         "toast": {
           "saving": "Guardando número…",
           "created": "Número creado.",
+          "createdAll": "Número creado en todos los idiomas — traduce los borradores cuando quieras.",
           "updated": "Número actualizado.",
           "saveError": "No se pudo guardar el número",
           "deleting": "Eliminando número…",
@@ -408,6 +427,21 @@
         "pasteImageUrl": "…o pega la URL de una imagen",
         "linkPlaceholder": "https://example.com",
         "removeLink": "Quitar enlace"
+      },
+      "fontSize": {
+        "label": "Tamaño del texto",
+        "hint": "Escala el texto de esta sección. El valor predeterminado coincide con el tamaño actual del sitio.",
+        "small": "Pequeño",
+        "default": "Predeterminado",
+        "large": "Grande",
+        "xl": "Extra grande"
+      },
+      "textAlign": {
+        "label": "Alineación",
+        "start": "Inicio",
+        "center": "Centro",
+        "end": "Fin",
+        "justify": "Justificado"
       }
     }
   }

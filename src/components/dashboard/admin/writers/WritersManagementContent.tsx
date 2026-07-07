@@ -14,6 +14,7 @@ import {
   useUpdateWriterProfile,
   useDeleteWriterProfile,
 } from "@/hooks/mutations/writers";
+import { useCreateAdminUser } from "@/hooks/mutations/users";
 import {
   writerAvatar,
   writerDisplayName,
@@ -22,10 +23,11 @@ import {
 } from "@/services/writers.service";
 import { formatApiError } from "@/lib/api/error-message";
 import { nameInitials } from "./initials";
+import { CreateAccountModal } from "./CreateAccountModal";
 
 const PAGE_LIMIT = 10;
 
-const KNOWN_KINDS = new Set(["musician", "writer", "visual_artist", "filmmaker"]);
+const KNOWN_KINDS = new Set(["musician", "writer", "visual_artist", "filmmaker", "photographer", "translator", "editor", "illustrator"]);
 
 const emptyMeta: WritersListMeta = {
   total: 0,
@@ -53,6 +55,7 @@ export function WritersManagementContent() {
   const [actionError, setActionError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<WriterProfile | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [accountTarget, setAccountTarget] = useState<WriterProfile | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(
@@ -87,6 +90,8 @@ export function WritersManagementContent() {
 
   const updateMutation = useUpdateWriterProfile();
   const deleteMutation = useDeleteWriterProfile();
+  const createAccountMutation = useCreateAdminUser();
+  const linkAccountMutation = useUpdateWriterProfile();
   const deleteBusy = deleteMutation.isPending;
 
   const toggleFeatured = useCallback(
@@ -131,7 +136,7 @@ export function WritersManagementContent() {
       {
         key: "writer",
         header: t("headers.writer"),
-        width: "26%",
+        width: "22%",
         cellClassName: "flex min-w-0 items-center gap-3 px-5 py-3",
         cell: (w) => {
           const avatar = writerAvatar(w);
@@ -155,7 +160,7 @@ export function WritersManagementContent() {
                 </span>
               )}
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium" style={{ color: "#DBC99E" }}>
+                <p className="truncate text-sm font-medium text-[var(--tott-dash-gold-text)]">
                   {writerRowName(w)}
                 </p>
                 <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]">
@@ -169,7 +174,7 @@ export function WritersManagementContent() {
       {
         key: "headline",
         header: t("headers.headline"),
-        width: "24%",
+        width: "20%",
         cellClassName:
           "px-5 py-3 text-sm text-[var(--tott-muted)] flex items-center min-w-0",
         cell: (w) => (
@@ -179,7 +184,7 @@ export function WritersManagementContent() {
       {
         key: "kind",
         header: t("headers.kind"),
-        width: "12%",
+        width: "10%",
         cell: (w) =>
           w.creator_kind ? (
             <span className="inline-flex max-w-full rounded-full bg-[var(--tott-elevated)] px-2.5 py-1 text-xs font-medium text-foreground">
@@ -196,7 +201,7 @@ export function WritersManagementContent() {
       {
         key: "location",
         header: t("headers.location"),
-        width: "14%",
+        width: "12%",
         cellClassName:
           "px-5 py-3 text-sm text-[var(--tott-muted)] flex items-center min-w-0",
         cell: (w) => (
@@ -204,9 +209,29 @@ export function WritersManagementContent() {
         ),
       },
       {
+        key: "account",
+        header: t("headers.account"),
+        width: "12%",
+        cellClassName: "px-5 py-3 flex items-center min-w-0",
+        cell: (w) =>
+          w.user_id ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
+              {t("account.linked")}
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setAccountTarget(w)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-2.5 py-1 text-xs font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 transition-colors"
+            >
+              {t("account.createAction")}
+            </button>
+          ),
+      },
+      {
         key: "featured",
         header: t("headers.featured"),
-        width: "12%",
+        width: "10%",
         align: "center",
         cellClassName: "px-5 py-3 flex items-center justify-center",
         cell: (w) => (
@@ -225,7 +250,7 @@ export function WritersManagementContent() {
           >
             <span
               className={[
-                "absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all",
+                "absolute top-0.5 h-4 w-4 rounded-full bg-[var(--tott-dash-surface)] transition-all",
                 w.featured ? "start-4" : "start-0.5",
               ].join(" ")}
             />
@@ -235,14 +260,14 @@ export function WritersManagementContent() {
       {
         key: "actions",
         header: "",
-        width: "12%",
+        width: "14%",
         align: "end",
         cellClassName: "flex items-center justify-end gap-2 px-3 py-3",
         cell: (w) => (
           <>
             <Link
               href={`/admin/writers/${w.id}/edit`}
-              className="rounded p-1 text-gray-400 hover:text-foreground"
+              className="rounded p-1 text-[var(--tott-muted)] hover:text-foreground"
               title={t("edit")}
             >
               <PenLineIcon />
@@ -250,7 +275,7 @@ export function WritersManagementContent() {
             <button
               type="button"
               onClick={() => openDelete(w)}
-              className="rounded p-1 text-gray-400 hover:text-red-400"
+              className="rounded p-1 text-[var(--tott-muted)] hover:text-red-400"
               title={t("delete.confirm")}
             >
               <TrashIcon />
@@ -282,7 +307,7 @@ export function WritersManagementContent() {
         placeholder={t("searchPlaceholder")}
         value={searchInput}
         onChange={(e) => setSearchInput(e.target.value)}
-        className="w-full max-w-sm rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder-gray-500 outline-none focus:border-gray-500"
+        className="w-full max-w-sm rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]"
       />
 
       {loadError && (
@@ -313,7 +338,7 @@ export function WritersManagementContent() {
       />
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-end gap-2 text-xs text-gray-400">
+        <div className="flex items-center justify-end gap-2 text-xs text-[var(--tott-muted)]">
           <button
             type="button"
             disabled={loading || effectivePage <= 1}
@@ -336,6 +361,27 @@ export function WritersManagementContent() {
         </div>
       )}
 
+      {accountTarget && (
+        <CreateAccountModal
+          writer={accountTarget}
+          busy={createAccountMutation.isPending || linkAccountMutation.isPending}
+          onClose={() => setAccountTarget(null)}
+          onSubmit={async ({ full_name, email, password }) => {
+            const user = await createAccountMutation.mutateAsync({
+              full_name,
+              email,
+              password,
+            });
+            await linkAccountMutation.mutateAsync({
+              writerId: accountTarget.id,
+              payload: { user_id: user.id },
+            });
+            toast.success(t("account.created"));
+            setAccountTarget(null);
+          }}
+        />
+      )}
+
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div
@@ -344,7 +390,7 @@ export function WritersManagementContent() {
             <h2 className="mb-2 text-base font-semibold">
               {t("delete.title")}
             </h2>
-            <p className="mb-4 text-sm text-gray-400">
+            <p className="mb-4 text-sm text-[var(--tott-muted)]">
               {t("delete.description", { name: writerRowName(deleteTarget) })}
             </p>
             {deleteError && (
@@ -359,7 +405,7 @@ export function WritersManagementContent() {
                   setDeleteError(null);
                 }}
                 disabled={deleteBusy}
-                className="rounded-lg px-4 py-1.5 text-sm text-gray-400 hover:text-foreground disabled:opacity-40"
+                className="rounded-lg px-4 py-1.5 text-sm text-[var(--tott-muted)] hover:text-foreground disabled:opacity-40"
               >
                 {t("delete.cancel")}
               </button>

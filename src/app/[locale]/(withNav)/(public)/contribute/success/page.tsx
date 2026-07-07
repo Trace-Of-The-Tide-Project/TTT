@@ -3,10 +3,10 @@ import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ContactUsLink } from "@/components/contribute/ContactUsLink";
 
-const LABEL_COLOR = "#FFFFFF";
-const HELPER_COLOR = "#A3A3A3";
-const FIELD_BORDER = "#333333";
-const FIELD_BG = "#262626";
+const LABEL_COLOR = "var(--tott-home-text-strong)";
+const HELPER_COLOR = "var(--tott-home-text-muted)";
+const FIELD_BORDER = "var(--tott-card-border)";
+const FIELD_BG = "var(--tott-dash-input-bg)";
 
 export default async function ContributionSuccessPage() {
   const t = await getTranslations("Contribute.success");

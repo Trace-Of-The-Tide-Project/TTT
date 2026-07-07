@@ -47,7 +47,7 @@ function DraftedHexIcon() {
       height="40"
       viewBox="0 0 32 40"
       fill="none"
-      className="shrink-0 text-gray-400"
+      className="shrink-0 text-[var(--tott-muted)]"
       aria-hidden
     >
       <defs>
@@ -107,7 +107,7 @@ function ScheduledHexIcon() {
       height="40"
       viewBox="0 0 32 40"
       fill="none"
-      className="shrink-0 text-gray-400"
+      className="shrink-0 text-[var(--tott-muted)]"
       aria-hidden
     >
       <defs>
@@ -332,7 +332,7 @@ export function AdminArticlesPageContent() {
 
   const fallback = useMemo(
     () => (
-      <div className="relative px-5 py-12 text-center text-sm text-gray-500">
+      <div className="relative px-5 py-12 text-center text-sm text-[var(--tott-muted)]">
         <ChamferedFrame />
         {t("loading")}
       </div>

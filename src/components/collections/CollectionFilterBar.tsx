@@ -46,7 +46,7 @@ export function CollectionFilterBar({
           value={search}
           onChange={(e) => onSearch(e.target.value)}
           placeholder={t("detailSearchPlaceholder")}
-          className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-[var(--tott-muted)]"
+          className="w-full border-0 bg-transparent p-0 text-sm text-foreground shadow-none outline-none focus:ring-0 placeholder:text-[var(--tott-muted)]"
         />
       </label>
 
@@ -82,7 +82,7 @@ export function CollectionFilterBar({
           <select
             value={sort}
             onChange={(e) => onSort(e.target.value as SortOrder)}
-            className="bg-transparent text-foreground outline-none"
+            className="appearance-none border-0 bg-transparent bg-none p-0 pe-1 text-foreground shadow-none outline-none focus:ring-0"
           >
             <option value="newest">{t("sortNewest")}</option>
             <option value="oldest">{t("sortOldest")}</option>

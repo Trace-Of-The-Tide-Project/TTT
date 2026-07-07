@@ -5,7 +5,8 @@
       "dashboard": "Tableau de bord",
       "adminSettings": "Paramètres administrateur",
       "openSidebar": "Ouvrir la barre latérale",
-      "closeSidebar": "Fermer la barre latérale"
+      "closeSidebar": "Fermer la barre latérale",
+      "viewAll": "Tout voir"
     },
     "topbar": {
       "searchPlaceholder": "Rechercher des utilisateurs, contenus, paramètres…",
@@ -62,7 +63,13 @@
       "createBook": "Ajouter un livre",
       "writers": "Écrivains",
       "allWriters": "Tous les écrivains",
-      "createWriter": "Ajouter un écrivain"
+      "createWriter": "Ajouter un écrivain",
+      "people": "Personnes",
+      "allPeople": "Toutes les personnes",
+      "addPerson": "Ajouter une personne",
+      "subscription": "Abonnement",
+      "subscriptions": "Abonnements",
+      "collections": "Collections"
     },
     "systemSettings": {
       "tabs": {
@@ -83,25 +90,29 @@
         "title": "Catégories de contenu",
         "subtitle": "Gérez les catégories de classification du contenu.",
         "editAria": "Modifier {name}",
-        "deleteAria": "Supprimer {name}"
+        "deleteAria": "Supprimer {name}",
+        "empty": "Aucune catégorie pour le moment."
       },
       "tags": {
         "add": "Ajouter un tag",
         "title": "Tags de contenu",
         "subtitle": "Tags spéciaux pour la mise en avant du contenu",
         "editAria": "Modifier {name}",
-        "deleteAria": "Supprimer {name}"
+        "deleteAria": "Supprimer {name}",
+        "empty": "Aucun tag pour le moment."
       },
       "badges": {
         "add": "Créer un badge",
         "title": "Badges de réussite",
         "subtitle": "Configurez les badges et jalons de réussite des utilisateurs.",
-        "editAria": "Modifier {name}"
+        "editAria": "Modifier {name}",
+        "empty": "Aucun badge pour le moment."
       },
       "email": {
         "title": "Modèles d'e-mail",
         "subtitle": "Personnalisez les communications e-mail automatisées",
-        "editTemplate": "Modifier le modèle"
+        "editTemplate": "Modifier le modèle",
+        "empty": "Aucun modèle pour le moment."
       },
       "localisation": {
         "title": "Paramètres de langue",
@@ -137,6 +148,57 @@
         "contentPolicyLabel": "Politique de contenu",
         "sampleCommunity": "1. Respectez tous les membres de la communauté\n2. Pas de discours haineux ni de discrimination\n3. Contenu original uniquement — pas de plagiat\n4. Citez les sources le cas échéant\n5. Pas de spam ni d'autopromotion",
         "sampleContentPolicy": "Tout contenu doit être original ou correctement sous licence. Le matériel protégé par des droits d'auteur sans autorisation sera supprimé. Le contenu pour adultes doit être correctement tagué."
+      },
+      "saving": "Enregistrement…",
+      "modal": {
+        "close": "Fermer",
+        "closeModal": "Fermer la fenêtre",
+        "cancel": "Annuler"
+      },
+      "categoryModal": {
+        "addTitle": "Ajouter une catégorie",
+        "editTitle": "Modifier la catégorie",
+        "addSubtitle": "Créer une nouvelle catégorie de contenu",
+        "editSubtitle": "Mettre à jour les détails de la catégorie",
+        "createLabel": "Créer une catégorie",
+        "saveLabel": "Enregistrer la modification",
+        "nameLabel": "Nom de la catégorie",
+        "namePlaceholder": "p. ex. Documentaire",
+        "slugLabel": "Slug",
+        "slugPlaceholder": "p. ex. documentaire",
+        "slugHint": "Identifiant compatible URL : /…"
+      },
+      "tagModal": {
+        "addTitle": "Ajouter un tag",
+        "editTitle": "Modifier le tag",
+        "addSubtitle": "Créer un nouveau tag de contenu",
+        "editSubtitle": "Mettre à jour les détails du tag",
+        "createLabel": "Créer un tag",
+        "nameLabel": "Nom du tag",
+        "namePlaceholder": "p. ex. En vedette"
+      },
+      "badgeModal": {
+        "addTitle": "Créer un badge",
+        "editTitle": "Modifier le badge",
+        "addSubtitle": "Créer un nouveau badge de réussite",
+        "editSubtitle": "Mettre à jour les détails du badge",
+        "createLabel": "Créer un badge",
+        "iconLabel": "Icône",
+        "selectIconAria": "Sélectionner l'icône {id}",
+        "nameLabel": "Nom du badge",
+        "namePlaceholder": "p. ex. Meilleur contributeur",
+        "milestoneLabel": "Jalon",
+        "milestonePlaceholder": "p. ex. +100 contributions"
+      },
+      "localeFields": {
+        "otherLanguages": "Autres langues",
+        "fallbackHint": "Laissez une langue vide pour utiliser le nom par défaut ci-dessus.",
+        "languages": {
+          "en": "Anglais",
+          "ar": "Arabe",
+          "es": "Espagnol",
+          "fr": "Français"
+        }
       }
     },
     "placeholders": {

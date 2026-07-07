@@ -302,14 +302,26 @@ export function UsersManagementContent() {
         cellClassName: "flex min-w-0 items-center gap-3 px-5 py-3",
         cell: (user) => (
           <>
-            <span
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-              style={{ backgroundColor: "#DBC99E", color: theme.bgDark }}
-            >
-              {initialsFromUser(user)}
-            </span>
+            {user.avatar ? (
+              // eslint-disable-next-line @next/next/no-img-element -- small admin thumbnail, varied hosts
+              <img
+                src={user.avatar}
+                alt=""
+                className="h-9 w-9 shrink-0 rounded-full object-cover border border-[var(--tott-card-border)]"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+            ) : (
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                style={{ backgroundColor: "var(--tott-gold-chip-bg)", color: theme.bgDark }}
+              >
+                {initialsFromUser(user)}
+              </span>
+            )}
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium" style={{ color: "#DBC99E" }}>
+              <p className="truncate text-sm font-medium" style={{ color: "var(--tott-dash-gold-text)" }}>
                 {displayName(user)}
               </p>
               <p
@@ -576,6 +588,7 @@ function AdvancedFilterPopover({
   ascLabel: string;
   descLabel: string;
 }) {
+  const t = useTranslations("Dashboard.usersManagement");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -615,8 +628,8 @@ function AdvancedFilterPopover({
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label="Filters"
-        title="Filters"
+        aria-label={t("filters.title")}
+        title={t("filters.title")}
         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--tott-muted)]"
         style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)" }}
       >
@@ -636,7 +649,7 @@ function AdvancedFilterPopover({
         {activeCount > 0 ? (
           <span
             aria-hidden
-            className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold"
+            className="absolute -end-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold"
             style={{
               backgroundColor: "var(--tott-dark-pill)",
               color: "var(--tott-dark-pill-fg)",
@@ -650,33 +663,33 @@ function AdvancedFilterPopover({
       {open ? (
         <div
           role="dialog"
-          aria-label="Filters"
-          className="absolute right-0 top-full z-30 mt-2 w-80 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] p-4 shadow-lg"
+          aria-label={t("filters.title")}
+          className="absolute end-0 top-full z-30 mt-2 w-80 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-2)] p-4 shadow-lg"
         >
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-sm font-semibold text-foreground">Filters</p>
+            <p className="text-sm font-semibold text-foreground">{t("filters.title")}</p>
             {activeCount > 0 ? (
               <button
                 type="button"
                 onClick={clearAll}
                 className="text-xs font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
               >
-                Clear all
+                {t("filters.clearAll")}
               </button>
             ) : null}
           </div>
 
-          <FilterField label="Email contains">
+          <FilterField label={t("filters.emailContains")}>
             <input
               type="text"
               value={email}
               onChange={(e) => onEmailChange(e.target.value)}
-              placeholder="e.g. @domain.com"
+              placeholder={t("filters.emailPlaceholder")}
               className={FILTER_INPUT_CLASS}
             />
           </FilterField>
 
-          <FilterField label="Min contributions">
+          <FilterField label={t("filters.minContributions")}>
             <input
               type="number"
               min={0}
@@ -687,7 +700,7 @@ function AdvancedFilterPopover({
             />
           </FilterField>
 
-          <FilterField label="Joined after">
+          <FilterField label={t("filters.joinedAfter")}>
             <input
               type="date"
               value={joinedAfter}
@@ -696,7 +709,7 @@ function AdvancedFilterPopover({
             />
           </FilterField>
 
-          <FilterField label="Sort order">
+          <FilterField label={t("filters.sortOrder")}>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
@@ -729,7 +742,7 @@ function AdvancedFilterPopover({
               onClick={() => setOpen(false)}
               className="rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
             >
-              Done
+              {t("filters.done")}
             </button>
           </div>
         </div>
@@ -771,14 +784,26 @@ function UserCardNarrow({
     <div className="px-3 py-3">
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3">
-          <span
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-            style={{ backgroundColor: "#DBC99E", color: theme.bgDark }}
-          >
-            {initialsFromUser(user)}
-          </span>
+          {user.avatar ? (
+            // eslint-disable-next-line @next/next/no-img-element -- small admin thumbnail, varied hosts
+            <img
+              src={user.avatar}
+              alt=""
+              className="h-9 w-9 shrink-0 rounded-full object-cover border border-[var(--tott-card-border)]"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+          ) : (
+            <span
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+              style={{ backgroundColor: "var(--tott-gold-chip-bg)", color: theme.bgDark }}
+            >
+              {initialsFromUser(user)}
+            </span>
+          )}
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium" style={{ color: "#DBC99E" }}>
+            <p className="truncate text-sm font-medium" style={{ color: "var(--tott-dash-gold-text)" }}>
               {displayName(user)}
             </p>
             <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]" title={user.email}>

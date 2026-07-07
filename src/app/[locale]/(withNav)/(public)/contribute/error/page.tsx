@@ -3,11 +3,11 @@ import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ContactUsLink } from "@/components/contribute/ContactUsLink";
 
-const LABEL_COLOR = "#FFFFFF";
-const HELPER_COLOR = "#A3A3A3";
-const FIELD_BORDER = "#333333";
-const FIELD_BG = "#262626";
-const NEGATIVE = "#E93544";
+const LABEL_COLOR = "var(--tott-home-text-strong)";
+const HELPER_COLOR = "var(--tott-home-text-muted)";
+const FIELD_BORDER = "var(--tott-card-border)";
+const FIELD_BG = "var(--tott-dash-input-bg)";
+const NEGATIVE = "var(--tott-dash-negative, #E93544)";
 
 export default async function ContributionErrorPage() {
   const t = await getTranslations("Contribute.error");
@@ -30,7 +30,7 @@ export default async function ContributionErrorPage() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, color-mix(in srgb, #E93544 12%, transparent) 0%, transparent 70%)",
+              `linear-gradient(to bottom, color-mix(in srgb, ${NEGATIVE} 12%, transparent) 0%, transparent 70%)`,
           }}
         />
       </div>

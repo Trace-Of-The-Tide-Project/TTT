@@ -1,0 +1,31 @@
+{
+  "Dashboard": {
+    "analyticsExtra": {
+      "allArticlesSubtitle": "Consultez et gérez vos articles publiés.",
+      "allArticlesTitle": "Tous les articles",
+      "anonymous": "Anonyme",
+      "articlesPublished": "Articles publiés",
+      "avgViewsPerArticle": "Vues moyennes / article",
+      "contributorsCount": "{count, plural, one {# contributeur} other {# contributeurs}}",
+      "draftArticle": "Brouillon d'article",
+      "loading": "Chargement…",
+      "noDataYet": "Aucune donnée pour le moment.",
+      "noPublishedArticlesYet": "Aucun article publié pour le moment.",
+      "pageSubtitle": "Suivez la performance de votre contenu et votre audience.",
+      "pageTitle": "Analytique",
+      "period30d": "30 derniers jours",
+      "period7d": "7 derniers jours",
+      "period90d": "90 derniers jours",
+      "periodYear": "Dernière année",
+      "publishFirstArticleHint": "Publiez votre premier article pour voir les analyses ici.",
+      "publishedArticle": "Article publié",
+      "topPerformingArticles": "Articles les plus performants",
+      "totalContributors": "Total des contributeurs",
+      "totalViews": "Vues totales",
+      "untitled": "Sans titre",
+      "views": "vues",
+      "viewsColumn": "Vues",
+      "viewsCount": "{count} vues"
+    }
+  }
+}

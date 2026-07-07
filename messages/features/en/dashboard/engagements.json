@@ -19,7 +19,10 @@
         "menuAria": "More actions",
         "view": "View",
         "edit": "Edit",
-        "delete": "Delete"
+        "delete": "Delete",
+        "flag": "Flag",
+        "unflag": "Unflag",
+        "unknownAuthor": "Unknown"
       },
       "trending": {
         "commentsCount": "{count, plural, one {# comment} other {# comments}}",
@@ -78,6 +81,9 @@
         "criteriaPlaceholder": "When should this badge be awarded?",
         "cancel": "Cancel",
         "submit": "Award Badge"
+      },
+      "common": {
+        "loading": "Loading..."
       }
     }
   }

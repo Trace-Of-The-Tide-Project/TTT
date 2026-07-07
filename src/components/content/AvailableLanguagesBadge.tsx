@@ -46,7 +46,7 @@ export function AvailableLanguagesBadge({
 
   return (
     <div className={`flex flex-wrap items-center gap-2 text-sm ${className ?? ""}`}>
-      <span className="text-gray-500">{t("label")}</span>
+      <span className="text-[var(--tott-home-text-muted)]">{t("label")}</span>
       {versions.map((v) => {
         const isCurrent = v.language === currentLanguage;
         const label = t.has(`languages.${v.language}`)
@@ -56,7 +56,7 @@ export function AvailableLanguagesBadge({
           return (
             <span
               key={v.id}
-              className="rounded-full bg-gray-700 px-2.5 py-0.5 text-xs font-medium text-gray-100"
+              className="rounded-full bg-[var(--tott-panel-bg)] px-2.5 py-0.5 text-xs font-medium text-foreground"
             >
               {label}
             </span>

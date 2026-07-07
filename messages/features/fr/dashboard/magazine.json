@@ -258,6 +258,7 @@
             "subtitlePlaceholder": "Sous-titre (facultatif)",
             "kind": "Type",
             "status": "Statut",
+            "language": "Langue",
             "isPremium": "Numéro premium (payant)",
             "fundingGoal": "Objectif de financement",
             "fundingDeadline": "Date limite de financement",
@@ -286,7 +287,24 @@
           "cancel": "Annuler",
           "create": "Créer",
           "save": "Enregistrer",
-          "saving": "Enregistrement…"
+          "saving": "Enregistrement…",
+          "createAllLanguages": "Créer aussi des brouillons dans les autres langues",
+          "discardTitle": "Abandonner les modifications ?",
+          "discardBody": "Vous avez des modifications non enregistrées. Fermer sans les enregistrer ?",
+          "discardCancel": "Continuer l’édition",
+          "discardConfirm": "Abandonner",
+          "articles": {
+            "label": "Articles de ce numéro",
+            "loading": "Chargement des articles…",
+            "empty": "Aucun article assigné pour le moment.",
+            "searchPlaceholder": "Rechercher des articles à ajouter…",
+            "searching": "Recherche…",
+            "noResults": "Aucun article correspondant",
+            "add": "Ajouter",
+            "remove": "Retirer",
+            "moveUp": "Monter",
+            "moveDown": "Descendre"
+          }
         },
         "delete": {
           "title": "Supprimer le numéro ?",
@@ -298,6 +316,7 @@
         "toast": {
           "saving": "Enregistrement du numéro…",
           "created": "Numéro créé.",
+          "createdAll": "Numéro créé dans toutes les langues — traduisez les brouillons quand vous êtes prêt.",
           "updated": "Numéro mis à jour.",
           "saveError": "Impossible d’enregistrer le numéro",
           "deleting": "Suppression du numéro…",
@@ -408,6 +427,21 @@
         "pasteImageUrl": "…ou collez l’URL d’une image",
         "linkPlaceholder": "https://example.com",
         "removeLink": "Supprimer le lien"
+      },
+      "fontSize": {
+        "label": "Taille du texte",
+        "hint": "Met à l'échelle le texte de cette section. La valeur par défaut correspond à la taille actuelle du site.",
+        "small": "Petit",
+        "default": "Par défaut",
+        "large": "Grand",
+        "xl": "Très grand"
+      },
+      "textAlign": {
+        "label": "Alignement",
+        "start": "Début",
+        "center": "Centre",
+        "end": "Fin",
+        "justify": "Justifié"
       }
     }
   }

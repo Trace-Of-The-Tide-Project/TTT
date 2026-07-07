@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
@@ -158,9 +160,20 @@ export function BooksPageContent({ items }: { items: BookItem[] }) {
                 {t("noResults")}
               </p>
             ) : (
-              <ul className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+              <motion.ul
+                className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4"
+                variants={staggerParent}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+              >
                 {filtered.map((b) => (
-                  <li key={b.id}>
+                  <motion.li
+                    key={b.id}
+                    variants={staggerChild}
+                    transition={springs.gentle}
+                    whileHover={{ y: -4 }}
+                  >
                     <BookCard
                       book={b}
                       labels={{
@@ -170,9 +183,9 @@ export function BooksPageContent({ items }: { items: BookItem[] }) {
                         reviews: (n: number) => t("reviews", { count: n }),
                       }}
                     />
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
             )}
           </section>
         </div>

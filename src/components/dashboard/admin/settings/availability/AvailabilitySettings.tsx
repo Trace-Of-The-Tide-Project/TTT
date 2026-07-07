@@ -21,7 +21,7 @@ const STATUS_OPTIONS: { value: AvailabilityStatus; dotColor: string }[] = [
 ];
 
 const textareaClass =
-  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-3 text-sm text-foreground placeholder:text-gray-500 outline-none focus:border-[#C9A96E]";
+  "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-3 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-accent-gold)]";
 
 function StatusCard({
   selected,
@@ -45,10 +45,10 @@ function StatusCard({
       aria-checked={selected}
       aria-label={ariaLabel}
       onClick={onSelect}
-      className={`flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A96E] ${
+      className={`flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tott-accent-gold)] ${
         selected
-          ? "border-[#C9A96E] bg-[#C9A96E]/10"
-          : "border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] hover:border-[#C9A96E]/50"
+          ? "border-[var(--tott-accent-gold)] bg-[var(--tott-accent-gold)]/10"
+          : "border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] hover:border-[var(--tott-accent-gold)]/50"
       }`}
     >
       <span className="flex items-center gap-2">
@@ -59,7 +59,7 @@ function StatusCard({
         />
         <span className="text-sm font-semibold text-foreground">{label}</span>
       </span>
-      <span className="text-xs text-gray-500">{description}</span>
+      <span className="text-xs text-[var(--tott-muted)]">{description}</span>
     </button>
   );
 }
@@ -122,11 +122,11 @@ export function AvailabilitySettings() {
       <div className={settingsCardClass} style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.04) inset" }}>
         <div className="mb-2">
           <h1 className="text-lg font-bold text-foreground">{t("title")}</h1>
-          <p className="mt-1 text-sm text-gray-500">{t("subtitle")}</p>
+          <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("subtitle")}</p>
         </div>
 
         {isPending ? (
-          <p className="mt-6 text-sm text-gray-500">{t("loading")}</p>
+          <p className="mt-6 text-sm text-[var(--tott-muted)]">{t("loading")}</p>
         ) : isError ? (
           <p className="mt-6 text-sm text-[var(--tott-dash-negative)]" role="alert">
             {t("loadError")}
@@ -134,7 +134,7 @@ export function AvailabilitySettings() {
         ) : null}
 
         <div className="mt-6">
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-gray-500">
+          <h2 className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--tott-muted)]">
             {t("statusLabel")}
           </h2>
           <div className="grid gap-3 sm:grid-cols-3" role="radiogroup" aria-label={t("statusAria")}>
@@ -153,7 +153,7 @@ export function AvailabilitySettings() {
         </div>
 
         <div className="mt-8">
-          <label htmlFor="availability-message" className="mb-1.5 block text-xs text-gray-500">
+          <label htmlFor="availability-message" className="mb-1.5 block text-xs text-[var(--tott-muted)]">
             {t("messageLabel")}
           </label>
           <textarea
@@ -164,7 +164,7 @@ export function AvailabilitySettings() {
             rows={3}
             className={textareaClass}
           />
-          <p className="mt-1.5 text-xs text-gray-600">{t("messageHint")}</p>
+          <p className="mt-1.5 text-xs text-[var(--tott-muted)]">{t("messageHint")}</p>
         </div>
 
         {saveError ? (
@@ -178,7 +178,7 @@ export function AvailabilitySettings() {
             type="button"
             onClick={handleSave}
             disabled={isPending || saveState === "saving"}
-            className="w-full rounded-lg py-3.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-lg py-3.5 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             style={{ backgroundColor: saveState === "error" ? "#ef4444" : theme.accentGold }}
           >
             {saveLabel}

@@ -258,6 +258,7 @@
             "subtitlePlaceholder": "Optional subtitle",
             "kind": "Kind",
             "status": "Status",
+            "language": "Language",
             "isPremium": "Premium issue (paid)",
             "fundingGoal": "Funding goal",
             "fundingDeadline": "Funding deadline",
@@ -286,7 +287,24 @@
           "cancel": "Cancel",
           "create": "Create",
           "save": "Save",
-          "saving": "Saving…"
+          "saving": "Saving…",
+          "createAllLanguages": "Also create drafts in the other languages",
+          "discardTitle": "Discard changes?",
+          "discardBody": "You have unsaved changes. Close without saving them?",
+          "discardCancel": "Keep editing",
+          "discardConfirm": "Discard",
+          "articles": {
+            "label": "Articles in this issue",
+            "loading": "Loading articles…",
+            "empty": "No articles assigned yet.",
+            "searchPlaceholder": "Search articles to add…",
+            "searching": "Searching…",
+            "noResults": "No matching articles",
+            "add": "Add",
+            "remove": "Remove",
+            "moveUp": "Move up",
+            "moveDown": "Move down"
+          }
         },
         "delete": {
           "title": "Delete issue?",
@@ -298,6 +316,7 @@
         "toast": {
           "saving": "Saving issue…",
           "created": "Issue created.",
+          "createdAll": "Issue created in all languages — translate the drafts when ready.",
           "updated": "Issue updated.",
           "saveError": "Could not save the issue",
           "deleting": "Deleting issue…",
@@ -408,6 +427,21 @@
         "pasteImageUrl": "…or paste an image URL",
         "linkPlaceholder": "https://example.com",
         "removeLink": "Remove link"
+      },
+      "fontSize": {
+        "label": "Text size",
+        "hint": "Scales this section's text. Default matches the site's current sizing.",
+        "small": "Small",
+        "default": "Default",
+        "large": "Large",
+        "xl": "Extra large"
+      },
+      "textAlign": {
+        "label": "Alignment",
+        "start": "Start",
+        "center": "Center",
+        "end": "End",
+        "justify": "Justify"
       }
     }
   }

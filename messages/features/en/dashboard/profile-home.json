@@ -78,6 +78,20 @@
       "deactivateDescription": "Once you deactivate your account, your profile and articles will be hidden. You can reactivate your account at any time by signing in.",
       "deactivateButton": "Deactivate account",
       "deactivateConfirm": "Deactivate your account? Your profile and articles will be hidden until you sign in again."
+    },
+    "profileSupporters": {
+      "loadError": "Could not load supporters. Please try again.",
+      "emptyTitle": "No supporters yet.",
+      "emptySubtitle": "Your supporters will appear here once they contribute.",
+      "anonymous": "Anonymous",
+      "thanked": "Thanked",
+      "sending": "Sending…",
+      "prev": "Prev",
+      "next": "Next",
+      "justNow": "just now",
+      "minutesAgo": "{count, plural, one {# min ago} other {# mins ago}}",
+      "hoursAgo": "{count, plural, one {# hr ago} other {# hrs ago}}",
+      "daysAgo": "{count, plural, one {# day ago} other {# days ago}}"
     }
   }
 }

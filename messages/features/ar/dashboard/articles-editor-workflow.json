@@ -27,6 +27,8 @@
           "successArticleSubmitted": "تم إرسال المقال",
           "successArticleScheduled": "تم جدولة المقال",
           "imageBlockShort": "صورة",
+          "createAllLanguages": "أنشئ أيضًا مسودات بباقي اللغات",
+          "unsavedChangesConfirm": "لديك تغييرات غير محفوظة. المغادرة دون حفظ؟",
           "validationOpenCallBlocksDraft": "أضف كتلة محتوى واحدة على الأقل بمحتوى.",
           "validationOpenCallBlocksPublish": "النشر يتطلب كتلة محتوى واحدة على الأقل بمحتوى.",
           "validationOpenCallBlocksSchedule": "الجدولة تتطلب كتلة محتوى واحدة على الأقل بمحتوى."
@@ -256,6 +258,21 @@
             "private": "خاص",
             "public": "عام"
           },
+          "access": {
+            "label": "الوصول",
+            "open": "مفتوح (للجميع)",
+            "preview": "معاينة (أول N فقرات مجانية)",
+            "subscriber": "للمشتركين فقط",
+            "paid": "مدفوع (شراء هذه المقالة)",
+            "previewCountPlaceholder": "عدد الفقرات المجانية، مثال: 2",
+            "pricePlaceholder": "السعر",
+            "hint": {
+              "open": "يمكن للجميع قراءة المقالة كاملة.",
+              "preview": "يرى الجميع أول N فقرات؛ والباقي مقفل.",
+              "subscriber": "يتطلب اشتراكًا فعالًا للقراءة.",
+              "paid": "يجب على القراء شراء هذه المقالة بشكل منفصل."
+            }
+          },
           "seo": {
             "label": "معاينة SEO",
             "previewTitlePlaceholder": "عنوان المقالة",
@@ -263,6 +280,23 @@
             "seoTitlePlaceholder": "عنوان SEO",
             "metaDescriptionPlaceholder": "الوصف الميتا",
             "previewUrlStub": "yoursite.com/articles/…"
+          }
+        },
+        "contributors": {
+          "panelTitle": "المساهمون",
+          "loading": "جارٍ تحميل المساهمين…",
+          "empty": "لم تتم إضافة مساهمين بعد.",
+          "unknownUser": "مستخدم غير معروف",
+          "add": "إضافة",
+          "adding": "جارٍ الإضافة…",
+          "remove": "إزالة",
+          "addFailed": "فشل إضافة المساهم. قد يكون مرتبطًا بالفعل.",
+          "roles": {
+            "main_contributor": "المساهم الرئيسي",
+            "co-author": "مؤلف مشارك",
+            "contributor": "مساهم",
+            "editor": "محرر",
+            "reviewer": "مراجع"
           }
         }
       }

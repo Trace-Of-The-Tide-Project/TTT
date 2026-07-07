@@ -10,17 +10,31 @@
       "mostPopular": "Most Popular",
       "subscribe": "Subscribe",
       "redirecting": "Redirecting…",
-      "reader": {
-        "desc": "Access to the magazine and all premium articles."
-      },
-      "full": {
-        "desc": "Everything in Reader, plus the complete PDF book library."
+      "desc": {
+        "reader": "La tarifa más baja posible para el panorama mediático fragmentado de nuestro tiempo. Abierta para los primeros 1000 lectores fundadores.",
+        "subscriber": "Nuestra tarifa de suscripción recomendada. Acceso a todo lo que publicamos, además de numerosos descuentos en librerías y editoriales independientes de todo el mundo.",
+        "bookshelf": "Para el lector que quiere pasar al formato físico con nuestra selección cuidadosamente curada de los mejores libros nuevos publicados sobre Palestina.",
+        "supporter": "Para el lector que quiere acceso completo al universo extendido.",
+        "collector": "Para quienes necesitan una biblioteca completa de nueva escritura sobre Palestina: seleccionaremos con esmero y te enviaremos un libro físico cada mes para que nunca te pierdas un título.",
+        "patron": "Para quienes pueden apoyar nuestro trabajo a nivel de infraestructura."
       }
     },
     "features": {
-      "magazine": "Full magazine access",
-      "articles": "All premium articles",
-      "books": "PDF book library"
+      "archive": "Acceso completo al archivo",
+      "podcast": "El pódcast Trace of the Tide directo a tu bandeja de entrada",
+      "newsletter": "El boletín cultural semanal Trace of the Tide",
+      "shop_discount": "10 % de descuento en la tienda Trace of the Tide",
+      "partner_discount": "10 % de descuento en librerías y editoriales asociadas de todo el mundo",
+      "tote_or_pin": "Una bolsa de tela clásica de Trace of the Tide o un pin de esmalte de simpatizante",
+      "subscriber_benefits": "Todas las ventajas de Suscriptor +",
+      "ttt_bookshelf": "La estantería Trace of the Tide: 6 libros físicos al año",
+      "bookshelf_benefits": "Todas las ventajas de Estantería +",
+      "early_bird_tickets": "Entradas anticipadas para eventos en directo",
+      "zoom_invitations": "Invitaciones a conversaciones en directo por Zoom con autores sobre piezas clave",
+      "supporter_benefits": "Todas las ventajas de Simpatizante +",
+      "physical_books_12": "12 libros físicos al año (1 al mes) + extras personalizados",
+      "collector_benefits": "Todas las ventajas de Coleccionista +",
+      "masthead_listing": "Agradecimiento público y mención en nuestra cabecera editorial"
     },
     "trust": {
       "stripe": "Secure checkout via Stripe",
@@ -37,6 +51,10 @@
       "a3": "Yes — upgrade or downgrade at any time from your subscription settings.",
       "q4": "Do you offer gift subscriptions?",
       "a4": "Yes — use the \"Gift a trace\" option in the navigation to give a membership."
+    },
+    "empty": "No hay planes de suscripción disponibles en este momento.",
+    "error": {
+      "generic": "Algo salió mal. Inténtalo de nuevo."
     }
   }
 }

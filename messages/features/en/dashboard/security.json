@@ -48,6 +48,9 @@
       },
       "sessions": {
         "intro": "Monitor and manage active admin sessions.",
+        "empty": "No active sessions.",
+        "youCurrent": "You (current)",
+        "userFallback": "User",
         "columns": {
           "user": "User",
           "ip": "IP Address",
@@ -117,6 +120,8 @@
       },
       "logs": {
         "intro": "Recent security-related events across the platform.",
+        "empty": "No audit logs yet.",
+        "systemUser": "System",
         "entries": {
           "l1": {
             "title": "Login successful",

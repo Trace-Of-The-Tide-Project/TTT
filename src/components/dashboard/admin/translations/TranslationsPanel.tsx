@@ -9,15 +9,15 @@ import {
   type TranslatableType,
   type TranslationVersion,
 } from "@/services/translations.service";
+import { TRANSLATION_ROUTES } from "./translation-routes";
 
 type TranslationsPanelProps = {
   contentType: TranslatableType;
   contentId: string;
   currentLanguage?: string;
+  /** Override the registry create path (e.g. article sub-kinds like trips). */
   createBasePath?: string;
 };
-
-const DEFAULT_CREATE_PATH = "/admin/articles/create/article";
 
 /**
  * Compact language-switcher chip row for the editor toolbar.
@@ -25,16 +25,21 @@ const DEFAULT_CREATE_PATH = "/admin/articles/create/article";
  * - Existing other version: link to that version's editor (same tab).
  * - Missing version: dimmed chip with "+", opens create route (same tab).
  * - "Add all" button: opens the first missing language; the rest stay as chips.
+ *
+ * Renders nothing when the content type has no admin editor route.
  */
 export function TranslationsPanel({
   contentType,
   contentId,
   currentLanguage,
-  createBasePath = DEFAULT_CREATE_PATH,
+  createBasePath,
 }: TranslationsPanelProps) {
   const t = useIntl("Dashboard.translations");
   const locale = useLocale();
   const { data } = useTranslations(contentType, contentId);
+
+  const route = TRANSLATION_ROUTES[contentType];
+  const createPath = createBasePath ?? route?.create;
 
   const byLanguage = useMemo(() => {
     const map = new Map<string, TranslationVersion>();
@@ -46,8 +51,11 @@ export function TranslationsPanel({
     (loc) => loc !== currentLanguage && !byLanguage.has(loc),
   );
 
+  // No admin editor route for this type → nothing to show.
+  if (!route || !createPath) return null;
+
   function createHref(loc: string) {
-    return `/${locale}${createBasePath}?language=${loc}&translation_of=${encodeURIComponent(contentId)}`;
+    return `/${locale}${createPath}?language=${loc}&translation_of=${encodeURIComponent(contentId)}`;
   }
 
   function handleAddAll() {
@@ -84,7 +92,7 @@ export function TranslationsPanel({
             return (
               <a
                 key={loc}
-                href={`/${locale}/admin/articles/edit/${version.id}`}
+                href={`/${locale}${route.edit(version.id)}`}
                 className={`${base} text-[var(--tott-tab-inactive)] hover:text-foreground`}
                 title={
                   version.status
@@ -103,11 +111,11 @@ export function TranslationsPanel({
             <a
               key={loc}
               href={createHref(loc)}
-              className={`${base} text-gray-600 hover:text-gray-400`}
+              className={`${base} text-[var(--tott-muted)] hover:text-[var(--tott-muted)]`}
               title={t("addTranslation")}
             >
               {loc}
-              <span className="ml-0.5 text-[9px] leading-none text-gray-500">+</span>
+              <span className="ml-0.5 text-[9px] leading-none text-[var(--tott-muted)]">+</span>
             </a>
           );
         })}
@@ -118,7 +126,7 @@ export function TranslationsPanel({
         <button
           type="button"
           onClick={handleAddAll}
-          className="rounded-md border border-[var(--tott-card-border)] px-2.5 py-1 text-[11px] font-medium text-gray-400 transition-colors hover:border-gray-500 hover:text-foreground"
+          className="rounded-md border border-[var(--tott-card-border)] px-2.5 py-1 text-[11px] font-medium text-[var(--tott-muted)] transition-colors hover:border-[var(--tott-card-border)] hover:text-foreground"
           title={missingLocales.map((l) => l.toUpperCase()).join(", ")}
         >
           {t("addAll")}

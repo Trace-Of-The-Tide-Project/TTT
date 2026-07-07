@@ -1,0 +1,53 @@
+{
+  "Dashboard": {
+    "cmsHome": {
+      "sections": "Sections",
+      "listHelper": "Basculez la visibilité ; modifiez le texte par langue. Le contenu des rails provient en direct de l'archive.",
+      "publish": "Publier",
+      "publishing": "Publication…",
+      "hideSection": "Masquer la section",
+      "showSection": "Afficher la section",
+      "reset": "Réinitialiser",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "sharedAllLanguages": "Partagé (toutes les langues)",
+      "loading": "Chargement de l'éditeur de la page d'accueil…",
+      "emptyState": "Sélectionnez une section à modifier.",
+      "fields": {
+        "heading": "Titre",
+        "subheading": "Sous-titre",
+        "eyebrow": "Surtitre",
+        "title": "Titre",
+        "missionSubtitle": "Sous-titre de la mission",
+        "primaryCtaLabel": "Libellé du CTA principal",
+        "secondaryCtaLabel": "Libellé du CTA secondaire",
+        "artworkUrl": "URL de l'image de l'œuvre",
+        "primaryCtaLink": "Lien du CTA principal",
+        "secondaryCtaLink": "Lien du CTA secondaire",
+        "homepageDirection": "Orientation de la page d'accueil",
+        "headingOptional": "Titre (facultatif)",
+        "body": "Corps",
+        "ctaLabel": "Libellé du CTA",
+        "openCallId": "ID de l'appel ouvert lié"
+      },
+      "variants": {
+        "default": "Par défaut",
+        "defaultSub": "Sections du CMS",
+        "d01": "Treillis raffiné",
+        "d02": "La ligne de marée",
+        "d03": "Courants"
+      },
+      "sectionNames": {
+        "hero": "Bannière principale",
+        "spotlight": "Histoire à la une",
+        "oralHistories": "Histoires orales et témoignages",
+        "magazineIssues": "Numéros du magazine",
+        "collections": "Collections sélectionnées",
+        "people": "Personnes des archives",
+        "trips": "Voyages patrimoniaux",
+        "bookClub": "Club de lecture",
+        "contributeCta": "Contribuer"
+      }
+    }
+  }
+}

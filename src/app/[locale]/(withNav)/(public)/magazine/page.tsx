@@ -8,16 +8,15 @@ import {
 } from "@/components/home/magazine/MagazineLatestPublished";
 import { MagazineLatestPublishedV2 } from "@/components/home/magazine/MagazineLatestPublishedV2";
 import {
+  MagazineLessReadV2,
+  type LessReadArticleItem,
+} from "@/components/home/magazine/MagazineLessReadV2";
+import {
   MagazineIssues,
   type MagazineIssueItem,
 } from "@/components/home/magazine/MagazineIssues";
 import { MagazineIssuesV2 } from "@/components/home/magazine/MagazineIssuesV2";
-import {
-  MagazineEditorialBoard,
-  type LessReadArticleItem,
-  type FollowWriterItem,
-  type FounderQuoteData,
-} from "@/components/home/magazine/MagazineEditorialBoard";
+import type { FollowWriterItem } from "@/components/home/magazine/MagazineEditorialBoard";
 import { MagazineEditorialBoardV2 } from "@/components/home/magazine/MagazineEditorialBoardV2";
 import {
   MagazineSupport,
@@ -41,7 +40,6 @@ import {
   parseSupportConfig,
   pickHeroLocale,
   pickManifestoLocale,
-  pickFounderLocale,
   pickNewsletterLocale,
   pickSupportLocale,
   findSection,
@@ -61,12 +59,8 @@ export const dynamic = "force-dynamic";
 type RawArticle = {
   id: string;
   title: string;
-  slug?: string;
-  excerpt?: string | null;
   cover_image?: string | null;
   category?: string | null;
-  reading_time?: number | null;
-  view_count?: number | null;
   edition?: string | null;
   published_at?: string | null;
   author?: {
@@ -108,10 +102,10 @@ function unwrapList<T>(raw: Envelope<T> | T[] | null): T[] {
   return raw.data ?? [];
 }
 
-async function fetchLatestBooks(): Promise<LatestPublishedItem[]> {
+async function fetchLatestBooks(locale: string): Promise<LatestPublishedItem[]> {
   const raw = await serverGet<{ rows?: RawBook[]; data?: RawBook[] }>(
     "/knowledge/books",
-    { limit: 5, page: 1 },
+    { limit: 5, page: 1, dedupe: "group", viewer_lang: locale },
   );
   const rows: RawBook[] =
     raw?.rows ?? raw?.data ?? (Array.isArray(raw) ? raw : []);
@@ -131,6 +125,8 @@ async function fetchLessReadArticles(locale: string): Promise<LessReadArticleIte
     status: "published",
     sortBy: "view_count",
     order: "ASC",
+    dedupe: "group",
+    viewer_lang: locale,
   });
   return unwrapList(raw).map((a) => ({
     id: a.id,
@@ -138,28 +134,33 @@ async function fetchLessReadArticles(locale: string): Promise<LessReadArticleIte
     author: pickAuthorName(a.author),
     date: formatShortDate(a.published_at, locale),
     category: prettifyCategory(a.category),
-    edition: a.edition ?? "",
+    coverImage: a.cover_image ?? null,
   }));
 }
 
-async function fetchWriters(): Promise<FollowWriterItem[]> {
+async function fetchWriters(locale: string): Promise<FollowWriterItem[]> {
   // Try featured strip first; fall back to the full writers list.
   const featured = await serverGet<Envelope<WriterProfile>>(
     "/writers/featured",
+    { viewer_lang: locale },
   );
   const list = unwrapList(featured);
   if (list.length > 0) return list.map(toWriterItem);
 
   const all = await serverGet<Envelope<WriterProfile>>("/writers", {
     limit: 4,
+    dedupe: "group",
+    viewer_lang: locale,
   });
   return unwrapList(all).slice(0, 4).map(toWriterItem);
 }
 
-async function fetchMagazineIssues(): Promise<MagazineIssueItem[]> {
+async function fetchMagazineIssues(locale: string): Promise<MagazineIssueItem[]> {
   const raw = await serverGet<Envelope<MagazineIssue>>("/magazine-issues", {
     limit: 20,
     status: "published",
+    dedupe: "group",
+    viewer_lang: locale,
   });
   return unwrapList(raw).map((it) => ({
     id: it.id,
@@ -194,7 +195,6 @@ async function fetchCollaborations(locale: string): Promise<CollaborationItem[]>
 
 async function fetchMagazineMeta(): Promise<{
   hero: { title?: string; subtitle?: string; image?: string } | null;
-  founder: FounderQuoteData | null;
   magazineId: string | null;
 }> {
   // Pull the first published magazine entity. When the backend hasn't
@@ -205,7 +205,7 @@ async function fetchMagazineMeta(): Promise<{
     status: "published",
   });
   const m = unwrapList(list)[0];
-  if (!m) return { hero: null, founder: null, magazineId: null };
+  if (!m) return { hero: null, magazineId: null };
 
   return {
     hero:
@@ -215,10 +215,6 @@ async function fetchMagazineMeta(): Promise<{
             subtitle: m.hero_subtitle ?? undefined,
             image: m.cover_image ?? undefined,
           }
-        : null,
-    founder:
-      m.founder_quote && m.founder_name
-        ? { quote: m.founder_quote, name: m.founder_name }
         : null,
     magazineId: m.id,
   };
@@ -345,10 +341,10 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
     magazineMeta,
     cmsCopy,
   ] = await Promise.all([
-    fetchLatestBooks(),
+    fetchLatestBooks(locale),
     fetchLessReadArticles(locale),
-    fetchWriters(),
-    fetchMagazineIssues(),
+    fetchWriters(locale),
+    fetchMagazineIssues(locale),
     fetchCollaborations(locale),
     fetchMagazineMeta(),
     fetchMagazineCmsCopy(),
@@ -377,22 +373,6 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
     ? pickSupportLocale(cmsCopy.support, locale)
     : {};
 
-  // Founder: merge CMS override into the legacy magazineMeta.founder
-  // object so MagazineEditorialBoard receives a single FounderQuoteData.
-  const founderLocale = cmsCopy.founder
-    ? pickFounderLocale(cmsCopy.founder, locale)
-    : {};
-  const founderForRender = (() => {
-    const legacy = magazineMeta.founder ?? null;
-    const cmsQuote = founderLocale.quote?.trim();
-    const cmsName = founderLocale.name?.trim();
-    if (!legacy && !cmsQuote && !cmsName) return null;
-    return {
-      quote: cmsQuote || legacy?.quote || "",
-      name: cmsName || legacy?.name || "",
-    };
-  })();
-
   return (
     <main
       className="relative min-h-screen w-full overflow-x-hidden"
@@ -408,6 +388,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
 
       <div className="relative">
         <MagazineHero
+          fontScale={cmsCopy.hero?.fontScale}
           artwork={heroArtwork}
           title={heroTitle}
           subtitle={heroSubtitle}
@@ -424,6 +405,8 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
           tabs={{
             manifesto: (
               <MagazineManifesto
+                fontScale={cmsCopy.manifesto?.fontScale}
+                textAlign={cmsCopy.manifesto?.textAlign}
                 philosophyHeadingOverride={manifestoLocale.philosophyHeading}
                 philosophyQuoteOverride={manifestoLocale.philosophyQuote}
                 visionHeadingOverride={manifestoLocale.visionHeading}
@@ -442,18 +425,20 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
               ) : undefined,
             issues: <MagazineIssues items={issues} />,
             editorialBoard:
-              lessReadArticles.length > 0 ||
-              writers.length > 0 ||
-              founderForRender ? (
-                <MagazineEditorialBoard
-                  lessReadArticles={lessReadArticles}
-                  writers={writers}
-                  founder={founderForRender}
-                />
+              lessReadArticles.length > 0 || writers.length > 0 ? (
+                <div className="flex flex-col" style={{ gap: 64 }}>
+                  {lessReadArticles.length > 0 ? (
+                    <MagazineLessReadV2 items={lessReadArticles} />
+                  ) : null}
+                  {writers.length > 0 ? (
+                    <MagazineEditorialBoardV2 writers={writers} />
+                  ) : null}
+                </div>
               ) : undefined,
             support:
               collaborations.length > 0 ? (
                 <MagazineSupport
+                  fontScale={cmsCopy.support?.fontScale}
                   collaborations={collaborations}
                   headingOverride={supportLocale.heading}
                   subheadingOverride={supportLocale.subheading}
@@ -464,7 +449,14 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
                 <MagazineLatestPublishedV2 items={latestArticles} />
               ),
               issues: <MagazineIssuesV2 items={issues} />,
-              editorialBoard: <MagazineEditorialBoardV2 writers={writers} />,
+              editorialBoard: (
+                <div className="flex flex-col" style={{ gap: 64 }}>
+                  {lessReadArticles.length > 0 ? (
+                    <MagazineLessReadV2 items={lessReadArticles} />
+                  ) : null}
+                  <MagazineEditorialBoardV2 writers={writers} />
+                </div>
+              ),
               support: <MagazineSupportV2 issues={issues} />,
             },
           }}
@@ -473,6 +465,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
             magazineId: magazineMeta.magazineId,
             titleOverride: newsletterLocale.title,
             bodyOverride: newsletterLocale.body,
+            fontScale: cmsCopy.newsletter?.fontScale,
           }}
         />
       </div>

@@ -78,6 +78,20 @@
       "deactivateDescription": "Une fois votre compte désactivé, votre profil et vos articles seront masqués. Vous pouvez réactiver votre compte à tout moment en vous reconnectant.",
       "deactivateButton": "Désactiver le compte",
       "deactivateConfirm": "Désactiver votre compte ? Votre profil et vos articles seront masqués jusqu'à votre prochaine connexion."
+    },
+    "profileSupporters": {
+      "loadError": "Impossible de charger les soutiens. Veuillez réessayer.",
+      "emptyTitle": "Aucun soutien pour le moment.",
+      "emptySubtitle": "Vos soutiens apparaîtront ici dès qu'ils contribueront.",
+      "anonymous": "Anonyme",
+      "thanked": "Remercié",
+      "sending": "Envoi…",
+      "prev": "Précédent",
+      "next": "Suivant",
+      "justNow": "à l'instant",
+      "minutesAgo": "{count, plural, one {il y a # min} other {il y a # min}}",
+      "hoursAgo": "{count, plural, one {il y a # h} other {il y a # h}}",
+      "daysAgo": "{count, plural, one {il y a # jour} other {il y a # jours}}"
     }
   }
 }

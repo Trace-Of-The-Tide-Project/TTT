@@ -52,7 +52,7 @@ export function ArticleCardsSection({
           {viewAllHref && (
             <Link
               href={viewAllHref}
-              className="text-sm font-medium text-gray-400 transition-colors hover:text-foreground"
+              className="text-sm font-medium text-[var(--tott-muted)] transition-colors hover:text-foreground"
             >
               View all
             </Link>

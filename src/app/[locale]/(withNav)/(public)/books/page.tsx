@@ -1,3 +1,4 @@
+import { getLocale } from "next-intl/server";
 import {
   isUsableArticleMediaRef,
   resolveArticleMediaSrc,
@@ -25,7 +26,9 @@ function authorOf(b: Book): string {
 /** Server component — fetches the real /knowledge/books catalogue
  * and shapes each record into BookItem for the client grid. */
 export default async function BooksPage() {
-  const books = await getBooks({ limit: 100 });
+  const locale = await getLocale();
+  // One card per translation group, viewer's language preferred.
+  const books = await getBooks({ limit: 100, dedupe: "group", viewer_lang: locale });
 
   const items: BookItem[] = books.map((b) => {
     const ref = b.cover_image?.trim();

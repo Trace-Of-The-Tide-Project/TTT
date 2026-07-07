@@ -18,7 +18,8 @@
         "status": {
           "completed": "Complété",
           "pending": "En attente"
-        }
+        },
+        "empty": "Aucun don trouvé."
       },
       "payouts": {
         "title": "Versements en attente",
@@ -33,13 +34,16 @@
         "status": {
           "pending": "En attente",
           "underReview": "En cours d'examen"
-        }
+        },
+        "empty": "Aucun versement trouvé."
       },
       "suspicious": {
         "title": "Activité suspecte",
         "subtitle": "Transactions signalées nécessitant un examen",
         "investigate": "Enquêter",
-        "block": "Bloquer"
+        "block": "Bloquer",
+        "empty": "Aucune activité suspecte.",
+        "unknown": "Inconnu"
       },
       "invoices": {
         "comingSoon": "Les factures seront bientôt disponibles."
@@ -48,6 +52,12 @@
         "rowAria": "Actions de la ligne",
         "viewDetails": "Voir les détails",
         "refund": "Rembourser"
+      },
+      "common": {
+        "loading": "Chargement…",
+        "prev": "← Précédent",
+        "next": "Suivant →",
+        "pageInfo": "Page {page} sur {totalPages}"
       }
     }
   }

@@ -102,6 +102,8 @@ export type MagazineEditorialBoardProps = {
   /** Founder pull-quote — when null/undefined, falls back to the
    * translation strings (the existing copy). */
   founder?: FounderQuoteData | null;
+  /** Per-section text scale (1 = current sizes). */
+  fontScale?: number;
 };
 
 /**
@@ -118,6 +120,7 @@ export function MagazineEditorialBoard({
   lessReadArticles,
   writers,
   founder,
+  fontScale = 1,
 }: MagazineEditorialBoardProps) {
   const t = useTranslations("Home.magazine.editorialBoard");
   const founderQuote = founder?.quote ?? t("founderQuote");
@@ -126,7 +129,10 @@ export function MagazineEditorialBoard({
   const showWriters = writers.length > 0;
 
   return (
-    <div className="grid gap-16 sm:gap-20">
+    <div
+      className="grid gap-16 sm:gap-20"
+      style={{ ["--mag-fs"]: fontScale } as React.CSSProperties}
+    >
       {/* ─── Explore Less Read Content ─────────────────────────────── */}
       {showLessRead ? (
         <section
@@ -138,7 +144,7 @@ export function MagazineEditorialBoard({
             style={{
               fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
               fontWeight: 500,
-              fontSize: "18px",
+              fontSize: `calc(18px * var(--mag-fs, 1))`,
               lineHeight: "24px",
               color: "var(--tott-home-text-strong)",
             }}
@@ -196,7 +202,7 @@ export function MagazineEditorialBoard({
               style={{
                 fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
                 fontWeight: 500,
-                fontSize: "18px",
+                fontSize: `calc(18px * var(--mag-fs, 1))`,
                 lineHeight: "24px",
                 color: "var(--tott-home-text-strong)",
               }}
@@ -207,7 +213,7 @@ export function MagazineEditorialBoard({
               style={{
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 400,
-                fontSize: "14px",
+                fontSize: `calc(14px * var(--mag-fs, 1))`,
                 lineHeight: "20px",
                 letterSpacing: "-0.005em",
                 color: "var(--tott-home-text-muted)",
@@ -303,7 +309,7 @@ export function MagazineEditorialBoard({
             style={{
               fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
               fontWeight: 500,
-              fontSize: "clamp(1.25rem, 3.2vw + 0.5rem, 2rem)",
+              fontSize: `calc((clamp(1.25rem, 3.2vw + 0.5rem, 2rem)) * var(--mag-fs, 1))`,
               lineHeight: 1.25,
               color: "var(--tott-home-text-strong)",
               textAlign: "center",
@@ -316,7 +322,7 @@ export function MagazineEditorialBoard({
             style={{
               fontFamily: "'Inter', var(--font-sans, sans-serif)",
               fontWeight: 500,
-              fontSize: "16px",
+              fontSize: `calc(16px * var(--mag-fs, 1))`,
               lineHeight: "24px",
               letterSpacing: "-0.01em",
               color: "var(--tott-home-text-strong)",
@@ -341,12 +347,13 @@ function WriterCardLink({
   id: string | null | undefined;
   children: React.ReactNode;
 }) {
+  const t = useTranslations("Home.magazine.editorialBoard");
   if (!id) return <>{children}</>;
   return (
     <Link
       href={`/writers/${encodeURIComponent(id)}`}
       className="contents"
-      aria-label="View writer"
+      aria-label={t("viewWriter")}
     >
       {children}
     </Link>
@@ -377,7 +384,7 @@ function CategoryCard({
   const goldGradientTextStyle = {
     fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
     fontWeight: 500,
-    fontSize: "16px",
+    fontSize: `calc(16px * var(--mag-fs, 1))`,
     lineHeight: "20px",
     color: "var(--tott-dash-gold-label)",
   } as React.CSSProperties;
@@ -385,7 +392,7 @@ function CategoryCard({
   const metaTextStyle = {
     fontFamily: "'Inter', var(--font-sans, sans-serif)",
     fontWeight: 400,
-    fontSize: "12px",
+    fontSize: `calc(12px * var(--mag-fs, 1))`,
     lineHeight: "16px",
     color: "var(--tott-home-text-heading)",
     textShadow: "var(--tott-home-text-shadow)",
@@ -484,7 +491,7 @@ function CategoryCard({
                 borderRadius: "999px",
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 500,
-                fontSize: "8.5px",
+                fontSize: `calc(8.5px * var(--mag-fs, 1))`,
                 lineHeight: "10px",
                 color: "var(--tott-auth-btn-text)",
               }}
@@ -694,7 +701,7 @@ function WriterCard({ writer }: { writer: FollowWriterItem }) {
             maxWidth: "228px",
             fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
             fontWeight: 500,
-            fontSize: "20px",
+            fontSize: `calc(20px * var(--mag-fs, 1))`,
             lineHeight: "28px",
             color: "var(--tott-home-text-strong)",
             textShadow: "var(--tott-home-text-shadow)",
@@ -719,7 +726,7 @@ function WriterCard({ writer }: { writer: FollowWriterItem }) {
                 borderRadius: "999px",
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 500,
-                fontSize: "8.5px",
+                fontSize: `calc(8.5px * var(--mag-fs, 1))`,
                 lineHeight: "10px",
                 color: "var(--tott-auth-btn-text)",
               }}
@@ -730,7 +737,7 @@ function WriterCard({ writer }: { writer: FollowWriterItem }) {
               style={{
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 400,
-                fontSize: "12px",
+                fontSize: `calc(12px * var(--mag-fs, 1))`,
                 lineHeight: "16px",
                 color: "var(--tott-home-text-heading)",
                 textShadow: "var(--tott-home-text-shadow)",
@@ -758,7 +765,7 @@ function WriterCard({ writer }: { writer: FollowWriterItem }) {
           color: "var(--tott-home-text-strong)",
           fontFamily: "'Inter', var(--font-sans, sans-serif)",
           fontWeight: 500,
-          fontSize: "12px",
+          fontSize: `calc(12px * var(--mag-fs, 1))`,
           lineHeight: "16px",
           clipPath: CHIP_CHAMFER,
           WebkitClipPath: CHIP_CHAMFER,

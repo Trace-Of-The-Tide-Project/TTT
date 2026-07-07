@@ -17,13 +17,38 @@ import {
   type CmsPage,
   type CmsSection,
 } from "./cms.service";
+import { routing } from "@/i18n/routing";
 
 export const MAGAZINE_PAGE_SLUG = "magazine";
 
-export const SUPPORTED_LOCALES = ["en", "ar", "fr", "es"] as const;
+export const SUPPORTED_LOCALES = routing.locales;
 export type MagazineLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export type Localized<T> = Partial<Record<MagazineLocale, T>>;
+
+// ── Font size (per-section) ────────────────────────────────────────
+
+/** Default scale — reproduces the components' built-in sizes exactly. */
+export const DEFAULT_FONT_SCALE = 1;
+
+/** Admin presets shown as buttons in the editor. `default` (1×) is the
+ * current site sizing; the others scale a section's text up/down together. */
+export const MAGAZINE_FONT_PRESETS = [
+  { key: "small", scale: 0.9 },
+  { key: "default", scale: 1 },
+  { key: "large", scale: 1.15 },
+  { key: "xl", scale: 1.3 },
+] as const;
+
+export type MagazineFontPresetKey = (typeof MAGAZINE_FONT_PRESETS)[number]["key"];
+
+/** Clamp an arbitrary stored value into the supported range, defaulting to 1. */
+export function clampFontScale(value: unknown): number {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.min(2, Math.max(0.5, value));
+  }
+  return DEFAULT_FONT_SCALE;
+}
 
 // ── Section type registry ──────────────────────────────────────────
 
@@ -53,6 +78,8 @@ export type HeroConfig = {
   artwork?: string;
   primaryHref?: string;
   secondaryHref?: string;
+  /** Per-section text scale (1 = current sizes). */
+  fontScale?: number;
 };
 
 export const EMPTY_HERO_CONFIG: HeroConfig = { copy: {} };
@@ -69,11 +96,29 @@ export type ManifestoLocaleFields = {
   valuesHeading?: string;
   closingQuote?: string;
 };
+/** Text alignment for prose sections. Direction-relative (`start`/`end`)
+ *  so it reads correctly under both LTR and RTL locales. Unset = `start`. */
+export type MagazineTextAlign = "start" | "center" | "end" | "justify";
+
+/** Validate a stored value into a supported alignment, else undefined. */
+export function readTextAlign(
+  cfg: Record<string, unknown> | null,
+): MagazineTextAlign | undefined {
+  const v = cfg?.textAlign;
+  return v === "start" || v === "center" || v === "end" || v === "justify"
+    ? v
+    : undefined;
+}
+
 export type ManifestoConfig = {
   copy: Localized<ManifestoLocaleFields>;
   banner?: string;
   /** Admin toggle — when true the silk banner image is hidden on the page. */
   bannerHidden?: boolean;
+  /** Per-section text scale (1 = current sizes). */
+  fontScale?: number;
+  /** Per-section text alignment (unset = start). */
+  textAlign?: MagazineTextAlign;
 };
 export const EMPTY_MANIFESTO_CONFIG: ManifestoConfig = { copy: {} };
 
@@ -86,6 +131,8 @@ export type FounderQuoteLocaleFields = {
 export type FounderQuoteConfig = {
   copy: Localized<FounderQuoteLocaleFields>;
   avatar?: string;
+  /** Per-section text scale (1 = current sizes). */
+  fontScale?: number;
 };
 export const EMPTY_FOUNDER_CONFIG: FounderQuoteConfig = { copy: {} };
 
@@ -96,6 +143,8 @@ export type NewsletterCopyLocaleFields = {
 };
 export type NewsletterCopyConfig = {
   copy: Localized<NewsletterCopyLocaleFields>;
+  /** Per-section text scale (1 = current sizes). */
+  fontScale?: number;
 };
 export const EMPTY_NEWSLETTER_CONFIG: NewsletterCopyConfig = { copy: {} };
 
@@ -105,7 +154,11 @@ export type SupportLocaleFields = {
   heading?: string;
   subheading?: string;
 };
-export type SupportConfig = { copy: Localized<SupportLocaleFields> };
+export type SupportConfig = {
+  copy: Localized<SupportLocaleFields>;
+  /** Per-section text scale (1 = current sizes). */
+  fontScale?: number;
+};
 export const EMPTY_SUPPORT_CONFIG: SupportConfig = { copy: {} };
 
 // ── Bootstrap ──────────────────────────────────────────────────────
@@ -194,6 +247,13 @@ function unwrapConfig(
   return raw as Record<string, unknown>;
 }
 
+/** Read the per-section font scale from raw config, if present and valid. */
+function readFontScale(cfg: Record<string, unknown> | null): number | undefined {
+  if (!cfg) return undefined;
+  const n = cfg.fontScale;
+  return typeof n === "number" && Number.isFinite(n) ? clampFontScale(n) : undefined;
+}
+
 export function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
   const cfg = unwrapConfig(section);
   if (!cfg) return EMPTY_HERO_CONFIG;
@@ -210,6 +270,7 @@ export function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
       typeof cfg.primaryHref === "string" ? cfg.primaryHref : undefined,
     secondaryHref:
       typeof cfg.secondaryHref === "string" ? cfg.secondaryHref : undefined,
+    fontScale: readFontScale(cfg),
   };
 }
 
@@ -261,6 +322,8 @@ export function parseManifestoConfig(
     copy: base.copy,
     banner: typeof cfg.banner === "string" ? cfg.banner : undefined,
     bannerHidden: cfg.bannerHidden === true,
+    fontScale: readFontScale(cfg),
+    textAlign: readTextAlign(cfg),
   };
 }
 
@@ -275,22 +338,28 @@ export function parseFounderConfig(
   return {
     copy: base.copy,
     avatar: typeof cfg.avatar === "string" ? cfg.avatar : undefined,
+    fontScale: readFontScale(cfg),
   };
 }
 
 export function parseNewsletterConfig(
   section: CmsSection | undefined,
 ): NewsletterCopyConfig {
-  return parseLocaleKeyed<NewsletterCopyLocaleFields>(
+  const base = parseLocaleKeyed<NewsletterCopyLocaleFields>(
     section,
     EMPTY_NEWSLETTER_CONFIG,
   );
+  return { copy: base.copy, fontScale: readFontScale(unwrapConfig(section)) };
 }
 
 export function parseSupportConfig(
   section: CmsSection | undefined,
 ): SupportConfig {
-  return parseLocaleKeyed<SupportLocaleFields>(section, EMPTY_SUPPORT_CONFIG);
+  const base = parseLocaleKeyed<SupportLocaleFields>(
+    section,
+    EMPTY_SUPPORT_CONFIG,
+  );
+  return { copy: base.copy, fontScale: readFontScale(unwrapConfig(section)) };
 }
 
 export function pickManifestoLocale(

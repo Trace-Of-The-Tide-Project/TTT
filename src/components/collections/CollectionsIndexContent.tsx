@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import HexBackground from "@/components/ui/HexBackground";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { ContentBreadcrumb } from "@/components/content/related/ContentBreadcrumb";
@@ -57,7 +59,7 @@ export function CollectionsIndexContent({ collections }: { collections: Collecti
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("searchPlaceholder")}
-              className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-[var(--tott-muted)]"
+              className="w-full border-0 bg-transparent p-0 text-sm text-foreground shadow-none outline-none focus:ring-0 placeholder:text-[var(--tott-muted)]"
             />
           </label>
         </div>
@@ -78,18 +80,29 @@ export function CollectionsIndexContent({ collections }: { collections: Collecti
               {t("noResults")}
             </p>
           ) : (
-            <ul className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+            <motion.ul
+              className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4"
+              variants={staggerParent}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+            >
               {filtered.map((c) => (
-                <li key={c.id}>
+                <motion.li
+                  key={c.id}
+                  variants={staggerChild}
+                  transition={springs.gentle}
+                  whileHover={{ y: -4 }}
+                >
                   <CollectionCard data={c} />
-                </li>
+                </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           )}
         </div>
       </div>
 
-      <ShareYourStory />
+      <ShareYourStory surface={theme.homeSurface} />
     </main>
   );
 }

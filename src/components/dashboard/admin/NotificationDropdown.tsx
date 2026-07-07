@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { BellIcon } from "@/components/ui/icons";
-import { useTheme } from "@/components/providers/ThemeProvider";
 import {
   useNotifications,
   useUnreadNotificationCount,
@@ -17,17 +17,19 @@ import { useAuthUser } from "@/components/providers/AuthProvider";
 import { theme } from "@/lib/theme";
 
 
-function timeAgo(iso: string): string {
+type TimeTranslate = (key: string, values?: Record<string, number>) => string;
+
+function timeAgo(iso: string, t: TimeTranslate): string {
   const diff = Date.now() - new Date(iso).getTime();
   const secs = Math.floor(diff / 1000);
-  if (secs < 60) return `${secs}s ago`;
+  if (secs < 60) return t("secondsAgo", { count: secs });
   const mins = Math.floor(secs / 60);
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 60) return t("minutesAgo", { count: mins });
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t("hoursAgo", { count: hours });
   const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
-  return `${Math.floor(days / 30)}mo ago`;
+  if (days < 30) return t("daysAgo", { count: days });
+  return t("monthsAgo", { count: Math.floor(days / 30) });
 }
 
 /** Notification-type accents resolve to theme-aware CSS vars. */
@@ -45,6 +47,7 @@ function NotifRow({
   n: NotificationListItem;
   onRead: (id: string) => void;
 }) {
+  const t = useTranslations("Dashboard.topbar");
   const isUnread = n.status === "unread";
   const typeColor = TYPE_COLORS[n.type] ?? TYPE_COLORS.system;
   return (
@@ -52,11 +55,16 @@ function NotifRow({
       <button
         type="button"
         onClick={() => isUnread && onRead(n.id)}
-        className="group w-full px-4 py-3 text-left transition-colors hover:bg-[var(--tott-dash-ghost-hover)] focus:outline-none"
-        style={{
-          borderLeft: isUnread ? `2px solid ${theme.accentGold}` : "2px solid transparent",
-        }}
+        className="group relative w-full py-3 ps-4 pe-4 text-start transition-colors hover:bg-[var(--tott-elevated)] focus:outline-none"
       >
+        {isUnread && (
+          <span
+            className="absolute inset-y-0 start-0 w-[3px]"
+            style={{
+              background: "linear-gradient(to bottom, var(--tott-accent-gold), var(--tott-dash-gold-label))",
+            }}
+          />
+        )}
         <div className="flex items-start gap-3">
           <span
             className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
@@ -83,7 +91,7 @@ function NotifRow({
                 {n.type}
               </span>
               <span className="text-xs" style={{ color: "var(--tott-muted)" }}>
-                {timeAgo(n.created_at)}
+                {timeAgo(n.created_at, t)}
               </span>
             </div>
           </div>
@@ -110,14 +118,12 @@ function Skeleton() {
 }
 
 export function NotificationDropdown() {
-  const { isDark } = useTheme();
+  const t = useTranslations("Dashboard.topbar");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const iconColor = "var(--tott-stat-icon)";
-  const iconBtn = isDark
-    ? "hover:opacity-80"
-    : "hover:opacity-80";
+  const iconBtn = "hover:opacity-80";
 
   const user = useAuthUser();
   const { data: unreadCountData } = useUnreadNotificationCount(user?.id, {
@@ -155,21 +161,21 @@ export function NotificationDropdown() {
         onClick={() => setOpen((o) => !o)}
         className={`relative p-2 transition-colors ${iconBtn}`}
         style={{ color: iconColor }}
-        aria-label="Notifications"
+        aria-label={t("notifications")}
         aria-expanded={open}
         aria-haspopup="true"
       >
         <BellIcon />
         {unreadCount > 0 ? (
           <span
-            className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-white"
+            className="absolute end-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-white"
             style={{ backgroundColor: "var(--tott-status-coral)" }}
           >
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         ) : (
           <span
-            className="absolute right-1 top-1 h-2 w-2 rounded-full"
+            className="absolute end-1 top-1 h-2 w-2 rounded-full"
             style={{ backgroundColor: "var(--tott-status-coral)" }}
           />
         )}
@@ -178,9 +184,9 @@ export function NotificationDropdown() {
       {/* Dropdown panel */}
       {open && (
         <div
-          className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-2xl border shadow-2xl"
+          className="absolute end-0 z-50 mt-2 w-80 max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border"
           style={{
-            backgroundColor: "var(--tott-dash-surface-2)",
+            backgroundColor: "var(--tott-elevated)",
             borderColor: "var(--tott-card-border)",
             boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
           }}
@@ -188,16 +194,16 @@ export function NotificationDropdown() {
           {/* Header */}
           <div
             className="flex items-center justify-between border-b px-4 py-3"
-            style={{ borderColor: "var(--tott-card-border)" }}
+            style={{ borderColor: "var(--tott-dash-divider)" }}
           >
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-foreground">Notifications</span>
+              <span className="text-sm font-bold text-foreground">{t("notifications")}</span>
               {unreadCount > 0 && (
                 <span
                   className="rounded-full px-1.5 py-0.5 text-[10px] font-bold text-white"
                   style={{ backgroundColor: "var(--tott-status-coral)" }}
                 >
-                  {unreadCount} new
+                  {t("newCount", { count: unreadCount })}
                 </span>
               )}
             </div>
@@ -208,7 +214,7 @@ export function NotificationDropdown() {
                 className="text-xs transition-colors hover:opacity-80"
                 style={{ color: theme.accentGold }}
               >
-                Mark all read
+                {t("markAllRead")}
               </button>
             )}
           </div>
@@ -220,13 +226,13 @@ export function NotificationDropdown() {
             ) : items.length === 0 ? (
               <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
                 <span className="text-2xl">🔔</span>
-                <p className="text-sm font-medium text-foreground">You&apos;re all caught up!</p>
+                <p className="text-sm font-medium text-foreground">{t("allCaughtUp")}</p>
                 <p className="text-xs" style={{ color: "var(--tott-muted)" }}>
-                  No notifications right now.
+                  {t("noNotifications")}
                 </p>
               </div>
             ) : (
-              <ul className="divide-y" style={{ borderColor: "var(--tott-card-border)" }}>
+              <ul className="divide-y" style={{ borderColor: "var(--tott-dash-divider)" }}>
                 {items.map((n) => (
                   <NotifRow key={n.id} n={n} onRead={handleRead} />
                 ))}
@@ -237,7 +243,7 @@ export function NotificationDropdown() {
           {/* Footer */}
           <div
             className="border-t px-4 py-2.5"
-            style={{ borderColor: "var(--tott-card-border)" }}
+            style={{ borderColor: "var(--tott-dash-divider)" }}
           >
             <Link
               href="/admin/notifications"
@@ -245,7 +251,7 @@ export function NotificationDropdown() {
               className="flex items-center justify-between text-xs font-medium transition-colors hover:opacity-80"
               style={{ color: theme.accentGold }}
             >
-              View all notifications
+              {t("viewAllNotifications")}
               <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
               </svg>

@@ -13,6 +13,9 @@ import {
 import { ContentEditorFooter } from "./ContentEditorFooter";
 import { EditorToolbar } from "./EditorToolbar";
 import { EditorRegistryProvider } from "./lib/editor-registry";
+import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
+import { routing } from "@/i18n/routing";
 import { ScheduleArticleModal } from "./modals/ScheduleArticleModal";
 import { buildOpenCallContentBlocksAndMainMedia } from "./lib/build-open-call-payload";
 import { buildArticleBlocksFromEditor } from "./lib/build-api-blocks";
@@ -25,7 +28,7 @@ import { ApplicationFormBuilder } from "./open-call/ApplicationFormBuilder";
 import { ApplicationFormPreview } from "./open-call/ApplicationFormPreview";
 import { invalidateAdminArticlesListCache } from "@/lib/dashboard/admin-articles-list-cache";
 import { useAdminTags } from "@/hooks/queries/admin-tags";
-import { createArticle, getArticleById } from "@/services/articles.service";
+import { createArticle, getArticleById, getArticleIdFromCreateResponse } from "@/services/articles.service";
 import { articleDetailBlocksToContentBlocks } from "@/components/dashboard/admin/articles/articles-editor/lib/api-blocks-to-content-blocks";
 import {
   createOpenCall,
@@ -75,6 +78,24 @@ function apiLanguage(lang: string): "en" | "ar" | "es" | "fr" {
   return "en";
 }
 
+/** Per-locale (translatable) state. Structural settings — category, tags,
+ * visibility, application form, schedule — stay shared from the primary. */
+type LangForm = {
+  title: string;
+  blocks: ContentBlock[];
+  seoTitle: string;
+  metaDescription: string;
+};
+
+function emptyLangForm(): LangForm {
+  return {
+    title: "",
+    blocks: openCallConfig.defaultBlocks,
+    seoTitle: "",
+    metaDescription: "",
+  };
+}
+
 type OpenCallEditorLayoutProps = {
   initialTranslationOf?: string;
   initialLanguage?: string;
@@ -120,19 +141,28 @@ export function OpenCallEditorLayout({
 
   const config = openCallConfig;
 
-  const [title, setTitle] = useState("");
-  const [blocks, setBlocks] = useState<ContentBlock[]>(() => openCallConfig.defaultBlocks);
+  const primaryLang = apiLanguage(initialLanguage ?? "en");
+  // Multi-language authoring (Pattern 2, see WriterFormContent): one LangForm
+  // per opened locale. A locale absent from `forms` has never been opened;
+  // opening it clones the primary tab. `dirty` tracks which tabs the admin
+  // actually touched — untouched tabs never submit.
+  const [activeLang, setActiveLang] = useState<string>(primaryLang);
+  const [forms, setForms] = useState<Record<string, LangForm>>(() => ({
+    [primaryLang]: emptyLangForm(),
+  }));
+  const [dirty, setDirty] = useState<Record<string, boolean>>({});
+
+  const form = forms[activeLang] ?? emptyLangForm();
+  const { title, blocks, seoTitle, metaDescription } = form;
+
   const [workflowStatus, setWorkflowStatus] = useState<ArticleWorkflowStatus>("draft");
   const [scheduledAt, setScheduledAt] = useState<string | null>(null);
   const [category, setCategory] = useState("");
   const [translationOf] = useState(initialTranslationOf);
-  const [language, setLanguage] = useState(initialLanguage ?? "en");
   const [originalTitle, setOriginalTitle] = useState<string | null>(null);
   // Resolved at mount; also re-fetched inline at save time if still null.
   const existingOpenCallIdRef = useRef<string | null | undefined>(undefined);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
-  const [seoTitle, setSeoTitle] = useState("");
-  const [metaDescription, setMetaDescription] = useState("");
   const [collectionId, setCollectionId] = useState("");
   const [tagIds, setTagIds] = useState<string[]>([]);
   const [applicationFields, setApplicationFields] = useState<ApplicationFormField[]>(() =>
@@ -143,7 +173,40 @@ export function OpenCallEditorLayout({
   const [error, setError] = useState<string | null>(null);
   const [editingFormBlock, setEditingFormBlock] = useState(false);
 
-  // Translation create mode: pre-fill form fields from the original so the
+  // All per-locale writes go through here so dirty-tracking can't be missed.
+  const updateForm = useCallback(
+    (mutate: (prev: LangForm) => LangForm) => {
+      setForms((prev) => ({
+        ...prev,
+        [activeLang]: mutate(prev[activeLang] ?? emptyLangForm()),
+      }));
+      setDirty((prev) => (prev[activeLang] ? prev : { ...prev, [activeLang]: true }));
+    },
+    [activeLang],
+  );
+
+  const setTitle = useCallback(
+    (v: string) => updateForm((prev) => ({ ...prev, title: v })),
+    [updateForm],
+  );
+  const setSeoTitle = useCallback(
+    (v: string) => updateForm((prev) => ({ ...prev, seoTitle: v })),
+    [updateForm],
+  );
+  const setMetaDescription = useCallback(
+    (v: string) => updateForm((prev) => ({ ...prev, metaDescription: v })),
+    [updateForm],
+  );
+  const setBlocks = useCallback(
+    (updater: React.SetStateAction<ContentBlock[]>) =>
+      updateForm((prev) => ({
+        ...prev,
+        blocks: typeof updater === "function" ? updater(prev.blocks) : updater,
+      })),
+    [updateForm],
+  );
+
+  // Translation create mode: pre-fill the primary tab from the original so the
   // translator starts with content rather than a blank page.
   useEffect(() => {
     if (!translationOf) return;
@@ -151,15 +214,46 @@ export function OpenCallEditorLayout({
       if (!a) return;
       existingOpenCallIdRef.current = a.open_call_id ?? null;
       setOriginalTitle(a.title ?? null);
-      setTitle(a.title ?? "");
       setCategory(a.category ?? "");
-      setSeoTitle(a.seo_title?.trim() ?? "");
-      setMetaDescription(a.meta_description?.trim() ?? "");
       const mapped = articleDetailBlocksToContentBlocks(a.blocks ?? []);
-      if (mapped.length) setBlocks(mapped);
+      setForms((prev) => ({
+        ...prev,
+        [primaryLang]: {
+          title: a.title ?? "",
+          seoTitle: a.seo_title?.trim() ?? "",
+          metaDescription: a.meta_description?.trim() ?? "",
+          blocks: mapped.length ? mapped : (prev[primaryLang]?.blocks ?? openCallConfig.defaultBlocks),
+        },
+      }));
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Tab switch — clone the primary tab into a never-opened locale.
+  const handleSelectLang = useCallback(
+    (loc: string) => {
+      if (loc === activeLang || busy) return;
+      setForms((prev) =>
+        prev[loc] ? prev : { ...prev, [loc]: { ...(prev[primaryLang] ?? emptyLangForm()) } },
+      );
+      setActiveLang(loc);
+    },
+    [activeLang, busy, primaryLang],
+  );
+
+  const tabStatus = useMemo(() => {
+    const map: Record<string, LanguageTabStatus> = {};
+    for (const loc of routing.locales) {
+      map[loc] = dirty[loc]
+        ? "dirty"
+        : loc === primaryLang
+          ? "primary"
+          : forms[loc]
+            ? "existing"
+            : "empty";
+    }
+    return map;
+  }, [dirty, primaryLang, forms]);
 
   const addBlock = useCallback((type: BlockType) => {
     setBlocks((prev) => [
@@ -176,11 +270,11 @@ export function OpenCallEditorLayout({
               : { content: "" }),
       },
     ]);
-  }, []);
+  }, [setBlocks]);
 
   const addCoverBlock = useCallback(() => {
     setBlocks((prev) => [{ id: crypto.randomUUID(), type: "image" as const }, ...prev]);
-  }, []);
+  }, [setBlocks]);
 
   const reorderBlocks = useCallback((activeId: string, overId: string) => {
     setBlocks((prev) => {
@@ -192,13 +286,20 @@ export function OpenCallEditorLayout({
       next.splice(to, 0, item!);
       return next;
     });
-  }, []);
+  }, [setBlocks]);
 
   const updateBlock = useCallback((id: string, patch: Partial<ContentBlock>) => {
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)));
-  }, []);
+  }, [setBlocks]);
+
+  const removeBlock = useCallback((id: string) => {
+    setBlocks((prev) => prev.filter((b) => b.id !== id));
+  }, [setBlocks]);
 
   const { data: adminTagsData = [] } = useAdminTags();
+
+  // Save always builds from the PRIMARY tab — the active tab may be a sibling.
+  const primaryForm = forms[primaryLang] ?? emptyLangForm();
 
   const buildPayloads = useCallback(
     async (opts: {
@@ -212,8 +313,8 @@ export function OpenCallEditorLayout({
       excerpt?: string;
     }> => {
       const [{ content_blocks, main_media }, articleBlocks] = await Promise.all([
-        buildOpenCallContentBlocksAndMainMedia(blocks),
-        buildArticleBlocksFromEditor(blocks),
+        buildOpenCallContentBlocksAndMainMedia(primaryForm.blocks),
+        buildArticleBlocksFromEditor(primaryForm.blocks),
       ]);
       const adminTags = adminTagsData;
       const tags = tagIds
@@ -230,7 +331,7 @@ export function OpenCallEditorLayout({
           : undefined;
 
       const openCall: CreateOpenCallPayload = {
-        title: title.trim(),
+        title: primaryForm.title.trim(),
         content_blocks,
         main_media,
         application_form: { fields: applicationFields },
@@ -238,13 +339,13 @@ export function OpenCallEditorLayout({
           status: opts.settingsStatus,
           category: category.trim(),
           tags,
-          language: apiLanguage(language),
+          language: apiLanguage(primaryLang),
           visibility,
           ...(translationOf ? { translation_of: translationOf } : {}),
         },
         seo: {
-          title: seoTitle.trim() || title.trim(),
-          meta_description: metaDescription.trim(),
+          title: primaryForm.seoTitle.trim() || primaryForm.title.trim(),
+          meta_description: primaryForm.metaDescription.trim(),
         },
         action: opts.action,
         scheduled_at: opts.scheduled_at,
@@ -252,7 +353,7 @@ export function OpenCallEditorLayout({
 
       return { openCall, articleBlocks, coverImage, excerpt };
     },
-    [blocks, title, applicationFields, category, language, visibility, seoTitle, metaDescription, tagIds, adminTagsData, translationOf],
+    [primaryForm, applicationFields, category, primaryLang, visibility, tagIds, adminTagsData, translationOf],
   );
 
   const createArticleFromBlocks = useCallback(
@@ -263,16 +364,28 @@ export function OpenCallEditorLayout({
         coverImage?: string;
         excerpt?: string;
         scheduledAt?: string | null;
+        /** Sibling tab: create this locale's version linked to the original,
+         * with that tab's authored text. */
+        asTranslation?: {
+          language: string;
+          of: string;
+          title?: string;
+          seoTitle?: string;
+          metaDescription?: string;
+        };
       } = {},
     ) => {
-      await createArticle({
-        title: title.trim(),
+      const sibTitle = extra.asTranslation?.title?.trim() || primaryForm.title.trim();
+      const sibSeo = extra.asTranslation?.seoTitle?.trim() ?? primaryForm.seoTitle.trim();
+      const sibMeta = extra.asTranslation?.metaDescription?.trim() ?? primaryForm.metaDescription.trim();
+      const res = await createArticle({
+        title: sibTitle,
         content_type: "open_call",
         category: category.trim(),
-        language: apiLanguage(language),
+        language: apiLanguage(extra.asTranslation?.language ?? primaryLang),
         visibility,
-        seo_title: seoTitle.trim() || title.trim(),
-        meta_description: metaDescription.trim(),
+        seo_title: sibSeo || sibTitle,
+        meta_description: sibMeta,
         collection_id: collectionId.trim() || undefined,
         tag_ids: tagIds.length ? tagIds : undefined,
         blocks: articleBlocks,
@@ -280,14 +393,49 @@ export function OpenCallEditorLayout({
         cover_image: extra.coverImage,
         excerpt: extra.excerpt,
         scheduled_at: extra.scheduledAt,
-        translation_of: translationOf || undefined,
+        translation_of: extra.asTranslation?.of ?? translationOf ?? undefined,
       });
+      return getArticleIdFromCreateResponse(res);
     },
-    [title, category, language, visibility, seoTitle, metaDescription, collectionId, tagIds, translationOf],
+    [primaryForm, category, primaryLang, visibility, collectionId, tagIds, translationOf],
+  );
+
+  /** After the primary tab saves: create each OTHER dirty tab as a draft
+   * sibling in that locale. They share the open call record and join the
+   * primary article's translation group. Best effort per sibling. */
+  const createDirtySiblings = useCallback(
+    async (
+      extra: { openCallId?: string; coverImage?: string; excerpt?: string },
+      originalId: string | null,
+    ) => {
+      const groupId = translationOf ?? originalId;
+      if (!groupId) return;
+      for (const loc of routing.locales) {
+        if (apiLanguage(loc) === primaryLang || !dirty[loc]) continue;
+        const f = forms[loc];
+        if (!f) continue;
+        try {
+          const sibBlocks = await buildArticleBlocksFromEditor(f.blocks, {});
+          await createArticleFromBlocks(sibBlocks, {
+            ...extra,
+            asTranslation: {
+              language: loc,
+              of: groupId,
+              title: f.title,
+              seoTitle: f.seoTitle,
+              metaDescription: f.metaDescription,
+            },
+          });
+        } catch {
+          /* sibling may already exist — the primary stands */
+        }
+      }
+    },
+    [translationOf, primaryLang, dirty, forms, createArticleFromBlocks],
   );
 
   const validateBeforeSubmit = useCallback(() => {
-    if (!title.trim()) return tAppForm("editorOpenCall.titleRequired");
+    if (!primaryForm.title.trim()) return tAppForm("editorOpenCall.titleRequired");
     if (!category.trim()) return tAppForm("editorOpenCall.categoryRequired");
     const issue = validateOpenCallApplicationFields(applicationFields);
     if (issue)
@@ -296,7 +444,7 @@ export function OpenCallEditorLayout({
         return f ? resolveFieldParticipantLabel(f, tAppForm) : resolveApplicationFieldLabel(n, tAppForm);
       });
     return null;
-  }, [title, category, applicationFields, tAppForm]);
+  }, [primaryForm, category, applicationFields, tAppForm]);
 
   const handleSaveDraft = useCallback(async () => {
     const v = validateBeforeSubmit();
@@ -317,7 +465,8 @@ export function OpenCallEditorLayout({
         return;
       }
       const ocId = await resolveOpenCallId(translationOf, existingOpenCallIdRef, openCall);
-      await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
+      const originalId = await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
+      await createDirtySiblings({ openCallId: ocId, coverImage, excerpt }, originalId);
       invalidateAdminArticlesListCache();
       router.push(ADMIN_ARTICLES_PATH);
     } catch (e) {
@@ -325,7 +474,7 @@ export function OpenCallEditorLayout({
     } finally {
       setBusy(false);
     }
-  }, [validateBeforeSubmit, buildPayloads, createArticleFromBlocks, router, translateErr, tLayout, translationOf, existingOpenCallIdRef]);
+  }, [validateBeforeSubmit, buildPayloads, createArticleFromBlocks, createDirtySiblings, router, translateErr, tLayout, translationOf, existingOpenCallIdRef]);
 
   const handlePublish = useCallback(async () => {
     if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
@@ -347,7 +496,9 @@ export function OpenCallEditorLayout({
         return;
       }
       const ocId = await resolveOpenCallId(translationOf, existingOpenCallIdRef, openCall);
-      await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
+      const originalId = await createArticleFromBlocks(articleBlocks, { openCallId: ocId, coverImage, excerpt });
+      // Siblings are plain drafts even when the primary publishes.
+      await createDirtySiblings({ openCallId: ocId, coverImage, excerpt }, originalId);
       invalidateAdminArticlesListCache();
       router.push(ADMIN_ARTICLES_PATH);
     } catch (e) {
@@ -360,6 +511,7 @@ export function OpenCallEditorLayout({
     validateBeforeSubmit,
     buildPayloads,
     createArticleFromBlocks,
+    createDirtySiblings,
     router,
     translateErr,
     tLayout,
@@ -390,12 +542,13 @@ export function OpenCallEditorLayout({
           return;
         }
         const ocId = await resolveOpenCallId(translationOf, existingOpenCallIdRef, openCall);
-        await createArticleFromBlocks(articleBlocks, {
+        const originalId = await createArticleFromBlocks(articleBlocks, {
           openCallId: ocId,
           coverImage,
           excerpt,
           scheduledAt: iso,
         });
+        await createDirtySiblings({ openCallId: ocId, coverImage, excerpt }, originalId);
         invalidateAdminArticlesListCache();
         setScheduleModalOpen(false);
         router.push(ADMIN_ARTICLES_PATH);
@@ -411,6 +564,7 @@ export function OpenCallEditorLayout({
       validateBeforeSubmit,
       buildPayloads,
       createArticleFromBlocks,
+      createDirtySiblings,
       router,
       translateErr,
       tLayout,
@@ -422,6 +576,8 @@ export function OpenCallEditorLayout({
   useEffect(() => {
     if (workflowStatus !== "scheduled") setScheduledAt(null);
   }, [workflowStatus]);
+
+  const isRtl = activeLang === "ar";
 
   return (
     <EditorRegistryProvider>
@@ -439,13 +595,28 @@ export function OpenCallEditorLayout({
         </div>
       ) : null}
 
+      {/* In-place language tabs (Pattern 2): each tab holds its own text;
+          untouched tabs never submit. */}
+      <div className="mb-4 flex flex-wrap items-center justify-end gap-3 border-b border-[var(--tott-card-border)] pb-4 shrink-0">
+        <LanguageFormTabs
+          active={activeLang}
+          onSelect={handleSelectLang}
+          status={tabStatus}
+          disabled={busy}
+        />
+      </div>
+
       <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
-        <div className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto">
+        <div
+          className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto"
+          dir={isRtl ? "rtl" : "ltr"}
+          lang={isRtl ? "ar" : undefined}
+        >
           {translationOf && originalTitle ? (
-            <div className="flex items-center gap-2 rounded-lg border border-[#C9A96E]/30 bg-[#C9A96E]/5 px-3 py-2 text-xs text-gray-400">
+            <div className="flex items-center gap-2 rounded-lg border border-[var(--tott-accent-gold)]/30 bg-[var(--tott-accent-gold)]/5 px-3 py-2 text-xs text-[var(--tott-muted)]" dir="ltr">
               <span>Translating from:</span>
-              <span className="font-medium text-[#C9A96E]">{originalTitle}</span>
-              <span className="text-gray-600">·</span>
+              <span className="font-medium text-[var(--tott-dash-gold-text)]">{originalTitle}</span>
+              <span className="text-[var(--tott-muted)]">·</span>
               <Link
                 href={`/admin/articles/edit/${translationOf}`}
                 target="_blank"
@@ -462,24 +633,27 @@ export function OpenCallEditorLayout({
             onChange={(e) => setTitle(e.target.value)}
             placeholder={localizedConfig.titlePlaceholder}
             className={titleClass}
+            dir={isRtl ? "rtl" : "ltr"}
+            lang={isRtl ? "ar" : undefined}
           />
           <ContentBlocks
             blocks={blocks}
             onUpdateBlock={updateBlock}
             onAddCoverBlock={addCoverBlock}
             onReorderBlock={reorderBlocks}
+            onRemoveBlock={removeBlock}
             config={localizedConfig}
             mainMediaCopy={localizedMainMedia}
           />
 
           {/* Public form preview (matches the SVG). The pencil header toggles
               into the field-configuration builder so admins can still edit. */}
-          <div>
+          <div dir="ltr">
             <hr className="mb-4 border-[var(--tott-card-border)]" />
             <button
               type="button"
               onClick={() => setEditingFormBlock((v) => !v)}
-              className="mb-3 inline-flex items-center gap-2 text-sm text-gray-300 transition-colors hover:text-foreground"
+              className="mb-3 inline-flex items-center gap-2 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground"
             >
               <svg
                 width="16"
@@ -518,8 +692,8 @@ export function OpenCallEditorLayout({
             scheduledAt={scheduledAt}
             category={category}
             onCategoryChange={setCategory}
-            language={language}
-            onLanguageChange={setLanguage}
+            language={activeLang}
+            onLanguageChange={handleSelectLang}
             visibility={visibility}
             onVisibilityChange={setVisibility}
             seoTitle={seoTitle}

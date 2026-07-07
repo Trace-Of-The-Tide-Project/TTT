@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { api } from '@/services/api';
 
 interface SubscriberRow {
@@ -17,12 +18,12 @@ interface SubscriberRow {
   created_at: string;
 }
 
-const STATUS_STYLE: Record<string, { color: string; label: string }> = {
-  active:    { color: '#22c55e', label: 'Active' },
-  past_due:  { color: '#f59e0b', label: 'Past Due' },
-  cancelled: { color: '#ef4444', label: 'Cancelled' },
-  expired:   { color: '#666',    label: 'Expired' },
-  trialing:  { color: '#6db3ae', label: 'Trial' },
+const STATUS_STYLE: Record<string, { color: string }> = {
+  active:    { color: '#22c55e' },
+  past_due:  { color: '#f59e0b' },
+  cancelled: { color: '#ef4444' },
+  expired:   { color: '#666'    },
+  trialing:  { color: '#6db3ae' },
 };
 
 const PLAN_BADGE: Record<string, { color: string; bg: string }> = {
@@ -33,9 +34,9 @@ const PLAN_BADGE: Record<string, { color: string; bg: string }> = {
 const CHANGEABLE_STATUSES = new Set(['active', 'trialing', 'past_due']);
 
 function PlanBadge({ planKey, planName }: { planKey: string | null; planName: string | null }) {
-  if (!planName) return <span style={{ color: '#555' }}>—</span>;
+  if (!planName) return <span style={{ color: 'var(--tott-muted)' }}>—</span>;
   const style = planKey ? PLAN_BADGE[planKey] : null;
-  if (!style) return <span className="text-sm" style={{ color: '#aaa' }}>{planName}</span>;
+  if (!style) return <span className="text-sm" style={{ color: 'var(--tott-muted)' }}>{planName}</span>;
   return (
     <span
       className="text-xs font-semibold px-2.5 py-1 rounded-full"
@@ -47,6 +48,7 @@ function PlanBadge({ planKey, planName }: { planKey: string | null; planName: st
 }
 
 export default function AdminSubscriptionsPage() {
+  const t = useTranslations('Dashboard.subscriptions');
   const [rows, setRows]                   = useState<SubscriberRow[]>([]);
   const [meta, setMeta]                   = useState({ total: 0, page: 1, totalPages: 1 });
   const [statusFilter, setStatus]         = useState('');
@@ -113,15 +115,15 @@ export default function AdminSubscriptionsPage() {
       {/* ── HEADER ── */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <p className="text-xs uppercase tracking-[3px] mb-1" style={{ color: '#cba158' }}>Admin</p>
-          <h1 className="text-2xl font-bold" style={{ color: '#ededed' }}>Subscriptions</h1>
+          <p className="text-xs uppercase tracking-[3px] mb-1" style={{ color: 'var(--tott-dash-gold-label)' }}>{t('admin')}</p>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{t('list.title')}</h1>
         </div>
         <a
           href="subscriptions/stats"
           className="text-xs uppercase tracking-[2px] px-4 py-2 rounded-lg transition-colors"
-          style={{ border: '1px solid #2a2a2a', color: '#cba158', background: 'transparent' }}
+          style={{ border: '1px solid var(--tott-card-border)', color: 'var(--tott-accent-gold)', background: 'transparent' }}
         >
-          Revenue & Stats →
+          {t('revenueStats')} →
         </a>
       </div>
 
@@ -137,22 +139,22 @@ export default function AdminSubscriptionsPage() {
               className="text-xs px-3 py-1.5 rounded-full font-medium transition-colors"
               style={
                 active
-                  ? { background: style ? style.color : '#cba158', color: '#000' }
-                  : { background: '#1a1a1a', color: '#666', border: '1px solid #2a2a2a' }
+                  ? { background: style ? style.color : 'var(--tott-accent-gold)', color: 'var(--tott-on-accent)' }
+                  : { background: 'var(--tott-dash-input-bg)', color: 'var(--tott-muted)', border: '1px solid var(--tott-card-border)' }
               }
             >
-              {s ? (STATUS_STYLE[s]?.label ?? s) : 'All'}
+              {s ? t(`status.${s}`) : t('list.filterAll')}
             </button>
           );
         })}
-        {loading && <span className="text-xs ml-2" style={{ color: '#555' }}>Loading…</span>}
-        <span className="ml-auto text-xs" style={{ color: '#555' }}>{meta.total} subscribers</span>
+        {loading && <span className="text-xs ml-2" style={{ color: 'var(--tott-muted)' }}>{t('loading')}</span>}
+        <span className="ml-auto text-xs" style={{ color: 'var(--tott-muted)' }}>{t('list.subscribersCount', { count: meta.total })}</span>
       </div>
 
       {/* ── PLAN FILTER BAR ── */}
       {plans.length > 0 && (
         <div className="flex items-center gap-3 mb-5">
-          {[{ id: '', display_name: 'All Plans', name: '' }, ...plans].map((p) => {
+          {[{ id: '', display_name: t('list.allPlans'), name: '' }, ...plans].map((p) => {
             const active = planFilter === p.id;
             const badge = p.name ? PLAN_BADGE[p.name] : null;
             return (
@@ -162,8 +164,8 @@ export default function AdminSubscriptionsPage() {
                 className="text-xs px-3 py-1.5 rounded-full font-medium transition-colors"
                 style={
                   active
-                    ? { background: badge ? badge.color : '#cba158', color: '#000' }
-                    : { background: '#1a1a1a', color: '#666', border: '1px solid #2a2a2a' }
+                    ? { background: badge ? badge.color : 'var(--tott-accent-gold)', color: 'var(--tott-on-accent)' }
+                    : { background: 'var(--tott-dash-input-bg)', color: 'var(--tott-muted)', border: '1px solid var(--tott-card-border)' }
                 }
               >
                 {p.display_name}
@@ -174,13 +176,13 @@ export default function AdminSubscriptionsPage() {
       )}
 
       {/* ── TABLE ── */}
-      <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #2a2a2a' }}>
+      <div className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--tott-card-border)' }}>
         <table className="w-full text-sm">
           <thead>
-            <tr style={{ borderBottom: '1px solid #2a2a2a', background: '#141414' }}>
-              {['User', 'Plan', 'Status', 'Renews', 'Source', 'Actions'].map((h) => (
-                <th key={h} className="text-left py-3 px-4 text-xs uppercase tracking-wider font-semibold" style={{ color: '#555' }}>
-                  {h}
+            <tr style={{ borderBottom: '1px solid var(--tott-card-border)', background: 'var(--tott-elevated)' }}>
+              {(['colUser', 'colPlan', 'colStatus', 'colRenews', 'colSource', 'colActions'] as const).map((h) => (
+                <th key={h} className="text-left py-3 px-4 text-xs uppercase tracking-wider font-semibold" style={{ color: 'var(--tott-muted)' }}>
+                  {t(`list.${h}`)}
                 </th>
               ))}
             </tr>
@@ -188,8 +190,8 @@ export default function AdminSubscriptionsPage() {
           <tbody>
             {rows.length === 0 && !loading && (
               <tr>
-                <td colSpan={6} className="py-12 text-center text-sm" style={{ color: '#555' }}>
-                  No subscribers found.
+                <td colSpan={6} className="py-12 text-center text-sm" style={{ color: 'var(--tott-muted)' }}>
+                  {t('list.empty')}
                 </td>
               </tr>
             )}
@@ -200,13 +202,13 @@ export default function AdminSubscriptionsPage() {
                 <tr
                   key={row.id}
                   style={{
-                    borderBottom: i < rows.length - 1 ? '1px solid #1a1a1a' : 'none',
+                    borderBottom: i < rows.length - 1 ? '1px solid var(--tott-card-border)' : 'none',
                     background: 'transparent',
                   }}
                 >
                   <td className="py-3 px-4">
-                    <p className="font-medium text-sm" style={{ color: '#ededed' }}>{row.user_name ?? '—'}</p>
-                    <p className="text-xs mt-0.5" style={{ color: '#555' }}>{row.user_email ?? '—'}</p>
+                    <p className="font-medium text-sm" style={{ color: 'var(--foreground)' }}>{row.user_name ?? '—'}</p>
+                    <p className="text-xs mt-0.5" style={{ color: 'var(--tott-muted)' }}>{row.user_email ?? '—'}</p>
                   </td>
                   <td className="py-3 px-4">
                     <PlanBadge planKey={row.plan_key} planName={row.plan_name} />
@@ -217,18 +219,18 @@ export default function AdminSubscriptionsPage() {
                         className="text-xs font-semibold px-2.5 py-1 rounded-full"
                         style={{ background: `${st.color}18`, color: st.color, border: `1px solid ${st.color}40` }}
                       >
-                        {st.label}
+                        {t(`status.${row.status}`)}
                       </span>
                     ) : (
-                      <span className="text-xs" style={{ color: '#555' }}>{row.status}</span>
+                      <span className="text-xs" style={{ color: 'var(--tott-muted)' }}>{row.status}</span>
                     )}
                   </td>
-                  <td className="py-3 px-4 text-sm" style={{ color: '#666' }}>
+                  <td className="py-3 px-4 text-sm" style={{ color: 'var(--tott-muted)' }}>
                     {row.current_period_end
                       ? new Date(row.current_period_end).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
                       : '—'}
                   </td>
-                  <td className="py-3 px-4 text-xs capitalize" style={{ color: '#666' }}>
+                  <td className="py-3 px-4 text-xs capitalize" style={{ color: 'var(--tott-muted)' }}>
                     {row.source}
                   </td>
                   <td className="py-3 px-4">
@@ -239,15 +241,15 @@ export default function AdminSubscriptionsPage() {
                           className="text-xs font-medium transition-colors"
                           style={{ color: '#6db3ae' }}
                         >
-                          Change Plan
+                          {t('changePlan')}
                         </button>
                       ) : (
                         <button
                           onClick={() => { setGrantTarget(row); setGrantPlanId(''); }}
                           className="text-xs font-medium transition-colors"
-                          style={{ color: '#cba158' }}
+                          style={{ color: 'var(--tott-accent-gold)' }}
                         >
-                          Grant
+                          {t('grant')}
                         </button>
                       )}
                       <button
@@ -255,7 +257,7 @@ export default function AdminSubscriptionsPage() {
                         className="text-xs font-medium transition-colors"
                         style={{ color: '#ef4444' }}
                       >
-                        Revoke
+                        {t('revoke')}
                       </button>
                     </div>
                   </td>
@@ -273,20 +275,20 @@ export default function AdminSubscriptionsPage() {
             onClick={() => load(meta.page - 1)}
             disabled={meta.page <= 1}
             className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30"
-            style={{ border: '1px solid #2a2a2a', color: '#aaa', background: 'transparent' }}
+            style={{ border: '1px solid var(--tott-card-border)', color: 'var(--tott-muted)', background: 'transparent' }}
           >
-            ← Prev
+            ← {t('list.prev')}
           </button>
-          <span className="text-xs" style={{ color: '#555' }}>
-            Page {meta.page} of {meta.totalPages}
+          <span className="text-xs" style={{ color: 'var(--tott-muted)' }}>
+            {t('list.pageOf', { page: meta.page, totalPages: meta.totalPages })}
           </span>
           <button
             onClick={() => load(meta.page + 1)}
             disabled={meta.page >= meta.totalPages}
             className="text-xs px-3 py-1.5 rounded-lg disabled:opacity-30"
-            style={{ border: '1px solid #2a2a2a', color: '#aaa', background: 'transparent' }}
+            style={{ border: '1px solid var(--tott-card-border)', color: 'var(--tott-muted)', background: 'transparent' }}
           >
-            Next →
+            {t('list.next')} →
           </button>
         </div>
       )}
@@ -294,25 +296,25 @@ export default function AdminSubscriptionsPage() {
       {/* ── REVOKE MODAL ── */}
       {revokeTarget && (
         <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: 'rgba(0,0,0,0.7)' }}>
-          <div className="rounded-xl p-6 max-w-sm w-full mx-4" style={{ background: '#141414', border: '1px solid #2a2a2a' }}>
-            <h2 className="font-semibold mb-1" style={{ color: '#ededed' }}>Revoke subscription?</h2>
-            <p className="text-sm mb-5" style={{ color: '#666' }}>
-              This will immediately cancel access for <span style={{ color: '#ccc' }}>{revokeTarget.user_email}</span>.
+          <div className="rounded-xl p-6 max-w-sm w-full mx-4" style={{ background: 'var(--tott-elevated)', border: '1px solid var(--tott-card-border)' }}>
+            <h2 className="font-semibold mb-1" style={{ color: 'var(--foreground)' }}>{t('list.revokeTitle')}</h2>
+            <p className="text-sm mb-5" style={{ color: 'var(--tott-muted)' }}>
+              {t('list.revokeBody', { email: revokeTarget.user_email ?? '' })}
             </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setRevokeTarget(null)}
                 className="text-sm px-4 py-2 rounded-lg"
-                style={{ border: '1px solid #2a2a2a', color: '#aaa', background: 'transparent' }}
+                style={{ border: '1px solid var(--tott-card-border)', color: 'var(--tott-muted)', background: 'transparent' }}
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 onClick={handleRevoke}
                 className="text-sm px-4 py-2 rounded-lg font-semibold"
                 style={{ background: '#ef4444', color: '#fff' }}
               >
-                Revoke
+                {t('revoke')}
               </button>
             </div>
           </div>
@@ -322,18 +324,18 @@ export default function AdminSubscriptionsPage() {
       {/* ── GRANT MODAL ── */}
       {grantTarget && (
         <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: 'rgba(0,0,0,0.7)' }}>
-          <div className="rounded-xl p-6 max-w-sm w-full mx-4" style={{ background: '#141414', border: '1px solid #2a2a2a' }}>
-            <h2 className="font-semibold mb-1" style={{ color: '#ededed' }}>Grant subscription</h2>
-            <p className="text-sm mb-4" style={{ color: '#666' }}>
-              Granting access to <span style={{ color: '#ccc' }}>{grantTarget.user_email}</span>
+          <div className="rounded-xl p-6 max-w-sm w-full mx-4" style={{ background: 'var(--tott-elevated)', border: '1px solid var(--tott-card-border)' }}>
+            <h2 className="font-semibold mb-1" style={{ color: 'var(--foreground)' }}>{t('list.grantTitle')}</h2>
+            <p className="text-sm mb-4" style={{ color: 'var(--tott-muted)' }}>
+              {t('list.grantBody', { email: grantTarget.user_email ?? '' })}
             </p>
             <select
               value={grantPlanId}
               onChange={(e) => setGrantPlanId(e.target.value)}
               className="w-full rounded-lg px-3 py-2 text-sm mb-4"
-              style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#ededed' }}
+              style={{ background: 'var(--tott-dash-input-bg)', border: '1px solid var(--tott-card-border)', color: 'var(--foreground)' }}
             >
-              <option value="">Select a plan…</option>
+              <option value="">{t('list.selectPlan')}</option>
               {plans.map((p) => (
                 <option key={p.id} value={p.id}>{p.display_name}</option>
               ))}
@@ -342,17 +344,17 @@ export default function AdminSubscriptionsPage() {
               <button
                 onClick={() => setGrantTarget(null)}
                 className="text-sm px-4 py-2 rounded-lg"
-                style={{ border: '1px solid #2a2a2a', color: '#aaa', background: 'transparent' }}
+                style={{ border: '1px solid var(--tott-card-border)', color: 'var(--tott-muted)', background: 'transparent' }}
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 onClick={handleGrant}
                 disabled={!grantPlanId}
                 className="text-sm px-4 py-2 rounded-lg font-semibold disabled:opacity-40"
-                style={{ background: '#cba158', color: '#000' }}
+                style={{ background: 'var(--tott-accent-gold)', color: 'var(--tott-on-accent)' }}
               >
-                Grant
+                {t('grant')}
               </button>
             </div>
           </div>
@@ -362,21 +364,21 @@ export default function AdminSubscriptionsPage() {
       {/* ── CHANGE PLAN MODAL ── */}
       {changePlanTarget && (
         <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: 'rgba(0,0,0,0.7)' }}>
-          <div className="rounded-xl p-6 max-w-sm w-full mx-4" style={{ background: '#141414', border: '1px solid #2a2a2a' }}>
-            <h2 className="font-semibold mb-1" style={{ color: '#ededed' }}>Change plan</h2>
-            <p className="text-sm mb-1" style={{ color: '#666' }}>
-              User: <span style={{ color: '#ccc' }}>{changePlanTarget.user_email}</span>
+          <div className="rounded-xl p-6 max-w-sm w-full mx-4" style={{ background: 'var(--tott-elevated)', border: '1px solid var(--tott-card-border)' }}>
+            <h2 className="font-semibold mb-1" style={{ color: 'var(--foreground)' }}>{t('list.changeTitle')}</h2>
+            <p className="text-sm mb-1" style={{ color: 'var(--tott-muted)' }}>
+              {t('list.changeUser')} <span style={{ color: 'var(--foreground)' }}>{changePlanTarget.user_email}</span>
             </p>
-            <p className="text-sm mb-4" style={{ color: '#666' }}>
-              Current plan: <span style={{ color: '#ccc' }}>{changePlanTarget.plan_name ?? '—'}</span>
+            <p className="text-sm mb-4" style={{ color: 'var(--tott-muted)' }}>
+              {t('list.changeCurrentPlan')} <span style={{ color: 'var(--foreground)' }}>{changePlanTarget.plan_name ?? '—'}</span>
             </p>
             <select
               value={changePlanId}
               onChange={(e) => setChangePlanId(e.target.value)}
               className="w-full rounded-lg px-3 py-2 text-sm mb-4"
-              style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#ededed' }}
+              style={{ background: 'var(--tott-dash-input-bg)', border: '1px solid var(--tott-card-border)', color: 'var(--foreground)' }}
             >
-              <option value="">Select new plan…</option>
+              <option value="">{t('list.selectNewPlan')}</option>
               {plans
                 .filter((p) => p.id !== changePlanTarget.plan_id)
                 .map((p) => (
@@ -387,9 +389,9 @@ export default function AdminSubscriptionsPage() {
               <button
                 onClick={() => setChangePlan(null)}
                 className="text-sm px-4 py-2 rounded-lg"
-                style={{ border: '1px solid #2a2a2a', color: '#aaa', background: 'transparent' }}
+                style={{ border: '1px solid var(--tott-card-border)', color: 'var(--tott-muted)', background: 'transparent' }}
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 onClick={handleChangePlan}
@@ -397,7 +399,7 @@ export default function AdminSubscriptionsPage() {
                 className="text-sm px-4 py-2 rounded-lg font-semibold disabled:opacity-40"
                 style={{ background: '#6db3ae', color: '#000' }}
               >
-                Change Plan
+                {t('changePlan')}
               </button>
             </div>
           </div>

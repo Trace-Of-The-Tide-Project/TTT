@@ -107,6 +107,47 @@
             "revokeFailed": "تعذّر إزالة الدور"
           }
         }
+      },
+      "addUser": {
+        "title": "إضافة مستخدم",
+        "subtitle": "أنشئ حساب مستخدم جديد. يمكنه تسجيل الدخول بالبريد وكلمة المرور التي تضعها هنا.",
+        "back": "العودة إلى المستخدمين",
+        "fields": {
+          "fullName": "الاسم الكامل",
+          "email": "البريد الإلكتروني",
+          "password": "كلمة المرور",
+          "passwordHint": "شارك كلمة المرور هذه مع المستخدم — لا يوجد بريد دعوة."
+        },
+        "actions": {
+          "generate": "توليد",
+          "copy": "نسخ",
+          "copied": "تم النسخ",
+          "show": "إظهار",
+          "hide": "إخفاء",
+          "create": "إنشاء المستخدم",
+          "creating": "جارٍ الإنشاء…",
+          "cancel": "إلغاء"
+        },
+        "errors": {
+          "fullNameRequired": "الاسم الكامل مطلوب.",
+          "emailRequired": "أدخل بريدًا إلكترونيًا صالحًا.",
+          "passwordTooShort": "يجب ألا تقل كلمة المرور عن 6 أحرف.",
+          "createFailed": "تعذر إنشاء المستخدم."
+        },
+        "toasts": {
+          "creating": "جارٍ إنشاء المستخدم…",
+          "created": "تم إنشاء المستخدم"
+        }
+      },
+      "filters": {
+        "title": "عوامل التصفية",
+        "clearAll": "مسح الكل",
+        "emailContains": "البريد يحتوي على",
+        "emailPlaceholder": "مثال: @domain.com",
+        "minContributions": "الحد الأدنى للمساهمات",
+        "joinedAfter": "انضم بعد",
+        "sortOrder": "ترتيب الفرز",
+        "done": "تم"
       }
     }
   }

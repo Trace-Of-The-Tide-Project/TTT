@@ -105,14 +105,14 @@ function Dropdown({
         ref={buttonRef}
         type="button"
         onClick={() => onOpenChange(!open)}
-        className={`inline-flex h-[42px] items-center justify-between gap-3 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 text-sm text-gray-200 outline-none transition-colors focus:border-[#555] ${
+        className={`inline-flex h-[42px] items-center justify-between gap-3 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 text-sm text-foreground outline-none transition-colors focus:border-[var(--tott-card-border)] ${
           fullWidth ? "w-full" : "min-w-[140px]"
         }`}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
         <span className="truncate">{selectedLabel}</span>
-        <span className="text-gray-500">
+        <span className="text-[var(--tott-muted)]">
           <ChevronDownIcon />
         </span>
       </button>
@@ -185,13 +185,13 @@ function ThreadRow({
       onClick={onSelect}
       className={`w-full rounded-xl border px-4 py-4 text-start transition-colors ${
         selected
-          ? "border-[#5a4a2a] bg-[#151515]"
-          : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] hover:bg-[#151515]"
+          ? "border-[var(--tott-accent-gold)] bg-[var(--tott-elevated)]"
+          : "border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] hover:bg-[var(--tott-elevated-hover)]"
       }`}
     >
       <div className="flex items-start gap-3">
         <div
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-[#111]"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-[var(--tott-on-accent)]"
           style={{ backgroundColor: theme.accentGoldFocus }}
         >
           {getInitials(thread.senderName)}
@@ -200,13 +200,13 @@ function ThreadRow({
           <div className="flex items-center justify-between gap-3">
             <p className="truncate text-sm font-semibold text-foreground">{thread.senderName}</p>
             {priorityKey && (
-              <span className="rounded-full border border-[#3a2f1a] bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[10px] font-semibold text-[#CBA158]">
+              <span className="rounded-full border border-[var(--tott-accent-gold)] bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[10px] font-semibold text-[var(--tott-dash-gold-text)]">
                 {t(`prioritiesShort.${priorityKey}`)}
               </span>
             )}
           </div>
-          <p className="mt-1 truncate text-xs text-gray-400">{thread.subject}</p>
-          <p className="mt-1 truncate text-xs text-gray-500">{thread.preview}</p>
+          <p className="mt-1 truncate text-xs text-[var(--tott-muted)]">{thread.subject}</p>
+          <p className="mt-1 truncate text-xs text-[var(--tott-muted)]">{thread.preview}</p>
         </div>
       </div>
     </button>
@@ -481,7 +481,7 @@ export function MessagingContent() {
         <div className="rounded-2xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 lg:p-8">
           <div className="mb-6 border-b border-[var(--tott-card-border)] pb-6">
             <h2 className="text-xl font-semibold text-foreground">{tb("title")}</h2>
-            <p className="mt-1 text-sm text-gray-500">{tb("subtitle")}</p>
+            <p className="mt-1 text-sm text-[var(--tott-muted)]">{tb("subtitle")}</p>
           </div>
 
           <div className="space-y-5">
@@ -532,7 +532,7 @@ export function MessagingContent() {
                 value={broadcastSubject}
                 onChange={(e) => setBroadcastSubject(e.target.value)}
                 placeholder={tb("subjectPlaceholder")}
-                className="h-[46px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-[#555]"
+                className="h-[46px] w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]"
               />
             </div>
 
@@ -543,7 +543,7 @@ export function MessagingContent() {
                 onChange={(e) => setBroadcastMessage(e.target.value)}
                 placeholder={tb("messagePlaceholder")}
                 rows={6}
-                className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-3 text-sm text-foreground placeholder:text-gray-500 outline-none transition-colors focus:border-[#555]"
+                className="w-full resize-y rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-3 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]"
               />
             </div>
 
@@ -551,7 +551,7 @@ export function MessagingContent() {
               <button
                 type="button"
                 onClick={() => { setBroadcastSubject(""); setBroadcastMessage(""); }}
-                className="h-[46px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-sm font-medium text-gray-200 transition-colors hover:bg-[var(--tott-dash-control-bg)]"
+                className="h-[46px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-bg)]"
               >
                 {tb("cancel")}
               </button>
@@ -559,7 +559,7 @@ export function MessagingContent() {
                 type="button"
                 disabled={sendingBroadcast}
                 onClick={() => handleSendBroadcast(false)}
-                className="inline-flex h-[46px] items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-sm font-medium text-gray-200 transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
+                className="inline-flex h-[46px] items-center justify-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-bg)] disabled:opacity-50"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -571,7 +571,7 @@ export function MessagingContent() {
                 type="button"
                 disabled={sendingBroadcast}
                 onClick={() => handleSendBroadcast(true)}
-                className="inline-flex h-[46px] items-center justify-center gap-2 rounded-lg text-sm font-semibold text-black transition-colors hover:opacity-90 disabled:opacity-50"
+                className="inline-flex h-[46px] items-center justify-center gap-2 rounded-lg text-sm font-semibold text-[var(--tott-on-accent)] transition-colors hover:opacity-90 disabled:opacity-50"
                 style={{ backgroundColor: theme.accentGoldFocus }}
               >
                 <SendIcon />
@@ -585,12 +585,12 @@ export function MessagingContent() {
           <div className="mb-6 flex flex-col gap-4 border-b border-[var(--tott-card-border)] pb-6 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h2 className="text-xl font-semibold text-foreground">{tt("title")}</h2>
-              <p className="mt-1 text-sm text-gray-500">{tt("subtitle")}</p>
+              <p className="mt-1 text-sm text-[var(--tott-muted)]">{tt("subtitle")}</p>
             </div>
             <button
               type="button"
               onClick={() => setCreateTemplateOpen(true)}
-              className="h-[40px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 text-sm font-medium text-gray-200 transition-colors hover:bg-[var(--tott-dash-control-bg)]"
+              className="h-[40px] rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-4 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-bg)]"
             >
               {tt("createButton")}
             </button>
@@ -607,17 +607,17 @@ export function MessagingContent() {
                 <ChamferedFrame />
                 <div className="min-w-0">
                   <p className="truncate text-base font-semibold text-foreground">{tpl.name}</p>
-                  <p className="mt-1 truncate text-sm text-gray-500 capitalize">
+                  <p className="mt-1 truncate text-sm text-[var(--tott-muted)] capitalize">
                     {tpl.category}
                   </p>
                 </div>
-                <span className="shrink-0 [&_svg]:h-4 [&_svg]:w-4" style={{ color: "#E8DDC0" }}>
+                <span className="shrink-0 [&_svg]:h-4 [&_svg]:w-4" style={{ color: "var(--tott-dash-gold-text)" }}>
                   <ContributeIcon />
                 </span>
               </button>
             ))}
             {templates.length === 0 && (
-              <p className="col-span-2 py-10 text-center text-sm text-gray-500">No templates yet</p>
+              <p className="col-span-2 py-10 text-center text-sm text-[var(--tott-muted)]">{tt("emptyState")}</p>
             )}
           </div>
         </div>
@@ -625,7 +625,7 @@ export function MessagingContent() {
         <>
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative flex-1">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tott-muted)]">
                 <SearchIcon />
               </span>
               <input
@@ -633,7 +633,7 @@ export function MessagingContent() {
                 placeholder={ti("searchPlaceholder")}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-gray-500 focus:border-[#555] focus:outline-none"
+                className="w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-card-border)] focus:outline-none"
               />
             </div>
 
@@ -668,7 +668,7 @@ export function MessagingContent() {
               ))}
 
               {filteredThreads.length === 0 && (
-                <div className="relative p-10 text-center text-gray-500">
+                <div className="relative p-10 text-center text-[var(--tott-muted)]">
                   <ChamferedFrame />
                   {ti("emptyFiltered")}
                 </div>
@@ -682,7 +682,7 @@ export function MessagingContent() {
                   <div className="flex items-start justify-between gap-4 border-b border-[var(--tott-card-border)] px-5 py-4">
                     <div className="flex items-start gap-3">
                       <div
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-[#111]"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-[var(--tott-on-accent)]"
                         style={{ backgroundColor: theme.accentGoldFocus }}
                       >
                         {getInitials(selectedThread.senderName)}
@@ -691,7 +691,7 @@ export function MessagingContent() {
                         <p className="truncate text-sm font-semibold text-foreground">
                           {selectedThread.senderName}
                         </p>
-                        <p className="truncate text-xs text-gray-500">{selectedThread.subject}</p>
+                        <p className="truncate text-xs text-[var(--tott-muted)]">{selectedThread.subject}</p>
                       </div>
                     </div>
                     <div className="relative">
@@ -699,7 +699,7 @@ export function MessagingContent() {
                         ref={threadMenuButtonRef}
                         type="button"
                         onClick={() => setThreadMenuOpen((v) => !v)}
-                        className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
+                        className="rounded-lg p-2 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground"
                         aria-label={ti("threadMenuAria")}
                         aria-haspopup="menu"
                         aria-expanded={threadMenuOpen}
@@ -721,7 +721,7 @@ export function MessagingContent() {
                           </button>
                           <button
                             type="button"
-                            className="w-full rounded-md px-3 py-2 text-start text-sm text-[#CBA158] hover:bg-[var(--tott-dash-ghost-hover)]"
+                            className="w-full rounded-md px-3 py-2 text-start text-sm text-[var(--tott-dash-gold-text)] hover:bg-[var(--tott-dash-ghost-hover)]"
                             onClick={handleArchiveThread}
                           >
                             {ti("archive")}
@@ -740,7 +740,7 @@ export function MessagingContent() {
 
                   <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
                     {loadingMessages && activeMessages.length === 0 && (
-                      <p className="text-center text-xs text-gray-500">Loading…</p>
+                      <p className="text-center text-xs text-[var(--tott-muted)]">{ti("loading")}</p>
                     )}
                     {activeMessages.map((m) => (
                       <div
@@ -749,7 +749,7 @@ export function MessagingContent() {
                       >
                         {m.align === "left" && (
                           <div
-                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-[#111]"
+                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-[var(--tott-on-accent)]"
                             style={{ backgroundColor: theme.accentGoldFocus }}
                           >
                             {m.senderInitials}
@@ -758,16 +758,16 @@ export function MessagingContent() {
                         <div
                           className={`max-w-[520px] rounded-xl border px-4 py-3 text-sm leading-relaxed ${
                             m.align === "right"
-                              ? "border-[#3a2f1a] bg-[var(--tott-dash-input-bg)] text-gray-200"
-                              : "border-[var(--tott-card-border)] bg-[#151515] text-gray-200"
+                              ? "border-[var(--tott-accent-gold)] bg-[var(--tott-dash-input-bg)] text-foreground"
+                              : "border-[var(--tott-card-border)] bg-[var(--tott-elevated)] text-foreground"
                           }`}
                         >
                           <p className="whitespace-pre-line">{m.body}</p>
-                          <p className="mt-2 text-[11px] text-gray-500">{m.timestamp}</p>
+                          <p className="mt-2 text-[11px] text-[var(--tott-muted)]">{m.timestamp}</p>
                         </div>
                         {m.align === "right" && (
                           <div
-                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-[#111]"
+                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-[var(--tott-on-accent)]"
                             style={{ backgroundColor: theme.accentGoldFocus }}
                           >
                             {m.senderInitials}
@@ -779,7 +779,7 @@ export function MessagingContent() {
 
                   <div className="border-t border-[var(--tott-card-border)] p-4">
                     <div className="mb-3">
-                      <label className="mb-1.5 block text-xs font-medium text-gray-500">{ti("useTemplate")}</label>
+                      <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">{ti("useTemplate")}</label>
                       <Dropdown
                         open={templateOpen}
                         onOpenChange={(v) => setTemplateOpen(v)}
@@ -793,7 +793,7 @@ export function MessagingContent() {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-gray-400 hover:text-foreground"
+                        className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] text-[var(--tott-muted)] hover:text-foreground"
                         aria-label={ti("attachAria")}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -805,13 +805,13 @@ export function MessagingContent() {
                         onChange={(e) => setComposer(e.target.value)}
                         onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendReply(); } }}
                         placeholder={ti("composerPlaceholder")}
-                        className="h-10 flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 text-sm text-foreground placeholder-gray-500 outline-none transition-colors focus:border-[#555]"
+                        className="h-10 flex-1 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] px-4 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none transition-colors focus:border-[var(--tott-card-border)]"
                       />
                       <button
                         type="button"
                         onClick={handleSendReply}
                         disabled={sendingReply || !composer.trim()}
-                        className="flex h-10 w-10 items-center justify-center rounded-lg text-black transition-colors hover:opacity-90 disabled:opacity-50"
+                        className="flex h-10 w-10 items-center justify-center rounded-lg text-[var(--tott-on-accent)] transition-colors hover:opacity-90 disabled:opacity-50"
                         style={{ backgroundColor: theme.accentGoldFocus }}
                         aria-label={ti("sendAria")}
                       >
@@ -821,7 +821,7 @@ export function MessagingContent() {
                   </div>
                 </div>
               ) : (
-                <div className="flex h-[640px] items-center justify-center text-gray-500">
+                <div className="flex h-[640px] items-center justify-center text-[var(--tott-muted)]">
                   {ti("selectConversation")}
                 </div>
               )}

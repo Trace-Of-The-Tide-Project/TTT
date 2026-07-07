@@ -25,7 +25,7 @@ export default function PremiumGate({ feature, children, upgradeMessage }: Props
   const { subscription, plans, loading } = useSubscription();
 
   if (loading) {
-    return <div className="h-32 bg-gray-100 animate-pulse rounded-xl" />;
+    return <div className="h-32 bg-[var(--tott-panel-bg)] animate-pulse rounded-xl" />;
   }
 
   const active = isActiveAccess(subscription);
@@ -81,12 +81,12 @@ export default function PremiumGate({ feature, children, upgradeMessage }: Props
       <div className="blur-sm pointer-events-none select-none" aria-hidden>
         {children}
       </div>
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 rounded-xl gap-3">
-        <p className="font-semibold text-gray-800">{heading}</p>
-        <p className="text-sm text-gray-500 text-center px-4">{body}</p>
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-[color-mix(in_srgb,var(--tott-home-surface)_80%,transparent)] rounded-xl gap-3">
+        <p className="font-semibold text-foreground">{heading}</p>
+        <p className="text-sm text-[var(--tott-home-text-muted)] text-center px-4">{body}</p>
         <Link
           href={actionHref}
-          className="bg-gray-900 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors"
+          className="bg-foreground text-background px-5 py-2 rounded-lg text-sm font-medium hover:bg-foreground/80 transition-colors"
         >
           {actionLabel}
         </Link>

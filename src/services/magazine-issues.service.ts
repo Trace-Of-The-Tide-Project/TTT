@@ -11,7 +11,7 @@ export type MagazineIssue = {
   subtitle?: string | null;
   slug: string;
   /** Issue kind — backend enum. Documented values: "editorial",
-   * "crowdfunded". */
+   * "crowdfunded", "slide". */
   kind?: string | null;
   status?: string | null;
   language?: string | null;
@@ -71,7 +71,7 @@ export async function getMagazineIssues(
  * Create / update payload — mirrors the backend's documented
  * `POST /magazine-issues` body. `title`, `magazine_id`, `slug`, and
  * `edition_number` are required on create; `kind` is an enum
- * ("editorial" | "crowdfunded"); crowdfunded issues add `funding_goal`
+ * ("editorial" | "crowdfunded" | "slide"); crowdfunded issues add `funding_goal`
  * + `funding_deadline`. PATCH accepts any subset.
  */
 export type MagazineIssueInput = {
@@ -148,6 +148,40 @@ export async function updateMagazineIssue(
 /** Admin — delete an issue. DELETE /magazine-issues/{id} */
 export async function deleteMagazineIssue(id: string): Promise<void> {
   await api.delete(`/magazine-issues/${encodeURIComponent(id)}`);
+}
+
+/** Article assigned to an issue, as returned by GET /magazine-issues/:id/articles. */
+export type IssueArticle = {
+  id: string;
+  title: string;
+  status?: string | null;
+  issue_position?: number | null;
+};
+
+function unwrapArticlesList(raw: unknown): IssueArticle[] {
+  if (Array.isArray(raw)) return raw as IssueArticle[];
+  if (raw && typeof raw === "object" && Array.isArray((raw as Record<string, unknown>).data)) {
+    return (raw as Record<string, unknown>).data as IssueArticle[];
+  }
+  return [];
+}
+
+/** Admin — list articles assigned to an issue, in display order. */
+export async function getIssueArticles(issueId: string): Promise<IssueArticle[]> {
+  const { data } = await api.get<unknown>(`/magazine-issues/${encodeURIComponent(issueId)}/articles`);
+  return unwrapArticlesList(data);
+}
+
+/** Admin — persist the full display order for an issue's articles. */
+export async function reorderIssueArticles(
+  issueId: string,
+  articleIds: string[],
+): Promise<IssueArticle[]> {
+  const { data } = await api.patch<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/articles/reorder`,
+    { article_ids: articleIds },
+  );
+  return unwrapArticlesList(data);
 }
 
 export async function getMagazineIssueBySlug(

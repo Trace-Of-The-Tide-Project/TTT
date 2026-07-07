@@ -126,6 +126,12 @@ export const adminConfig: DashboardConfig = {
             },
             {
               kind: "item",
+              labelKey: "sidebar.collections",
+              href: "/admin/collections",
+              icon: GridIcon,
+            },
+            {
+              kind: "item",
               labelKey: "sidebar.visualEditor",
               href: "/admin/editor",
               icon: CodeIcon,

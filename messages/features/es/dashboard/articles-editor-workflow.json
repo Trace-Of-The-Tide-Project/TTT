@@ -27,6 +27,8 @@
           "successArticleSubmitted": "Artículo enviado",
           "successArticleScheduled": "Artículo programado",
           "imageBlockShort": "Imagen",
+          "createAllLanguages": "Crear también borradores en los demás idiomas",
+          "unsavedChangesConfirm": "Tienes cambios sin guardar. ¿Salir sin guardar?",
           "validationOpenCallBlocksDraft": "Añade al menos un bloque de contenido con contenido.",
           "validationOpenCallBlocksPublish": "Para publicar se necesita al menos un bloque de contenido con contenido.",
           "validationOpenCallBlocksSchedule": "Para programar se necesita al menos un bloque de contenido con contenido."
@@ -256,6 +258,21 @@
             "private": "Privado",
             "public": "Público"
           },
+          "access": {
+            "label": "Acceso",
+            "open": "Abierto (para todos)",
+            "preview": "Vista previa (primeros N bloques gratis)",
+            "subscriber": "Solo suscriptores",
+            "paid": "De pago (comprar este artículo)",
+            "previewCountPlaceholder": "Bloques gratis, p. ej. 2",
+            "pricePlaceholder": "Precio",
+            "hint": {
+              "open": "Cualquiera puede leer el artículo completo.",
+              "preview": "Todos ven los primeros N bloques; el resto queda bloqueado.",
+              "subscriber": "Requiere una suscripción activa para leer.",
+              "paid": "Los lectores deben comprar este artículo individualmente."
+            }
+          },
           "seo": {
             "label": "Vista previa SEO",
             "previewTitlePlaceholder": "Título del artículo",
@@ -263,6 +280,23 @@
             "seoTitlePlaceholder": "Título SEO",
             "metaDescriptionPlaceholder": "Meta descripción",
             "previewUrlStub": "tusitioweb.com/articulos/…"
+          }
+        },
+        "contributors": {
+          "panelTitle": "Colaboradores",
+          "loading": "Cargando colaboradores…",
+          "empty": "Aún no se han añadido colaboradores.",
+          "unknownUser": "Usuario desconocido",
+          "add": "Añadir",
+          "adding": "Añadiendo…",
+          "remove": "Eliminar",
+          "addFailed": "No se pudo añadir al colaborador. Puede que ya esté vinculado.",
+          "roles": {
+            "main_contributor": "Colaborador principal",
+            "co-author": "Coautor",
+            "contributor": "Colaborador",
+            "editor": "Editor",
+            "reviewer": "Revisor"
           }
         }
       }
