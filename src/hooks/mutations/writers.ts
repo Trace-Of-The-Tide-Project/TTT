@@ -2,6 +2,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   createWriterProfile,
   updateWriterProfile,
+  setWriterEditorialBoard,
+  setWriterFeatured,
+  linkWriterAccount,
   deleteWriterProfile,
   type WriterProfilePayload,
 } from "@/services/writers.service";
@@ -28,6 +31,36 @@ export function useUpdateWriterProfile() {
       qc.invalidateQueries({ queryKey: writersKeys.byId(args.writerId) });
       qc.invalidateQueries({ queryKey: writersKeys.all });
     },
+    meta: { silent: true },
+  });
+}
+
+export function useSetWriterEditorialBoard() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (args: { writerId: string; value: boolean }) =>
+      setWriterEditorialBoard(args.writerId, args.value),
+    onSuccess: () => qc.invalidateQueries({ queryKey: writersKeys.all }),
+    meta: { silent: true },
+  });
+}
+
+export function useSetWriterFeatured() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (args: { writerId: string; value: boolean }) =>
+      setWriterFeatured(args.writerId, args.value),
+    onSuccess: () => qc.invalidateQueries({ queryKey: writersKeys.all }),
+    meta: { silent: true },
+  });
+}
+
+export function useLinkWriterAccount() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (args: { writerId: string; userId: string }) =>
+      linkWriterAccount(args.writerId, args.userId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: writersKeys.all }),
     meta: { silent: true },
   });
 }

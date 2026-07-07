@@ -16,7 +16,9 @@ import {
 } from "@/components/ui/ChamferedTable";
 import { useWritersAdmin } from "@/hooks/queries/writers";
 import {
-  useUpdateWriterProfile,
+  useSetWriterEditorialBoard,
+  useSetWriterFeatured,
+  useLinkWriterAccount,
   useDeleteWriterProfile,
 } from "@/hooks/mutations/writers";
 import { useCreateAdminUser } from "@/hooks/mutations/users";
@@ -139,6 +141,11 @@ export function WritersManagementContent() {
       const expanded = expandedGroups.has(gid);
       out.push({
         ...primary,
+        // Board + Homepage toggles and the account link are group-level: show
+        // ON / linked when ANY version is, so a mixed group doesn't read wrong.
+        editorial_board: members.some((m) => m.editorial_board),
+        featured: members.some((m) => m.featured),
+        user_id: members.find((m) => m.user_id)?.user_id ?? primary.user_id,
         isPrimary: true,
         isChild: false,
         siblingCount: children.length,
@@ -163,18 +170,19 @@ export function WritersManagementContent() {
     return out;
   }, [writers, expandedGroups, locale]);
 
-  const updateMutation = useUpdateWriterProfile();
   const deleteMutation = useDeleteWriterProfile();
   const createAccountMutation = useCreateAdminUser();
-  const linkAccountMutation = useUpdateWriterProfile();
+  const linkAccountMutation = useLinkWriterAccount();
   const deleteBusy = deleteMutation.isPending;
 
+  const featuredMutation = useSetWriterFeatured();
   const toggleFeatured = useCallback(
     (w: WriterProfile) => {
       setActionError(null);
       const next = !w.featured;
-      updateMutation.mutate(
-        { writerId: w.id, payload: { featured: next } },
+      // Sets the flag on every language version of the writer in one call.
+      featuredMutation.mutate(
+        { writerId: w.id, value: next },
         {
           onSuccess: () =>
             toast.success(next ? t("toasts.featuredOn") : t("toasts.featuredOff")),
@@ -183,15 +191,17 @@ export function WritersManagementContent() {
         },
       );
     },
-    [updateMutation, t],
+    [featuredMutation, t],
   );
 
+  const boardMutation = useSetWriterEditorialBoard();
   const toggleBoard = useCallback(
     (w: WriterProfile) => {
       setActionError(null);
       const next = !w.editorial_board;
-      updateMutation.mutate(
-        { writerId: w.id, payload: { editorial_board: next } },
+      // Sets the flag on every language version of the writer in one call.
+      boardMutation.mutate(
+        { writerId: w.id, value: next },
         {
           onSuccess: () =>
             toast.success(next ? t("toasts.boardOn") : t("toasts.boardOff")),
@@ -200,7 +210,7 @@ export function WritersManagementContent() {
         },
       );
     },
-    [updateMutation, t],
+    [boardMutation, t],
   );
 
   const openDelete = useCallback((w: WriterProfile) => {
@@ -334,8 +344,11 @@ export function WritersManagementContent() {
         header: t("headers.account"),
         width: "12%",
         cellClassName: "px-5 py-3 flex items-center min-w-0",
+        // One account per writer (translation group) — all versions share it.
+        // Show the cell on the primary row only; the account links to the
+        // whole group at once.
         cell: (w) =>
-          w.user_id ? (
+          w.isChild ? null : w.user_id ? (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
               {t("account.linked")}
             </span>
@@ -355,28 +368,31 @@ export function WritersManagementContent() {
         width: "8%",
         align: "center",
         cellClassName: "px-5 py-3 flex items-center justify-center",
-        cell: (w) => (
-          <button
-            type="button"
-            onClick={() => toggleFeatured(w)}
-            disabled={updateMutation.isPending}
-            title={w.featured ? t("featuredOn") : t("featuredOff")}
-            aria-label={w.featured ? t("featuredOn") : t("featuredOff")}
-            className={[
-              "relative h-5 w-9 rounded-full transition-colors disabled:opacity-50",
-              w.featured
-                ? "bg-[var(--tott-gold)]"
-                : "border border-[var(--tott-card-border)] bg-[var(--tott-elevated)]",
-            ].join(" ")}
-          >
-            <span
+        // Group-level toggle on the primary row only — flags every language
+        // version at once; child rows leave the cell empty.
+        cell: (w) =>
+          w.isChild ? null : (
+            <button
+              type="button"
+              onClick={() => toggleFeatured(w)}
+              disabled={featuredMutation.isPending}
+              title={w.featured ? t("featuredOn") : t("featuredOff")}
+              aria-label={w.featured ? t("featuredOn") : t("featuredOff")}
               className={[
-                "absolute top-0.5 h-4 w-4 rounded-full bg-[var(--tott-dash-surface)] transition-all",
-                w.featured ? "start-4" : "start-0.5",
+                "relative h-5 w-9 rounded-full transition-colors disabled:opacity-50",
+                w.featured
+                  ? "bg-[var(--tott-gold)]"
+                  : "border border-[var(--tott-card-border)] bg-[var(--tott-elevated)]",
               ].join(" ")}
-            />
-          </button>
-        ),
+            >
+              <span
+                className={[
+                  "absolute top-0.5 h-4 w-4 rounded-full bg-[var(--tott-dash-surface)] transition-all",
+                  w.featured ? "start-4" : "start-0.5",
+                ].join(" ")}
+              />
+            </button>
+          ),
       },
       {
         key: "editorial_board",
@@ -384,28 +400,32 @@ export function WritersManagementContent() {
         width: "8%",
         align: "center",
         cellClassName: "px-5 py-3 flex items-center justify-center",
-        cell: (w) => (
-          <button
-            type="button"
-            onClick={() => toggleBoard(w)}
-            disabled={updateMutation.isPending}
-            title={w.editorial_board ? t("boardOn") : t("boardOff")}
-            aria-label={w.editorial_board ? t("boardOn") : t("boardOff")}
-            className={[
-              "relative h-5 w-9 rounded-full transition-colors disabled:opacity-50",
-              w.editorial_board
-                ? "bg-[var(--tott-gold)]"
-                : "border border-[var(--tott-card-border)] bg-[var(--tott-elevated)]",
-            ].join(" ")}
-          >
-            <span
+        // One toggle per writer (translation group), shown on the primary row
+        // only — it flags every language version at once. Child rows leave the
+        // cell empty so admins don't flip each version by hand.
+        cell: (w) =>
+          w.isChild ? null : (
+            <button
+              type="button"
+              onClick={() => toggleBoard(w)}
+              disabled={boardMutation.isPending}
+              title={w.editorial_board ? t("boardOn") : t("boardOff")}
+              aria-label={w.editorial_board ? t("boardOn") : t("boardOff")}
               className={[
-                "absolute top-0.5 h-4 w-4 rounded-full bg-[var(--tott-dash-surface)] transition-all",
-                w.editorial_board ? "start-4" : "start-0.5",
+                "relative h-5 w-9 rounded-full transition-colors disabled:opacity-50",
+                w.editorial_board
+                  ? "bg-[var(--tott-gold)]"
+                  : "border border-[var(--tott-card-border)] bg-[var(--tott-elevated)]",
               ].join(" ")}
-            />
-          </button>
-        ),
+            >
+              <span
+                className={[
+                  "absolute top-0.5 h-4 w-4 rounded-full bg-[var(--tott-dash-surface)] transition-all",
+                  w.editorial_board ? "start-4" : "start-0.5",
+                ].join(" ")}
+              />
+            </button>
+          ),
       },
       {
         key: "actions",
@@ -434,7 +454,7 @@ export function WritersManagementContent() {
         ),
       },
     ],
-    [t, toggleFeatured, toggleBoard, openDelete, toggleGroup, updateMutation.isPending],
+    [t, toggleFeatured, toggleBoard, openDelete, toggleGroup, featuredMutation.isPending, boardMutation.isPending],
   );
 
   return (
@@ -522,9 +542,10 @@ export function WritersManagementContent() {
               email,
               password,
             });
+            // Links the new account to every language version at once.
             await linkAccountMutation.mutateAsync({
               writerId: accountTarget.id,
-              payload: { user_id: user.id },
+              userId: user.id,
             });
             toast.success(t("account.created"));
             setAccountTarget(null);

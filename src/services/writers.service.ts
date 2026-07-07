@@ -326,6 +326,37 @@ export async function updateWriterProfile(
   return item;
 }
 
+/** PATCH /writers/:id/editorial-board — sets the Editorial Board flag on
+ * every language version of the writer in one call. */
+export async function setWriterEditorialBoard(
+  id: string,
+  value: boolean,
+): Promise<void> {
+  await api.patch(`/writers/${encodeURIComponent(id)}/editorial-board`, {
+    value,
+  });
+}
+
+/** PATCH /writers/:id/featured — sets the homepage featured flag on every
+ * language version of the writer in one call. */
+export async function setWriterFeatured(
+  id: string,
+  value: boolean,
+): Promise<void> {
+  await api.patch(`/writers/${encodeURIComponent(id)}/featured`, { value });
+}
+
+/** PATCH /writers/:id/link-account — links a user account to every language
+ * version of the writer in one call. */
+export async function linkWriterAccount(
+  id: string,
+  userId: string,
+): Promise<void> {
+  await api.patch(`/writers/${encodeURIComponent(id)}/link-account`, {
+    user_id: userId,
+  });
+}
+
 /** DELETE /writers/:id — admin only. */
 export async function deleteWriterProfile(id: string): Promise<void> {
   await api.delete(`/writers/${encodeURIComponent(id)}`);
