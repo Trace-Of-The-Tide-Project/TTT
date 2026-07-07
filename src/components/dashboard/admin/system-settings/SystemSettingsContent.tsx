@@ -11,6 +11,7 @@ import {
   TrashIcon,
 } from "@/components/ui/icons";
 import { BadgeFormModal } from "@/components/dashboard/admin/system-settings/BadgeFormModal";
+import { CommunityHeroImagesPanel } from "@/components/dashboard/admin/system-settings/CommunityHeroImagesPanel";
 import { CategoryFormModal } from "@/components/dashboard/admin/system-settings/CategoryFormModal";
 import { TagFormModal } from "@/components/dashboard/admin/system-settings/TagFormModal";
 import type { MessageTemplate, MessageTemplateCategory } from "@/components/dashboard/modals/CreateMessageTemplateModal";
@@ -635,6 +636,9 @@ export function SystemSettingsContent() {
             </div>
           </div>
         )}
+
+        {/* ── HERO IMAGES ── */}
+        {activeTab === "heroImages" && <CommunityHeroImagesPanel />}
       </div>
 
       <CategoryFormModal

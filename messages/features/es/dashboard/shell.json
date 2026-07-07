@@ -78,7 +78,8 @@
         "badges": "Insignias",
         "email": "Plantillas de correo",
         "localisation": "Localización",
-        "guidelines": "Directrices"
+        "guidelines": "Directrices",
+        "heroImages": "Imágenes de portada"
       },
       "saveChanges": "Guardar cambios",
       "itemCount": "{count, plural, one {# elemento} other {# elementos}}",
@@ -148,6 +149,17 @@
         "contentPolicyLabel": "Política de contenido",
         "sampleCommunity": "1. Sé respetuoso con todos los miembros de la comunidad\n2. No se permite el discurso de odio ni la discriminación\n3. Solo contenido original, sin plagio\n4. Acredita las fuentes cuando corresponda\n5. No se permite spam ni autopromoción",
         "sampleContentPolicy": "Todo el contenido debe ser original o estar debidamente licenciado. El material con derechos de autor sin permiso será eliminado. El contenido para adultos debe estar correctamente etiquetado."
+      },
+      "heroImages": {
+        "title": "Imágenes de portada de la página Comunidad",
+        "subtitle": "Gestiona las imágenes en rotación que se muestran en la portada de la página Comunidad.",
+        "addImage": "Añadir imagen",
+        "uploading": "Subiendo imagen…",
+        "uploaded": "Imagen subida",
+        "uploadFailed": "Error al subir",
+        "moveUp": "Mover arriba",
+        "moveDown": "Mover abajo",
+        "remove": "Eliminar imagen"
       },
       "saving": "Guardando…",
       "modal": {

@@ -1,45 +1,60 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import HexBackground from "@/components/ui/HexBackground";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { SpringLink } from "@/components/motion/SpringLink";
 import { theme } from "@/lib/theme";
 
 export function CommunityCta() {
   const t = useTranslations("Community");
 
   return (
+    <RevealOnScroll>
     <section
-      className="mt-16 flex flex-col items-start gap-4 rounded-2xl border p-8 sm:flex-row sm:items-center sm:justify-between"
+      className="relative -mx-6 mt-24 flex flex-col items-center gap-6 overflow-hidden px-6 py-20 text-center sm:-mx-10 sm:px-10 sm:py-28"
       style={{
-        borderColor: theme.cardBorder,
-        backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 8%, var(--tott-well-bg))",
+        background:
+          "linear-gradient(180deg, color-mix(in srgb, var(--tott-accent-gold) 16%, var(--tott-well-bg)) 0%, var(--tott-well-bg) 100%)",
+        borderTop: `1px solid ${theme.cardBorder}`,
       }}
     >
-      <div>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-30"
+      >
+        <HexBackground />
+      </div>
+
+      <div className="relative flex max-w-2xl flex-col items-center">
         <h2
-          className="text-xl font-medium"
+          className="font-serif text-3xl font-medium sm:text-5xl"
           style={{ color: "var(--tott-home-text-strong)" }}
         >
           {t("ctaHeading")}
         </h2>
-        <p className="mt-1 text-sm" style={{ color: "var(--tott-home-text-muted)" }}>
+        <p
+          className="mt-4 text-base sm:text-lg"
+          style={{ color: "var(--tott-home-text-muted)" }}
+        >
           {t("ctaSubtitle")}
         </p>
+        <SpringLink
+          href="/contribute"
+          className="relative mt-8 inline-flex shrink-0 items-center justify-center"
+          style={{
+            padding: "16px 40px",
+            borderRadius: 12,
+            fontWeight: 600,
+            fontSize: 16,
+            backgroundColor: "var(--tott-magazine-btn-bg)",
+            color: "var(--tott-auth-btn-text)",
+          }}
+        >
+          {t("ctaButton")}
+        </SpringLink>
       </div>
-      <Link
-        href="/contribute"
-        className="inline-flex shrink-0 items-center justify-center transition-opacity hover:opacity-90"
-        style={{
-          padding: "10px 24px",
-          borderRadius: 8,
-          fontWeight: 500,
-          fontSize: 14,
-          backgroundColor: "var(--tott-magazine-btn-bg)",
-          color: "var(--tott-auth-btn-text)",
-        }}
-      >
-        {t("ctaButton")}
-      </Link>
     </section>
+    </RevealOnScroll>
   );
 }

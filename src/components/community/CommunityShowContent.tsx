@@ -1,41 +1,62 @@
 "use client";
 
-import HexBackground from "@/components/ui/HexBackground";
 import { theme } from "@/lib/theme";
-import { type WriterProfile } from "@/services/writers.service";
+import { writerAvatar, type WriterProfile } from "@/services/writers.service";
 import { type OpenCallListItem } from "@/services/open-calls.service";
+import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { CommunityHero } from "./CommunityHero";
 import { CommunityStats } from "./CommunityStats";
 import { CommunityWriters } from "./CommunityWriters";
-import { CommunityOpenCalls } from "./CommunityOpenCalls";
+import { CommunityOpenCalls, coverOf } from "./CommunityOpenCalls";
 import { CommunityGuidelines } from "./CommunityGuidelines";
 import { CommunityCta } from "./CommunityCta";
+
+/** First usable cover for the hero: an open-call cover, else a writer avatar.
+ * Fallback when the admin hasn't configured hero images. */
+function fallbackHeroCover(
+  openCalls: OpenCallListItem[],
+  writers: WriterProfile[],
+): string | null {
+  for (const call of openCalls) {
+    const c = coverOf(call);
+    if (c) return c;
+  }
+  for (const w of writers) {
+    const a = writerAvatar(w);
+    if (a) return a;
+  }
+  return null;
+}
 
 export function CommunityShowContent({
   featuredWriters,
   openCalls,
   guidelines,
+  heroImages,
 }: {
   featuredWriters: WriterProfile[];
   openCalls: OpenCallListItem[];
   guidelines: string[];
+  heroImages: string[];
 }) {
+  const resolvedHeroImages = heroImages.map((key) => resolveArticleMediaSrc(key));
+  const heroCoverImages =
+    resolvedHeroImages.length > 0
+      ? resolvedHeroImages
+      : (() => {
+          const fallback = fallbackHeroCover(openCalls, featuredWriters);
+          return fallback ? [fallback] : [];
+        })();
+
   return (
     <main
       className="relative min-h-screen w-full overflow-x-hidden"
       style={{ backgroundColor: theme.homeSurface }}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-64 overflow-hidden"
-        style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
-      >
-        <HexBackground />
-      </div>
+      <CommunityHero coverImages={heroCoverImages} />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-24 pb-20 sm:px-10 sm:pt-28">
-        <CommunityHero />
-
+      {/* Sections pull up slightly to bleed into the hero's tideline base. */}
+      <div className="relative z-10 mx-auto -mt-6 max-w-7xl px-6 pb-24 sm:px-10 sm:-mt-10">
         <CommunityStats
           writers={featuredWriters.length}
           openCalls={openCalls.length}

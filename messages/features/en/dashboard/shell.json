@@ -78,7 +78,8 @@
         "badges": "Badges",
         "email": "Email Templates",
         "localisation": "Localisation",
-        "guidelines": "Guidelines"
+        "guidelines": "Guidelines",
+        "heroImages": "Hero Images"
       },
       "saveChanges": "Save Changes",
       "itemCount": "{count, plural, one {# item} other {# items}}",
@@ -148,6 +149,17 @@
         "contentPolicyLabel": "Content Policy",
         "sampleCommunity": "1. Be respectful to all community members\n2. No hate speech or discrimination\n3. Original content only - no plagiarism\n4. Credit sources when applicable\n5. No spam or self-promotion",
         "sampleContentPolicy": "All content must be original or properly licensed. Copyrighted material without permission will be removed. Adult content must be properly tagged."
+      },
+      "heroImages": {
+        "title": "Community Hero Images",
+        "subtitle": "Manage the rotating images shown on the Community page hero.",
+        "addImage": "Add image",
+        "uploading": "Uploading image…",
+        "uploaded": "Image uploaded",
+        "uploadFailed": "Upload failed",
+        "moveUp": "Move up",
+        "moveDown": "Move down",
+        "remove": "Remove image"
       },
       "saving": "Saving…",
       "modal": {

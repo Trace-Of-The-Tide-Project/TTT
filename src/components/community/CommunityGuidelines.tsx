@@ -1,6 +1,8 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
+import { staggerParent, staggerChild, springs } from "@/lib/motion";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { theme } from "@/lib/theme";
 
@@ -11,8 +13,8 @@ export function CommunityGuidelines({ guidelines }: { guidelines: string[] }) {
     <RevealOnScroll>
     <section className="mt-16">
       <h2
-        className="text-2xl font-medium"
-        style={{ color: "var(--tott-home-text-heading)" }}
+        className="font-serif text-3xl font-medium"
+        style={{ color: "var(--tott-home-text-strong)" }}
       >
         {t("guidelinesHeading")}
       </h2>
@@ -20,17 +22,27 @@ export function CommunityGuidelines({ guidelines }: { guidelines: string[] }) {
         {t("guidelinesSubtitle")}
       </p>
 
-      <ol
-        className="mt-6 grid gap-3 rounded-2xl border p-6 sm:grid-cols-2"
-        style={{
-          borderColor: theme.cardBorder,
-          backgroundColor: "var(--tott-well-bg)",
-        }}
+      <motion.ol
+        className="mt-6 grid gap-4 sm:grid-cols-2"
+        variants={staggerParent}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
       >
         {guidelines.map((rule, i) => (
-          <li key={i} className="flex items-start gap-3">
+          <motion.li
+            key={i}
+            className="flex items-start gap-4 rounded-2xl border p-5 transition-colors hover:border-[color:var(--tott-accent-gold)]"
+            style={{
+              borderColor: theme.cardBorder,
+              backgroundColor: "var(--tott-well-bg)",
+            }}
+            variants={staggerChild}
+            transition={springs.gentle}
+            whileHover={{ y: -3 }}
+          >
             <span
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-serif text-base font-semibold"
               style={{
                 backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 18%, transparent)",
                 color: "var(--tott-accent-gold)",
@@ -39,14 +51,14 @@ export function CommunityGuidelines({ guidelines }: { guidelines: string[] }) {
               {i + 1}
             </span>
             <span
-              className="pt-0.5 text-sm"
+              className="pt-1.5 text-sm leading-relaxed"
               style={{ color: "var(--tott-home-text-strong)" }}
             >
               {rule}
             </span>
-          </li>
+          </motion.li>
         ))}
-      </ol>
+      </motion.ol>
     </section>
     </RevealOnScroll>
   );

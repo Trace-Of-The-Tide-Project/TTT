@@ -38,7 +38,8 @@
         "changeTitle": "Changer de forfait",
         "changeUser": "Utilisateur :",
         "changeCurrentPlan": "Forfait actuel :",
-        "selectNewPlan": "Sélectionnez un nouveau forfait…"
+        "selectNewPlan": "Sélectionnez un nouveau forfait…",
+        "noFeatures": "Aucune fonctionnalité"
       },
       "stats": {
         "backToSubscribers": "Abonnés",
