@@ -85,6 +85,8 @@
         "readOnline": "Lire en ligne",
         "galleryHeading": "Galerie visuelle",
         "gallerySubtitle": "Lorem ipsum dolor sit amet adipiscing elit.",
+        "emptyTitle": "Aucun numéro publié pour le moment",
+        "emptyBody": "Les nouveaux numéros du magazine apparaîtront ici dès leur publication.",
         "viewMore": "Voir plus",
         "searchPlaceholder": "Rechercher du contenu…",
         "filterAll": "Tout afficher",

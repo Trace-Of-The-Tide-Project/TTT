@@ -124,7 +124,8 @@
           "details": "Book details",
           "pricing": "Pricing",
           "chapters": "Chapters",
-          "media": "Media"
+          "media": "Media",
+          "editions": "Editions"
         },
         "chapters": {
           "label": "Compiled from",
@@ -144,7 +145,8 @@
           "printPriceCurrency": "Charged in the currency set above",
           "coverUrl": "Or paste an image URL directly",
           "pdfUrl": "Or paste a PDF URL directly",
-          "languageLocked": "Language is locked after creation. Use the tabs above to add another language version."
+          "languageLocked": "Language is locked after creation. Use the tabs above to add another language version.",
+          "sharedFieldLocked": "Shared across every language edition — edit it on the original language tab."
         },
         "upload": {
           "coverUpload": "Upload cover image",
@@ -186,6 +188,19 @@
           "searching": "Searching…",
           "none": "No matching books",
           "linkFailed": "Failed to link book"
+        },
+        "editions": {
+          "untitled": "Untitled",
+          "pdfAttached": "PDF attached",
+          "pdfMissing": "No PDF yet",
+          "addLabel": "Add another language edition",
+          "badgePrimary": "Primary",
+          "badge": {
+            "primary": "Primary",
+            "dirty": "Unsaved",
+            "existing": "Saved",
+            "empty": "Not started"
+          }
         }
       }
     }

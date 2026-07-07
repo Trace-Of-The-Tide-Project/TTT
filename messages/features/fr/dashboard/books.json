@@ -124,7 +124,8 @@
           "details": "Détails du livre",
           "pricing": "Tarification",
           "chapters": "Chapitres",
-          "media": "Médias"
+          "media": "Médias",
+          "editions": "Éditions"
         },
         "chapters": {
           "label": "Compilé à partir de",
@@ -144,7 +145,8 @@
           "printPriceCurrency": "Facturé dans la devise définie ci-dessus",
           "coverUrl": "Ou collez directement l'URL d'une image",
           "pdfUrl": "Ou collez directement l'URL d'un PDF",
-          "languageLocked": "La langue est verrouillée après création. Utilisez les onglets ci-dessus pour ajouter une autre version linguistique."
+          "languageLocked": "La langue est verrouillée après création. Utilisez les onglets ci-dessus pour ajouter une autre version linguistique.",
+          "sharedFieldLocked": "Partagé entre toutes les éditions linguistiques — modifiez-le depuis l'onglet de la langue d'origine."
         },
         "upload": {
           "coverUpload": "Télécharger l'image de couverture",
@@ -186,6 +188,19 @@
           "searching": "Recherche…",
           "none": "Aucun livre correspondant",
           "linkFailed": "Échec de la liaison du livre"
+        },
+        "editions": {
+          "untitled": "Sans titre",
+          "pdfAttached": "PDF joint",
+          "pdfMissing": "Pas encore de PDF",
+          "addLabel": "Ajouter une autre édition linguistique",
+          "badgePrimary": "Principale",
+          "badge": {
+            "primary": "Principale",
+            "dirty": "Non enregistrée",
+            "existing": "Enregistrée",
+            "empty": "Non commencée"
+          }
         }
       }
     }

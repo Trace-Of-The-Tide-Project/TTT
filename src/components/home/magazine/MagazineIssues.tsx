@@ -9,6 +9,7 @@ import {
   SearchIcon,
   ChevronLeftLargeIcon,
   ChevronRightLargeIcon,
+  BookIcon,
 } from "@/components/ui/icons";
 import { FirstWordGold } from "./FirstWordGold";
 
@@ -33,13 +34,12 @@ const TAB_BORDER = "var(--tott-card-border)";
 const TAB_ACTIVE = "var(--tott-accent-gold)";
 const TAB_INACTIVE_TEXT = "var(--tott-home-text-muted)";
 
-// The book spread is a static brand asset; the page-flip animation is
-// cosmetic (we don't have per-page artwork yet). Real-data parts of
-// this pane are the search/filter/sort controls + the issue list.
+// The page-flip animation is cosmetic (we still don't have per-page
+// artwork — the spread shows the issue cover, not real inner pages).
+// Real-data parts of this pane are the search/filter/sort controls,
+// the issue list, and (as of the cover-image wiring below) the spread
+// art + title itself.
 const FLIP_MS = 700;
-// Fallback page count used only when the active issue has no
-// `page_count` field — keeps the indicator from reading 0/0.
-const DEMO_FALLBACK_TOTAL_PAGES = 128;
 const DEMO_INITIAL_PAGE = 1;
 
 /**
@@ -61,7 +61,8 @@ export type MagazineIssueItem = {
 };
 
 export type MagazineIssuesProps = {
-  /** Pass an empty array to hide the section entirely. */
+  /** Pass an empty array to show the "no issues published yet" card
+   * instead of the toolbar + book reader. */
   items: MagazineIssueItem[];
 };
 
@@ -137,10 +138,14 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
 
   // The reader shows the first match — a "now reading" preview.
   const currentIssue = filtered[0] ?? items[0] ?? null;
+  // No per-page artwork exists yet, so there's nothing to count pages
+  // of unless the issue itself reports a real `page_count`. Render
+  // `null` rather than a fabricated total — the pager hides itself
+  // instead of showing a number that doesn't correspond to anything.
   const totalPages =
     currentIssue?.pageCount && currentIssue.pageCount > 0
       ? currentIssue.pageCount
-      : DEMO_FALLBACK_TOTAL_PAGES;
+      : null;
 
   // Page-flip state — `flipping` is set when an animation starts; the
   // `flipPhase` then transitions from "start" (rotateY 0) to "end"
@@ -181,7 +186,7 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
   }, [flipping]);
 
   const goNext = () => {
-    if (flipping || currentPage + 2 > totalPages) return;
+    if (flipping || totalPages === null || currentPage + 2 > totalPages) return;
     setFlipping("next");
     flipTimer.current = setTimeout(() => {
       setCurrentPage((p) => Math.min(p + 2, totalPages));
@@ -191,7 +196,7 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
   };
 
   const goPrev = () => {
-    if (flipping || currentPage - 2 < 1) return;
+    if (flipping || totalPages === null || currentPage - 2 < 1) return;
     setFlipping("prev");
     flipTimer.current = setTimeout(() => {
       setCurrentPage((p) => Math.max(p - 2, 1));
@@ -199,10 +204,6 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
       setFlipPhase("start");
     }, FLIP_MS);
   };
-
-  // The Issues pane always renders — the book-spread reader is a
-  // brand visual, not driven by data. The list below the search/
-  // filters is what's empty when `items` is empty.
 
   return (
     <div className="grid w-full min-w-0 gap-8 px-4 sm:gap-10 sm:px-6 md:px-8">
@@ -233,6 +234,13 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
         </Link>
       </header>
 
+      {items.length === 0 ? (
+        <EmptyIssuesCard
+          title={t("emptyTitle")}
+          body={t("emptyBody")}
+        />
+      ) : (
+        <>
       {/* Toolbar — search input + filter chips + sort + filters.
           Wrapped in the same outer (sm:px-12 lg:px-16) + inner
           (mx-auto max-w-6xl) bounds as the book reader below, so the
@@ -313,14 +321,15 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
           turning page rotates around the spine using CSS 3D transforms;
           the static pages stay in place underneath.
 
-          Note: the book content is currently a single static PNG; the
-          flip overlay is cosmetic. Once real spread data lands the
-          overlay should snap to the new spread. */}
+          Note: the spread shows the current issue's cover image (real
+          data); the flip overlay itself is still cosmetic since we
+          don't have real inner-page artwork. Falls back to the static
+          brand PNG only when the issue has no cover_image. */}
       <div className="relative mx-auto w-full sm:px-12 lg:px-16">
         <button
           type="button"
           onClick={goPrev}
-          disabled={flipping !== null || currentPage - 2 < 1}
+          disabled={flipping !== null || totalPages === null || currentPage - 2 < 1}
           aria-label={t("previousPage")}
           className="absolute left-2 top-1/2 z-20 hidden -translate-y-1/2 transition-opacity hover:opacity-70 disabled:opacity-30 sm:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
           style={{ color: "var(--tott-home-text-strong)" }}
@@ -330,7 +339,9 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
         <button
           type="button"
           onClick={goNext}
-          disabled={flipping !== null || currentPage + 2 > totalPages}
+          disabled={
+            flipping !== null || totalPages === null || currentPage + 2 > totalPages
+          }
           aria-label={t("nextPage")}
           className="absolute right-2 top-1/2 z-20 hidden -translate-y-1/2 transition-opacity hover:opacity-70 disabled:opacity-30 sm:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
           style={{ color: "var(--tott-home-text-strong)" }}
@@ -350,7 +361,7 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
             }}
           >
             <Image
-              src={BOOK_IMAGE}
+              src={currentIssue?.coverImage || BOOK_IMAGE}
               alt=""
               fill
               priority={false}
@@ -414,7 +425,7 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
           <button
             type="button"
             onClick={goPrev}
-            disabled={flipping !== null || currentPage - 2 < 1}
+            disabled={flipping !== null || totalPages === null || currentPage - 2 < 1}
             aria-label={t("previousPage")}
             className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40 [&>svg]:h-6 [&>svg]:w-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
             style={{ color: TAB_INACTIVE_TEXT }}
@@ -432,14 +443,20 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
               letterSpacing: "-0.005em",
             }}
           >
-            <span style={{ color: "var(--tott-home-text-strong)" }}>{currentPage}</span>
-            <span style={{ color: TAB_INACTIVE_TEXT }}>/</span>
-            <span style={{ color: TAB_INACTIVE_TEXT }}>{totalPages}</span>
+            {totalPages !== null ? (
+              <>
+                <span style={{ color: "var(--tott-home-text-strong)" }}>{currentPage}</span>
+                <span style={{ color: TAB_INACTIVE_TEXT }}>/</span>
+                <span style={{ color: TAB_INACTIVE_TEXT }}>{totalPages}</span>
+              </>
+            ) : null}
           </span>
           <button
             type="button"
             onClick={goNext}
-            disabled={flipping !== null || currentPage + 2 > totalPages}
+            disabled={
+            flipping !== null || totalPages === null || currentPage + 2 > totalPages
+          }
             aria-label={t("nextPage")}
             className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40 [&>svg]:h-6 [&>svg]:w-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--tott-accent-gold)]"
             style={{ color: TAB_INACTIVE_TEXT }}
@@ -447,6 +464,41 @@ export function MagazineIssues({ items }: MagazineIssuesProps) {
             <ChevronRightLargeIcon />
           </button>
         </div>
+      </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Shown in place of the book reader + toolbar when there are no
+ * published issues to browse or search. Keeps the section's header
+ * (heading/subtitle/View more) visible above it so the pane still
+ * reads as an intentional part of the page, not a broken one.
+ */
+function EmptyIssuesCard({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="w-full sm:px-12 lg:px-16">
+      <div
+        className="mx-auto flex w-full max-w-6xl flex-col items-center gap-3 rounded-2xl px-6 py-16 text-center"
+        style={{
+          backgroundColor: TAB_BG,
+          border: `1px solid ${TAB_BORDER}`,
+        }}
+      >
+        <span style={{ color: TAB_INACTIVE_TEXT }}>
+          <BookIcon />
+        </span>
+        <p
+          className="text-base font-medium"
+          style={{ color: "var(--tott-home-text-strong)" }}
+        >
+          {title}
+        </p>
+        <p className="max-w-sm text-sm" style={{ color: TAB_INACTIVE_TEXT }}>
+          {body}
+        </p>
       </div>
     </div>
   );

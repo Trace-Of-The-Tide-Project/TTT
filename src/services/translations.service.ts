@@ -29,6 +29,9 @@ export type TranslationVersion = {
   status?: string | null;
   /** `title` for most types, `name` for collections. */
   title?: string | null;
+  /** Books only: whether this edition has a PDF attached. Undefined for
+   * every other content type. */
+  has_pdf?: boolean;
 };
 
 export type TranslationGroup = {

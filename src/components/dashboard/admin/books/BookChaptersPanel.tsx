@@ -14,7 +14,7 @@ type ChapterDraft = { article_id: string; title: string };
 /** Records which articles a book was compiled from, in order. Metadata only —
  *  the book's own uploaded PDF stays the readable artifact. */
 export function BookChaptersPanel({ bookId }: { bookId: string }) {
-  const t = useTranslations("Dashboard.books.chapters");
+  const t = useTranslations("Dashboard.books.form.chapters");
   const { data: chapters = [], isPending } = useBookChapters(bookId);
   const setChapters = useSetBookChapters(bookId);
 

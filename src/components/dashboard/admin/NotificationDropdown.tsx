@@ -55,11 +55,16 @@ function NotifRow({
       <button
         type="button"
         onClick={() => isUnread && onRead(n.id)}
-        className="group w-full px-4 py-3 text-left transition-colors hover:bg-[var(--tott-dash-ghost-hover)] focus:outline-none"
-        style={{
-          borderLeft: isUnread ? `2px solid ${theme.accentGold}` : "2px solid transparent",
-        }}
+        className="group relative w-full py-3 ps-4 pe-4 text-start transition-colors hover:bg-[var(--tott-elevated)] focus:outline-none"
       >
+        {isUnread && (
+          <span
+            className="absolute inset-y-0 start-0 w-[3px]"
+            style={{
+              background: "linear-gradient(to bottom, var(--tott-accent-gold), var(--tott-dash-gold-label))",
+            }}
+          />
+        )}
         <div className="flex items-start gap-3">
           <span
             className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
@@ -163,14 +168,14 @@ export function NotificationDropdown() {
         <BellIcon />
         {unreadCount > 0 ? (
           <span
-            className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-white"
+            className="absolute end-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-white"
             style={{ backgroundColor: "var(--tott-status-coral)" }}
           >
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         ) : (
           <span
-            className="absolute right-1 top-1 h-2 w-2 rounded-full"
+            className="absolute end-1 top-1 h-2 w-2 rounded-full"
             style={{ backgroundColor: "var(--tott-status-coral)" }}
           />
         )}
@@ -179,9 +184,9 @@ export function NotificationDropdown() {
       {/* Dropdown panel */}
       {open && (
         <div
-          className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-2xl border shadow-2xl"
+          className="absolute end-0 z-50 mt-2 w-80 max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border"
           style={{
-            backgroundColor: "var(--tott-dash-surface-2)",
+            backgroundColor: "var(--tott-elevated)",
             borderColor: "var(--tott-card-border)",
             boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
           }}
@@ -189,10 +194,10 @@ export function NotificationDropdown() {
           {/* Header */}
           <div
             className="flex items-center justify-between border-b px-4 py-3"
-            style={{ borderColor: "var(--tott-card-border)" }}
+            style={{ borderColor: "var(--tott-dash-divider)" }}
           >
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-foreground">{t("notifications")}</span>
+              <span className="text-sm font-bold text-foreground">{t("notifications")}</span>
               {unreadCount > 0 && (
                 <span
                   className="rounded-full px-1.5 py-0.5 text-[10px] font-bold text-white"
@@ -227,7 +232,7 @@ export function NotificationDropdown() {
                 </p>
               </div>
             ) : (
-              <ul className="divide-y" style={{ borderColor: "var(--tott-card-border)" }}>
+              <ul className="divide-y" style={{ borderColor: "var(--tott-dash-divider)" }}>
                 {items.map((n) => (
                   <NotifRow key={n.id} n={n} onRead={handleRead} />
                 ))}
@@ -238,7 +243,7 @@ export function NotificationDropdown() {
           {/* Footer */}
           <div
             className="border-t px-4 py-2.5"
-            style={{ borderColor: "var(--tott-card-border)" }}
+            style={{ borderColor: "var(--tott-dash-divider)" }}
           >
             <Link
               href="/admin/notifications"

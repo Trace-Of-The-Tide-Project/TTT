@@ -11,7 +11,7 @@ export type MagazineIssue = {
   subtitle?: string | null;
   slug: string;
   /** Issue kind — backend enum. Documented values: "editorial",
-   * "crowdfunded". */
+   * "crowdfunded", "slide". */
   kind?: string | null;
   status?: string | null;
   language?: string | null;
@@ -71,7 +71,7 @@ export async function getMagazineIssues(
  * Create / update payload — mirrors the backend's documented
  * `POST /magazine-issues` body. `title`, `magazine_id`, `slug`, and
  * `edition_number` are required on create; `kind` is an enum
- * ("editorial" | "crowdfunded"); crowdfunded issues add `funding_goal`
+ * ("editorial" | "crowdfunded" | "slide"); crowdfunded issues add `funding_goal`
  * + `funding_deadline`. PATCH accepts any subset.
  */
 export type MagazineIssueInput = {

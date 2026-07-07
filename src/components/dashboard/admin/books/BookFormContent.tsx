@@ -23,6 +23,7 @@ import { routing } from "@/i18n/routing";
 import { formatApiError } from "@/lib/api/error-message";
 import { BookChaptersPanel } from "./BookChaptersPanel";
 import { LinkBookTranslationPicker } from "./LinkBookTranslationPicker";
+import { EditionsPanel } from "./EditionsPanel";
 import { getBookById, type Book, type BookPayload } from "@/services/books.service";
 import { booksKeys } from "@/hooks/queries/books";
 
@@ -264,6 +265,18 @@ function PdfUploadZone({
   );
 }
 
+/** Shared-field display for a non-primary language tab: shows the primary's
+ * value, not editable — price/genre/print settings/magazine are the same
+ * across every language edition (see
+ * docs/superpowers/plans/2026-07-06-book-multi-language-shared-fields.md). */
+function SharedFieldNote({ t }: { t: (key: string) => string }) {
+  return (
+    <p className="mt-1 text-[10px] text-[var(--tott-muted)]">
+      {t("hints.sharedFieldLocked")}
+    </p>
+  );
+}
+
 function seedFromBook(b: Book): FormState {
   return {
     title: b.title ?? "",
@@ -331,6 +344,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = forms[activeLang] ?? { ...EMPTY, language: activeLang as FormState["language"] };
+  const isPrimaryTab = activeLang === primaryLang;
 
   const versionIds = useMemo(() => {
     const map: Record<string, string> = {};
@@ -682,7 +696,15 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
           </div>
           <div>
             <label className={labelClass}>{t("fields.genre")}</label>
-            <input type="text" className={inputClass} placeholder={t("fields.genrePlaceholder")} value={form.genre} onChange={set("genre")} />
+            <input
+              type="text"
+              className={`${inputClass} disabled:opacity-60 disabled:cursor-not-allowed`}
+              placeholder={t("fields.genrePlaceholder")}
+              value={form.genre}
+              onChange={set("genre")}
+              disabled={isEdit && !isPrimaryTab}
+            />
+            {isEdit && !isPrimaryTab ? <SharedFieldNote t={t} /> : null}
           </div>
           <div>
             <label className={labelClass}>{t("fields.published_date")}</label>
@@ -730,12 +752,32 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="sm:col-span-2">
             <label className={labelClass}>{t("fields.price")}</label>
-            <input type="number" step="0.01" min="0" className={inputClass} placeholder={t("fields.pricePlaceholder")} value={form.price} onChange={set("price")} />
-            <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.priceFree")}</p>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              className={`${inputClass} disabled:opacity-60 disabled:cursor-not-allowed`}
+              placeholder={t("fields.pricePlaceholder")}
+              value={form.price}
+              onChange={set("price")}
+              disabled={isEdit && !isPrimaryTab}
+            />
+            {isEdit && !isPrimaryTab ? (
+              <SharedFieldNote t={t} />
+            ) : (
+              <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.priceFree")}</p>
+            )}
           </div>
           <div>
             <label className={labelClass}>{t("fields.currency")}</label>
-            <input type="text" className={inputClass} placeholder={t("fields.currencyPlaceholder")} value={form.currency} onChange={set("currency")} />
+            <input
+              type="text"
+              className={`${inputClass} disabled:opacity-60 disabled:cursor-not-allowed`}
+              placeholder={t("fields.currencyPlaceholder")}
+              value={form.currency}
+              onChange={set("currency")}
+              disabled={isEdit && !isPrimaryTab}
+            />
           </div>
         </div>
         <div>
@@ -744,21 +786,40 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
               type="checkbox"
               checked={form.print_enabled}
               onChange={(e) => updateForm((prev) => ({ ...prev, print_enabled: e.target.checked }))}
-              className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+              disabled={isEdit && !isPrimaryTab}
+              className="h-4 w-4 accent-[var(--tott-accent-gold)] disabled:opacity-60 disabled:cursor-not-allowed"
             />
             {t("fields.printEnabled")}
           </label>
+          {isEdit && !isPrimaryTab ? <SharedFieldNote t={t} /> : null}
         </div>
         {form.print_enabled ? (
           <div>
             <label className={labelClass}>{t("fields.printPrice")}</label>
-            <input type="number" step="0.01" min="0" className={inputClass} placeholder={t("fields.printPricePlaceholder")} value={form.print_price} onChange={set("print_price")} />
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              className={`${inputClass} disabled:opacity-60 disabled:cursor-not-allowed`}
+              placeholder={t("fields.printPricePlaceholder")}
+              value={form.print_price}
+              onChange={set("print_price")}
+              disabled={isEdit && !isPrimaryTab}
+            />
             <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.printPriceCurrency")}</p>
           </div>
         ) : null}
         <div>
           <label className={labelClass}>{t("fields.magazine_id")}</label>
-          <input type="text" className={inputClass} placeholder={t("fields.magazine_idPlaceholder")} value={form.magazine_id} onChange={set("magazine_id")} />
+          <input
+            type="text"
+            className={`${inputClass} disabled:opacity-60 disabled:cursor-not-allowed`}
+            placeholder={t("fields.magazine_idPlaceholder")}
+            value={form.magazine_id}
+            onChange={set("magazine_id")}
+            disabled={isEdit && !isPrimaryTab}
+          />
+          {isEdit && !isPrimaryTab ? <SharedFieldNote t={t} /> : null}
         </div>
       </div>
 
@@ -835,7 +896,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         {t("backToList")}
       </Link>
 
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-xl font-semibold text-foreground">
           {isEdit ? t("editTitle") : t("createTitle")}
         </h1>
@@ -849,8 +910,25 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         ) : null}
       </div>
 
+      {isEdit && !isTranslation && bookId ? (
+        <div className={`${sectionClass} mb-4`}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
+            {t("sections.editions")}
+          </p>
+          <EditionsPanel
+            versions={groupQuery.data?.versions ?? []}
+            primaryLang={primaryLang}
+            activeLang={activeLang}
+            tabStatus={tabStatus}
+            forms={forms}
+            onSelectLang={(loc) => void handleSelectLang(loc)}
+            disabled={busy}
+          />
+        </div>
+      ) : null}
+
       {isEdit && !isTranslation && activeLang !== primaryLang && !versionIds[activeLang] ? (
-        <div className="mb-6 max-w-2xl rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] p-4">
+        <div className="mb-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] p-4">
           <p className="mb-2 text-xs font-medium text-[var(--tott-dash-gold-text)]">
             {t("linkTranslation.label")}
           </p>
@@ -873,7 +951,7 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
 
       {/* Clarify what a book is vs an issue/article — admins were unsure which
           form to use for which kind of content. */}
-      <p className="mb-6 max-w-2xl text-xs leading-relaxed text-[var(--tott-muted)]">
+      <p className="mb-6 text-xs leading-relaxed text-[var(--tott-muted)]">
         {t("createDescription")}
       </p>
 

@@ -27,7 +27,7 @@ export function LanguageFormTabs({ active, onSelect, status, disabled }: Props) 
   const t = useIntl("Dashboard.translations");
 
   return (
-    <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
+    <div className="inline-flex shrink-0 gap-1 rounded-lg bg-[var(--tott-elevated)] p-1">
       {routing.locales.map((loc) => {
         const s = status[loc] ?? "empty";
         const isActive = loc === active;

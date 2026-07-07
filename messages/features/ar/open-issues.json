@@ -8,6 +8,7 @@
     "supporters": "{count, plural, =1 {داعم واحد} other {# داعمين}}",
     "supportCta": "ادعم هذا العدد",
     "emptyState": "لا توجد أعداد مفتوحة حالياً — تفقد لاحقاً.",
+    "browseCta": "تصفّح المجلة",
     "modal": {
       "title": "ادعم {author}",
       "subtitle": "عبّر عن تقديرك لمحتوى {author} الرائع",

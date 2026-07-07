@@ -85,6 +85,8 @@
         "readOnline": "Read Online",
         "galleryHeading": "Visual Gallery",
         "gallerySubtitle": "Lorem ipsum dolor sit amet adipiscing elit.",
+        "emptyTitle": "No issues published yet",
+        "emptyBody": "New magazine issues will appear here as soon as they go live.",
         "viewMore": "View more",
         "searchPlaceholder": "Search content...",
         "filterAll": "Show all",

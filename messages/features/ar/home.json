@@ -85,6 +85,8 @@
         "readOnline": "اقرأ على الإنترنت",
         "galleryHeading": "المعرض البصري",
         "gallerySubtitle": "Lorem ipsum dolor sit amet adipiscing elit.",
+        "emptyTitle": "لا توجد أعداد منشورة بعد",
+        "emptyBody": "ستظهر أعداد المجلة الجديدة هنا فور نشرها.",
         "viewMore": "عرض المزيد",
         "searchPlaceholder": "ابحث في المحتوى...",
         "filterAll": "عرض الكل",

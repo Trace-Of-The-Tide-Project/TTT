@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { staggerParent, staggerChild, springs } from "@/lib/motion";
@@ -149,18 +150,7 @@ export function OpenIssuesContent({
 
         {/* Grid — empty-state row spans all columns. */}
         {issues.length === 0 ? (
-          <p
-            className="mt-12 text-center"
-            style={{
-              fontFamily: "'Inter', var(--font-sans, sans-serif)",
-              fontWeight: 400,
-              fontSize: 14,
-              lineHeight: "20px",
-              color: TEXT_MUTED,
-            }}
-          >
-            {t("emptyState")}
-          </p>
+          <EmptyState message={t("emptyState")} browseCta={t("browseCta")} />
         ) : (
           <motion.ul
             className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
@@ -213,6 +203,104 @@ export function OpenIssuesContent({
         }
       />
     </main>
+  );
+}
+
+// Mirrors ComingSoon.tsx's composition (breathing mark, rule-line eyebrow,
+// arrow CTA) so every "nothing here yet" state on the site reads the same.
+function EmptyState({
+  message,
+  browseCta,
+}: {
+  message: string;
+  browseCta: string;
+}) {
+  const rule = (toLeft: boolean) => ({
+    height: 1,
+    width: 40,
+    background: `linear-gradient(to ${toLeft ? "left" : "right"}, transparent, var(--tott-accent-gold))`,
+  });
+
+  return (
+    <motion.div
+      className="mx-auto mt-16 flex w-full flex-col items-center text-center"
+      style={{ maxWidth: 420, gap: 20 }}
+      variants={staggerParent}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+    >
+      <motion.div variants={staggerChild} transition={springs.gentle}>
+        <motion.div
+          animate={{ y: [0, -8, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden style={{ color: ACCENT }}>
+            <path
+              d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path d="M9 8h7M9 11.5h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </motion.div>
+      </motion.div>
+
+      <motion.div
+        variants={staggerChild}
+        transition={springs.gentle}
+        className="flex items-center gap-3"
+      >
+        <span aria-hidden style={rule(false)} />
+        <span
+          style={{
+            fontFamily: "'Inter', var(--font-sans, sans-serif)",
+            fontWeight: 500,
+            fontSize: 12,
+            lineHeight: "16px",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: ACCENT,
+          }}
+        >
+          {message}
+        </span>
+        <span aria-hidden style={rule(true)} />
+      </motion.div>
+
+      <motion.div variants={staggerChild} transition={springs.gentle} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+        <Link
+          href="/magazine"
+          className="inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap transition-opacity hover:opacity-90"
+          style={{
+            minWidth: 160,
+            height: 40,
+            padding: "8px 20px",
+            backgroundColor: ACCENT,
+            boxShadow: "inset 0px 1px 0px rgba(255, 255, 255, 0.4)",
+            borderRadius: 999,
+            fontFamily: "'Inter', var(--font-sans, sans-serif)",
+            fontWeight: 500,
+            fontSize: 14,
+            lineHeight: "20px",
+            letterSpacing: "-0.005em",
+            color: ACCENT_TEXT,
+          }}
+        >
+          {browseCta}
+          <span aria-hidden>←</span>
+        </Link>
+      </motion.div>
+    </motion.div>
   );
 }
 

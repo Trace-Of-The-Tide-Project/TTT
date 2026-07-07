@@ -1,18 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
+import { PersonIcon } from "@/components/ui/icons";
 import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { FirstWordGold } from "./FirstWordGold";
-
-// Twin-hex header (Author + Contributor hexes connected by the
-// heart-handshake glyph). This is a label-stripped copy of the original
-// `Frame 86.svg` — the baked "Author"/"Contributor" vector text was removed
-// so we can render those labels as real, translatable text on top (the gold
-// gradient + hexagons are untouched).
-const FRAME_86 = "/images/home/twin-hex-nolabels.svg";
 
 // Outer card silhouette — chamfered-hex path lifted from the Figma
 // comp (Card-2.svg). Used as both the fill (matching the page
@@ -48,9 +41,6 @@ export type CollaborationItem = {
   timeline?: string | null;
   /** Long-form description. */
   description: string;
-  /** Optional avatar urls for the twin-hex header. */
-  authorAvatar?: string | null;
-  contributorAvatar?: string | null;
 };
 
 export type MagazineSupportProps = {
@@ -370,48 +360,42 @@ function CollabCard({
         />
       </svg>
 
-      {/* Frame 86 — twin-hex header in flow. z=1
-          The label-less graphic keeps the full gold gradient + hexagons; the
-          "Author"/"Contributor" labels are overlaid as real translated text on
-          the gold band (where the baked ones sat), so they switch per language.
-          dir="ltr" pins each label under its hexagon (author = left,
-          contributor = right) regardless of locale, since the art doesn't
-          mirror. containerType lets the label font scale with the graphic. */}
+      {/* Author + Contributor identity row. z=1
+          Neither role has a real photo backing it yet (no avatar field
+          on the contribution record), so this renders a plain generic
+          person icon per role instead of a fake/stock photo — honest
+          "no photo" placeholder rather than invented imagery.
+          dir="ltr" keeps author on the left / contributor on the right
+          regardless of locale. */}
       <div
-        className="relative w-full shrink-0"
-        style={{ maxWidth: "270px", aspectRatio: "270 / 156", zIndex: 1, containerType: "inline-size" }}
+        className="relative flex w-full shrink-0 items-center justify-center"
+        style={{ maxWidth: "270px", gap: "32px", zIndex: 1 }}
         dir="ltr"
       >
-        <Image
-          src={FRAME_86}
-          alt=""
-          fill
-          sizes="270px"
-          className="pointer-events-none select-none"
-          draggable={false}
-        />
-        {/* Overlaid labels — sit on the gold band; light fixed color to read on
-            the dark/gold gradient (matches the original baked labels). */}
-        <div className="absolute inset-x-0 flex w-full" style={{ bottom: "6.5%" }}>
-          {[t("roleAuthor"), t("roleContributor")].map((label, i) => (
+        {[t("roleAuthor"), t("roleContributor")].map((label, i) => (
+          <div key={i} className="flex flex-col items-center gap-1.5">
             <span
-              key={i}
-              className="flex-1 text-center"
+              className="flex h-12 w-12 items-center justify-center rounded-full"
+              style={{
+                backgroundColor: "var(--tott-well-bg)",
+                color: "var(--tott-home-text-muted)",
+              }}
+            >
+              <PersonIcon />
+            </span>
+            <span
               style={{
                 fontFamily: "'Inter', var(--font-sans, sans-serif)",
                 fontWeight: 400,
-                fontSize: `calc((clamp(9px, 4.6cqw, 13px)) * var(--mag-fs, 1))`,
+                fontSize: `calc(12px * var(--mag-fs, 1))`,
                 lineHeight: 1,
-                // Fixed light color: these labels are overlaid on the dark/gold
-                // FRAME_86 band image, which does not re-theme — a themed text
-                // token would flip dark and vanish in light/tide.
-                color: "#d6d6d6",
+                color: "var(--tott-home-text-muted)",
               }}
             >
               {label}
             </span>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
       {/* Text block — Title + Meta + Description, in flow. z=2 */}
