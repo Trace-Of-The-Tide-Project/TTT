@@ -8,10 +8,6 @@ import {
 } from "@/components/home/magazine/MagazineLatestPublished";
 import { MagazineLatestPublishedV2 } from "@/components/home/magazine/MagazineLatestPublishedV2";
 import {
-  MagazineLessReadV2,
-  type LessReadArticleItem,
-} from "@/components/home/magazine/MagazineLessReadV2";
-import {
   MagazineIssues,
   type MagazineIssueItem,
 } from "@/components/home/magazine/MagazineIssues";
@@ -55,20 +51,6 @@ import type { CmsPage } from "@/services/cms.service";
 export const dynamic = "force-dynamic";
 
 // ─── Backend response shapes (loose; OpenAPI doesn't declare them) ──
-
-type RawArticle = {
-  id: string;
-  title: string;
-  cover_image?: string | null;
-  category?: string | null;
-  edition?: string | null;
-  published_at?: string | null;
-  author?: {
-    full_name?: string | null;
-    username?: string | null;
-    profile?: { display_name?: string | null; avatar?: string | null } | null;
-  } | null;
-};
 
 type RawContribution = {
   id: string;
@@ -119,32 +101,14 @@ async function fetchLatestBooks(locale: string): Promise<LatestPublishedItem[]> 
   }));
 }
 
-async function fetchLessReadArticles(locale: string): Promise<LessReadArticleItem[]> {
-  const raw = await serverGet<Envelope<RawArticle>>("/articles", {
-    limit: 5,
-    status: "published",
-    sortBy: "view_count",
-    order: "ASC",
-    dedupe: "group",
-    viewer_lang: locale,
-  });
-  return unwrapList(raw).map((a) => ({
-    id: a.id,
-    title: a.title,
-    author: pickAuthorName(a.author),
-    date: formatShortDate(a.published_at, locale),
-    category: prettifyCategory(a.category),
-    coverImage: a.cover_image ?? null,
-  }));
-}
-
 async function fetchWriters(locale: string): Promise<FollowWriterItem[]> {
-  // Try featured strip first; fall back to the full writers list.
-  const featured = await serverGet<Envelope<WriterProfile>>(
-    "/writers/featured",
+  // Admin-picked Editorial Board writers first; fall back to the full
+  // writers list so the board is never empty before any writer is flagged.
+  const board = await serverGet<Envelope<WriterProfile>>(
+    "/writers/editorial-board",
     { viewer_lang: locale },
   );
-  const list = unwrapList(featured);
+  const list = unwrapList(board);
   if (list.length > 0) return list.map(toWriterItem);
 
   const all = await serverGet<Envelope<WriterProfile>>("/writers", {
@@ -221,15 +185,6 @@ async function fetchMagazineMeta(): Promise<{
 }
 
 // ─── Mapping helpers ────────────────────────────────────────────────
-
-function pickAuthorName(author: RawArticle["author"]): string {
-  return (
-    author?.profile?.display_name?.trim() ||
-    author?.full_name?.trim() ||
-    author?.username?.trim() ||
-    ""
-  );
-}
 
 function prettifyCategory(c: string | null | undefined): string {
   const v = (c ?? "").trim();
@@ -334,7 +289,6 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
   // so the page always renders, even with the backend offline.
   const [
     latestArticles,
-    lessReadArticles,
     writers,
     issues,
     collaborations,
@@ -342,7 +296,6 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
     cmsCopy,
   ] = await Promise.all([
     fetchLatestBooks(locale),
-    fetchLessReadArticles(locale),
     fetchWriters(locale),
     fetchMagazineIssues(locale),
     fetchCollaborations(locale),
@@ -425,15 +378,8 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
               ) : undefined,
             issues: <MagazineIssues items={issues} />,
             editorialBoard:
-              lessReadArticles.length > 0 || writers.length > 0 ? (
-                <div className="flex flex-col" style={{ gap: 64 }}>
-                  {lessReadArticles.length > 0 ? (
-                    <MagazineLessReadV2 items={lessReadArticles} />
-                  ) : null}
-                  {writers.length > 0 ? (
-                    <MagazineEditorialBoardV2 writers={writers} />
-                  ) : null}
-                </div>
+              writers.length > 0 ? (
+                <MagazineEditorialBoardV2 writers={writers} />
               ) : undefined,
             support:
               collaborations.length > 0 ? (
@@ -449,14 +395,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
                 <MagazineLatestPublishedV2 items={latestArticles} />
               ),
               issues: <MagazineIssuesV2 items={issues} />,
-              editorialBoard: (
-                <div className="flex flex-col" style={{ gap: 64 }}>
-                  {lessReadArticles.length > 0 ? (
-                    <MagazineLessReadV2 items={lessReadArticles} />
-                  ) : null}
-                  <MagazineEditorialBoardV2 writers={writers} />
-                </div>
-              ),
+              editorialBoard: <MagazineEditorialBoardV2 writers={writers} />,
               support: <MagazineSupportV2 issues={issues} />,
             },
           }}

@@ -124,8 +124,8 @@ export function MagazineEditorialBoardV2({
   roleCounts = DEFAULT_ROLE_COUNTS,
 }: MagazineEditorialBoardProps) {
   const t = useTranslations("Home.magazine.editorialBoard");
-  // Real writers only — no fake "Author / 12.05" filler padding the row.
-  const carouselWriters = writers.slice(0, 4);
+  // All board writers — the carousel scrolls when the row overflows.
+  const carouselWriters = writers;
 
   return (
     <div

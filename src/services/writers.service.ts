@@ -30,6 +30,7 @@ export type WriterProfile = {
   bio_long?: string | null;
   avatar_url?: string | null;
   featured?: boolean;
+  editorial_board?: boolean;
   social_links?: WriterSocialLinks | null;
   creator_kind?: string | null;
   location?: string | null;
@@ -45,6 +46,10 @@ export type WriterProfile = {
    * version; all language versions of one writer share `translation_group_id`. */
   language?: string | null;
   translation_group_id?: string | null;
+  /** Other language versions in this writer's translation group. Present on the
+   * admin list (dedupe=group), where each primary carries its siblings for the
+   * collapse UI. Empty/absent when the writer has no translations. */
+  translations?: WriterProfile[] | null;
   createdAt?: string;
   updatedAt?: string;
   /** When the backend joins the user record onto the writer profile
@@ -233,6 +238,7 @@ export type WriterProfilePayload = {
   bio_long?: string | null;
   avatar_url?: string | null;
   featured?: boolean;
+  editorial_board?: boolean;
   social_links?: WriterSocialLinks | null;
   creator_kind?: string | null;
   location?: string | null;

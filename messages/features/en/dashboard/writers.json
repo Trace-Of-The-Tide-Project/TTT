@@ -17,7 +17,8 @@
           "kind": "Discipline",
           "location": "Location",
           "account": "Account",
-          "featured": "Featured"
+          "featured": "Homepage",
+          "editorialBoard": "Board"
         },
         "account": {
           "linked": "Has account",
@@ -34,9 +35,13 @@
         },
         "featuredOn": "Featured — shown on the homepage strip",
         "featuredOff": "Not featured",
+        "boardOn": "On the Editorial Board",
+        "boardOff": "Not on the Editorial Board",
         "toasts": {
           "featuredOn": "Writer added to the featured strip",
-          "featuredOff": "Writer removed from the featured strip"
+          "featuredOff": "Writer removed from the featured strip",
+          "boardOn": "Writer added to the Editorial Board",
+          "boardOff": "Writer removed from the Editorial Board"
         },
         "errors": {
           "loadFailed": "Failed to load writer profiles",
@@ -48,6 +53,12 @@
           "pageOf": "Page {page} of {totalPages}",
           "previous": "Previous",
           "next": "Next"
+        },
+        "translations": {
+          "toggle": "Show language versions",
+          "count": "{count, plural, one {+# version} other {+# versions}}",
+          "needsTranslation": "Needs translation",
+          "needsTranslationTooltip": "No {locale} version of this writer yet"
         },
         "delete": {
           "title": "Delete writer profile",
@@ -110,7 +121,9 @@
           "instagram": "Instagram",
           "youtube": "YouTube",
           "featured": "Show on the featured writers strip",
-          "featuredHint": "Featured writers appear on the public Magazine → Editorial Board. Leave off to keep the profile hidden from the board."
+          "featuredHint": "Featured writers appear on the homepage \"Voices of our Writers\" strip.",
+          "editorialBoard": "Show on the Magazine Editorial Board",
+          "editorialBoardHint": "Writers on the Editorial Board appear in the Magazine → Editorial Board carousel. Independent of the featured strip."
         },
         "kinds": {
           "none": "—",

@@ -1,10 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
-import { PlusIcon, TrashIcon, PenLineIcon } from "@/components/ui/icons";
+import {
+  PlusIcon,
+  TrashIcon,
+  PenLineIcon,
+  ChevronRightIcon,
+} from "@/components/ui/icons";
 import {
   ChamferedTable,
   type ChamferedTableColumn,
@@ -27,8 +32,6 @@ import { CreateAccountModal } from "./CreateAccountModal";
 
 const PAGE_LIMIT = 10;
 
-const KNOWN_KINDS = new Set(["musician", "writer", "visual_artist", "filmmaker", "photographer", "translator", "editor", "illustrator"]);
-
 const emptyMeta: WritersListMeta = {
   total: 0,
   page: 1,
@@ -45,9 +48,21 @@ function writerRowName(w: WriterProfile): string {
   );
 }
 
+/** A writer row plus its translation-group role for flat rendering. */
+type DisplayWriter = WriterProfile & {
+  isPrimary: boolean;
+  isChild: boolean;
+  /** Count of other language versions; 0 on child rows and untranslated writers. */
+  siblingCount: number;
+  /** True on the primary when no version matches the admin's UI language. */
+  missingLocale: boolean;
+  groupExpanded: boolean;
+  groupId: string;
+};
+
 export function WritersManagementContent() {
   const t = useTranslations("Dashboard.writersManagement.list");
-  const tKinds = useTranslations("Dashboard.writersManagement.form.kinds");
+  const locale = useLocale();
 
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -88,6 +103,66 @@ export function WritersManagementContent() {
     ? formatApiError(writersQuery.error, t("errors.loadFailed"))
     : null;
 
+  // Cluster the page's rows by translation group (client-side), so a writer with
+  // several language versions shows as one collapsible row. The same admin
+  // session that adds a writer's languages creates them together, so
+  // createdAt-DESC order keeps a group's rows on one page.
+  // ponytail: per-page grouping; true page-by-group paging needs the server to
+  // dedupe (dedupe=group) — do that when the backend change ships.
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const toggleGroup = useCallback((gid: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(gid)) next.delete(gid);
+      else next.add(gid);
+      return next;
+    });
+  }, []);
+
+  const displayWriters = useMemo<DisplayWriter[]>(() => {
+    const byGroup = new Map<string, WriterProfile[]>();
+    for (const w of writers) {
+      const gid = w.translation_group_id ?? w.id;
+      if (!byGroup.has(gid)) byGroup.set(gid, []);
+      byGroup.get(gid)!.push(w);
+    }
+    const stamp = (w: WriterProfile) => w.updatedAt ?? w.createdAt ?? "";
+    const out: DisplayWriter[] = [];
+    for (const [gid, members] of byGroup) {
+      // Prefer the version in the admin's UI language; fall back to the newest.
+      const localeMatch = members.find((m) => m.language === locale);
+      const newest = [...members].sort((a, b) =>
+        stamp(b).localeCompare(stamp(a)),
+      )[0];
+      const primary = localeMatch ?? newest;
+      const children = members.filter((m) => m.id !== primary.id);
+      const expanded = expandedGroups.has(gid);
+      out.push({
+        ...primary,
+        isPrimary: true,
+        isChild: false,
+        siblingCount: children.length,
+        missingLocale: !localeMatch,
+        groupExpanded: expanded,
+        groupId: gid,
+      });
+      if (expanded) {
+        for (const child of children) {
+          out.push({
+            ...child,
+            isPrimary: false,
+            isChild: true,
+            siblingCount: 0,
+            missingLocale: false,
+            groupExpanded: expanded,
+            groupId: gid,
+          });
+        }
+      }
+    }
+    return out;
+  }, [writers, expandedGroups, locale]);
+
   const updateMutation = useUpdateWriterProfile();
   const deleteMutation = useDeleteWriterProfile();
   const createAccountMutation = useCreateAdminUser();
@@ -103,6 +178,23 @@ export function WritersManagementContent() {
         {
           onSuccess: () =>
             toast.success(next ? t("toasts.featuredOn") : t("toasts.featuredOff")),
+          onError: (e) =>
+            setActionError(formatApiError(e, t("errors.updateFailed"))),
+        },
+      );
+    },
+    [updateMutation, t],
+  );
+
+  const toggleBoard = useCallback(
+    (w: WriterProfile) => {
+      setActionError(null);
+      const next = !w.editorial_board;
+      updateMutation.mutate(
+        { writerId: w.id, payload: { editorial_board: next } },
+        {
+          onSuccess: () =>
+            toast.success(next ? t("toasts.boardOn") : t("toasts.boardOff")),
           onError: (e) =>
             setActionError(formatApiError(e, t("errors.updateFailed"))),
         },
@@ -131,17 +223,35 @@ export function WritersManagementContent() {
     setPage(totalPages);
   }
 
-  const columns = useMemo<ChamferedTableColumn<WriterProfile>[]>(
+  const columns = useMemo<ChamferedTableColumn<DisplayWriter>[]>(
     () => [
       {
         key: "writer",
         header: t("headers.writer"),
-        width: "22%",
-        cellClassName: "flex min-w-0 items-center gap-3 px-5 py-3",
+        width: "30%",
+        cellClassName: "flex min-w-0 items-center gap-2 px-5 py-3",
         cell: (w) => {
           const avatar = writerAvatar(w);
           return (
             <>
+              {w.isPrimary && w.siblingCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(w.groupId)}
+                  aria-expanded={w.groupExpanded}
+                  aria-label={t("translations.toggle")}
+                  className={`shrink-0 rounded p-1 text-[var(--tott-dash-gold-label)] transition-transform hover:bg-[var(--tott-dash-ghost-hover)] ${
+                    w.groupExpanded ? "rotate-90" : "rtl:-scale-x-100"
+                  }`}
+                >
+                  <ChevronRightIcon />
+                </button>
+              ) : (
+                <span
+                  className="shrink-0"
+                  style={{ width: w.isChild ? "1.75rem" : "1.5rem" }}
+                />
+              )}
               {avatar ? (
                 // eslint-disable-next-line @next/next/no-img-element -- small admin thumbnail, varied hosts
                 <img
@@ -160,12 +270,40 @@ export function WritersManagementContent() {
                 </span>
               )}
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-[var(--tott-dash-gold-text)]">
+                <p
+                  className={`truncate text-sm font-medium ${
+                    w.isChild
+                      ? "text-[var(--tott-muted)]"
+                      : "text-[var(--tott-dash-gold-text)]"
+                  }`}
+                >
                   {writerRowName(w)}
                 </p>
-                <p className="mt-0.5 truncate text-xs text-[var(--tott-muted)]">
-                  {w.user?.username || w.user?.full_name || "—"}
-                </p>
+                <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-xs text-[var(--tott-muted)]">
+                  {w.language ? (
+                    <span className="shrink-0 rounded bg-[var(--tott-elevated)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+                      {w.language}
+                    </span>
+                  ) : null}
+                  {w.isPrimary && w.siblingCount > 0 ? (
+                    <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider">
+                      {t("translations.count", { count: w.siblingCount })}
+                    </span>
+                  ) : null}
+                  {w.isPrimary && w.missingLocale ? (
+                    <span
+                      className="shrink-0 rounded bg-[var(--tott-status-coral)]/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-status-coral)]"
+                      title={t("translations.needsTranslationTooltip", { locale })}
+                    >
+                      {t("translations.needsTranslation")}
+                    </span>
+                  ) : null}
+                  {w.user?.username || w.user?.full_name ? (
+                    <span className="truncate">
+                      {w.user?.username || w.user?.full_name}
+                    </span>
+                  ) : null}
+                </div>
               </div>
             </>
           );
@@ -180,23 +318,6 @@ export function WritersManagementContent() {
         cell: (w) => (
           <span className="truncate">{w.headline?.trim() || "—"}</span>
         ),
-      },
-      {
-        key: "kind",
-        header: t("headers.kind"),
-        width: "10%",
-        cell: (w) =>
-          w.creator_kind ? (
-            <span className="inline-flex max-w-full rounded-full bg-[var(--tott-elevated)] px-2.5 py-1 text-xs font-medium text-foreground">
-              <span className="truncate">
-                {KNOWN_KINDS.has(w.creator_kind)
-                  ? tKinds(w.creator_kind as "musician")
-                  : w.creator_kind}
-              </span>
-            </span>
-          ) : (
-            <span className="text-sm text-[var(--tott-muted)]">—</span>
-          ),
       },
       {
         key: "location",
@@ -231,7 +352,7 @@ export function WritersManagementContent() {
       {
         key: "featured",
         header: t("headers.featured"),
-        width: "10%",
+        width: "8%",
         align: "center",
         cellClassName: "px-5 py-3 flex items-center justify-center",
         cell: (w) => (
@@ -258,11 +379,40 @@ export function WritersManagementContent() {
         ),
       },
       {
+        key: "editorial_board",
+        header: t("headers.editorialBoard"),
+        width: "8%",
+        align: "center",
+        cellClassName: "px-5 py-3 flex items-center justify-center",
+        cell: (w) => (
+          <button
+            type="button"
+            onClick={() => toggleBoard(w)}
+            disabled={updateMutation.isPending}
+            title={w.editorial_board ? t("boardOn") : t("boardOff")}
+            aria-label={w.editorial_board ? t("boardOn") : t("boardOff")}
+            className={[
+              "relative h-5 w-9 rounded-full transition-colors disabled:opacity-50",
+              w.editorial_board
+                ? "bg-[var(--tott-gold)]"
+                : "border border-[var(--tott-card-border)] bg-[var(--tott-elevated)]",
+            ].join(" ")}
+          >
+            <span
+              className={[
+                "absolute top-0.5 h-4 w-4 rounded-full bg-[var(--tott-dash-surface)] transition-all",
+                w.editorial_board ? "start-4" : "start-0.5",
+              ].join(" ")}
+            />
+          </button>
+        ),
+      },
+      {
         key: "actions",
         header: "",
-        width: "14%",
-        align: "end",
-        cellClassName: "flex items-center justify-end gap-2 px-3 py-3",
+        width: "8%",
+        align: "center",
+        cellClassName: "flex items-center justify-center gap-2 px-3 py-3",
         cell: (w) => (
           <>
             <Link
@@ -284,7 +434,7 @@ export function WritersManagementContent() {
         ),
       },
     ],
-    [t, tKinds, toggleFeatured, openDelete, updateMutation.isPending],
+    [t, toggleFeatured, toggleBoard, openDelete, toggleGroup, updateMutation.isPending],
   );
 
   return (
@@ -330,7 +480,7 @@ export function WritersManagementContent() {
 
       <ChamferedTable
         columns={columns}
-        rows={writers}
+        rows={displayWriters}
         rowKey={(w) => w.id}
         loading={loading}
         loadingLabel={t("loading")}
@@ -338,23 +488,23 @@ export function WritersManagementContent() {
       />
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-end gap-2 text-xs text-[var(--tott-muted)]">
+        <div className="flex items-center justify-end gap-3 text-xs">
           <button
             type="button"
             disabled={loading || effectivePage <= 1}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
-            className="disabled:opacity-40"
+            className="rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-3 py-1.5 font-medium text-[var(--tott-gold)] transition-colors hover:bg-[var(--tott-gold)]/20 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[var(--tott-gold)]/10"
           >
             {t("pagination.previous")}
           </button>
-          <span>
+          <span className="text-[var(--tott-muted)]">
             {t("pagination.pageOf", { page: effectivePage, totalPages })}
           </span>
           <button
             type="button"
             disabled={loading || effectivePage >= totalPages}
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            className="disabled:opacity-40"
+            className="rounded-lg border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-3 py-1.5 font-medium text-[var(--tott-gold)] transition-colors hover:bg-[var(--tott-gold)]/20 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[var(--tott-gold)]/10"
           >
             {t("pagination.next")}
           </button>
