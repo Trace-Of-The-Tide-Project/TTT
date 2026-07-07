@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { Link } from "@/i18n/navigation";
 
 // Shared "silk hex" card assets — same files the home "Follow our
@@ -8,11 +9,20 @@ import { Link } from "@/i18n/navigation";
 // the three rows read as one system.
 const WRITER_CARD = "/images/home/Image-2.png";
 const WRITER_TOP_ICON = "/images/home/Icon-4.svg";
-// Hexagon matching the silk-hex frame (Image-2.png) — clips the cover
-// image to the hex so a bright/full-bleed cover doesn't bleed into the
-// frame's transparent corners and make the card read as a rectangle.
-const HEX_CLIP =
-  "polygon(47.5% 5.67%, 48.29% 5.3%, 49.13% 5.08%, 50% 5%, 50.87% 5.08%, 51.71% 5.3%, 52.5% 5.67%, 87.14% 25.67%, 87.85% 26.17%, 88.47% 26.79%, 88.97% 27.5%, 89.34% 28.29%, 89.57% 29.13%, 89.64% 30%, 89.64% 70%, 89.57% 70.87%, 89.34% 71.71%, 88.97% 72.5%, 88.47% 73.21%, 87.85% 73.83%, 87.14% 74.33%, 52.5% 94.33%, 51.71% 94.7%, 50.87% 94.92%, 50% 95%, 49.13% 94.92%, 48.29% 94.7%, 47.5% 94.33%, 12.86% 74.33%, 12.15% 73.83%, 11.53% 73.21%, 11.03% 72.5%, 10.66% 71.71%, 10.43% 70.87%, 10.36% 70%, 10.36% 30%, 10.43% 29.13%, 10.66% 28.29%, 11.03% 27.5%, 11.53% 26.79%, 12.15% 26.17%, 12.86% 25.67%)";
+// Clip a real avatar photo to the exact silk-hex silhouette using the
+// frame PNG's own alpha as a mask — pixel-accurate against the silk
+// (a hand-authored clip-path polygon drifts from the art at odd sizes).
+// Same technique as the Editorial Board carousel card.
+const HEX_PHOTO_MASK: CSSProperties = {
+  WebkitMaskImage: `url(${WRITER_CARD})`,
+  maskImage: `url(${WRITER_CARD})`,
+  WebkitMaskSize: "100% auto",
+  maskSize: "100% auto",
+  WebkitMaskPosition: "center center",
+  maskPosition: "center center",
+  WebkitMaskRepeat: "no-repeat",
+  maskRepeat: "no-repeat",
+};
 const CHIP_CHAMFER =
   "polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px)";
 
@@ -56,18 +66,8 @@ export function FeaturedHexCard({
         flexShrink: 0,
       }}
     >
-      {coverImage ? (
-        <Image
-          src={coverImage}
-          alt=""
-          fill
-          className="absolute inset-0 select-none object-cover"
-          style={{ clipPath: HEX_CLIP, WebkitClipPath: HEX_CLIP }}
-          sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
-          draggable={false}
-          unoptimized
-        />
-      ) : null}
+      {/* Silk hex frame — drawn first as the base/fallback fill so a real
+          photo (layered on top below) isn't washed out by the silk texture. */}
       <Image
         src={WRITER_CARD}
         alt=""
@@ -76,6 +76,18 @@ export function FeaturedHexCard({
         sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
         draggable={false}
       />
+      {coverImage ? (
+        <Image
+          src={coverImage}
+          alt=""
+          fill
+          className="absolute inset-0 select-none object-cover"
+          style={HEX_PHOTO_MASK}
+          sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
+          draggable={false}
+          unoptimized
+        />
+      ) : null}
 
       <div
         aria-hidden

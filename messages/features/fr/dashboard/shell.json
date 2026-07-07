@@ -78,7 +78,8 @@
         "badges": "Badges",
         "email": "Modèles d'e-mail",
         "localisation": "Localisation",
-        "guidelines": "Directives"
+        "guidelines": "Directives",
+        "heroImages": "Images d'en-tête"
       },
       "saveChanges": "Enregistrer les modifications",
       "itemCount": "{count, plural, one {# élément} other {# éléments}}",
@@ -148,6 +149,17 @@
         "contentPolicyLabel": "Politique de contenu",
         "sampleCommunity": "1. Respectez tous les membres de la communauté\n2. Pas de discours haineux ni de discrimination\n3. Contenu original uniquement — pas de plagiat\n4. Citez les sources le cas échéant\n5. Pas de spam ni d'autopromotion",
         "sampleContentPolicy": "Tout contenu doit être original ou correctement sous licence. Le matériel protégé par des droits d'auteur sans autorisation sera supprimé. Le contenu pour adultes doit être correctement tagué."
+      },
+      "heroImages": {
+        "title": "Images d'en-tête de la page Communauté",
+        "subtitle": "Gérez les images en rotation affichées dans l'en-tête de la page Communauté.",
+        "addImage": "Ajouter une image",
+        "uploading": "Téléchargement de l'image…",
+        "uploaded": "Image téléchargée",
+        "uploadFailed": "Échec du téléchargement",
+        "moveUp": "Déplacer vers le haut",
+        "moveDown": "Déplacer vers le bas",
+        "remove": "Supprimer l'image"
       },
       "saving": "Enregistrement…",
       "modal": {

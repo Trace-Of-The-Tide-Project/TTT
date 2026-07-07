@@ -33,10 +33,28 @@ const PLAN_BADGE: Record<string, { color: string; bg: string }> = {
 
 const CHANGEABLE_STATUSES = new Set(['active', 'trialing', 'past_due']);
 
+// Stable per-plan color: hash key → hue. Fixed S/L so all read as siblings, not a rainbow riot.
+function planColor(key: string | null, name: string | null): { color: string; bg: string } {
+  if (key && PLAN_BADGE[key]) return PLAN_BADGE[key];
+  const seed = (key || name || '') as string;
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) % 360;
+  const color = `hsl(${h} 45% 62%)`;
+  return { color, bg: `hsl(${h} 45% 62% / 0.12)` };
+}
+
+// snake_case key → readable label. ttt_bookshelf → Bookshelf, physical_books_12 → Physical Books 12.
+function humanizeFeature(key: string): string {
+  return key
+    .replace(/^ttt_/, '')
+    .split('_')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
 function PlanBadge({ planKey, planName }: { planKey: string | null; planName: string | null }) {
   if (!planName) return <span style={{ color: 'var(--tott-muted)' }}>—</span>;
-  const style = planKey ? PLAN_BADGE[planKey] : null;
-  if (!style) return <span className="text-sm" style={{ color: 'var(--tott-muted)' }}>{planName}</span>;
+  const style = planColor(planKey, planName);
   return (
     <span
       className="text-xs font-semibold px-2.5 py-1 rounded-full"
@@ -58,7 +76,7 @@ export default function AdminSubscriptionsPage() {
   const [changePlanTarget, setChangePlan] = useState<SubscriberRow | null>(null);
   const [grantPlanId, setGrantPlanId]     = useState('');
   const [changePlanId, setChangePlanId]   = useState('');
-  const [plans, setPlans]                 = useState<Array<{ id: string; display_name: string; name: string }>>([]);
+  const [plans, setPlans]                 = useState<Array<{ id: string; display_name: string; name: string; features?: string[]; price_monthly?: number; currency?: string }>>([]);
   const [loading, setLoading]             = useState(false);
 
   useEffect(() => {
@@ -127,53 +145,108 @@ export default function AdminSubscriptionsPage() {
         </a>
       </div>
 
-      {/* ── STATUS FILTER BAR ── */}
-      <div className="flex items-center gap-3 mb-3">
-        {['', 'active', 'past_due', 'cancelled', 'expired', 'trialing'].map((s) => {
-          const active = statusFilter === s;
-          const style = s ? STATUS_STYLE[s] : null;
-          return (
-            <button
-              key={s}
-              onClick={() => setStatus(s)}
-              className="text-xs px-3 py-1.5 rounded-full font-medium transition-colors"
-              style={
-                active
-                  ? { background: style ? style.color : 'var(--tott-accent-gold)', color: 'var(--tott-on-accent)' }
-                  : { background: 'var(--tott-dash-input-bg)', color: 'var(--tott-muted)', border: '1px solid var(--tott-card-border)' }
-              }
-            >
-              {s ? t(`status.${s}`) : t('list.filterAll')}
-            </button>
-          );
-        })}
-        {loading && <span className="text-xs ml-2" style={{ color: 'var(--tott-muted)' }}>{t('loading')}</span>}
-        <span className="ml-auto text-xs" style={{ color: 'var(--tott-muted)' }}>{t('list.subscribersCount', { count: meta.total })}</span>
-      </div>
-
-      {/* ── PLAN FILTER BAR ── */}
+      {/* ── PLAN FEATURES OVERVIEW ── */}
       {plans.length > 0 && (
-        <div className="flex items-center gap-3 mb-5">
-          {[{ id: '', display_name: t('list.allPlans'), name: '' }, ...plans].map((p) => {
-            const active = planFilter === p.id;
-            const badge = p.name ? PLAN_BADGE[p.name] : null;
+        <div className="grid gap-3 mb-8 items-stretch" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))' }}>
+          {plans.map((p) => {
+            const c = planColor(p.name || null, p.display_name);
             return (
-              <button
+              <div
                 key={p.id}
-                onClick={() => setPlanFilter(p.id)}
-                className="text-xs px-3 py-1.5 rounded-full font-medium transition-colors"
-                style={
-                  active
-                    ? { background: badge ? badge.color : 'var(--tott-accent-gold)', color: 'var(--tott-on-accent)' }
-                    : { background: 'var(--tott-dash-input-bg)', color: 'var(--tott-muted)', border: '1px solid var(--tott-card-border)' }
-                }
+                className="flex flex-col rounded-xl p-4"
+                style={{ border: '1px solid var(--tott-card-border)', background: 'var(--tott-elevated)' }}
               >
-                {p.display_name}
-              </button>
+                <div className="flex items-baseline justify-between mb-3">
+                  <span className="font-semibold text-sm" style={{ color: c.color }}>{p.display_name}</span>
+                  {typeof p.price_monthly === 'number' && (
+                    <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>
+                      {p.currency ?? '£'}{p.price_monthly}
+                      <span className="text-xs font-normal" style={{ color: 'var(--tott-muted)' }}>/mo</span>
+                    </span>
+                  )}
+                </div>
+                {p.features && p.features.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {p.features.map((f) => (
+                      <span
+                        key={f}
+                        className="text-xs px-2 py-0.5 rounded-md"
+                        style={{ background: c.bg, color: c.color, border: `1px solid ${c.color}33` }}
+                      >
+                        {humanizeFeature(f)}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="text-xs" style={{ color: 'var(--tott-muted)' }}>{t('list.noFeatures')}</span>
+                )}
+              </div>
             );
           })}
         </div>
       )}
+
+      {/* ── FILTERS ── */}
+      <div className="rounded-xl p-4 mb-5 space-y-3" style={{ border: '1px solid var(--tott-card-border)', background: 'var(--tott-elevated)' }}>
+
+        {/* Status row */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs uppercase tracking-wider font-semibold w-16 shrink-0" style={{ color: 'var(--tott-muted)' }}>
+            {t('list.colStatus')}
+          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            {['', 'active', 'past_due', 'cancelled', 'expired', 'trialing'].map((s) => {
+              const active = statusFilter === s;
+              const style = s ? STATUS_STYLE[s] : null;
+              return (
+                <button
+                  key={s}
+                  onClick={() => setStatus(s)}
+                  className="text-xs px-3 py-1.5 rounded-full font-medium transition-colors"
+                  style={
+                    active
+                      ? { background: style ? style.color : 'var(--tott-accent-gold)', color: 'var(--tott-on-accent)' }
+                      : { background: 'var(--tott-dash-input-bg)', color: 'var(--tott-muted)', border: '1px solid var(--tott-card-border)' }
+                  }
+                >
+                  {s ? t(`status.${s}`) : t('list.filterAll')}
+                </button>
+              );
+            })}
+          </div>
+          {loading && <span className="text-xs" style={{ color: 'var(--tott-muted)' }}>{t('loading')}</span>}
+          <span className="ml-auto text-xs shrink-0" style={{ color: 'var(--tott-muted)' }}>{t('list.subscribersCount', { count: meta.total })}</span>
+        </div>
+
+        {/* Plan row */}
+        {plans.length > 0 && (
+          <div className="flex items-center gap-3 pt-3" style={{ borderTop: '1px solid var(--tott-card-border)' }}>
+            <span className="text-xs uppercase tracking-wider font-semibold w-16 shrink-0" style={{ color: 'var(--tott-muted)' }}>
+              {t('list.colPlan')}
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              {[{ id: '', display_name: t('list.allPlans'), name: '' }, ...plans].map((p) => {
+                const active = planFilter === p.id;
+                const c = p.id ? planColor(p.name || null, p.display_name) : null;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => setPlanFilter(p.id)}
+                    className="text-xs px-3 py-1.5 rounded-full font-medium transition-colors"
+                    style={
+                      active
+                        ? { background: c ? c.color : 'var(--tott-accent-gold)', color: 'var(--tott-on-accent)' }
+                        : { background: 'var(--tott-dash-input-bg)', color: c ? c.color : 'var(--tott-muted)', border: `1px solid ${c ? c.color + '40' : 'var(--tott-card-border)'}` }
+                    }
+                  >
+                    {p.display_name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* ── TABLE ── */}
       <div className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--tott-card-border)' }}>

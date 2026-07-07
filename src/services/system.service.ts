@@ -44,3 +44,26 @@ export function splitGuidelines(text: string): string[] {
     .map((line) => line.replace(/^\s*\d+[.)]\s*/, "").trim())
     .filter(Boolean);
 }
+
+function unwrapHeroImages(raw: unknown): string[] {
+  if (!raw || typeof raw !== "object") return [];
+  const o = (raw as { data?: unknown }).data ?? raw;
+  if (!o || typeof o !== "object") return [];
+  const images = (o as { images?: unknown }).images;
+  return Array.isArray(images) ? images.filter((v): v is string => typeof v === "string") : [];
+}
+
+/** GET /system/community-hero-images — public. SSR- and client-safe.
+ * Ordered list of admin-managed hero image storage keys/URLs for the
+ * Community page hero rotation. */
+export async function getCommunityHeroImages(): Promise<string[]> {
+  if (typeof window === "undefined") {
+    return unwrapHeroImages(await serverGet<unknown>("/system/community-hero-images"));
+  }
+  try {
+    const { data } = await api.get<unknown>("/system/community-hero-images");
+    return unwrapHeroImages(data);
+  } catch {
+    return [];
+  }
+}

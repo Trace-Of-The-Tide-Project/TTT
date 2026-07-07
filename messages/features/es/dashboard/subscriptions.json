@@ -38,7 +38,8 @@
         "changeTitle": "Cambiar plan",
         "changeUser": "Usuario:",
         "changeCurrentPlan": "Plan actual:",
-        "selectNewPlan": "Selecciona un nuevo plan…"
+        "selectNewPlan": "Selecciona un nuevo plan…",
+        "noFeatures": "Sin funciones"
       },
       "stats": {
         "backToSubscribers": "Suscriptores",

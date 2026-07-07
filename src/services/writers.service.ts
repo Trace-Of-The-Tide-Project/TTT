@@ -224,6 +224,7 @@ export function writerAvatar(w: WriterProfile): string | null {
     w.avatar_url?.trim() ||
     w.avatar?.trim() ||
     w.user?.profile?.avatar?.trim() ||
+    w.cover_image?.trim() ||
     null;
   return raw ? resolveArticleMediaSrc(raw) : null;
 }

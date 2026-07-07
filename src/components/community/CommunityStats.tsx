@@ -4,26 +4,18 @@ import { useTranslations } from "next-intl";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { theme } from "@/lib/theme";
 
-const HEX_CLIP =
-  "polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%)";
-
-function StatChip({ value, label }: { value: number; label: string }) {
+function StatItem({ value, label }: { value: number; label: string }) {
   return (
-    <div className="flex items-center gap-3">
-      <div
-        className="flex h-14 w-14 shrink-0 items-center justify-center text-lg font-semibold"
-        style={{
-          clipPath: HEX_CLIP,
-          WebkitClipPath: HEX_CLIP,
-          backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 18%, transparent)",
-          color: "var(--tott-accent-gold)",
-        }}
+    <div className="flex flex-col items-start gap-1">
+      <span
+        className="font-serif text-4xl font-medium leading-none sm:text-5xl"
+        style={{ color: "var(--tott-accent-gold)" }}
       >
         {value}
-      </div>
+      </span>
       <span
-        className="text-sm font-medium"
-        style={{ color: "var(--tott-home-text-heading)" }}
+        className="text-xs font-medium uppercase tracking-[0.15em]"
+        style={{ color: "var(--tott-home-text-muted)" }}
       >
         {label}
       </span>
@@ -45,15 +37,12 @@ export function CommunityStats({
   return (
     <RevealOnScroll>
     <section
-      className="mt-10 flex flex-wrap gap-x-10 gap-y-5 rounded-2xl border px-6 py-6"
-      style={{
-        borderColor: theme.cardBorder,
-        backgroundColor: "var(--tott-well-bg)",
-      }}
+      className="flex flex-wrap items-start gap-x-16 gap-y-6 border-b py-10"
+      style={{ borderColor: theme.cardBorder }}
     >
-      <StatChip value={writers} label={t("statsWriters", { count: writers })} />
-      <StatChip value={openCalls} label={t("statsOpenCalls", { count: openCalls })} />
-      <StatChip value={guidelines} label={t("statsGuidelines", { count: guidelines })} />
+      <StatItem value={writers} label={t("statsWriters", { count: writers })} />
+      <StatItem value={openCalls} label={t("statsOpenCalls", { count: openCalls })} />
+      <StatItem value={guidelines} label={t("statsGuidelines", { count: guidelines })} />
     </section>
     </RevealOnScroll>
   );
