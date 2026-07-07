@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Node CommonJS runtime shim (Docker start) — not app source, uses require().
+    "docker-entrypoint.js",
   ]),
   {
     rules: {

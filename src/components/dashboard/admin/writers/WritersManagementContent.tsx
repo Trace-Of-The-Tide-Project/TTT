@@ -98,7 +98,10 @@ export function WritersManagementContent() {
   );
 
   const writersQuery = useWritersAdmin(queryParams);
-  const writers = writersQuery.data?.writers ?? [];
+  const writers = useMemo(
+    () => writersQuery.data?.writers ?? [],
+    [writersQuery.data],
+  );
   const meta = writersQuery.data?.meta ?? emptyMeta;
   const loading = writersQuery.isPending;
   const loadError = writersQuery.error
@@ -465,7 +468,7 @@ export function WritersManagementContent() {
         ),
       },
     ],
-    [t, toggleFeatured, toggleBoard, openDelete, toggleGroup, featuredMutation.isPending, boardMutation.isPending],
+    [t, locale, toggleFeatured, toggleBoard, openDelete, toggleGroup, featuredMutation.isPending, boardMutation.isPending],
   );
 
   return (
