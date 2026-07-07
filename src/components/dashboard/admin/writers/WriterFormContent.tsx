@@ -38,6 +38,7 @@ type FormState = {
   bio_long: string;
   avatar_url: string;
   featured: boolean;
+  editorial_board: boolean;
   creator_kind: "" | CreatorKind;
   location: string;
   themes: string[];
@@ -58,6 +59,7 @@ const EMPTY: FormState = {
   bio_long: "",
   avatar_url: "",
   featured: false,
+  editorial_board: false,
   creator_kind: "",
   location: "",
   themes: [],
@@ -81,6 +83,7 @@ function seedFromWriter(w: WriterProfile): FormState {
     bio_long: w.bio_long ?? "",
     avatar_url: w.avatar_url ?? "",
     featured: Boolean(w.featured),
+    editorial_board: Boolean(w.editorial_board),
     creator_kind: (w.creator_kind ?? "") as FormState["creator_kind"],
     location: w.location ?? "",
     themes: Array.isArray(w.themes) ? w.themes : [],
@@ -354,6 +357,7 @@ export function WriterFormContent({
       bio_long: f.bio_long.trim() || null,
       avatar_url: f.avatar_url.trim() || null,
       featured: f.featured,
+      editorial_board: f.editorial_board,
       social_links: Object.keys(links).length > 0 ? links : null,
       creator_kind: f.creator_kind || null,
       location: f.location.trim() || null,
@@ -737,10 +741,24 @@ export function WriterFormContent({
           />
           {t("fields.featured")}
         </label>
-        {/* Make the board-visibility consequence explicit — otherwise a new
+        {/* Make the strip-visibility consequence explicit — otherwise a new
             writer is created but never appears publicly, which reads as a bug. */}
         <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
           {t("fields.featuredHint")}
+        </p>
+        <label className="mt-3 flex items-center gap-2 text-sm text-foreground cursor-pointer">
+          <input
+            type="checkbox"
+            checked={form.editorial_board}
+            onChange={(e) =>
+              updateForm((prev) => ({ ...prev, editorial_board: e.target.checked }))
+            }
+            className="h-4 w-4 accent-[var(--tott-accent-gold)]"
+          />
+          {t("fields.editorialBoard")}
+        </label>
+        <p className="mt-1 text-[11px] text-[var(--tott-muted)]">
+          {t("fields.editorialBoardHint")}
         </p>
       </div>
     </>

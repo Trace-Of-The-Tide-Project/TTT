@@ -30,6 +30,7 @@ export type WriterProfile = {
   bio_long?: string | null;
   avatar_url?: string | null;
   featured?: boolean;
+  editorial_board?: boolean;
   social_links?: WriterSocialLinks | null;
   creator_kind?: string | null;
   location?: string | null;
@@ -45,6 +46,10 @@ export type WriterProfile = {
    * version; all language versions of one writer share `translation_group_id`. */
   language?: string | null;
   translation_group_id?: string | null;
+  /** Other language versions in this writer's translation group. Present on the
+   * admin list (dedupe=group), where each primary carries its siblings for the
+   * collapse UI. Empty/absent when the writer has no translations. */
+  translations?: WriterProfile[] | null;
   createdAt?: string;
   updatedAt?: string;
   /** When the backend joins the user record onto the writer profile
@@ -233,6 +238,7 @@ export type WriterProfilePayload = {
   bio_long?: string | null;
   avatar_url?: string | null;
   featured?: boolean;
+  editorial_board?: boolean;
   social_links?: WriterSocialLinks | null;
   creator_kind?: string | null;
   location?: string | null;
@@ -318,6 +324,37 @@ export async function updateWriterProfile(
   const item = unwrapOne(data);
   if (!item) throw new Error("Invalid response from update writer profile");
   return item;
+}
+
+/** PATCH /writers/:id/editorial-board — sets the Editorial Board flag on
+ * every language version of the writer in one call. */
+export async function setWriterEditorialBoard(
+  id: string,
+  value: boolean,
+): Promise<void> {
+  await api.patch(`/writers/${encodeURIComponent(id)}/editorial-board`, {
+    value,
+  });
+}
+
+/** PATCH /writers/:id/featured — sets the homepage featured flag on every
+ * language version of the writer in one call. */
+export async function setWriterFeatured(
+  id: string,
+  value: boolean,
+): Promise<void> {
+  await api.patch(`/writers/${encodeURIComponent(id)}/featured`, { value });
+}
+
+/** PATCH /writers/:id/link-account — links a user account to every language
+ * version of the writer in one call. */
+export async function linkWriterAccount(
+  id: string,
+  userId: string,
+): Promise<void> {
+  await api.patch(`/writers/${encodeURIComponent(id)}/link-account`, {
+    user_id: userId,
+  });
 }
 
 /** DELETE /writers/:id — admin only. */

@@ -17,7 +17,8 @@
           "kind": "Discipline",
           "location": "Lieu",
           "account": "Compte",
-          "featured": "À la une"
+          "featured": "Accueil",
+          "editorialBoard": "Comité"
         },
         "account": {
           "linked": "A un compte",
@@ -34,9 +35,13 @@
         },
         "featuredOn": "À la une — visible sur le bandeau d'accueil",
         "featuredOff": "Pas à la une",
+        "boardOn": "Dans le Comité éditorial",
+        "boardOff": "Pas dans le Comité éditorial",
         "toasts": {
           "featuredOn": "Écrivain ajouté au bandeau à la une",
-          "featuredOff": "Écrivain retiré du bandeau à la une"
+          "featuredOff": "Écrivain retiré du bandeau à la une",
+          "boardOn": "Écrivain ajouté au Comité éditorial",
+          "boardOff": "Écrivain retiré du Comité éditorial"
         },
         "errors": {
           "loadFailed": "Échec du chargement des profils",
@@ -48,6 +53,12 @@
           "pageOf": "Page {page} sur {totalPages}",
           "previous": "Précédent",
           "next": "Suivant"
+        },
+        "translations": {
+          "toggle": "Afficher les versions linguistiques",
+          "count": "{count, plural, one {+# version} other {+# versions}}",
+          "needsTranslation": "Traduction manquante",
+          "needsTranslationTooltip": "Pas encore de version {locale} de cet écrivain"
         },
         "delete": {
           "title": "Supprimer le profil d'écrivain",
@@ -110,7 +121,9 @@
           "instagram": "Instagram",
           "youtube": "YouTube",
           "featured": "Afficher dans le bandeau des écrivains à la une",
-          "featuredHint": "Les écrivains à la une apparaissent sur la page publique du Magazine → Comité éditorial. Laissez décoché pour garder le profil masqué du tableau."
+          "featuredHint": "Les écrivains à la une apparaissent dans le bandeau « Voix de nos écrivains » de la page d'accueil.",
+          "editorialBoard": "Afficher dans le Comité éditorial du Magazine",
+          "editorialBoardHint": "Les écrivains du Comité éditorial apparaissent dans le carrousel Magazine → Comité éditorial. Indépendant du bandeau à la une."
         },
         "kinds": {
           "none": "—",
