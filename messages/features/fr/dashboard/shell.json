@@ -159,7 +159,8 @@
         "uploadFailed": "Échec du téléchargement",
         "moveUp": "Déplacer vers le haut",
         "moveDown": "Déplacer vers le bas",
-        "remove": "Supprimer l'image"
+        "remove": "Supprimer l'image",
+        "previewUnavailable": "Aperçu indisponible"
       },
       "saving": "Enregistrement…",
       "modal": {

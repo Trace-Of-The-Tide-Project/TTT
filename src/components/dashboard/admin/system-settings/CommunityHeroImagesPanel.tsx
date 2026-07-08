@@ -4,9 +4,10 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { TrashIcon } from "@/components/ui/icons";
 import { api } from "@/services/api";
-import { uploadArticleAssetPath } from "@/services/uploads.service";
-import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+import { uploadArticleAssetKeyAndUrl } from "@/services/uploads.service";
 import { mutationToast } from "@/hooks/useMutationToast";
+
+type HeroImage = { key: string; url: string | null };
 
 const ACCENT = "#E8DDC0";
 
@@ -40,15 +41,16 @@ function moveItem<T>(list: T[], from: number, to: number): T[] {
 
 /**
  * Community page hero image rotation — an ordered list of admin-uploaded
- * images (stable storage keys) that `CommunityHero` crossfades between on
- * the public page. Same `site_settings`-backed read/write pattern as the
- * Guidelines tab, plus one upload slot per image using the existing
- * `POST /upload` flow (`uploadArticleAssetPath` — the stable key, not the
- * expiring signed URL, since this list persists server-side).
+ * images that `CommunityHero` crossfades between on the public page. Same
+ * `site_settings`-backed read/write pattern as the Guidelines tab. The
+ * storage bucket is private, so each image is a `{ key, url }` pair: `key`
+ * is the stable object path saved back on write, `url` is a freshly signed
+ * link the backend re-signs on every read (and returns immediately from the
+ * upload response) — never construct a display URL from the key directly.
  */
 export function CommunityHeroImagesPanel() {
   const t = useTranslations("Dashboard.systemSettings");
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<HeroImage[]>([]);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -57,7 +59,14 @@ export function CommunityHeroImagesPanel() {
       .get("/admin/system-settings/community-hero-images")
       .then((r: { data: unknown }) => {
         const list = r.data;
-        if (Array.isArray(list)) setImages(list.filter((v): v is string => typeof v === "string"));
+        if (Array.isArray(list)) {
+          setImages(
+            list.filter(
+              (v): v is HeroImage =>
+                !!v && typeof v === "object" && typeof (v as HeroImage).key === "string",
+            ),
+          );
+        }
       });
   }, []);
 
@@ -72,12 +81,12 @@ export function CommunityHeroImagesPanel() {
       e.target.value = "";
       setUploading(true);
       try {
-        const key = await mutationToast(() => uploadArticleAssetPath(file), {
+        const uploaded = await mutationToast(() => uploadArticleAssetKeyAndUrl(file), {
           loading: t("heroImages.uploading"),
           success: t("heroImages.uploaded"),
           error: t("heroImages.uploadFailed"),
         });
-        setImages((prev) => [...prev, key]);
+        setImages((prev) => [...prev, uploaded]);
       } catch {
         // error surfaced via toast
       } finally {
@@ -99,7 +108,10 @@ export function CommunityHeroImagesPanel() {
     setSaving(true);
     try {
       await mutationToast(
-        () => api.patch("/admin/system-settings/community-hero-images", { images }),
+        () =>
+          api.patch("/admin/system-settings/community-hero-images", {
+            images: images.map((img) => img.key),
+          }),
         {
           loading: t("saving"),
           success: t("saveChanges"),
@@ -116,17 +128,19 @@ export function CommunityHeroImagesPanel() {
       <p className="mt-1 text-sm text-[var(--tott-muted)]">{t("heroImages.subtitle")}</p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {images.map((key, i) => (
+        {images.map((img, i) => (
           <div
-            key={`${key}-${i}`}
+            key={`${img.key}-${i}`}
             className="relative overflow-hidden rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)]"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={resolveArticleMediaSrc(key)}
-              alt=""
-              className="aspect-[16/9] w-full object-cover"
-            />
+            {img.url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={img.url} alt="" className="aspect-[16/9] w-full object-cover" />
+            ) : (
+              <div className="flex aspect-[16/9] w-full items-center justify-center text-xs text-[var(--tott-muted)]">
+                {t("heroImages.previewUnavailable")}
+              </div>
+            )}
             <div className="flex items-center justify-between gap-2 p-2">
               <div className="flex gap-1">
                 <button

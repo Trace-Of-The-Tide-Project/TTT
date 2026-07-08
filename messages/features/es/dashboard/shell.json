@@ -159,7 +159,8 @@
         "uploadFailed": "Error al subir",
         "moveUp": "Mover arriba",
         "moveDown": "Mover abajo",
-        "remove": "Eliminar imagen"
+        "remove": "Eliminar imagen",
+        "previewUnavailable": "Vista previa no disponible"
       },
       "saving": "Guardando…",
       "modal": {
