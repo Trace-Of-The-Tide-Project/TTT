@@ -7,6 +7,7 @@ import HexBackground from "@/components/ui/HexBackground";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { IssuePurchaseActions } from "./IssuePurchaseActions";
 import { nameInitials } from "@/components/dashboard/admin/writers/initials";
+import { AvailableLanguagesBadge } from "@/components/content/AvailableLanguagesBadge";
 
 export type IssueIndexArticle = { id: string; title: string };
 export type IssueContributorEntry = {
@@ -36,6 +37,7 @@ export type MagazineIssueDetail = {
   currency: string;
   isFree: boolean;
   isOwned: boolean;
+  language: string;
   articles: IssueIndexArticle[];
   contributors: IssueContributorEntry[];
 };
@@ -129,6 +131,15 @@ export function MagazineIssueDetailContent({
             {issue.excerpt}
           </p>
         ) : null}
+
+        <AvailableLanguagesBadge
+          contentType="issue"
+          contentId={issue.id}
+          currentLanguage={issue.language}
+          statusFilter={(v) => v.status === "published"}
+          hrefFor={(v) => `/magazine-issues/${v.slug ?? v.id}`}
+          className="mt-3"
+        />
 
         {issue.description ? (
           <RevealOnScroll

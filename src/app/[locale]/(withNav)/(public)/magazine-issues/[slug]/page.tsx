@@ -54,6 +54,7 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
         ? issue.reading_time
         : null,
     publishedAt: issue.published_at ?? null,
+    language: issue.language ?? "en",
     price: priceNum != null && priceNum > 0 ? priceNum : null,
     currency: issue.currency ?? "USD",
     isFree: Boolean(issue.is_free),
