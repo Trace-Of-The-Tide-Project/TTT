@@ -159,7 +159,8 @@
         "uploadFailed": "فشل الرفع",
         "moveUp": "تحريك لأعلى",
         "moveDown": "تحريك لأسفل",
-        "remove": "إزالة الصورة"
+        "remove": "إزالة الصورة",
+        "previewUnavailable": "المعاينة غير متاحة"
       },
       "saving": "جارٍ الحفظ…",
       "modal": {
