@@ -44,6 +44,18 @@
           "openCall": {
             "title": "Convocatoria abierta",
             "description": "Invita a colaboradores a postularse y contribuir a tu contenido mediante un briefing público y un formulario."
+          },
+          "interview": {
+            "title": "Entrevista",
+            "description": "Una entrevista o conversación"
+          },
+          "comic": {
+            "title": "Cómic",
+            "description": "Un cómic o historia gráfica en imágenes"
+          },
+          "literary": {
+            "title": "Texto literario",
+            "description": "Poesía, prosa u otra escritura literaria"
           }
         }
       }

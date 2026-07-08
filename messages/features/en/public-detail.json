@@ -2,7 +2,6 @@
   "MagazineIssueDetail": {
     "issuePrefix": "Issue",
     "pages": "{count, plural, =1 {1 page} other {# pages}}",
-    "readTime": "{minutes} min read",
     "supportCta": "Support this Issue",
     "backToMagazine": "Back to Magazine",
     "contents": "In this issue",

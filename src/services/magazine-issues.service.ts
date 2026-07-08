@@ -18,7 +18,6 @@ export type MagazineIssue = {
   cover_image?: string | null;
   excerpt?: string | null;
   description?: string | null;
-  reading_time?: number | null;
   page_count?: number | null;
   edition?: string | null;
   edition_number?: number | null;

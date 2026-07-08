@@ -2,7 +2,6 @@
   "MagazineIssueDetail": {
     "issuePrefix": "Numéro",
     "pages": "{count, plural, =1 {1 page} other {# pages}}",
-    "readTime": "{minutes} min de lecture",
     "supportCta": "Soutenir ce numéro",
     "backToMagazine": "Retour au magazine",
     "contents": "Dans ce numéro",

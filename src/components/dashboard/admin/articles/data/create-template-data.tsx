@@ -18,7 +18,10 @@ export type CreateTemplateKey =
   | "artwork"
   | "figma"
   | "trip"
-  | "openCall";
+  | "openCall"
+  | "interview"
+  | "comic"
+  | "literary";
 
 export type CreateTemplateFilterId =
   | "all"
@@ -99,6 +102,27 @@ export const createTemplates: CreateTemplateDef[] = [
     templateKey: "openCall",
     icon: <ArticleGlyph />,
     href: "/admin/articles/create/open-call",
+    category: "articles",
+  },
+  {
+    number: "09",
+    templateKey: "interview",
+    icon: <ArticleGlyph />,
+    href: "/admin/articles/create/interview",
+    category: "articles",
+  },
+  {
+    number: "10",
+    templateKey: "comic",
+    icon: <ArtworkGlyph />,
+    href: "/admin/articles/create/comic",
+    category: "artwork",
+  },
+  {
+    number: "11",
+    templateKey: "literary",
+    icon: <ArticleGlyph />,
+    href: "/admin/articles/create/literary",
     category: "articles",
   },
 ];

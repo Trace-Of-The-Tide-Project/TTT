@@ -2,7 +2,6 @@
   "MagazineIssueDetail": {
     "issuePrefix": "العدد",
     "pages": "{count, plural, =1 {صفحة واحدة} other {# صفحات}}",
-    "readTime": "قراءة {minutes} دقيقة",
     "supportCta": "ادعم هذا العدد",
     "backToMagazine": "العودة إلى المجلة",
     "contents": "في هذا العدد",

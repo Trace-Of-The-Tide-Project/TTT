@@ -31,7 +31,6 @@ export type MagazineIssueDetail = {
   description: string | null;
   coverImage: string | null;
   pageCount: number | null;
-  readingTime: number | null;
   publishedAt: string | null;
   price: number | null;
   currency: string;
@@ -151,17 +150,12 @@ export function MagazineIssueDetailContent({
         ) : null}
 
         {/* Stats */}
-        {(issue.pageCount || issue.readingTime) ? (
+        {issue.pageCount ? (
           <RevealOnScroll
             className="mt-8 flex flex-wrap gap-x-8 gap-y-2 text-sm"
             style={{ color: TEXT_MUTED }}
           >
-            {issue.pageCount ? (
-              <span>{t("pages", { count: issue.pageCount })}</span>
-            ) : null}
-            {issue.readingTime ? (
-              <span>{t("readTime", { minutes: issue.readingTime })}</span>
-            ) : null}
+            <span>{t("pages", { count: issue.pageCount })}</span>
           </RevealOnScroll>
         ) : null}
 

@@ -49,10 +49,6 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
       typeof issue.page_count === "number" && issue.page_count > 0
         ? issue.page_count
         : null,
-    readingTime:
-      typeof issue.reading_time === "number" && issue.reading_time > 0
-        ? issue.reading_time
-        : null,
     publishedAt: issue.published_at ?? null,
     language: issue.language ?? "en",
     price: priceNum != null && priceNum > 0 ? priceNum : null,

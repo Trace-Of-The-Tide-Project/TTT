@@ -44,6 +44,18 @@
           "openCall": {
             "title": "Open Call",
             "description": "Invite collaborators to apply and contribute to your content through a public brief and form."
+          },
+          "interview": {
+            "title": "Interview",
+            "description": "A Q&A or conversation piece"
+          },
+          "comic": {
+            "title": "Comic",
+            "description": "A comic or graphic story told in images"
+          },
+          "literary": {
+            "title": "Literary text",
+            "description": "Poetry, prose, or other literary writing"
           }
         }
       }
