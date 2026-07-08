@@ -560,6 +560,9 @@ type FormState = {
   status: string;
   language: string;
   is_premium: boolean;
+  price: string;
+  currency: string;
+  pdf_path: string;
   funding_goal: string;
   funding_deadline: string;
   cover_image: string;
@@ -581,6 +584,9 @@ function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
     status: normStatus(item?.status ?? "published"),
     language: item?.language ?? "",
     is_premium: item?.is_premium ?? false,
+    price: item?.price != null ? String(item.price) : "",
+    currency: item?.currency ?? "USD",
+    pdf_path: (item as { pdf_path?: string | null })?.pdf_path ?? "",
     funding_goal: item?.funding_goal != null ? String(item.funding_goal) : "",
     funding_deadline: item?.funding_deadline
       ? item.funding_deadline.slice(0, 10)
@@ -781,6 +787,9 @@ function IssueFormModal({
       status: f.status || null,
       language: lang,
       is_premium: f.is_premium,
+      price: f.price ? parseFloat(f.price) : null,
+      currency: f.currency.trim() || "USD",
+      pdf_path: f.pdf_path.trim() || null,
       cover_image: f.cover_image.trim() || null,
       excerpt: f.excerpt.trim() || null,
       description: f.description.trim() || null,
@@ -986,6 +995,42 @@ function IssueFormModal({
         />
         {t("published.form.fields.isPremium")}
       </label>
+
+      {/* Commerce — sell the issue as a digital product */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div>
+          <label className={labelClass}>{t("published.form.fields.price")}</label>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            className={inputClass}
+            value={form.price}
+            onChange={set("price")}
+            placeholder="0.00"
+          />
+        </div>
+        <div>
+          <label className={labelClass}>{t("published.form.fields.currency")}</label>
+          <input
+            type="text"
+            className={inputClass}
+            value={form.currency}
+            onChange={set("currency")}
+            placeholder="USD"
+          />
+        </div>
+      </div>
+      <div>
+        <label className={labelClass}>{t("published.form.fields.pdfPath")}</label>
+        <input
+          type="text"
+          className={inputClass}
+          value={form.pdf_path}
+          onChange={set("pdf_path")}
+          placeholder={t("published.form.fields.pdfPathPlaceholder")}
+        />
+      </div>
 
       <div>
         <label className={labelClass}>{t("published.form.fields.coverImage")}</label>

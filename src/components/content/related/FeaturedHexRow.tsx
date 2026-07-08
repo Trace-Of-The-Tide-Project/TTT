@@ -33,29 +33,40 @@ function SmallCardSlot({ item, isActive }: { item: FeaturedHexItem; isActive: bo
   );
 }
 
-/** Round gold ← / → arrow pair for the small-screen carousel. */
-function SmallNavArrows({ onPrev, onNext }: { onPrev: () => void; onNext: () => void }) {
+/** Round gold ← / → arrow pair for the small-screen carousel. Glyphs mirror
+ * under RTL via `rtl:-scale-x-100` so "previous" always points at the start. */
+function SmallNavArrows({
+  onPrev,
+  onNext,
+  prevLabel,
+  nextLabel,
+}: {
+  onPrev: () => void;
+  onNext: () => void;
+  prevLabel: string;
+  nextLabel: string;
+}) {
   return (
     <div className="flex items-center" style={{ gap: "80px" }}>
       <button
         type="button"
-        aria-label="Previous"
+        aria-label={prevLabel}
         onClick={onPrev}
         className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)]"
         style={{ border: "2px solid var(--tott-accent-gold)", color: "var(--tott-accent-gold)" }}
       >
-        <span aria-hidden className="text-xl">
+        <span aria-hidden className="text-xl rtl:-scale-x-100">
           ←
         </span>
       </button>
       <button
         type="button"
-        aria-label="Next"
+        aria-label={nextLabel}
         onClick={onNext}
         className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)]"
         style={{ border: "2px solid var(--tott-accent-gold)", color: "var(--tott-accent-gold)" }}
       >
-        <span aria-hidden className="text-xl">
+        <span aria-hidden className="text-xl rtl:-scale-x-100">
           →
         </span>
       </button>
@@ -76,6 +87,10 @@ type FeaturedHexRowProps = {
   subtitle?: string;
   viewMoreHref?: string;
   viewMoreLabel?: string;
+  /** Localized carousel arrow labels. Default to English so existing
+   * (home / writing-room) callers keep their prior behavior unchanged. */
+  prevLabel?: string;
+  nextLabel?: string;
 };
 
 /**
@@ -87,7 +102,15 @@ type FeaturedHexRowProps = {
  * falls back to a single-card centred carousel. The consumer must place
  * this inside an `overflow-x-hidden` ancestor (the xl row is 100vw).
  */
-export function FeaturedHexRow({ items, heading, subtitle, viewMoreHref, viewMoreLabel }: FeaturedHexRowProps) {
+export function FeaturedHexRow({
+  items,
+  heading,
+  subtitle,
+  viewMoreHref,
+  viewMoreLabel,
+  prevLabel = "Previous",
+  nextLabel = "Next",
+}: FeaturedHexRowProps) {
   const itemCount = items.length;
   const [visible, setVisible] = useState(4);
   useEffect(() => {
@@ -223,7 +246,9 @@ export function FeaturedHexRow({ items, heading, subtitle, viewMoreHref, viewMor
             </div>
           </div>
 
-          {hasSmallCarousel ? <SmallNavArrows onPrev={goPrev} onNext={goNext} /> : null}
+          {hasSmallCarousel ? (
+            <SmallNavArrows onPrev={goPrev} onNext={goNext} prevLabel={prevLabel} nextLabel={nextLabel} />
+          ) : null}
         </div>
       </div>
 
@@ -272,16 +297,18 @@ export function FeaturedHexRow({ items, heading, subtitle, viewMoreHref, viewMor
 
           {hasCarousel ? (
             <>
+              {/* Ghost fades use logical inset (start/end) so they swap under
+                  RTL. The mirrored (scaleX) filler sits at the inline start. */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute top-0 z-10 min-[1600px]:w-40! min-[1600px]:h-[341px]! min-[1600px]:-left-[176px]! min-[1920px]:w-[180px]! min-[1920px]:h-[384px]! min-[1920px]:-left-[196px]!"
-                style={{ left: `-${GHOST_WIDTH + 16}px`, width: `${GHOST_WIDTH}px`, height: "294px" }}
+                className="pointer-events-none absolute top-0 z-10 min-[1600px]:w-40! min-[1600px]:h-[341px]! min-[1600px]:[inset-inline-start:-176px]! min-[1920px]:w-[180px]! min-[1920px]:h-[384px]! min-[1920px]:[inset-inline-start:-196px]!"
+                style={{ insetInlineStart: `-${GHOST_WIDTH + 16}px`, width: `${GHOST_WIDTH}px`, height: "294px" }}
               >
                 <Image
                   src={FILLER}
                   alt=""
                   fill
-                  className="select-none object-cover"
+                  className="select-none object-cover rtl:-scale-x-100"
                   style={{ transform: "scaleX(-1)", filter: "var(--tott-image-invert)" }}
                   sizes="(min-width: 1920px) 180px, (min-width: 1600px) 160px, 138px"
                   draggable={false}
@@ -290,14 +317,14 @@ export function FeaturedHexRow({ items, heading, subtitle, viewMoreHref, viewMor
 
               <div
                 aria-hidden
-                className="pointer-events-none absolute top-0 z-10 min-[1600px]:w-40! min-[1600px]:h-[341px]! min-[1600px]:-right-[176px]! min-[1920px]:w-[180px]! min-[1920px]:h-[384px]! min-[1920px]:-right-[196px]!"
-                style={{ right: `-${GHOST_WIDTH + 16}px`, width: `${GHOST_WIDTH}px`, height: "294px" }}
+                className="pointer-events-none absolute top-0 z-10 min-[1600px]:w-40! min-[1600px]:h-[341px]! min-[1600px]:[inset-inline-end:-176px]! min-[1920px]:w-[180px]! min-[1920px]:h-[384px]! min-[1920px]:[inset-inline-end:-196px]!"
+                style={{ insetInlineEnd: `-${GHOST_WIDTH + 16}px`, width: `${GHOST_WIDTH}px`, height: "294px" }}
               >
                 <Image
                   src={FILLER}
                   alt=""
                   fill
-                  className="select-none object-cover"
+                  className="select-none object-cover rtl:-scale-x-100"
                   style={{ filter: "var(--tott-image-invert)" }}
                   sizes="(min-width: 1920px) 180px, (min-width: 1600px) 160px, 138px"
                   draggable={false}
@@ -311,12 +338,12 @@ export function FeaturedHexRow({ items, heading, subtitle, viewMoreHref, viewMor
               <button
                 type="button"
                 onClick={goPrev}
-                aria-label="Previous"
-                className="absolute z-20 flex items-center justify-center transition-opacity hover:opacity-80 min-[1600px]:w-12! min-[1600px]:h-12! min-[1600px]:top-[148px]! min-[1600px]:-left-24! min-[1920px]:w-14! min-[1920px]:h-14! min-[1920px]:top-[165px]! min-[1920px]:-left-28!"
+                aria-label={prevLabel}
+                className="absolute z-20 flex items-center justify-center transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)] min-[1600px]:w-12! min-[1600px]:h-12! min-[1600px]:top-[148px]! min-[1600px]:[inset-inline-start:-96px]! min-[1920px]:w-14! min-[1920px]:h-14! min-[1920px]:top-[165px]! min-[1920px]:[inset-inline-start:-112px]!"
                 style={{
                   width: "40px",
                   height: "40px",
-                  left: "-72px",
+                  insetInlineStart: "-72px",
                   top: "127px",
                   borderRadius: "999px",
                   backgroundColor: "var(--tott-panel-bg)",
@@ -325,7 +352,7 @@ export function FeaturedHexRow({ items, heading, subtitle, viewMoreHref, viewMor
                   boxShadow: "0px 1px 3px rgba(var(--tott-home-surface-rgb), 0.4)",
                 }}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                <svg className="rtl:-scale-x-100" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
                   <line x1="19" y1="12" x2="5" y2="12" />
                   <polyline points="11 6 5 12 11 18" />
                 </svg>
@@ -333,12 +360,12 @@ export function FeaturedHexRow({ items, heading, subtitle, viewMoreHref, viewMor
               <button
                 type="button"
                 onClick={goNext}
-                aria-label="Next"
-                className="absolute z-20 flex items-center justify-center transition-opacity hover:opacity-80 min-[1600px]:w-12! min-[1600px]:h-12! min-[1600px]:top-[148px]! min-[1600px]:-right-24! min-[1920px]:w-14! min-[1920px]:h-14! min-[1920px]:top-[165px]! min-[1920px]:-right-28!"
+                aria-label={nextLabel}
+                className="absolute z-20 flex items-center justify-center transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)] min-[1600px]:w-12! min-[1600px]:h-12! min-[1600px]:top-[148px]! min-[1600px]:[inset-inline-end:-96px]! min-[1920px]:w-14! min-[1920px]:h-14! min-[1920px]:top-[165px]! min-[1920px]:[inset-inline-end:-112px]!"
                 style={{
                   width: "40px",
                   height: "40px",
-                  right: "-72px",
+                  insetInlineEnd: "-72px",
                   top: "127px",
                   borderRadius: "999px",
                   backgroundColor: "var(--tott-panel-bg)",
@@ -347,7 +374,7 @@ export function FeaturedHexRow({ items, heading, subtitle, viewMoreHref, viewMor
                   boxShadow: "0px 1px 3px rgba(var(--tott-home-surface-rgb), 0.4)",
                 }}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                <svg className="rtl:-scale-x-100" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="13 6 19 12 13 18" />
                 </svg>

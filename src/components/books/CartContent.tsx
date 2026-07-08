@@ -8,6 +8,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { useCart } from "@/hooks/queries/commerce";
 import {
   useRemoveFromCart,
+  useRemoveIssueFromCart,
   useCreateCheckout,
 } from "@/hooks/mutations/commerce";
 import { formatApiError } from "@/lib/api/error-message";
@@ -32,6 +33,7 @@ export function CartContent() {
   const authed = status === "authenticated";
   const { data: cart, isLoading } = useCart(authed);
   const removeItem = useRemoveFromCart();
+  const removeIssue = useRemoveIssueFromCart();
   const checkout = useCreateCheckout();
 
   // Cart requires auth — bounce guests to login.
@@ -79,7 +81,7 @@ export function CartContent() {
           <ul className="flex flex-col gap-3">
             {items.map((item) => (
               <li
-                key={item.book_id}
+                key={item.book_id ?? item.issue_id}
                 className="flex items-center gap-4 rounded-lg border border-[var(--tott-card-border)] p-3"
               >
                 <div className="min-w-0 flex-1">
@@ -97,7 +99,11 @@ export function CartContent() {
                 </span>
                 <button
                   type="button"
-                  onClick={() => removeItem.mutate(item.book_id)}
+                  onClick={() =>
+                    item.issue_id
+                      ? removeIssue.mutate(item.issue_id)
+                      : removeItem.mutate(item.book_id!)
+                  }
                   disabled={removeItem.isPending}
                   className="text-sm text-[var(--tott-home-text-muted)] hover:underline disabled:opacity-50"
                 >

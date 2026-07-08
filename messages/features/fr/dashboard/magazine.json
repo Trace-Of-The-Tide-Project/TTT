@@ -272,7 +272,11 @@
             "coverImagePlaceholder": "Ou collez une URL d’image",
             "excerpt": "Extrait",
             "excerptPlaceholder": "Court résumé affiché dans les aperçus",
-            "description": "Description"
+            "description": "Description",
+            "price": "Prix",
+            "currency": "Devise",
+            "pdfPath": "Chemin du PDF du numéro",
+            "pdfPathPlaceholder": "Chemin de l'objet GCS du PDF payant"
           },
           "errors": {
             "titleRequired": "Le titre est requis.",

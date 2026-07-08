@@ -4,7 +4,12 @@
     "pages": "{count, plural, =1 {صفحة واحدة} other {# صفحات}}",
     "readTime": "قراءة {minutes} دقيقة",
     "supportCta": "ادعم هذا العدد",
-    "backToMagazine": "العودة إلى المجلة"
+    "backToMagazine": "العودة إلى المجلة",
+    "contents": "في هذا العدد",
+    "buyNow": "اشترِ الآن",
+    "addToCart": "أضف إلى السلة",
+    "addedToCart": "أُضيف إلى السلة",
+    "downloadPdf": "تنزيل PDF"
   },
   "DictionaryEntry": {
     "backToDictionary": "العودة إلى القاموس الحي",
@@ -32,11 +37,26 @@
     "show": {
       "title": "أصوات TTT",
       "subtitle": "اكتشف الكتّاب الذين يصوغون صفحاتنا — وتابع من تحب منهم.",
+      "heroKicker": "كتّابنا",
+      "voiceCount": "{count, plural, =1 {صوت واحد وما زال العدد يتزايد} other {# أصوات وما زال العدد يتزايد}}",
+      "spotlightLabel": "في دائرة الضوء",
+      "followersLabel": "متابعون",
+      "worksLabel": "أعمال",
+      "basedIn": "مقيم في",
+      "viewProfile": "عرض الملف",
+      "allHeading": "كل الأصوات",
       "featuredHeading": "كتّاب مميزون",
+      "carouselPrev": "الكاتب السابق",
+      "carouselNext": "الكاتب التالي",
       "searchPlaceholder": "ابحث عن كتّاب",
       "allThemes": "الكل",
       "emptyTitle": "لا توجد أصوات تطابق بحثك.",
-      "clearFilters": "مسح عوامل التصفية"
+      "clearFilters": "مسح عوامل التصفية",
+      "statsVoices": "أصوات",
+      "statsThemes": "مواضيع",
+      "statsLocations": "أماكن",
+      "statsBoard": "هيئة التحرير",
+      "themeGalaxyHeading": "استكشف حسب الموضوع"
     }
   }
 }

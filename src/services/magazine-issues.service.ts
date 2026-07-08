@@ -25,6 +25,14 @@ export type MagazineIssue = {
   category?: string | null;
   magazine_id?: string | null;
   is_premium?: boolean | null;
+  /** Commerce — sell the issue as a digital product like a book. */
+  price?: number | string | null;
+  currency?: string | null;
+  /** Computed on read for the caller. */
+  is_free?: boolean | null;
+  is_owned?: boolean | null;
+  /** Signed download URL, present only when the caller is entitled. */
+  pdf_url?: string | null;
   /** Crowdfunded issues only. */
   funding_goal?: number | null;
   funding_deadline?: string | null;
@@ -95,6 +103,10 @@ export type MagazineIssueInput = {
   /** REQUIRED by the create DTO — the parent magazine the issue belongs to. */
   magazine_id?: string | null;
   is_premium?: boolean | null;
+  /** Commerce. null/<=0 price ⇒ free. */
+  price?: number | null;
+  currency?: string | null;
+  pdf_path?: string | null;
   /** Crowdfunded issues only. */
   funding_goal?: number | null;
   funding_deadline?: string | null;
@@ -166,9 +178,14 @@ function unwrapArticlesList(raw: unknown): IssueArticle[] {
   return [];
 }
 
-/** Admin — list articles assigned to an issue, in display order. */
+/** List articles assigned to an issue, in display order. Works on server and
+ * client — the endpoint is public. */
 export async function getIssueArticles(issueId: string): Promise<IssueArticle[]> {
-  const { data } = await api.get<unknown>(`/magazine-issues/${encodeURIComponent(issueId)}/articles`);
+  const path = `/magazine-issues/${encodeURIComponent(issueId)}/articles`;
+  if (typeof window === "undefined") {
+    return unwrapArticlesList(await serverGet<unknown>(path));
+  }
+  const { data } = await api.get<unknown>(path);
   return unwrapArticlesList(data);
 }
 
@@ -182,6 +199,16 @@ export async function reorderIssueArticles(
     { article_ids: articleIds },
   );
   return unwrapArticlesList(data);
+}
+
+/** GET /magazine-issues/:id/download — signed PDF URL for owners. */
+export async function getIssueDownloadUrl(id: string): Promise<string> {
+  const { data } = await api.get<unknown>(
+    `/magazine-issues/${encodeURIComponent(id)}/download`,
+  );
+  const inner = unwrapOne(data) as { url?: string } | null;
+  if (!inner?.url) throw new Error("Download did not return a URL");
+  return inner.url;
 }
 
 export async function getMagazineIssueBySlug(

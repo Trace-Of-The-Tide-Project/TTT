@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import { Link } from "@/i18n/navigation";
 
 // Shared "silk hex" card assets — same files the home "Follow our
@@ -37,6 +37,19 @@ export type FeaturedHexItem = {
   href?: string;
 };
 
+type FeaturedHexCardProps = Omit<FeaturedHexItem, "id"> & {
+  /** Max width of the title line box. Defaults to 228px (home/writing-room rails). */
+  nameMaxWidth?: number;
+  /** Title line-clamp. Defaults to 2. */
+  nameClamp?: number;
+  /**
+   * Deepen the bottom scrim + add meaningful photo alt text. Opt-in so the
+   * shared home/writing-room rails render byte-identically. Set on the
+   * writers page where long names sit over real portraits (WCAG AA contrast).
+   */
+  strongOverlay?: boolean;
+};
+
 /**
  * Silk-hex card — identical visual structure to the writing-room
  * "Discover Featured Writing" card (`FeaturedWritingCard`): Image-2.png
@@ -50,15 +63,21 @@ export function FeaturedHexCard({
   coverImage,
   chipLabel,
   href = "#",
-}: Omit<FeaturedHexItem, "id">) {
+  nameMaxWidth = 228,
+  nameClamp = 2,
+  strongOverlay = false,
+}: FeaturedHexCardProps) {
   const cardTitle = title?.trim() || "Untitled";
   const authorName = author?.trim() || "Author";
   const initial = (authorName || cardTitle).slice(0, 1).toUpperCase() || "A";
+  // Fall back to the silk frame (+ initials) if the portrait 404s / fails.
+  const [imgOk, setImgOk] = useState(true);
+  const showPhoto = Boolean(coverImage) && imgOk;
 
   return (
     <Link
       href={href}
-      className="relative block w-full transition-opacity hover:opacity-90"
+      className="relative block w-full rounded-sm transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--tott-accent-gold)]"
       style={{
         maxWidth: "var(--carousel-card-w, 276px)",
         width: "var(--carousel-card-w, 276px)",
@@ -76,16 +95,55 @@ export function FeaturedHexCard({
         sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
         draggable={false}
       />
-      {coverImage ? (
+      {showPhoto ? (
         <Image
-          src={coverImage}
-          alt=""
+          src={coverImage as string}
+          alt={strongOverlay ? cardTitle : ""}
           fill
           className="absolute inset-0 select-none object-cover"
           style={HEX_PHOTO_MASK}
           sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
           draggable={false}
           unoptimized
+          onError={() => setImgOk(false)}
+        />
+      ) : (
+        // No/failed portrait → initials on a gold-tinted hex, clipped to the frame.
+        <div
+          aria-hidden
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            ...HEX_PHOTO_MASK,
+            background:
+              "color-mix(in srgb, var(--tott-dash-gold-text) 22%, transparent)",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
+              fontWeight: 600,
+              fontSize: "44px",
+              color: "var(--tott-home-text-strong)",
+              opacity: 0.85,
+            }}
+          >
+            {initial}
+          </span>
+        </div>
+      )}
+
+      {/* Extra scrim under the caption when text sits over a real photo — the
+          shared --tott-writer-card-fade alone doesn't clear WCAG AA on bright
+          portraits. Opt-in via strongOverlay so other rails are unaffected. */}
+      {strongOverlay ? (
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 z-[9]"
+          style={{
+            height: "62%",
+            background:
+              "linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--tott-home-surface) 55%, transparent) 45%, var(--tott-home-surface) 100%)",
+          }}
         />
       ) : null}
 
@@ -114,9 +172,15 @@ export function FeaturedHexCard({
         }}
       >
         <p
-          className="line-clamp-2 w-full text-center"
+          className="w-full text-center"
+          title={cardTitle}
           style={{
-            maxWidth: "228px",
+            maxWidth: `${nameMaxWidth}px`,
+            display: "-webkit-box",
+            WebkitBoxOrient: "vertical",
+            WebkitLineClamp: nameClamp,
+            overflow: "hidden",
+            overflowWrap: "anywhere",
             fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
             fontWeight: 500,
             fontSize: "20px",
@@ -130,7 +194,7 @@ export function FeaturedHexCard({
 
         <div
           className="flex w-full flex-wrap items-center justify-center"
-          style={{ maxWidth: "228px", gap: "4px 8px" }}
+          style={{ maxWidth: `${nameMaxWidth}px`, gap: "4px 8px" }}
         >
           <span className="flex items-center" style={{ gap: "4px" }}>
             <span

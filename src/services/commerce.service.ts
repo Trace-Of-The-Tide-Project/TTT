@@ -1,9 +1,12 @@
 import { api } from "./api";
 import { routing } from "@/i18n/routing";
 
-/** A single line in the user's cart, as returned by GET /commerce/cart. */
+/** A single line in the user's cart, as returned by GET /commerce/cart.
+ * Either a book (book_id set) or a magazine issue (issue_id set). */
 export type CartItem = {
-  book_id: string;
+  item_type?: "book" | "issue";
+  book_id?: string;
+  issue_id?: string;
   title: string;
   author?: string | null;
   cover_image?: string | null;
@@ -70,10 +73,28 @@ export async function addToCart(bookId: string): Promise<CartResponse> {
   return asCart(data);
 }
 
+/** POST /commerce/cart — add a magazine issue; returns the updated cart. */
+export async function addIssueToCart(issueId: string): Promise<CartResponse> {
+  const { data } = await api.post<unknown>("/commerce/cart", {
+    issue_id: issueId,
+  });
+  return asCart(data);
+}
+
 /** DELETE /commerce/cart/:bookId */
 export async function removeFromCart(bookId: string): Promise<CartResponse> {
   const { data } = await api.delete<unknown>(
     `/commerce/cart/${encodeURIComponent(bookId)}`,
+  );
+  return asCart(data);
+}
+
+/** DELETE /commerce/cart/issue/:issueId */
+export async function removeIssueFromCart(
+  issueId: string,
+): Promise<CartResponse> {
+  const { data } = await api.delete<unknown>(
+    `/commerce/cart/issue/${encodeURIComponent(issueId)}`,
   );
   return asCart(data);
 }

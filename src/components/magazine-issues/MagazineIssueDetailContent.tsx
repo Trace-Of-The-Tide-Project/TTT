@@ -5,6 +5,9 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
+import { IssuePurchaseActions } from "./IssuePurchaseActions";
+
+export type IssueIndexArticle = { id: string; title: string };
 
 const TEXT_STRONG = "var(--tott-home-text-strong)";
 const TEXT_MUTED = "var(--tott-home-text-muted)";
@@ -23,6 +26,11 @@ export type MagazineIssueDetail = {
   pageCount: number | null;
   readingTime: number | null;
   publishedAt: string | null;
+  price: number | null;
+  currency: string;
+  isFree: boolean;
+  isOwned: boolean;
+  articles: IssueIndexArticle[];
 };
 
 function formatLongDate(iso: string | null): string {
@@ -139,18 +147,41 @@ export function MagazineIssueDetailContent({
           </RevealOnScroll>
         ) : null}
 
+        {/* Table of contents */}
+        {issue.articles.length > 0 ? (
+          <RevealOnScroll className="mt-10">
+            <h2
+              className="text-lg font-medium tracking-tight"
+              style={{ color: TEXT_STRONG }}
+            >
+              {t("contents")}
+            </h2>
+            <ul className="mt-4 flex flex-col gap-2">
+              {issue.articles.map((a) => (
+                <li key={a.id}>
+                  <Link
+                    href={`/content/article?id=${encodeURIComponent(a.id)}`}
+                    className="inline-flex items-center gap-2 text-base transition-opacity hover:opacity-90"
+                    style={{ color: ACCENT }}
+                  >
+                    {a.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </RevealOnScroll>
+        ) : null}
+
         {/* Actions */}
         <RevealOnScroll className="mt-10 flex flex-wrap items-center gap-3">
-          <Link
-            href="/open-issues"
-            className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium transition-opacity hover:opacity-90"
-            style={{
-              backgroundColor: "var(--tott-magazine-btn-bg)",
-              color: "var(--tott-auth-btn-text)",
-            }}
-          >
-            {t("supportCta")}
-          </Link>
+          <IssuePurchaseActions
+            issueId={issue.id}
+            slug={issue.slug}
+            price={issue.price}
+            currency={issue.currency}
+            isFree={issue.isFree}
+            isOwned={issue.isOwned}
+          />
           <Link
             href="/magazine"
             className="inline-flex h-10 items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"

@@ -272,7 +272,11 @@
             "coverImagePlaceholder": "أو الصق رابط صورة",
             "excerpt": "مقتطف",
             "excerptPlaceholder": "ملخّص قصير يظهر في المعاينات",
-            "description": "الوصف"
+            "description": "الوصف",
+            "price": "السعر",
+            "currency": "العملة",
+            "pdfPath": "مسار ملف PDF للعدد",
+            "pdfPathPlaceholder": "مسار كائن GCS لملف PDF المدفوع"
           },
           "errors": {
             "titleRequired": "العنوان مطلوب.",

@@ -272,7 +272,11 @@
             "coverImagePlaceholder": "O pega una URL de imagen",
             "excerpt": "Extracto",
             "excerptPlaceholder": "Breve resumen mostrado en las vistas previas",
-            "description": "Descripción"
+            "description": "Descripción",
+            "price": "Precio",
+            "currency": "Moneda",
+            "pdfPath": "Ruta del PDF del número",
+            "pdfPathPlaceholder": "Ruta del objeto GCS del PDF de pago"
           },
           "errors": {
             "titleRequired": "El título es obligatorio.",
