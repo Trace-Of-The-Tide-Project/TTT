@@ -9,7 +9,15 @@
     "buyNow": "Acheter",
     "addToCart": "Ajouter au panier",
     "addedToCart": "Ajouté au panier",
-    "downloadPdf": "Télécharger le PDF"
+    "downloadPdf": "Télécharger le PDF",
+    "contributorsHeading": "Rédacteurs et contributeurs",
+    "roles": {
+      "main_contributor": "Contributeur principal",
+      "co-author": "Co-auteur",
+      "contributor": "Contributeur",
+      "editor": "Éditeur",
+      "reviewer": "Relecteur"
+    }
   },
   "DictionaryEntry": {
     "backToDictionary": "Retour au Dictionnaire vivant",

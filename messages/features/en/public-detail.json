@@ -9,7 +9,15 @@
     "buyNow": "Buy now",
     "addToCart": "Add to cart",
     "addedToCart": "Added to cart",
-    "downloadPdf": "Download PDF"
+    "downloadPdf": "Download PDF",
+    "contributorsHeading": "Editors & Contributors",
+    "roles": {
+      "main_contributor": "Main contributor",
+      "co-author": "Co-author",
+      "contributor": "Contributor",
+      "editor": "Editor",
+      "reviewer": "Reviewer"
+    }
   },
   "DictionaryEntry": {
     "backToDictionary": "Back to the Living Dictionary",

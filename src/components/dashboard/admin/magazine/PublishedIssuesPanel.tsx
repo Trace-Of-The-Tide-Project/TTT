@@ -25,6 +25,7 @@ import {
   useDeleteMagazineIssue,
 } from "@/hooks/mutations/magazine-issues";
 import { IssueArticlesPanel } from "./IssueArticlesPanel";
+import { IssueContributorsPanel } from "./IssueContributorsPanel";
 import { LanguageFormTabs, TranslationWizard } from "@/components/dashboard/admin/translations";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
 import type { TranslationWizardReviewLine } from "@/components/dashboard/admin/translations/TranslationWizard";
@@ -1070,7 +1071,10 @@ function IssueFormModal({
       </div>
 
       {isEdit && item ? (
-        <IssueArticlesPanel issueId={item.id} magazineId={item.magazine_id ?? null} />
+        <>
+          <IssueArticlesPanel issueId={item.id} magazineId={item.magazine_id ?? null} />
+          <IssueContributorsPanel issueId={item.id} />
+        </>
       ) : null}
     </>
   );

@@ -327,6 +327,25 @@
           "deleted": "تم حذف العدد.",
           "deleteError": "تعذّر حذف العدد"
         }
+      },
+      "contributors": {
+        "label": "المحررون / المساهمون",
+        "loading": "جارٍ التحميل…",
+        "empty": "لا مساهمين بعد.",
+        "add": "إضافة",
+        "adding": "جارٍ الإضافة…",
+        "remove": "إزالة",
+        "moveUp": "تحريك لأعلى",
+        "moveDown": "تحريك لأسفل",
+        "addFailed": "تعذّرت إضافة المساهم",
+        "unknownWriter": "كاتب غير معروف",
+        "roles": {
+          "main_contributor": "المساهم الرئيسي",
+          "co-author": "مؤلف مشارك",
+          "contributor": "مساهم",
+          "editor": "محرر",
+          "reviewer": "مراجع"
+        }
       }
     },
     "magazinePageEditor": {

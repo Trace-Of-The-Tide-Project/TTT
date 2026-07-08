@@ -6,6 +6,7 @@ import {
 import {
   getMagazineIssueBySlug,
   getIssueArticles,
+  getIssueContributors,
 } from "@/services/magazine-issues.service";
 import {
   MagazineIssueDetailContent,
@@ -23,7 +24,10 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
   const issue = await getMagazineIssueBySlug(slug);
   if (!issue) return notFound();
 
-  const articles = await getIssueArticles(issue.id);
+  const [articles, contributors] = await Promise.all([
+    getIssueArticles(issue.id),
+    getIssueContributors(issue.id),
+  ]);
   const priceNum =
     issue.price == null || issue.price === "" ? null : Number(issue.price);
 
@@ -55,6 +59,15 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
     isFree: Boolean(issue.is_free),
     isOwned: Boolean(issue.is_owned),
     articles: articles.map((a) => ({ id: a.id, title: a.title })),
+    contributors: contributors.map((c) => ({
+      id: c.id,
+      name:
+        c.writer?.pen_name?.trim() ||
+        c.writer?.display_name?.trim() ||
+        c.writer?.user?.full_name?.trim() ||
+        "—",
+      role: c.role,
+    })),
   };
 
   return <MagazineIssueDetailContent issue={detail} />;

@@ -6,8 +6,14 @@ import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { IssuePurchaseActions } from "./IssuePurchaseActions";
+import { nameInitials } from "@/components/dashboard/admin/writers/initials";
 
 export type IssueIndexArticle = { id: string; title: string };
+export type IssueContributorEntry = {
+  id: string;
+  name: string;
+  role: string;
+};
 
 const TEXT_STRONG = "var(--tott-home-text-strong)";
 const TEXT_MUTED = "var(--tott-home-text-muted)";
@@ -31,6 +37,7 @@ export type MagazineIssueDetail = {
   isFree: boolean;
   isOwned: boolean;
   articles: IssueIndexArticle[];
+  contributors: IssueContributorEntry[];
 };
 
 function formatLongDate(iso: string | null): string {
@@ -166,6 +173,44 @@ export function MagazineIssueDetailContent({
                   >
                     {a.title}
                   </Link>
+                </li>
+              ))}
+            </ul>
+          </RevealOnScroll>
+        ) : null}
+
+        {/* Editors / Contributors */}
+        {issue.contributors.length > 0 ? (
+          <RevealOnScroll className="mt-10">
+            <h2
+              className="text-lg font-medium tracking-tight"
+              style={{ color: TEXT_STRONG }}
+            >
+              {t("contributorsHeading")}
+            </h2>
+            <ul className="mt-4 flex flex-wrap gap-x-8 gap-y-4">
+              {issue.contributors.map((c) => (
+                <li key={c.id} className="flex items-center gap-3">
+                  <span
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                    style={{
+                      backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 18%, transparent)",
+                      color: ACCENT,
+                    }}
+                  >
+                    {nameInitials(c.name)}
+                  </span>
+                  <span className="min-w-0">
+                    <span
+                      className="block truncate text-sm font-medium"
+                      style={{ color: TEXT_STRONG }}
+                    >
+                      {c.name}
+                    </span>
+                    <span className="block truncate text-xs" style={{ color: TEXT_MUTED }}>
+                      {t.has(`roles.${c.role}`) ? t(`roles.${c.role}`) : c.role}
+                    </span>
+                  </span>
                 </li>
               ))}
             </ul>

@@ -211,6 +211,83 @@ export async function getIssueDownloadUrl(id: string): Promise<string> {
   return inner.url;
 }
 
+/** A writer credited as editor/contributor on an issue, from
+ * GET /magazine-issues/:id/contributors. */
+export type IssueContributor = {
+  id: string;
+  issue_id: string;
+  writer_id: string;
+  role: string;
+  position?: number | null;
+  writer?: {
+    id: string;
+    pen_name?: string | null;
+    display_name?: string | null;
+    avatar_url?: string | null;
+    avatar?: string | null;
+    user?: { full_name?: string | null; username?: string | null } | null;
+  } | null;
+};
+
+function unwrapContributors(raw: unknown): IssueContributor[] {
+  if (Array.isArray(raw)) return raw as IssueContributor[];
+  if (
+    raw &&
+    typeof raw === "object" &&
+    Array.isArray((raw as Record<string, unknown>).data)
+  ) {
+    return (raw as Record<string, unknown>).data as IssueContributor[];
+  }
+  return [];
+}
+
+/** List issue editors/contributors, in display order. Public endpoint. */
+export async function getIssueContributors(
+  issueId: string,
+): Promise<IssueContributor[]> {
+  const path = `/magazine-issues/${encodeURIComponent(issueId)}/contributors`;
+  if (typeof window === "undefined") {
+    return unwrapContributors(await serverGet<unknown>(path));
+  }
+  const { data } = await api.get<unknown>(path);
+  return unwrapContributors(data);
+}
+
+/** Admin — credit a writer on an issue. */
+export async function addIssueContributor(
+  issueId: string,
+  input: { writer_id: string; role?: string },
+): Promise<IssueContributor[]> {
+  const { data } = await api.post<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/contributors`,
+    input,
+  );
+  return unwrapContributors(data);
+}
+
+/** Admin — remove a contributor credit. */
+export async function removeIssueContributor(
+  issueId: string,
+  contributorId: string,
+): Promise<IssueContributor[]> {
+  const { data } = await api.delete<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/contributors/${encodeURIComponent(contributorId)}`,
+  );
+  return unwrapContributors(data);
+}
+
+/** Admin — persist contributor display order. */
+export async function reorderIssueContributors(
+  issueId: string,
+  contributorIds: string[],
+): Promise<IssueContributor[]> {
+  const { data } = await api.patch<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/contributors/reorder`,
+    { contributor_ids: contributorIds },
+  );
+  return unwrapContributors(data);
+}
+
 export async function getMagazineIssueBySlug(
   slug: string,
 ): Promise<MagazineIssue | null> {

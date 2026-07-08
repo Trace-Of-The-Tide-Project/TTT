@@ -327,6 +327,25 @@
           "deleted": "Número eliminado.",
           "deleteError": "No se pudo eliminar el número"
         }
+      },
+      "contributors": {
+        "label": "Editores / Colaboradores",
+        "loading": "Cargando…",
+        "empty": "Aún no hay colaboradores.",
+        "add": "Añadir",
+        "adding": "Añadiendo…",
+        "remove": "Eliminar",
+        "moveUp": "Subir",
+        "moveDown": "Bajar",
+        "addFailed": "No se pudo añadir el colaborador",
+        "unknownWriter": "Escritor desconocido",
+        "roles": {
+          "main_contributor": "Colaborador principal",
+          "co-author": "Coautor",
+          "contributor": "Colaborador",
+          "editor": "Editor",
+          "reviewer": "Revisor"
+        }
       }
     },
     "magazinePageEditor": {

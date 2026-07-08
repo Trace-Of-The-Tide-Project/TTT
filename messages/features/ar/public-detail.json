@@ -9,7 +9,15 @@
     "buyNow": "اشترِ الآن",
     "addToCart": "أضف إلى السلة",
     "addedToCart": "أُضيف إلى السلة",
-    "downloadPdf": "تنزيل PDF"
+    "downloadPdf": "تنزيل PDF",
+    "contributorsHeading": "المحررون والمساهمون",
+    "roles": {
+      "main_contributor": "المساهم الرئيسي",
+      "co-author": "مؤلف مشارك",
+      "contributor": "مساهم",
+      "editor": "محرر",
+      "reviewer": "مراجع"
+    }
   },
   "DictionaryEntry": {
     "backToDictionary": "العودة إلى القاموس الحي",
