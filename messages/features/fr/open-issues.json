@@ -30,6 +30,7 @@
       "submitting": "Traitement…",
       "submitted": "Merci pour votre soutien !",
       "error": "Nous n'avons pas pu enregistrer votre don. Veuillez réessayer."
-    }
+    },
+    "browseCta": "Parcourir le magazine"
   }
 }

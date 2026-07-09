@@ -13,139 +13,139 @@
       }
     },
     "privacy": {
-      "title": "Privacy Policy",
-      "subtitle": "Effective Date: [Insert Date]",
+      "title": "Politique de confidentialité",
+      "subtitle": "Date d'entrée en vigueur : [Insert Date]",
       "s1": {
         "heading": "1. Introduction",
-        "body": "We value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and share information when you use our website [yourdomain.com]."
+        "body": "Nous accordons de l'importance à votre vie privée et nous nous engageons à protéger vos informations personnelles. La présente politique de confidentialité explique comment nous collectons, utilisons et partageons les informations lorsque vous utilisez notre site web [yourdomain.com]."
       },
       "s2": {
-        "heading": "2. Information We Collect",
-        "intro": "We may collect the following types of information:",
-        "item1": "<b>Personal Information:</b> Name, email, or other details you voluntarily submit (e.g., contact forms or newsletter subscriptions).",
-        "item2": "<b>Usage Data:</b> IP address, browser type, device, pages visited, and time spent — collected via cookies and analytics tools.",
-        "item3": "<b>Uploaded Content:</b> Any content (articles, comments, media) you submit or contribute."
+        "heading": "2. Informations que nous collectons",
+        "intro": "Nous pouvons collecter les types d'informations suivants :",
+        "item1": "<b>Informations personnelles :</b> nom, e-mail ou autres coordonnées que vous nous transmettez volontairement (par exemple, via des formulaires de contact ou des inscriptions à la newsletter).",
+        "item2": "<b>Données d'utilisation :</b> adresse IP, type de navigateur, appareil, pages consultées et temps passé — collectées au moyen de cookies et d'outils d'analyse.",
+        "item3": "<b>Contenu téléversé :</b> tout contenu (articles, commentaires, médias) que vous soumettez ou auquel vous contribuez."
       },
       "s3": {
-        "heading": "3. How We Use Your Information",
-        "intro": "We use your data to:",
-        "item1": "Provide and maintain our services",
-        "item2": "Improve user experience and content relevance",
-        "item3": "Respond to inquiries or support requests",
-        "item4": "Send occasional updates (only with your consent)"
+        "heading": "3. Comment nous utilisons vos informations",
+        "intro": "Nous utilisons vos données pour :",
+        "item1": "Fournir et maintenir nos services",
+        "item2": "Améliorer l'expérience utilisateur et la pertinence des contenus",
+        "item3": "Répondre aux demandes de renseignements ou d'assistance",
+        "item4": "Envoyer des mises à jour occasionnelles (uniquement avec votre consentement)"
       },
       "s4": {
-        "heading": "4. Sharing and Disclosure",
-        "intro": "We do not sell or share your personal information with third parties, except:",
-        "item1": "With service providers (e.g., hosting, analytics) under confidentiality agreements",
-        "item2": "If required by law or legal process",
-        "item3": "To prevent fraud or protect the security of our services"
+        "heading": "4. Partage et divulgation",
+        "intro": "Nous ne vendons ni ne partageons vos informations personnelles avec des tiers, sauf :",
+        "item1": "Avec des prestataires de services (par exemple, hébergement, analyse) soumis à des accords de confidentialité",
+        "item2": "Si la loi ou une procédure judiciaire l'exige",
+        "item3": "Pour prévenir la fraude ou protéger la sécurité de nos services"
       },
       "s5": {
-        "heading": "5. Cookies and Analytics",
-        "body": "We use cookies and similar technologies to collect usage data and improve our services. You can control cookie preferences through your browser settings. We may use analytics services (e.g., Google Analytics) to understand how visitors use our site and to optimize content and performance."
+        "heading": "5. Cookies et analyse",
+        "body": "Nous utilisons des cookies et des technologies similaires pour collecter des données d'utilisation et améliorer nos services. Vous pouvez gérer vos préférences en matière de cookies dans les paramètres de votre navigateur. Nous pouvons recourir à des services d'analyse (par exemple, Google Analytics) afin de comprendre comment les visiteurs utilisent notre site et d'optimiser le contenu et les performances."
       }
     },
     "terms": {
-      "title": "Terms of Service",
-      "subtitle": "Effective Date: [Insert Date]",
+      "title": "Conditions d'utilisation",
+      "subtitle": "Date d'entrée en vigueur : [Insert Date]",
       "s1": {
-        "heading": "1. Acceptance of Terms",
-        "body": "By accessing or using [yourdomain.com], you agree to these Terms of Service and our Privacy Policy. If you do not agree, please do not use the website."
+        "heading": "1. Acceptation des conditions",
+        "body": "En accédant à [yourdomain.com] ou en l'utilisant, vous acceptez les présentes conditions d'utilisation ainsi que notre politique de confidentialité. Si vous n'êtes pas d'accord, veuillez ne pas utiliser le site web."
       },
       "s2": {
-        "heading": "2. Use of the Website",
-        "intro": "You agree to:",
-        "item1": "Use the site only for lawful, non-commercial purposes",
-        "item2": "Respect intellectual property rights",
-        "item3": "Not interfere with or disrupt the site or servers"
+        "heading": "2. Utilisation du site",
+        "intro": "Vous vous engagez à :",
+        "item1": "N'utiliser le site qu'à des fins licites et non commerciales",
+        "item2": "Respecter les droits de propriété intellectuelle",
+        "item3": "Ne pas gêner ni perturber le site ou les serveurs"
       },
       "s3": {
-        "heading": "3. User Content",
-        "intro": "If you upload or contribute content:",
-        "item1": "You retain ownership, but grant us a license to display, share, and archive your content on our platform",
-        "item2": "You must not upload content that is unlawful, defamatory, infringing, or harmful",
-        "after": "We reserve the right to remove any content at our discretion."
+        "heading": "3. Contenu des utilisateurs",
+        "intro": "Si vous téléversez ou apportez du contenu :",
+        "item1": "Vous en conservez la propriété, mais vous nous accordez une licence pour afficher, partager et archiver votre contenu sur notre plateforme",
+        "item2": "Vous ne devez pas téléverser de contenu illicite, diffamatoire, contrefaisant ou préjudiciable",
+        "after": "Nous nous réservons le droit de supprimer tout contenu à notre discrétion."
       },
       "s4": {
-        "heading": "4. Intellectual Property",
-        "body": "All content on this website — including text, design, logos, videos, and other media — is either owned by or licensed to us and protected by copyright and intellectual property laws."
+        "heading": "4. Propriété intellectuelle",
+        "body": "L'ensemble du contenu de ce site web — y compris les textes, la conception, les logos, les vidéos et autres médias — nous appartient ou nous est concédé sous licence et est protégé par les lois sur le droit d'auteur et la propriété intellectuelle."
       },
       "s5": {
-        "heading": "5. Links to Other Websites",
-        "body": "Our site may contain links to third-party websites. We are not responsible for their content, policies, or practices."
+        "heading": "5. Liens vers d'autres sites web",
+        "body": "Notre site peut contenir des liens vers des sites web tiers. Nous ne sommes pas responsables de leur contenu, de leurs politiques ou de leurs pratiques."
       },
       "s6": {
-        "heading": "6. Disclaimers",
-        "body": "The content provided is for educational and informational purposes. While we strive for accuracy, we make no warranties about the completeness, reliability, or accuracy of any content."
+        "heading": "6. Avertissements",
+        "body": "Le contenu fourni l'est à des fins éducatives et informatives. Bien que nous nous efforcions d'assurer l'exactitude des informations, nous ne donnons aucune garantie quant à l'exhaustivité, la fiabilité ou l'exactitude de tout contenu."
       },
       "s7": {
-        "heading": "7. Limitation of Liability",
-        "body": "We are not liable for any direct, indirect, incidental, or consequential damages arising from your use of this website."
+        "heading": "7. Limitation de responsabilité",
+        "body": "Nous ne saurions être tenus responsables des dommages directs, indirects, accessoires ou consécutifs résultant de votre utilisation de ce site web."
       },
       "s8": {
         "heading": "8. Modifications",
-        "body": "We may update these Terms of Service at any time. Continued use of the site means you accept the revised terms."
+        "body": "Nous pouvons mettre à jour ces conditions d'utilisation à tout moment. En continuant à utiliser le site, vous acceptez les conditions révisées."
       },
       "s9": {
-        "heading": "9. Governing Law",
-        "body": "These terms are governed by the laws of [Your Country/State]. Any disputes shall be resolved under the jurisdiction of [Your Jurisdiction]."
+        "heading": "9. Droit applicable",
+        "body": "Les présentes conditions sont régies par les lois de [Your Country/State]. Tout litige sera résolu sous la juridiction de [Your Jurisdiction]."
       },
       "s10": {
-        "heading": "10. Contact Us",
-        "email": "📧 Email: <mail>[your-email@example.com]</mail>",
-        "address": "📍 Address: [Your Organization, Street Address, City, Country]"
+        "heading": "10. Contactez-nous",
+        "email": "📧 E-mail : <mail>[your-email@example.com]</mail>",
+        "address": "📍 Adresse : [Your Organization, Street Address, City, Country]"
       }
     },
     "gdpr": {
-      "title": "GDPR",
-      "subtitle": "Effective Date: [Insert Date]",
+      "title": "RGPD",
+      "subtitle": "Date d'entrée en vigueur : [Insert Date]",
       "s1": {
-        "heading": "1. Acceptance of Terms",
-        "body": "By accessing or using [yourdomain.com], you agree to these Terms of Service and our Privacy Policy. If you do not agree, please do not use the website."
+        "heading": "1. Acceptation des conditions",
+        "body": "En accédant à [yourdomain.com] ou en l'utilisant, vous acceptez les présentes conditions d'utilisation ainsi que notre politique de confidentialité. Si vous n'êtes pas d'accord, veuillez ne pas utiliser le site web."
       },
       "s2": {
-        "heading": "2. Use of the Website",
-        "intro": "You agree to:",
-        "item1": "Use the site only for lawful, non-commercial purposes",
-        "item2": "Respect intellectual property rights",
-        "item3": "Not interfere with or disrupt the site or servers"
+        "heading": "2. Utilisation du site",
+        "intro": "Vous vous engagez à :",
+        "item1": "N'utiliser le site qu'à des fins licites et non commerciales",
+        "item2": "Respecter les droits de propriété intellectuelle",
+        "item3": "Ne pas gêner ni perturber le site ou les serveurs"
       },
       "s3": {
-        "heading": "3. User Content",
-        "intro": "If you upload or contribute content:",
-        "item1": "You retain ownership, but grant us a license to display, share, and archive your content on our platform",
-        "item2": "You must not upload content that is unlawful, defamatory, infringing, or harmful",
-        "after": "We reserve the right to remove any content at our discretion."
+        "heading": "3. Contenu des utilisateurs",
+        "intro": "Si vous téléversez ou apportez du contenu :",
+        "item1": "Vous en conservez la propriété, mais vous nous accordez une licence pour afficher, partager et archiver votre contenu sur notre plateforme",
+        "item2": "Vous ne devez pas téléverser de contenu illicite, diffamatoire, contrefaisant ou préjudiciable",
+        "after": "Nous nous réservons le droit de supprimer tout contenu à notre discrétion."
       },
       "s4": {
-        "heading": "4. Intellectual Property",
-        "body": "All content on this website — including text, design, logos, videos, and other media — is either owned by or licensed to us and protected by copyright and intellectual property laws."
+        "heading": "4. Propriété intellectuelle",
+        "body": "L'ensemble du contenu de ce site web — y compris les textes, la conception, les logos, les vidéos et autres médias — nous appartient ou nous est concédé sous licence et est protégé par les lois sur le droit d'auteur et la propriété intellectuelle."
       },
       "s5": {
-        "heading": "5. Links to Other Websites",
-        "body": "Our site may contain links to third-party websites. We are not responsible for their content, policies, or practices."
+        "heading": "5. Liens vers d'autres sites web",
+        "body": "Notre site peut contenir des liens vers des sites web tiers. Nous ne sommes pas responsables de leur contenu, de leurs politiques ou de leurs pratiques."
       },
       "s6": {
-        "heading": "6. Disclaimers",
-        "body": "The content provided is for educational and informational purposes. While we strive for accuracy, we make no warranties about the completeness, reliability, or accuracy of any content."
+        "heading": "6. Avertissements",
+        "body": "Le contenu fourni l'est à des fins éducatives et informatives. Bien que nous nous efforcions d'assurer l'exactitude des informations, nous ne donnons aucune garantie quant à l'exhaustivité, la fiabilité ou l'exactitude de tout contenu."
       },
       "s7": {
-        "heading": "7. Limitation of Liability",
-        "body": "We are not liable for any direct, indirect, incidental, or consequential damages arising from your use of this website."
+        "heading": "7. Limitation de responsabilité",
+        "body": "Nous ne saurions être tenus responsables des dommages directs, indirects, accessoires ou consécutifs résultant de votre utilisation de ce site web."
       },
       "s8": {
         "heading": "8. Modifications",
-        "body": "We may update these Terms of Service at any time. Continued use of the site means you accept the revised terms."
+        "body": "Nous pouvons mettre à jour ces conditions d'utilisation à tout moment. En continuant à utiliser le site, vous acceptez les conditions révisées."
       },
       "s9": {
-        "heading": "9. Governing Law",
-        "body": "These terms are governed by the laws of [Your Country/State]. Any disputes shall be resolved under the jurisdiction of [Your Jurisdiction]."
+        "heading": "9. Droit applicable",
+        "body": "Les présentes conditions sont régies par les lois de [Your Country/State]. Tout litige sera résolu sous la juridiction de [Your Jurisdiction]."
       },
       "s10": {
-        "heading": "10. Contact Us",
-        "email": "📧 Email: <mail>[your-email@example.com]</mail>",
-        "address": "📍 Address: [Your Organization, Street Address, City, Country]"
+        "heading": "10. Contactez-nous",
+        "email": "📧 E-mail : <mail>[your-email@example.com]</mail>",
+        "address": "📍 Adresse : [Your Organization, Street Address, City, Country]"
       }
     }
   }

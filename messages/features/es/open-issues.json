@@ -30,6 +30,7 @@
       "submitting": "Procesando…",
       "submitted": "¡Gracias por tu apoyo!",
       "error": "No pudimos registrar tu aporte. Inténtalo de nuevo."
-    }
+    },
+    "browseCta": "Explorar la revista"
   }
 }

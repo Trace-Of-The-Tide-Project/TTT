@@ -13,139 +13,139 @@
       }
     },
     "privacy": {
-      "title": "Privacy Policy",
-      "subtitle": "Effective Date: [Insert Date]",
+      "title": "سياسة الخصوصية",
+      "subtitle": "تاريخ السريان: [Insert Date]",
       "s1": {
-        "heading": "1. Introduction",
-        "body": "We value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and share information when you use our website [yourdomain.com]."
+        "heading": "1. المقدمة",
+        "body": "نحن نُقدّر خصوصيتك ونلتزم بحماية معلوماتك الشخصية. توضّح سياسة الخصوصية هذه كيفية جمعنا للمعلومات واستخدامها ومشاركتها عند استخدامك لموقعنا الإلكتروني [yourdomain.com]."
       },
       "s2": {
-        "heading": "2. Information We Collect",
-        "intro": "We may collect the following types of information:",
-        "item1": "<b>Personal Information:</b> Name, email, or other details you voluntarily submit (e.g., contact forms or newsletter subscriptions).",
-        "item2": "<b>Usage Data:</b> IP address, browser type, device, pages visited, and time spent — collected via cookies and analytics tools.",
-        "item3": "<b>Uploaded Content:</b> Any content (articles, comments, media) you submit or contribute."
+        "heading": "2. المعلومات التي نجمعها",
+        "intro": "قد نجمع الأنواع التالية من المعلومات:",
+        "item1": "<b>المعلومات الشخصية:</b> الاسم أو البريد الإلكتروني أو غيرها من التفاصيل التي تقدّمها طوعًا (مثل نماذج الاتصال أو الاشتراك في النشرة الإخبارية).",
+        "item2": "<b>بيانات الاستخدام:</b> عنوان IP ونوع المتصفح والجهاز والصفحات التي تمت زيارتها والوقت المستغرق — تُجمع عبر ملفات تعريف الارتباط وأدوات التحليل.",
+        "item3": "<b>المحتوى المرفوع:</b> أي محتوى (مقالات أو تعليقات أو وسائط) تقوم بتقديمه أو المساهمة به."
       },
       "s3": {
-        "heading": "3. How We Use Your Information",
-        "intro": "We use your data to:",
-        "item1": "Provide and maintain our services",
-        "item2": "Improve user experience and content relevance",
-        "item3": "Respond to inquiries or support requests",
-        "item4": "Send occasional updates (only with your consent)"
+        "heading": "3. كيفية استخدامنا لمعلوماتك",
+        "intro": "نستخدم بياناتك من أجل:",
+        "item1": "تقديم خدماتنا والحفاظ عليها",
+        "item2": "تحسين تجربة المستخدم وملاءمة المحتوى",
+        "item3": "الرد على الاستفسارات أو طلبات الدعم",
+        "item4": "إرسال تحديثات من حين لآخر (بموافقتك فقط)"
       },
       "s4": {
-        "heading": "4. Sharing and Disclosure",
-        "intro": "We do not sell or share your personal information with third parties, except:",
-        "item1": "With service providers (e.g., hosting, analytics) under confidentiality agreements",
-        "item2": "If required by law or legal process",
-        "item3": "To prevent fraud or protect the security of our services"
+        "heading": "4. المشاركة والإفصاح",
+        "intro": "نحن لا نبيع معلوماتك الشخصية أو نشاركها مع أطراف ثالثة، باستثناء:",
+        "item1": "مع مزوّدي الخدمات (مثل الاستضافة والتحليلات) بموجب اتفاقيات سرية",
+        "item2": "إذا اقتضى القانون أو الإجراءات القانونية ذلك",
+        "item3": "لمنع الاحتيال أو حماية أمن خدماتنا"
       },
       "s5": {
-        "heading": "5. Cookies and Analytics",
-        "body": "We use cookies and similar technologies to collect usage data and improve our services. You can control cookie preferences through your browser settings. We may use analytics services (e.g., Google Analytics) to understand how visitors use our site and to optimize content and performance."
+        "heading": "5. ملفات تعريف الارتباط والتحليلات",
+        "body": "نستخدم ملفات تعريف الارتباط والتقنيات المماثلة لجمع بيانات الاستخدام وتحسين خدماتنا. يمكنك التحكم في تفضيلات ملفات تعريف الارتباط من خلال إعدادات متصفحك. وقد نستخدم خدمات تحليلية (مثل Google Analytics) لفهم كيفية استخدام الزوار لموقعنا وتحسين المحتوى والأداء."
       }
     },
     "terms": {
-      "title": "Terms of Service",
-      "subtitle": "Effective Date: [Insert Date]",
+      "title": "شروط الخدمة",
+      "subtitle": "تاريخ السريان: [Insert Date]",
       "s1": {
-        "heading": "1. Acceptance of Terms",
-        "body": "By accessing or using [yourdomain.com], you agree to these Terms of Service and our Privacy Policy. If you do not agree, please do not use the website."
+        "heading": "1. قبول الشروط",
+        "body": "بدخولك إلى [yourdomain.com] أو استخدامك له، فإنك توافق على شروط الخدمة هذه وعلى سياسة الخصوصية الخاصة بنا. إذا كنت لا توافق، فيرجى عدم استخدام الموقع."
       },
       "s2": {
-        "heading": "2. Use of the Website",
-        "intro": "You agree to:",
-        "item1": "Use the site only for lawful, non-commercial purposes",
-        "item2": "Respect intellectual property rights",
-        "item3": "Not interfere with or disrupt the site or servers"
+        "heading": "2. استخدام الموقع",
+        "intro": "أنت توافق على:",
+        "item1": "استخدام الموقع للأغراض المشروعة وغير التجارية فقط",
+        "item2": "احترام حقوق الملكية الفكرية",
+        "item3": "عدم التدخل في الموقع أو الخوادم أو تعطيلها"
       },
       "s3": {
-        "heading": "3. User Content",
-        "intro": "If you upload or contribute content:",
-        "item1": "You retain ownership, but grant us a license to display, share, and archive your content on our platform",
-        "item2": "You must not upload content that is unlawful, defamatory, infringing, or harmful",
-        "after": "We reserve the right to remove any content at our discretion."
+        "heading": "3. محتوى المستخدم",
+        "intro": "إذا قمت برفع محتوى أو المساهمة به:",
+        "item1": "تحتفظ بملكيته، لكنك تمنحنا ترخيصًا لعرض محتواك ومشاركته وأرشفته على منصتنا",
+        "item2": "يجب ألا ترفع محتوى غير قانوني أو تشهيري أو مخالف أو ضار",
+        "after": "نحتفظ بالحق في إزالة أي محتوى وفقًا لتقديرنا."
       },
       "s4": {
-        "heading": "4. Intellectual Property",
-        "body": "All content on this website — including text, design, logos, videos, and other media — is either owned by or licensed to us and protected by copyright and intellectual property laws."
+        "heading": "4. الملكية الفكرية",
+        "body": "جميع المحتويات الموجودة على هذا الموقع — بما في ذلك النصوص والتصميم والشعارات ومقاطع الفيديو والوسائط الأخرى — مملوكة لنا أو مرخّصة لنا ومحمية بموجب قوانين حقوق النشر والملكية الفكرية."
       },
       "s5": {
-        "heading": "5. Links to Other Websites",
-        "body": "Our site may contain links to third-party websites. We are not responsible for their content, policies, or practices."
+        "heading": "5. الروابط إلى مواقع أخرى",
+        "body": "قد يحتوي موقعنا على روابط إلى مواقع تابعة لأطراف ثالثة. نحن لسنا مسؤولين عن محتواها أو سياساتها أو ممارساتها."
       },
       "s6": {
-        "heading": "6. Disclaimers",
-        "body": "The content provided is for educational and informational purposes. While we strive for accuracy, we make no warranties about the completeness, reliability, or accuracy of any content."
+        "heading": "6. إخلاء المسؤولية",
+        "body": "المحتوى المقدَّم مخصّص لأغراض تعليمية وإعلامية. ومع أننا نسعى إلى الدقة، فإننا لا نقدّم أي ضمانات بشأن اكتمال أي محتوى أو موثوقيته أو دقته."
       },
       "s7": {
-        "heading": "7. Limitation of Liability",
-        "body": "We are not liable for any direct, indirect, incidental, or consequential damages arising from your use of this website."
+        "heading": "7. تحديد المسؤولية",
+        "body": "نحن غير مسؤولين عن أي أضرار مباشرة أو غير مباشرة أو عرضية أو تبعية تنشأ عن استخدامك لهذا الموقع."
       },
       "s8": {
-        "heading": "8. Modifications",
-        "body": "We may update these Terms of Service at any time. Continued use of the site means you accept the revised terms."
+        "heading": "8. التعديلات",
+        "body": "قد نقوم بتحديث شروط الخدمة هذه في أي وقت. ويعني استمرارك في استخدام الموقع قبولك للشروط المعدّلة."
       },
       "s9": {
-        "heading": "9. Governing Law",
-        "body": "These terms are governed by the laws of [Your Country/State]. Any disputes shall be resolved under the jurisdiction of [Your Jurisdiction]."
+        "heading": "9. القانون الحاكم",
+        "body": "تخضع هذه الشروط لقوانين [Your Country/State]. وتُحلّ أي نزاعات وفقًا لاختصاص [Your Jurisdiction]."
       },
       "s10": {
-        "heading": "10. Contact Us",
-        "email": "📧 Email: <mail>[your-email@example.com]</mail>",
-        "address": "📍 Address: [Your Organization, Street Address, City, Country]"
+        "heading": "10. اتصل بنا",
+        "email": "📧 البريد الإلكتروني: <mail>[your-email@example.com]</mail>",
+        "address": "📍 العنوان: [Your Organization, Street Address, City, Country]"
       }
     },
     "gdpr": {
       "title": "GDPR",
-      "subtitle": "Effective Date: [Insert Date]",
+      "subtitle": "تاريخ السريان: [Insert Date]",
       "s1": {
-        "heading": "1. Acceptance of Terms",
-        "body": "By accessing or using [yourdomain.com], you agree to these Terms of Service and our Privacy Policy. If you do not agree, please do not use the website."
+        "heading": "1. قبول الشروط",
+        "body": "بدخولك إلى [yourdomain.com] أو استخدامك له، فإنك توافق على شروط الخدمة هذه وعلى سياسة الخصوصية الخاصة بنا. إذا كنت لا توافق، فيرجى عدم استخدام الموقع."
       },
       "s2": {
-        "heading": "2. Use of the Website",
-        "intro": "You agree to:",
-        "item1": "Use the site only for lawful, non-commercial purposes",
-        "item2": "Respect intellectual property rights",
-        "item3": "Not interfere with or disrupt the site or servers"
+        "heading": "2. استخدام الموقع",
+        "intro": "أنت توافق على:",
+        "item1": "استخدام الموقع للأغراض المشروعة وغير التجارية فقط",
+        "item2": "احترام حقوق الملكية الفكرية",
+        "item3": "عدم التدخل في الموقع أو الخوادم أو تعطيلها"
       },
       "s3": {
-        "heading": "3. User Content",
-        "intro": "If you upload or contribute content:",
-        "item1": "You retain ownership, but grant us a license to display, share, and archive your content on our platform",
-        "item2": "You must not upload content that is unlawful, defamatory, infringing, or harmful",
-        "after": "We reserve the right to remove any content at our discretion."
+        "heading": "3. محتوى المستخدم",
+        "intro": "إذا قمت برفع محتوى أو المساهمة به:",
+        "item1": "تحتفظ بملكيته، لكنك تمنحنا ترخيصًا لعرض محتواك ومشاركته وأرشفته على منصتنا",
+        "item2": "يجب ألا ترفع محتوى غير قانوني أو تشهيري أو مخالف أو ضار",
+        "after": "نحتفظ بالحق في إزالة أي محتوى وفقًا لتقديرنا."
       },
       "s4": {
-        "heading": "4. Intellectual Property",
-        "body": "All content on this website — including text, design, logos, videos, and other media — is either owned by or licensed to us and protected by copyright and intellectual property laws."
+        "heading": "4. الملكية الفكرية",
+        "body": "جميع المحتويات الموجودة على هذا الموقع — بما في ذلك النصوص والتصميم والشعارات ومقاطع الفيديو والوسائط الأخرى — مملوكة لنا أو مرخّصة لنا ومحمية بموجب قوانين حقوق النشر والملكية الفكرية."
       },
       "s5": {
-        "heading": "5. Links to Other Websites",
-        "body": "Our site may contain links to third-party websites. We are not responsible for their content, policies, or practices."
+        "heading": "5. الروابط إلى مواقع أخرى",
+        "body": "قد يحتوي موقعنا على روابط إلى مواقع تابعة لأطراف ثالثة. نحن لسنا مسؤولين عن محتواها أو سياساتها أو ممارساتها."
       },
       "s6": {
-        "heading": "6. Disclaimers",
-        "body": "The content provided is for educational and informational purposes. While we strive for accuracy, we make no warranties about the completeness, reliability, or accuracy of any content."
+        "heading": "6. إخلاء المسؤولية",
+        "body": "المحتوى المقدَّم مخصّص لأغراض تعليمية وإعلامية. ومع أننا نسعى إلى الدقة، فإننا لا نقدّم أي ضمانات بشأن اكتمال أي محتوى أو موثوقيته أو دقته."
       },
       "s7": {
-        "heading": "7. Limitation of Liability",
-        "body": "We are not liable for any direct, indirect, incidental, or consequential damages arising from your use of this website."
+        "heading": "7. تحديد المسؤولية",
+        "body": "نحن غير مسؤولين عن أي أضرار مباشرة أو غير مباشرة أو عرضية أو تبعية تنشأ عن استخدامك لهذا الموقع."
       },
       "s8": {
-        "heading": "8. Modifications",
-        "body": "We may update these Terms of Service at any time. Continued use of the site means you accept the revised terms."
+        "heading": "8. التعديلات",
+        "body": "قد نقوم بتحديث شروط الخدمة هذه في أي وقت. ويعني استمرارك في استخدام الموقع قبولك للشروط المعدّلة."
       },
       "s9": {
-        "heading": "9. Governing Law",
-        "body": "These terms are governed by the laws of [Your Country/State]. Any disputes shall be resolved under the jurisdiction of [Your Jurisdiction]."
+        "heading": "9. القانون الحاكم",
+        "body": "تخضع هذه الشروط لقوانين [Your Country/State]. وتُحلّ أي نزاعات وفقًا لاختصاص [Your Jurisdiction]."
       },
       "s10": {
-        "heading": "10. Contact Us",
-        "email": "📧 Email: <mail>[your-email@example.com]</mail>",
-        "address": "📍 Address: [Your Organization, Street Address, City, Country]"
+        "heading": "10. اتصل بنا",
+        "email": "📧 البريد الإلكتروني: <mail>[your-email@example.com]</mail>",
+        "address": "📍 العنوان: [Your Organization, Street Address, City, Country]"
       }
     }
   }

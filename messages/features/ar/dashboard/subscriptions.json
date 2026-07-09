@@ -38,7 +38,8 @@
         "changeTitle": "تغيير الخطة",
         "changeUser": "المستخدم:",
         "changeCurrentPlan": "الخطة الحالية:",
-        "selectNewPlan": "اختر خطة جديدة…"
+        "selectNewPlan": "اختر خطة جديدة…",
+        "noFeatures": "لا توجد ميزات"
       },
       "stats": {
         "backToSubscribers": "المشتركون",
