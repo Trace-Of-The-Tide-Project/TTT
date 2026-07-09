@@ -2,21 +2,22 @@
 
 import { useTranslations } from "next-intl";
 import HexBackground from "@/components/ui/HexBackground";
+import { ChamferedSurface } from "@/components/ui/ChamferedSurface";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { SpringLink } from "@/components/motion/SpringLink";
-import { theme } from "@/lib/theme";
 
 export function CommunityCta() {
   const t = useTranslations("Community");
 
   return (
     <RevealOnScroll>
-    <section
-      className="relative -mx-6 mt-24 flex flex-col items-center gap-6 overflow-hidden px-6 py-20 text-center sm:-mx-10 sm:px-10 sm:py-28"
+    <ChamferedSurface
+      chamfer={72}
+      borderColor="var(--tott-accent-gold)"
+      className="mt-24 flex flex-col items-center gap-6 px-6 py-20 text-center sm:px-10 sm:py-28"
       style={{
         background:
           "linear-gradient(180deg, color-mix(in srgb, var(--tott-accent-gold) 16%, var(--tott-well-bg)) 0%, var(--tott-well-bg) 100%)",
-        borderTop: `1px solid ${theme.cardBorder}`,
       }}
     >
       <div
@@ -54,7 +55,7 @@ export function CommunityCta() {
           {t("ctaButton")}
         </SpringLink>
       </div>
-    </section>
+    </ChamferedSurface>
     </RevealOnScroll>
   );
 }

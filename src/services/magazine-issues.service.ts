@@ -18,13 +18,20 @@ export type MagazineIssue = {
   cover_image?: string | null;
   excerpt?: string | null;
   description?: string | null;
-  reading_time?: number | null;
   page_count?: number | null;
   edition?: string | null;
   edition_number?: number | null;
   category?: string | null;
   magazine_id?: string | null;
   is_premium?: boolean | null;
+  /** Commerce — sell the issue as a digital product like a book. */
+  price?: number | string | null;
+  currency?: string | null;
+  /** Computed on read for the caller. */
+  is_free?: boolean | null;
+  is_owned?: boolean | null;
+  /** Signed download URL, present only when the caller is entitled. */
+  pdf_url?: string | null;
   /** Crowdfunded issues only. */
   funding_goal?: number | null;
   funding_deadline?: string | null;
@@ -95,6 +102,10 @@ export type MagazineIssueInput = {
   /** REQUIRED by the create DTO — the parent magazine the issue belongs to. */
   magazine_id?: string | null;
   is_premium?: boolean | null;
+  /** Commerce. null/<=0 price ⇒ free. */
+  price?: number | null;
+  currency?: string | null;
+  pdf_path?: string | null;
   /** Crowdfunded issues only. */
   funding_goal?: number | null;
   funding_deadline?: string | null;
@@ -166,9 +177,14 @@ function unwrapArticlesList(raw: unknown): IssueArticle[] {
   return [];
 }
 
-/** Admin — list articles assigned to an issue, in display order. */
+/** List articles assigned to an issue, in display order. Works on server and
+ * client — the endpoint is public. */
 export async function getIssueArticles(issueId: string): Promise<IssueArticle[]> {
-  const { data } = await api.get<unknown>(`/magazine-issues/${encodeURIComponent(issueId)}/articles`);
+  const path = `/magazine-issues/${encodeURIComponent(issueId)}/articles`;
+  if (typeof window === "undefined") {
+    return unwrapArticlesList(await serverGet<unknown>(path));
+  }
+  const { data } = await api.get<unknown>(path);
   return unwrapArticlesList(data);
 }
 
@@ -182,6 +198,93 @@ export async function reorderIssueArticles(
     { article_ids: articleIds },
   );
   return unwrapArticlesList(data);
+}
+
+/** GET /magazine-issues/:id/download — signed PDF URL for owners. */
+export async function getIssueDownloadUrl(id: string): Promise<string> {
+  const { data } = await api.get<unknown>(
+    `/magazine-issues/${encodeURIComponent(id)}/download`,
+  );
+  const inner = unwrapOne(data) as { url?: string } | null;
+  if (!inner?.url) throw new Error("Download did not return a URL");
+  return inner.url;
+}
+
+/** A writer credited as editor/contributor on an issue, from
+ * GET /magazine-issues/:id/contributors. */
+export type IssueContributor = {
+  id: string;
+  issue_id: string;
+  writer_id: string;
+  role: string;
+  position?: number | null;
+  writer?: {
+    id: string;
+    pen_name?: string | null;
+    display_name?: string | null;
+    avatar_url?: string | null;
+    avatar?: string | null;
+    user?: { full_name?: string | null; username?: string | null } | null;
+  } | null;
+};
+
+function unwrapContributors(raw: unknown): IssueContributor[] {
+  if (Array.isArray(raw)) return raw as IssueContributor[];
+  if (
+    raw &&
+    typeof raw === "object" &&
+    Array.isArray((raw as Record<string, unknown>).data)
+  ) {
+    return (raw as Record<string, unknown>).data as IssueContributor[];
+  }
+  return [];
+}
+
+/** List issue editors/contributors, in display order. Public endpoint. */
+export async function getIssueContributors(
+  issueId: string,
+): Promise<IssueContributor[]> {
+  const path = `/magazine-issues/${encodeURIComponent(issueId)}/contributors`;
+  if (typeof window === "undefined") {
+    return unwrapContributors(await serverGet<unknown>(path));
+  }
+  const { data } = await api.get<unknown>(path);
+  return unwrapContributors(data);
+}
+
+/** Admin — credit a writer on an issue. */
+export async function addIssueContributor(
+  issueId: string,
+  input: { writer_id: string; role?: string },
+): Promise<IssueContributor[]> {
+  const { data } = await api.post<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/contributors`,
+    input,
+  );
+  return unwrapContributors(data);
+}
+
+/** Admin — remove a contributor credit. */
+export async function removeIssueContributor(
+  issueId: string,
+  contributorId: string,
+): Promise<IssueContributor[]> {
+  const { data } = await api.delete<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/contributors/${encodeURIComponent(contributorId)}`,
+  );
+  return unwrapContributors(data);
+}
+
+/** Admin — persist contributor display order. */
+export async function reorderIssueContributors(
+  issueId: string,
+  contributorIds: string[],
+): Promise<IssueContributor[]> {
+  const { data } = await api.patch<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/contributors/reorder`,
+    { contributor_ids: contributorIds },
+  );
+  return unwrapContributors(data);
 }
 
 export async function getMagazineIssueBySlug(

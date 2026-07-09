@@ -272,7 +272,11 @@
             "coverImagePlaceholder": "أو الصق رابط صورة",
             "excerpt": "مقتطف",
             "excerptPlaceholder": "ملخّص قصير يظهر في المعاينات",
-            "description": "الوصف"
+            "description": "الوصف",
+            "price": "السعر",
+            "currency": "العملة",
+            "pdfPath": "مسار ملف PDF للعدد",
+            "pdfPathPlaceholder": "مسار كائن GCS لملف PDF المدفوع"
           },
           "errors": {
             "titleRequired": "العنوان مطلوب.",
@@ -322,6 +326,25 @@
           "deleting": "جارٍ حذف العدد…",
           "deleted": "تم حذف العدد.",
           "deleteError": "تعذّر حذف العدد"
+        }
+      },
+      "contributors": {
+        "label": "المحررون / المساهمون",
+        "loading": "جارٍ التحميل…",
+        "empty": "لا مساهمين بعد.",
+        "add": "إضافة",
+        "adding": "جارٍ الإضافة…",
+        "remove": "إزالة",
+        "moveUp": "تحريك لأعلى",
+        "moveDown": "تحريك لأسفل",
+        "addFailed": "تعذّرت إضافة المساهم",
+        "unknownWriter": "كاتب غير معروف",
+        "roles": {
+          "main_contributor": "المساهم الرئيسي",
+          "co-author": "مؤلف مشارك",
+          "contributor": "مساهم",
+          "editor": "محرر",
+          "reviewer": "مراجع"
         }
       }
     },

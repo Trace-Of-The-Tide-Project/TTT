@@ -272,7 +272,11 @@
             "coverImagePlaceholder": "Ou collez une URL d’image",
             "excerpt": "Extrait",
             "excerptPlaceholder": "Court résumé affiché dans les aperçus",
-            "description": "Description"
+            "description": "Description",
+            "price": "Prix",
+            "currency": "Devise",
+            "pdfPath": "Chemin du PDF du numéro",
+            "pdfPathPlaceholder": "Chemin de l'objet GCS du PDF payant"
           },
           "errors": {
             "titleRequired": "Le titre est requis.",
@@ -322,6 +326,25 @@
           "deleting": "Suppression du numéro…",
           "deleted": "Numéro supprimé.",
           "deleteError": "Impossible de supprimer le numéro"
+        }
+      },
+      "contributors": {
+        "label": "Rédacteurs / Contributeurs",
+        "loading": "Chargement…",
+        "empty": "Aucun contributeur pour l'instant.",
+        "add": "Ajouter",
+        "adding": "Ajout…",
+        "remove": "Supprimer",
+        "moveUp": "Monter",
+        "moveDown": "Descendre",
+        "addFailed": "Impossible d'ajouter le contributeur",
+        "unknownWriter": "Auteur inconnu",
+        "roles": {
+          "main_contributor": "Contributeur principal",
+          "co-author": "Co-auteur",
+          "contributor": "Contributeur",
+          "editor": "Éditeur",
+          "reviewer": "Relecteur"
         }
       }
     },

@@ -3,7 +3,11 @@ import {
   isUsableArticleMediaRef,
   resolveArticleMediaSrc,
 } from "@/lib/content/article-media-url";
-import { getMagazineIssueBySlug } from "@/services/magazine-issues.service";
+import {
+  getMagazineIssueBySlug,
+  getIssueArticles,
+  getIssueContributors,
+} from "@/services/magazine-issues.service";
 import {
   MagazineIssueDetailContent,
   type MagazineIssueDetail,
@@ -19,6 +23,13 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const issue = await getMagazineIssueBySlug(slug);
   if (!issue) return notFound();
+
+  const [articles, contributors] = await Promise.all([
+    getIssueArticles(issue.id),
+    getIssueContributors(issue.id),
+  ]);
+  const priceNum =
+    issue.price == null || issue.price === "" ? null : Number(issue.price);
 
   const ref = issue.cover_image?.trim();
   const cover =
@@ -38,11 +49,22 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
       typeof issue.page_count === "number" && issue.page_count > 0
         ? issue.page_count
         : null,
-    readingTime:
-      typeof issue.reading_time === "number" && issue.reading_time > 0
-        ? issue.reading_time
-        : null,
     publishedAt: issue.published_at ?? null,
+    language: issue.language ?? "en",
+    price: priceNum != null && priceNum > 0 ? priceNum : null,
+    currency: issue.currency ?? "USD",
+    isFree: Boolean(issue.is_free),
+    isOwned: Boolean(issue.is_owned),
+    articles: articles.map((a) => ({ id: a.id, title: a.title })),
+    contributors: contributors.map((c) => ({
+      id: c.id,
+      name:
+        c.writer?.pen_name?.trim() ||
+        c.writer?.display_name?.trim() ||
+        c.writer?.user?.full_name?.trim() ||
+        "—",
+      role: c.role,
+    })),
   };
 
   return <MagazineIssueDetailContent issue={detail} />;

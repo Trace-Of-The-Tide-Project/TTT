@@ -272,7 +272,11 @@
             "coverImagePlaceholder": "Or paste an image URL",
             "excerpt": "Excerpt",
             "excerptPlaceholder": "Short summary shown in previews",
-            "description": "Description"
+            "description": "Description",
+            "price": "Price",
+            "currency": "Currency",
+            "pdfPath": "Issue PDF path",
+            "pdfPathPlaceholder": "GCS object path to the paid PDF"
           },
           "errors": {
             "titleRequired": "Title is required.",
@@ -322,6 +326,25 @@
           "deleting": "Deleting issue…",
           "deleted": "Issue deleted.",
           "deleteError": "Could not delete the issue"
+        }
+      },
+      "contributors": {
+        "label": "Editors / Contributors",
+        "loading": "Loading…",
+        "empty": "No contributors yet.",
+        "add": "Add",
+        "adding": "Adding…",
+        "remove": "Remove",
+        "moveUp": "Move up",
+        "moveDown": "Move down",
+        "addFailed": "Could not add contributor",
+        "unknownWriter": "Unknown writer",
+        "roles": {
+          "main_contributor": "Main contributor",
+          "co-author": "Co-author",
+          "contributor": "Contributor",
+          "editor": "Editor",
+          "reviewer": "Reviewer"
         }
       }
     },

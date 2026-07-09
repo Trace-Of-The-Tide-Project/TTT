@@ -236,6 +236,72 @@ export const artworkConfig: ContentFormConfig = {
   disableHero: true,
 };
 
+export const interviewConfig: ContentFormConfig = {
+  contentType: "interview",
+  titlePlaceholder: "Enter the interview title...",
+  defaultBlocks: [
+    { id: "1", type: "paragraph", content: "", placeholder: "Introduce the interviewee..." },
+    { id: "2", type: "quote", content: "", quoteAttribution: "" },
+    { id: "3", type: "paragraph", content: "", placeholder: "Q & A..." },
+    { id: "4", type: "image" },
+    { id: "5", type: "author-note", content: "" },
+  ],
+  blockLabels: {
+    paragraph: "Write the interview...",
+    quote: "Pull quote",
+    "author-note": "Author note",
+  },
+  iconBlockType: "paragraph",
+  settingsTitle: "Interview Settings",
+  primaryButtonLabel: "Publish Interview",
+  showToolbar: true,
+  allowedBlockTypes: articleAllowedBlockTypes,
+  disableHero: true,
+};
+
+export const literaryConfig: ContentFormConfig = {
+  contentType: "literary",
+  titlePlaceholder: "Enter the title...",
+  defaultBlocks: [
+    { id: "1", type: "paragraph", content: "" },
+    { id: "2", type: "quote", content: "" },
+    { id: "3", type: "author-note", content: "" },
+  ],
+  blockLabels: {
+    paragraph: "Begin the text...",
+    quote: "Quote",
+    "author-note": "Author note",
+  },
+  iconBlockType: "paragraph",
+  settingsTitle: "Literary Text Settings",
+  primaryButtonLabel: "Publish Text",
+  showToolbar: true,
+  allowedBlockTypes: articleAllowedBlockTypes,
+  disableHero: true,
+};
+
+export const comicConfig: ContentFormConfig = {
+  contentType: "comic",
+  titlePlaceholder: "Enter the comic title...",
+  defaultBlocks: [
+    { id: "1", type: "image" },
+    { id: "2", type: "gallery" },
+    { id: "3", type: "paragraph", content: "" },
+    { id: "4", type: "caption-text", content: "" },
+    { id: "5", type: "author-note", content: "" },
+  ],
+  blockLabels: {
+    paragraph: "Describe the story...",
+    "caption-text": "Caption Text…",
+    "author-note": "Author note",
+  },
+  iconBlockType: "image",
+  settingsTitle: "Comic Settings",
+  primaryButtonLabel: "Publish Comic",
+  allowedBlockTypes: artworkAllowedBlockTypes,
+  disableHero: true,
+};
+
 /** Pick create/edit defaults from API `content_type`. */
 export function contentFormConfigForType(contentType: string | undefined): ContentFormConfig {
   const t = (contentType || "article").toLowerCase().replace(/-/g, "_");
@@ -243,6 +309,9 @@ export function contentFormConfigForType(contentType: string | undefined): Conte
   if (t === "thread") return threadConfig;
   if (t === "audio") return audioConfig;
   if (t === "artwork") return artworkConfig;
+  if (t === "interview") return interviewConfig;
+  if (t === "literary") return literaryConfig;
+  if (t === "comic") return comicConfig;
   if (t === "open_call" || t === "opencall") return openCallConfig;
   return articleConfig;
 }

@@ -44,6 +44,18 @@
           "openCall": {
             "title": "Appel ouvert",
             "description": "Invitez des collaborateurs à postuler et à contribuer à votre contenu via un brief public et un formulaire."
+          },
+          "interview": {
+            "title": "Entretien",
+            "description": "Un entretien ou une conversation"
+          },
+          "comic": {
+            "title": "Bande dessinée",
+            "description": "Une BD ou un récit graphique en images"
+          },
+          "literary": {
+            "title": "Texte littéraire",
+            "description": "Poésie, prose ou autre écrit littéraire"
           }
         }
       }

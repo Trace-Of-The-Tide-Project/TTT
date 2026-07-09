@@ -13,6 +13,9 @@ const BADGES: Record<string, ContentBadge> = {
   thread: { label: "Thread", glyph: "❝" },
   trip: { label: "Trip", glyph: "⌖" },
   open_call: { label: "Open Call", glyph: "✶" },
+  interview: { label: "Interview", glyph: "❢" },
+  comic: { label: "Comic", glyph: "▤" },
+  literary: { label: "Literary", glyph: "✎" },
   article: { label: "Read", glyph: "—" },
 };
 

@@ -2,9 +2,21 @@
   "MagazineIssueDetail": {
     "issuePrefix": "Número",
     "pages": "{count, plural, =1 {1 página} other {# páginas}}",
-    "readTime": "{minutes} min de lectura",
     "supportCta": "Apoyar este número",
-    "backToMagazine": "Volver a la revista"
+    "backToMagazine": "Volver a la revista",
+    "contents": "En este número",
+    "buyNow": "Comprar ahora",
+    "addToCart": "Añadir al carrito",
+    "addedToCart": "Añadido al carrito",
+    "downloadPdf": "Descargar PDF",
+    "contributorsHeading": "Editores y colaboradores",
+    "roles": {
+      "main_contributor": "Colaborador principal",
+      "co-author": "Coautor",
+      "contributor": "Colaborador",
+      "editor": "Editor",
+      "reviewer": "Revisor"
+    }
   },
   "DictionaryEntry": {
     "backToDictionary": "Volver al Diccionario vivo",
@@ -32,11 +44,26 @@
     "show": {
       "title": "Las voces de TTT",
       "subtitle": "Descubre a los escritores que dan forma a nuestras páginas — y sigue a los que más te gusten.",
+      "heroKicker": "Nuestros escritores",
+      "voiceCount": "{count, plural, =1 {1 voz y sumando} other {# voces y sumando}}",
+      "spotlightLabel": "En el foco",
+      "followersLabel": "Seguidores",
+      "worksLabel": "Obras",
+      "basedIn": "Reside en",
+      "viewProfile": "Ver perfil",
+      "allHeading": "Todas las voces",
       "featuredHeading": "Escritores destacados",
+      "carouselPrev": "Escritor anterior",
+      "carouselNext": "Escritor siguiente",
       "searchPlaceholder": "Buscar escritores",
       "allThemes": "Todos",
       "emptyTitle": "Ninguna voz coincide con tu búsqueda.",
-      "clearFilters": "Borrar filtros"
+      "clearFilters": "Borrar filtros",
+      "statsVoices": "Voces",
+      "statsThemes": "Temas",
+      "statsLocations": "Lugares",
+      "statsBoard": "Consejo editorial",
+      "themeGalaxyHeading": "Explora por tema"
     }
   }
 }

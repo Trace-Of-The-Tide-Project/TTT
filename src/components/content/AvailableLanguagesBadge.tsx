@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { useTranslations as useTranslationGroup } from "@/hooks/queries/translations";
 import {
   type TranslatableType,
+  type TranslationVersion,
 } from "@/services/translations.service";
 
 type AvailableLanguagesBadgeProps = {
@@ -16,9 +17,18 @@ type AvailableLanguagesBadgeProps = {
   currentLanguage?: string;
   /**
    * Public route base used to switch to another version, e.g.
-   * "/content/article". The sibling id is appended as `?id=<id>`.
+   * "/content/article". The sibling id is appended as `?id=<id>`. Ignored
+   * when `hrefFor` is given.
    */
   viewBasePath?: string;
+  /**
+   * Build the href for a sibling version — use for routes that aren't
+   * `?id=`-based (e.g. slug routes). Defaults to `${viewBasePath}?id=<id>`.
+   */
+  hrefFor?: (version: TranslationVersion) => string;
+  /** Only show versions matching this predicate (e.g. published-only for
+   * public readers). Defaults to showing every version returned. */
+  statusFilter?: (version: TranslationVersion) => boolean;
   className?: string;
 };
 
@@ -35,12 +45,16 @@ export function AvailableLanguagesBadge({
   contentId,
   currentLanguage,
   viewBasePath = DEFAULT_VIEW_PATH,
+  hrefFor,
+  statusFilter,
   className,
 }: AvailableLanguagesBadgeProps) {
   const t = useTranslations("Content.availableLanguages");
   const { data } = useTranslationGroup(contentType, contentId);
 
-  const versions = data?.versions ?? [];
+  const versions = (data?.versions ?? []).filter((v) =>
+    statusFilter ? statusFilter(v) : true,
+  );
   // Only worth showing when the piece exists in more than one language.
   if (versions.length < 2) return null;
 
@@ -65,7 +79,7 @@ export function AvailableLanguagesBadge({
         return (
           <Link
             key={v.id}
-            href={`${viewBasePath}?id=${encodeURIComponent(v.id)}`}
+            href={hrefFor ? hrefFor(v) : `${viewBasePath}?id=${encodeURIComponent(v.id)}`}
             locale={v.language as "en" | "ar" | "es" | "fr"}
             className="rounded-full border border-[var(--tott-card-border)] px-2.5 py-0.5 text-xs font-medium text-blue-400 hover:underline"
           >

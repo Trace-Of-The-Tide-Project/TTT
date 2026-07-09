@@ -1,5 +1,9 @@
 import { getLocale } from "next-intl/server";
-import { getFeaturedWriters, getWriters } from "@/services/writers.service";
+import {
+  getFeaturedWriters,
+  getWriterProfileFull,
+  getWriters,
+} from "@/services/writers.service";
 import { WritersShowContent } from "@/components/writers/WritersShowContent";
 
 export const dynamic = "force-dynamic";
@@ -14,10 +18,19 @@ export default async function WritersShowPage() {
     getFeaturedWriters(locale),
   ]);
 
+  // Spotlight the first featured writer with its rich profile (quote, stats,
+  // based_in) — one extra call, only for the hero. Null-safe → hero falls back
+  // to thin featured data. No featured writers → no spotlight.
+  const spotlightId = featuredWriters[0]?.id;
+  const spotlightProfile = spotlightId
+    ? await getWriterProfileFull(spotlightId, locale)
+    : null;
+
   return (
     <WritersShowContent
       initialWriters={initialWriters}
       featuredWriters={featuredWriters}
+      spotlightProfile={spotlightProfile}
     />
   );
 }

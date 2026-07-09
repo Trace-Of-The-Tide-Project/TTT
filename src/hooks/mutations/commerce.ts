@@ -1,7 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   addToCart,
+  addIssueToCart,
   removeFromCart,
+  removeIssueFromCart,
   clearCart,
   createCheckout,
 } from "@/services/commerce.service";
@@ -19,10 +21,31 @@ export function useAddToCart() {
   });
 }
 
+export function useAddIssueToCart() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (issueId: string) => addIssueToCart(issueId),
+    onSuccess: (cart) => {
+      qc.setQueryData(commerceKeys.cart(), cart);
+      qc.invalidateQueries({ queryKey: commerceKeys.cart() });
+    },
+  });
+}
+
 export function useRemoveFromCart() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (bookId: string) => removeFromCart(bookId),
+    onSuccess: (cart) => {
+      qc.setQueryData(commerceKeys.cart(), cart);
+    },
+  });
+}
+
+export function useRemoveIssueFromCart() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (issueId: string) => removeIssueFromCart(issueId),
     onSuccess: (cart) => {
       qc.setQueryData(commerceKeys.cart(), cart);
     },
