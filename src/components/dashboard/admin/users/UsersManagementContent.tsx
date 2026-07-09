@@ -50,7 +50,7 @@ function initialsFromUser(u: AdminUserListItem): string {
 
 function statusColor(status: string): string {
   const key = status.trim().toLowerCase();
-  return USER_STATUS_COLORS[key] ?? "#9CA3AF";
+  return USER_STATUS_COLORS[key] ?? "var(--tott-muted)";
 }
 
 const emptyMeta: UsersListMeta = { total: 0, page: 1, limit: PAGE_LIMIT, totalPages: 1 };

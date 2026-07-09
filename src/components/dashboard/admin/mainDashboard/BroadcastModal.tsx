@@ -57,7 +57,7 @@ export function BroadcastModal({ open, onClose }: BroadcastModalProps) {
               <h2 className="text-lg font-bold text-foreground">{t("title")}</h2>
               <span
                 className="rounded px-2 py-0.5 text-[10px] font-semibold uppercase"
-                style={{ backgroundColor: "rgba(156, 163, 175, 0.2)", color: "#9ca3af" }}
+                style={{ backgroundColor: "color-mix(in srgb, var(--tott-muted) 20%, transparent)", color: "var(--tott-muted)" }}
               >
                 info
               </span>

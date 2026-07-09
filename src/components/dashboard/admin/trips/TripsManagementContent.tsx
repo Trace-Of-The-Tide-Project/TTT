@@ -52,7 +52,7 @@ function statusDisplay(status: string, t: (key: string) => string): StatusStyle 
     return { label: t("management.status.completed"), color: "#2ECC71" };
   if (s === "archived") return { label: t("management.status.archived"), color: "#E67E22" };
   if (s === "draft") return { label: t("management.status.draft"), color: "#3498DB" };
-  return { label: t("management.status.past"), color: "#9ca3af" };
+  return { label: t("management.status.past"), color: "var(--tott-muted)" };
 }
 
 function SearchIcon() {

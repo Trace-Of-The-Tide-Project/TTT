@@ -90,7 +90,7 @@ const statusColorMap: Record<string, string> = {
 };
 
 function statusColor(status: string): string {
-  return statusColorMap[status.toLowerCase()] ?? "#9CA3AF";
+  return statusColorMap[status.toLowerCase()] ?? "var(--tott-muted)";
 }
 
 function capitalize(s: string): string {
@@ -274,7 +274,7 @@ function ContributionDetailModal({
                 <span
                   className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase"
                   style={{
-                    backgroundColor: `${statusColor(item.status)}20`,
+                    backgroundColor: `color-mix(in srgb, ${statusColor(item.status)} 12.5%, transparent)`,
                     color: statusColor(item.status),
                   }}
                 >
