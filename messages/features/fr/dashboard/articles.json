@@ -39,7 +39,7 @@
           "view": "Voir"
         },
         "table": {
-          "addNew": "Ajouter",
+          "addNew": "Ajouter un article",
           "title": "Titre",
           "status": "Statut",
           "statusValues": {

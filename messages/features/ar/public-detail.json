@@ -10,6 +10,18 @@
     "addedToCart": "أُضيف إلى السلة",
     "downloadPdf": "تنزيل PDF",
     "contributorsHeading": "المحررون والمساهمون",
+    "editorsLetter": "افتتاحية العدد",
+    "readEditorsLetter": "اقرأ افتتاحية المحرر",
+    "startReading": "ابدأ القراءة",
+    "ungrouped": "المزيد في هذا العدد",
+    "locked": "مقفل — مضمَّن مع العدد",
+    "reader": {
+      "previous": "السابق",
+      "next": "التالي",
+      "position": "{current} من {total}",
+      "backToIssue": "غلاف العدد",
+      "close": "إغلاق"
+    },
     "roles": {
       "main_contributor": "المساهم الرئيسي",
       "co-author": "مؤلف مشارك",

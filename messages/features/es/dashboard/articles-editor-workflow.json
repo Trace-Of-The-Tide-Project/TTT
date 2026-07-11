@@ -31,7 +31,9 @@
           "unsavedChangesConfirm": "Tienes cambios sin guardar. ¿Salir sin guardar?",
           "validationOpenCallBlocksDraft": "Añade al menos un bloque de contenido con contenido.",
           "validationOpenCallBlocksPublish": "Para publicar se necesita al menos un bloque de contenido con contenido.",
-          "validationOpenCallBlocksSchedule": "Para programar se necesita al menos un bloque de contenido con contenido."
+          "validationOpenCallBlocksSchedule": "Para programar se necesita al menos un bloque de contenido con contenido.",
+          "backToMagazine": "Volver a los artículos de la revista",
+          "magazineBadge": "Artículo de revista"
         },
         "footer": {
           "schedule": "Programar",

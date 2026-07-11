@@ -504,8 +504,7 @@ export function ArticlesTable({
       <div className="mt-4 flex w-full">
         <Link
           href={addNewHref}
-          className="ms-auto flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors"
-          style={{ color: "var(--tott-dash-gold-label)" }}
+          className="ms-auto flex items-center gap-2 rounded-lg bg-[var(--tott-accent-gold)] px-4 py-2 text-sm font-semibold text-[var(--tott-on-accent)] transition-opacity hover:opacity-90"
         >
           <PlusIcon />
           {t("table.addNew")}

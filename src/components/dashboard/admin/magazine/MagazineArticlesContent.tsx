@@ -9,8 +9,7 @@ import { useArticles } from "@/hooks/queries/articles";
 import { useMagazineIssues } from "@/hooks/queries/magazine-issues";
 import { formatApiError } from "@/lib/api/error-message";
 
-const CREATE_HREF =
-  "/admin/articles/create/article?product=magazine&return=/admin/magazine/articles";
+const CREATE_HREF = "/admin/magazine/articles/create";
 
 const STATUS_FALLBACK = "var(--tott-muted)";
 const statusColor: Record<string, string> = {
@@ -126,7 +125,7 @@ export function MagazineArticlesContent() {
                   </div>
                   <div className="flex items-center justify-end border-t border-[var(--tott-card-border)] px-4 py-3">
                     <Link
-                      href={`/admin/articles/edit/${encodeURIComponent(a.id)}`}
+                      href={`/admin/magazine/articles/edit/${encodeURIComponent(a.id)}`}
                       aria-label={t("edit")}
                       className="inline-flex items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] p-1.5 text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] [&_svg]:h-3.5 [&_svg]:w-3.5"
                     >

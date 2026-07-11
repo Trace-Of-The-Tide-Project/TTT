@@ -63,6 +63,14 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
   const { articleId } = props;
   const contentDir = dirFor(activeLang);
 
+  // Magazine authoring context: entered via ?product=magazine or ?issue_id.
+  // Surfaces a badge + a back link to the magazine so the shared editor
+  // doesn't read as the main-site article editor and leave the user lost.
+  const isMagazineContext = props.initialProduct === "magazine" || Boolean(props.initialIssueId);
+  const backHref =
+    props.returnTo || (isMagazineContext ? "/admin/magazine/articles" : ADMIN_ARTICLES_PATH);
+  const backLabel = isMagazineContext ? tLayout("backToMagazine") : tLayout("backToArticles");
+
   // Unsaved-work guard (create + edit): fingerprint-based dirty flag from the
   // hook. Covers tab close/refresh (beforeunload) and ALL in-app link clicks
   // (capture-phase listener beats Next's Link handler, so sidebar navigation
@@ -194,10 +202,22 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
         {isEditMode && articleId ? (
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4 shrink-0">
             <div className="flex flex-wrap items-center gap-3 text-sm">
-              <Link href={ADMIN_ARTICLES_PATH} className="text-[var(--tott-dash-gold-text)] hover:underline">
-                {tLayout("backToArticles")}
+              <Link href={backHref} className="text-[var(--tott-dash-gold-text)] hover:underline">
+                {backLabel}
               </Link>
-              <span className="text-[var(--tott-muted)]">{tLayout("editArticle")}</span>
+              {isMagazineContext ? (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                  style={{
+                    backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
+                    color: "var(--tott-accent-gold)",
+                  }}
+                >
+                  {tLayout("magazineBadge")}
+                </span>
+              ) : (
+                <span className="text-[var(--tott-muted)]">{tLayout("editArticle")}</span>
+              )}
             </div>
             <div className="flex items-center gap-3">
               <LanguageFormTabs
@@ -220,12 +240,25 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
           /* Create mode: in-place language tabs (Pattern 2) — each tab holds
              its own text; untouched tabs never submit. */
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--tott-card-border)] pb-4 shrink-0">
-            <Link
-              href={ADMIN_ARTICLES_PATH}
-              className="text-sm text-[var(--tott-dash-gold-text)] hover:underline"
-            >
-              {tLayout("backToArticles")}
-            </Link>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href={backHref}
+                className="text-sm text-[var(--tott-dash-gold-text)] hover:underline"
+              >
+                {backLabel}
+              </Link>
+              {isMagazineContext ? (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                  style={{
+                    backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
+                    color: "var(--tott-accent-gold)",
+                  }}
+                >
+                  {tLayout("magazineBadge")}
+                </span>
+              ) : null}
+            </div>
             <LanguageFormTabs
               active={activeLang}
               onSelect={switchLanguage}

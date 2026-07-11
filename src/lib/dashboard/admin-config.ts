@@ -20,7 +20,6 @@ import {
   EyeIcon,
   BellIcon,
   UserCheckIcon,
-  PlusIcon,
   MegaphoneIcon,
   CalendarIcon,
   IdCardIcon,
@@ -58,12 +57,6 @@ export const adminConfig: DashboardConfig = {
           labelKey: "sidebar.articles",
           icon: MegaphoneIcon,
           items: [
-            {
-              kind: "item",
-              labelKey: "sidebar.createArticles",
-              href: "/admin/articles/create",
-              icon: PlusIcon,
-            },
             {
               kind: "item",
               labelKey: "sidebar.allArticles",
@@ -182,12 +175,6 @@ export const adminConfig: DashboardConfig = {
             },
             {
               kind: "item",
-              labelKey: "sidebar.createBook",
-              href: "/admin/books/create",
-              icon: PlusIcon,
-            },
-            {
-              kind: "item",
               labelKey: "sidebar.allBooks",
               href: "/admin/books",
               icon: ListIcon,
@@ -202,12 +189,6 @@ export const adminConfig: DashboardConfig = {
           items: [
             {
               kind: "item",
-              labelKey: "sidebar.createWriter",
-              href: "/admin/writers/create",
-              icon: PlusIcon,
-            },
-            {
-              kind: "item",
               labelKey: "sidebar.allWriters",
               href: "/admin/writers",
               icon: MicIcon,
@@ -220,12 +201,6 @@ export const adminConfig: DashboardConfig = {
           labelKey: "sidebar.people",
           icon: PersonIcon,
           items: [
-            {
-              kind: "item",
-              labelKey: "sidebar.addPerson",
-              href: "/admin/people/create",
-              icon: PlusIcon,
-            },
             {
               kind: "item",
               labelKey: "sidebar.allPeople",

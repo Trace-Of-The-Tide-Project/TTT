@@ -5,6 +5,24 @@ import { serverGet } from "@/lib/api/isomorphic-fetch";
  * Magazine issue / spread / collection record. Field set kept tight
  * to what the magazine "Issues" pane actually renders.
  */
+/** A department/section within an issue (from the issue detail response). */
+export type IssueSectionRef = {
+  id: string;
+  title: string;
+  slug?: string | null;
+  position?: number | null;
+};
+
+/** The issue's editor's letter — a linked article, basic fields only. */
+export type IssueEditorsLetter = {
+  id: string;
+  slug?: string | null;
+  title: string;
+  excerpt?: string | null;
+  language?: string | null;
+  cover_image?: string | null;
+};
+
 export type MagazineIssue = {
   id: string;
   title: string;
@@ -38,6 +56,10 @@ export type MagazineIssue = {
   open_call_id?: string | null;
   translation_of?: string | null;
   published_at?: string | null;
+  /** Ordered departments within this issue (present on single-issue reads). */
+  sections?: IssueSectionRef[] | null;
+  /** Editor's letter, when set (single-issue reads only). */
+  editors_letter?: IssueEditorsLetter | null;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -168,6 +190,16 @@ export type IssueArticle = {
   slug?: string | null;
   status?: string | null;
   issue_position?: number | null;
+  /** Section/department this article sits under (null = ungrouped). */
+  section_id?: string | null;
+  excerpt?: string | null;
+  cover_image?: string | null;
+  reading_time?: number | null;
+  content_type?: string | null;
+  /** Article's own tier: open | preview | subscriber | paid. */
+  access_level?: string | null;
+  /** Per-viewer access, computed by the backend: full | preview | locked. */
+  access?: "full" | "preview" | "locked" | null;
 };
 
 function unwrapArticlesList(raw: unknown): IssueArticle[] {
