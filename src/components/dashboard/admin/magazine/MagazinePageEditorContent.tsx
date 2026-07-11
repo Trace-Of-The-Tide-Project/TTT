@@ -544,7 +544,7 @@ function RichField({
 }) {
   return (
     <Field label={label}>
-      <div className="overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
+      <div className="mag-rich-field overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
         <RichTextEditor value={value} onChange={onChange} dir={rtl ? "rtl" : "ltr"} />
       </div>
     </Field>
