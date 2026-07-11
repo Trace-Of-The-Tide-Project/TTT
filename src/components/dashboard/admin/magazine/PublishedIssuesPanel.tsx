@@ -457,6 +457,9 @@ export function PublishedIssuesPanel() {
           onClose={() => setEditing(null)}
           onSave={async (plan) => {
             let magazineId: string | null = magazines[0]?.id ?? null;
+            // Full created primary issue, so we can reopen the modal in edit
+            // mode (→ article panel) right after create — no edit-button hop.
+            let createdPrimary: MagazineIssue | null = null;
 
             const savePrimary = async (): Promise<{ id: string } | null> => {
               const p = plan[0];
@@ -480,6 +483,7 @@ export function PublishedIssuesPanel() {
                 // regenerated on edit so public deep-links stay stable.
                 slug: `${slugify(p.values.title)}-${Date.now().toString(36).slice(-5)}`,
               });
+              createdPrimary = created;
               return created ? { id: created.id } : null;
             };
 
@@ -527,7 +531,9 @@ export function PublishedIssuesPanel() {
                 tTr("toasts.partialFailure", { languages: failed.join(", ").toUpperCase() }),
               );
             }
-            setEditing(null);
+            // Fresh issue → jump straight into edit mode so its article panel
+            // is visible immediately (no close + re-open + edit-button hop).
+            setEditing(isNew && createdPrimary ? createdPrimary : null);
           }}
         />
       ) : null}
