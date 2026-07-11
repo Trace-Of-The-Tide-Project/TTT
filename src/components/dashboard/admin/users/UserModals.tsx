@@ -24,7 +24,7 @@ import type { AdminUserListItem, AdminUserStatus } from "@/services/users.servic
 type Translate = ReturnType<typeof useTranslations>;
 
 function statusColor(status: string): string {
-  return USER_STATUS_COLORS[status.trim().toLowerCase()] ?? "#9CA3AF";
+  return USER_STATUS_COLORS[status.trim().toLowerCase()] ?? "var(--tott-muted)";
 }
 
 function roleLabel(slug: string, tRoles: Translate): string {

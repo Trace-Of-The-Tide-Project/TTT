@@ -288,7 +288,7 @@ export function FinanceContent() {
                     <div className="text-sm text-[var(--tott-muted)]">{fmtDate(row.created_at)}</div>
                     <div
                       className={`text-sm font-medium capitalize ${
-                        row.status === "pending" ? "text-[#F59E0B]" : row.status === "approved" ? "text-emerald-400" : "text-blue-400"
+                        row.status === "pending" ? "text-[var(--tott-status-amber)]" : row.status === "approved" ? "text-emerald-400" : "text-blue-400"
                       }`}
                     >
                       {row.status}
@@ -446,7 +446,7 @@ export function FinanceContent() {
                     <div className="text-sm text-[var(--tott-muted)]">{fmtDate(row.created_at)}</div>
                     <div
                       className={`text-sm font-medium capitalize ${
-                        row.status === "completed" ? "text-emerald-400" : "text-[#F59E0B]"
+                        row.status === "completed" ? "text-emerald-400" : "text-[var(--tott-status-amber)]"
                       }`}
                     >
                       {row.status === "completed" ? td("status.completed") : td("status.pending")}

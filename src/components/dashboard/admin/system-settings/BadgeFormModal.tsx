@@ -8,7 +8,7 @@ import type { BadgeIconId } from "@/lib/dashboard/system-settings-constants";
 import { routing } from "@/i18n/routing";
 import { LocaleNameFields } from "./LocaleNameFields";
 
-const ACCENT = "#E8DDC0";
+const ACCENT = "var(--tott-stat-icon)";
 
 const DEFAULT_ICON: BadgeIconId = "gift";
 
