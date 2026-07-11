@@ -743,6 +743,17 @@ a,
   margin: 0;
 }
 
+/* Magazine page editor — keep authored copy legible in every dashboard
+   theme. Rich content can carry an absolute text color (e.g. white, set
+   for the dark public hero) that vanishes against a light editor surface.
+   Force the *editing* surface to the theme foreground so text never
+   disappears when the admin switches theme; the live preview and the
+   saved HTML still honor the author's colors. */
+.mag-rich-field .tiptap-paragraph,
+.mag-rich-field .tiptap-paragraph * {
+  color: var(--foreground) !important;
+}
+
 /* ── Rich-content prose scope ───────────────────────────────────────
    Shared typography for sanitized rich HTML rendered by <RichContent>.
    Token-driven so light/dark follow the existing theme; RTL follows the
