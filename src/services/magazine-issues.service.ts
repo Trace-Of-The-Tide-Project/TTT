@@ -165,6 +165,7 @@ export async function deleteMagazineIssue(id: string): Promise<void> {
 export type IssueArticle = {
   id: string;
   title: string;
+  slug?: string | null;
   status?: string | null;
   issue_position?: number | null;
 };

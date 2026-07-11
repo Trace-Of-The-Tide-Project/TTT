@@ -22,6 +22,9 @@ export type CreateArticleBlock = {
 
 export type ArticleAccessLevel = "open" | "preview" | "subscriber" | "paid";
 
+/** Which product the article belongs to — main site or standalone magazine. */
+export type ArticleProduct = "main" | "magazine";
+
 export type CreateArticlePayload = {
   title: string;
   content_type: string;
@@ -46,6 +49,12 @@ export type CreateArticlePayload = {
   open_call_id?: string;
   /** When set, links this article as a translation of the given article. */
   translation_of?: string;
+  /** Magazine issue this article is created into (forces product=magazine). */
+  issue_id?: string;
+  /** Parent magazine — set alongside issue_id. */
+  magazine_id?: string;
+  /** Display order within the issue (lower first). */
+  issue_position?: number;
 };
 
 export type ArticleCreateResponse = {
@@ -181,6 +190,9 @@ export type ArticleListItem = {
   published_at: string | null;
   author_id: string;
   collection_id: string | null;
+  product?: ArticleProduct;
+  issue_id?: string | null;
+  magazine_id?: string | null;
   translation_of: string | null;
   translation_group_id?: string | null;
   createdAt: string;
@@ -309,6 +321,9 @@ export type ArticleDetail = {
   view_count?: number;
   createdAt?: string;
   open_call_id?: string | null;
+  product?: ArticleProduct;
+  issue_id?: string | null;
+  magazine_id?: string | null;
   translation_of?: string | null;
   translation_group_id?: string | null;
   is_premium?: boolean;

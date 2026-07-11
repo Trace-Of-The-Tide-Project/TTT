@@ -33,6 +33,31 @@ const PLAN_BADGE: Record<string, { color: string; bg: string }> = {
 
 const CHANGEABLE_STATUSES = new Set(['active', 'trialing', 'past_due']);
 
+// The tokens canAccessFeature() actually gates on — shown as checkboxes so
+// admins can grant real content access, separate from display-only keys.
+const ACCESS_FEATURES = ['magazine', 'articles', 'books'] as const;
+
+interface AdminPlan {
+  id: string;
+  name: string;
+  display_name: string;
+  stripe_price_id?: string;
+  price_monthly?: number;
+  currency?: string;
+  features?: string[];
+  status?: string;
+}
+
+interface PlanForm {
+  display_name: string;
+  price_monthly: string;
+  currency: string;
+  stripe_price_id: string;
+  status: string;
+  access: Set<string>;
+  displayFeatures: string[];
+}
+
 // Stable per-plan color: hash key → hue. Fixed S/L so all read as siblings, not a rainbow riot.
 function planColor(key: string | null, name: string | null): { color: string; bg: string } {
   if (key && PLAN_BADGE[key]) return PLAN_BADGE[key];
@@ -76,16 +101,23 @@ export default function AdminSubscriptionsPage() {
   const [changePlanTarget, setChangePlan] = useState<SubscriberRow | null>(null);
   const [grantPlanId, setGrantPlanId]     = useState('');
   const [changePlanId, setChangePlanId]   = useState('');
-  const [plans, setPlans]                 = useState<Array<{ id: string; display_name: string; name: string; features?: string[]; price_monthly?: number; currency?: string }>>([]);
+  const [plans, setPlans]                 = useState<AdminPlan[]>([]);
   const [loading, setLoading]             = useState(false);
+  const [editPlan, setEditPlan]           = useState<AdminPlan | null>(null);
+  const [planForm, setPlanForm]           = useState<PlanForm | null>(null);
+  const [planSaving, setPlanSaving]       = useState(false);
+  const [planError, setPlanError]         = useState<string | null>(null);
+  const [newFeature, setNewFeature]       = useState('');
 
-  useEffect(() => {
+  function loadPlans() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    api.get('/subscriptions/plans').then((r: { data: any }) => {
+    api.get('/admin/subscriptions/plans').then((r: { data: any }) => {
       const data = r.data?.data ?? r.data;
       setPlans(Array.isArray(data) ? data : []);
     });
-  }, []);
+  }
+
+  useEffect(() => { loadPlans(); }, []);
 
   function load(page = 1) {
     setLoading(true);
@@ -127,6 +159,45 @@ export default function AdminSubscriptionsPage() {
     load();
   }
 
+  function openPlanEditor(p: AdminPlan) {
+    const features = p.features ?? [];
+    setPlanForm({
+      display_name: p.display_name,
+      price_monthly: p.price_monthly != null ? String(p.price_monthly) : '',
+      currency: p.currency ?? 'USD',
+      stripe_price_id: p.stripe_price_id ?? '',
+      status: p.status ?? 'active',
+      access: new Set(features.filter((f) => (ACCESS_FEATURES as readonly string[]).includes(f))),
+      displayFeatures: features.filter((f) => !(ACCESS_FEATURES as readonly string[]).includes(f)),
+    });
+    setPlanError(null);
+    setNewFeature('');
+    setEditPlan(p);
+  }
+
+  async function handleSavePlan() {
+    if (!editPlan || !planForm) return;
+    setPlanSaving(true);
+    setPlanError(null);
+    try {
+      await api.patch(`/admin/subscriptions/plans/${editPlan.id}`, {
+        display_name: planForm.display_name,
+        price_monthly: Number(planForm.price_monthly) || 0,
+        currency: planForm.currency.toUpperCase(),
+        stripe_price_id: planForm.stripe_price_id,
+        status: planForm.status,
+        features: [...planForm.access, ...planForm.displayFeatures],
+      });
+      setEditPlan(null);
+      setPlanForm(null);
+      loadPlans();
+    } catch {
+      setPlanError(t('plans.saveFailed'));
+    } finally {
+      setPlanSaving(false);
+    }
+  }
+
   return (
     <div className="p-6 max-w-6xl">
 
@@ -154,16 +225,36 @@ export default function AdminSubscriptionsPage() {
               <div
                 key={p.id}
                 className="flex flex-col rounded-xl p-4"
-                style={{ border: '1px solid var(--tott-card-border)', background: 'var(--tott-elevated)' }}
+                style={{
+                  border: '1px solid var(--tott-card-border)',
+                  background: 'var(--tott-elevated)',
+                  opacity: p.status === 'archived' ? 0.55 : 1,
+                }}
               >
-                <div className="flex items-baseline justify-between mb-3">
-                  <span className="font-semibold text-sm" style={{ color: c.color }}>{p.display_name}</span>
-                  {typeof p.price_monthly === 'number' && (
-                    <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>
-                      {p.currency ?? '£'}{p.price_monthly}
-                      <span className="text-xs font-normal" style={{ color: 'var(--tott-muted)' }}>/mo</span>
-                    </span>
-                  )}
+                <div className="flex items-baseline justify-between mb-3 gap-2">
+                  <span className="font-semibold text-sm" style={{ color: c.color }}>
+                    {p.display_name}
+                    {p.status === 'archived' && (
+                      <span className="ml-2 text-xs font-normal" style={{ color: 'var(--tott-muted)' }}>
+                        {t('plans.archived')}
+                      </span>
+                    )}
+                  </span>
+                  <span className="flex items-baseline gap-2 shrink-0">
+                    {typeof p.price_monthly === 'number' && (
+                      <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>
+                        {p.currency ?? '£'}{p.price_monthly}
+                        <span className="text-xs font-normal" style={{ color: 'var(--tott-muted)' }}>/mo</span>
+                      </span>
+                    )}
+                    <button
+                      onClick={() => openPlanEditor(p)}
+                      className="text-xs font-medium"
+                      style={{ color: 'var(--tott-accent-gold)' }}
+                    >
+                      {t('plans.edit')}
+                    </button>
+                  </span>
                 </div>
                 {p.features && p.features.length > 0 ? (
                   <div className="flex flex-wrap gap-1.5">
@@ -473,6 +564,164 @@ export default function AdminSubscriptionsPage() {
                 style={{ background: '#6db3ae', color: '#000' }}
               >
                 {t('changePlan')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── EDIT PLAN MODAL ── */}
+      {editPlan && planForm && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 overflow-y-auto py-8" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="rounded-xl p-6 max-w-md w-full mx-4 my-auto" style={{ background: 'var(--tott-elevated)', border: '1px solid var(--tott-card-border)' }}>
+            <h2 className="font-semibold mb-1" style={{ color: 'var(--foreground)' }}>
+              {t('plans.editTitle', { name: editPlan.name })}
+            </h2>
+            <p className="text-xs mb-4" style={{ color: 'var(--tott-muted)' }}>{t('plans.editHint')}</p>
+
+            <div className="space-y-3">
+              <label className="block">
+                <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--tott-muted)' }}>{t('plans.displayName')}</span>
+                <input
+                  value={planForm.display_name}
+                  onChange={(e) => setPlanForm({ ...planForm, display_name: e.target.value })}
+                  className="mt-1 w-full rounded-lg px-3 py-2 text-sm"
+                  style={{ background: 'var(--tott-dash-input-bg)', border: '1px solid var(--tott-card-border)', color: 'var(--foreground)' }}
+                />
+              </label>
+
+              <div className="flex gap-3">
+                <label className="block flex-1">
+                  <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--tott-muted)' }}>{t('plans.priceMonthly')}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={planForm.price_monthly}
+                    onChange={(e) => setPlanForm({ ...planForm, price_monthly: e.target.value })}
+                    className="mt-1 w-full rounded-lg px-3 py-2 text-sm"
+                    style={{ background: 'var(--tott-dash-input-bg)', border: '1px solid var(--tott-card-border)', color: 'var(--foreground)' }}
+                  />
+                </label>
+                <label className="block w-24">
+                  <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--tott-muted)' }}>{t('plans.currency')}</span>
+                  <input
+                    value={planForm.currency}
+                    maxLength={3}
+                    onChange={(e) => setPlanForm({ ...planForm, currency: e.target.value.toUpperCase() })}
+                    className="mt-1 w-full rounded-lg px-3 py-2 text-sm uppercase"
+                    style={{ background: 'var(--tott-dash-input-bg)', border: '1px solid var(--tott-card-border)', color: 'var(--foreground)' }}
+                  />
+                </label>
+              </div>
+
+              <label className="block">
+                <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--tott-muted)' }}>{t('plans.stripePriceId')}</span>
+                <input
+                  value={planForm.stripe_price_id}
+                  onChange={(e) => setPlanForm({ ...planForm, stripe_price_id: e.target.value.trim() })}
+                  placeholder="price_..."
+                  className="mt-1 w-full rounded-lg px-3 py-2 text-sm font-mono"
+                  style={{ background: 'var(--tott-dash-input-bg)', border: '1px solid var(--tott-card-border)', color: 'var(--foreground)' }}
+                />
+                <span className="text-xs" style={{ color: 'var(--tott-muted)' }}>{t('plans.stripePriceIdHint')}</span>
+              </label>
+
+              <label className="block">
+                <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--tott-muted)' }}>{t('plans.status')}</span>
+                <select
+                  value={planForm.status}
+                  onChange={(e) => setPlanForm({ ...planForm, status: e.target.value })}
+                  className="mt-1 w-full rounded-lg px-3 py-2 text-sm"
+                  style={{ background: 'var(--tott-dash-input-bg)', border: '1px solid var(--tott-card-border)', color: 'var(--foreground)' }}
+                >
+                  <option value="active">{t('plans.statusActive')}</option>
+                  <option value="archived">{t('plans.statusArchived')}</option>
+                </select>
+              </label>
+
+              <div>
+                <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--tott-muted)' }}>{t('plans.accessFeatures')}</span>
+                <div className="mt-1 flex gap-4">
+                  {ACCESS_FEATURES.map((f) => (
+                    <label key={f} className="flex items-center gap-1.5 text-sm" style={{ color: 'var(--foreground)' }}>
+                      <input
+                        type="checkbox"
+                        checked={planForm.access.has(f)}
+                        onChange={(e) => {
+                          const access = new Set(planForm.access);
+                          if (e.target.checked) access.add(f); else access.delete(f);
+                          setPlanForm({ ...planForm, access });
+                        }}
+                      />
+                      {t(`plans.access.${f}`)}
+                    </label>
+                  ))}
+                </div>
+                <span className="text-xs" style={{ color: 'var(--tott-muted)' }}>{t('plans.accessHint')}</span>
+              </div>
+
+              <div>
+                <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--tott-muted)' }}>{t('plans.displayFeatures')}</span>
+                <div className="mt-1 flex flex-wrap gap-1.5">
+                  {planForm.displayFeatures.map((f) => (
+                    <span
+                      key={f}
+                      className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md"
+                      style={{ background: 'var(--tott-dash-input-bg)', border: '1px solid var(--tott-card-border)', color: 'var(--foreground)' }}
+                    >
+                      {humanizeFeature(f)}
+                      <button
+                        onClick={() =>
+                          setPlanForm({ ...planForm, displayFeatures: planForm.displayFeatures.filter((x) => x !== f) })
+                        }
+                        style={{ color: '#ef4444' }}
+                        aria-label={t('plans.removeFeature')}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-2 flex gap-2">
+                  <input
+                    value={newFeature}
+                    onChange={(e) => setNewFeature(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key !== 'Enter') return;
+                      e.preventDefault();
+                      const key = newFeature.trim().toLowerCase().replace(/\s+/g, '_');
+                      if (key && !planForm.displayFeatures.includes(key)) {
+                        setPlanForm({ ...planForm, displayFeatures: [...planForm.displayFeatures, key] });
+                      }
+                      setNewFeature('');
+                    }}
+                    placeholder={t('plans.addFeaturePlaceholder')}
+                    className="flex-1 rounded-lg px-3 py-1.5 text-xs"
+                    style={{ background: 'var(--tott-dash-input-bg)', border: '1px solid var(--tott-card-border)', color: 'var(--foreground)' }}
+                  />
+                </div>
+                <span className="text-xs" style={{ color: 'var(--tott-muted)' }}>{t('plans.displayFeaturesHint')}</span>
+              </div>
+
+              {planError && <p className="text-xs" style={{ color: '#ef4444' }}>{planError}</p>}
+            </div>
+
+            <div className="flex gap-3 justify-end mt-5">
+              <button
+                onClick={() => { setEditPlan(null); setPlanForm(null); }}
+                className="text-sm px-4 py-2 rounded-lg"
+                style={{ border: '1px solid var(--tott-card-border)', color: 'var(--tott-muted)', background: 'transparent' }}
+              >
+                {t('cancel')}
+              </button>
+              <button
+                onClick={handleSavePlan}
+                disabled={planSaving || !planForm.display_name.trim() || !planForm.stripe_price_id.startsWith('price_')}
+                className="text-sm px-4 py-2 rounded-lg font-semibold disabled:opacity-40"
+                style={{ background: 'var(--tott-accent-gold)', color: 'var(--tott-on-accent)' }}
+              >
+                {planSaving ? t('plans.saving') : t('plans.save')}
               </button>
             </div>
           </div>

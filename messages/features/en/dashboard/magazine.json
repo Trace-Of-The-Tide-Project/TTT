@@ -307,7 +307,8 @@
             "add": "Add",
             "remove": "Remove",
             "moveUp": "Move up",
-            "moveDown": "Move down"
+            "moveDown": "Move down",
+            "createNew": "New article in this issue"
           }
         },
         "delete": {

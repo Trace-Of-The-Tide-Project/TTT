@@ -55,7 +55,7 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
     currency: issue.currency ?? "USD",
     isFree: Boolean(issue.is_free),
     isOwned: Boolean(issue.is_owned),
-    articles: articles.map((a) => ({ id: a.id, title: a.title })),
+    articles: articles.map((a) => ({ id: a.id, title: a.title, slug: a.slug ?? null })),
     contributors: contributors.map((c) => ({
       id: c.id,
       name:

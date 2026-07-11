@@ -69,7 +69,8 @@ export function TranslationOfPicker({
     setLoading(true);
     const handle = setTimeout(async () => {
       try {
-        const res = await getArticles({ search: q, limit: 8 });
+        // product=all: admin picker must find magazine articles too.
+        const res = await getArticles({ search: q, limit: 8, product: "all" });
         const list = (res.data as Result[]).filter((a) => a.id !== excludeId);
         setResults(list);
       } catch {

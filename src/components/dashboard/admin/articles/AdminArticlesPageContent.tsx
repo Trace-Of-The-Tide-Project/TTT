@@ -257,7 +257,8 @@ export function AdminArticlesPageContent() {
   const t = useTranslations("Dashboard.articles.list");
   const locale = useLocale();
 
-  const articlesQuery = useArticles(undefined, { silent: true });
+  // product=all: the admin library manages both main-site and magazine articles.
+  const articlesQuery = useArticles({ product: "all" }, { silent: true });
   const articleList: ArticleListItem[] = useMemo(() => {
     const fromQuery = articlesQuery.data?.data;
     if (Array.isArray(fromQuery)) return fromQuery;

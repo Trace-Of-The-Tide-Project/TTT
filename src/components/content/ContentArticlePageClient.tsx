@@ -115,7 +115,17 @@ function mapCollection(
   };
 }
 
-function ArticleByIdLoader({ id, slug }: { id?: string; slug?: string }) {
+function ArticleByIdLoader({
+  id,
+  slug,
+  expectedProduct = "main",
+  requiredIssueId,
+}: {
+  id?: string;
+  slug?: string;
+  expectedProduct?: "main" | "magazine";
+  requiredIssueId?: string;
+}) {
   const t = useTranslations("Content");
   const fallbackAuthor = t("fallbackAuthor");
   const fallbackArticle = t("fallbackArticle");
@@ -125,11 +135,17 @@ function ArticleByIdLoader({ id, slug }: { id?: string; slug?: string }) {
   const articleQuery = slug ? slugQuery : idQuery;
   const article: ArticleDetail | null = articleQuery.data ?? null;
   const key = slug ?? id ?? "";
+  // Product separation: an article outside this reader's product (or issue)
+  // renders as not-found so magazine content never reads on main-site routes.
+  const productMismatch =
+    !!article &&
+    ((article.product ?? "main") !== expectedProduct ||
+      (requiredIssueId !== undefined && article.issue_id !== requiredIssueId));
   const phase: "loading" | "ok" | "missing" | "error" = articleQuery.isPending
     ? "loading"
     : articleQuery.error
       ? "error"
-      : article
+      : article && !productMismatch
         ? "ok"
         : "missing";
 
@@ -169,7 +185,7 @@ function ArticleByIdLoader({ id, slug }: { id?: string; slug?: string }) {
   // Async fetches stay in an effect — these setStates resolve later
   // (after the await), so the lint rule doesn't apply.
   useEffect(() => {
-    if (!article) return;
+    if (!article || productMismatch) return;
     let cancelled = false;
     getRelatedArticles(article.id).then((items) => {
       if (!cancelled) setLiveRelated(mapRelated(items, { author: fallbackAuthor, article: fallbackArticle }));
@@ -182,7 +198,7 @@ function ArticleByIdLoader({ id, slug }: { id?: string; slug?: string }) {
     return () => {
       cancelled = true;
     };
-  }, [article, fallbackAuthor, fallbackArticle]);
+  }, [article, productMismatch, fallbackAuthor, fallbackArticle]);
 
   useEffect(() => {
     if (phase !== "ok" || !article) return;
@@ -282,10 +298,14 @@ function ContentArticlePageInner({
   demoMedia,
   demoArticle,
   slug,
+  expectedProduct,
+  requiredIssueId,
 }: {
   demoMedia: ContentPageLayoutProps["media"];
   demoArticle?: DemoArticle;
   slug?: string;
+  expectedProduct?: "main" | "magazine";
+  requiredIssueId?: string;
 }) {
   const searchParams = useSearchParams();
   const setArticleHeaderMeta = useOptionalArticleReadingHeader()?.setArticleHeaderMeta;
@@ -300,7 +320,14 @@ function ContentArticlePageInner({
     return <StaticArticleDemo media={demoMedia} article={demoArticle} />;
   }
 
-  return <ArticleByIdLoader id={id} slug={slug} />;
+  return (
+    <ArticleByIdLoader
+      id={id}
+      slug={slug}
+      expectedProduct={expectedProduct}
+      requiredIssueId={requiredIssueId}
+    />
+  );
 }
 
 /**
@@ -316,10 +343,16 @@ export function ContentArticlePageClient({
   demoMedia = { ...CONTENT_MEDIA_ARTICLE },
   demoArticle,
   slug,
+  expectedProduct,
+  requiredIssueId,
 }: {
   demoMedia?: ContentPageLayoutProps["media"];
   demoArticle?: DemoArticle;
   slug?: string;
+  /** Which product this reader serves; articles from the other product render as not-found. */
+  expectedProduct?: "main" | "magazine";
+  /** When set, the article must belong to this magazine issue. */
+  requiredIssueId?: string;
 } = {}) {
   return (
     <Suspense
@@ -332,7 +365,13 @@ export function ContentArticlePageClient({
         </div>
       }
     >
-      <ContentArticlePageInner demoMedia={demoMedia} demoArticle={demoArticle} slug={slug} />
+      <ContentArticlePageInner
+        demoMedia={demoMedia}
+        demoArticle={demoArticle}
+        slug={slug}
+        expectedProduct={expectedProduct}
+        requiredIssueId={requiredIssueId}
+      />
     </Suspense>
   );
 }
