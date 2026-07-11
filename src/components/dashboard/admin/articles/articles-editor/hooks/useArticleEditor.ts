@@ -41,6 +41,9 @@ export type ContentEditorLayoutProps = {
   initialIssueId?: string;
   /** Parent magazine — passed alongside initialIssueId. */
   initialMagazineId?: string;
+  /** Force the product on create (e.g. 'magazine' for a loose pool article
+   * with no issue yet). issue_id, when present, forces magazine regardless. */
+  initialProduct?: "main" | "magazine";
   returnTo?: string;
 };
 
@@ -65,6 +68,7 @@ export function useArticleEditor({
   initialLanguage,
   initialIssueId,
   initialMagazineId,
+  initialProduct,
   returnTo,
 }: ContentEditorLayoutProps) {
   const t = useTranslations("Dashboard.articles.editor");
@@ -473,6 +477,8 @@ export function useArticleEditor({
       blocks: apiBlocks,
       translation_of: translationOf || undefined,
       // Issue-scoped create: backend forces product=magazine when issue_id set.
+      // A loose magazine-pool article passes product='magazine' with no issue.
+      product: initialProduct || undefined,
       issue_id: initialIssueId || undefined,
       magazine_id: initialMagazineId || undefined,
     };
@@ -480,7 +486,7 @@ export function useArticleEditor({
     config.contentType, category, language, visibility,
     accessLevel, previewBlockCount, price, currency,
     collectionId, tagIds, coverImage, coverFile, translationOf,
-    initialIssueId, initialMagazineId,
+    initialProduct, initialIssueId, initialMagazineId,
   ]);
 
   /** After the primary saves: persist each OTHER dirty tab. An existing

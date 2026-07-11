@@ -15,8 +15,10 @@ export function useAssignArticleToIssue(issueId: string) {
 export function useUnassignArticleFromIssue(issueId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (articleId: string) =>
-      updateArticle(articleId, { issue_id: null, magazine_id: null }),
+    // Detach from the issue but keep it in the magazine pool: clear issue_id
+    // only. Backend keeps product='magazine' (once magazine, stays magazine),
+    // magazine_id is retained so it stays reachable and reassignable.
+    mutationFn: (articleId: string) => updateArticle(articleId, { issue_id: null }),
     onSuccess: () => qc.invalidateQueries({ queryKey: issueArticlesKeys.list(issueId) }),
   });
 }

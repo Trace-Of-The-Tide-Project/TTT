@@ -49,6 +49,9 @@ export type CreateArticlePayload = {
   open_call_id?: string;
   /** When set, links this article as a translation of the given article. */
   translation_of?: string;
+  /** Product this article belongs to. Magazine-pool articles set 'magazine'
+   * with no issue_id; attaching an issue also forces magazine server-side. */
+  product?: ArticleProduct;
   /** Magazine issue this article is created into (forces product=magazine). */
   issue_id?: string;
   /** Parent magazine — set alongside issue_id. */

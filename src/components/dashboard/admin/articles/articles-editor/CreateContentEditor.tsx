@@ -24,6 +24,7 @@ function Inner({ config }: { config: ContentFormConfig }) {
     initialLanguage: params.get("language") ?? undefined,
     initialIssueId: params.get("issue_id") ?? undefined,
     initialMagazineId: params.get("magazine_id") ?? undefined,
+    initialProduct: params.get("product") === "magazine" ? "magazine" : undefined,
     returnTo: params.get("return") ?? undefined,
   };
   return <ContentEditorLayout {...props} />;
