@@ -29,7 +29,7 @@ import type { EmailTemplateListItem } from "@/lib/dashboard/email-templates-cons
 import { RichTextEditor, EditorToolbar, EditorRegistryProvider } from "@/components/ui/rich-text";
 import { api } from "@/services/api";
 
-const ACCENT = "#E8DDC0";
+const ACCENT = "var(--tott-stat-icon)";
 
 type CategoryModalState =
   | { type: "closed" }

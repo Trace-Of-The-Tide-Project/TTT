@@ -217,7 +217,7 @@ function HowSupportWorksSection({ t }: { t: ReturnType<typeof useTranslations> }
         className="sticky z-20 flex w-full flex-col items-center"
         style={{
           gap: 8,
-          top: 72,
+          top: 96,
           paddingTop: 12,
           paddingBottom: 12,
           backgroundColor: "var(--tott-home-surface)",

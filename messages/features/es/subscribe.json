@@ -1,15 +1,15 @@
 {
   "subscribe": {
     "hero": {
-      "eyebrow": "Support independent journalism",
-      "title": "Stories worth keeping alive.",
-      "subtitle": "Your membership funds deep reporting, cultural memory, and independent voices — from Palestine to Bali and beyond."
+      "eyebrow": "Apoya el periodismo independiente",
+      "title": "Historias que merece la pena mantener vivas.",
+      "subtitle": "Tu membresía financia reportajes en profundidad, memoria cultural y voces independientes, desde Palestine hasta Bali y más allá."
     },
     "plan": {
-      "perMonth": "per month",
-      "mostPopular": "Most Popular",
-      "subscribe": "Subscribe",
-      "redirecting": "Redirecting…",
+      "perMonth": "al mes",
+      "mostPopular": "Más popular",
+      "subscribe": "Suscribirse",
+      "redirecting": "Redirigiendo…",
       "desc": {
         "reader": "La tarifa más baja posible para el panorama mediático fragmentado de nuestro tiempo. Abierta para los primeros 1000 lectores fundadores.",
         "subscriber": "Nuestra tarifa de suscripción recomendada. Acceso a todo lo que publicamos, además de numerosos descuentos en librerías y editoriales independientes de todo el mundo.",
@@ -37,20 +37,20 @@
       "masthead_listing": "Agradecimiento público y mención en nuestra cabecera editorial"
     },
     "trust": {
-      "stripe": "Secure checkout via Stripe",
-      "cancel": "Cancel anytime",
-      "billing": "Billed monthly"
+      "stripe": "Pago seguro a través de Stripe",
+      "cancel": "Cancela cuando quieras",
+      "billing": "Facturación mensual"
     },
     "faq": {
-      "title": "Common questions",
-      "q1": "Can I cancel anytime?",
-      "a1": "Yes — cancel from your account settings at any time, no questions asked.",
-      "q2": "What payment methods are accepted?",
-      "a2": "All major credit and debit cards via Stripe. Payments are encrypted and secure.",
-      "q3": "Can I switch between plans?",
-      "a3": "Yes — upgrade or downgrade at any time from your subscription settings.",
-      "q4": "Do you offer gift subscriptions?",
-      "a4": "Yes — use the \"Gift a trace\" option in the navigation to give a membership."
+      "title": "Preguntas frecuentes",
+      "q1": "¿Puedo cancelar cuando quiera?",
+      "a1": "Sí: cancela desde la configuración de tu cuenta en cualquier momento, sin preguntas.",
+      "q2": "¿Qué métodos de pago se aceptan?",
+      "a2": "Todas las principales tarjetas de crédito y débito a través de Stripe. Los pagos están cifrados y son seguros.",
+      "q3": "¿Puedo cambiar de plan?",
+      "a3": "Sí: mejora o reduce tu plan en cualquier momento desde la configuración de tu suscripción.",
+      "q4": "¿Ofrecen suscripciones de regalo?",
+      "a4": "Sí: usa la opción «Regala una huella» en la navegación para regalar una membresía."
     },
     "empty": "No hay planes de suscripción disponibles en este momento.",
     "error": {

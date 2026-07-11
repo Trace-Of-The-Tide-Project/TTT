@@ -16,8 +16,8 @@ type SaveState = "idle" | "saving" | "saved" | "error";
 
 const STATUS_OPTIONS: { value: AvailabilityStatus; dotColor: string }[] = [
   { value: "available", dotColor: "var(--tott-dash-positive)" },
-  { value: "busy", dotColor: "#f59e0b" },
-  { value: "away", dotColor: "#9ca3af" },
+  { value: "busy", dotColor: "var(--tott-status-amber)" },
+  { value: "away", dotColor: "var(--tott-muted)" },
 ];
 
 const textareaClass =

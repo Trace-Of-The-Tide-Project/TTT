@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import {
   motion,
@@ -32,6 +33,13 @@ import {
   type WriterProfile,
   type WriterProfileFull,
 } from "@/services/writers.service";
+
+/** Editorial type system. Plex Serif carries the display moments (masthead
+ * title + pull-quote); Plex Sans handles everything utilitarian. These point at
+ * the REAL next/font variables set on <body> — the codebase's older
+ * `var(--font-sans)` was never defined, so serif went unused until now. */
+const SERIF = "var(--font-plex-serif), 'IBM Plex Serif', Georgia, serif";
+const SANS = "var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif";
 
 /** Strip stray straight/curly quotes some source data ships with — we add our
  * own curly quotes around the rendered pull-quote. */
@@ -160,13 +168,12 @@ export function WritersShowContent({
       .map(([value, count]) => ({ value, count }))
       .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value));
   }, [writers]);
-  const maxThemeCount = allThemes[0]?.count ?? 1;
 
   const items = useMemo(() => {
     const filtered = activeTheme
       ? writers.filter((w) => writerThemes(w).includes(activeTheme))
       : writers;
-    return filtered.map(toHexItem);
+    return filtered.map((w) => ({ ...toHexItem(w), themes: writerThemes(w) }));
   }, [writers, activeTheme]);
 
   const hasFilters = Boolean(search || activeTheme);
@@ -210,58 +217,59 @@ export function WritersShowContent({
             initial="hidden"
             animate="visible"
           >
-            <motion.span
+            <motion.div
               variants={staggerChild}
               transition={springs.gentle}
-              className="inline-block text-xs font-semibold uppercase tracking-[0.2em]"
-              style={{ color: theme.accentGold }}
+              className="flex items-center gap-3"
             >
-              {t("show.heroKicker")}
-            </motion.span>
+              <span
+                aria-hidden
+                className="h-px w-8"
+                style={{ backgroundColor: theme.accentGold }}
+              />
+              <span
+                className="text-[11px] font-semibold uppercase tracking-[0.28em]"
+                style={{ color: theme.accentGold, fontFamily: SANS }}
+              >
+                {t("show.heroKicker")}
+              </span>
+            </motion.div>
 
-            <div className="mt-4 grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-              <div className="max-w-xl">
-                <motion.h1
+            <div className="mt-6 max-w-3xl">
+              <motion.h1
+                variants={staggerChild}
+                transition={springs.gentle}
+                className="text-[2.75rem] font-medium leading-[1.02] tracking-[-0.02em] sm:text-6xl lg:text-7xl"
+                style={{ fontFamily: SERIF }}
+              >
+                <FirstWordGold raw={t("show.title")} />
+              </motion.h1>
+              <motion.p
+                variants={staggerChild}
+                transition={springs.gentle}
+                className="mt-6 max-w-xl text-base leading-relaxed sm:text-lg"
+                style={{ color: "var(--tott-home-text-muted)", fontFamily: SANS }}
+              >
+                {t("show.subtitle")}
+              </motion.p>
+              {writers.length > 0 ? (
+                <motion.div
                   variants={staggerChild}
                   transition={springs.gentle}
-                  className="text-4xl font-medium leading-[1.1] tracking-tight sm:text-5xl"
-                  style={{
-                    fontFamily:
-                      "'IBM Plex Sans', var(--font-sans, sans-serif)",
-                  }}
+                  className="mt-8 flex items-center gap-3"
                 >
-                  <FirstWordGold raw={t("show.title")} />
-                </motion.h1>
-                <motion.p
-                  variants={staggerChild}
-                  transition={springs.gentle}
-                  className="mt-5 text-base leading-relaxed"
-                  style={{ color: "var(--tott-home-text-muted)" }}
-                >
-                  {t("show.subtitle")}
-                </motion.p>
-                {writers.length > 0 ? (
-                  <motion.p
-                    variants={staggerChild}
-                    transition={springs.gentle}
-                    className="mt-6 text-sm"
-                    style={{ color: "var(--tott-home-text-heading)" }}
+                  <span
+                    aria-hidden
+                    className="h-px w-6"
+                    style={{ backgroundColor: "var(--tott-card-border)" }}
+                  />
+                  <span
+                    className="text-xs uppercase tracking-[0.18em]"
+                    style={{ color: "var(--tott-home-text-heading)", fontFamily: SANS }}
                   >
                     {t("show.voiceCount", { count: writers.length })}
-                  </motion.p>
-                ) : null}
-              </div>
-
-              {spotlightWriter ? (
-                <SpotlightHero
-                  writer={spotlightWriter}
-                  profile={spotlightProfile}
-                  label={t("show.spotlightLabel")}
-                  followersLabel={t("show.followersLabel")}
-                  worksLabel={t("show.worksLabel")}
-                  basedInLabel={t("show.basedIn")}
-                  viewProfileLabel={t("show.viewProfile")}
-                />
+                  </span>
+                </motion.div>
               ) : null}
             </div>
           </motion.div>
@@ -284,8 +292,8 @@ export function WritersShowContent({
                   <ChamferedPanel size={12}>
                     <div className="flex flex-col items-start gap-1 px-5 py-4">
                       <span
-                        className="text-3xl font-semibold tabular-nums sm:text-4xl"
-                        style={{ color: theme.accentGold }}
+                        className="text-4xl font-medium tabular-nums sm:text-5xl"
+                        style={{ color: theme.accentGold, fontFamily: SERIF }}
                       >
                         <CountUp value={s.value} />
                       </span>
@@ -303,6 +311,19 @@ export function WritersShowContent({
           ) : null}
         </section>
 
+        {/* ── Featured Voice — full-width spotlight band ──────────── */}
+        {spotlightWriter ? (
+          <FeaturedVoiceBand
+            writer={spotlightWriter}
+            profile={spotlightProfile}
+            label={t("show.spotlightLabel")}
+            followersLabel={t("show.followersLabel")}
+            worksLabel={t("show.worksLabel")}
+            basedInLabel={t("show.basedIn")}
+            viewProfileLabel={t("show.viewProfile")}
+          />
+        ) : null}
+
         {/* ── 2. Featured silk-hex carousel ───────────────────────── */}
         {showFeaturedRail ? (
           <RevealOnScroll className="mt-20">
@@ -317,34 +338,28 @@ export function WritersShowContent({
 
         {/* ── 3 + 4. Filter bar + all-voices grid ─────────────────── */}
         <section className="mx-auto mt-20 max-w-6xl px-6 pb-20 sm:px-10">
-          {/* Theme galaxy — weighted, clickable data-viz of the roster's themes */}
-          {allThemes.length > 0 ? (
-            <div className="mb-16">
-              <h2
-                className="text-2xl font-medium sm:text-3xl"
-                style={{
-                  fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)",
-                }}
-              >
-                <FirstWordGold raw={t("show.themeGalaxyHeading")} />
-              </h2>
-              <StaggerGalaxy
-                themes={allThemes}
-                maxCount={maxThemeCount}
-                activeTheme={activeTheme}
-                onToggle={(v) =>
-                  setActiveTheme((cur) => (cur === v ? null : v))
-                }
-              />
-            </div>
-          ) : null}
-
-          <h2
-            className="text-2xl font-medium sm:text-3xl"
-            style={{ fontFamily: "'IBM Plex Sans', var(--font-sans, sans-serif)" }}
+          <div
+            className="flex items-center gap-3 border-b pb-4"
+            style={{ borderColor: "var(--tott-card-border)" }}
           >
-            <FirstWordGold raw={t("show.allHeading")} />
-          </h2>
+            <span
+              aria-hidden
+              className="inline-block shrink-0"
+              style={{
+                width: 11,
+                height: 12,
+                backgroundColor: theme.accentGold,
+                clipPath:
+                  "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)",
+              }}
+            />
+            <h2
+              className="text-2xl font-medium tracking-tight sm:text-3xl"
+              style={{ fontFamily: SERIF }}
+            >
+              <FirstWordGold raw={t("show.allHeading")} />
+            </h2>
+          </div>
 
           {/* Filter toolbar */}
           <div
@@ -356,10 +371,12 @@ export function WritersShowContent({
           >
             <div className="flex flex-col gap-3">
               <label
-                className="relative flex w-full items-center gap-2 px-4 py-2.5 sm:w-80"
-                style={{ backgroundColor: "var(--tott-well-bg)" }}
+                className="flex w-full items-center gap-2.5 rounded-lg border px-4 py-2.5 sm:w-96"
+                style={{
+                  backgroundColor: "var(--tott-well-bg)",
+                  borderColor: "var(--tott-card-border)",
+                }}
               >
-                <ChamferedFrame size={10} />
                 <span style={{ color: "var(--tott-home-text-muted)" }}>
                   <SearchIcon />
                 </span>
@@ -369,7 +386,7 @@ export function WritersShowContent({
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder={t("show.searchPlaceholder")}
                   aria-label={t("show.searchPlaceholder")}
-                  className="w-full bg-transparent text-sm outline-none"
+                  className="w-full border-0 bg-transparent p-0 text-sm outline-none focus:ring-0"
                   style={{ color: "var(--tott-home-text-strong)" }}
                 />
               </label>
@@ -401,8 +418,8 @@ export function WritersShowContent({
           {/* Grid / states */}
           <div className="mt-8">
             {isFetching && items.length === 0 ? (
-              <div className="grid justify-items-center gap-6 [--carousel-card-w:240px] [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]">
-                {Array.from({ length: 6 }).map((_, i) => (
+              <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 [--carousel-card-w:100%]">
+                {Array.from({ length: 8 }).map((_, i) => (
                   <SilkSkeleton key={i} />
                 ))}
               </div>
@@ -435,7 +452,7 @@ export function WritersShowContent({
               </div>
             ) : (
               <motion.ul
-                className="grid justify-items-center gap-6 [--carousel-card-w:240px] [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]"
+                className="grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 lg:grid-cols-4"
                 variants={staggerParent}
                 initial="hidden"
                 whileInView="visible"
@@ -448,15 +465,7 @@ export function WritersShowContent({
                     transition={springs.gentle}
                     className="w-full"
                   >
-                    <SpringCard className="w-full">
-                      <FeaturedHexCard
-                        title={it.title}
-                        author={it.author}
-                        coverImage={it.coverImage}
-                        href={it.href}
-                        strongOverlay
-                      />
-                    </SpringCard>
+                    <WriterGridCard item={it} />
                   </motion.li>
                 ))}
               </motion.ul>
@@ -469,68 +478,12 @@ export function WritersShowContent({
 }
 
 /**
- * Weighted "theme galaxy" — each theme rendered as a pill whose text size and
- * emphasis scale with how many writers carry it. Clicking a pill toggles it as
- * the active grid filter (shares state with the toolbar pills below).
+ * Featured Voice — a full-width editorial band spotlighting one writer: a large
+ * silk-hex portrait beside their pull-quote set in serif. Prefers the SSR'd
+ * `profile-full` (quote, based_in, follower/work counts); degrades to the thin
+ * featured-list record when that call returned null.
  */
-function StaggerGalaxy({
-  themes,
-  maxCount,
-  activeTheme,
-  onToggle,
-}: {
-  themes: { value: string; count: number }[];
-  maxCount: number;
-  activeTheme: string | null;
-  onToggle: (value: string) => void;
-}) {
-  return (
-    <motion.div
-      className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-2"
-      variants={staggerParent}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
-    >
-      {themes.map((th) => {
-        const active = activeTheme === th.value;
-        // Map frequency → font size (13px…30px) so heavier themes read larger.
-        const weight = maxCount > 1 ? th.count / maxCount : 1;
-        const fontSize = 13 + Math.round(weight * 17);
-        return (
-          <motion.button
-            key={th.value}
-            type="button"
-            variants={staggerChild}
-            transition={springs.gentle}
-            onClick={() => onToggle(th.value)}
-            aria-pressed={active}
-            whileHover={{ y: -2 }}
-            className="inline-flex items-center leading-tight transition-colors"
-            style={{
-              fontSize,
-              fontWeight: active ? 700 : 500,
-              color: active
-                ? theme.accentGold
-                : "var(--tott-home-text-heading)",
-              opacity: active ? 1 : 0.55 + weight * 0.45,
-            }}
-          >
-            {titleCaseTheme(th.value)}
-          </motion.button>
-        );
-      })}
-    </motion.div>
-  );
-}
-
-/**
- * Editorial hero portrait — one featured writer rendered rich beside a large
- * silk-hex portrait. Prefers the SSR'd `profile-full` (quote, based_in,
- * follower/work counts); degrades to the thin featured-list record when that
- * call returned null.
- */
-function SpotlightHero({
+function FeaturedVoiceBand({
   writer,
   profile,
   label,
@@ -565,88 +518,128 @@ function SpotlightHero({
   const href = `/writers/${encodeURIComponent(writer.id)}`;
 
   return (
-    <div className="group grid grid-cols-[auto_1fr] items-center gap-5">
-      {/* Large silk-hex portrait — the card carries its own link. */}
-      <SpringCard className="shrink-0 [--carousel-card-w:200px] sm:[--carousel-card-w:220px]">
-        <FeaturedHexCard
-          title={name}
-          author={headline ?? "TTT Writer"}
-          coverImage={writerAvatar(writer)}
-          chipLabel={label}
-          href={href}
-          strongOverlay
-        />
-      </SpringCard>
-
-      <div className="min-w-0">
-        <span
-          className="text-[10px] font-semibold uppercase tracking-[0.18em]"
-          style={{ color: theme.accentGold }}
+    <RevealOnScroll className="mt-24">
+      <section className="mx-auto max-w-6xl px-6 sm:px-10">
+        <div
+          className="flex items-center gap-3 border-b pb-4"
+          style={{ borderColor: "var(--tott-card-border)" }}
         >
-          {label}
-        </span>
-        <p
-          className="mt-1 line-clamp-2 text-xl font-medium"
-          title={name}
-          style={{ color: "var(--tott-home-text-strong)", overflowWrap: "anywhere" }}
-        >
-          {name}
-        </p>
-        {headline ? (
-          <p
-            className="mt-1 line-clamp-2 text-sm"
-            style={{ color: "var(--tott-home-text-muted)" }}
-          >
-            {headline}
-          </p>
-        ) : null}
-
-        {quote ? (
-          <p
-            className="mt-4 line-clamp-3 border-s-2 ps-3 text-sm italic"
-            style={{
-              borderColor: theme.accentGold,
-              color: "var(--tott-home-text-heading)",
-            }}
-          >
-            “{quote}”
-          </p>
-        ) : null}
-
-        {followers !== null || works !== null ? (
-          <div className="mt-4 flex gap-6">
-            {followers !== null ? (
-              <Stat value={followers} label={followersLabel} />
-            ) : null}
-            {works !== null ? <Stat value={works} label={worksLabel} /> : null}
-          </div>
-        ) : null}
-
-        {basedIn ? (
-          <p
-            className="mt-3 text-xs"
-            style={{ color: "var(--tott-home-text-muted)" }}
-          >
-            {basedInLabel}{" "}
-            <span style={{ color: "var(--tott-home-text-heading)" }}>{basedIn}</span>
-          </p>
-        ) : null}
-
-        <Link
-          href={href}
-          className="mt-4 inline-flex items-center gap-2 text-sm font-semibold"
-          style={{ color: theme.accentGold }}
-        >
-          {viewProfileLabel}
           <span
             aria-hidden
-            className="transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
+            className="inline-block shrink-0"
+            style={{
+              width: 11,
+              height: 12,
+              backgroundColor: theme.accentGold,
+              clipPath:
+                "polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%)",
+            }}
+          />
+          <h2
+            className="text-xs font-semibold uppercase tracking-[0.24em]"
+            style={{ color: theme.accentGold, fontFamily: SANS }}
           >
-            →
-          </span>
-        </Link>
-      </div>
-    </div>
+            {label}
+          </h2>
+        </div>
+
+        <div className="group mt-10 grid items-start gap-8 sm:gap-14 lg:grid-cols-[minmax(0,300px)_1fr]">
+          {/* Large silk-hex portrait — the card carries its own link + name. */}
+          <SpringCard className="mx-auto w-full max-w-[300px] [--carousel-card-w:300px]">
+            <FeaturedHexCard
+              title={name}
+              author={headline ?? "TTT Writer"}
+              coverImage={writerAvatar(writer)}
+              href={href}
+              strongOverlay
+            />
+          </SpringCard>
+
+          <div className="min-w-0">
+            {quote ? (
+              <blockquote>
+                <p
+                  className="text-2xl leading-snug sm:text-[2rem] sm:leading-[1.28]"
+                  style={{ fontFamily: SERIF, color: "var(--tott-home-text-strong)" }}
+                >
+                  <span aria-hidden style={{ color: theme.accentGold }}>
+                    “
+                  </span>
+                  {quote}
+                  <span aria-hidden style={{ color: theme.accentGold }}>
+                    ”
+                  </span>
+                </p>
+                <footer
+                  className="mt-5 text-sm font-semibold uppercase tracking-[0.14em]"
+                  style={{ color: "var(--tott-home-text-heading)", fontFamily: SANS }}
+                >
+                  <span aria-hidden style={{ color: theme.accentGold }}>
+                    —{" "}
+                  </span>
+                  {name}
+                </footer>
+              </blockquote>
+            ) : (
+              <>
+                <p
+                  className="text-2xl font-medium leading-tight sm:text-3xl"
+                  title={name}
+                  style={{
+                    fontFamily: SERIF,
+                    color: "var(--tott-home-text-strong)",
+                    overflowWrap: "anywhere",
+                  }}
+                >
+                  {name}
+                </p>
+                {headline ? (
+                  <p
+                    className="mt-2 text-base"
+                    style={{ color: "var(--tott-home-text-muted)", fontFamily: SANS }}
+                  >
+                    {headline}
+                  </p>
+                ) : null}
+              </>
+            )}
+
+            {followers !== null || works !== null ? (
+              <div className="mt-6 flex gap-10">
+                {followers !== null ? (
+                  <Stat value={followers} label={followersLabel} />
+                ) : null}
+                {works !== null ? <Stat value={works} label={worksLabel} /> : null}
+              </div>
+            ) : null}
+
+            {basedIn ? (
+              <p
+                className="mt-5 text-xs uppercase tracking-[0.14em]"
+                style={{ color: "var(--tott-home-text-muted)", fontFamily: SANS }}
+              >
+                {basedInLabel}{" "}
+                <span style={{ color: "var(--tott-home-text-heading)" }}>{basedIn}</span>
+              </p>
+            ) : null}
+
+            <Link
+              href={href}
+              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold"
+              style={{ color: theme.accentGold, fontFamily: SANS }}
+            >
+              {viewProfileLabel}
+              <span
+                aria-hidden
+                className="transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
+              >
+                →
+              </span>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </RevealOnScroll>
   );
 }
 
@@ -654,8 +647,8 @@ function Stat({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col gap-0.5">
       <span
-        className="text-lg font-semibold tabular-nums"
-        style={{ color: "var(--tott-home-text-strong)" }}
+        className="text-xl font-medium tabular-nums"
+        style={{ color: "var(--tott-home-text-strong)", fontFamily: SERIF }}
       >
         <CountUp value={value} />
       </span>
@@ -699,18 +692,128 @@ function ThemePill({
   );
 }
 
-/** Loading placeholder matching the silk-hex card silhouette. */
+/** Chamfer used by the contributor cards + their skeleton. */
+const CARD_CHAMFER =
+  "polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px)";
+
+type WriterCardItem = FeaturedHexItem & { themes: string[] };
+
+/**
+ * Editorial contributor card for the "All voices" index — a chamfered portrait
+ * with the writer's name (serif), role, and up to two themes. Rectangular cards
+ * tessellate cleanly in the grid, where the silk-hex reads sparse; the silk-hex
+ * stays the signature in the hero spotlight and the featured rail.
+ */
+function WriterGridCard({ item }: { item: WriterCardItem }) {
+  const [imgOk, setImgOk] = useState(true);
+  const showPhoto = Boolean(item.coverImage) && imgOk;
+  const initial = (item.title || "W").trim().slice(0, 1).toUpperCase() || "W";
+
+  return (
+    <Link href={item.href ?? "#"} className="group block focus-visible:outline-none">
+      <div
+        className="relative w-full overflow-hidden"
+        style={{
+          aspectRatio: "4 / 5",
+          clipPath: CARD_CHAMFER,
+          backgroundColor: "var(--tott-well-bg)",
+        }}
+      >
+        {showPhoto ? (
+          <Image
+            src={item.coverImage as string}
+            alt={item.title}
+            fill
+            unoptimized
+            sizes="(min-width: 1024px) 280px, (min-width: 640px) 33vw, 45vw"
+            className="object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.06]"
+            onError={() => setImgOk(false)}
+          />
+        ) : (
+          <div
+            className="flex h-full w-full items-center justify-center"
+            style={{
+              background:
+                "color-mix(in srgb, var(--tott-dash-gold-text) 20%, transparent)",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: SERIF,
+                fontSize: 46,
+                color: "var(--tott-home-text-strong)",
+                opacity: 0.8,
+              }}
+            >
+              {initial}
+            </span>
+          </div>
+        )}
+
+        {/* Gold hairline traces the chamfer on hover. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            clipPath: CARD_CHAMFER,
+            boxShadow: "inset 0 0 0 1.5px var(--tott-accent-gold)",
+          }}
+        />
+      </div>
+
+      <div className="mt-3.5">
+        <p
+          className="text-lg font-medium leading-snug text-[var(--tott-home-text-strong)] transition-colors group-hover:text-[var(--tott-accent-gold)]"
+          style={{ fontFamily: SERIF }}
+        >
+          {item.title}
+        </p>
+        {item.author ? (
+          <p
+            className="mt-0.5 line-clamp-1 text-sm"
+            style={{ color: "var(--tott-home-text-muted)", fontFamily: SANS }}
+          >
+            {item.author}
+          </p>
+        ) : null}
+        {item.themes.length > 0 ? (
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {item.themes.slice(0, 2).map((th) => (
+              <span
+                key={th}
+                className="rounded-full border px-2.5 py-0.5 text-[11px] leading-tight"
+                style={{
+                  borderColor: "var(--tott-card-border)",
+                  color: "var(--tott-home-text-heading)",
+                  fontFamily: SANS,
+                }}
+              >
+                {titleCaseTheme(th)}
+              </span>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </Link>
+  );
+}
+
+/** Loading placeholder matching the chamfered contributor card. */
 function SilkSkeleton() {
   return (
-    <div
-      className="w-full animate-pulse"
-      style={{
-        maxWidth: "var(--carousel-card-w, 240px)",
-        aspectRatio: "276 / 294",
-        backgroundColor: "var(--tott-well-bg)",
-        clipPath:
-          "polygon(50% 5%, 89.6% 30%, 89.6% 70%, 50% 95%, 10.4% 70%, 10.4% 30%)",
-      }}
-    />
+    <div className="w-full">
+      <div
+        className="animate-pulse"
+        style={{
+          aspectRatio: "4 / 5",
+          backgroundColor: "var(--tott-well-bg)",
+          clipPath: CARD_CHAMFER,
+        }}
+      />
+      <div
+        className="mt-3.5 h-4 w-2/3 animate-pulse rounded"
+        style={{ backgroundColor: "var(--tott-well-bg)" }}
+      />
+    </div>
   );
 }

@@ -6,7 +6,7 @@ import { XIcon } from "@/components/ui/icons";
 import { routing } from "@/i18n/routing";
 import { LocaleNameFields } from "./LocaleNameFields";
 
-const ACCENT = "#E8DDC0";
+const ACCENT = "var(--tott-stat-icon)";
 
 /** name_i18n = canonical default-locale name + any non-empty other-language names. */
 function buildNameI18n(
