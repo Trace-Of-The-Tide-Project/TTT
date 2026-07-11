@@ -467,6 +467,22 @@
         "end": "End",
         "justify": "Justify"
       }
+    },
+    "magazineArticles": {
+      "title": "Magazine Articles",
+      "subtitle": "All magazine content. Create articles here and assign them to an issue, or author them from inside an issue.",
+      "newArticle": "New magazine article",
+      "loading": "Loading articles…",
+      "loadError": "Could not load magazine articles.",
+      "empty": "No magazine articles yet. Create one to get started.",
+      "unassigned": "Unassigned",
+      "issueUnknown": "Unknown issue",
+      "edit": "Edit",
+      "columns": {
+        "title": "Title",
+        "status": "Status",
+        "issue": "Issue"
+      }
     }
   }
 }

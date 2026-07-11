@@ -467,6 +467,22 @@
         "end": "Fin",
         "justify": "Justifié"
       }
+    },
+    "magazineArticles": {
+      "title": "Articles du magazine",
+      "subtitle": "Tout le contenu du magazine. Créez des articles ici et affectez-les à un numéro, ou rédigez-les depuis un numéro.",
+      "newArticle": "Nouvel article de magazine",
+      "loading": "Chargement des articles…",
+      "loadError": "Impossible de charger les articles du magazine.",
+      "empty": "Aucun article de magazine pour l’instant. Créez-en un pour commencer.",
+      "unassigned": "Non affecté",
+      "issueUnknown": "Numéro inconnu",
+      "edit": "Modifier",
+      "columns": {
+        "title": "Titre",
+        "status": "Statut",
+        "issue": "Numéro"
+      }
     }
   }
 }

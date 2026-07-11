@@ -29,13 +29,17 @@ export function IssueArticlesPanel({
   const reorder = useReorderIssueArticles(issueId);
 
   const [search, setSearch] = useState("");
+  // Attach only from the magazine pool (product=magazine), and only articles
+  // not already in an issue — a magazine article lives in one issue at a time.
   const searchQuery = useArticles(
-    search.trim() ? { search: search.trim(), limit: 8 } : undefined,
+    search.trim() ? { search: search.trim(), limit: 8, product: "magazine" } : undefined,
     { silent: true },
   );
 
   const assignedIds = useMemo(() => new Set(assigned.map((a) => a.id)), [assigned]);
-  const searchResults = (searchQuery.data?.data ?? []).filter((a) => !assignedIds.has(a.id));
+  const searchResults = (searchQuery.data?.data ?? []).filter(
+    (a) => !assignedIds.has(a.id) && !a.issue_id,
+  );
 
   const [localOrder, setLocalOrder] = useState<string[] | null>(null);
   const orderedIds = localOrder ?? assigned.map((a) => a.id);

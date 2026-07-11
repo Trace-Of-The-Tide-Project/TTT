@@ -158,6 +158,12 @@ export const adminConfig: DashboardConfig = {
             },
             {
               kind: "item",
+              labelKey: "sidebar.magazineArticles",
+              href: "/admin/magazine/articles",
+              icon: FileTextIcon,
+            },
+            {
+              kind: "item",
               labelKey: "sidebar.residency",
               href: "/admin/residency",
               icon: HomeIcon,
