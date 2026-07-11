@@ -307,7 +307,8 @@
             "add": "Añadir",
             "remove": "Eliminar",
             "moveUp": "Subir",
-            "moveDown": "Bajar"
+            "moveDown": "Bajar",
+            "createNew": "Nuevo artículo en este número"
           }
         },
         "delete": {

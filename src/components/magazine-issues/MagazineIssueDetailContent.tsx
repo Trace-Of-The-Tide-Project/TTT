@@ -9,7 +9,7 @@ import { IssuePurchaseActions } from "./IssuePurchaseActions";
 import { nameInitials } from "@/components/dashboard/admin/writers/initials";
 import { AvailableLanguagesBadge } from "@/components/content/AvailableLanguagesBadge";
 
-export type IssueIndexArticle = { id: string; title: string };
+export type IssueIndexArticle = { id: string; title: string; slug?: string | null };
 export type IssueContributorEntry = {
   id: string;
   name: string;
@@ -172,7 +172,11 @@ export function MagazineIssueDetailContent({
               {issue.articles.map((a) => (
                 <li key={a.id}>
                   <Link
-                    href={`/content/article?id=${encodeURIComponent(a.id)}`}
+                    href={
+                      a.slug && issue.slug
+                        ? `/magazine-issues/${encodeURIComponent(issue.slug)}/${encodeURIComponent(a.slug)}`
+                        : `/content/article?id=${encodeURIComponent(a.id)}`
+                    }
                     className="inline-flex items-center gap-2 text-base transition-opacity hover:opacity-90"
                     style={{ color: ACCENT }}
                   >

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useArticles } from "@/hooks/queries/articles";
 import { useIssueArticles } from "@/hooks/queries/issue-articles";
 import {
@@ -49,9 +50,21 @@ export function IssueArticlesPanel({
     reorder.mutate(next, { onSettled: () => setLocalOrder(null) });
   }
 
+  const createHref = `/admin/articles/create/article?issue_id=${encodeURIComponent(issueId)}${
+    magazineId ? `&magazine_id=${encodeURIComponent(magazineId)}` : ""
+  }&return=${encodeURIComponent("/admin/magazine-issues")}`;
+
   return (
     <div className="space-y-3 rounded-lg border border-[var(--tott-card-border)] p-3">
-      <p className="text-xs font-medium text-[var(--tott-dash-gold-label)]">{t("label")}</p>
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-medium text-[var(--tott-dash-gold-label)]">{t("label")}</p>
+        <Link
+          href={createHref}
+          className="shrink-0 rounded-md border border-[var(--tott-card-border)] px-2 py-1 text-xs text-[var(--tott-gold)] hover:bg-[var(--tott-elevated)]"
+        >
+          {t("createNew")}
+        </Link>
+      </div>
 
       {isPending ? (
         <p className="text-xs text-[var(--tott-muted)]">{t("loading")}</p>
