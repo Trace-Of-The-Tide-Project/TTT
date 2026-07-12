@@ -63,10 +63,11 @@ async function loadDashboardMessages(locale: AppLocale): Promise<Record<string, 
  */
 export async function loadMessages(locale: AppLocale) {
 
-  const [core, navbar, home, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, collections, subscribe, community, legal, dashboardMerged] = await Promise.all([
+  const [core, navbar, home, homeNext, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, collections, subscribe, community, legal, dashboardMerged] = await Promise.all([
     import(`../../messages/${locale}.json`),
     import(`../../messages/features/${locale}/navbar.json`),
     import(`../../messages/features/${locale}/home.json`),
+    import(`../../messages/features/${locale}/home-next.json`),
     import(`../../messages/features/${locale}/auth.json`),
     import(`../../messages/features/${locale}/notFound.json`),
     import(`../../messages/features/${locale}/contribute.json`),
@@ -86,6 +87,7 @@ export async function loadMessages(locale: AppLocale) {
     ...core.default,
     ...navbar.default,
     ...home.default,
+    ...homeNext.default,
     ...auth.default,
     ...notFound.default,
     ...contribute.default,

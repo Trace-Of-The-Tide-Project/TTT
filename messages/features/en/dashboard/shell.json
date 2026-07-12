@@ -80,7 +80,8 @@
         "email": "Email Templates",
         "localisation": "Localisation",
         "guidelines": "Guidelines",
-        "heroImages": "Hero Images"
+        "heroImages": "Hero Images",
+        "homepageHero": "Homepage Hero"
       },
       "saveChanges": "Save Changes",
       "itemCount": "{count, plural, one {# item} other {# items}}",
@@ -162,6 +163,15 @@
         "moveDown": "Move down",
         "remove": "Remove image",
         "previewUnavailable": "Preview unavailable"
+      },
+      "homepageHero": {
+        "title": "Homepage Hero Image",
+        "subtitle": "Upload the background image shown behind the homepage hero headline.",
+        "addImage": "Add image",
+        "uploading": "Uploading image…",
+        "uploaded": "Image uploaded",
+        "uploadFailed": "Upload failed",
+        "remove": "Remove image"
       },
       "saving": "Saving…",
       "modal": {

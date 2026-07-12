@@ -193,7 +193,7 @@ export function CommunityHeroImagesPanel() {
   );
 }
 
-function UploadSlot({
+export function UploadSlot({
   uploading,
   onChange,
   label,

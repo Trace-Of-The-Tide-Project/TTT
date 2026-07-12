@@ -1,9 +1,10 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Sans_Arabic, IBM_Plex_Mono, IBM_Plex_Serif } from "next/font/google";
+import { Amiri, IBM_Plex_Sans, IBM_Plex_Sans_Arabic, IBM_Plex_Mono, IBM_Plex_Serif } from "next/font/google";
 import { hasLocale } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { SITE_URL } from "@/lib/constants";
 
 /** Inline before paint so `data-theme` matches stored preference (avoids flash). Default: dark. */
 const THEME_BOOTSTRAP = `(function(){try{var k='tott-color-scheme',s=localStorage.getItem(k),t=s==='light'||s==='dark'||s==='tide'?s:'dark';document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t==='dark'?'dark':'light';}catch(e){}})();`;
@@ -32,7 +33,16 @@ const plexSerif = IBM_Plex_Serif({
   weight: ["400", "500", "600"],
 });
 
+/** Arabic display serif (Naskh) — homepage headlines only, via --font-display. */
+const amiri = Amiri({
+  variable: "--font-amiri",
+  subsets: ["arabic"],
+  weight: ["400", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Trace of The Tide",
   description: "Trace of The Tide",
   icons: {
@@ -62,7 +72,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <body
-        className={`${plexSans.variable} ${plexArabic.variable} ${plexMono.variable} ${plexSerif.variable} min-h-screen bg-background text-foreground antialiased`}
+        className={`${plexSans.variable} ${plexArabic.variable} ${plexMono.variable} ${plexSerif.variable} ${amiri.variable} min-h-screen bg-background text-foreground antialiased`}
         suppressHydrationWarning
       >
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />

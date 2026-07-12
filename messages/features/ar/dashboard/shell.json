@@ -80,7 +80,8 @@
         "email": "قوالب البريد",
         "localisation": "التوطين",
         "guidelines": "الإرشادات",
-        "heroImages": "صور الغلاف"
+        "heroImages": "صور الغلاف",
+        "homepageHero": "غلاف الصفحة الرئيسية"
       },
       "saveChanges": "حفظ التغييرات",
       "itemCount": "{count, plural, one {# عنصر} other {# عناصر}}",
@@ -162,6 +163,15 @@
         "moveDown": "تحريك لأسفل",
         "remove": "إزالة الصورة",
         "previewUnavailable": "المعاينة غير متاحة"
+      },
+      "homepageHero": {
+        "title": "صورة غلاف الصفحة الرئيسية",
+        "subtitle": "ارفع صورة الخلفية المعروضة خلف عنوان غلاف الصفحة الرئيسية.",
+        "addImage": "إضافة صورة",
+        "uploading": "جارٍ رفع الصورة…",
+        "uploaded": "تم رفع الصورة",
+        "uploadFailed": "فشل الرفع",
+        "remove": "إزالة الصورة"
       },
       "saving": "جارٍ الحفظ…",
       "modal": {

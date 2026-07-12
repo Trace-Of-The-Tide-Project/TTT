@@ -1,0 +1,64 @@
+{
+  "HomeNext": {
+    "meta": {
+      "title": "Trace of the Tide — The Living Archive",
+      "description": "Preserving our collective memory through stories, testimonies, and cultural artifacts."
+    },
+    "stub": { "placeholder": "Section under construction" },
+    "hero": {
+      "eyebrow": "Trace of the Tide",
+      "title": "The Living Archive",
+      "subheadline": "Preserving our collective memory through stories, testimonies, and cultural artifacts.",
+      "ctaPrimary": "Explore the archive",
+      "ctaSecondary": "Meet our voices",
+      "scrollCue": "Scroll"
+    },
+    "pillars": {
+      "eyebrow": "Trails",
+      "title": "Paths through the archive",
+      "palestineHeading": "Palestine (Architecture of stories)",
+      "fieldsHeading": "Fields (Mosaic of Bali trails)",
+      "items": {
+        "stone": { "title": "Stone", "description": "Witness of life" },
+        "salt": { "title": "Salt", "description": "Trace of time" },
+        "compass": { "title": "Compass", "description": "Trace of place" },
+        "harbour": { "title": "Harbour trails", "description": "Mujaawarah with Culture" },
+        "courtyard": { "title": "Courtyard trails", "description": "Mujaawarah with Knowledge" },
+        "hill": { "title": "Hill trails", "description": "Mujaawarah with Arts" }
+      }
+    },
+    "archive": {
+      "eyebrow": "Latest",
+      "title": "From the archive",
+      "standfirst": "New stories, testimonies, and recordings as they enter the archive.",
+      "viewAll": "View the full archive",
+      "justNow": "Just now",
+      "types": {
+        "article": "Story",
+        "video": "Video",
+        "audio": "Audio",
+        "gallery": "Gallery",
+        "thread": "Thread"
+      }
+    },
+    "voices": {
+      "eyebrow": "Voices of TTT",
+      "title": "The people behind the stories",
+      "viewAll": "Meet all our voices",
+      "prevLabel": "Scroll to previous writers",
+      "nextLabel": "Scroll to next writers"
+    },
+    "editions": {
+      "eyebrow": "Editions",
+      "title": "Editions & testimonies",
+      "standfirst": "Multilingual editions from the archive's press, and the voices that carry it.",
+      "viewAll": "Browse all editions",
+      "featuredEdition": "Featured edition",
+      "languagesLabel": "Available languages",
+      "testimoniesLabel": "Testimonies",
+      "pause": "Pause testimonies",
+      "play": "Resume testimonies",
+      "goTo": "Show testimony {number}"
+    }
+  }
+}

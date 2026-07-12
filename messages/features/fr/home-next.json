@@ -1,0 +1,64 @@
+{
+  "HomeNext": {
+    "meta": {
+      "title": "Trace of the Tide — L'archive vivante",
+      "description": "Préserver notre mémoire collective à travers des histoires, des témoignages et des artefacts culturels."
+    },
+    "stub": { "placeholder": "Section en construction" },
+    "hero": {
+      "eyebrow": "Trace of the Tide",
+      "title": "L'archive vivante",
+      "subheadline": "Préserver notre mémoire collective à travers des histoires, des témoignages et des artefacts culturels.",
+      "ctaPrimary": "Explorer l'archive",
+      "ctaSecondary": "Rencontrez nos voix",
+      "scrollCue": "Faites défiler"
+    },
+    "pillars": {
+      "eyebrow": "Sentiers",
+      "title": "Chemins à travers l'archive",
+      "palestineHeading": "Palestine (Architecture des histoires)",
+      "fieldsHeading": "Champs (Mosaïque des sentiers de Bali)",
+      "items": {
+        "stone": { "title": "Pierre", "description": "Témoin de vie" },
+        "salt": { "title": "Sel", "description": "Trace du temps" },
+        "compass": { "title": "Boussole", "description": "Trace du lieu" },
+        "harbour": { "title": "Sentiers du port", "description": "Mujaawarah avec la Culture" },
+        "courtyard": { "title": "Sentiers de la cour", "description": "Mujaawarah avec la Connaissance" },
+        "hill": { "title": "Sentiers de la colline", "description": "Mujaawarah avec les Arts" }
+      }
+    },
+    "archive": {
+      "eyebrow": "À la une",
+      "title": "Depuis l'archive",
+      "standfirst": "Histoires, témoignages et enregistrements nouveaux, à mesure qu'ils entrent dans l'archive.",
+      "viewAll": "Voir toute l'archive",
+      "justNow": "À l'instant",
+      "types": {
+        "article": "Récit",
+        "video": "Vidéo",
+        "audio": "Audio",
+        "gallery": "Galerie",
+        "thread": "Fil"
+      }
+    },
+    "voices": {
+      "eyebrow": "Voix de TTT",
+      "title": "Celles et ceux derrière les récits",
+      "viewAll": "Rencontrez toutes nos voix",
+      "prevLabel": "Faire défiler vers les auteurs précédents",
+      "nextLabel": "Faire défiler vers les auteurs suivants"
+    },
+    "editions": {
+      "eyebrow": "Éditions",
+      "title": "Éditions et témoignages",
+      "standfirst": "Des éditions multilingues issues de la maison de l'archive, et les voix qui la portent.",
+      "viewAll": "Parcourir toutes les éditions",
+      "featuredEdition": "Édition à la une",
+      "languagesLabel": "Langues disponibles",
+      "testimoniesLabel": "Témoignages",
+      "pause": "Mettre les témoignages en pause",
+      "play": "Reprendre les témoignages",
+      "goTo": "Afficher le témoignage {number}"
+    }
+  }
+}
