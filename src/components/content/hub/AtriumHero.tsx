@@ -13,6 +13,9 @@ import type { HeroData } from "./atrium-types";
 
 type AtriumHeroProps = {
   item: HeroData;
+  /** Admin-set override from the Media Library (page id "content-hub").
+   * Takes precedence over the item's own cover_image when present. */
+  heroOverrideUrl?: string | null;
 };
 
 /**
@@ -22,20 +25,26 @@ type AtriumHeroProps = {
  * tideline wave cutting the image into the page surface. With no item (or
  * the API down) it renders the same-scale intro variant — never a void.
  */
-export function AtriumHero({ item }: AtriumHeroProps) {
+export function AtriumHero({ item, heroOverrideUrl }: AtriumHeroProps) {
   const t = useTranslations("Content");
 
-  return item ? <FeaturedHero item={item} t={t} /> : <IntroHero t={t} />;
+  return item ? (
+    <FeaturedHero item={item} t={t} heroOverrideUrl={heroOverrideUrl} />
+  ) : (
+    <IntroHero t={t} />
+  );
 }
 
 function FeaturedHero({
   item,
   t,
+  heroOverrideUrl,
 }: {
   item: NonNullable<HeroData>;
   t: ReturnType<typeof useTranslations>;
+  heroOverrideUrl?: string | null;
 }) {
-  const cover = safeImage(item.coverImage);
+  const cover = safeImage(heroOverrideUrl ?? item.coverImage);
 
   return (
     <section className="relative min-h-[100svh] w-full overflow-hidden">

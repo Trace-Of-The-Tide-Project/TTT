@@ -100,10 +100,14 @@ export function WritersShowContent({
   initialWriters,
   featuredWriters,
   spotlightProfile,
+  heroOverrideUrl,
 }: {
   initialWriters: WriterProfile[];
   featuredWriters: WriterProfile[];
   spotlightProfile: WriterProfileFull | null;
+  /** Admin-set hero override (Media Library). Takes precedence over the
+   * featured writer's avatar in the spotlight band when non-null. */
+  heroOverrideUrl?: string | null;
 }) {
   const t = useTranslations("Writers");
   const [searchInput, setSearchInput] = useState("");
@@ -316,6 +320,7 @@ export function WritersShowContent({
           <FeaturedVoiceBand
             writer={spotlightWriter}
             profile={spotlightProfile}
+            heroOverrideUrl={heroOverrideUrl}
             label={t("show.spotlightLabel")}
             followersLabel={t("show.followersLabel")}
             worksLabel={t("show.worksLabel")}
@@ -486,6 +491,7 @@ export function WritersShowContent({
 function FeaturedVoiceBand({
   writer,
   profile,
+  heroOverrideUrl,
   label,
   followersLabel,
   worksLabel,
@@ -494,6 +500,7 @@ function FeaturedVoiceBand({
 }: {
   writer: WriterProfile;
   profile: WriterProfileFull | null;
+  heroOverrideUrl?: string | null;
   label: string;
   followersLabel: string;
   worksLabel: string;
@@ -549,7 +556,7 @@ function FeaturedVoiceBand({
             <FeaturedHexCard
               title={name}
               author={headline ?? "TTT Writer"}
-              coverImage={writerAvatar(writer)}
+              coverImage={heroOverrideUrl ?? writerAvatar(writer)}
               href={href}
               strongOverlay
             />

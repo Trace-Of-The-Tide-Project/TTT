@@ -37,6 +37,7 @@ import {
   PersonPlusIcon,
   ClockIcon,
   CompassIcon,
+  ImageInsertIcon,
 } from "@/components/ui/icons";
 import type { DashboardConfig } from "./types";
 
@@ -116,6 +117,12 @@ export const adminConfig: DashboardConfig = {
               labelKey: "sidebar.contentLibrary",
               href: "/admin/content",
               icon: FolderIcon,
+            },
+            {
+              kind: "item",
+              labelKey: "sidebar.mediaLibrary",
+              href: "/admin/media-library",
+              icon: ImageInsertIcon,
             },
             {
               kind: "item",

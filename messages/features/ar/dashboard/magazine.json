@@ -397,6 +397,7 @@
           "secondaryCta": "زر الدعوة الثانوي",
           "secondaryCtaPlaceholder": "أحدث عدد",
           "artworkUrl": "رابط صورة الخلفية",
+          "artworkUrlHint": "يتم تجاوز هذا الحقل إذا تم تعيين صورة بطل بديلة من مكتبة الوسائط.",
           "primaryHref": "رابط الزر الأساسي",
           "secondaryHref": "رابط الزر الثانوي"
         }

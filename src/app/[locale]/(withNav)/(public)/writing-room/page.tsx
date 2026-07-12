@@ -4,6 +4,7 @@ import {
   isUsableArticleMediaRef,
   resolveArticleMediaSrc,
 } from "@/lib/content/article-media-url";
+import { getPageHero } from "@/services/media-library.service";
 import {
   WritingRoomContent,
   type DictionaryItem,
@@ -82,20 +83,22 @@ function mapDictionaryEntry(e: RawDictionaryEntry): DictionaryItem {
 
 export default async function WritingRoomPage() {
   const locale = await getLocale();
-  const [rawArticles, rawFeaturedDict, rawDict] = await Promise.all([
-    serverGet<Envelope<RawArticle>>("/articles", {
-      limit: 8,
-      status: "published",
-      sortBy: "published_at",
-      order: "DESC",
-      dedupe: "group",
-      viewer_lang: locale,
-    }),
-    serverGet<Envelope<RawDictionaryEntry>>("/dictionary/featured", {
-      limit: 6,
-    }),
-    serverGet<Envelope<RawDictionaryEntry>>("/dictionary", { limit: 6 }),
-  ]);
+  const [rawArticles, rawFeaturedDict, rawDict, heroOverrideUrl] =
+    await Promise.all([
+      serverGet<Envelope<RawArticle>>("/articles", {
+        limit: 8,
+        status: "published",
+        sortBy: "published_at",
+        order: "DESC",
+        dedupe: "group",
+        viewer_lang: locale,
+      }),
+      serverGet<Envelope<RawDictionaryEntry>>("/dictionary/featured", {
+        limit: 6,
+      }),
+      serverGet<Envelope<RawDictionaryEntry>>("/dictionary", { limit: 6 }),
+      getPageHero("writing-room"),
+    ]);
 
   const featured: FeaturedWritingItem[] = unwrapList(rawArticles).map((a) => {
     const ref = a.cover_image?.trim();
@@ -124,6 +127,10 @@ export default async function WritingRoomPage() {
     .filter((d) => d.word && d.body);
 
   return (
-    <WritingRoomContent featured={featured} dictionary={dictionary} />
+    <WritingRoomContent
+      featured={featured}
+      dictionary={dictionary}
+      heroOverrideUrl={heroOverrideUrl}
+    />
   );
 }

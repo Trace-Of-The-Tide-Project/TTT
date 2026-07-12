@@ -1,0 +1,119 @@
+{
+  "Dashboard": {
+    "mediaLibrary": {
+      "title": "مكتبة الوسائط",
+      "subtitle": "كل صورة في النظام في مكان واحد — منظمة وقابلة للبحث وآمنة لإعادة الاستخدام.",
+      "libraryTab": "المكتبة",
+      "searchPlaceholder": "البحث عن ملفات…",
+      "rescan": "إعادة الفحص",
+      "rescanning": "جارٍ الفحص…",
+      "rescanDone": "اكتمل الفحص — تمت فهرسة {count} ملف",
+      "upload": {
+        "cta": "رفع",
+        "dropHint": "أسقط الملفات هنا أو انقر للرفع",
+        "uploading": "جارٍ الرفع…",
+        "uploaded": "تم رفع الملفات",
+        "failed": "فشل رفع بعض الملفات"
+      },
+      "folders": {
+        "root": "كل الملفات",
+        "new": "مجلد جديد",
+        "namePlaceholder": "اسم المجلد",
+        "createTitle": "مجلد جديد",
+        "renameTitle": "إعادة تسمية المجلد",
+        "rename": "إعادة تسمية",
+        "delete": "حذف",
+        "addSubfolder": "إضافة مجلد فرعي",
+        "renameAria": "إعادة تسمية {name}",
+        "deleteAria": "حذف {name}",
+        "deleteConfirmTitle": "حذف المجلد؟",
+        "deleteConfirmDescription": "لا يمكن التراجع عن هذا الإجراء.",
+        "notEmpty": "المجلد غير فارغ — انقل محتواه أو احذفه أولاً",
+        "created": "تم إنشاء المجلد",
+        "updated": "تم تحديث المجلد",
+        "deleted": "تم حذف المجلد"
+      },
+      "asset": {
+        "name": "الاسم",
+        "size": "الحجم",
+        "dimensions": "الأبعاد",
+        "uploaded": "تاريخ الرفع",
+        "usages": "مستخدم في",
+        "usagesCount": "{count, plural, one {استخدام واحد} two {استخدامان} few {# استخدامات} many {# استخدامًا} other {# استخدام}}",
+        "noUsages": "غير مستخدم في أي مكان",
+        "rename": "إعادة تسمية",
+        "download": "تنزيل",
+        "delete": "حذف",
+        "detailsTitle": "تفاصيل الملف",
+        "renameSaved": "تمت إعادة التسمية",
+        "deleteConfirmTitle": "حذف الملف؟",
+        "deleteConfirmDescription": "سيؤدي هذا إلى إزالة الملف نهائيًا من التخزين.",
+        "deleteBlockedTitle": "هذا الملف قيد الاستخدام",
+        "deleteBlockedDescription": "سيؤدي حذفه إلى تعطيل ما يلي:",
+        "forceDelete": "حذف على أي حال",
+        "deleted": "تم حذف الملف"
+      },
+      "filters": {
+        "all": "الكل",
+        "unused": "غير مستخدم",
+        "imagesOnly": "الصور فقط",
+        "scope": "النطاق",
+        "main": "الموقع الرئيسي",
+        "magazine": "المجلة",
+        "clear": "مسح الفلاتر"
+      },
+      "empty": "لا توجد ملفات بعد.",
+      "emptyFiltered": "لا توجد ملفات مطابقة للفلاتر.",
+      "pagination": {
+        "previous": "السابق",
+        "next": "التالي",
+        "pageOf": "صفحة {page} من {totalPages}"
+      },
+      "select": {
+        "selectedCount": "{count, plural, zero {لم يتم تحديد شيء} one {تم تحديد واحد} two {تم تحديد اثنان} few {تم تحديد #} many {تم تحديد #} other {تم تحديد #}}",
+        "selectAll": "تحديد الكل",
+        "clear": "إلغاء التحديد"
+      },
+      "bulk": {
+        "move": "نقل",
+        "delete": "حذف",
+        "zip": "تنزيل كملف مضغوط",
+        "zipTooMany": "اختر 50 ملفًا أو أقل لتنزيلها كملف مضغوط",
+        "moveTitle": "النقل إلى مجلد",
+        "moved": "تم نقل الملفات",
+        "deleteConfirmTitle": "حذف {count} ملفات؟",
+        "deleteConfirmDescription": "سيؤدي هذا إلى إزالتها نهائيًا من التخزين.",
+        "deleted": "تم حذف الملفات",
+        "partialBlocked": "{blocked} من أصل {total} ملفات قيد الاستخدام ولم يتم حذفها"
+      },
+      "share": {
+        "copyLink": "نسخ الرابط",
+        "copied": "تم نسخ الرابط"
+      },
+      "heroes": {
+        "tab": "أغلفة الصفحات",
+        "subtitle": "تجاوز صورة الغلاف المعروضة أعلى أي من هذه الصفحات.",
+        "current": "الغلاف الحالي",
+        "derivedFrom": "يستخدم الصورة الافتراضية للصفحة",
+        "noHero": "لا توجد صورة غلاف",
+        "replace": "استبدال",
+        "clear": "إلغاء التجاوز",
+        "cleared": "تم إلغاء التجاوز",
+        "updated": "تم تحديث الغلاف",
+        "pickerTitle": "اختر صورة غلاف",
+        "pickFromLibrary": "اختيار من المكتبة",
+        "uploadNew": "رفع صورة جديدة",
+        "communityNotice": "غلاف صفحة المجتمع معرض دوّار، يُدار بشكل منفصل.",
+        "communityLinkOut": "الانتقال إلى إعدادات النظام",
+        "pages": {
+          "home": "الصفحة الرئيسية",
+          "contentHub": "مركز المحتوى",
+          "magazineLanding": "الصفحة الرئيسية للمجلة",
+          "writers": "الكتّاب",
+          "trips": "الرحلات",
+          "writingRoom": "غرفة الكتابة"
+        }
+      }
+    }
+  }
+}

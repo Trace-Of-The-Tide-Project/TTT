@@ -397,6 +397,7 @@
           "secondaryCta": "Secondary CTA",
           "secondaryCtaPlaceholder": "Latest Issue",
           "artworkUrl": "Background image URL",
+          "artworkUrlHint": "Overridden by a Media Library page-hero, if one is set.",
           "primaryHref": "Primary CTA link",
           "secondaryHref": "Secondary CTA link"
         }

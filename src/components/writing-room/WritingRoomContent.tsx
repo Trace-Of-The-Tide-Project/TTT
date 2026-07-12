@@ -81,9 +81,14 @@ const EXPERIENCES: Experience[] = [
 export function WritingRoomContent({
   featured,
   dictionary,
+  heroOverrideUrl = null,
 }: {
   featured: FeaturedWritingItem[];
   dictionary: DictionaryItem[];
+  /** Admin-set hero image override (Media Library page-hero for
+   * "writing-room"). When set, renders as a full-bleed scrimmed band
+   * behind the hero header; when null the header is unchanged. */
+  heroOverrideUrl?: string | null;
 }) {
   const t = useTranslations("Home.writingRoom");
   const [submitOpen, setSubmitOpen] = useState(false);
@@ -109,13 +114,32 @@ export function WritingRoomContent({
             is centered and capped at 552px on desktop, full width
             on small screens. */}
         <header
-          className="mx-auto flex flex-col items-center text-center"
+          className={`relative mx-auto flex flex-col items-center text-center ${
+            heroOverrideUrl ? "overflow-hidden rounded-2xl px-6 py-10 sm:px-10 sm:py-14" : ""
+          }`}
           style={{
             width: "100%",
             maxWidth: "552px",
             gap: "clamp(16px, 3vw, 24px)",
           }}
         >
+          {heroOverrideUrl ? (
+            <div aria-hidden className="absolute inset-0 -z-10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={heroOverrideUrl}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.7) 100%)",
+                }}
+              />
+            </div>
+          ) : null}
           <span
             aria-hidden
             className="relative shrink-0 min-[1600px]:w-24! min-[1600px]:h-[108px]!"

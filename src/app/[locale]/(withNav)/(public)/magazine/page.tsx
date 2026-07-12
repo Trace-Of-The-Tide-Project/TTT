@@ -46,6 +46,7 @@ import {
   type SupportConfig,
 } from "@/services/magazine-page.service";
 import type { CmsPage } from "@/services/cms.service";
+import { getPageHero } from "@/services/media-library.service";
 
 // Magazine page is highly dynamic — we don't want it cached.
 export const dynamic = "force-dynamic";
@@ -294,6 +295,7 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
     collaborations,
     magazineMeta,
     cmsCopy,
+    heroOverrideUrl,
   ] = await Promise.all([
     fetchLatestBooks(locale),
     fetchWriters(locale),
@@ -301,12 +303,15 @@ export default async function MagazinePreviewPage({ params }: PageProps) {
     fetchCollaborations(locale),
     fetchMagazineMeta(),
     fetchMagazineCmsCopy(),
+    getPageHero("magazine-landing"),
   ]);
 
-  // Priority for every section: CMS (admin-edited, per-locale) →
-  // legacy backend record → component i18n defaults.
+  // Priority for every section: Media Library page-hero override (admin) →
+  // CMS (admin-edited, per-locale) → legacy backend record → component
+  // i18n defaults.
   const cmsHeroLocale = cmsCopy.hero ? pickHeroLocale(cmsCopy.hero, locale) : {};
-  const heroArtwork = cmsCopy.hero?.artwork || magazineMeta.hero?.image;
+  const heroArtwork =
+    heroOverrideUrl || cmsCopy.hero?.artwork || magazineMeta.hero?.image;
   const heroTitle = cmsHeroLocale.title || magazineMeta.hero?.title;
   const heroSubtitle = cmsHeroLocale.subtitle || magazineMeta.hero?.subtitle;
   const heroPrimaryCta = cmsHeroLocale.primaryCtaLabel;
