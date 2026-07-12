@@ -4,7 +4,7 @@
 
 /** Canonical site origin for metadata (metadataBase, canonical, JSON-LD). */
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_APP_URL ?? "https://traceofthetide.org";
+  process.env.NEXT_PUBLIC_APP_URL || "https://traceofthetide.org";
 
 export const CONTRIBUTION_FORM_INPUT_BASE =
   "w-full select-none rounded-lg border bg-[var(--tott-well-bg)] px-3 py-2 text-sm text-[color:var(--tott-panel-text)] placeholder:text-gray-500 transition-colors hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-offset-transparent focus:ring-[#C9A96E] focus:border-[#C9A96E] sm:px-4 sm:py-3 sm:text-base";
