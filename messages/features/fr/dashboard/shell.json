@@ -33,6 +33,7 @@
       "rolesPermissions": "Rôles & Permissions",
       "content": "Contenu",
       "contentLibrary": "Bibliothèque de contenus",
+      "mediaLibrary": "Bibliothèque de médias",
       "visualEditor": "Éditeur visuel (CMS)",
       "magazine": "Magazine",
       "magazinePageEditor": "Éditeur de page",
@@ -80,7 +81,8 @@
         "email": "Modèles d'e-mail",
         "localisation": "Localisation",
         "guidelines": "Directives",
-        "heroImages": "Images d'en-tête"
+        "heroImages": "Images d'en-tête",
+        "homepageHero": "En-tête de la page d'accueil"
       },
       "saveChanges": "Enregistrer les modifications",
       "itemCount": "{count, plural, one {# élément} other {# éléments}}",
@@ -162,6 +164,15 @@
         "moveDown": "Déplacer vers le bas",
         "remove": "Supprimer l'image",
         "previewUnavailable": "Aperçu indisponible"
+      },
+      "homepageHero": {
+        "title": "Image d'en-tête de la page d'accueil",
+        "subtitle": "Téléchargez l'image de fond affichée derrière le titre de l'en-tête de la page d'accueil.",
+        "addImage": "Ajouter une image",
+        "uploading": "Téléchargement de l'image…",
+        "uploaded": "Image téléchargée",
+        "uploadFailed": "Échec du téléchargement",
+        "remove": "Supprimer l'image"
       },
       "saving": "Enregistrement…",
       "modal": {

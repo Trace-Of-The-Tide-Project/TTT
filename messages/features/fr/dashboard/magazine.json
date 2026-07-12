@@ -397,6 +397,7 @@
           "secondaryCta": "CTA secondaire",
           "secondaryCtaPlaceholder": "Dernier numéro",
           "artworkUrl": "URL de l’image de fond",
+          "artworkUrlHint": "Remplacée si une image héros est définie dans la Médiathèque.",
           "primaryHref": "Lien du CTA principal",
           "secondaryHref": "Lien du CTA secondaire"
         }

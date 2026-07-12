@@ -1,0 +1,64 @@
+{
+  "HomeNext": {
+    "meta": {
+      "title": "Trace of the Tide — El archivo vivo",
+      "description": "Preservando nuestra memoria colectiva a través de historias, testimonios y artefactos culturales."
+    },
+    "stub": { "placeholder": "Sección en construcción" },
+    "hero": {
+      "eyebrow": "Trace of the Tide",
+      "title": "El archivo vivo",
+      "subheadline": "Preservando nuestra memoria colectiva a través de historias, testimonios y artefactos culturales.",
+      "ctaPrimary": "Explora el archivo",
+      "ctaSecondary": "Conoce nuestras voces",
+      "scrollCue": "Desplázate"
+    },
+    "pillars": {
+      "eyebrow": "Senderos",
+      "title": "Caminos por el archivo",
+      "palestineHeading": "Palestina (Arquitectura de historias)",
+      "fieldsHeading": "Campos (Mosaico de senderos de Bali)",
+      "items": {
+        "stone": { "title": "Piedra", "description": "Testigo de vida" },
+        "salt": { "title": "Sal", "description": "Huella del tiempo" },
+        "compass": { "title": "Brújula", "description": "Huella del lugar" },
+        "harbour": { "title": "Senderos del puerto", "description": "Mujaawarah con la Cultura" },
+        "courtyard": { "title": "Senderos del patio", "description": "Mujaawarah con el Conocimiento" },
+        "hill": { "title": "Senderos del cerro", "description": "Mujaawarah con las Artes" }
+      }
+    },
+    "archive": {
+      "eyebrow": "Lo último",
+      "title": "Desde el archivo",
+      "standfirst": "Nuevas historias, testimonios y grabaciones a medida que entran en el archivo.",
+      "viewAll": "Ver el archivo completo",
+      "justNow": "Ahora mismo",
+      "types": {
+        "article": "Historia",
+        "video": "Vídeo",
+        "audio": "Audio",
+        "gallery": "Galería",
+        "thread": "Hilo"
+      }
+    },
+    "voices": {
+      "eyebrow": "Voces de TTT",
+      "title": "Las personas detrás de las historias",
+      "viewAll": "Conoce todas nuestras voces",
+      "prevLabel": "Desplazarse a los escritores anteriores",
+      "nextLabel": "Desplazarse a los escritores siguientes"
+    },
+    "editions": {
+      "eyebrow": "Ediciones",
+      "title": "Ediciones y testimonios",
+      "standfirst": "Ediciones multilingües del sello del archivo, y las voces que lo sostienen.",
+      "viewAll": "Explorar todas las ediciones",
+      "featuredEdition": "Edición destacada",
+      "languagesLabel": "Idiomas disponibles",
+      "testimoniesLabel": "Testimonios",
+      "pause": "Pausar los testimonios",
+      "play": "Reanudar los testimonios",
+      "goTo": "Mostrar el testimonio {number}"
+    }
+  }
+}

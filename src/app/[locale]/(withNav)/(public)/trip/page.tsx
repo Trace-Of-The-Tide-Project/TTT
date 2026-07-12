@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { TripHero } from "@/components/trip/TripHero";
 import { TripDetailsBar, DEFAULT_TRIP_ICONS } from "@/components/trip/TripDetailsBar";
@@ -14,6 +14,7 @@ import {
   TRIP_TIMELINE,
 } from "@/lib/constants";
 import { tripDisplayPriceLabel } from "@/services/trips.service";
+import { getPageHero } from "@/services/media-library.service";
 
 const DEMO_TRIP_PRICE = { min: "600", currency: "USD" as const };
 
@@ -24,13 +25,14 @@ const DETAILS = TRIP_DETAILS.map((d) => ({
   ] ?? DEFAULT_TRIP_ICONS.calendar,
 }));
 
-export default function TripPage() {
-  const t = useTranslations("Dashboard.applicationForm.tripBooking");
+export default async function TripPage() {
+  const t = await getTranslations("Dashboard.applicationForm.tripBooking");
+  const heroOverrideUrl = await getPageHero("trips");
   return (
     <div className="min-h-screen w-full" style={{ backgroundColor: theme.pageBackground }}>
       {/* Hero */}
       <TripHero
-        image={TRIP_HERO.image}
+        image={heroOverrideUrl || TRIP_HERO.image}
         title={TRIP_HERO.title}
         price={tripDisplayPriceLabel({
           price: DEMO_TRIP_PRICE.min,

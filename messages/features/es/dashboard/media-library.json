@@ -1,0 +1,119 @@
+{
+  "Dashboard": {
+    "mediaLibrary": {
+      "title": "Biblioteca multimedia",
+      "subtitle": "Todas las imágenes del sistema en un solo lugar — organizadas, buscables y seguras de reutilizar.",
+      "libraryTab": "Biblioteca",
+      "searchPlaceholder": "Buscar archivos…",
+      "rescan": "Reescanear",
+      "rescanning": "Escaneando…",
+      "rescanDone": "Escaneo completo — {count} archivos indexados",
+      "upload": {
+        "cta": "Subir",
+        "dropHint": "Suelta archivos aquí o haz clic para subir",
+        "uploading": "Subiendo…",
+        "uploaded": "Archivos subidos",
+        "failed": "Algunas subidas fallaron"
+      },
+      "folders": {
+        "root": "Todos los archivos",
+        "new": "Nueva carpeta",
+        "namePlaceholder": "Nombre de la carpeta",
+        "createTitle": "Nueva carpeta",
+        "renameTitle": "Renombrar carpeta",
+        "rename": "Renombrar",
+        "delete": "Eliminar",
+        "addSubfolder": "Añadir subcarpeta",
+        "renameAria": "Renombrar {name}",
+        "deleteAria": "Eliminar {name}",
+        "deleteConfirmTitle": "¿Eliminar carpeta?",
+        "deleteConfirmDescription": "Esta acción no se puede deshacer.",
+        "notEmpty": "La carpeta no está vacía — mueve o elimina su contenido primero",
+        "created": "Carpeta creada",
+        "updated": "Carpeta actualizada",
+        "deleted": "Carpeta eliminada"
+      },
+      "asset": {
+        "name": "Nombre",
+        "size": "Tamaño",
+        "dimensions": "Dimensiones",
+        "uploaded": "Subido el",
+        "usages": "Usado en",
+        "usagesCount": "{count, plural, one {# uso} other {# usos}}",
+        "noUsages": "No se usa en ningún lugar",
+        "rename": "Renombrar",
+        "download": "Descargar",
+        "delete": "Eliminar",
+        "detailsTitle": "Detalles del archivo",
+        "renameSaved": "Renombrado",
+        "deleteConfirmTitle": "¿Eliminar archivo?",
+        "deleteConfirmDescription": "Esto eliminará permanentemente el archivo del almacenamiento.",
+        "deleteBlockedTitle": "Este archivo está en uso",
+        "deleteBlockedDescription": "Eliminarlo romperá lo siguiente:",
+        "forceDelete": "Eliminar de todos modos",
+        "deleted": "Archivo eliminado"
+      },
+      "filters": {
+        "all": "Todos",
+        "unused": "Sin usar",
+        "imagesOnly": "Solo imágenes",
+        "scope": "Ámbito",
+        "main": "Sitio principal",
+        "magazine": "Revista",
+        "clear": "Borrar filtros"
+      },
+      "empty": "Aún no hay archivos.",
+      "emptyFiltered": "Ningún archivo coincide con tus filtros.",
+      "pagination": {
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "pageOf": "Página {page} de {totalPages}"
+      },
+      "select": {
+        "selectedCount": "{count, plural, one {# seleccionado} other {# seleccionados}}",
+        "selectAll": "Seleccionar todo",
+        "clear": "Limpiar selección"
+      },
+      "bulk": {
+        "move": "Mover",
+        "delete": "Eliminar",
+        "zip": "Descargar zip",
+        "zipTooMany": "Selecciona 50 archivos o menos para descargar un zip",
+        "moveTitle": "Mover a carpeta",
+        "moved": "Archivos movidos",
+        "deleteConfirmTitle": "¿Eliminar {count} archivos?",
+        "deleteConfirmDescription": "Esto los eliminará permanentemente del almacenamiento.",
+        "deleted": "Archivos eliminados",
+        "partialBlocked": "{blocked} de {total} archivos están en uso y no se eliminaron"
+      },
+      "share": {
+        "copyLink": "Copiar enlace",
+        "copied": "Enlace copiado"
+      },
+      "heroes": {
+        "tab": "Portadas de página",
+        "subtitle": "Anula la imagen de portada mostrada en la parte superior de cualquiera de estas páginas.",
+        "current": "Portada actual",
+        "derivedFrom": "Usando la imagen predeterminada de la página",
+        "noHero": "Sin imagen de portada",
+        "replace": "Reemplazar",
+        "clear": "Quitar anulación",
+        "cleared": "Anulación eliminada",
+        "updated": "Portada actualizada",
+        "pickerTitle": "Elegir una imagen de portada",
+        "pickFromLibrary": "Elegir de la biblioteca",
+        "uploadNew": "Subir una nueva",
+        "communityNotice": "La portada de Comunidad es una galería rotativa, gestionada aparte.",
+        "communityLinkOut": "Ir a Configuración del sistema",
+        "pages": {
+          "home": "Página de inicio",
+          "contentHub": "Centro de contenido",
+          "magazineLanding": "Portada de la revista",
+          "writers": "Escritores",
+          "trips": "Viajes",
+          "writingRoom": "Sala de escritura"
+        }
+      }
+    }
+  }
+}

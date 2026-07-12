@@ -31,7 +31,9 @@
           "unsavedChangesConfirm": "لديك تغييرات غير محفوظة. المغادرة دون حفظ؟",
           "validationOpenCallBlocksDraft": "أضف كتلة محتوى واحدة على الأقل بمحتوى.",
           "validationOpenCallBlocksPublish": "النشر يتطلب كتلة محتوى واحدة على الأقل بمحتوى.",
-          "validationOpenCallBlocksSchedule": "الجدولة تتطلب كتلة محتوى واحدة على الأقل بمحتوى."
+          "validationOpenCallBlocksSchedule": "الجدولة تتطلب كتلة محتوى واحدة على الأقل بمحتوى.",
+          "backToMagazine": "العودة إلى مقالات المجلة",
+          "magazineBadge": "مقال مجلة"
         },
         "footer": {
           "schedule": "جدولة",

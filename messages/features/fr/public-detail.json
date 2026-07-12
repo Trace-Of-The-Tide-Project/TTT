@@ -10,6 +10,18 @@
     "addedToCart": "Ajouté au panier",
     "downloadPdf": "Télécharger le PDF",
     "contributorsHeading": "Rédacteurs et contributeurs",
+    "editorsLetter": "Édito",
+    "readEditorsLetter": "Lire l'édito",
+    "startReading": "Commencer la lecture",
+    "ungrouped": "Plus dans ce numéro",
+    "locked": "Verrouillé — inclus avec le numéro",
+    "reader": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "position": "{current} sur {total}",
+      "backToIssue": "Couverture du numéro",
+      "close": "Fermer"
+    },
     "roles": {
       "main_contributor": "Contributeur principal",
       "co-author": "Co-auteur",

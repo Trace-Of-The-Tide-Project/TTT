@@ -54,7 +54,7 @@ export function IssueArticlesPanel({
     reorder.mutate(next, { onSettled: () => setLocalOrder(null) });
   }
 
-  const createHref = `/admin/articles/create/article?issue_id=${encodeURIComponent(issueId)}${
+  const createHref = `/admin/magazine/articles/create?issue_id=${encodeURIComponent(issueId)}${
     magazineId ? `&magazine_id=${encodeURIComponent(magazineId)}` : ""
   }&return=${encodeURIComponent("/admin/magazine-issues")}`;
 

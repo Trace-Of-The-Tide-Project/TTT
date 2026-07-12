@@ -26,3 +26,19 @@ export const staggerParent: Variants = {
 };
 
 export const staggerChild = fadeUp;
+
+/**
+ * Clip-path mask reveal — content wipes up from behind a horizontal mask.
+ * Apply per LINE, never per word or letter: Arabic letterforms join across
+ * a word and splitting mid-line breaks shaping. Vertical inset only, so it
+ * is RTL-safe with no logical-property flipping.
+ *
+ * IMPORTANT: `MotionConfig reducedMotion="user"` only disables transform and
+ * layout animations — clip-path still animates. Consumers MUST check
+ * `useReducedMotion()` and swap to `fadeIn` (same pattern as Parallax.tsx).
+ * Pair with the shared `reveal` transition from ./springs.
+ */
+export const revealMask: Variants = {
+  hidden: { clipPath: "inset(0% 0% 100% 0%)" },
+  visible: { clipPath: "inset(0% 0% 0% 0%)" },
+};

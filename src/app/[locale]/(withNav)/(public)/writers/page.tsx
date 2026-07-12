@@ -4,6 +4,7 @@ import {
   getWriterProfileFull,
   getWriters,
 } from "@/services/writers.service";
+import { getPageHero } from "@/services/media-library.service";
 import { WritersShowContent } from "@/components/writers/WritersShowContent";
 
 export const dynamic = "force-dynamic";
@@ -13,9 +14,10 @@ export default async function WritersShowPage() {
   // SSR the initial (unfiltered) list + the featured strip in parallel. Both
   // hit public endpoints and swallow errors → null-safe empty arrays.
   // One card per translation group, viewer's language preferred.
-  const [initialWriters, featuredWriters] = await Promise.all([
+  const [initialWriters, featuredWriters, heroOverrideUrl] = await Promise.all([
     getWriters({ limit: 60, dedupe: "group", viewer_lang: locale }),
     getFeaturedWriters(locale),
+    getPageHero("writers"),
   ]);
 
   // Spotlight the first featured writer with its rich profile (quote, stats,
@@ -31,6 +33,7 @@ export default async function WritersShowPage() {
       initialWriters={initialWriters}
       featuredWriters={featuredWriters}
       spotlightProfile={spotlightProfile}
+      heroOverrideUrl={heroOverrideUrl}
     />
   );
 }

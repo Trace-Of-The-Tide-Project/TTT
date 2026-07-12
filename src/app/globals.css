@@ -101,6 +101,21 @@ html {
   --tott-home-hero-grad-top: #171717;
   --tott-home-hero-grad-mid: #1e1e1e;
   --tott-home-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.24);
+  /** Homepage rebuild — gold scale as semantic aliases. Defined once here;
+   * var() resolves against the ACTIVE theme, so light/tide overrides of the
+   * targets carry through without per-theme redefinition. */
+  --tott-gold-muted: var(--tott-home-eyebrow);
+  --tott-gold-primary: var(--tott-accent-gold);
+  --tott-gold-bright: var(--tott-dash-gold-text);
+  /** Homepage rebuild — warm off-white display text (home-text-strong is pure white). */
+  --tott-home-text-warm: #f4eee1;
+  /** Homepage rebuild — desaturated "salt" neutral: captions, hairlines, rules. */
+  --tott-salt: #b8b3a9;
+  /** Homepage rebuild — bilingual display type scale. Arabic needs taller
+   * leading and zero tracking (letterforms join); html[lang="ar"] overrides
+   * below the theme blocks. Theme-agnostic. */
+  --tott-display-leading: 1.08;
+  --tott-display-tracking: -0.015em;
   /** Filter applied to baked dark-silk imagery (carousel fillers,
    * decorative grayscale gradients) so the same PNG reads correctly
    * on both themes — no-op on dark, inverted on light. */
@@ -161,9 +176,14 @@ html {
   --tott-auth-input-shadow: none;
 }
 
-/* Light defaults — applied automatically when the OS prefers light */
+/* Light defaults — applied automatically when the OS prefers light.
+ * Gated on `:not([data-theme])`: once the pre-paint bootstrap (or the
+ * ThemeProvider) stamps an explicit theme, that choice must win — an
+ * ungated `:root` here (0,1,0) out-ranks the `html` dark defaults
+ * (0,0,1), which made OS-light override an explicit dark theme with a
+ * half-light hybrid (only tokens listed in this block flipped). */
 @media (prefers-color-scheme: light) {
-  :root {
+  html:not([data-theme]) {
     color-scheme: light;
     --background: #fff;
     --foreground: #171717;
@@ -310,6 +330,8 @@ html[data-theme="light"] {
   --tott-home-hero-grad-top: #f5f1e8;
   --tott-home-hero-grad-mid: #ece8dc;
   --tott-home-text-shadow: none;
+  --tott-home-text-warm: #33291a;
+  --tott-salt: #8a857b;
   --tott-image-invert: invert(1);
   --tott-writer-card-fade: linear-gradient(180deg, rgba(250, 249, 245, 0) 0%, #faf9f5 100%);
   --tott-stat-icon: #7d5a28;
@@ -425,6 +447,8 @@ html[data-theme="tide"] {
   --tott-home-hero-grad-top: #fdf2df;
   --tott-home-hero-grad-mid: #f8e6cb;
   --tott-home-text-shadow: none;
+  --tott-home-text-warm: #002b47;
+  --tott-salt: #6b7f8f;
   --tott-image-invert: invert(1);
   --tott-writer-card-fade: linear-gradient(180deg, rgba(251, 233, 210, 0) 0%, #fbe9d2 100%);
   --tott-magazine-btn-bg: #003d66;
@@ -466,6 +490,13 @@ html[data-theme="tide"] {
   --tott-auth-input-shadow: 0 1px 0 rgba(255, 255, 255, 0.7), 0 2px 10px rgba(0, 61, 102, 0.07);
 }
 
+/* Arabic display type: taller leading, no negative tracking (letterforms join).
+ * Placed after the theme blocks; they never define these tokens, so no conflict. */
+html[lang="ar"] {
+  --tott-display-leading: 1.35;
+  --tott-display-tracking: 0;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -473,6 +504,8 @@ html[data-theme="tide"] {
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
   /* Plex Serif has no Arabic glyphs — Arabic falls through to Plex Arabic. */
   --font-serif: var(--font-plex-serif), var(--font-plex-arabic), Georgia, serif;
+  /* Homepage display face: Plex Serif for Latin, Amiri (Naskh serif) for Arabic. */
+  --font-display: var(--font-plex-serif), var(--font-amiri), var(--font-plex-arabic), Georgia, serif;
 }
 
 /* /content hub ("The Tideline") ambient loops — pure CSS so reduced-motion
@@ -495,6 +528,15 @@ html[data-theme="tide"] {
   animation: tott-tide-drift 18s linear infinite;
 }
 
+/* Homepage rebuild "tideDrift": slow x/y idle sway for background elements. */
+@keyframes tott-tide-sway {
+  from { transform: translate(0, 0); }
+  to { transform: translate(8px, -12px); }
+}
+.tott-tide-sway {
+  animation: tott-tide-sway 14s ease-in-out infinite alternate;
+}
+
 @keyframes tott-scroll-cue {
   0%, 100% { transform: translateY(0); opacity: 0.7; }
   50% { transform: translateY(6px); opacity: 1; }
@@ -514,9 +556,269 @@ html[data-theme="tide"] {
 @media (prefers-reduced-motion: reduce) {
   .tott-kenburns,
   .tott-tide-drift,
+  .tott-tide-sway,
   .tott-scroll-cue,
   .tott-bottle-float {
     animation: none;
+  }
+}
+
+/* Homepage rebuild pillar cards (home/Pillars): lift + per-motif hover/focus
+   micro-animations. Whole block gated behind no-preference — an ungated
+   :hover transform would still jump under reduced motion. Border/background
+   color changes stay in the component (they're focus/hover indicators, not
+   motion). Keyframes omit 0%/100% so elements return to their base state. */
+@media (prefers-reduced-motion: no-preference) {
+  .tott-pillar-card {
+    transition:
+      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.3s ease,
+      background-color 0.3s ease;
+  }
+  .tott-pillar-card:hover,
+  .tott-pillar-card:focus-visible {
+    transform: translateY(-5px);
+  }
+
+  .tott-pillar-card :is(
+    .tott-motif-stone,
+    .tott-motif-crystal-a,
+    .tott-motif-crystal-b,
+    .tott-motif-needle,
+    .tott-motif-wave,
+    .tott-motif-moon
+  ) {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  /* Arch draw needs a dash the length of the path (pathLength=60); solid
+     when idle since dash == full length. */
+  .tott-pillar-card .tott-motif-arch {
+    stroke-dasharray: 60;
+  }
+
+  @keyframes tott-pillar-stone {
+    30% { transform: translateY(2px); }
+  }
+  @keyframes tott-pillar-crystal-a {
+    50% { transform: translate(-3px, -2px); }
+  }
+  @keyframes tott-pillar-crystal-b {
+    50% { transform: translate(3px, 2px); }
+  }
+  @keyframes tott-pillar-needle {
+    35% { transform: rotate(20deg); }
+    70% { transform: rotate(-14deg); }
+  }
+  @keyframes tott-pillar-wave {
+    50% { transform: translateY(-2px) scaleY(1.15); }
+  }
+  @keyframes tott-pillar-arch {
+    from { stroke-dashoffset: 60; }
+  }
+  @keyframes tott-pillar-moon {
+    50% { transform: translateY(-4px); }
+  }
+
+  .tott-pillar-card:hover .tott-motif-stone,
+  .tott-pillar-card:focus-visible .tott-motif-stone {
+    animation: tott-pillar-stone 0.6s ease-in-out;
+  }
+  .tott-pillar-card:hover .tott-motif-crystal-a,
+  .tott-pillar-card:focus-visible .tott-motif-crystal-a {
+    animation: tott-pillar-crystal-a 0.6s ease-in-out;
+  }
+  .tott-pillar-card:hover .tott-motif-crystal-b,
+  .tott-pillar-card:focus-visible .tott-motif-crystal-b {
+    animation: tott-pillar-crystal-b 0.6s ease-in-out;
+  }
+  .tott-pillar-card:hover .tott-motif-needle,
+  .tott-pillar-card:focus-visible .tott-motif-needle {
+    animation: tott-pillar-needle 0.6s ease-in-out;
+  }
+  .tott-pillar-card:hover .tott-motif-wave,
+  .tott-pillar-card:focus-visible .tott-motif-wave {
+    animation: tott-pillar-wave 0.6s ease-in-out;
+  }
+  .tott-pillar-card:hover .tott-motif-arch,
+  .tott-pillar-card:focus-visible .tott-motif-arch {
+    animation: tott-pillar-arch 0.6s ease-out;
+  }
+  .tott-pillar-card:hover .tott-motif-moon,
+  .tott-pillar-card:focus-visible .tott-motif-moon {
+    animation: tott-pillar-moon 0.6s ease-in-out;
+  }
+}
+
+/* Homepage rebuild archive cards (home/ArchiveFeed): headline underline grows
+   from inline-start (transform-origin flips under [dir="rtl"]), cover zooms
+   inside its overflow-hidden frame, view-all arrow nudges toward inline-end.
+   Base/hover states stay UNGATED so the underline still appears (instantly)
+   under reduced motion — it's a hover indicator; only transitions and the
+   cover/arrow transforms are motion, so those live in the no-preference gate.
+   The RTL arrow mirror is directional rendering, not motion — never gate it. */
+.tott-archive-underline {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: var(--tott-gold-primary);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+[dir="rtl"] .tott-archive-underline {
+  transform-origin: right center;
+}
+.tott-archive-card:hover .tott-archive-underline,
+.tott-archive-card:focus-visible .tott-archive-underline {
+  transform: scaleX(1);
+}
+[dir="rtl"] .tott-archive-arrow {
+  transform: scaleX(-1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tott-archive-underline {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .tott-archive-cover {
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .tott-archive-card:hover .tott-archive-cover,
+  .tott-archive-card:focus-visible .tott-archive-cover {
+    transform: scale(1.03);
+  }
+  .tott-archive-arrow {
+    transition: transform var(--tott-motion-duration-hover) var(--tott-motion-ease);
+  }
+  .tott-archive-viewall:hover .tott-archive-arrow,
+  .tott-archive-viewall:focus-visible .tott-archive-arrow {
+    transform: translateX(4px);
+  }
+  [dir="rtl"] .tott-archive-viewall:hover .tott-archive-arrow,
+  [dir="rtl"] .tott-archive-viewall:focus-visible .tott-archive-arrow {
+    transform: translateX(-4px) scaleX(-1);
+  }
+}
+
+/* Homepage rebuild voices strip (home/Voices): horizontal writers rail on
+   native overflow-x scroll — NO scroll-snap (fights Lenis). Scrollbar hidden
+   (arrows + drag are the affordance), symmetric edge fade mask (same both
+   ends, so direction-safe by construction). Portraits grayscale→color plus a
+   thin gold ring on hover/focus: end states UNGATED (hover indicators appear
+   instantly under reduced motion), only the 0.4s transitions live in the
+   no-preference gate. Arrow-button mirroring is directional rendering, not
+   motion — never gate it. The footer view-all link reuses
+   .tott-archive-viewall/.tott-archive-arrow (identical idiom, one source). */
+.tott-voices-strip {
+  cursor: grab;
+  user-select: none;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 3rem,
+    black calc(100% - 3rem),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 3rem,
+    black calc(100% - 3rem),
+    transparent
+  );
+}
+.tott-voices-strip::-webkit-scrollbar {
+  display: none;
+}
+.tott-voices-strip[data-dragging] {
+  cursor: grabbing;
+}
+.tott-voices-portrait {
+  filter: grayscale(1);
+}
+.tott-voices-card:hover .tott-voices-portrait,
+.tott-voices-card:focus-visible .tott-voices-portrait {
+  filter: grayscale(0);
+}
+.tott-voices-card:hover .tott-voices-frame,
+.tott-voices-card:focus-visible .tott-voices-frame {
+  box-shadow: 0 0 0 1px var(--tott-gold-primary);
+}
+.tott-voices-arrow-prev {
+  transform: scaleX(-1);
+}
+[dir="rtl"] .tott-voices-arrow-prev {
+  transform: none;
+}
+[dir="rtl"] .tott-voices-arrow-next {
+  transform: scaleX(-1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tott-voices-portrait {
+    transition: filter 0.4s var(--tott-motion-ease);
+  }
+  .tott-voices-frame {
+    transition: box-shadow 0.4s var(--tott-motion-ease);
+  }
+}
+
+/* Session 5 — Editions & Testimonies (the amber room). Books as physical
+   covers: a STATIC rotateY tilt (presentation, not motion — ungated) with
+   per-book perspective; [dir="rtl"] mirrors the tilt so covers lean toward
+   the content in both directions. The hover/focus straighten-to-viewer is a
+   transform, so it lives entirely inside the reduced-motion gate (Pillars
+   rule: the global reduced-motion override only zeroes durations and would
+   not stop a :hover transform from jumping). The gold hairline on hover is
+   an indicator — end state UNGATED (Session 3/4 rule), only its transition
+   is gated. Quotemark mirroring is directional rendering — never gate it. */
+.tott-editions-book {
+  perspective: 900px;
+}
+.tott-editions-cover {
+  transform: rotateY(-9deg);
+  box-shadow:
+    0 18px 30px -12px rgb(0 0 0 / 0.55),
+    0 6px 12px -6px rgb(0 0 0 / 0.4);
+}
+[dir="rtl"] .tott-editions-cover {
+  transform: rotateY(9deg);
+}
+/* Spine shading on the receding (inline-start) edge of the cover. */
+.tott-editions-cover::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 14%;
+  background: linear-gradient(to right, rgb(0 0 0 / 0.35), transparent);
+  z-index: 1;
+  pointer-events: none;
+}
+[dir="rtl"] .tott-editions-cover::before {
+  background: linear-gradient(to left, rgb(0 0 0 / 0.35), transparent);
+}
+.tott-editions-book:hover .tott-editions-cover,
+.tott-editions-book:focus-visible .tott-editions-cover {
+  box-shadow:
+    0 22px 38px -14px rgb(0 0 0 / 0.6),
+    0 0 0 1px var(--tott-gold-primary);
+}
+[dir="rtl"] .tott-editions-quotemark {
+  transform: scaleX(-1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tott-editions-cover {
+    transition:
+      transform 0.5s var(--tott-motion-ease),
+      box-shadow 0.5s var(--tott-motion-ease);
+  }
+  .tott-editions-book:hover .tott-editions-cover,
+  .tott-editions-book:focus-visible .tott-editions-cover {
+    transform: rotateY(0deg) translateY(-4px);
   }
 }
 

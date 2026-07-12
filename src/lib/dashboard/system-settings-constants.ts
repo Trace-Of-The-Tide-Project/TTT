@@ -6,6 +6,7 @@ export const SYSTEM_SETTINGS_TAB_IDS = [
   "localisation",
   "guidelines",
   "heroImages",
+  "homepageHero",
 ] as const;
 
 export type SystemSettingsTabId = (typeof SYSTEM_SETTINGS_TAB_IDS)[number];

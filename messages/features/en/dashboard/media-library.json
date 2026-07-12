@@ -1,0 +1,119 @@
+{
+  "Dashboard": {
+    "mediaLibrary": {
+      "title": "Media Library",
+      "subtitle": "Every image in the system in one place — organized, searchable, and safe to reuse.",
+      "libraryTab": "Library",
+      "searchPlaceholder": "Search files…",
+      "rescan": "Rescan",
+      "rescanning": "Scanning…",
+      "rescanDone": "Scan complete — {count} files indexed",
+      "upload": {
+        "cta": "Upload",
+        "dropHint": "Drop files here or click to upload",
+        "uploading": "Uploading…",
+        "uploaded": "Files uploaded",
+        "failed": "Some uploads failed"
+      },
+      "folders": {
+        "root": "All Files",
+        "new": "New Folder",
+        "namePlaceholder": "Folder name",
+        "createTitle": "New Folder",
+        "renameTitle": "Rename Folder",
+        "rename": "Rename",
+        "delete": "Delete",
+        "addSubfolder": "Add subfolder",
+        "renameAria": "Rename {name}",
+        "deleteAria": "Delete {name}",
+        "deleteConfirmTitle": "Delete folder?",
+        "deleteConfirmDescription": "This cannot be undone.",
+        "notEmpty": "Folder is not empty — move or delete its contents first",
+        "created": "Folder created",
+        "updated": "Folder updated",
+        "deleted": "Folder deleted"
+      },
+      "asset": {
+        "name": "Name",
+        "size": "Size",
+        "dimensions": "Dimensions",
+        "uploaded": "Uploaded",
+        "usages": "Used in",
+        "usagesCount": "{count, plural, one {# use} other {# uses}}",
+        "noUsages": "Not used anywhere",
+        "rename": "Rename",
+        "download": "Download",
+        "delete": "Delete",
+        "detailsTitle": "File details",
+        "renameSaved": "Renamed",
+        "deleteConfirmTitle": "Delete file?",
+        "deleteConfirmDescription": "This will permanently remove the file from storage.",
+        "deleteBlockedTitle": "This file is in use",
+        "deleteBlockedDescription": "Deleting it will break the following:",
+        "forceDelete": "Delete anyway",
+        "deleted": "File deleted"
+      },
+      "filters": {
+        "all": "All",
+        "unused": "Unused",
+        "imagesOnly": "Images only",
+        "scope": "Scope",
+        "main": "Main site",
+        "magazine": "Magazine",
+        "clear": "Clear filters"
+      },
+      "empty": "No files yet.",
+      "emptyFiltered": "No files match your filters.",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "pageOf": "Page {page} of {totalPages}"
+      },
+      "select": {
+        "selectedCount": "{count, plural, one {# selected} other {# selected}}",
+        "selectAll": "Select all",
+        "clear": "Clear selection"
+      },
+      "bulk": {
+        "move": "Move",
+        "delete": "Delete",
+        "zip": "Download zip",
+        "zipTooMany": "Select 50 or fewer files to download as a zip",
+        "moveTitle": "Move to folder",
+        "moved": "Assets moved",
+        "deleteConfirmTitle": "Delete {count} files?",
+        "deleteConfirmDescription": "This will permanently remove them from storage.",
+        "deleted": "Files deleted",
+        "partialBlocked": "{blocked} of {total} files are in use and were not deleted"
+      },
+      "share": {
+        "copyLink": "Copy link",
+        "copied": "Link copied"
+      },
+      "heroes": {
+        "tab": "Page Heroes",
+        "subtitle": "Override the hero image shown at the top of any of these pages.",
+        "current": "Current hero",
+        "derivedFrom": "Using the page's default image",
+        "noHero": "No hero image",
+        "replace": "Replace",
+        "clear": "Clear override",
+        "cleared": "Override cleared",
+        "updated": "Hero updated",
+        "pickerTitle": "Choose a hero image",
+        "pickFromLibrary": "Choose from library",
+        "uploadNew": "Upload new",
+        "communityNotice": "Community's hero is a rotating gallery, managed separately.",
+        "communityLinkOut": "Go to System Settings",
+        "pages": {
+          "home": "Homepage",
+          "contentHub": "Content Hub",
+          "magazineLanding": "Magazine Landing",
+          "writers": "Writers",
+          "trips": "Trips",
+          "writingRoom": "Writing Room"
+        }
+      }
+    }
+  }
+}

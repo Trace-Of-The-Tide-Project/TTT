@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -8,8 +9,25 @@ import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { IssuePurchaseActions } from "./IssuePurchaseActions";
 import { nameInitials } from "@/components/dashboard/admin/writers/initials";
 import { AvailableLanguagesBadge } from "@/components/content/AvailableLanguagesBadge";
+import { LockIcon } from "@/components/ui/icons";
 
-export type IssueIndexArticle = { id: string; title: string; slug?: string | null };
+export type IssueIndexArticle = {
+  id: string;
+  title: string;
+  slug?: string | null;
+  sectionId?: string | null;
+  locked?: boolean;
+};
+export type IssueSectionEntry = {
+  id: string;
+  title: string;
+};
+export type IssueEditorsLetterEntry = {
+  id: string;
+  title: string;
+  slug?: string | null;
+  excerpt?: string | null;
+};
 export type IssueContributorEntry = {
   id: string;
   name: string;
@@ -37,6 +55,8 @@ export type MagazineIssueDetail = {
   isFree: boolean;
   isOwned: boolean;
   language: string;
+  sections: IssueSectionEntry[];
+  editorsLetter: IssueEditorsLetterEntry | null;
   articles: IssueIndexArticle[];
   contributors: IssueContributorEntry[];
 };
@@ -64,6 +84,41 @@ export function MagazineIssueDetailContent({
     date,
     issue.category || issue.kind || "",
   ].filter(Boolean);
+
+  const articleHref = (slug: string) =>
+    issue.slug
+      ? `/magazine-issues/${encodeURIComponent(issue.slug)}/${encodeURIComponent(slug)}`
+      : null;
+
+  // First readable article — drives the "Start reading" CTA.
+  const firstReadable = issue.articles.find((a) => a.slug);
+
+  // Group the TOC by section, preserving section order; a trailing "ungrouped"
+  // bucket collects articles with no section. With no sections defined, the
+  // whole list falls into one unlabelled group (the flat legacy layout).
+  const groups = useMemo(() => {
+    const bySection = new Map<string | null, IssueIndexArticle[]>();
+    for (const a of issue.articles) {
+      const key = a.sectionId ?? null;
+      const bucket = bySection.get(key);
+      if (bucket) bucket.push(a);
+      else bySection.set(key, [a]);
+    }
+    const ordered: { id: string; label: string | null; items: IssueIndexArticle[] }[] = [];
+    for (const s of issue.sections) {
+      const items = bySection.get(s.id);
+      if (items?.length) ordered.push({ id: s.id, label: s.title, items });
+    }
+    const ungrouped = bySection.get(null);
+    if (ungrouped?.length) {
+      ordered.push({
+        id: "__ungrouped",
+        label: issue.sections.length > 0 ? t("ungrouped") : null,
+        items: ungrouped,
+      });
+    }
+    return ordered;
+  }, [issue.articles, issue.sections, t]);
 
   return (
     <main
@@ -140,6 +195,24 @@ export function MagazineIssueDetailContent({
           className="mt-3"
         />
 
+        {/* Start reading — jump straight into the first article */}
+        {firstReadable?.slug && articleHref(firstReadable.slug) ? (
+          <RevealOnScroll className="mt-6">
+            <Link
+              href={articleHref(firstReadable.slug) as string}
+              className="inline-flex h-11 items-center gap-2 rounded-lg border px-5 text-sm font-medium transition-opacity hover:opacity-90"
+              style={{
+                borderColor: "color-mix(in srgb, var(--tott-accent-gold) 55%, transparent)",
+                backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
+                color: ACCENT,
+              }}
+            >
+              {t("startReading")}
+              <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
+            </Link>
+          </RevealOnScroll>
+        ) : null}
+
         {issue.description ? (
           <RevealOnScroll
             className="mt-8 whitespace-pre-line text-base leading-relaxed"
@@ -159,8 +232,49 @@ export function MagazineIssueDetailContent({
           </RevealOnScroll>
         ) : null}
 
-        {/* Table of contents */}
-        {issue.articles.length > 0 ? (
+        {/* Editor's letter */}
+        {issue.editorsLetter ? (
+          <RevealOnScroll className="mt-10">
+            <div
+              className="rounded-2xl border p-5"
+              style={{
+                borderColor: "var(--tott-card-border)",
+                backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 6%, transparent)",
+              }}
+            >
+              <p
+                className="text-xs font-semibold uppercase tracking-wider"
+                style={{ color: ACCENT }}
+              >
+                {t("editorsLetter")}
+              </p>
+              <h2
+                className="mt-2 text-lg font-medium tracking-tight"
+                style={{ color: TEXT_STRONG }}
+              >
+                {issue.editorsLetter.title}
+              </h2>
+              {issue.editorsLetter.excerpt ? (
+                <p className="mt-2 text-sm leading-relaxed" style={{ color: TEXT_MUTED }}>
+                  {issue.editorsLetter.excerpt}
+                </p>
+              ) : null}
+              {issue.editorsLetter.slug && articleHref(issue.editorsLetter.slug) ? (
+                <Link
+                  href={articleHref(issue.editorsLetter.slug) as string}
+                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
+                  style={{ color: ACCENT }}
+                >
+                  {t("readEditorsLetter")}
+                  <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
+                </Link>
+              ) : null}
+            </div>
+          </RevealOnScroll>
+        ) : null}
+
+        {/* Table of contents (grouped by section) */}
+        {groups.length > 0 ? (
           <RevealOnScroll className="mt-10">
             <h2
               className="text-lg font-medium tracking-tight"
@@ -168,23 +282,54 @@ export function MagazineIssueDetailContent({
             >
               {t("contents")}
             </h2>
-            <ul className="mt-4 flex flex-col gap-2">
-              {issue.articles.map((a) => (
-                <li key={a.id}>
-                  <Link
-                    href={
-                      a.slug && issue.slug
-                        ? `/magazine-issues/${encodeURIComponent(issue.slug)}/${encodeURIComponent(a.slug)}`
-                        : `/content/article?id=${encodeURIComponent(a.id)}`
-                    }
-                    className="inline-flex items-center gap-2 text-base transition-opacity hover:opacity-90"
-                    style={{ color: ACCENT }}
-                  >
-                    {a.title}
-                  </Link>
-                </li>
+            <div className="mt-4 flex flex-col gap-6">
+              {groups.map((g) => (
+                <div key={g.id}>
+                  {g.label ? (
+                    <h3
+                      className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: TEXT_MUTED }}
+                    >
+                      {g.label}
+                    </h3>
+                  ) : null}
+                  <ul className="flex flex-col gap-2">
+                    {g.items.map((a) => {
+                      const href = a.slug ? articleHref(a.slug) : null;
+                      const lock = a.locked ? (
+                        <span
+                          aria-hidden
+                          className="inline-flex shrink-0 [&_svg]:h-3.5 [&_svg]:w-3.5"
+                          style={{ color: TEXT_MUTED }}
+                          title={t("locked")}
+                        >
+                          <LockIcon />
+                        </span>
+                      ) : null;
+                      return (
+                        <li key={a.id}>
+                          {href ? (
+                            <Link
+                              href={href}
+                              className="inline-flex items-center gap-2 text-base transition-opacity hover:opacity-90"
+                              style={{ color: ACCENT }}
+                            >
+                              {a.title}
+                              {lock}
+                            </Link>
+                          ) : (
+                            <span className="inline-flex items-center gap-2 text-base" style={{ color: TEXT_MUTED }}>
+                              {a.title}
+                              {lock}
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           </RevealOnScroll>
         ) : null}
 

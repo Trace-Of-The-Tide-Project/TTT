@@ -67,3 +67,26 @@ export async function getCommunityHeroImages(): Promise<string[]> {
     return [];
   }
 }
+
+function unwrapImageUrl(raw: unknown): string | null {
+  if (!raw || typeof raw !== "object") return null;
+  const o = (raw as { data?: unknown }).data ?? raw;
+  if (!o || typeof o !== "object") return null;
+  const url = (o as { url?: unknown }).url;
+  return typeof url === "string" && url ? url : null;
+}
+
+/** GET /system/homepage-hero-image — public. SSR- and client-safe.
+ * Admin-managed background image for the homepage hero section, or null
+ * when none has been uploaded. */
+export async function getHomepageHeroImage(): Promise<string | null> {
+  if (typeof window === "undefined") {
+    return unwrapImageUrl(await serverGet<unknown>("/system/homepage-hero-image"));
+  }
+  try {
+    const { data } = await api.get<unknown>("/system/homepage-hero-image");
+    return unwrapImageUrl(data);
+  } catch {
+    return null;
+  }
+}

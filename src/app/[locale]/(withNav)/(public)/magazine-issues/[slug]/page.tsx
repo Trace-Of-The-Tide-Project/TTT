@@ -55,7 +55,26 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
     currency: issue.currency ?? "USD",
     isFree: Boolean(issue.is_free),
     isOwned: Boolean(issue.is_owned),
-    articles: articles.map((a) => ({ id: a.id, title: a.title, slug: a.slug ?? null })),
+    sections: (issue.sections ?? []).map((s) => ({ id: s.id, title: s.title })),
+    editorsLetter: issue.editors_letter
+      ? {
+          id: issue.editors_letter.id,
+          title: issue.editors_letter.title,
+          slug: issue.editors_letter.slug ?? null,
+          excerpt: issue.editors_letter.excerpt ?? null,
+        }
+      : null,
+    // Public TOC shows published articles only; drafts are admin-visible via
+    // the same endpoint but never surfaced to readers.
+    articles: articles
+      .filter((a) => a.status === "published")
+      .map((a) => ({
+        id: a.id,
+        title: a.title,
+        slug: a.slug ?? null,
+        sectionId: a.section_id ?? null,
+        locked: a.access === "locked",
+      })),
     contributors: contributors.map((c) => ({
       id: c.id,
       name:

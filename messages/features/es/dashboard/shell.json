@@ -33,6 +33,7 @@
       "rolesPermissions": "Roles y permisos",
       "content": "Contenido",
       "contentLibrary": "Biblioteca de contenido",
+      "mediaLibrary": "Biblioteca multimedia",
       "visualEditor": "Editor visual (CMS)",
       "magazine": "Revista",
       "magazinePageEditor": "Editor de página",
@@ -80,7 +81,8 @@
         "email": "Plantillas de correo",
         "localisation": "Localización",
         "guidelines": "Directrices",
-        "heroImages": "Imágenes de portada"
+        "heroImages": "Imágenes de portada",
+        "homepageHero": "Portada de la página de inicio"
       },
       "saveChanges": "Guardar cambios",
       "itemCount": "{count, plural, one {# elemento} other {# elementos}}",
@@ -162,6 +164,15 @@
         "moveDown": "Mover abajo",
         "remove": "Eliminar imagen",
         "previewUnavailable": "Vista previa no disponible"
+      },
+      "homepageHero": {
+        "title": "Imagen de portada de la página de inicio",
+        "subtitle": "Sube la imagen de fondo que se muestra detrás del titular de la portada de la página de inicio.",
+        "addImage": "Añadir imagen",
+        "uploading": "Subiendo imagen…",
+        "uploaded": "Imagen subida",
+        "uploadFailed": "Error al subir",
+        "remove": "Eliminar imagen"
       },
       "saving": "Guardando…",
       "modal": {

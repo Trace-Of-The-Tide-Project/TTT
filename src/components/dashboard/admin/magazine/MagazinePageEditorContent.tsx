@@ -368,6 +368,9 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
                   onChange={(v) => setSharedField("artwork", v)}
                   placeholder="/images/home/magazine-thumbnail.svg"
                 />
+                <p className="mt-1 text-xs text-[var(--tott-muted)]">
+                  {t("fields.artworkUrlHint")}
+                </p>
               </Field>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label={t("fields.primaryHref")}>

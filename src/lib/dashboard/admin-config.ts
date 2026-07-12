@@ -20,7 +20,6 @@ import {
   EyeIcon,
   BellIcon,
   UserCheckIcon,
-  PlusIcon,
   MegaphoneIcon,
   CalendarIcon,
   IdCardIcon,
@@ -38,6 +37,7 @@ import {
   PersonPlusIcon,
   ClockIcon,
   CompassIcon,
+  ImageInsertIcon,
 } from "@/components/ui/icons";
 import type { DashboardConfig } from "./types";
 
@@ -58,12 +58,6 @@ export const adminConfig: DashboardConfig = {
           labelKey: "sidebar.articles",
           icon: MegaphoneIcon,
           items: [
-            {
-              kind: "item",
-              labelKey: "sidebar.createArticles",
-              href: "/admin/articles/create",
-              icon: PlusIcon,
-            },
             {
               kind: "item",
               labelKey: "sidebar.allArticles",
@@ -126,6 +120,12 @@ export const adminConfig: DashboardConfig = {
             },
             {
               kind: "item",
+              labelKey: "sidebar.mediaLibrary",
+              href: "/admin/media-library",
+              icon: ImageInsertIcon,
+            },
+            {
+              kind: "item",
               labelKey: "sidebar.collections",
               href: "/admin/collections",
               icon: GridIcon,
@@ -182,12 +182,6 @@ export const adminConfig: DashboardConfig = {
             },
             {
               kind: "item",
-              labelKey: "sidebar.createBook",
-              href: "/admin/books/create",
-              icon: PlusIcon,
-            },
-            {
-              kind: "item",
               labelKey: "sidebar.allBooks",
               href: "/admin/books",
               icon: ListIcon,
@@ -202,12 +196,6 @@ export const adminConfig: DashboardConfig = {
           items: [
             {
               kind: "item",
-              labelKey: "sidebar.createWriter",
-              href: "/admin/writers/create",
-              icon: PlusIcon,
-            },
-            {
-              kind: "item",
               labelKey: "sidebar.allWriters",
               href: "/admin/writers",
               icon: MicIcon,
@@ -220,12 +208,6 @@ export const adminConfig: DashboardConfig = {
           labelKey: "sidebar.people",
           icon: PersonIcon,
           items: [
-            {
-              kind: "item",
-              labelKey: "sidebar.addPerson",
-              href: "/admin/people/create",
-              icon: PlusIcon,
-            },
             {
               kind: "item",
               labelKey: "sidebar.allPeople",

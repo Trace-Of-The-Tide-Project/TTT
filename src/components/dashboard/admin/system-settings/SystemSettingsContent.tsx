@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/icons";
 import { BadgeFormModal } from "@/components/dashboard/admin/system-settings/BadgeFormModal";
 import { CommunityHeroImagesPanel } from "@/components/dashboard/admin/system-settings/CommunityHeroImagesPanel";
+import { HomepageHeroImagePanel } from "@/components/dashboard/admin/system-settings/HomepageHeroImagePanel";
 import { CategoryFormModal } from "@/components/dashboard/admin/system-settings/CategoryFormModal";
 import { TagFormModal } from "@/components/dashboard/admin/system-settings/TagFormModal";
 import type { MessageTemplate, MessageTemplateCategory } from "@/components/dashboard/modals/CreateMessageTemplateModal";
@@ -639,6 +640,9 @@ export function SystemSettingsContent() {
 
         {/* ── HERO IMAGES ── */}
         {activeTab === "heroImages" && <CommunityHeroImagesPanel />}
+
+        {/* ── HOMEPAGE HERO IMAGE ── */}
+        {activeTab === "homepageHero" && <HomepageHeroImagePanel />}
       </div>
 
       <CategoryFormModal

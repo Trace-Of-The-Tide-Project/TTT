@@ -10,6 +10,18 @@
     "addedToCart": "Added to cart",
     "downloadPdf": "Download PDF",
     "contributorsHeading": "Editors & Contributors",
+    "editorsLetter": "Editor's Letter",
+    "readEditorsLetter": "Read the editor's letter",
+    "startReading": "Start reading",
+    "ungrouped": "More in this issue",
+    "locked": "Locked — included with the issue",
+    "reader": {
+      "previous": "Previous",
+      "next": "Next",
+      "position": "{current} of {total}",
+      "backToIssue": "Issue cover",
+      "close": "Close"
+    },
     "roles": {
       "main_contributor": "Main contributor",
       "co-author": "Co-author",

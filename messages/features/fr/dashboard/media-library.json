@@ -1,0 +1,119 @@
+{
+  "Dashboard": {
+    "mediaLibrary": {
+      "title": "Bibliothèque de médias",
+      "subtitle": "Toutes les images du système au même endroit — organisées, consultables et sûres à réutiliser.",
+      "libraryTab": "Bibliothèque",
+      "searchPlaceholder": "Rechercher des fichiers…",
+      "rescan": "Ré-analyser",
+      "rescanning": "Analyse en cours…",
+      "rescanDone": "Analyse terminée — {count} fichiers indexés",
+      "upload": {
+        "cta": "Téléverser",
+        "dropHint": "Déposez des fichiers ici ou cliquez pour téléverser",
+        "uploading": "Téléversement…",
+        "uploaded": "Fichiers téléversés",
+        "failed": "Certains téléversements ont échoué"
+      },
+      "folders": {
+        "root": "Tous les fichiers",
+        "new": "Nouveau dossier",
+        "namePlaceholder": "Nom du dossier",
+        "createTitle": "Nouveau dossier",
+        "renameTitle": "Renommer le dossier",
+        "rename": "Renommer",
+        "delete": "Supprimer",
+        "addSubfolder": "Ajouter un sous-dossier",
+        "renameAria": "Renommer {name}",
+        "deleteAria": "Supprimer {name}",
+        "deleteConfirmTitle": "Supprimer le dossier ?",
+        "deleteConfirmDescription": "Cette action est irréversible.",
+        "notEmpty": "Le dossier n'est pas vide — déplacez ou supprimez son contenu d'abord",
+        "created": "Dossier créé",
+        "updated": "Dossier mis à jour",
+        "deleted": "Dossier supprimé"
+      },
+      "asset": {
+        "name": "Nom",
+        "size": "Taille",
+        "dimensions": "Dimensions",
+        "uploaded": "Téléversé le",
+        "usages": "Utilisé dans",
+        "usagesCount": "{count, plural, one {# utilisation} other {# utilisations}}",
+        "noUsages": "Non utilisé nulle part",
+        "rename": "Renommer",
+        "download": "Télécharger",
+        "delete": "Supprimer",
+        "detailsTitle": "Détails du fichier",
+        "renameSaved": "Renommé",
+        "deleteConfirmTitle": "Supprimer le fichier ?",
+        "deleteConfirmDescription": "Cette action supprimera définitivement le fichier du stockage.",
+        "deleteBlockedTitle": "Ce fichier est utilisé",
+        "deleteBlockedDescription": "Le supprimer cassera les éléments suivants :",
+        "forceDelete": "Supprimer quand même",
+        "deleted": "Fichier supprimé"
+      },
+      "filters": {
+        "all": "Tous",
+        "unused": "Non utilisés",
+        "imagesOnly": "Images uniquement",
+        "scope": "Portée",
+        "main": "Site principal",
+        "magazine": "Magazine",
+        "clear": "Effacer les filtres"
+      },
+      "empty": "Aucun fichier pour le moment.",
+      "emptyFiltered": "Aucun fichier ne correspond à vos filtres.",
+      "pagination": {
+        "previous": "Précédent",
+        "next": "Suivant",
+        "pageOf": "Page {page} sur {totalPages}"
+      },
+      "select": {
+        "selectedCount": "{count, plural, one {# sélectionné} other {# sélectionnés}}",
+        "selectAll": "Tout sélectionner",
+        "clear": "Effacer la sélection"
+      },
+      "bulk": {
+        "move": "Déplacer",
+        "delete": "Supprimer",
+        "zip": "Télécharger en zip",
+        "zipTooMany": "Sélectionnez 50 fichiers ou moins pour télécharger un zip",
+        "moveTitle": "Déplacer vers un dossier",
+        "moved": "Fichiers déplacés",
+        "deleteConfirmTitle": "Supprimer {count} fichiers ?",
+        "deleteConfirmDescription": "Cette action les supprimera définitivement du stockage.",
+        "deleted": "Fichiers supprimés",
+        "partialBlocked": "{blocked} fichier(s) sur {total} sont utilisés et n'ont pas été supprimés"
+      },
+      "share": {
+        "copyLink": "Copier le lien",
+        "copied": "Lien copié"
+      },
+      "heroes": {
+        "tab": "En-têtes de page",
+        "subtitle": "Remplacez l'image d'en-tête affichée en haut de l'une de ces pages.",
+        "current": "En-tête actuel",
+        "derivedFrom": "Utilise l'image par défaut de la page",
+        "noHero": "Aucune image d'en-tête",
+        "replace": "Remplacer",
+        "clear": "Effacer la substitution",
+        "cleared": "Substitution effacée",
+        "updated": "En-tête mis à jour",
+        "pickerTitle": "Choisir une image d'en-tête",
+        "pickFromLibrary": "Choisir depuis la bibliothèque",
+        "uploadNew": "Téléverser une nouvelle image",
+        "communityNotice": "L'en-tête de la Communauté est une galerie rotative, gérée séparément.",
+        "communityLinkOut": "Aller aux paramètres système",
+        "pages": {
+          "home": "Page d'accueil",
+          "contentHub": "Centre de contenu",
+          "magazineLanding": "Page d'accueil du magazine",
+          "writers": "Écrivains",
+          "trips": "Voyages",
+          "writingRoom": "Salle d'écriture"
+        }
+      }
+    }
+  }
+}

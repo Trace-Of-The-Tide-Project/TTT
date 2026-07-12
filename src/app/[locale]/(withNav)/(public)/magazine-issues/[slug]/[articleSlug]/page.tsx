@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getMagazineIssueBySlug } from "@/services/magazine-issues.service";
 import { ContentArticlePageClient } from "@/components/content/ContentArticlePageClient";
+import { IssueReaderShell } from "@/components/magazine-issues/IssueReaderShell";
 import { callBackend } from "@/lib/auth/proxy-backend";
 
 export const dynamic = "force-dynamic";
@@ -33,10 +34,17 @@ export default async function MagazineIssueArticlePage({ params }: PageProps) {
   if (!issue) return notFound();
 
   return (
-    <ContentArticlePageClient
-      slug={articleSlug}
-      expectedProduct="magazine"
-      requiredIssueId={issue.id}
-    />
+    <IssueReaderShell
+      issueSlug={issue.slug ?? slug}
+      issueId={issue.id}
+      issueTitle={issue.title}
+      articleSlug={articleSlug}
+    >
+      <ContentArticlePageClient
+        slug={articleSlug}
+        expectedProduct="magazine"
+        requiredIssueId={issue.id}
+      />
+    </IssueReaderShell>
   );
 }

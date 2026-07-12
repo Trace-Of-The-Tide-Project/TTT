@@ -16,4 +16,6 @@
  * time so it must not be statically prerendered.
  */
 export const dynamic = "force-dynamic";
-export { default } from "./home/page";
+// Named exports don't flow through `export { default }` — re-export
+// generateMetadata explicitly so `/` gets the homepage title/OG/hreflang.
+export { default, generateMetadata } from "./home/page";

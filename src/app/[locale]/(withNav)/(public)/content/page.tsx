@@ -2,6 +2,7 @@ import { getLocale } from "next-intl/server";
 import HexBackground from "@/components/ui/HexBackground";
 import { serverGet } from "@/lib/api/isomorphic-fetch";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
+import { getPageHero } from "@/services/media-library.service";
 import { AtriumHero } from "@/components/content/hub/AtriumHero";
 import { AtriumManifesto } from "@/components/content/hub/AtriumManifesto";
 import { AtriumGateways } from "@/components/content/hub/AtriumGateways";
@@ -138,7 +139,10 @@ async function fetchAtriumData(locale: string): Promise<AtriumData> {
 
 export default async function ContentHubPage() {
   const locale = await getLocale();
-  const { hero, gateways, curated } = await fetchAtriumData(locale);
+  const [{ hero, gateways, curated }, heroOverrideUrl] = await Promise.all([
+    fetchAtriumData(locale),
+    getPageHero("content-hub"),
+  ]);
 
   return (
     <main
@@ -155,7 +159,7 @@ export default async function ContentHubPage() {
       </div>
 
       <div className="relative">
-        <AtriumHero item={hero} />
+        <AtriumHero item={hero} heroOverrideUrl={heroOverrideUrl} />
         <AtriumManifesto />
         <AtriumGateways gateways={gateways} />
         <AtriumCuratedStrip items={curated} />

@@ -31,7 +31,9 @@
           "unsavedChangesConfirm": "Vous avez des modifications non enregistrées. Quitter sans enregistrer ?",
           "validationOpenCallBlocksDraft": "Ajoutez au moins un bloc de contenu avec du contenu.",
           "validationOpenCallBlocksPublish": "La publication nécessite au moins un bloc de contenu avec du contenu.",
-          "validationOpenCallBlocksSchedule": "La programmation nécessite au moins un bloc de contenu avec du contenu."
+          "validationOpenCallBlocksSchedule": "La programmation nécessite au moins un bloc de contenu avec du contenu.",
+          "backToMagazine": "Retour aux articles du magazine",
+          "magazineBadge": "Article de magazine"
         },
         "footer": {
           "schedule": "Programmer",
