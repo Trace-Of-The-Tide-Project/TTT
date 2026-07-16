@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=20 <23"
+    "node": ">=22.12"
   },
   "scripts": {
     "dev": "next dev",
@@ -55,5 +55,8 @@
     "prettier": "^3.8.1",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "jsdom": "27.3.0"
   }
 }

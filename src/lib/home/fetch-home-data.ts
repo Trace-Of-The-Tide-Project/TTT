@@ -13,6 +13,7 @@
  * biographical-card image).
  */
 import { callBackend } from "@/lib/auth/proxy-backend";
+import { stripHtml } from "@/components/home/magazine-next/ui";
 
 // ── Normalized rail item shapes ────────────────────────────────────
 
@@ -147,7 +148,7 @@ function mapArticle(a: Record<string, unknown>): HomeArticle {
   return {
     id,
     title: str(a.title) ?? "Untitled",
-    excerpt: str(a.excerpt) ?? str(a.summary),
+    excerpt: str(stripHtml(str(a.excerpt))) || str(stripHtml(str(a.summary))),
     image: str(a.cover_image),
     category: str(a.category),
     contentType: (str(a.content_type) ?? "article").toLowerCase(),

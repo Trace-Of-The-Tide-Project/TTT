@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { FileTextIcon, ImageIcon, TrashIcon } from "../ArticleEditorIcons";
 
 export const SUPPORTED_FILE_ACCEPT =
@@ -26,8 +27,41 @@ export function formatFileSize(bytes: number): string {
 
 const fileRowGlyphClass = "h-5 w-5 shrink-0 text-[var(--tott-muted)]";
 
+function useObjectUrl(file: File | null): string | null {
+  const [url, setUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!file) {
+      setUrl(null);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(file);
+    setUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [file]);
+
+  return url;
+}
+
 export function FileKindGlyph({ file }: { file: File }) {
   const t = (file.type || "").toLowerCase();
+  const isImage = t.startsWith("image/");
+  const previewUrl = useObjectUrl(isImage ? file : null);
+
+  if (isImage) {
+    return previewUrl ? (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={previewUrl}
+        alt=""
+        className="h-9 w-9 shrink-0 rounded-md object-cover"
+      />
+    ) : (
+      <span className={`${fileRowGlyphClass} flex items-center justify-center`} aria-hidden>
+        <ImageIcon />
+      </span>
+    );
+  }
   if (t.startsWith("video/")) {
     return (
       <svg
@@ -57,13 +91,6 @@ export function FileKindGlyph({ file }: { file: File }) {
         <circle cx="6" cy="18" r="3" />
         <circle cx="18" cy="16" r="3" />
       </svg>
-    );
-  }
-  if (t.startsWith("image/")) {
-    return (
-      <span className={`${fileRowGlyphClass} flex items-center justify-center`} aria-hidden>
-        <ImageIcon />
-      </span>
     );
   }
   return (

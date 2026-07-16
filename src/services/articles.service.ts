@@ -25,6 +25,14 @@ export type ArticleAccessLevel = "open" | "preview" | "subscriber" | "paid";
 /** Which product the article belongs to — main site or standalone magazine. */
 export type ArticleProduct = "main" | "magazine";
 
+/**
+ * Product as a LIST-QUERY value. Wider than the entity union: "all" is never
+ * stored, it tells the backend to drop the product filter entirely. Omitting
+ * the param is not the same as "all" — GET /articles defaults an absent
+ * product to "main", so admin lists that want both must ask for "all".
+ */
+export type ArticleProductFilter = ArticleProduct | "all";
+
 export type CreateArticlePayload = {
   title: string;
   content_type: string;
@@ -112,6 +120,12 @@ function toCreateArticleBody(payload: CreateArticlePayload): Record<string, unkn
   if (payload.preview_block_count != null) body.preview_block_count = payload.preview_block_count;
   if (payload.price != null) body.price = payload.price;
   if (payload.currency) body.currency = payload.currency;
+  // Magazine routing lives on these — dropping them made every magazine
+  // article POST as product='main' (backend column default).
+  if (payload.product) body.product = payload.product;
+  if (payload.issue_id) body.issue_id = payload.issue_id;
+  if (payload.magazine_id) body.magazine_id = payload.magazine_id;
+  if (payload.issue_position != null) body.issue_position = payload.issue_position;
 
   return body;
 }
@@ -501,6 +515,8 @@ export type UpdateArticlePayload = {
   issue_id?: string | null;
   /** Parent magazine — normally set alongside issue_id. */
   magazine_id?: string | null;
+  /** Re-assert the product on save; omitted (undefined) leaves it untouched. */
+  product?: ArticleProduct;
   access_level?: ArticleAccessLevel;
   preview_block_count?: number | null;
   price?: number | null;

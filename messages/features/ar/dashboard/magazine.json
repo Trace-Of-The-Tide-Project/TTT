@@ -479,10 +479,18 @@
       "unassigned": "غير مُسندة",
       "issueUnknown": "عدد غير معروف",
       "edit": "تعديل",
+      "delete": "حذف",
+      "deleteError": "تعذّر حذف المقال",
       "columns": {
         "title": "العنوان",
         "status": "الحالة",
         "issue": "العدد"
+      },
+      "translations": {
+        "toggle": "إظهار الترجمات",
+        "count": "+{count} لغة",
+        "needsTranslation": "بحاجة إلى ترجمة",
+        "needsTranslationTooltip": "لا توجد نسخة بلغة {locale} بعد."
       }
     }
   }

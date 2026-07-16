@@ -38,6 +38,8 @@ export type LatestPublishedItem = {
 export type MagazineLatestPublishedProps = {
   /** Pass an empty array to hide the section. */
   items: LatestPublishedItem[];
+  /** Header "view more" target. Defaults to /books; pass null to hide it. */
+  allHref?: string | null;
 };
 
 /**
@@ -50,6 +52,7 @@ export type MagazineLatestPublishedProps = {
  */
 export function MagazineLatestPublished({
   items,
+  allHref = "/books",
 }: MagazineLatestPublishedProps) {
   const t = useTranslations("Home.magazine.publications");
 
@@ -76,14 +79,16 @@ export function MagazineLatestPublished({
             {t("latestSubtitle")}
           </p>
         </div>
-        <Link
-          href="/books"
-          className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
-          style={{ color: "var(--tott-accent-gold)" }}
-        >
-          {t("viewMore")}
-          <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
-        </Link>
+        {allHref ? (
+          <Link
+            href={allHref}
+            className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
+            style={{ color: "var(--tott-accent-gold)" }}
+          >
+            {t("viewMore")}
+            <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
+          </Link>
+        ) : null}
       </RevealOnScroll>
 
       <motion.ul
@@ -102,7 +107,7 @@ export function MagazineLatestPublished({
             whileHover={{ y: -6, transition: springs.snappy }}
             className="flex basis-[calc(50%-0.5rem)] flex-col items-stretch sm:basis-[170px] sm:max-w-[192px]"
           >
-            <PublishedCardLink id={item.id}>
+            <PublishedCardLink id={item.id} href={item.href}>
             {item.coverImage ? (
               // Real cover fills the hex at full opacity/colour; the hex
               // path itself provides the shape + 1px sheen border.
@@ -168,20 +173,23 @@ export function MagazineLatestPublished({
   );
 }
 
-/** Wraps a card body in a Link to the public article reader when an
- * id is present; otherwise renders the body unwrapped so we never
- * produce a dead link. */
+/** Wraps a card body in a Link. Prefers an explicit `href` (e.g. a magazine
+ * article reader); falls back to the book reader by id. Renders unwrapped when
+ * neither is present so we never produce a dead link. */
 function PublishedCardLink({
   id,
+  href,
   children,
 }: {
   id: string | null | undefined;
+  href?: string | null;
   children: React.ReactNode;
 }) {
-  if (!id) return <>{children}</>;
+  const to = href ?? (id ? `/books/${encodeURIComponent(id)}` : null);
+  if (!to) return <>{children}</>;
   return (
     <Link
-      href={`/books/${encodeURIComponent(id)}`}
+      href={to}
       className="flex flex-col items-stretch transition-opacity hover:opacity-90"
     >
       {children}

@@ -10,6 +10,7 @@ import {
   useReorderIssueArticles,
   useUnassignArticleFromIssue,
 } from "@/hooks/mutations/issue-articles";
+import type { ArticleProduct } from "@/services/articles.service";
 
 const inputClass =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground outline-none placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-accent-gold)]";
@@ -32,7 +33,9 @@ export function IssueArticlesPanel({
   // Attach only from the magazine pool (product=magazine), and only articles
   // not already in an issue — a magazine article lives in one issue at a time.
   const searchQuery = useArticles(
-    search.trim() ? { search: search.trim(), limit: 8, product: "magazine" } : undefined,
+    search.trim()
+      ? { search: search.trim(), limit: 8, product: "magazine" satisfies ArticleProduct }
+      : undefined,
     { silent: true },
   );
 

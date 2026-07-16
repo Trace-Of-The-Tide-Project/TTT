@@ -22,6 +22,7 @@ import {
   updateArticle,
   type ArticleLifecycleStatus,
   type ArticleAccessLevel,
+  type ArticleProduct,
 } from "@/services/articles.service";
 import { useArticle } from "@/hooks/queries/articles";
 import { useTranslations as useTranslationGroup } from "@/hooks/queries/translations";
@@ -43,7 +44,7 @@ export type ContentEditorLayoutProps = {
   initialMagazineId?: string;
   /** Force the product on create (e.g. 'magazine' for a loose pool article
    * with no issue yet). issue_id, when present, forces magazine regardless. */
-  initialProduct?: "main" | "magazine";
+  initialProduct?: ArticleProduct;
   returnTo?: string;
 };
 
@@ -123,12 +124,15 @@ export function useArticleEditor({
   // stashed here on switch. A locale absent from the buffers has never been
   // opened.
   const [activeLang, setActiveLang] = useState(initialLanguage || "en");
+  // Kept in sync via effect (not written during render) so async callbacks
+  // (tab-switch fetch, sibling save) can read the truly-latest value without
+  // forcing every callback to depend on activeLang/liveForm.
   const activeLangRef = useRef(activeLang);
-  activeLangRef.current = activeLang;
-  const languageBuffersRef = useRef<Record<string, LangForm>>({});
+  useEffect(() => { activeLangRef.current = activeLang; }, [activeLang]);
+  const [languageBuffers, setLanguageBuffers] = useState<Record<string, LangForm>>({});
   // Per-locale pristine fingerprints; a tab whose form differs from its
   // baseline is "dirty" and gets saved as a sibling version.
-  const langBaselineRef = useRef<Record<string, string>>({});
+  const [langBaseline, setLangBaseline] = useState<Record<string, string>>({});
   const [translationOf, setTranslationOf] = useState<string | undefined>(initialTranslationOf);
   const [originalTitle, setOriginalTitle] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
@@ -169,7 +173,7 @@ export function useArticleEditor({
   // Live form of the ACTIVE tab (the regular states) + ref for async readers.
   const liveForm: LangForm = { title, blocks, seoTitle, metaDescription };
   const liveFormRef = useRef(liveForm);
-  liveFormRef.current = liveForm;
+  useEffect(() => { liveFormRef.current = liveForm; });
 
   // Capture a per-tab pristine baseline shortly after a tab is (re)seeded.
   // ponytail: same 1.5s settle window as the global dirty baseline — rich-text
@@ -177,11 +181,12 @@ export function useArticleEditor({
   const [langBaselineTick, setLangBaselineTick] = useState(0);
   useEffect(() => {
     const loc = activeLang;
-    if (langBaselineRef.current[loc]) return;
+    if (langBaseline[loc]) return;
     const id = setTimeout(() => {
-      langBaselineRef.current[loc] = langFormFingerprint(liveFormRef.current);
+      setLangBaseline((prev) => ({ ...prev, [loc]: langFormFingerprint(liveFormRef.current) }));
     }, 1500);
     return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeLang, langBaselineTick]);
 
   // Existing sibling versions of the translation group (edit mode).
@@ -207,15 +212,16 @@ export function useArticleEditor({
   const switchLanguage = useCallback(
     (next: string) => {
       if (next === activeLang || busy) return;
-      languageBuffersRef.current[activeLang] = { title, blocks, seoTitle, metaDescription };
-      const buf = languageBuffersRef.current[next];
+      const snapshot: LangForm = { title, blocks, seoTitle, metaDescription };
+      setLanguageBuffers((prev) => ({ ...prev, [activeLang]: snapshot }));
+      const buf = languageBuffers[next];
       if (buf) {
         applyLangForm(buf);
       } else if (isEditMode && versionIds[next]) {
         // Existing sibling never opened this session — fetch it. The current
         // content stays visible until the fetch lands; if the admin already
         // started typing in the tab, the fetch never clobbers their work.
-        const cloneFp = langFormFingerprint({ title, blocks, seoTitle, metaDescription });
+        const cloneFp = langFormFingerprint(snapshot);
         getArticleById(versionIds[next]).then((a) => {
           if (!a || activeLangRef.current !== next) return;
           if (langFormFingerprint(liveFormRef.current) !== cloneFp) return;
@@ -230,14 +236,17 @@ export function useArticleEditor({
           };
           applyLangForm(f);
           // Re-capture the pristine baseline from the fetched content.
-          delete langBaselineRef.current[next];
+          setLangBaseline((prev) => {
+            const { [next]: _removed, ...rest } = prev;
+            return rest;
+          });
           setLangBaselineTick((n) => n + 1);
         });
       }
       // else: clone-in-place — current content is the starting point.
       setActiveLang(next);
     },
-    [activeLang, busy, title, blocks, seoTitle, metaDescription, isEditMode, versionIds, applyLangForm],
+    [activeLang, busy, title, blocks, seoTitle, metaDescription, isEditMode, versionIds, applyLangForm, languageBuffers],
   );
 
   /** Create mode only: the settings language select re-tags which language is
@@ -251,25 +260,28 @@ export function useArticleEditor({
     [isEditMode, switchLanguage],
   );
 
-  /** A tab is dirty when its form differs from its pristine baseline. */
-  const langDirtyFor = useCallback(
-    (loc: string): boolean => {
-      const base = langBaselineRef.current[loc];
+  /** A tab is dirty when its form differs from its pristine baseline.
+   * Takes lang/form explicitly so it's safe to call during render (tabStatus)
+   * as well as from async handlers (saveDirtySiblings), which pass the ref
+   * values to get the truly-latest active tab instead of a stale closure. */
+  const isLangDirty = useCallback(
+    (loc: string, currentLang: string, currentForm: LangForm): boolean => {
+      const base = langBaseline[loc];
       if (!base) return false;
-      const f = loc === activeLangRef.current ? liveFormRef.current : languageBuffersRef.current[loc];
+      const f = loc === currentLang ? currentForm : languageBuffers[loc];
       return f ? langFormFingerprint(f) !== base : false;
     },
-    [],
+    [langBaseline, languageBuffers],
   );
 
   // Computed per render so typing updates the dot immediately.
   const tabStatus: Record<string, LanguageTabStatus> = {};
   for (const loc of routing.locales) {
-    tabStatus[loc] = langDirtyFor(loc)
+    tabStatus[loc] = isLangDirty(loc, activeLang, liveForm)
       ? "dirty"
       : loc === language
         ? "primary"
-        : versionIds[loc] || languageBuffersRef.current[loc]
+        : versionIds[loc] || languageBuffers[loc]
           ? "existing"
           : "empty";
   }
@@ -283,24 +295,24 @@ export function useArticleEditor({
     price, currency, seoTitle, metaDescription, collectionId, tagIds,
     coverImage, blocks, workflowStatus,
   });
-  const dirtyBaselineRef = useRef<string | null>(null);
+  const [dirtyBaseline, setDirtyBaseline] = useState<string | null>(null);
   const fingerprintRef = useRef(editorFingerprint);
-  fingerprintRef.current = editorFingerprint;
+  useEffect(() => { fingerprintRef.current = editorFingerprint; });
   const [rebaselineTick, setRebaselineTick] = useState(0);
   useEffect(() => {
     // The rich-text editors normalize their HTML shortly after mounting,
     // which mutates blocks without any user input. Capture the baseline
     // after that settles so a freshly loaded article reads as pristine.
     // ponytail: fixed 1.5s settle window; edits made inside it are absorbed.
-    dirtyBaselineRef.current = null;
+    setDirtyBaseline(null);
     const id = setTimeout(() => {
-      dirtyBaselineRef.current = fingerprintRef.current;
+      setDirtyBaseline(fingerprintRef.current);
     }, 1500);
     return () => clearTimeout(id);
   }, [rebaselineTick]);
   const isDirty =
-    dirtyBaselineRef.current !== null &&
-    dirtyBaselineRef.current !== editorFingerprint;
+    dirtyBaseline !== null &&
+    dirtyBaseline !== editorFingerprint;
 
   const articleQuery = useArticle(articleId);
   const articleLoading = isEditMode && articleQuery.isPending;
@@ -329,8 +341,8 @@ export function useArticleEditor({
     const loadedLang = (a.language || "en").trim() || "en";
     setLanguage(loadedLang);
     setActiveLang(loadedLang);
-    languageBuffersRef.current = {};
-    langBaselineRef.current = {};
+    setLanguageBuffers({});
+    setLangBaseline({});
     setLangBaselineTick((n) => n + 1);
     setTranslationOf(a.translation_of?.trim() || undefined);
     setVisibility((a.visibility || "public").toLowerCase() === "private" ? "private" : "public");
@@ -442,8 +454,8 @@ export function useArticleEditor({
     (): LangForm =>
       activeLangRef.current === language
         ? liveFormRef.current
-        : (languageBuffersRef.current[language] ?? liveFormRef.current),
-    [language],
+        : (languageBuffers[language] ?? liveFormRef.current),
+    [language, languageBuffers],
   );
 
   const buildPayload = useCallback(async (f: LangForm) => {
@@ -496,9 +508,9 @@ export function useArticleEditor({
   const saveDirtySiblings = useCallback(
     async (payload: Awaited<ReturnType<typeof buildPayload>>, groupId: string | null | undefined) => {
       for (const loc of routing.locales) {
-        if (loc === language || !langDirtyFor(loc)) continue;
+        if (loc === language || !isLangDirty(loc, activeLangRef.current, liveFormRef.current)) continue;
         const f =
-          loc === activeLangRef.current ? liveFormRef.current : languageBuffersRef.current[loc];
+          loc === activeLangRef.current ? liveFormRef.current : languageBuffers[loc];
         if (!f) continue;
         try {
           const built = await buildArticleBlocksFromEditor(f.blocks, {
@@ -529,7 +541,7 @@ export function useArticleEditor({
         }
       }
     },
-    [language, langDirtyFor, versionIds],
+    [language, isLangDirty, versionIds, languageBuffers],
   );
 
   const handleSaveDraft = useCallback(async () => {

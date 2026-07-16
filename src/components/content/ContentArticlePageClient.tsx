@@ -10,6 +10,7 @@ import {
   getRelatedArticles,
   getCollectionArticles,
   type ArticleDetail,
+  type ArticleProduct,
 } from "@/services/articles.service";
 import { useArticle, useArticleBySlug } from "@/hooks/queries/articles";
 import { useRecordArticleView } from "@/hooks/mutations/articles";
@@ -123,7 +124,7 @@ function ArticleByIdLoader({
 }: {
   id?: string;
   slug?: string;
-  expectedProduct?: "main" | "magazine";
+  expectedProduct?: ArticleProduct;
   requiredIssueId?: string;
 }) {
   const t = useTranslations("Content");
@@ -304,7 +305,7 @@ function ContentArticlePageInner({
   demoMedia: ContentPageLayoutProps["media"];
   demoArticle?: DemoArticle;
   slug?: string;
-  expectedProduct?: "main" | "magazine";
+  expectedProduct?: ArticleProduct;
   requiredIssueId?: string;
 }) {
   const searchParams = useSearchParams();
@@ -350,7 +351,7 @@ export function ContentArticlePageClient({
   demoArticle?: DemoArticle;
   slug?: string;
   /** Which product this reader serves; articles from the other product render as not-found. */
-  expectedProduct?: "main" | "magazine";
+  expectedProduct?: ArticleProduct;
   /** When set, the article must belong to this magazine issue. */
   requiredIssueId?: string;
 } = {}) {

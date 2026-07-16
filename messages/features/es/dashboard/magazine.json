@@ -479,10 +479,18 @@
       "unassigned": "Sin asignar",
       "issueUnknown": "Número desconocido",
       "edit": "Editar",
+      "delete": "Eliminar",
+      "deleteError": "No se pudo eliminar el artículo",
       "columns": {
         "title": "Título",
         "status": "Estado",
         "issue": "Número"
+      },
+      "translations": {
+        "toggle": "Mostrar traducciones",
+        "count": "+{count} idiomas",
+        "needsTranslation": "Necesita traducción",
+        "needsTranslationTooltip": "Aún no hay versión en {locale}."
       }
     }
   }

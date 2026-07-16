@@ -740,8 +740,8 @@ function IssueFormModal({
 
   // Snapshot of the pristine forms — anything different means unsaved work,
   // so closing asks for confirmation instead of silently dropping it.
-  const initialFormRef = useRef<string>("");
-  if (!initialFormRef.current) initialFormRef.current = JSON.stringify(forms);
+  const initialFormRef = useRef<string | null>(null);
+  if (initialFormRef.current == null) initialFormRef.current = JSON.stringify(forms);
   const isDirty = JSON.stringify(forms) !== initialFormRef.current;
 
   const requestClose = () => {

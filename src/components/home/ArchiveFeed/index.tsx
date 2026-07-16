@@ -10,8 +10,10 @@ import {
 import { formatArticleListDate } from "@/lib/dashboard/map-articles-list";
 import { StaggerContainer } from "@/components/motion/StaggerContainer";
 import { StaggerItem } from "@/components/motion/StaggerItem";
+import { ChamferedSurface } from "@/components/ui/ChamferedSurface";
 import { SectionShell } from "../SectionShell";
 import { MaskReveal } from "./MaskReveal";
+import { stripHtml } from "../magazine-next/ui";
 
 /**
  * "Latest from the archive" — one featured article (is_featured flag, falling
@@ -121,7 +123,7 @@ export async function ArchiveFeed() {
         ? resolveArticleMediaSrc(row.cover_image)
         : null,
       typeLabel: t(`archive.types.${typeKeyOf(row.content_type)}`),
-      excerpt: row.excerpt?.trim() || null,
+      excerpt: stripHtml(row.excerpt) || null,
       meta: [authorName, dateLabel].filter(Boolean).join(" · ") || null,
     };
   };
@@ -144,7 +146,11 @@ export async function ArchiveFeed() {
           >
             {feat.image ? (
               <MaskReveal>
-                <span className="relative block aspect-[16/10] overflow-hidden bg-[var(--tott-panel-bg)]">
+                <ChamferedSurface
+                  chamfer={28}
+                  borderColor="color-mix(in srgb, var(--tott-gold-muted) 45%, transparent)"
+                  className="relative block aspect-[16/10] bg-[var(--tott-panel-bg)]"
+                >
                   <Image
                     src={feat.image}
                     alt=""
@@ -153,7 +159,7 @@ export async function ArchiveFeed() {
                     sizes="(min-width: 1024px) 560px, 100vw"
                     className="tott-archive-cover object-cover"
                   />
-                </span>
+                </ChamferedSurface>
               </MaskReveal>
             ) : null}
             <div>
@@ -192,48 +198,55 @@ export async function ArchiveFeed() {
                 <StaggerItem key={item.id} className="h-full">
                   <Link
                     href={item.href}
-                    className="tott-archive-card group flex h-full flex-col border border-[color-mix(in_srgb,var(--tott-salt)_25%,transparent)] bg-[var(--tott-elevated)] transition-colors hover:border-[var(--tott-gold-muted)] hover:bg-[var(--tott-elevated-hover)] focus-visible:border-[var(--tott-gold-muted)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-gold-bright)]"
+                    className="tott-archive-card group block h-full [--archive-bg:var(--tott-elevated)] [--archive-border:color-mix(in_srgb,var(--tott-salt)_25%,transparent)] hover:[--archive-bg:var(--tott-elevated-hover)] hover:[--archive-border:var(--tott-gold-muted)] focus-visible:[--archive-bg:var(--tott-elevated-hover)] focus-visible:[--archive-border:var(--tott-gold-muted)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-gold-bright)]"
                   >
-                    {withImage && item.image ? (
-                      <span className="relative block aspect-[16/10] overflow-hidden bg-[var(--tott-panel-bg)]">
-                        <Image
-                          src={item.image}
-                          alt=""
-                          fill
-                          unoptimized
-                          sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
-                          className="tott-archive-cover object-cover"
-                        />
-                      </span>
-                    ) : (
-                      <span
-                        aria-hidden
-                        className="mx-6 mt-6 block h-px w-10 bg-[var(--tott-gold-muted)]"
-                      />
-                    )}
-                    <div className="flex flex-1 flex-col p-6">
-                      <span className={KICKER_CLASS}>{item.typeLabel}</span>
-                      <h3
-                        className="mt-2 line-clamp-2 font-display text-xl text-[var(--tott-home-text-warm)]"
-                        style={{
-                          lineHeight: "var(--tott-display-leading)",
-                          letterSpacing: "var(--tott-display-tracking)",
-                        }}
-                      >
-                        {item.title}
-                      </h3>
-                      <span aria-hidden className="tott-archive-underline mt-1.5" />
-                      {!withImage && item.excerpt ? (
-                        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-[var(--tott-salt)]">
-                          {item.excerpt}
-                        </p>
-                      ) : null}
-                      {item.meta ? (
-                        <span className="mt-auto block pt-5 text-xs tabular-nums text-[var(--tott-salt)]">
-                          {item.meta}
+                    <ChamferedSurface
+                      chamfer={20}
+                      borderColor="var(--archive-border)"
+                      innerFill="var(--archive-bg)"
+                      className="flex h-full flex-col"
+                    >
+                      {withImage && item.image ? (
+                        <span className="relative block aspect-[16/10] overflow-hidden bg-[var(--tott-panel-bg)]">
+                          <Image
+                            src={item.image}
+                            alt=""
+                            fill
+                            unoptimized
+                            sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
+                            className="tott-archive-cover object-cover"
+                          />
                         </span>
-                      ) : null}
-                    </div>
+                      ) : (
+                        <span
+                          aria-hidden
+                          className="relative mx-6 mt-6 block h-px w-10 bg-[var(--tott-gold-muted)]"
+                        />
+                      )}
+                      <div className="relative flex flex-1 flex-col p-6">
+                        <span className={KICKER_CLASS}>{item.typeLabel}</span>
+                        <h3
+                          className="mt-2 line-clamp-2 font-display text-xl text-[var(--tott-home-text-warm)]"
+                          style={{
+                            lineHeight: "var(--tott-display-leading)",
+                            letterSpacing: "var(--tott-display-tracking)",
+                          }}
+                        >
+                          {item.title}
+                        </h3>
+                        <span aria-hidden className="tott-archive-underline mt-1.5" />
+                        {!withImage && item.excerpt ? (
+                          <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-[var(--tott-salt)]">
+                            {item.excerpt}
+                          </p>
+                        ) : null}
+                        {item.meta ? (
+                          <span className="mt-auto block pt-5 text-xs tabular-nums text-[var(--tott-salt)]">
+                            {item.meta}
+                          </span>
+                        ) : null}
+                      </div>
+                    </ChamferedSurface>
                   </Link>
                 </StaggerItem>
               );
