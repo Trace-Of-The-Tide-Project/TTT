@@ -219,6 +219,15 @@
       },
       "published": {
         "new": "عدد جديد",
+        "card": {
+          "currentBadge": "الحالي",
+          "setCurrent": "تعيين كعدد حالي",
+          "settingCurrent": "جارٍ التعيين…",
+          "setCurrentTitle": "تعيينه كعدد حالي؟",
+          "setCurrentBody": "سيصبح «{title}» العدد الحالي المعروض على صفحة المجلة الرئيسية، بدلاً من العدد السابق.",
+          "setCurrentDone": "تم تحديث العدد الحالي.",
+          "setCurrentError": "تعذّر تعيين العدد الحالي"
+        },
         "tabs": {
           "all": "الكل",
           "published": "منشور",
@@ -327,6 +336,35 @@
           "deleting": "جارٍ حذف العدد…",
           "deleted": "تم حذف العدد.",
           "deleteError": "تعذّر حذف العدد"
+        }
+      },
+      "editor": {
+        "createTitle": "عدد جديد",
+        "editTitle": "تحرير العدد",
+        "back": "العودة إلى الأعداد",
+        "save": "حفظ",
+        "create": "إنشاء العدد",
+        "saving": "جارٍ الحفظ…",
+        "saved": "تم حفظ العدد.",
+        "created": "تم إنشاء العدد.",
+        "saveError": "تعذّر حفظ العدد",
+        "uploading": "جارٍ رفع الغلاف…",
+        "uploaded": "تم رفع الغلاف",
+        "uploadError": "فشل رفع الغلاف",
+        "notFound": "تعذّر العثور على هذا العدد.",
+        "currentBadge": "العدد الحالي",
+        "saveToAssign": "احفظ العدد أولاً لإسناد المقالات والمساهمين.",
+        "fields": {
+          "theme": "الموضوع / العنوان الفرعي",
+          "letter": "افتتاحية المحرّر",
+          "letterHint": "تُعرض كمقدمة للعدد",
+          "letterPlaceholder": "اكتب افتتاحية المحرّر لهذا العدد…"
+        },
+        "errors": {
+          "titleRequired": "العنوان مطلوب.",
+          "editionRequired": "رقم العدد مطلوب.",
+          "editionNumber": "يجب أن يكون رقم العدد رقمًا.",
+          "coverRequired": "صورة الغلاف مطلوبة."
         }
       },
       "contributors": {

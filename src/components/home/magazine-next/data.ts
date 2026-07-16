@@ -65,6 +65,7 @@ export type IssueCard = {
   editionNumber: number | null;
   category: string | null;
   publishedAt: string | null;
+  isCurrent: boolean;
 };
 
 export type ArticleCard = {
@@ -154,6 +155,7 @@ function toIssueCard(it: MagazineIssue): IssueCard {
     editionNumber: it.edition_number ?? null,
     category: it.category ?? null,
     publishedAt: it.published_at ?? null,
+    isCurrent: it.is_current ?? false,
   };
 }
 
@@ -265,6 +267,24 @@ export async function fetchIssues(
     order: "DESC",
   });
   return unwrapList(raw).map(toIssueCard);
+}
+
+/**
+ * The magazine's current issue (isCurrent = true), resolved to the viewer's
+ * language server-side. Null when no issue has been marked current — callers
+ * fall back to the newest published issue.
+ */
+export async function fetchCurrentIssue(
+  locale: string,
+): Promise<IssueCard | null> {
+  const raw = await serverGet<MagazineIssue | { data?: MagazineIssue }>(
+    "/magazine-issues/current",
+    { viewer_lang: locale },
+  );
+  if (!raw) return null;
+  const issue =
+    "data" in raw ? (raw as { data?: MagazineIssue }).data : (raw as MagazineIssue);
+  return issue?.id ? toIssueCard(issue) : null;
 }
 
 /**

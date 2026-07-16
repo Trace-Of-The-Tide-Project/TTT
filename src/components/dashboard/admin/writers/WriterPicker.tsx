@@ -3,8 +3,30 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useWriters } from "@/hooks/queries/writers";
-import type { WriterProfile } from "@/services/writers.service";
+import { writerAvatar, type WriterProfile } from "@/services/writers.service";
 import { nameInitials } from "./initials";
+
+function Avatar({ w, name }: { w: WriterProfile; name: string }) {
+  const avatar = writerAvatar(w);
+  if (avatar) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- small picker thumbnail, varied hosts
+      <img
+        src={avatar}
+        alt=""
+        className="h-8 w-8 shrink-0 rounded-full object-cover border border-[var(--tott-card-border)]"
+        onError={(e) => {
+          (e.target as HTMLImageElement).style.display = "none";
+        }}
+      />
+    );
+  }
+  return (
+    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--tott-elevated)] text-xs font-semibold text-[var(--tott-gold)]">
+      {nameInitials(name)}
+    </span>
+  );
+}
 
 /** Display name for a writer: pen name, then legacy display name, then the
  * linked user's full name. Accepts any object carrying these optional fields. */
@@ -53,9 +75,7 @@ export function WriterPicker({
     return (
       <div className="flex items-center justify-between gap-3 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--tott-elevated)] text-xs font-semibold text-[var(--tott-gold)]">
-            {nameInitials(name)}
-          </span>
+          <Avatar w={value} name={name} />
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-foreground">{name}</p>
             {value.headline ? (
@@ -111,9 +131,7 @@ export function WriterPicker({
               disabled={disabled}
               className="flex w-full items-center gap-3 border-b border-[var(--tott-card-border)] px-3 py-2 text-start last:border-b-0 hover:bg-[var(--tott-elevated)] disabled:opacity-40"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--tott-elevated)] text-xs font-semibold text-[var(--tott-gold)]">
-                {nameInitials(name)}
-              </span>
+              <Avatar w={w} name={name} />
               <span className="min-w-0">
                 <span className="block truncate text-sm text-foreground">
                   {name}

@@ -219,6 +219,15 @@
       },
       "published": {
         "new": "New issue",
+        "card": {
+          "currentBadge": "Current",
+          "setCurrent": "Set as current",
+          "settingCurrent": "Setting…",
+          "setCurrentTitle": "Set as current issue?",
+          "setCurrentBody": "“{title}” will become the current issue shown on the magazine homepage, replacing the previous one.",
+          "setCurrentDone": "Current issue updated.",
+          "setCurrentError": "Could not set the current issue"
+        },
         "tabs": {
           "all": "All",
           "published": "Published",
@@ -327,6 +336,35 @@
           "deleting": "Deleting issue…",
           "deleted": "Issue deleted.",
           "deleteError": "Could not delete the issue"
+        }
+      },
+      "editor": {
+        "createTitle": "New issue",
+        "editTitle": "Edit issue",
+        "back": "Back to issues",
+        "save": "Save",
+        "create": "Create issue",
+        "saving": "Saving…",
+        "saved": "Issue saved.",
+        "created": "Issue created.",
+        "saveError": "Could not save the issue",
+        "uploading": "Uploading cover…",
+        "uploaded": "Cover uploaded",
+        "uploadError": "Cover upload failed",
+        "notFound": "This issue could not be found.",
+        "currentBadge": "Current issue",
+        "saveToAssign": "Save the issue first to assign articles and contributors.",
+        "fields": {
+          "theme": "Theme / subtitle",
+          "letter": "Editor's letter",
+          "letterHint": "Shown as the issue's introduction",
+          "letterPlaceholder": "Write the editor's letter for this issue…"
+        },
+        "errors": {
+          "titleRequired": "Title is required.",
+          "editionRequired": "Edition number is required.",
+          "editionNumber": "Edition must be a number.",
+          "coverRequired": "A cover image is required."
         }
       },
       "contributors": {

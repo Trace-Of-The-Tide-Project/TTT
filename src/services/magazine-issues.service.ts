@@ -42,6 +42,11 @@ export type MagazineIssue = {
   category?: string | null;
   magazine_id?: string | null;
   is_premium?: boolean | null;
+  /** The public "current issue" flag. Flipped only via setCurrentIssue. */
+  is_current?: boolean | null;
+  /** The issue's editor's letter — rich-text HTML (distinct from the legacy
+   * `editors_letter` linked article). */
+  editors_letter_html?: string | null;
   /** Commerce — sell the issue as a digital product like a book. */
   price?: number | string | null;
   currency?: string | null;
@@ -55,6 +60,8 @@ export type MagazineIssue = {
   funding_deadline?: string | null;
   open_call_id?: string | null;
   translation_of?: string | null;
+  /** Shared id linking this issue's language versions. */
+  translation_group_id?: string | null;
   published_at?: string | null;
   /** Ordered departments within this issue (present on single-issue reads). */
   sections?: IssueSectionRef[] | null;
@@ -134,6 +141,8 @@ export type MagazineIssueInput = {
   open_call_id?: string | null;
   translation_of?: string | null;
   published_at?: string | null;
+  /** The issue's editor's letter — rich-text HTML. */
+  editors_letter_html?: string | null;
 };
 
 function unwrapOne(raw: unknown): MagazineIssue | null {
@@ -181,6 +190,32 @@ export async function updateMagazineIssue(
 /** Admin — delete an issue. DELETE /magazine-issues/{id} */
 export async function deleteMagazineIssue(id: string): Promise<void> {
   await api.delete(`/magazine-issues/${encodeURIComponent(id)}`);
+}
+
+/** Admin — mark this (published) issue as the magazine's current issue. */
+export async function setCurrentIssue(id: string): Promise<MagazineIssue | null> {
+  const { data } = await api.patch<unknown>(
+    `/magazine-issues/${encodeURIComponent(id)}/set-current`,
+  );
+  return unwrapOne(data);
+}
+
+/** The magazine's current issue, resolved to the viewer's language. Public;
+ * works on server (hero) and client. Returns null when none is set. */
+export async function getCurrentIssue(
+  viewerLang?: string,
+): Promise<MagazineIssue | null> {
+  const params = viewerLang ? { viewer_lang: viewerLang } : undefined;
+  if (typeof window === "undefined") {
+    const raw = await serverGet<unknown>("/magazine-issues/current", params);
+    return unwrapOne(raw);
+  }
+  try {
+    const { data } = await api.get<unknown>("/magazine-issues/current", { params });
+    return unwrapOne(data);
+  } catch {
+    return null;
+  }
 }
 
 /** Article assigned to an issue, as returned by GET /magazine-issues/:id/articles. */
