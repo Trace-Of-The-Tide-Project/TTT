@@ -6,20 +6,20 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const nextConfig = {
   // jsdom (isomorphic-dompurify's server path) can't be bundled — it fs.reads
   // non-JS assets via __dirname — and Next externalises it by default anyway.
-  // So *Node*, not Turbopack, resolves jsdom's dep tree at runtime, and that
-  // tree require()s ESM-only packages (jsdom -> parse5@8, which ships no CJS
-  // build at all). That only works where require(esm) is enabled.
+  // So *Node*, not Turbopack, resolves jsdom's dep tree at runtime.
   //
-  // Vercel's function runtime does NOT enable require(esm) by default, so
-  // NODE_OPTIONS=--experimental-require-module is set on the Vercel project and
-  // is LOAD-BEARING: without it every SSR route 500s with ERR_REQUIRE_ESM.
-  // See https://vercel.com/docs/functions/runtimes/node-js/advanced-node-configuration
-  // Local dev and the Fly image never hit this — Node >= 22.12 has require(esm)
-  // on by default, which is why this only ever broke on Vercel.
+  // That runtime resolution must stay CommonJS all the way down: Vercel's
+  // function runtime does NOT have require(esm) enabled, so any ESM-only link
+  // in the chain 500s every SSR route with ERR_REQUIRE_ESM. jsdom@27 pulls
+  // parse5@8, which is ESM-only — hence the `jsdom: 26.1.0` override in
+  // package.json (jsdom@26 -> parse5@7, which ships a CJS build). That override
+  // is LOAD-BEARING; check the chain is still CJS before bumping jsdom:
+  //   node --no-experimental-require-module -e "require('isomorphic-dompurify')"
+  // Local dev and the Fly image never catch this — Node >= 22.12 has require(esm)
+  // on by default, which is why it only ever broke on Vercel.
   //
-  // Pinning deps does NOT substitute for the flag: parse5 has no CJS build to
-  // pin to. If the flag ever has to go, the fix is to drop jsdom (replace the
-  // sanitizer with a DOM-free one), not to chase versions.
+  // If jsdom@26 ever has to go, the fix is to drop jsdom entirely (replace the
+  // sanitizer with a DOM-free one), not to re-chase runtime flags.
   serverExternalPackages: ["jsdom", "isomorphic-dompurify"],
   images: {
     remotePatterns: [
