@@ -39,6 +39,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
     tabStatus,
     isDirty,
     translationOf, originalTitle,
+    canAssign, authorUser, setAuthorUser, currentOwnerName, writer, setWriter,
     visibility, setVisibility,
     accessLevel, setAccessLevel,
     previewBlockCount, setPreviewBlockCount,
@@ -331,6 +332,12 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
               translationOf={translationOf}
               onTranslationOfChange={handleTranslationOfChange}
               excludeId={articleId}
+              canAssign={canAssign}
+              authorUser={authorUser}
+              onAuthorUserChange={setAuthorUser}
+              currentOwnerName={currentOwnerName}
+              writer={writer}
+              onWriterChange={setWriter}
               visibility={visibility}
               onVisibilityChange={setVisibility}
               accessLevel={accessLevel}

@@ -1,5 +1,6 @@
 import { api } from "./api";
 import { isAxiosError } from "axios";
+import type { WriterProfile } from "./writers.service";
 
 export type CreateArticleBlock = {
   block_order: number;
@@ -46,6 +47,11 @@ export type CreateArticlePayload = {
   seo_title?: string;
   meta_description?: string;
   collection_id?: string;
+  /** User to own this article (admin/editor only). Defaults to the caller. */
+  author_id?: string;
+  /** Writer profile credited as the byline (admin/editor only). Null clears it
+   * on edit; on create a null/absent value simply leaves no byline. */
+  writer_id?: string | null;
   tag_ids?: string[];
   blocks: CreateArticleBlock[];
   excerpt?: string;
@@ -107,6 +113,9 @@ function toCreateArticleBody(payload: CreateArticlePayload): Record<string, unkn
   if (payload.seo_title) body.seo_title = payload.seo_title;
   if (payload.meta_description) body.meta_description = payload.meta_description;
   if (payload.collection_id?.trim()) body.collection_id = payload.collection_id.trim();
+  // Author/writer assignment — server rejects both from non-admin/editor.
+  if (payload.author_id) body.author_id = payload.author_id;
+  if (payload.writer_id) body.writer_id = payload.writer_id;
   if (payload.tag_ids?.length) body.tag_ids = payload.tag_ids;
   if (payload.excerpt) body.excerpt = payload.excerpt;
   if (payload.cover_image) body.cover_image = payload.cover_image;
@@ -335,6 +344,9 @@ export type ArticleDetail = {
   tags?: ArticleDetailTag[];
   contributors?: unknown[];
   author?: ArticleDetailAuthor | null;
+  writer_id?: string | null;
+  /** Credited byline (writer_profiles row). Null = bylined to author only. */
+  writer?: WriterProfile | null;
   view_count?: number;
   createdAt?: string;
   open_call_id?: string | null;
@@ -506,6 +518,10 @@ export type UpdateArticlePayload = {
   status?: ArticleLifecycleStatus;
   category?: string;
   collection_id?: string | null;
+  /** Transfer ownership to another user (admin/editor only). */
+  author_id?: string;
+  /** Set/clear the credited byline (admin/editor only). Null clears it. */
+  writer_id?: string | null;
   /** Stable storage key (e.g. `images/123.png`) or null to clear. */
   cover_image?: string | null;
   /** When sent, backend replaces blocks (same shape as create). */
