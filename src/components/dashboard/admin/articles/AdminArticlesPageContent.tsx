@@ -22,7 +22,7 @@ import {
   peekValidAdminArticlesList,
   removeArticleFromAdminArticlesListCache,
 } from "@/lib/dashboard/admin-articles-list-cache";
-import type { ArticleListItem } from "@/services/articles.service";
+import type { ArticleListItem, ArticleProductFilter } from "@/services/articles.service";
 import { useArticles } from "@/hooks/queries/articles";
 import { useDeleteArticle } from "@/hooks/mutations/articles";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
@@ -258,7 +258,10 @@ export function AdminArticlesPageContent() {
   const locale = useLocale();
 
   // product=all: the admin library manages both main-site and magazine articles.
-  const articlesQuery = useArticles({ product: "all" }, { silent: true });
+  const articlesQuery = useArticles(
+    { product: "all" satisfies ArticleProductFilter },
+    { silent: true },
+  );
   const articleList: ArticleListItem[] = useMemo(() => {
     const fromQuery = articlesQuery.data?.data;
     if (Array.isArray(fromQuery)) return fromQuery;

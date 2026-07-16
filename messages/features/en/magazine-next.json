@@ -1,0 +1,72 @@
+{
+  "MagazineNext": {
+    "meta": {
+      "title": "Trace of the Tide — Magazine",
+      "description": "A standalone literary magazine: issues, articles, books, and the voices behind them."
+    },
+    "hero": {
+      "eyebrow": "Current issue",
+      "readIssue": "Read this issue",
+      "browseAll": "Browse all issues",
+      "coverAlt": "Issue cover",
+      "brandCoverAlt": "Trace of the Tide cover artwork",
+      "brandStatement": "A living archive of tides, voices, and letters.",
+      "brandLead": "Trace of the Tide"
+    },
+    "featured": {
+      "eyebrow": "Featured",
+      "title": "The lead story"
+    },
+    "feed": {
+      "eyebrow": "Latest",
+      "title": "Latest writing",
+      "standfirst": "New essays, threads, and dispatches from our writers.",
+      "minRead": "{count} min read"
+    },
+    "issues": {
+      "eyebrow": "The archive",
+      "title": "Browse by issue",
+      "standfirst": "Every issue we have published, newest first.",
+      "editionLabel": "Issue {number}",
+      "prev": "Previous issues",
+      "next": "More issues"
+    },
+    "books": {
+      "eyebrow": "The shelf",
+      "title": "Books",
+      "standfirst": "Multilingual editions from our writers and partners.",
+      "prev": "Previous books",
+      "next": "More books",
+      "byAuthor": "by {author}"
+    },
+    "videos": {
+      "eyebrow": "Watch",
+      "title": "Video",
+      "standfirst": "Films, readings, and conversations.",
+      "prev": "Previous videos",
+      "next": "More videos",
+      "duration": "{minutes} min"
+    },
+    "voices": {
+      "eyebrow": "The people",
+      "title": "Voices of the magazine",
+      "standfirst": "The writers and editors behind the work."
+    },
+    "openingLine": {
+      "eyebrow": "Why we publish"
+    },
+    "quoteBreak": {
+      "eyebrow": "In our words",
+      "pause": "Pause quotes",
+      "play": "Resume quotes",
+      "goTo": "Show quote {number}"
+    },
+    "values": {
+      "eyebrow": "What we stand for",
+      "title": "Editorial values"
+    },
+    "founder": {
+      "eyebrow": "From the founder"
+    }
+  }
+}

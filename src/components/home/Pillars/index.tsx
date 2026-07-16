@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { StaggerContainer } from "@/components/motion/StaggerContainer";
 import { StaggerItem } from "@/components/motion/StaggerItem";
+import { ChamferedSurface } from "@/components/ui/ChamferedSurface";
 import { SectionShell } from "../SectionShell";
 import { PILLAR_MOTIFS, type PillarKey } from "./motifs";
 
@@ -39,26 +40,33 @@ export async function Pillars() {
                 <StaggerItem key={key} className="h-full">
                   <Link
                     href={PILLAR_HREF}
-                    className="tott-pillar-card group block h-full border border-[color-mix(in_srgb,var(--tott-gold-muted)_45%,transparent)] bg-[var(--tott-elevated)] p-6 hover:border-[var(--tott-gold-bright)] hover:bg-[var(--tott-elevated-hover)] focus-visible:border-[var(--tott-gold-bright)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-gold-bright)] sm:p-7"
+                    className="tott-pillar-card group block h-full [--pillar-bg:var(--tott-elevated)] hover:[--pillar-bg:var(--tott-elevated-hover)] focus-visible:[--pillar-bg:var(--tott-elevated-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-gold-bright)]"
                   >
-                    <span
-                      aria-hidden
-                      className="block text-[var(--tott-gold-muted)] transition-colors duration-300 group-hover:text-[var(--tott-gold-primary)] group-focus-visible:text-[var(--tott-gold-primary)]"
+                    <ChamferedSurface
+                      chamfer={20}
+                      borderColor="color-mix(in srgb, var(--tott-gold-muted) 45%, transparent)"
+                      innerFill="var(--pillar-bg)"
+                      className="h-full p-6 transition-colors duration-300 sm:p-7"
                     >
-                      {PILLAR_MOTIFS[key]}
-                    </span>
-                    <span
-                      className="font-display mt-5 block text-xl text-[var(--tott-home-text-warm)]"
-                      style={{
-                        lineHeight: "var(--tott-display-leading)",
-                        letterSpacing: "var(--tott-display-tracking)",
-                      }}
-                    >
-                      {t(`pillars.items.${key}.title`)}
-                    </span>
-                    <span className="mt-1.5 block text-sm leading-relaxed text-[var(--tott-salt)]">
-                      {t(`pillars.items.${key}.description`)}
-                    </span>
+                      <span
+                        aria-hidden
+                        className="relative block text-[var(--tott-gold-muted)] transition-colors duration-300 group-hover:text-[var(--tott-gold-primary)] group-focus-visible:text-[var(--tott-gold-primary)]"
+                      >
+                        {PILLAR_MOTIFS[key]}
+                      </span>
+                      <span
+                        className="font-display relative mt-5 block text-xl text-[var(--tott-home-text-warm)]"
+                        style={{
+                          lineHeight: "var(--tott-display-leading)",
+                          letterSpacing: "var(--tott-display-tracking)",
+                        }}
+                      >
+                        {t(`pillars.items.${key}.title`)}
+                      </span>
+                      <span className="relative mt-1.5 block text-sm leading-relaxed text-[var(--tott-salt)]">
+                        {t(`pillars.items.${key}.description`)}
+                      </span>
+                    </ChamferedSurface>
                   </Link>
                 </StaggerItem>
               ))}

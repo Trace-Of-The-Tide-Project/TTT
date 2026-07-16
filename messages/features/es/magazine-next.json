@@ -1,0 +1,72 @@
+{
+  "MagazineNext": {
+    "meta": {
+      "title": "Trace of the Tide — Revista",
+      "description": "Una revista literaria independiente: números, artículos, libros y las voces que los crean."
+    },
+    "hero": {
+      "eyebrow": "Número actual",
+      "readIssue": "Leer este número",
+      "browseAll": "Ver todos los números",
+      "coverAlt": "Portada del número",
+      "brandCoverAlt": "Ilustración de portada de Trace of the Tide",
+      "brandStatement": "Un archivo vivo de mareas, voces y letras.",
+      "brandLead": "Trace of the Tide"
+    },
+    "featured": {
+      "eyebrow": "Destacado",
+      "title": "La historia principal"
+    },
+    "feed": {
+      "eyebrow": "Lo último",
+      "title": "Últimas publicaciones",
+      "standfirst": "Nuevos ensayos, hilos y crónicas de nuestros escritores.",
+      "minRead": "{count} min de lectura"
+    },
+    "issues": {
+      "eyebrow": "El archivo",
+      "title": "Explorar por número",
+      "standfirst": "Todos los números que hemos publicado, del más reciente al más antiguo.",
+      "editionLabel": "Número {number}",
+      "prev": "Números anteriores",
+      "next": "Más números"
+    },
+    "books": {
+      "eyebrow": "La estantería",
+      "title": "Libros",
+      "standfirst": "Ediciones multilingües de nuestros escritores y colaboradores.",
+      "prev": "Libros anteriores",
+      "next": "Más libros",
+      "byAuthor": "por {author}"
+    },
+    "videos": {
+      "eyebrow": "Ver",
+      "title": "Vídeo",
+      "standfirst": "Películas, lecturas y conversaciones.",
+      "prev": "Vídeos anteriores",
+      "next": "Más vídeos",
+      "duration": "{minutes} min"
+    },
+    "voices": {
+      "eyebrow": "Las personas",
+      "title": "Voces de la revista",
+      "standfirst": "Los escritores y editores detrás del trabajo."
+    },
+    "openingLine": {
+      "eyebrow": "Por qué publicamos"
+    },
+    "quoteBreak": {
+      "eyebrow": "En nuestras palabras",
+      "pause": "Pausar las citas",
+      "play": "Reanudar las citas",
+      "goTo": "Mostrar la cita {number}"
+    },
+    "values": {
+      "eyebrow": "Lo que defendemos",
+      "title": "Valores editoriales"
+    },
+    "founder": {
+      "eyebrow": "De la fundadora"
+    }
+  }
+}

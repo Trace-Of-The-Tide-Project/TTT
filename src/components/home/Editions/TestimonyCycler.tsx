@@ -27,6 +27,11 @@ export type Testimony = {
   /** ISO code of the quote's language — content dir, not UI dir. */
   language: string;
   dir: "rtl" | "ltr";
+  /**
+   * Attribution link target. Defaults to the writer route (`/writers/{id}`).
+   * Pass `null` to render the name as plain text (quotes with no writer page).
+   */
+  href?: string | null;
 };
 
 type Props = {
@@ -34,15 +39,22 @@ type Props = {
   pauseLabel: string;
   playLabel: string;
   dotLabels: string[];
+  /** Overrides the quote <p> type scale. Defaults to the Editions scale. */
+  quoteClassName?: string;
 };
 
 const CYCLE_MS = 8000;
 
-function Quote({ q }: { q: Testimony }) {
+const DEFAULT_QUOTE_CLASS =
+  "max-w-3xl font-display text-2xl text-[var(--tott-home-text-warm)] sm:text-3xl lg:text-4xl";
+
+function Quote({ q, quoteClassName }: { q: Testimony; quoteClassName?: string }) {
+  // href undefined → default to the writer route; href null → plain text.
+  const href = q.href === undefined ? `/writers/${encodeURIComponent(q.id)}` : q.href;
   return (
     <>
       <p
-        className="max-w-3xl font-display text-2xl text-[var(--tott-home-text-warm)] sm:text-3xl lg:text-4xl"
+        className={quoteClassName ?? DEFAULT_QUOTE_CLASS}
         style={{
           lineHeight: "var(--tott-display-leading)",
           letterSpacing: "var(--tott-display-tracking)",
@@ -52,12 +64,16 @@ function Quote({ q }: { q: Testimony }) {
       </p>
       <footer className="mt-5 text-sm text-[var(--tott-salt)]">
         <span aria-hidden>— </span>
-        <Link
-          href={`/writers/${encodeURIComponent(q.id)}`}
-          className="font-medium text-[var(--tott-gold-primary)] transition-colors hover:text-[var(--tott-gold-bright)] focus-visible:text-[var(--tott-gold-bright)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--tott-gold-bright)]"
-        >
-          {q.name}
-        </Link>
+        {href ? (
+          <Link
+            href={href}
+            className="font-medium text-[var(--tott-gold-primary)] transition-colors hover:text-[var(--tott-gold-bright)] focus-visible:text-[var(--tott-gold-bright)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--tott-gold-bright)]"
+          >
+            {q.name}
+          </Link>
+        ) : (
+          <span className="font-medium text-[var(--tott-gold-primary)]">{q.name}</span>
+        )}
         {q.headline ? <span> · {q.headline}</span> : null}
       </footer>
     </>
@@ -82,6 +98,7 @@ export function TestimonyCycler({
   pauseLabel,
   playLabel,
   dotLabels,
+  quoteClassName,
 }: Props) {
   const reduced = useReducedMotion();
   const [index, setIndex] = useState(0);
@@ -132,7 +149,7 @@ export function TestimonyCycler({
         <div className="relative pt-10 sm:pt-14">
           {reduced ? (
             <blockquote dir={current.dir} lang={current.language}>
-              <Quote q={current} />
+              <Quote q={current} quoteClassName={quoteClassName} />
             </blockquote>
           ) : (
             <div className="grid">
@@ -151,7 +168,7 @@ export function TestimonyCycler({
                     inert={!active}
                     style={{ pointerEvents: active ? undefined : "none" }}
                   >
-                    <Quote q={q} />
+                    <Quote q={q} quoteClassName={quoteClassName} />
                   </motion.blockquote>
                 );
               })}

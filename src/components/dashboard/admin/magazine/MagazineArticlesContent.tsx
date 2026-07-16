@@ -1,13 +1,16 @@
 "use client";
 
-import { useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useCallback, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
-import { PlusIcon, PenLineIcon } from "@/components/ui/icons";
+import { PlusIcon, PenLineIcon, ChevronRightIcon, TrashIcon } from "@/components/ui/icons";
 import { useArticles } from "@/hooks/queries/articles";
 import { useMagazineIssues } from "@/hooks/queries/magazine-issues";
+import { useDeleteArticle } from "@/hooks/mutations/articles";
+import { ConfirmDeleteArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ConfirmDeleteArticleModal";
 import { formatApiError } from "@/lib/api/error-message";
+import type { ArticleListItem, ArticleProduct } from "@/services/articles.service";
 
 const CREATE_HREF = "/admin/magazine/articles/create";
 
@@ -26,10 +29,26 @@ const statusColor: Record<string, string> = {
 /** The magazine article pool: every product=magazine article, assigned to an
  * issue or loose. Loose articles can be attached to an issue later from the
  * issue's Articles panel. */
+/** Article row plus its translation-group role for flat rendering. */
+type DisplayArticle = ArticleListItem & {
+  isPrimary: boolean;
+  isChild: boolean;
+  /** Count of other language versions; 0 on child rows and untranslated articles. */
+  siblingCount: number;
+  /** True on the primary when no version matches the admin's UI language. */
+  missingLocale: boolean;
+  groupExpanded: boolean;
+  groupId: string;
+};
+
 export function MagazineArticlesContent() {
   const t = useTranslations("Dashboard.magazineArticles");
+  const locale = useLocale();
 
-  const articlesQuery = useArticles({ product: "magazine", limit: 100 }, { silent: true });
+  const articlesQuery = useArticles(
+    { product: "magazine" satisfies ArticleProduct, limit: 100 },
+    { silent: true },
+  );
   const issuesQuery = useMagazineIssues({ limit: 100 });
 
   const issueTitleById = useMemo(() => {
@@ -38,11 +57,87 @@ export function MagazineArticlesContent() {
     return map;
   }, [issuesQuery.data]);
 
-  const articles = articlesQuery.data?.data ?? [];
+  const rawArticles = articlesQuery.data?.data ?? [];
   const loading = articlesQuery.isPending;
   const error = articlesQuery.error
     ? formatApiError(articlesQuery.error, t("loadError"))
     : null;
+
+  // Cluster rows by translation group so an article with several language
+  // versions shows as one collapsible row, matching writers/books lists.
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const toggleGroup = useCallback((gid: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(gid)) next.delete(gid);
+      else next.add(gid);
+      return next;
+    });
+  }, []);
+
+  const articles = useMemo<DisplayArticle[]>(() => {
+    const byGroup = new Map<string, ArticleListItem[]>();
+    for (const a of rawArticles) {
+      const gid = a.translation_group_id || a.translation_of || a.id;
+      if (!byGroup.has(gid)) byGroup.set(gid, []);
+      byGroup.get(gid)!.push(a);
+    }
+    const stamp = (a: ArticleListItem) => a.updatedAt ?? a.createdAt ?? "";
+    const out: DisplayArticle[] = [];
+    for (const [gid, members] of byGroup) {
+      const localeMatch = members.find((m) => m.language === locale);
+      const newest = [...members].sort((a, b) => stamp(b).localeCompare(stamp(a)))[0];
+      const primary = localeMatch ?? newest;
+      const children = members.filter((m) => m.id !== primary.id);
+      const expanded = expandedGroups.has(gid);
+      out.push({
+        ...primary,
+        isPrimary: true,
+        isChild: false,
+        siblingCount: children.length,
+        missingLocale: !localeMatch,
+        groupExpanded: expanded,
+        groupId: gid,
+      });
+      if (expanded) {
+        for (const child of children) {
+          out.push({
+            ...child,
+            isPrimary: false,
+            isChild: true,
+            siblingCount: 0,
+            missingLocale: false,
+            groupExpanded: expanded,
+            groupId: gid,
+          });
+        }
+      }
+    }
+    return out;
+  }, [rawArticles, expandedGroups, locale]);
+
+  const [deleteTarget, setDeleteTarget] = useState<DisplayArticle | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const deleteMutation = useDeleteArticle({ silent: true });
+  const deleteBusy = deleteMutation.isPending;
+
+  const closeDeleteModal = useCallback(() => {
+    if (deleteBusy) return;
+    setDeleteTarget(null);
+    setDeleteError(null);
+  }, [deleteBusy]);
+
+  const confirmDelete = useCallback(() => {
+    if (!deleteTarget) return;
+    setDeleteError(null);
+    deleteMutation.mutate(deleteTarget.id, {
+      onSuccess: () => {
+        setDeleteTarget(null);
+        articlesQuery.refetch();
+      },
+      onError: (e) => setDeleteError(formatApiError(e, t("deleteError"))),
+    });
+  }, [deleteTarget, deleteMutation, articlesQuery, t]);
 
   return (
     <div className="space-y-4">
@@ -90,7 +185,7 @@ export function MagazineArticlesContent() {
             {t("empty")}
           </div>
         ) : (
-          <div className="grid grid-cols-[40%_18%_28%_14%] border border-[var(--tott-card-border)]">
+          <div className="grid grid-cols-[38%_16%_26%_20%] border border-[var(--tott-card-border)]">
             {["title", "status", "issue", ""].map((h, i) => (
               <div
                 key={i}
@@ -104,8 +199,44 @@ export function MagazineArticlesContent() {
               const issueTitle = a.issue_id ? issueTitleById.get(a.issue_id) : null;
               return (
                 <div key={a.id} className="contents">
-                  <div className="border-t border-[var(--tott-card-border)] px-4 py-3 text-sm font-medium text-foreground">
-                    {a.title}
+                  <div
+                    className="flex items-center gap-2 border-t border-[var(--tott-card-border)] px-4 py-3 text-sm font-medium text-foreground"
+                    style={a.isChild ? { paddingInlineStart: "2rem" } : undefined}
+                  >
+                    {a.isPrimary && a.siblingCount > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => toggleGroup(a.groupId)}
+                        aria-expanded={a.groupExpanded}
+                        aria-label={t("translations.toggle")}
+                        className={`shrink-0 rounded p-1 text-[var(--tott-dash-gold-label)] transition-transform hover:bg-[var(--tott-dash-ghost-hover)] ${
+                          a.groupExpanded ? "rotate-90" : "rtl:-scale-x-100"
+                        }`}
+                      >
+                        <ChevronRightIcon />
+                      </button>
+                    ) : null}
+                    <span className={a.isChild ? "text-[var(--tott-muted)]" : undefined}>
+                      {a.title}
+                    </span>
+                    {a.language ? (
+                      <span className="shrink-0 rounded bg-[var(--tott-elevated)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
+                        {a.language}
+                      </span>
+                    ) : null}
+                    {a.isPrimary && a.siblingCount > 0 ? (
+                      <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
+                        {t("translations.count", { count: a.siblingCount })}
+                      </span>
+                    ) : null}
+                    {a.isPrimary && a.missingLocale ? (
+                      <span
+                        className="shrink-0 rounded bg-[var(--tott-status-coral)]/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-status-coral)]"
+                        title={t("translations.needsTranslationTooltip", { locale })}
+                      >
+                        {t("translations.needsTranslation")}
+                      </span>
+                    ) : null}
                   </div>
                   <div className="border-t border-[var(--tott-card-border)] px-4 py-3">
                     <span
@@ -123,7 +254,7 @@ export function MagazineArticlesContent() {
                       ? (issueTitle ?? t("issueUnknown"))
                       : t("unassigned")}
                   </div>
-                  <div className="flex items-center justify-end border-t border-[var(--tott-card-border)] px-4 py-3">
+                  <div className="flex items-center justify-end gap-2 border-t border-[var(--tott-card-border)] px-4 py-3">
                     <Link
                       href={`/admin/magazine/articles/edit/${encodeURIComponent(a.id)}`}
                       aria-label={t("edit")}
@@ -131,6 +262,18 @@ export function MagazineArticlesContent() {
                     >
                       <PenLineIcon />
                     </Link>
+                    <button
+                      type="button"
+                      aria-label={t("delete")}
+                      disabled={deleteBusy && deleteTarget?.id === a.id}
+                      onClick={() => {
+                        setDeleteError(null);
+                        setDeleteTarget(a);
+                      }}
+                      className="inline-flex items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] p-1.5 text-foreground transition-colors hover:bg-red-950/40 hover:text-red-300 disabled:opacity-40 [&_svg]:h-3.5 [&_svg]:w-3.5"
+                    >
+                      <TrashIcon />
+                    </button>
                   </div>
                 </div>
               );
@@ -138,6 +281,15 @@ export function MagazineArticlesContent() {
           </div>
         )}
       </ChamferedPanel>
+
+      <ConfirmDeleteArticleModal
+        open={deleteTarget != null}
+        articleTitle={deleteTarget?.title ?? ""}
+        busy={deleteBusy}
+        error={deleteError}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

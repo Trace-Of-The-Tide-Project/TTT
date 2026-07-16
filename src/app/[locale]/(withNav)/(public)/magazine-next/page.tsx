@@ -1,5 +1,5 @@
-// The rebuilt scroll-first magazine homepage. The previous tab-based
-// magazine page is preserved verbatim in `./_magazine-original.tsx`.
+// Scroll-first magazine homepage (rebuild preview). Swaps to /magazine on
+// approval. The live tab-based page remains at /magazine until then.
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { MagazineNextPage } from "@/components/home/magazine-next/MagazineNextPage";
@@ -18,19 +18,19 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `/${locale}/magazine`,
+      canonical: `/${locale}/magazine-next`,
       languages: {
-        en: "/en/magazine",
-        ar: "/ar/magazine",
-        es: "/es/magazine",
-        fr: "/fr/magazine",
-        "x-default": "/en/magazine",
+        en: "/en/magazine-next",
+        ar: "/ar/magazine-next",
+        es: "/es/magazine-next",
+        fr: "/fr/magazine-next",
+        "x-default": "/en/magazine-next",
       },
     },
   };
 }
 
-export default async function Magazine({
+export default async function MagazineNext({
   params,
 }: {
   params: Promise<{ locale: string }>;

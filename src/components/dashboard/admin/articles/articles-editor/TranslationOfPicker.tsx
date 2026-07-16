@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getArticles, getArticleById } from "@/services/articles.service";
+import {
+  getArticles,
+  getArticleById,
+  type ArticleProductFilter,
+} from "@/services/articles.service";
 
 type Result = { id: string; title: string; language?: string };
 
@@ -70,7 +74,11 @@ export function TranslationOfPicker({
     const handle = setTimeout(async () => {
       try {
         // product=all: admin picker must find magazine articles too.
-        const res = await getArticles({ search: q, limit: 8, product: "all" });
+        const res = await getArticles({
+          search: q,
+          limit: 8,
+          product: "all" satisfies ArticleProductFilter,
+        });
         const list = (res.data as Result[]).filter((a) => a.id !== excludeId);
         setResults(list);
       } catch {

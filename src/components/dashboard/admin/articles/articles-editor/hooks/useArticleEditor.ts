@@ -22,6 +22,7 @@ import {
   updateArticle,
   type ArticleLifecycleStatus,
   type ArticleAccessLevel,
+  type ArticleProduct,
 } from "@/services/articles.service";
 import { useArticle } from "@/hooks/queries/articles";
 import { useTranslations as useTranslationGroup } from "@/hooks/queries/translations";
@@ -43,7 +44,7 @@ export type ContentEditorLayoutProps = {
   initialMagazineId?: string;
   /** Force the product on create (e.g. 'magazine' for a loose pool article
    * with no issue yet). issue_id, when present, forces magazine regardless. */
-  initialProduct?: "main" | "magazine";
+  initialProduct?: ArticleProduct;
   returnTo?: string;
 };
 

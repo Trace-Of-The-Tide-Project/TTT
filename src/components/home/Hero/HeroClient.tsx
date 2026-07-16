@@ -80,13 +80,27 @@ export function HeroClient({
         style={{ backgroundImage: GRAIN }}
       />
 
+      {/* ponytail: readability scrim — hero text sits over a photo in every
+          theme, so it can't rely on theme text tokens (light theme flips
+          --tott-home-text-warm to dark brown, invisible on rubble). Text
+          block below is forced light-on-dark; this band is the "dark" it
+          needs, covering eyebrow through CTAs, not just the title. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 90% 75% at 50% 55%, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.35) 60%, transparent 90%)",
+        }}
+      />
+
       <div className="relative mx-auto w-full max-w-6xl px-6 sm:px-10">
         <motion.p
           variants={fadeUp}
           initial="hidden"
           animate="visible"
           transition={at(0.3)}
-          className="text-sm font-medium uppercase tracking-[0.2em] text-[var(--tott-gold-muted)]"
+          className="text-sm font-medium uppercase tracking-[0.2em] text-[#e0b979]"
         >
           {eyebrow}
         </motion.p>
@@ -96,10 +110,11 @@ export function HeroClient({
           variants={headlineVariant}
           initial={false}
           animate="visible"
-          className="font-display mt-5 max-w-4xl text-balance text-5xl text-[var(--tott-home-text-warm)] sm:text-7xl lg:text-8xl"
+          className="font-display mt-5 max-w-4xl text-balance text-5xl text-[#f4eee1] sm:text-7xl lg:text-8xl"
           style={{
             lineHeight: "var(--tott-display-leading)",
             letterSpacing: "var(--tott-display-tracking)",
+            textShadow: "0 2px 24px rgba(0,0,0,0.6)",
           }}
         >
           {title}
@@ -110,7 +125,7 @@ export function HeroClient({
           initial="hidden"
           animate="visible"
           transition={at(0.9)}
-          className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--tott-salt)]"
+          className="mt-6 max-w-xl text-lg leading-relaxed text-[#d4cfc4]"
         >
           {subheadline}
         </motion.p>
@@ -130,7 +145,7 @@ export function HeroClient({
           </Link>
           <Link
             href={secondary.href}
-            className="inline-flex items-center border border-[color-mix(in_srgb,var(--tott-salt)_40%,transparent)] px-7 py-3.5 text-sm font-semibold text-[var(--tott-home-text-warm)] transition-colors hover:border-[var(--tott-salt)] hover:text-[var(--tott-gold-bright)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-gold-bright)]"
+            className="inline-flex items-center border border-[rgba(244,238,225,0.4)] px-7 py-3.5 text-sm font-semibold text-[#f4eee1] transition-colors hover:border-[#f4eee1] hover:text-[var(--tott-gold-bright)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-gold-bright)]"
           >
             {secondary.label}
           </Link>
@@ -146,11 +161,11 @@ export function HeroClient({
       >
         {/* .tott-scroll-cue: existing 2.2s translateY loop, killed under reduced motion. */}
         <div className="tott-scroll-cue flex flex-col items-center gap-2" aria-hidden>
-          <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--tott-salt)]">
+          <span className="text-[10px] uppercase tracking-[0.25em] text-[#d4cfc4]">
             {scrollCue}
           </span>
-          <span className="h-10 w-px bg-gradient-to-b from-[var(--tott-salt)] to-transparent" />
-          <svg width="12" height="7" viewBox="0 0 12 7" fill="none" className="text-[var(--tott-gold-muted)]">
+          <span className="h-10 w-px bg-gradient-to-b from-[#d4cfc4] to-transparent" />
+          <svg width="12" height="7" viewBox="0 0 12 7" fill="none" className="text-[#e0b979]">
             <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         </div>

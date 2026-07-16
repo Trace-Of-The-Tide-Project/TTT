@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { SegmentedControl, type SegmentedControlOption } from "@/components/ui/SegmentedControl";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
-const TAB_IDS = ["manifesto", "publications", "issues", "editorialBoard", "support"] as const;
+const TAB_IDS = ["manifesto", "publications", "articles", "issues", "editorialBoard", "support"] as const;
 type TabId = (typeof TAB_IDS)[number];
 
 /**
@@ -25,6 +25,7 @@ export type MagazineTabId = (typeof TAB_IDS)[number];
 export type MagazineTabsProps = {
   manifesto?: ReactNode;
   publications?: ReactNode;
+  articles?: ReactNode;
   issues?: ReactNode;
   editorialBoard?: ReactNode;
   support?: ReactNode;
@@ -57,6 +58,7 @@ export type MagazineTabsProps = {
 export function MagazineTabs({
   manifesto,
   publications,
+  articles,
   issues,
   editorialBoard,
   support,
@@ -69,6 +71,7 @@ export function MagazineTabs({
   const slots: Record<TabId, ReactNode> = {
     manifesto,
     publications,
+    articles,
     issues,
     editorialBoard,
     support,

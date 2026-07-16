@@ -479,10 +479,18 @@
       "unassigned": "Unassigned",
       "issueUnknown": "Unknown issue",
       "edit": "Edit",
+      "delete": "Delete",
+      "deleteError": "Could not delete the article",
       "columns": {
         "title": "Title",
         "status": "Status",
         "issue": "Issue"
+      },
+      "translations": {
+        "toggle": "Toggle translations",
+        "count": "{count, plural, one {+1 language} other {+# languages}}",
+        "needsTranslation": "Needs translation",
+        "needsTranslationTooltip": "No version in {locale} yet."
       }
     }
   }
