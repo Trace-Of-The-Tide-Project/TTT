@@ -536,6 +536,12 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
           {t("published.form.description")}
         </p>
 
+        {/* Shared floating toolbar — targets whichever rich-text field (letter
+            or a paragraph/author-note block) currently has focus. */}
+        <div className="mb-4">
+          <EditorToolbar />
+        </div>
+
         <div className="space-y-6">
           {/* Cover (required) */}
           <div>
@@ -740,9 +746,6 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
               </span>
             </div>
             <div className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
-              <div className="border-b border-[var(--tott-card-border)]">
-                <EditorToolbar />
-              </div>
               <RichTextEditor
                 key={activeLang}
                 value={form.editors_letter}
