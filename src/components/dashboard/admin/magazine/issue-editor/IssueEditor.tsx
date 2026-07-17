@@ -14,6 +14,11 @@ import { RichTextEditor } from "@/components/ui/rich-text/RichTextEditor";
 import { EditorRegistryProvider } from "@/components/ui/rich-text/editor-registry";
 import { EditorToolbar } from "@/components/ui/rich-text/EditorToolbar";
 import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
+import { AvailableBlocks } from "@/components/dashboard/admin/articles/articles-editor/AvailableBlocks";
+import { ContentBlocks, type ContentBlock } from "@/components/dashboard/admin/articles/articles-editor/ContentBlocks";
+import { articleConfig, articleAllowedBlockTypes } from "@/components/dashboard/admin/articles/articles-editor/content-form-config";
+import { buildArticleBlocksFromEditor } from "@/components/dashboard/admin/articles/articles-editor/lib/build-api-blocks";
+import { articleDetailBlocksToContentBlocks } from "@/components/dashboard/admin/articles/articles-editor/lib/api-blocks-to-content-blocks";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
 import { useMagazineIssues } from "@/hooks/queries/magazine-issues";
 import { useMagazines } from "@/hooks/queries/magazines";
@@ -69,6 +74,7 @@ type FormState = {
   excerpt: string;
   description: string;
   editors_letter: string;
+  blocks: ContentBlock[];
   page_count: string;
   edition: string;
   category: string;
@@ -92,6 +98,7 @@ function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
     excerpt: item?.excerpt ?? "",
     description: item?.description ?? "",
     editors_letter: item?.editors_letter_html ?? "",
+    blocks: articleDetailBlocksToContentBlocks(item?.body_blocks ?? []),
     page_count: item?.page_count != null ? String(item.page_count) : "",
     edition:
       item?.edition_number != null
@@ -102,7 +109,11 @@ function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
   };
 }
 
-function toPayload(f: FormState, lang: string): MagazineIssueInput {
+function toPayload(
+  f: FormState,
+  lang: string,
+  body_blocks?: MagazineIssueInput["body_blocks"],
+): MagazineIssueInput {
   const toIso = (ymd: string): string | null => {
     if (!ymd) return null;
     const d = new Date(ymd);
@@ -123,6 +134,7 @@ function toPayload(f: FormState, lang: string): MagazineIssueInput {
     excerpt: f.excerpt.trim() || null,
     description: f.description.trim() || null,
     editors_letter_html: f.editors_letter || null,
+    body_blocks: body_blocks ?? undefined,
     page_count: f.page_count ? parseInt(f.page_count, 10) : null,
     edition_number: parseInt(f.edition, 10),
     category: f.category.trim() || null,
@@ -286,6 +298,58 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
     }
   };
 
+  const addBlock = useCallback(
+    (type: ContentBlock["type"]) => {
+      updateForm((prev) => ({
+        ...prev,
+        blocks: [
+          ...prev.blocks,
+          { id: crypto.randomUUID(), type, ...(type === "divider" ? {} : { content: "" }) },
+        ],
+      }));
+    },
+    [updateForm],
+  );
+
+  const addCoverBlock = useCallback(() => {
+    updateForm((prev) => ({
+      ...prev,
+      blocks: [{ id: crypto.randomUUID(), type: "image" as const }, ...prev.blocks],
+    }));
+  }, [updateForm]);
+
+  const reorderBlocks = useCallback(
+    (activeId: string, overId: string) => {
+      updateForm((prev) => {
+        const from = prev.blocks.findIndex((b) => b.id === activeId);
+        const to = prev.blocks.findIndex((b) => b.id === overId);
+        if (from < 0 || to < 0 || from === to) return prev;
+        const blocks = [...prev.blocks];
+        const [item] = blocks.splice(from, 1);
+        blocks.splice(to, 0, item);
+        return { ...prev, blocks };
+      });
+    },
+    [updateForm],
+  );
+
+  const updateBlock = useCallback(
+    (id: string, patch: Partial<ContentBlock>) => {
+      updateForm((prev) => ({
+        ...prev,
+        blocks: prev.blocks.map((b) => (b.id === id ? { ...b, ...patch } : b)),
+      }));
+    },
+    [updateForm],
+  );
+
+  const removeBlock = useCallback(
+    (id: string) => {
+      updateForm((prev) => ({ ...prev, blocks: prev.blocks.filter((b) => b.id !== id) }));
+    },
+    [updateForm],
+  );
+
   async function handleSave() {
     const primary = forms[primaryLang] ?? forms[activeLang] ?? form;
     const next: FieldErrors = {};
@@ -312,8 +376,14 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
       await mutationToast(
         async () => {
           // Primary
+          const primaryBlocks = await buildArticleBlocksFromEditor(primary.blocks, {
+            onUploading: setUploading,
+          });
           if (item?.id) {
-            await update.mutateAsync({ id: item.id, payload: toPayload(primary, primaryLang) });
+            await update.mutateAsync({
+              id: item.id,
+              payload: toPayload(primary, primaryLang, primaryBlocks),
+            });
             createdPrimaryId = item.id;
           } else {
             if (!magazineId) {
@@ -326,7 +396,7 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
               magazineId = mag?.id ?? null;
             }
             const created = await create.mutateAsync({
-              ...toPayload(primary, primaryLang),
+              ...toPayload(primary, primaryLang, primaryBlocks),
               magazine_id: magazineId,
               slug: `${slugify(primary.title)}-${Date.now().toString(36).slice(-5)}`,
             });
@@ -339,11 +409,14 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
             if (!f) continue;
             const existingId = allVersions[loc]?.id;
             try {
+              const locBlocks = await buildArticleBlocksFromEditor(f.blocks, {
+                onUploading: setUploading,
+              });
               if (existingId) {
-                await update.mutateAsync({ id: existingId, payload: toPayload(f, loc) });
+                await update.mutateAsync({ id: existingId, payload: toPayload(f, loc, locBlocks) });
               } else if (createdPrimaryId) {
                 await create.mutateAsync({
-                  ...toPayload(f, loc),
+                  ...toPayload(f, loc, locBlocks),
                   status: "draft",
                   translation_of: createdPrimaryId,
                   magazine_id: magazineId,
@@ -678,6 +751,20 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
                 placeholder={t("editor.fields.letterPlaceholder")}
               />
             </div>
+          </div>
+
+          {/* Content blocks — quote/callout/image/gallery/etc, same editor articles use */}
+          <div className="space-y-3">
+            <label className={labelClass}>{t("editor.fields.blocks")}</label>
+            <AvailableBlocks onAddBlock={addBlock} allowedBlockTypes={articleAllowedBlockTypes} />
+            <ContentBlocks
+              blocks={form.blocks}
+              onUpdateBlock={updateBlock}
+              onAddCoverBlock={addCoverBlock}
+              onReorderBlock={reorderBlocks}
+              onRemoveBlock={removeBlock}
+              config={{ ...articleConfig, disableHero: true }}
+            />
           </div>
 
           {/* Assignments — edit mode only */}

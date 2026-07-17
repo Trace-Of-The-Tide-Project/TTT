@@ -10,6 +10,10 @@ import { IssuePurchaseActions } from "./IssuePurchaseActions";
 import { nameInitials } from "@/components/dashboard/admin/writers/initials";
 import { AvailableLanguagesBadge } from "@/components/content/AvailableLanguagesBadge";
 import { LockIcon } from "@/components/ui/icons";
+import {
+  ContentArticleBody,
+  type ContentArticleSection,
+} from "@/components/content/article/ContentArticleBody";
 
 export type IssueIndexArticle = {
   id: string;
@@ -56,6 +60,8 @@ export type MagazineIssueDetail = {
   isOwned: boolean;
   language: string;
   sections: IssueSectionEntry[];
+  /** Content blocks authored directly on the issue (quote/callout/image/…). */
+  bodySections: ContentArticleSection[];
   editorsLetter: IssueEditorsLetterEntry | null;
   articles: IssueIndexArticle[];
   contributors: IssueContributorEntry[];
@@ -229,6 +235,13 @@ export function MagazineIssueDetailContent({
             style={{ color: TEXT_MUTED }}
           >
             <span>{t("pages", { count: issue.pageCount })}</span>
+          </RevealOnScroll>
+        ) : null}
+
+        {/* Issue content blocks (quote/callout/image/gallery/etc) */}
+        {issue.bodySections.length > 0 ? (
+          <RevealOnScroll className="mt-10">
+            <ContentArticleBody sections={issue.bodySections} />
           </RevealOnScroll>
         ) : null}
 

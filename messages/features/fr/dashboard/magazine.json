@@ -358,7 +358,8 @@
           "theme": "Thème / sous-titre",
           "letter": "Édito du rédacteur",
           "letterHint": "Affiché comme introduction du numéro",
-          "letterPlaceholder": "Rédigez l'édito du rédacteur pour ce numéro…"
+          "letterPlaceholder": "Rédigez l'édito du rédacteur pour ce numéro…",
+          "blocks": "Blocs de contenu"
         },
         "errors": {
           "titleRequired": "Le titre est obligatoire.",
