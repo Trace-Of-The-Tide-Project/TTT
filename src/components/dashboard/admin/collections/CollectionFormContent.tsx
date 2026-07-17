@@ -1,11 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
+import { mutationToast } from "@/hooks/useMutationToast";
+import { uploadFileToUrl } from "@/services/uploads.service";
+import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { LanguageFormTabs, TranslationWizard } from "@/components/dashboard/admin/translations";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
 import type { TranslationWizardReviewLine } from "@/components/dashboard/admin/translations/TranslationWizard";
@@ -46,6 +49,89 @@ const labelClass = "text-xs font-medium text-[var(--tott-dash-gold-label)] mb-1 
 const sectionClass =
   "rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-elevated)] p-5 space-y-4";
 
+/** Drag-and-drop + click-to-upload zone for cover images */
+function CoverUploadZone({
+  value,
+  uploading,
+  onChange,
+}: {
+  value: string;
+  uploading: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  const t = useTranslations("Dashboard.collections.form");
+  const id = useId();
+  const [dragging, setDragging] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const dragProps = {
+    onDragOver: (e: React.DragEvent) => { e.preventDefault(); setDragging(true); },
+    onDragLeave: () => setDragging(false),
+    onDrop: (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragging(false);
+      const file = e.dataTransfer.files?.[0];
+      if (!file || !inputRef.current) return;
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      inputRef.current.files = dt.files;
+      inputRef.current.dispatchEvent(new Event("change", { bubbles: true }));
+    },
+  };
+
+  if (value && !uploading) {
+    return (
+      <div className="relative mt-1 inline-block">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={resolveArticleMediaSrc(value)}
+          alt={t("upload.coverAlt")}
+          className="h-36 w-24 rounded-lg object-cover border border-[var(--tott-card-border)] shadow-md"
+          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+        />
+        <label
+          htmlFor={id}
+          className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50 opacity-0 hover:opacity-100 transition-opacity cursor-pointer text-xs font-medium text-white text-center px-2"
+        >
+          {t("upload.change")}
+          <input id={id} ref={inputRef} type="file" accept="image/*" className="hidden" onChange={onChange} />
+        </label>
+      </div>
+    );
+  }
+
+  return (
+    <label
+      htmlFor={id}
+      {...dragProps}
+      className={[
+        "mt-1 flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed cursor-pointer transition-colors min-h-[120px]",
+        dragging
+          ? "border-[var(--tott-accent-gold)] bg-[var(--tott-accent-gold)]/5"
+          : "border-[var(--tott-card-border)] hover:border-[var(--tott-accent-gold)]/50 bg-[var(--tott-dash-input-bg)]",
+      ].join(" ")}
+    >
+      <input id={id} ref={inputRef} type="file" accept="image/*" className="hidden" onChange={onChange} disabled={uploading} />
+      {uploading ? (
+        <div className="flex flex-col items-center gap-2 py-6">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--tott-card-border)] border-t-[var(--tott-accent-gold)]" />
+          <span className="text-xs text-[var(--tott-muted)]">{t("upload.coverUploading")}</span>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-1 py-6 px-4 text-center pointer-events-none">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--tott-muted)]">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+          <span className="text-xs font-medium text-[var(--tott-muted)] mt-1">{t("upload.coverHint")}</span>
+          <span className="text-[10px] text-[var(--tott-muted)]">{t("upload.coverFormats")}</span>
+        </div>
+      )}
+    </label>
+  );
+}
+
 type Props = {
   collectionId?: string;
   /** Create-mode only: ISO code for the version being created. */
@@ -74,6 +160,7 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
   const [langLoading, setLangLoading] = useState(false);
   const [seeded, setSeeded] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [coverUploading, setCoverUploading] = useState(false);
 
   const wizardLocales = useMemo(
     () => [initialLang, ...routing.locales.filter((l) => l !== initialLang)],
@@ -142,6 +229,28 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
 
   const set = (key: keyof FormState, value: string) =>
     updateForm((prev) => ({ ...prev, [key]: value }));
+
+  const handleCoverUpload = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      e.target.value = "";
+      setCoverUploading(true);
+      try {
+        const url = await mutationToast(() => uploadFileToUrl(file), {
+          loading: t("form.toast.coverUploading"),
+          success: t("form.toast.coverUploaded"),
+          error: t("form.toast.coverUploadFailed"),
+        });
+        updateForm((prev) => ({ ...prev, cover_image: url }));
+      } catch {
+        // error surfaced via toast
+      } finally {
+        setCoverUploading(false);
+      }
+    },
+    [t, updateForm],
+  );
 
   const handleSelectLang = useCallback(
     async (loc: string) => {
@@ -341,13 +450,16 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
       </div>
       <div>
         <label className={labelClass}>{t("form.fields.coverImage")}</label>
-        <input
-          className={inputClass}
-          value={form.cover_image}
-          onChange={(e) => set("cover_image", e.target.value)}
-          placeholder={t("form.fields.coverImagePlaceholder")}
-          disabled={busy}
-        />
+        <CoverUploadZone value={form.cover_image} uploading={coverUploading} onChange={handleCoverUpload} />
+        <div className="mt-2">
+          <input
+            className={inputClass}
+            value={form.cover_image}
+            onChange={(e) => set("cover_image", e.target.value)}
+            placeholder={t("form.fields.coverImagePlaceholder")}
+            disabled={busy}
+          />
+        </div>
       </div>
     </div>
   );

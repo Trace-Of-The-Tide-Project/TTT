@@ -27,8 +27,20 @@
           "namePlaceholder": "p. ej. Patrimonio cultural",
           "description": "Descripción",
           "descriptionPlaceholder": "Una breve descripción de la colección",
-          "coverImage": "URL de la imagen de portada",
+          "coverImage": "Imagen de portada",
           "coverImagePlaceholder": "https://… o la clave de un recurso subido"
+        },
+        "upload": {
+          "coverAlt": "Imagen de portada",
+          "change": "Cambiar imagen",
+          "coverUploading": "Subiendo…",
+          "coverHint": "Haz clic o arrastra una imagen para subirla",
+          "coverFormats": "PNG, JPG, WEBP"
+        },
+        "toast": {
+          "coverUploading": "Subiendo imagen de portada…",
+          "coverUploaded": "Imagen de portada subida",
+          "coverUploadFailed": "No se pudo subir la imagen de portada"
         },
         "translation": {
           "banner": "Añadiendo la versión en {language}",

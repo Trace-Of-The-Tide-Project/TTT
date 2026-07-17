@@ -27,8 +27,20 @@
           "namePlaceholder": "p. ex. Patrimoine culturel",
           "description": "Description",
           "descriptionPlaceholder": "Une brève description de la collection",
-          "coverImage": "URL de l’image de couverture",
+          "coverImage": "Image de couverture",
           "coverImagePlaceholder": "https://… ou la clé d’un fichier importé"
+        },
+        "upload": {
+          "coverAlt": "Image de couverture",
+          "change": "Changer l’image",
+          "coverUploading": "Téléversement…",
+          "coverHint": "Cliquez ou glissez une image pour la téléverser",
+          "coverFormats": "PNG, JPG, WEBP"
+        },
+        "toast": {
+          "coverUploading": "Téléversement de l’image de couverture…",
+          "coverUploaded": "Image de couverture téléversée",
+          "coverUploadFailed": "Impossible de téléverser l’image de couverture"
         },
         "translation": {
           "banner": "Ajout de la version {language}",

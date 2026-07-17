@@ -27,8 +27,20 @@
           "namePlaceholder": "e.g. Cultural Heritage",
           "description": "Description",
           "descriptionPlaceholder": "A short description of the collection",
-          "coverImage": "Cover image URL",
+          "coverImage": "Cover image",
           "coverImagePlaceholder": "https://… or an uploaded asset key"
+        },
+        "upload": {
+          "coverAlt": "Cover image",
+          "change": "Change image",
+          "coverUploading": "Uploading…",
+          "coverHint": "Click or drag an image to upload",
+          "coverFormats": "PNG, JPG, WEBP"
+        },
+        "toast": {
+          "coverUploading": "Uploading cover image…",
+          "coverUploaded": "Cover image uploaded",
+          "coverUploadFailed": "Could not upload cover image"
         },
         "translation": {
           "banner": "Adding the {language} version",

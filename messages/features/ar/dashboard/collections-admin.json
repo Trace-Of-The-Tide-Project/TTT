@@ -27,8 +27,20 @@
           "namePlaceholder": "مثال: التراث الثقافي",
           "description": "الوصف",
           "descriptionPlaceholder": "وصف موجز للمجموعة",
-          "coverImage": "رابط صورة الغلاف",
+          "coverImage": "صورة الغلاف",
           "coverImagePlaceholder": "https://… أو مفتاح ملف مرفوع"
+        },
+        "upload": {
+          "coverAlt": "صورة الغلاف",
+          "change": "تغيير الصورة",
+          "coverUploading": "جارٍ الرفع…",
+          "coverHint": "انقر أو اسحب صورة للرفع",
+          "coverFormats": "PNG, JPG, WEBP"
+        },
+        "toast": {
+          "coverUploading": "جارٍ رفع صورة الغلاف…",
+          "coverUploaded": "تم رفع صورة الغلاف",
+          "coverUploadFailed": "تعذّر رفع صورة الغلاف"
         },
         "translation": {
           "banner": "إضافة نسخة {language}",
