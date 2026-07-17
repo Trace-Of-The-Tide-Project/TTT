@@ -482,65 +482,69 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
   return (
     <EditorRegistryProvider>
       <div className="mx-auto max-w-3xl">
-        {/* Sticky action bar */}
-        <div className="sticky top-0 z-20 -mx-2 mb-4 flex flex-wrap items-center gap-3 border-b border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)]/95 px-2 py-3 backdrop-blur">
-          <Link
-            href={LIST_URL}
-            className="inline-flex items-center gap-1 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground [&_svg]:h-4 [&_svg]:w-4"
-          >
-            <ChevronLeftLargeIcon />
-            {t("editor.back")}
-          </Link>
-          <div className="flex flex-1 items-center gap-2">
-            <h1 className="text-base font-bold text-foreground">
-              {isEdit ? t("editor.editTitle") : t("editor.createTitle")}
-            </h1>
-            {item?.is_current ? (
-              <span
-                className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold [&_svg]:h-3 [&_svg]:w-3"
-                style={{
-                  backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
-                  color: "var(--tott-accent-gold)",
-                }}
-              >
-                <StarIcon />
-                {t("editor.currentBadge")}
-              </span>
-            ) : null}
+        {/* Sticky header: action bar + shared rich-text toolbar stacked as one
+            unit, so the toolbar stays reachable while scrolling through blocks. */}
+        <div className="sticky top-0 z-20 -mx-2 mb-4 border-b border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)]/95 px-2 backdrop-blur">
+          <div className="flex flex-wrap items-center gap-3 py-3">
+            <Link
+              href={LIST_URL}
+              className="inline-flex items-center gap-1 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground [&_svg]:h-4 [&_svg]:w-4"
+            >
+              <ChevronLeftLargeIcon />
+              {t("editor.back")}
+            </Link>
+            <div className="flex flex-1 items-center gap-2">
+              <h1 className="text-base font-bold text-foreground">
+                {isEdit ? t("editor.editTitle") : t("editor.createTitle")}
+              </h1>
+              {item?.is_current ? (
+                <span
+                  className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold [&_svg]:h-3 [&_svg]:w-3"
+                  style={{
+                    backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
+                    color: "var(--tott-accent-gold)",
+                  }}
+                >
+                  <StarIcon />
+                  {t("editor.currentBadge")}
+                </span>
+              ) : null}
+            </div>
+            <LanguageFormTabs
+              active={activeLang}
+              onSelect={switchLanguage}
+              status={tabStatus}
+              disabled={busy}
+            />
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={busy}
+              className="inline-flex items-center gap-2 rounded-lg border px-5 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+              style={{
+                borderColor: "color-mix(in srgb, var(--tott-accent-gold) 60%, transparent)",
+                backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
+                color: "var(--tott-accent-gold)",
+              }}
+            >
+              {busy ? (
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : null}
+              {busy ? t("editor.saving") : isEdit ? t("editor.save") : t("editor.create")}
+            </button>
           </div>
-          <LanguageFormTabs
-            active={activeLang}
-            onSelect={switchLanguage}
-            status={tabStatus}
-            disabled={busy}
-          />
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={busy}
-            className="inline-flex items-center gap-2 rounded-lg border px-5 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
-            style={{
-              borderColor: "color-mix(in srgb, var(--tott-accent-gold) 60%, transparent)",
-              backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
-              color: "var(--tott-accent-gold)",
-            }}
-          >
-            {busy ? (
-              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            ) : null}
-            {busy ? t("editor.saving") : isEdit ? t("editor.save") : t("editor.create")}
-          </button>
+
+          {/* Shared toolbar — targets whichever rich-text field (letter or a
+              paragraph/author-note block) currently has focus. Stays pinned
+              under the action bar so it's reachable while editing any block. */}
+          <div className="border-t border-[var(--tott-card-border)] py-2">
+            <EditorToolbar />
+          </div>
         </div>
 
         <p className="mb-6 text-xs leading-relaxed text-[var(--tott-muted)]">
           {t("published.form.description")}
         </p>
-
-        {/* Shared floating toolbar — targets whichever rich-text field (letter
-            or a paragraph/author-note block) currently has focus. */}
-        <div className="mb-4">
-          <EditorToolbar />
-        </div>
 
         <div className="space-y-6">
           {/* Cover (required) */}
