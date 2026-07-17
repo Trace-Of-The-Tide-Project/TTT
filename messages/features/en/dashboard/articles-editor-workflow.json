@@ -247,6 +247,15 @@
             "es": "Spanish",
             "fr": "French"
           },
+          "writer": {
+            "label": "Credited writer",
+            "hint": "The byline shown to readers. Independent of who can edit the article."
+          },
+          "owner": {
+            "label": "Owner",
+            "current": "Currently: {name}",
+            "hint": "Transfer this article to another account — the new owner can edit it. Leave empty to keep the current owner."
+          },
           "translationOf": {
             "label": "Translation of",
             "placeholder": "Search an article to translate…",

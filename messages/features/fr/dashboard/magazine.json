@@ -219,6 +219,15 @@
       },
       "published": {
         "new": "Nouveau numéro",
+        "card": {
+          "currentBadge": "Actuel",
+          "setCurrent": "Définir comme actuel",
+          "settingCurrent": "Définition…",
+          "setCurrentTitle": "Définir comme numéro actuel ?",
+          "setCurrentBody": "« {title} » deviendra le numéro actuel affiché sur la page d'accueil du magazine, à la place du précédent.",
+          "setCurrentDone": "Numéro actuel mis à jour.",
+          "setCurrentError": "Impossible de définir le numéro actuel"
+        },
         "tabs": {
           "all": "Tous",
           "published": "Publié",
@@ -327,6 +336,35 @@
           "deleting": "Suppression du numéro…",
           "deleted": "Numéro supprimé.",
           "deleteError": "Impossible de supprimer le numéro"
+        }
+      },
+      "editor": {
+        "createTitle": "Nouveau numéro",
+        "editTitle": "Modifier le numéro",
+        "back": "Retour aux numéros",
+        "save": "Enregistrer",
+        "create": "Créer le numéro",
+        "saving": "Enregistrement…",
+        "saved": "Numéro enregistré.",
+        "created": "Numéro créé.",
+        "saveError": "Impossible d'enregistrer le numéro",
+        "uploading": "Téléversement de la couverture…",
+        "uploaded": "Couverture téléversée",
+        "uploadError": "Échec du téléversement de la couverture",
+        "notFound": "Ce numéro est introuvable.",
+        "currentBadge": "Numéro actuel",
+        "saveToAssign": "Enregistrez d'abord le numéro pour affecter des articles et des contributeurs.",
+        "fields": {
+          "theme": "Thème / sous-titre",
+          "letter": "Édito du rédacteur",
+          "letterHint": "Affiché comme introduction du numéro",
+          "letterPlaceholder": "Rédigez l'édito du rédacteur pour ce numéro…"
+        },
+        "errors": {
+          "titleRequired": "Le titre est obligatoire.",
+          "editionRequired": "Le numéro d'édition est obligatoire.",
+          "editionNumber": "L'édition doit être un nombre.",
+          "coverRequired": "Une image de couverture est requise."
         }
       },
       "contributors": {
@@ -481,6 +519,15 @@
       "edit": "Modifier",
       "delete": "Supprimer",
       "deleteError": "Impossible de supprimer l'article",
+      "feature": {
+        "feature": "Afficher sur la page d'accueil du magazine",
+        "unfeature": "Retirer de la page d'accueil du magazine",
+        "disabledTooltip": "Publiez d'abord cet article — seuls les articles publiés apparaissent sur la page d'accueil.",
+        "loading": "Mise à jour…",
+        "featured": "Ajouté à la page d'accueil du magazine.",
+        "unfeatured": "Retiré de la page d'accueil du magazine.",
+        "failed": "Impossible de mettre à jour la mise en avant"
+      },
       "columns": {
         "title": "Titre",
         "status": "Statut",

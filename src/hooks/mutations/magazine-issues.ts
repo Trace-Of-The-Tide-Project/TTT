@@ -3,6 +3,7 @@ import {
   createMagazineIssue,
   updateMagazineIssue,
   deleteMagazineIssue,
+  setCurrentIssue,
   type MagazineIssueInput,
 } from "@/services/magazine-issues.service";
 import { magazineIssuesKeys } from "@/hooks/queries/magazine-issues";
@@ -35,6 +36,15 @@ export function useDeleteMagazineIssue() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteMagazineIssue(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: magazineIssuesKeys.all }),
+    meta: { silent: true },
+  });
+}
+
+export function useSetCurrentIssue() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => setCurrentIssue(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: magazineIssuesKeys.all }),
     meta: { silent: true },
   });

@@ -8,6 +8,10 @@ import type { AdminTagItem } from "@/services/admin-tags.service";
 import { useAdminTags } from "@/hooks/queries/admin-tags";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { TranslationOfPicker } from "./TranslationOfPicker";
+import { WriterPicker } from "@/components/dashboard/admin/writers/WriterPicker";
+import { UserPicker } from "@/components/dashboard/admin/writers/UserPicker";
+import type { AdminUserListItem } from "@/services/users.service";
+import type { WriterProfile } from "@/services/writers.service";
 
 /**
  * Resolve the cover value for the `<img>` preview. Fresh picks are local
@@ -97,6 +101,16 @@ type ContentSettingsProps = {
   onTranslationOfChange?: (id: string | undefined, title?: string | null) => void;
   /** The current article's id, so it can't be linked as its own translation. */
   excludeId?: string;
+  /** Owner/byline assignment is admin/editor only — when false the block hides. */
+  canAssign?: boolean;
+  /** Selected new owner (empty = leave ownership unchanged). */
+  authorUser?: AdminUserListItem | null;
+  onAuthorUserChange?: (user: AdminUserListItem | null) => void;
+  /** Name of the current owner, shown as a caption above the transfer picker. */
+  currentOwnerName?: string | null;
+  /** Credited byline writer profile (null = bylined to the owner only). */
+  writer?: WriterProfile | null;
+  onWriterChange?: (writer: WriterProfile | null) => void;
   visibility: "public" | "private";
   onVisibilityChange: (v: "public" | "private") => void;
   accessLevel?: "open" | "preview" | "subscriber" | "paid";
@@ -149,6 +163,12 @@ export function ContentSettings({
   translationOf,
   onTranslationOfChange,
   excludeId,
+  canAssign,
+  authorUser,
+  onAuthorUserChange,
+  currentOwnerName,
+  writer,
+  onWriterChange,
   visibility,
   onVisibilityChange,
   accessLevel = "open",
@@ -367,6 +387,28 @@ export function ContentSettings({
             ))}
           </FieldSelect>
         </div>
+
+        {canAssign && onWriterChange ? (
+          <>
+            <div>
+              <SectionLabel icon={<GlobeIcon />}>{t("writer.label")}</SectionLabel>
+              <WriterPicker value={writer ?? null} onChange={onWriterChange} />
+              <p className="mt-1.5 text-xs text-[var(--tott-muted)]">{t("writer.hint")}</p>
+            </div>
+            {onAuthorUserChange ? (
+              <div>
+                <SectionLabel icon={<GlobeIcon />}>{t("owner.label")}</SectionLabel>
+                {currentOwnerName ? (
+                  <p className="mb-1.5 text-xs text-[var(--tott-muted)]">
+                    {t("owner.current", { name: currentOwnerName })}
+                  </p>
+                ) : null}
+                <UserPicker value={authorUser ?? null} onChange={onAuthorUserChange} />
+                <p className="mt-1.5 text-xs text-[var(--tott-muted)]">{t("owner.hint")}</p>
+              </div>
+            ) : null}
+          </>
+        ) : null}
 
         {onTranslationOfChange ? (
           <div>

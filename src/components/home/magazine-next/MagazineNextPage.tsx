@@ -15,6 +15,7 @@ import { MagFounderNote } from "./MagFounderNote";
 import {
   fetchArticles,
   fetchBooks,
+  fetchCurrentIssue,
   fetchEditorialCopy,
   fetchIssues,
   fetchMagazineId,
@@ -39,6 +40,7 @@ export async function MagazineNextPage({ locale }: { locale: string }) {
   const [
     magazineId,
     issues,
+    currentIssue,
     featuredRaw,
     articles,
     videos,
@@ -49,6 +51,7 @@ export async function MagazineNextPage({ locale }: { locale: string }) {
   ] = await Promise.all([
     fetchMagazineId(),
     fetchIssues(locale, SECTION_SIZES.issues),
+    fetchCurrentIssue(locale),
     fetchArticles(locale, { limit: SECTION_SIZES.featured, is_featured: true }),
     fetchArticles(locale, { limit: SECTION_SIZES.latest }),
     fetchArticles(locale, { limit: SECTION_SIZES.videos, content_type: "video" }),
@@ -57,6 +60,9 @@ export async function MagazineNextPage({ locale }: { locale: string }) {
     fetchEditorialCopy(locale),
     getPageHero("magazine-landing"),
   ]);
+
+  // The admin-chosen current issue leads; fall back to the newest published.
+  const heroIssue = currentIssue ?? issues[0];
 
   // Featured block: prefer admin-flagged articles; fall back to the newest
   // articles so the lead is never empty when nothing is flagged.
@@ -71,7 +77,7 @@ export async function MagazineNextPage({ locale }: { locale: string }) {
   return (
     <SmoothScroll>
       <main className="min-h-screen bg-[var(--tott-home-surface)] text-[var(--tott-home-text-warm)]">
-        <MagHero issue={issues[0]} fallbackArtwork={heroFallbackArtwork} />
+        <MagHero issue={heroIssue} fallbackArtwork={heroFallbackArtwork} />
         <MagOpeningLine copy={editorial.manifesto} />
         <MagFeatured articles={featured} locale={locale} />
         <MagQuoteBreak copy={editorial.manifesto} locale={locale} />

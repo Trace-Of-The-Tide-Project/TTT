@@ -25,6 +25,11 @@
           "published": "منشورة",
           "scheduled": "مجدولة"
         },
+        "sourceFilter": {
+          "all": "الكل",
+          "main": "الموقع الرئيسي",
+          "magazine": "المجلة"
+        },
         "sections": {
           "draftedArticles": "مقالات مسودة",
           "scheduledArticles": "مقالات مجدولة"
@@ -60,7 +65,17 @@
           "menuAriaFor": "إجراءات المقالة: {title}",
           "preview": "معاينة",
           "edit": "تعديل",
-          "delete": "حذف"
+          "delete": "حذف",
+          "magazineBadge": "المجلة",
+          "featuredBadge": "مميّزة",
+          "featuredBadgeTooltip": "معروضة على الصفحة الرئيسية",
+          "featureOnHomepage": "عرض على الصفحة الرئيسية",
+          "removeFromHomepage": "إزالة من الصفحة الرئيسية",
+          "featureDisabledTooltip": "انشر هذه المقالة أولاً — تظهر المقالات المنشورة فقط على الصفحة الرئيسية.",
+          "featureLoading": "جارٍ التحديث…",
+          "featureSuccess": "أُضيفت إلى الصفحة الرئيسية.",
+          "unfeatureSuccess": "أُزيلت من الصفحة الرئيسية.",
+          "featureFailed": "تعذّر تحديث الإبراز على الصفحة الرئيسية"
         }
       }
     }

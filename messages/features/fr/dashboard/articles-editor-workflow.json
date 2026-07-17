@@ -247,6 +247,15 @@
             "es": "Espagnol",
             "fr": "Français"
           },
+          "writer": {
+            "label": "Auteur crédité",
+            "hint": "La signature affichée aux lecteurs. Indépendante de qui peut modifier l’article."
+          },
+          "owner": {
+            "label": "Propriétaire",
+            "current": "Actuel : {name}",
+            "hint": "Transférez cet article à un autre compte — le nouveau propriétaire pourra le modifier. Laissez vide pour conserver le propriétaire actuel."
+          },
           "translationOf": {
             "label": "Traduction de",
             "placeholder": "Rechercher un article à traduire…",

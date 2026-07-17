@@ -25,6 +25,9 @@ import {
   type ArticleProduct,
 } from "@/services/articles.service";
 import { useArticle } from "@/hooks/queries/articles";
+import { useAuthUser } from "@/components/providers/AuthProvider";
+import type { AdminUserListItem } from "@/services/users.service";
+import type { WriterProfile } from "@/services/writers.service";
 import { useTranslations as useTranslationGroup } from "@/hooks/queries/translations";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
 import { uploadArticleAssetPath } from "@/services/uploads.service";
@@ -135,6 +138,15 @@ export function useArticleEditor({
   const [langBaseline, setLangBaseline] = useState<Record<string, string>>({});
   const [translationOf, setTranslationOf] = useState<string | undefined>(initialTranslationOf);
   const [originalTitle, setOriginalTitle] = useState<string | null>(null);
+  // Editorial assignment (admin/editor only). Owner transfers edit rights; writer
+  // is the credited byline. Owner isn't preloaded (the article read carries only
+  // a thin author) — currentOwnerName shows who owns it now; author_id is sent
+  // only when an admin actively picks a new owner.
+  const authUser = useAuthUser();
+  const canAssign = !!authUser?.roles?.some((r) => r === "admin" || r === "editor");
+  const [authorUser, setAuthorUser] = useState<AdminUserListItem | null>(null);
+  const [currentOwnerName, setCurrentOwnerName] = useState<string | null>(null);
+  const [writer, setWriter] = useState<WriterProfile | null>(null);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [accessLevel, setAccessLevel] = useState<ArticleAccessLevel>("open");
   const [previewBlockCount, setPreviewBlockCount] = useState<number | null>(null);
@@ -345,6 +357,9 @@ export function useArticleEditor({
     setLangBaseline({});
     setLangBaselineTick((n) => n + 1);
     setTranslationOf(a.translation_of?.trim() || undefined);
+    setCurrentOwnerName(a.author?.full_name?.trim() || a.author?.username?.trim() || null);
+    setAuthorUser(null); // owner picker starts empty; only sent on deliberate transfer
+    setWriter(canAssign ? (a.writer ?? null) : null);
     setVisibility((a.visibility || "public").toLowerCase() === "private" ? "private" : "public");
     const level = (a.access_level || "open").trim().toLowerCase();
     setAccessLevel(
@@ -370,7 +385,7 @@ export function useArticleEditor({
       mapped.length ? mapped : [{ id: crypto.randomUUID(), type: "paragraph", content: "" }],
     );
     setRebaselineTick((n) => n + 1); // loaded values are the pristine state
-  }, [articleQuery.data, loadKey]);
+  }, [articleQuery.data, loadKey, canAssign]);
 
   useEffect(() => {
     if (!translationOf || articleId) return;
@@ -488,6 +503,11 @@ export function useArticleEditor({
       cover_image: resolvedCover || undefined,
       blocks: apiBlocks,
       translation_of: translationOf || undefined,
+      // Editorial assignment — only privileged users emit these. Owner: id when
+      // an admin picked a transfer, else undefined (leave as-is). Writer: id when
+      // selected, null to clear the byline, undefined when not applicable.
+      author_id: canAssign ? (authorUser?.id || undefined) : undefined,
+      writer_id: canAssign ? (writer?.id ?? null) : undefined,
       // Issue-scoped create: backend forces product=magazine when issue_id set.
       // A loose magazine-pool article passes product='magazine' with no issue.
       product: initialProduct || undefined,
@@ -499,6 +519,7 @@ export function useArticleEditor({
     accessLevel, previewBlockCount, price, currency,
     collectionId, tagIds, coverImage, coverFile, translationOf,
     initialProduct, initialIssueId, initialMagazineId,
+    canAssign, authorUser, writer,
   ]);
 
   /** After the primary saves: persist each OTHER dirty tab. An existing
@@ -690,6 +711,10 @@ export function useArticleEditor({
     isDirty,
     translationOf,
     originalTitle,
+    canAssign,
+    authorUser, setAuthorUser,
+    currentOwnerName,
+    writer, setWriter,
     visibility, setVisibility,
     accessLevel, setAccessLevel,
     previewBlockCount, setPreviewBlockCount,

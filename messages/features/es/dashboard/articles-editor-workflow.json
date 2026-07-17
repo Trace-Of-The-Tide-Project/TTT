@@ -247,6 +247,15 @@
             "es": "Español",
             "fr": "Francés"
           },
+          "writer": {
+            "label": "Autor acreditado",
+            "hint": "La firma que ven los lectores. Independiente de quién puede editar el artículo."
+          },
+          "owner": {
+            "label": "Propietario",
+            "current": "Actual: {name}",
+            "hint": "Transfiere este artículo a otra cuenta — el nuevo propietario podrá editarlo. Déjalo vacío para mantener el propietario actual."
+          },
           "translationOf": {
             "label": "Traducción de",
             "placeholder": "Busca un artículo para traducir…",

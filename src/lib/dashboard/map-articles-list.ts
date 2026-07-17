@@ -138,5 +138,7 @@ export function mapArticleListItemToTableRow(a: ArticleListItem): ArticleRow {
     updatedAtIso: a.updatedAt,
     views: String(a.view_count ?? 0),
     supporters: contributors > 0 ? String(contributors) : "—",
+    product: a.product ?? "main",
+    isFeatured: Boolean(a.is_featured),
   };
 }

@@ -219,6 +219,15 @@
       },
       "published": {
         "new": "Nuevo número",
+        "card": {
+          "currentBadge": "Actual",
+          "setCurrent": "Marcar como actual",
+          "settingCurrent": "Marcando…",
+          "setCurrentTitle": "¿Marcar como número actual?",
+          "setCurrentBody": "«{title}» pasará a ser el número actual que se muestra en la página principal de la revista, en lugar del anterior.",
+          "setCurrentDone": "Número actual actualizado.",
+          "setCurrentError": "No se pudo marcar el número actual"
+        },
         "tabs": {
           "all": "Todos",
           "published": "Publicado",
@@ -327,6 +336,35 @@
           "deleting": "Eliminando número…",
           "deleted": "Número eliminado.",
           "deleteError": "No se pudo eliminar el número"
+        }
+      },
+      "editor": {
+        "createTitle": "Nuevo número",
+        "editTitle": "Editar número",
+        "back": "Volver a los números",
+        "save": "Guardar",
+        "create": "Crear número",
+        "saving": "Guardando…",
+        "saved": "Número guardado.",
+        "created": "Número creado.",
+        "saveError": "No se pudo guardar el número",
+        "uploading": "Subiendo portada…",
+        "uploaded": "Portada subida",
+        "uploadError": "Error al subir la portada",
+        "notFound": "No se pudo encontrar este número.",
+        "currentBadge": "Número actual",
+        "saveToAssign": "Guarda el número primero para asignar artículos y colaboradores.",
+        "fields": {
+          "theme": "Tema / subtítulo",
+          "letter": "Carta del editor",
+          "letterHint": "Se muestra como introducción del número",
+          "letterPlaceholder": "Escribe la carta del editor para este número…"
+        },
+        "errors": {
+          "titleRequired": "El título es obligatorio.",
+          "editionRequired": "El número de edición es obligatorio.",
+          "editionNumber": "La edición debe ser un número.",
+          "coverRequired": "Se requiere una imagen de portada."
         }
       },
       "contributors": {
@@ -481,6 +519,15 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "deleteError": "No se pudo eliminar el artículo",
+      "feature": {
+        "feature": "Mostrar en la página de inicio de la revista",
+        "unfeature": "Quitar de la página de inicio de la revista",
+        "disabledTooltip": "Publica este artículo primero: solo los artículos publicados aparecen en la página de inicio.",
+        "loading": "Actualizando…",
+        "featured": "Añadido a la página de inicio de la revista.",
+        "unfeatured": "Quitado de la página de inicio de la revista.",
+        "failed": "No se pudo actualizar el destacado de la página de inicio"
+      },
       "columns": {
         "title": "Título",
         "status": "Estado",

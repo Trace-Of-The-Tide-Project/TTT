@@ -1045,6 +1045,60 @@ a,
   margin: 0;
 }
 
+/* Tailwind v4 Preflight zeroes margin/padding/border on every element and
+   strips list-style globally. Without these rules an inserted blockquote,
+   code block, or list is pixel-identical to a plain paragraph in the editing
+   surface — indistinguishable from "nothing happened" — even though the
+   TipTap command succeeded and the node is really in the document. Mirrors
+   the `.prose` display-side styling below so editing matches the saved
+   render. */
+.tiptap-paragraph blockquote {
+  margin: 0.75em 0;
+  padding-inline-start: 1em;
+  border-inline-start: 3px solid var(--tott-content-quote-border, var(--tott-card-border));
+  font-style: italic;
+}
+.tiptap-paragraph pre {
+  margin: 0.75em 0;
+  padding: 0.75em 1em;
+  background-color: var(--tott-elevated);
+  border: 1px solid var(--tott-card-border);
+  border-radius: 8px;
+  overflow-x: auto;
+}
+.tiptap-paragraph code {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.875em;
+  background-color: var(--tott-elevated);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+.tiptap-paragraph pre code {
+  background: none;
+  padding: 0;
+}
+.tiptap-paragraph img {
+  border-radius: 8px;
+  margin: 0.75em 0;
+}
+.tiptap-paragraph hr {
+  margin: 1em 0;
+}
+.tiptap-paragraph ul,
+.tiptap-paragraph ol {
+  margin: 0 0 0.75em;
+  padding-inline-start: 1.5em;
+}
+.tiptap-paragraph ul {
+  list-style: disc;
+}
+.tiptap-paragraph ol {
+  list-style: decimal;
+}
+.tiptap-paragraph li {
+  margin: 0.15em 0;
+}
+
 /* Magazine page editor — keep authored copy legible in every dashboard
    theme. Rich content can carry an absolute text color (e.g. white, set
    for the dark public hero) that vanishes against a light editor surface.
