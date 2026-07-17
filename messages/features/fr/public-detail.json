@@ -53,6 +53,11 @@
     "socials": {
       "website": "Site web"
     },
+    "works": {
+      "eyebrow": "Publié",
+      "title": "Œuvres choisies",
+      "empty": "Aucune œuvre publiée pour le moment."
+    },
     "show": {
       "title": "Les voix de TTT",
       "subtitle": "Découvrez les auteurs qui façonnent nos pages — et suivez ceux que vous aimez.",
