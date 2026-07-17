@@ -9,7 +9,9 @@ import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { normalizeAppPathname } from "@/lib/i18n/strip-locale-from-path";
 import { PlusIcon, MoreDotsIcon, ChevronRightIcon } from "@/components/ui/icons";
 import { ConfirmDeleteArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ConfirmDeleteArticleModal";
-import { useDeleteArticle } from "@/hooks/mutations/articles";
+import { useDeleteArticle, useUpdateArticle } from "@/hooks/mutations/articles";
+import { mutationToast } from "@/hooks/useMutationToast";
+import type { ArticleProduct } from "@/services/articles.service";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import { formatApiError } from "@/lib/api/error-message";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
@@ -41,6 +43,10 @@ export type ArticleRow = {
   updatedAtIso: string;
   views: string;
   supporters: string;
+  /** Which surface this article belongs to; drives the Magazine badge + source filter. */
+  product?: ArticleProduct;
+  /** Featured on its product homepage (main or magazine). */
+  isFeatured?: boolean;
 };
 
 /** ArticleRow enriched for rendering: translation-group primary/child role + display fields. */
@@ -149,12 +155,15 @@ export function ArticlesTable({
   const defaultTab = tabs[0]?.id ?? "all";
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [activeType, setActiveType] = useState("all");
+  const [activeSource, setActiveSource] = useState<"all" | ArticleProduct>("all");
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ArticleRow | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [featureBusyId, setFeatureBusyId] = useState<string | null>(null);
   const deleteMutation = useDeleteArticle({ silent: true });
   const deleteBusy = deleteMutation.isPending;
+  const updateMutation = useUpdateArticle();
 
   // Sync the active tab to the `?tab=` query param. Render-phase
   // prev-value pattern instead of an effect.
@@ -237,6 +246,47 @@ export function ArticlesTable({
     [pathname, router, searchParams]
   );
 
+  // Source filter (All / Main site / Magazine) — only shown when the list
+  // actually contains magazine articles (main list fetches product=all).
+  const hasMagazine = useMemo(
+    () => rows.some((r) => (r.product ?? "main") === "magazine"),
+    [rows],
+  );
+  const sourceOptions = useMemo<FilterOption[]>(
+    () => [
+      { id: "all", label: t("sourceFilter.all") },
+      { id: "main", label: t("sourceFilter.main") },
+      { id: "magazine", label: t("sourceFilter.magazine") },
+    ],
+    [t],
+  );
+
+  const urlSource = searchParams.get("source");
+  const [prevUrlSource, setPrevUrlSource] = useState(urlSource);
+  if (urlSource !== prevUrlSource) {
+    setPrevUrlSource(urlSource);
+    if (urlSource === "main" || urlSource === "magazine") {
+      setActiveSource(urlSource);
+    }
+  }
+
+  const selectSource = useCallback(
+    (sourceId: string) => {
+      const next = sourceId === "main" || sourceId === "magazine" ? sourceId : "all";
+      setActiveSource(next);
+      const params = new URLSearchParams(searchParams.toString());
+      if (next === "all") {
+        params.delete("source");
+      } else {
+        params.set("source", next);
+      }
+      const q = params.toString();
+      const base = normalizeAppPathname(pathname) ?? pathname ?? "/admin/articles";
+      router.replace(q ? `${base}?${q}` : base, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
+
   const filteredRows = useMemo(() => {
     const wantStatus = TAB_TO_STATUS[activeTab];
     return rows.filter((r) => {
@@ -244,9 +294,12 @@ export function ArticlesTable({
       if (activeType !== "all" && contentTypeToFilterId(r.content_type) !== activeType) {
         return false;
       }
+      if (activeSource !== "all" && (r.product ?? "main") !== activeSource) {
+        return false;
+      }
       return true;
     });
-  }, [rows, activeTab, activeType]);
+  }, [rows, activeTab, activeType, activeSource]);
 
   // Group id used for clustering translation siblings: shared translationGroupId,
   // or the row's own id when it has no translations (never collides with a real group).
@@ -402,6 +455,26 @@ export function ArticlesTable({
     setOpenMenuId(row.id);
   }, [openMenuId, closeArticleMenu]);
 
+  const toggleFeatured = useCallback(
+    (row: ArticleRow) => {
+      const next = !row.isFeatured;
+      // Guard: only published articles surface on the homepage. Allow removing
+      // the flag from a non-published row, never adding it.
+      if (next && row.status !== "published") return;
+      setFeatureBusyId(row.id);
+      closeArticleMenu();
+      void mutationToast(
+        () => updateMutation.mutateAsync({ articleId: row.id, payload: { is_featured: next } }),
+        {
+          loading: t("table.featureLoading"),
+          success: next ? t("table.featureSuccess") : t("table.unfeatureSuccess"),
+          error: t("table.featureFailed"),
+        },
+      ).finally(() => setFeatureBusyId(null));
+    },
+    [updateMutation, closeArticleMenu, t],
+  );
+
   const closeDeleteModal = useCallback(() => {
     if (deleteBusy) return;
     setDeleteTarget(null);
@@ -463,6 +536,27 @@ export function ArticlesTable({
                   <button
                     type="button"
                     role="menuitem"
+                    className="w-full px-4 py-2 text-start text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)] disabled:cursor-not-allowed disabled:opacity-40"
+                    disabled={
+                      featureBusyId === openMenuRow.id ||
+                      (!openMenuRow.isFeatured && openMenuRow.status !== "published")
+                    }
+                    title={
+                      !openMenuRow.isFeatured && openMenuRow.status !== "published"
+                        ? t("table.featureDisabledTooltip")
+                        : undefined
+                    }
+                    onClick={() => toggleFeatured(openMenuRow)}
+                  >
+                    {openMenuRow.isFeatured
+                      ? t("table.removeFromHomepage")
+                      : t("table.featureOnHomepage")}
+                  </button>
+                </li>
+                <li role="none">
+                  <button
+                    type="button"
+                    role="menuitem"
                     className="w-full px-4 py-2 text-start text-sm text-red-300 transition-colors hover:bg-red-950/40 hover:text-red-200"
                     disabled={deleteBusy && deleteTarget?.id === openMenuRow.id}
                     onClick={() => openDeleteModal(openMenuRow)}
@@ -490,6 +584,18 @@ export function ArticlesTable({
         value={activeTab}
         onChange={selectTab}
       />
+
+      {/* Source filter (All / Main / Magazine) — only when magazine rows exist. */}
+      {hasMagazine ? (
+        <div className="mb-4">
+          <CreatePageFilters
+            options={sourceOptions}
+            selectedId={activeSource}
+            onSelect={selectSource}
+            variant="outlined"
+          />
+        </div>
+      ) : null}
 
       {/* Type filter chips — only shown when there are 2+ real types. */}
       {typeOptions.length > 2 ? (
@@ -564,6 +670,19 @@ export function ArticlesTable({
                     title={t("table.needsTranslationTooltip", { locale })}
                   >
                     {t("table.needsTranslation")}
+                  </span>
+                ) : null}
+                {(row.product ?? "main") === "magazine" ? (
+                  <span className="shrink-0 rounded bg-[var(--tott-accent-gold)]/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-accent-gold)]">
+                    {t("table.magazineBadge")}
+                  </span>
+                ) : null}
+                {row.isFeatured ? (
+                  <span
+                    className="shrink-0 rounded bg-[var(--tott-accent-gold)]/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-accent-gold)]"
+                    title={t("table.featuredBadgeTooltip")}
+                  >
+                    ★ {t("table.featuredBadge")}
                   </span>
                 ) : null}
               </span>

@@ -25,6 +25,11 @@
           "published": "Published",
           "scheduled": "Scheduled"
         },
+        "sourceFilter": {
+          "all": "All",
+          "main": "Main site",
+          "magazine": "Magazine"
+        },
         "sections": {
           "draftedArticles": "Drafted Articles",
           "scheduledArticles": "Scheduled Articles"
@@ -60,7 +65,17 @@
           "menuAriaFor": "Actions for {title}",
           "preview": "Preview",
           "edit": "Edit",
-          "delete": "Delete"
+          "delete": "Delete",
+          "magazineBadge": "Magazine",
+          "featuredBadge": "Featured",
+          "featuredBadgeTooltip": "Featured on the homepage",
+          "featureOnHomepage": "Show on homepage",
+          "removeFromHomepage": "Remove from homepage",
+          "featureDisabledTooltip": "Publish this article first — only published articles appear on the homepage.",
+          "featureLoading": "Updating…",
+          "featureSuccess": "Added to the homepage.",
+          "unfeatureSuccess": "Removed from the homepage.",
+          "featureFailed": "Could not update the homepage feature"
         }
       }
     }

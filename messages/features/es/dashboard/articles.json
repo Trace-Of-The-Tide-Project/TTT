@@ -25,6 +25,11 @@
           "published": "Publicados",
           "scheduled": "Programados"
         },
+        "sourceFilter": {
+          "all": "Todos",
+          "main": "Sitio principal",
+          "magazine": "Revista"
+        },
         "sections": {
           "draftedArticles": "Artículos en borrador",
           "scheduledArticles": "Artículos programados"
@@ -60,7 +65,17 @@
           "menuAriaFor": "Acciones para {title}",
           "preview": "Vista previa",
           "edit": "Editar",
-          "delete": "Eliminar"
+          "delete": "Eliminar",
+          "magazineBadge": "Revista",
+          "featuredBadge": "Destacado",
+          "featuredBadgeTooltip": "Destacado en la página de inicio",
+          "featureOnHomepage": "Mostrar en la página de inicio",
+          "removeFromHomepage": "Quitar de la página de inicio",
+          "featureDisabledTooltip": "Publica este artículo primero: solo los artículos publicados aparecen en la página de inicio.",
+          "featureLoading": "Actualizando…",
+          "featureSuccess": "Añadido a la página de inicio.",
+          "unfeatureSuccess": "Quitado de la página de inicio.",
+          "featureFailed": "No se pudo actualizar el destacado de la página de inicio"
         }
       }
     }

@@ -519,6 +519,15 @@
       "edit": "Edit",
       "delete": "Delete",
       "deleteError": "Could not delete the article",
+      "feature": {
+        "feature": "Show on magazine homepage",
+        "unfeature": "Remove from magazine homepage",
+        "disabledTooltip": "Publish this article first — only published articles appear on the homepage.",
+        "loading": "Updating…",
+        "featured": "Added to the magazine homepage.",
+        "unfeatured": "Removed from the magazine homepage.",
+        "failed": "Could not update the homepage feature"
+      },
       "columns": {
         "title": "Title",
         "status": "Status",

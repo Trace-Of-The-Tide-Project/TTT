@@ -7,7 +7,8 @@ import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import { PlusIcon, PenLineIcon, ChevronRightIcon, TrashIcon } from "@/components/ui/icons";
 import { useArticles } from "@/hooks/queries/articles";
 import { useMagazineIssues } from "@/hooks/queries/magazine-issues";
-import { useDeleteArticle } from "@/hooks/mutations/articles";
+import { useDeleteArticle, useUpdateArticle } from "@/hooks/mutations/articles";
+import { mutationToast } from "@/hooks/useMutationToast";
 import { ConfirmDeleteArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ConfirmDeleteArticleModal";
 import { formatApiError } from "@/lib/api/error-message";
 import type { ArticleListItem, ArticleProduct } from "@/services/articles.service";
@@ -120,6 +121,27 @@ export function MagazineArticlesContent() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const deleteMutation = useDeleteArticle({ silent: true });
   const deleteBusy = deleteMutation.isPending;
+
+  const updateMutation = useUpdateArticle();
+  const [featureBusyId, setFeatureBusyId] = useState<string | null>(null);
+  const toggleFeatured = useCallback(
+    (a: DisplayArticle) => {
+      const next = !a.is_featured;
+      // Only published articles surface on the magazine homepage. Never flag a
+      // non-published one; unflagging stays allowed.
+      if (next && (a.status ?? "draft").toLowerCase() !== "published") return;
+      setFeatureBusyId(a.id);
+      void mutationToast(
+        () => updateMutation.mutateAsync({ articleId: a.id, payload: { is_featured: next } }),
+        {
+          loading: t("feature.loading"),
+          success: next ? t("feature.featured") : t("feature.unfeatured"),
+          error: t("feature.failed"),
+        },
+      ).finally(() => setFeatureBusyId(null));
+    },
+    [updateMutation, t],
+  );
 
   const closeDeleteModal = useCallback(() => {
     if (deleteBusy) return;
@@ -255,6 +277,24 @@ export function MagazineArticlesContent() {
                       : t("unassigned")}
                   </div>
                   <div className="flex items-center justify-end gap-2 border-t border-[var(--tott-card-border)] px-4 py-3">
+                    <button
+                      type="button"
+                      aria-label={a.is_featured ? t("feature.unfeature") : t("feature.feature")}
+                      aria-pressed={Boolean(a.is_featured)}
+                      title={
+                        !a.is_featured && s !== "published"
+                          ? t("feature.disabledTooltip")
+                          : a.is_featured
+                            ? t("feature.unfeature")
+                            : t("feature.feature")
+                      }
+                      disabled={featureBusyId === a.id || (!a.is_featured && s !== "published")}
+                      onClick={() => toggleFeatured(a)}
+                      className="inline-flex items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] p-1.5 text-sm leading-none transition-colors hover:bg-[var(--tott-dash-control-hover)] disabled:cursor-not-allowed disabled:opacity-40"
+                      style={a.is_featured ? { color: "var(--tott-accent-gold)" } : { color: "var(--tott-muted)" }}
+                    >
+                      {a.is_featured ? "★" : "☆"}
+                    </button>
                     <Link
                       href={`/admin/magazine/articles/edit/${encodeURIComponent(a.id)}`}
                       aria-label={t("edit")}

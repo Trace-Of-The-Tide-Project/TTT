@@ -219,6 +219,8 @@ export type ArticleListItem = {
   product?: ArticleProduct;
   issue_id?: string | null;
   magazine_id?: string | null;
+  /** Featured on this article's product homepage (main or magazine). */
+  is_featured?: boolean;
   translation_of: string | null;
   translation_group_id?: string | null;
   createdAt: string;
@@ -533,6 +535,8 @@ export type UpdateArticlePayload = {
   magazine_id?: string | null;
   /** Re-assert the product on save; omitted (undefined) leaves it untouched. */
   product?: ArticleProduct;
+  /** Feature/unfeature on the article's product homepage (main or magazine). */
+  is_featured?: boolean;
   access_level?: ArticleAccessLevel;
   preview_block_count?: number | null;
   price?: number | null;

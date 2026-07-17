@@ -519,6 +519,15 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "deleteError": "No se pudo eliminar el artículo",
+      "feature": {
+        "feature": "Mostrar en la página de inicio de la revista",
+        "unfeature": "Quitar de la página de inicio de la revista",
+        "disabledTooltip": "Publica este artículo primero: solo los artículos publicados aparecen en la página de inicio.",
+        "loading": "Actualizando…",
+        "featured": "Añadido a la página de inicio de la revista.",
+        "unfeatured": "Quitado de la página de inicio de la revista.",
+        "failed": "No se pudo actualizar el destacado de la página de inicio"
+      },
       "columns": {
         "title": "Título",
         "status": "Estado",

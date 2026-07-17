@@ -25,6 +25,11 @@
           "published": "Publiés",
           "scheduled": "Programmés"
         },
+        "sourceFilter": {
+          "all": "Tous",
+          "main": "Site principal",
+          "magazine": "Magazine"
+        },
         "sections": {
           "draftedArticles": "Articles en brouillon",
           "scheduledArticles": "Articles programmés"
@@ -60,7 +65,17 @@
           "menuAriaFor": "Actions pour {title}",
           "preview": "Aperçu",
           "edit": "Modifier",
-          "delete": "Supprimer"
+          "delete": "Supprimer",
+          "magazineBadge": "Magazine",
+          "featuredBadge": "À la une",
+          "featuredBadgeTooltip": "Mis en avant sur la page d'accueil",
+          "featureOnHomepage": "Afficher sur la page d'accueil",
+          "removeFromHomepage": "Retirer de la page d'accueil",
+          "featureDisabledTooltip": "Publiez d'abord cet article — seuls les articles publiés apparaissent sur la page d'accueil.",
+          "featureLoading": "Mise à jour…",
+          "featureSuccess": "Ajouté à la page d'accueil.",
+          "unfeatureSuccess": "Retiré de la page d'accueil.",
+          "featureFailed": "Impossible de mettre à jour la mise en avant"
         }
       }
     }

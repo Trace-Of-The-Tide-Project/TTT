@@ -519,6 +519,15 @@
       "edit": "Modifier",
       "delete": "Supprimer",
       "deleteError": "Impossible de supprimer l'article",
+      "feature": {
+        "feature": "Afficher sur la page d'accueil du magazine",
+        "unfeature": "Retirer de la page d'accueil du magazine",
+        "disabledTooltip": "Publiez d'abord cet article — seuls les articles publiés apparaissent sur la page d'accueil.",
+        "loading": "Mise à jour…",
+        "featured": "Ajouté à la page d'accueil du magazine.",
+        "unfeatured": "Retiré de la page d'accueil du magazine.",
+        "failed": "Impossible de mettre à jour la mise en avant"
+      },
       "columns": {
         "title": "Titre",
         "status": "Statut",
