@@ -46,6 +46,9 @@
       "works": "الأعمال"
     },
     "about": {
+      "heading": "نبذة",
+      "biography": "السيرة",
+      "themes": "المواضيع",
       "basedIn": "مقيم في",
       "collaborations": "التعاونات",
       "recognition": "التكريمات"

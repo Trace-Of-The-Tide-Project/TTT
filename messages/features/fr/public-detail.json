@@ -46,6 +46,9 @@
       "works": "Œuvres"
     },
     "about": {
+      "heading": "À propos",
+      "biography": "Biographie",
+      "themes": "Thèmes",
       "basedIn": "Basé à",
       "collaborations": "Collaborations",
       "recognition": "Distinctions"
