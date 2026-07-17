@@ -358,7 +358,8 @@
           "theme": "Tema / subtítulo",
           "letter": "Carta del editor",
           "letterHint": "Se muestra como introducción del número",
-          "letterPlaceholder": "Escribe la carta del editor para este número…"
+          "letterPlaceholder": "Escribe la carta del editor para este número…",
+          "blocks": "Bloques de contenido"
         },
         "errors": {
           "titleRequired": "El título es obligatorio.",

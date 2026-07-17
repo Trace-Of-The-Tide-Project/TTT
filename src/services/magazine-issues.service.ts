@@ -1,5 +1,6 @@
 import { api } from "./api";
 import { serverGet } from "@/lib/api/isomorphic-fetch";
+import type { CreateArticleBlock, ArticleDetailBlock } from "./articles.service";
 
 /**
  * Magazine issue / spread / collection record. Field set kept tight
@@ -47,6 +48,8 @@ export type MagazineIssue = {
   /** The issue's editor's letter — rich-text HTML (distinct from the legacy
    * `editors_letter` linked article). */
   editors_letter_html?: string | null;
+  /** Ordered content blocks authored on the issue (quote/callout/image/…). */
+  body_blocks?: ArticleDetailBlock[] | null;
   /** Commerce — sell the issue as a digital product like a book. */
   price?: number | string | null;
   currency?: string | null;
@@ -143,6 +146,8 @@ export type MagazineIssueInput = {
   published_at?: string | null;
   /** The issue's editor's letter — rich-text HTML. */
   editors_letter_html?: string | null;
+  /** Ordered content blocks authored on the issue (quote/callout/image/…). */
+  body_blocks?: CreateArticleBlock[] | null;
 };
 
 function unwrapOne(raw: unknown): MagazineIssue | null {

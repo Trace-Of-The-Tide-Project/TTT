@@ -3,6 +3,7 @@ import {
   isUsableArticleMediaRef,
   resolveArticleMediaSrc,
 } from "@/lib/content/article-media-url";
+import { articleBlocksToSections } from "@/lib/content/article-blocks-to-sections";
 import {
   getMagazineIssueBySlug,
   getIssueArticles,
@@ -56,6 +57,9 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
     isFree: Boolean(issue.is_free),
     isOwned: Boolean(issue.is_owned),
     sections: (issue.sections ?? []).map((s) => ({ id: s.id, title: s.title })),
+    bodySections: issue.body_blocks?.length
+      ? articleBlocksToSections(issue.body_blocks)
+      : [],
     editorsLetter: issue.editors_letter
       ? {
           id: issue.editors_letter.id,

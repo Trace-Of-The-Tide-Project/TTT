@@ -46,12 +46,20 @@
       "works": "Œuvres"
     },
     "about": {
+      "heading": "À propos",
+      "biography": "Biographie",
+      "themes": "Thèmes",
       "basedIn": "Basé à",
       "collaborations": "Collaborations",
       "recognition": "Distinctions"
     },
     "socials": {
       "website": "Site web"
+    },
+    "works": {
+      "eyebrow": "Publié",
+      "title": "Œuvres choisies",
+      "empty": "Aucune œuvre publiée pour le moment."
     },
     "show": {
       "title": "Les voix de TTT",

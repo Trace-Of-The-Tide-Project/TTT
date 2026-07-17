@@ -358,7 +358,8 @@
           "theme": "Theme / subtitle",
           "letter": "Editor's letter",
           "letterHint": "Shown as the issue's introduction",
-          "letterPlaceholder": "Write the editor's letter for this issue…"
+          "letterPlaceholder": "Write the editor's letter for this issue…",
+          "blocks": "Content blocks"
         },
         "errors": {
           "titleRequired": "Title is required.",
