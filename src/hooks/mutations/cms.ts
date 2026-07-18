@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   publishCmsPage,
   toggleCmsSection,
+  updateCmsPage,
   updateCmsSection,
   updateCmsSetting,
 } from "@/services/cms.service";
@@ -33,6 +34,26 @@ export function useToggleCmsSection() {
     mutationFn: (args: { pageId: string; sectionId: string }) =>
       toggleCmsSection(args.pageId, args.sectionId),
     onSuccess: () => qc.invalidateQueries({ queryKey: cmsKeys.all }),
+  });
+}
+
+export function useUpdateCmsPage() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (args: {
+      id: string;
+      data: {
+        title?: string;
+        content?: string;
+        seo_title?: string;
+        meta_description?: string;
+        status?: "draft" | "published";
+      };
+    }) => updateCmsPage(args.id, args.data),
+    onSuccess: (_data, args) => {
+      qc.invalidateQueries({ queryKey: cmsKeys.pageById(args.id) });
+      qc.invalidateQueries({ queryKey: cmsKeys.pages() });
+    },
   });
 }
 

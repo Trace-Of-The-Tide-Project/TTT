@@ -172,6 +172,7 @@
             "paragraph": "Paragraph",
             "heading": "Title",
             "quote": "Quote",
+            "pull-quote": "Pull quote",
             "image": "Image",
             "video": "Video",
             "audio": "Audio",
@@ -180,7 +181,8 @@
             "author-note": "Author note",
             "caption-text": "Caption Text",
             "meta-data": "Meta Data",
-            "divider": "Divider"
+            "divider": "Divider",
+            "embed": "Embed"
           }
         },
         "modals": {

@@ -5,6 +5,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { EyeIcon, FileTextIcon, PenLineIcon } from "@/components/ui/icons";
 import { HexIconOutlined } from "@/components/dashboard/admin/articles/articles-create/HexIconOutlined";
 import { useCmsPages } from "@/hooks/queries/cms";
+import { useRouter } from "@/i18n/navigation";
+import type { CmsPage } from "@/services/cms.service";
 
 function formatDate(iso: string, locale: string): string {
   return new Date(iso).toLocaleDateString(locale, { month: "short", day: "numeric", year: "numeric" });
@@ -13,8 +15,13 @@ function formatDate(iso: string, locale: string): string {
 export function StaticPagesTab() {
   const t = useTranslations("Dashboard.cmsStatic");
   const locale = useLocale();
+  const router = useRouter();
   const { data: allPages, isPending: loading } = useCmsPages();
   const pages = (allPages ?? []).filter((p) => p.page_type !== "homepage");
+
+  const handlePreview = (page: CmsPage) => {
+    window.open(`/${page.language ?? locale}/${page.slug}`, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
@@ -46,6 +53,7 @@ export function StaticPagesTab() {
                 </span>
                 <button
                   type="button"
+                  onClick={() => router.push(`/admin/cms/${page.id}`)}
                   className="flex items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
                 >
                   <span className="[&_svg]:h-4 [&_svg]:w-4">
@@ -55,6 +63,7 @@ export function StaticPagesTab() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => handlePreview(page)}
                   className="flex items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
                 >
                   <span className="[&_svg]:h-4 [&_svg]:w-4">

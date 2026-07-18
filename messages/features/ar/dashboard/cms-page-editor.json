@@ -1,0 +1,22 @@
+{
+  "Dashboard": {
+    "cmsPageEditor": {
+      "loading": "جارٍ تحميل الصفحة…",
+      "back": "رجوع",
+      "preview": "معاينة",
+      "reset": "إعادة تعيين",
+      "save": "حفظ",
+      "saving": "جارٍ الحفظ…",
+      "publish": "نشر",
+      "publishing": "جارٍ النشر…",
+      "published": "منشور",
+      "seo": "تحسين محركات البحث",
+      "fields": {
+        "title": "العنوان",
+        "content": "المحتوى",
+        "seoTitle": "عنوان تحسين محركات البحث",
+        "metaDescription": "الوصف التعريفي"
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "Dashboard": {
+    "cmsPageEditor": {
+      "loading": "Chargement de la page…",
+      "back": "Retour",
+      "preview": "Aperçu",
+      "reset": "Réinitialiser",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "publish": "Publier",
+      "publishing": "Publication…",
+      "published": "Publié",
+      "seo": "SEO",
+      "fields": {
+        "title": "Titre",
+        "content": "Contenu",
+        "seoTitle": "Titre SEO",
+        "metaDescription": "Méta description"
+      }
+    }
+  }
+}

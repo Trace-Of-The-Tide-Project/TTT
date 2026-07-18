@@ -172,6 +172,7 @@
             "paragraph": "Paragraphe",
             "heading": "Titre",
             "quote": "Citation",
+            "pull-quote": "Citation mise en avant",
             "image": "Image",
             "video": "Vidéo",
             "audio": "Audio",
@@ -180,7 +181,8 @@
             "author-note": "Note de l'auteur",
             "caption-text": "Légende",
             "meta-data": "Méta-données",
-            "divider": "Séparateur"
+            "divider": "Séparateur",
+            "embed": "Intégration"
           }
         },
         "modals": {

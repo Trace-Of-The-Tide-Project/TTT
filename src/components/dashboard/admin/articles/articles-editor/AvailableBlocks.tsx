@@ -7,6 +7,7 @@ export type BlockType =
   | "paragraph"
   | "heading"
   | "quote"
+  | "pull-quote"
   | "image"
   | "video"
   | "audio"
@@ -15,7 +16,9 @@ export type BlockType =
   | "author-note"
   | "caption-text"
   | "meta-data"
-  | "divider";
+  | "divider"
+  | "list"
+  | "embed";
 
 /* ─────────────────────────── icons (Figma `Trailing Icon-{1..6}.svg`) ───
    Each icon is the exact path from the Figma export. Stroke `#7B7B7B`,
@@ -46,6 +49,25 @@ function QuoteTrailingIcon() {
   return (
     <svg {...iconProps} aria-hidden>
       <path d="M11.8571 10.75H7.57143C7.28727 10.75 7.01475 10.6183 6.81381 10.3839C6.61288 10.1495 6.5 9.83152 6.5 9.5V5.75C6.5 5.41848 6.61288 5.10054 6.81381 4.86612C7.01475 4.6317 7.28727 4.5 7.57143 4.5H10.7857C11.0699 4.5 11.3424 4.6317 11.5433 4.86612C11.7443 5.10054 11.8571 5.41848 11.8571 5.75V13.25C11.8571 16.5838 10.4289 18.6663 7.57143 19.5M21.5 10.75H17.2143C16.9301 10.75 16.6576 10.6183 16.4567 10.3839C16.2557 10.1495 16.1429 9.83152 16.1429 9.5V5.75C16.1429 5.41848 16.2557 5.10054 16.4567 4.86612C16.6576 4.6317 16.9301 4.5 17.2143 4.5H20.4286C20.7127 4.5 20.9853 4.6317 21.1862 4.86612C21.3871 5.10054 21.5 5.41848 21.5 5.75V13.25C21.5 16.5838 20.0718 18.6663 17.2143 19.5" />
+    </svg>
+  );
+}
+
+/** Pull quote — bold serif "T" with flanking accent bars, distinct from the plain quote glyph. */
+function PullQuoteTrailingIcon() {
+  return (
+    <svg {...iconProps} aria-hidden>
+      <path d="M9 6h10M14 6v12M7 20h4M15 20h4M6.5 10.5v3M21.5 10.5v3" />
+    </svg>
+  );
+}
+
+/** Embed — a play glyph inside a frame, for external video embeds. */
+function EmbedTrailingIcon() {
+  return (
+    <svg {...iconProps} aria-hidden>
+      <path d="M6.5 6.375C6.5 5.87772 6.69754 5.40081 7.04917 5.04917C7.40081 4.69754 7.87772 4.5 8.375 4.5H19.625C20.1223 4.5 20.5992 4.69754 20.9508 5.04917C21.3025 5.40081 21.5 5.87772 21.5 6.375V17.625C21.5 18.1223 21.3025 18.5992 20.9508 18.9508C20.5992 19.3025 20.1223 19.5 19.625 19.5H8.375C7.87772 19.5 7.40081 19.3025 7.04917 18.9508C6.69754 18.5992 6.5 18.1223 6.5 17.625V6.375Z" />
+      <path d="M12.5 9.5L16.5 12L12.5 14.5V9.5Z" />
     </svg>
   );
 }
@@ -126,6 +148,7 @@ const BLOCKS: { id: BlockType; icon: React.ReactNode }[] = [
   { id: "paragraph", icon: <ParagraphTrailingIcon /> },
   { id: "heading", icon: <ParagraphTrailingIcon /> },
   { id: "quote", icon: <QuoteTrailingIcon /> },
+  { id: "pull-quote", icon: <PullQuoteTrailingIcon /> },
   { id: "image", icon: <ImageTrailingIcon /> },
   { id: "video", icon: <VideoTrailingIcon /> },
   { id: "audio", icon: <AudioTrailingIcon /> },
@@ -137,6 +160,7 @@ const BLOCKS: { id: BlockType; icon: React.ReactNode }[] = [
   { id: "caption-text", icon: <CaptionTextTrailingIcon /> },
   { id: "meta-data", icon: <MetaDataTrailingIcon /> },
   { id: "divider", icon: <DividerTrailingIcon /> },
+  { id: "embed", icon: <EmbedTrailingIcon /> },
 ];
 
 type AvailableBlocksProps = {

@@ -65,8 +65,10 @@ export function AssetCard(props: AssetCardProps) {
               e.stopPropagation();
               onToggleSelect(asset.id);
             }}
-            className={`absolute start-2 top-2 rounded-md bg-black/50 p-1 text-white ${
-              selected ? "opacity-100" : "opacity-60"
+            className={`absolute start-2 top-2 rounded-md p-1 text-white ${
+              selected
+                ? "bg-[var(--tott-status-emerald)] opacity-100"
+                : "bg-black/50 opacity-60"
             }`}
           >
             <SquareCheckIcon />

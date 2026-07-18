@@ -1,6 +1,7 @@
 import type { ArticleDetailBlock } from "@/services/articles.service";
-import type { ContentArticleSection } from "@/components/content/article/ContentArticleBody";
+import type { ContentArticleSection, ListItem } from "@/components/content/article/ContentArticleBody";
 import { isLikelyAudioUrl, isLikelyVideoUrl } from "@/lib/content/media-url";
+import { parseEmbedUrl, embedSrc, embedAspect } from "@/lib/content/embed-providers";
 
 type Figure = { src: string; alt?: string; caption?: string };
 
@@ -16,18 +17,21 @@ function decodeEntities(s: string): string {
 }
 
 /**
- * The editor stores block content as HTML (e.g. "<p>text</p>"), but the
- * reader renders plain-text paragraphs. Convert that HTML into one or
- * more plain-text paragraphs: block-level tags become line breaks,
- * remaining tags are stripped, entities decoded.
+ * The editor stores block content as HTML (e.g. "<p>text</p>"). Split it into
+ * one paragraph string per top-level block-level tag, keeping inline markup
+ * (bold/italic/links/lists) intact — `RichContent` sanitizes and renders it.
+ *
+ * `<ul>`/`<ol>`/`<blockquote>`/`<pre>` are atomic: never split inside them,
+ * or one list gets shattered into orphan `<li>` fragments.
+ *
+ * ponytail: regex block-splitter, not a parser. Corpus is TipTap output
+ * (well-formed, shallow, one level of nesting). Move to DOMParser if authors
+ * ever paste raw/foreign HTML into the editor.
  */
 function htmlToParagraphs(html: string): string[] {
-  return decodeEntities(
-    html
-      .replace(/<\s*br\s*\/?>/gi, "\n")
-      .replace(/<\/(p|div|h[1-6]|li|blockquote)>/gi, "\n")
-      .replace(/<[^>]+>/g, ""),
-  )
+  return html
+    .replace(/<\s*br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|h[1-6])>/gi, "\n")
     .split(/\n+/)
     .map((s) => s.trim())
     .filter(Boolean);
@@ -35,7 +39,7 @@ function htmlToParagraphs(html: string): string[] {
 
 /** Single-line plain text from HTML — for headings/quotes/callouts. */
 function htmlToText(html: string): string {
-  return htmlToParagraphs(html).join(" ").trim();
+  return decodeEntities(html.replace(/<[^>]+>/g, "")).trim();
 }
 
 /** API may return metadata as a JSON string or a parsed object. */
@@ -63,6 +67,41 @@ function parseMetadataObject(raw: ArticleDetailBlock["metadata"]): Record<string
     }
   }
   return null;
+}
+
+/** Per-block direction override. Absent metadata / unrecognized value = inherit. */
+function parseBlockDir(b: ArticleDetailBlock): "ltr" | "rtl" | undefined {
+  const obj = parseMetadataObject(b.metadata);
+  const dir = obj?.dir;
+  return dir === "rtl" || dir === "ltr" ? dir : undefined;
+}
+
+/** Parses a `<ul>`/`<ol>` HTML string into structured list items (one nesting level). */
+function parseListItems(html: string): { ordered: boolean; items: ListItem[] } {
+  const ordered = /^\s*<ol\b/i.test(html);
+  const items: ListItem[] = [];
+  const liPattern = /<li\b[^>]*>([\s\S]*?)<\/li>/gi;
+  let match = liPattern.exec(html);
+  while (match) {
+    const inner = match[1];
+    const nested = /<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/i.exec(inner);
+    if (nested) {
+      const before = inner.slice(0, nested.index).trim();
+      const subItems: string[] = [];
+      const subPattern = /<li\b[^>]*>([\s\S]*?)<\/li>/gi;
+      let subMatch = subPattern.exec(nested[2]);
+      while (subMatch) {
+        subItems.push(subMatch[1].trim());
+        subMatch = subPattern.exec(nested[2]);
+      }
+      if (before) items.push(before);
+      if (subItems.length) items.push({ items: subItems });
+    } else {
+      items.push(inner.trim());
+    }
+    match = liPattern.exec(html);
+  }
+  return { ordered, items };
 }
 
 function parseImageFigure(b: ArticleDetailBlock): Figure | null {
@@ -187,16 +226,18 @@ export function articleBlocksToSections(
   const sorted = [...blocks].sort((a, b) => a.block_order - b.block_order);
   const sections: ContentArticleSection[] = [];
   let paragraphs: string[] = [];
+  let paragraphsDir: "ltr" | "rtl" | undefined;
   let openHeading: ContentArticleSection | null = null;
 
   const pushParas = () => {
     if (!paragraphs.length) return;
-    if (openHeading) {
+    if (openHeading && openHeading.dir === paragraphsDir) {
       openHeading.paragraphs.push(...paragraphs);
     } else {
-      sections.push({ paragraphs: [...paragraphs] });
+      sections.push({ paragraphs: [...paragraphs], dir: paragraphsDir });
     }
     paragraphs = [];
+    paragraphsDir = undefined;
   };
 
   const breakOpenHeading = () => {
@@ -205,12 +246,15 @@ export function articleBlocksToSections(
 
   for (const b of sorted) {
     const type = (b.block_type || "").toLowerCase();
+    const dir = parseBlockDir(b);
 
     if (type === "heading") {
       pushParas();
       const h = htmlToText(b.content ?? "");
       if (h) {
-        const sec: ContentArticleSection = { heading: h, paragraphs: [] };
+        const obj = parseMetadataObject(b.metadata);
+        const headingLevel = obj?.level === 3 ? 3 : undefined;
+        const sec: ContentArticleSection = { heading: h, headingLevel, paragraphs: [], dir };
         sections.push(sec);
         openHeading = sec;
       } else {
@@ -222,7 +266,24 @@ export function articleBlocksToSections(
     if (type === "quote") {
       pushParas();
       breakOpenHeading();
-      sections.push({ paragraphs: [], quote: htmlToText(b.content ?? "") || "—" });
+      sections.push({ paragraphs: [], quote: htmlToText(b.content ?? "") || "—", dir });
+      continue;
+    }
+
+    if (type === "pull_quote") {
+      pushParas();
+      breakOpenHeading();
+      const obj = parseMetadataObject(b.metadata);
+      const attribution =
+        obj && typeof obj.attribution === "string" ? obj.attribution.trim() : "";
+      const text = htmlToText(b.content ?? "");
+      if (text) {
+        sections.push({
+          paragraphs: [],
+          pullQuote: { text, ...(attribution ? { attribution } : {}) },
+          dir,
+        });
+      }
       continue;
     }
 
@@ -234,11 +295,11 @@ export function articleBlocksToSections(
       const bodyFromMeta = obj && typeof obj.body === "string" ? obj.body.trim() : "";
       const body = htmlToText(b.content ?? "") || bodyFromMeta;
       if (title && body) {
-        sections.push({ paragraphs: [], callout: { title, body } });
+        sections.push({ paragraphs: [], callout: { title, body }, dir });
       } else if (title) {
-        sections.push({ paragraphs: [], callout: { title, body: "" } });
+        sections.push({ paragraphs: [], callout: { title, body: "" }, dir });
       } else if (body) {
-        sections.push({ paragraphs: [], callout: body });
+        sections.push({ paragraphs: [], callout: body, dir });
       }
       continue;
     }
@@ -250,6 +311,40 @@ export function articleBlocksToSections(
       continue;
     }
 
+    if (type === "list") {
+      pushParas();
+      breakOpenHeading();
+      const obj = parseMetadataObject(b.metadata);
+      const metaItems = obj?.items;
+      const list =
+        Array.isArray(metaItems) && metaItems.length
+          ? { ordered: obj?.ordered === true, items: metaItems as ListItem[] }
+          : parseListItems(b.content ?? "");
+      if (list.items.length) sections.push({ paragraphs: [], list, dir });
+      continue;
+    }
+
+    if (type === "embed") {
+      pushParas();
+      breakOpenHeading();
+      const obj = parseMetadataObject(b.metadata);
+      const parsed = parseEmbedUrl(
+        (typeof obj?.url === "string" && obj.url) || b.content || ""
+      );
+      if (parsed) {
+        sections.push({
+          paragraphs: [],
+          embed: {
+            src: embedSrc(parsed),
+            aspect: embedAspect(parsed.provider),
+            title: `${parsed.provider} video`,
+          },
+          dir,
+        });
+      }
+      continue;
+    }
+
     if (type === "image" || type === "video" || type === "audio") {
       const fig = parseImageFigure(b);
       if (fig) {
@@ -258,7 +353,7 @@ export function articleBlocksToSections(
         }
         pushParas();
         breakOpenHeading();
-        sections.push({ paragraphs: [], images: [fig] });
+        sections.push({ paragraphs: [], images: [fig], dir });
       } else {
         const fallback = imageFallbackText(b);
         if (fallback) {
@@ -273,7 +368,7 @@ export function articleBlocksToSections(
       pushParas();
       breakOpenHeading();
       const note = htmlToText(b.content ?? "");
-      if (note) sections.push({ paragraphs: [], callout: note });
+      if (note) sections.push({ paragraphs: [], callout: note, dir });
       continue;
     }
 
@@ -286,18 +381,38 @@ export function articleBlocksToSections(
         figures = figures.slice(1);
       }
       if (figures.length) {
-        sections.push({ paragraphs: [], images: figures });
+        sections.push({ paragraphs: [], images: figures, dir });
       } else if (allFigures.length === 0) {
         const lines = galleryFallbackLines(metadataString(b.metadata));
-        sections.push({ paragraphs: lines });
+        sections.push({ paragraphs: lines, dir });
       }
       continue;
     }
 
+    // Legacy safety net: a list authored between the reader supporting rich
+    // text and the block_type: "list" tagging landing would arrive here as a
+    // bare paragraph whose content is <ul>/<ol> HTML — route it to the list
+    // handler instead of letting it fall through as prose.
+    const trimmedContent = (b.content ?? "").trim();
+    if (/^<(ul|ol)\b/i.test(trimmedContent)) {
+      pushParas();
+      breakOpenHeading();
+      const list = parseListItems(trimmedContent);
+      if (list.items.length) sections.push({ paragraphs: [], list, dir });
+      continue;
+    }
+
+    // ponytail: once a dir-mismatched paragraph detaches from the open
+    // heading, it stays detached even if a later paragraph's dir would again
+    // match the heading — re-attaching mid-stream isn't worth the extra
+    // state for a scenario with no authored dir data in the corpus today.
     for (const text of htmlToParagraphs(b.content ?? "")) {
-      if (openHeading) {
+      if (openHeading && openHeading.dir === dir) {
         openHeading.paragraphs.push(text);
       } else {
+        if (paragraphs.length && paragraphsDir !== dir) pushParas();
+        breakOpenHeading();
+        paragraphsDir = dir;
         paragraphs.push(text);
       }
     }

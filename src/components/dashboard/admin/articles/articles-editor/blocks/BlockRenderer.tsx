@@ -10,6 +10,7 @@ import type { BlockType } from "../AvailableBlocks";
 import { SelectedFileRow, SUPPORTED_FILE_ACCEPT, SUPPORTED_FILE_LABEL } from "./BlockFileUpload";
 import { HeroPickerModal } from "@/components/dashboard/admin/media-library/HeroPickerModal";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+import { parseEmbedUrl } from "@/lib/content/embed-providers";
 
 const fieldShell =
   "w-full rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]";
@@ -23,6 +24,7 @@ const DEFAULT_LABELS: Partial<Record<BlockType, string>> = {
   paragraph: "Start writing your article...",
   heading: "Section title",
   quote: "Quote",
+  "pull-quote": "Pull quote",
   callout: "Callout",
   "author-note": "Author note",
   "caption-text": "Caption Text…",
@@ -54,36 +56,118 @@ export function BlockRenderer({
             value={block.content ?? ""}
             onChange={(html) => onChange({ content: html })}
             placeholder={block.placeholder ?? l.paragraph ?? "Paragraph"}
+            dir={block.dir}
           />
         </div>
       );
 
     case "heading":
       return (
-        <input
-          type="text"
-          value={block.content ?? ""}
-          onChange={(e) => onChange({ content: e.target.value })}
-          placeholder={l.heading ?? "Section title"}
-          className={`${inputClass} text-lg font-semibold`}
-        />
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={block.content ?? ""}
+            onChange={(e) => onChange({ content: e.target.value })}
+            placeholder={l.heading ?? "Section title"}
+            dir={block.dir}
+            className={`${inputClass} text-lg font-semibold`}
+          />
+          <div className="flex shrink-0 overflow-hidden rounded-lg border border-[var(--tott-card-border)]">
+            {([2, 3] as const).map((level) => (
+              <button
+                key={level}
+                type="button"
+                onClick={() => onChange({ headingLevel: level })}
+                aria-pressed={(block.headingLevel ?? 2) === level}
+                className={`px-3 py-2 text-xs font-semibold ${
+                  (block.headingLevel ?? 2) === level
+                    ? "bg-[var(--tott-accent-gold)] text-black"
+                    : "bg-[var(--tott-dash-control-bg)] text-foreground/70 hover:text-foreground"
+                }`}
+              >
+                H{level}
+              </button>
+            ))}
+          </div>
+        </div>
       );
 
     case "quote":
       return (
         <div
-          className="w-full rounded-r-xl border border-[var(--tott-card-border)] border-l-4 bg-[var(--tott-dash-control-bg)]"
-          style={{ borderLeftColor: "var(--tott-accent-gold)" }}
+          className="w-full rounded-e-xl border border-[var(--tott-card-border)] border-s-4 bg-[var(--tott-dash-control-bg)]"
+          style={{ borderInlineStartColor: "var(--tott-accent-gold)" }}
         >
           <input
             type="text"
             value={block.content ?? ""}
             onChange={(e) => onChange({ content: e.target.value })}
             placeholder={l.quote ?? "Quote"}
+            dir={block.dir}
             className={fieldInput}
           />
         </div>
       );
+
+    case "pull-quote": {
+      const hasAttribution = Boolean((block.quoteAttribution ?? "").trim());
+      return (
+        <div
+          className="w-full space-y-2 rounded-e-xl border border-[var(--tott-card-border)] border-s-4 bg-[var(--tott-dash-control-bg)] p-1"
+          style={{ borderInlineStartColor: "var(--tott-accent-gold)" }}
+        >
+          <input
+            type="text"
+            value={block.content ?? ""}
+            onChange={(e) => onChange({ content: e.target.value })}
+            placeholder={l["pull-quote"] ?? "Pull quote"}
+            dir={block.dir}
+            className={`${fieldInput} text-lg font-medium`}
+          />
+          {hasAttribution ? (
+            <input
+              type="text"
+              value={block.quoteAttribution ?? ""}
+              onChange={(e) => onChange({ quoteAttribution: e.target.value })}
+              placeholder="Attribution"
+              dir={block.dir}
+              className={fieldInput}
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={() => onChange({ quoteAttribution: " " })}
+              className="px-4 pb-2 text-xs font-medium underline"
+              style={{ color: "var(--tott-accent-gold)" }}
+            >
+              + Add attribution
+            </button>
+          )}
+        </div>
+      );
+    }
+
+    case "embed": {
+      const url = block.embedUrl ?? "";
+      const trimmed = url.trim();
+      const invalid = trimmed.length > 0 && !parseEmbedUrl(trimmed);
+      return (
+        <div className={fieldShell}>
+          <input
+            type="url"
+            value={url}
+            onChange={(e) => onChange({ embedUrl: e.target.value })}
+            placeholder="https://youtube.com/watch?v=… or https://vimeo.com/…"
+            className={fieldInput}
+          />
+          {invalid ? (
+            <p className="px-4 pb-2 text-xs text-[var(--tott-status-coral)]">
+              Only YouTube and Vimeo URLs are supported.
+            </p>
+          ) : null}
+        </div>
+      );
+    }
 
     case "image":
     case "video":
@@ -268,14 +352,15 @@ export function BlockRenderer({
     case "callout":
       return (
         <div
-          className="w-full rounded-r-xl border border-[var(--tott-card-border)] border-l-4 bg-[var(--tott-dash-control-bg)]"
-          style={{ borderLeftColor: "var(--tott-accent-gold)" }}
+          className="w-full rounded-e-xl border border-[var(--tott-card-border)] border-s-4 bg-[var(--tott-dash-control-bg)]"
+          style={{ borderInlineStartColor: "var(--tott-accent-gold)" }}
         >
           <input
             type="text"
             value={block.content ?? ""}
             onChange={(e) => onChange({ content: e.target.value })}
             placeholder={l.callout ?? "Callout"}
+            dir={block.dir}
             className={fieldInput}
           />
         </div>
@@ -288,6 +373,7 @@ export function BlockRenderer({
             value={block.content ?? ""}
             onChange={(html) => onChange({ content: html })}
             placeholder={l["author-note"] ?? "Author note"}
+            dir={block.dir}
           />
         </div>
       );
@@ -300,6 +386,7 @@ export function BlockRenderer({
             value={block.content ?? ""}
             onChange={(e) => onChange({ content: e.target.value })}
             placeholder={l["caption-text"] ?? "Caption Text…"}
+            dir={block.dir}
             className={fieldInput}
           />
         </div>
@@ -313,6 +400,7 @@ export function BlockRenderer({
             value={block.content ?? ""}
             onChange={(e) => onChange({ content: e.target.value })}
             placeholder={l["meta-data"] ?? "Camera | Medium | Date"}
+            dir={block.dir}
             className={fieldInput}
           />
         </div>
