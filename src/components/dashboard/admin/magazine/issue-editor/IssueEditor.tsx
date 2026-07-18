@@ -16,7 +16,7 @@ import { EditorToolbar } from "@/components/ui/rich-text/EditorToolbar";
 import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
 import { AvailableBlocks } from "@/components/dashboard/admin/articles/articles-editor/AvailableBlocks";
 import { ContentBlocks, type ContentBlock } from "@/components/dashboard/admin/articles/articles-editor/ContentBlocks";
-import { articleConfig, articleAllowedBlockTypes } from "@/components/dashboard/admin/articles/articles-editor/content-form-config";
+import { articleConfig, issueAllowedBlockTypes } from "@/components/dashboard/admin/articles/articles-editor/content-form-config";
 import { buildArticleBlocksFromEditor } from "@/components/dashboard/admin/articles/articles-editor/lib/build-api-blocks";
 import { articleDetailBlocksToContentBlocks } from "@/components/dashboard/admin/articles/articles-editor/lib/api-blocks-to-content-blocks";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
@@ -763,7 +763,6 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
           {/* Content blocks — quote/callout/image/gallery/etc, same editor articles use */}
           <div className="space-y-3">
             <label className={labelClass}>{t("editor.fields.blocks")}</label>
-            <AvailableBlocks onAddBlock={addBlock} allowedBlockTypes={articleAllowedBlockTypes} />
             <ContentBlocks
               blocks={form.blocks}
               onUpdateBlock={updateBlock}
@@ -772,6 +771,7 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
               onRemoveBlock={removeBlock}
               config={{ ...articleConfig, disableHero: true }}
             />
+            <AvailableBlocks onAddBlock={addBlock} allowedBlockTypes={issueAllowedBlockTypes} />
           </div>
 
           {/* Assignments — edit mode only */}

@@ -67,6 +67,25 @@ function PanelTrashIcon() {
   );
 }
 
+/** Direction toggle — cycles auto (inherit) → ltr → rtl → auto. */
+function PanelDirIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M4 7h11M4 12h16M4 17h9" />
+    </svg>
+  );
+}
+
 export function BlockActions({
   blockId,
   isDragging,
@@ -75,6 +94,8 @@ export function BlockActions({
   onDelete,
   onCopy,
   mode,
+  dir,
+  onChangeDir,
 }: {
   blockId: string;
   isDragging: boolean;
@@ -83,7 +104,12 @@ export function BlockActions({
   onDelete: () => void;
   onCopy: () => void;
   mode: BlockActionsMode;
+  /** Current per-block direction override, or undefined to inherit. */
+  dir?: "ltr" | "rtl";
+  /** Cycles the override: undefined → "ltr" → "rtl" → undefined. */
+  onChangeDir?: () => void;
 }) {
+  const dirLabel = dir === "rtl" ? "RTL" : dir === "ltr" ? "LTR" : "Auto";
   return (
     <div
       className="flex w-10 shrink-0 flex-col items-center self-start rounded-lg bg-[var(--tott-dash-control-bg)] py-1 text-[var(--tott-muted)]"
@@ -113,6 +139,18 @@ export function BlockActions({
           <PanelCopyIcon />
         </button>
       ) : null}
+      {onChangeDir ? (
+        <button
+          type="button"
+          onClick={onChangeDir}
+          className="flex h-10 w-10 flex-col items-center justify-center gap-0.5"
+          aria-label={`Text direction: ${dirLabel}. Click to change.`}
+          title={`Direction: ${dirLabel}`}
+        >
+          <PanelDirIcon />
+          <span className="text-[9px] font-medium leading-none">{dirLabel}</span>
+        </button>
+      ) : null}
       <button
         type="button"
         onClick={onDelete}
@@ -134,7 +172,7 @@ export function blockActionsModeFor(
     return "delete-only";
   }
   // No text content to copy — media/divider blocks only drag and delete.
-  if (["image", "video", "audio", "gallery", "divider"].includes(blockType)) {
+  if (["image", "video", "audio", "gallery", "divider", "embed"].includes(blockType)) {
     return "delete-only";
   }
   if (blockType === "image" && firstImageBlockId != null && blockId === firstImageBlockId) {

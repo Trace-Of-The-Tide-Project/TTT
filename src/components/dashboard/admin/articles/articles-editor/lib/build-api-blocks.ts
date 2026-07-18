@@ -2,6 +2,20 @@ import { uploadArticleAsset } from "@/services/uploads.service";
 import type { CreateArticleBlock } from "@/services/articles.service";
 import type { ContentBlock } from "../ContentBlocks";
 import { isLikelyAudioUrl, isLikelyVideoUrl } from "@/lib/content/media-url";
+import { parseEmbedUrl } from "@/lib/content/embed-providers";
+
+/**
+ * Builds a metadata JSON string, omitting null/empty values and returning
+ * `undefined` (no `metadata` key at all) when everything is empty — keeps
+ * blocks with no dir/level/etc. byte-identical to their pre-this-feature
+ * serialization.
+ */
+function meta(o: Record<string, unknown>): string | undefined {
+  const clean = Object.fromEntries(
+    Object.entries(o).filter(([, v]) => v != null && v !== ""),
+  );
+  return Object.keys(clean).length ? JSON.stringify(clean) : undefined;
+}
 
 export type BuildArticleBlocksFromEditorOptions = {
   /** Called when file uploads start / finish (only if the editor has pending asset uploads). */
@@ -46,12 +60,6 @@ export async function buildArticleBlocksFromEditor(
           const isAudio =
             explicitType === "audio" || b.file.type.startsWith("audio/") || isLikelyAudioUrl(url);
           const mimeType = b.file.type?.trim() || undefined;
-          const meta = {
-            url,
-            alt: "",
-            caption,
-            ...(mimeType ? { mime_type: mimeType } : {}),
-          };
           const block_type: CreateArticleBlock["block_type"] = isVideo
             ? "video"
             : isAudio
@@ -61,7 +69,7 @@ export async function buildArticleBlocksFromEditor(
             block_order: order++,
             block_type,
             content: null,
-            metadata: JSON.stringify(meta),
+            metadata: meta({ url, alt: "", caption, mime_type: mimeType, dir: b.dir }),
           });
           continue;
         }
@@ -69,7 +77,6 @@ export async function buildArticleBlocksFromEditor(
         if (!url) continue;
         const isVideo = explicitType === "video" || isLikelyVideoUrl(url);
         const isAudio = explicitType === "audio" || isLikelyAudioUrl(url);
-        const meta = { url, alt: "", caption };
         const block_type: CreateArticleBlock["block_type"] = isVideo
           ? "video"
           : isAudio
@@ -79,7 +86,7 @@ export async function buildArticleBlocksFromEditor(
           block_order: order++,
           block_type,
           content: null,
-          metadata: JSON.stringify(meta),
+          metadata: meta({ url, alt: "", caption, dir: b.dir }),
         });
         continue;
       }
@@ -95,6 +102,7 @@ export async function buildArticleBlocksFromEditor(
             content: null,
             metadata: JSON.stringify({
               images: urls.map((url) => ({ url, alt: "", caption: "" })),
+              ...(b.dir ? { dir: b.dir } : {}),
             }),
           });
           continue;
@@ -107,6 +115,7 @@ export async function buildArticleBlocksFromEditor(
           content: null,
           metadata: JSON.stringify({
             images: existing.map((url) => ({ url, alt: "", caption: "" })),
+            ...(b.dir ? { dir: b.dir } : {}),
           }),
         });
         continue;
@@ -120,7 +129,34 @@ export async function buildArticleBlocksFromEditor(
           block_order: order++,
           block_type: "quote",
           content: text,
-          metadata: attribution ? JSON.stringify({ attribution }) : undefined,
+          metadata: meta({ attribution, dir: b.dir }),
+        });
+        continue;
+      }
+
+      if (b.type === "pull-quote") {
+        const text = (b.content ?? "").trim();
+        if (!text) continue;
+        const attribution = (b.quoteAttribution ?? "").trim();
+        out.push({
+          block_order: order++,
+          block_type: "pull_quote",
+          content: text,
+          metadata: meta({ attribution, dir: b.dir }),
+        });
+        continue;
+      }
+
+      if (b.type === "embed") {
+        const url = (b.embedUrl ?? "").trim();
+        if (!url) continue;
+        const parsed = parseEmbedUrl(url);
+        if (!parsed) continue; // invalid/unwhitelisted URL — silently drop, same as an empty block
+        out.push({
+          block_order: order++,
+          block_type: "embed",
+          content: url,
+          metadata: meta({ provider: parsed.provider, id: parsed.id, dir: b.dir }),
         });
         continue;
       }
@@ -129,14 +165,11 @@ export async function buildArticleBlocksFromEditor(
         const title = (b.calloutTitle ?? "").trim();
         const body = (b.content ?? "").trim();
         if (!title && !body) continue;
-        const meta: Record<string, string> = {};
-        if (title) meta.title = title;
-        if (body) meta.body = body;
         out.push({
           block_order: order++,
           block_type: "callout",
           content: body || null,
-          metadata: Object.keys(meta).length ? JSON.stringify(meta) : undefined,
+          metadata: meta({ title, body, dir: b.dir }),
         });
         continue;
       }
@@ -144,7 +177,12 @@ export async function buildArticleBlocksFromEditor(
       if (b.type === "heading") {
         const t = (b.content ?? "").trim();
         if (!t) continue;
-        out.push({ block_order: order++, block_type: "heading", content: t });
+        out.push({
+          block_order: order++,
+          block_type: "heading",
+          content: t,
+          metadata: meta({ level: b.headingLevel === 3 ? 3 : undefined, dir: b.dir }),
+        });
         continue;
       }
 
@@ -155,6 +193,7 @@ export async function buildArticleBlocksFromEditor(
           block_order: order++,
           block_type: b.type === "caption-text" ? "caption_text" : "meta_data",
           content: t,
+          metadata: meta({ dir: b.dir }),
         });
         continue;
       }
@@ -162,13 +201,21 @@ export async function buildArticleBlocksFromEditor(
       const text = (b.content ?? "").trim();
       if (!text) continue;
 
-      const block_type: CreateArticleBlock["block_type"] =
-        b.type === "author-note" ? "author_note" : "paragraph";
+      // A paragraph whose TipTap content is a <ul>/<ol> is tagged "list" so
+      // the reader dispatches on block_type instead of sniffing HTML twice.
+      // Authoring is unchanged — this is purely a wire-format tag.
+      const isList = /^<(ul|ol)\b/i.test(text);
+      const block_type: CreateArticleBlock["block_type"] = isList
+        ? "list"
+        : b.type === "author-note"
+          ? "author_note"
+          : "paragraph";
 
       out.push({
         block_order: order++,
         block_type,
         content: text,
+        metadata: meta({ dir: b.dir }),
       });
     }
 

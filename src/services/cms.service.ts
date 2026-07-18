@@ -17,6 +17,10 @@ export interface CmsPage {
   status: "draft" | "published";
   updatedAt: string;
   sections: CmsSection[];
+  content?: string | null;
+  seo_title?: string | null;
+  meta_description?: string | null;
+  language?: string;
 }
 
 function unwrap<T>(body: unknown): T {
@@ -64,6 +68,25 @@ export async function createCmsSection(
     ...data,
   });
   return unwrap<CmsSection>(res.data);
+}
+
+export async function getCmsPage(id: string): Promise<CmsPage> {
+  const res = await api.get(`/cms/pages/${id}`);
+  return unwrap<CmsPage>(res.data);
+}
+
+export async function updateCmsPage(
+  id: string,
+  data: {
+    title?: string;
+    content?: string;
+    seo_title?: string;
+    meta_description?: string;
+    status?: "draft" | "published";
+  },
+): Promise<CmsPage> {
+  const res = await api.patch(`/cms/pages/${id}`, data);
+  return unwrap<CmsPage>(res.data);
 }
 
 export async function getCmsPages(): Promise<CmsPage[]> {

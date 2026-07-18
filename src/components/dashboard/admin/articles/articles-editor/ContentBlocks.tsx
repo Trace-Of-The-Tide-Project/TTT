@@ -22,6 +22,12 @@ export type ContentBlock = {
   galleryUrls?: string[];
   /** Per-block placeholder override — wins over the type-level `blockLabels` when set. */
   placeholder?: string;
+  /** Heading level. 2 (default, omitted from payload) or 3. H1 is reserved for the article title. */
+  headingLevel?: 2 | 3;
+  /** Embed source URL (YouTube/Vimeo) — validated by `parseEmbedUrl` before save. */
+  embedUrl?: string;
+  /** Per-block direction override. Undefined = inherit from the content language. */
+  dir?: "ltr" | "rtl";
 };
 
 type ContentBlocksProps = {
@@ -136,6 +142,15 @@ export function ContentBlocks({
                 onDragEnd={handleDragEnd}
                 mode={blockActionsModeFor(block.type, block.id, firstImageBlockId)}
                 onDelete={() => onRemoveBlock(block.id)}
+                dir={block.dir}
+                onChangeDir={
+                  block.type === "divider"
+                    ? undefined
+                    : () =>
+                        onUpdateBlock(block.id, {
+                          dir: block.dir === undefined ? "ltr" : block.dir === "ltr" ? "rtl" : undefined,
+                        })
+                }
                 onCopy={() => {
                   if (typeof navigator === "undefined") return;
                   const html = block.content ?? "";

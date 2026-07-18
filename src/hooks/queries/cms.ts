@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   getCmsHomepage,
+  getCmsPage,
   getCmsPageBySlug,
   getCmsPages,
   getCmsSettings,
@@ -12,6 +13,7 @@ export const cmsKeys = {
   all: ["cms"] as const,
   homepage: () => ["cms", "homepage"] as const,
   pageBySlug: (slug: string) => ["cms", "page", slug] as const,
+  pageById: (id: string) => ["cms", "page", "id", id] as const,
   pages: () => ["cms", "pages"] as const,
   settings: () => ["cms", "settings"] as const,
 };
@@ -50,6 +52,16 @@ export function useCmsHomepage() {
   return useQuery({
     queryKey: cmsKeys.homepage(),
     queryFn: getCmsHomepage,
+  });
+}
+
+export function useCmsPage(id: string) {
+  return useQuery({
+    queryKey: cmsKeys.pageById(id),
+    queryFn: () => getCmsPage(id),
+    enabled: !!id,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
   });
 }
 

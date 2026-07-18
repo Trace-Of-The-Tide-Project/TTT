@@ -7,6 +7,7 @@ export type CreateArticleBlock = {
   block_type:
     | "paragraph"
     | "quote"
+    | "pull_quote"
     | "image"
     | "video"
     | "audio"
@@ -16,7 +17,9 @@ export type CreateArticleBlock = {
     | "divider"
     | "heading"
     | "caption_text"
-    | "meta_data";
+    | "meta_data"
+    | "list"
+    | "embed";
   content: string | null;
   metadata?: string | null;
 };

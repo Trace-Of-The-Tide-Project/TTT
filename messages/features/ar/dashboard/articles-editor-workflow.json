@@ -172,6 +172,7 @@
             "paragraph": "فقرة",
             "heading": "عنوان",
             "quote": "اقتباس",
+            "pull-quote": "اقتباس بارز",
             "image": "صورة",
             "video": "فيديو",
             "audio": "صوت",
@@ -180,7 +181,8 @@
             "author-note": "ملاحظة المؤلف",
             "caption-text": "نص التسمية التوضيحية",
             "meta-data": "بيانات وصفية",
-            "divider": "فاصل"
+            "divider": "فاصل",
+            "embed": "تضمين"
           }
         },
         "modals": {

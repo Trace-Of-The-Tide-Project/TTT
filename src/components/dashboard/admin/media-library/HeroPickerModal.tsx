@@ -18,11 +18,16 @@ export interface HeroPickerModalProps {
   onClose: () => void;
   /** Caller performs the actual updatePageHero mutation + its own toast. */
   onPick: (storageKey: string) => void;
+  /** Overrides the modal title. Defaults to the page-hero picker copy. */
+  title?: string;
+  /** Restricts the library tab to images only. Defaults to true. */
+  images_only?: boolean;
 }
 
 export function HeroPickerModal(props: HeroPickerModalProps) {
   const t = useTranslations("Dashboard.mediaLibrary");
   const [mode, setMode] = useState<"library" | "upload">("library");
+  const imagesOnly = props.images_only ?? true;
 
   const handlePick = (storageKey: string) => {
     props.onPick(storageKey);
@@ -32,7 +37,7 @@ export function HeroPickerModal(props: HeroPickerModalProps) {
   return (
     <Modal
       open={props.open}
-      title={t("heroes.pickerTitle")}
+      title={props.title ?? t("heroes.pickerTitle")}
       onClose={props.onClose}
       maxWidthClassName="max-w-3xl"
     >
@@ -46,17 +51,23 @@ export function HeroPickerModal(props: HeroPickerModalProps) {
         className="mb-4"
       />
       {mode === "library" ? (
-        <LibraryPicker onPick={handlePick} />
+        <LibraryPicker onPick={handlePick} imagesOnly={imagesOnly} />
       ) : (
-        <UploadPicker onPick={handlePick} />
+        <UploadPicker onPick={handlePick} accept={imagesOnly ? "image/*" : undefined} />
       )}
     </Modal>
   );
 }
 
-function LibraryPicker({ onPick }: { onPick: (storageKey: string) => void }) {
+function LibraryPicker({
+  onPick,
+  imagesOnly,
+}: {
+  onPick: (storageKey: string) => void;
+  imagesOnly: boolean;
+}) {
   const t = useTranslations("Dashboard.mediaLibrary");
-  const assetsQuery = useMediaAssets({ images_only: true, limit: 60 });
+  const assetsQuery = useMediaAssets({ images_only: imagesOnly, limit: 60 });
 
   return (
     <div className="max-h-[50vh] overflow-y-auto">
@@ -73,7 +84,13 @@ function LibraryPicker({ onPick }: { onPick: (storageKey: string) => void }) {
   );
 }
 
-function UploadPicker({ onPick }: { onPick: (storageKey: string) => void }) {
+function UploadPicker({
+  onPick,
+  accept,
+}: {
+  onPick: (storageKey: string) => void;
+  accept?: string;
+}) {
   const t = useTranslations("Dashboard.mediaLibrary");
   const [uploading, setUploading] = useState(false);
 
@@ -100,7 +117,7 @@ function UploadPicker({ onPick }: { onPick: (storageKey: string) => void }) {
     >
       <input
         type="file"
-        accept="image/*"
+        accept={accept ?? "image/*"}
         className="hidden"
         disabled={uploading}
         onChange={handleChange}
