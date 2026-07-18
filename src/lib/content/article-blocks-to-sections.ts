@@ -269,6 +269,14 @@ export function articleBlocksToSections(
       continue;
     }
 
+    if (type === "author_note") {
+      pushParas();
+      breakOpenHeading();
+      const note = htmlToText(b.content ?? "");
+      if (note) sections.push({ paragraphs: [], callout: note });
+      continue;
+    }
+
     if (type === "gallery") {
       pushParas();
       breakOpenHeading();

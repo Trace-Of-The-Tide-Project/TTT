@@ -40,6 +40,16 @@ export const articleAllowedBlockTypes: BlockType[] = [
   "divider",
 ];
 
+/** Magazine issue block set — article set plus heading, video, audio, caption text, meta data. */
+export const issueAllowedBlockTypes: BlockType[] = [
+  ...articleAllowedBlockTypes,
+  "heading",
+  "video",
+  "audio",
+  "caption-text",
+  "meta-data",
+];
+
 /** Artwork block set — paragraph, quote, image, gallery, caption text, author note, meta data, divider. */
 export const artworkAllowedBlockTypes: BlockType[] = [
   "paragraph",

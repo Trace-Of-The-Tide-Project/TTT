@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { RichTextEditor } from "../RichTextEditor";
 import { CloudUploadIcon } from "@/components/ui/icons";
 import type { ContentFormConfig, MainMediaEditorCopy } from "../content-form-config";
@@ -7,6 +8,8 @@ import { theme } from "@/lib/theme";
 import type { ContentBlock } from "../ContentBlocks";
 import type { BlockType } from "../AvailableBlocks";
 import { SelectedFileRow, SUPPORTED_FILE_ACCEPT, SUPPORTED_FILE_LABEL } from "./BlockFileUpload";
+import { HeroPickerModal } from "@/components/dashboard/admin/media-library/HeroPickerModal";
+import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 
 const fieldShell =
   "w-full rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]";
@@ -42,6 +45,7 @@ export function BlockRenderer({
   onChange,
 }: BlockRendererProps) {
   const l = { ...DEFAULT_LABELS, ...labels };
+  const [libraryOpen, setLibraryOpen] = useState(false);
   switch (block.type) {
     case "paragraph":
       return (
@@ -133,6 +137,26 @@ export function BlockRenderer({
               }}
             />
           </label>
+          {block.type === "image" ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setLibraryOpen(true)}
+                className="text-sm font-medium underline"
+                style={{ color: "var(--tott-accent-gold)" }}
+              >
+                Choose from library
+              </button>
+              <HeroPickerModal
+                open={libraryOpen}
+                onClose={() => setLibraryOpen(false)}
+                title="Choose image"
+                onPick={(storageKey) =>
+                  onChange({ imageUrl: resolveArticleMediaSrc(storageKey), file: null })
+                }
+              />
+            </>
+          ) : null}
           {isCoverImageBlock ? (
             <div>
               <p className="mb-1 text-xs text-[var(--tott-muted)]">{heroCopy.pasteUrlHint}</p>
@@ -186,6 +210,24 @@ export function BlockRenderer({
               }}
             />
           </label>
+          <button
+            type="button"
+            onClick={() => setLibraryOpen(true)}
+            className="text-sm font-medium underline"
+            style={{ color: "var(--tott-accent-gold)" }}
+          >
+            Choose from library
+          </button>
+          <HeroPickerModal
+            open={libraryOpen}
+            onClose={() => setLibraryOpen(false)}
+            title="Choose gallery image"
+            onPick={(storageKey) =>
+              onChange({
+                galleryUrls: [...(block.galleryUrls ?? []), resolveArticleMediaSrc(storageKey)],
+              })
+            }
+          />
           {(block.files?.length ?? 0) > 0 ? (
             <ul className="space-y-2" aria-label="Selected gallery files">
               {(block.files ?? []).map((f, index) => (
