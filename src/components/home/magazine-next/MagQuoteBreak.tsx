@@ -1,4 +1,6 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 import { TestimonyCycler, type Testimony } from "@/components/home/Editions/TestimonyCycler";
 import { dirFor } from "@/i18n/dir";
 import type { ManifestoLocaleFields } from "@/services/magazine-page.service";
@@ -11,16 +13,16 @@ import { stripHtml } from "./ui";
  * writer page) and a magazine type scale. CMS override per field wins;
  * otherwise the i18n manifesto copy. Renders nothing if no quote survives.
  */
-export async function MagQuoteBreak({
+export function MagQuoteBreak({
   copy,
   locale,
 }: {
   copy: ManifestoLocaleFields;
   locale: string;
 }) {
-  const t = await getTranslations("Home.magazine.manifesto");
-  const tb = await getTranslations("MagazineNext.quoteBreak");
-  const th = await getTranslations("MagazineNext.hero");
+  const t = useTranslations("Home.magazine.manifesto");
+  const tb = useTranslations("MagazineNext.quoteBreak");
+  const th = useTranslations("MagazineNext.hero");
   const dir = dirFor(locale);
 
   // Field key → CMS override; fall back to i18n. Strip inline markup since the

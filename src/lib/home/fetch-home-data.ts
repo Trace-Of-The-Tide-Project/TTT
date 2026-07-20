@@ -14,6 +14,9 @@
  */
 import { callBackend } from "@/lib/auth/proxy-backend";
 import { stripHtml } from "@/components/home/magazine-next/ui";
+import { getFramingsServer } from "@/services/image-framing.service";
+import { PERSON_PORTRAIT_FRAMING } from "@/lib/framing-placements";
+import type { ImageFraming } from "@/lib/image-framing";
 
 // ── Normalized rail item shapes ────────────────────────────────────
 
@@ -71,6 +74,8 @@ export type HomePerson = {
   birthDate: string | null;
   deathDate: string | null;
   href: string;
+  /** Admin-set framing for `image`. Undefined renders as before. */
+  framing?: ImageFraming;
 };
 
 export type HomeTrip = {
@@ -232,6 +237,20 @@ function mapPerson(p: Record<string, unknown>): HomePerson {
   };
 }
 
+/** Attach portrait framing to the People row — one request for the whole row. */
+async function attachPersonFraming(people: HomePerson[]): Promise<HomePerson[]> {
+  if (people.length === 0) return people;
+  const framings = await getFramingsServer(
+    PERSON_PORTRAIT_FRAMING.entity,
+    people.map((p) => p.id),
+    PERSON_PORTRAIT_FRAMING.field,
+  );
+  return people.map((person) => {
+    const framing = framings[person.id]?.[PERSON_PORTRAIT_FRAMING.field];
+    return framing ? { ...person, framing } : person;
+  });
+}
+
 function mapTrip(t: Record<string, unknown>): HomeTrip {
   const id = String(t.id ?? "");
   return {
@@ -303,7 +322,9 @@ export async function fetchHomeData(locale: string): Promise<HomeData> {
     openCalls,
     issues: asArray(issuesJson).map(mapIssue).filter((i) => i.id),
     collections: asArray(collectionsJson).map(mapCollection).filter((c) => c.id),
-    people: asArray(peopleJson).map(mapPerson).filter((p) => p.id),
+    people: await attachPersonFraming(
+      asArray(peopleJson).map(mapPerson).filter((p) => p.id),
+    ),
     trips: asArray(tripsJson).map(mapTrip).filter((t) => t.id),
     bookClub: asArray(bookClubJson).map(mapBookClub).filter((b) => b.id),
     primaryOpenCall: openCalls.length > 0 ? openCalls[0]! : null,

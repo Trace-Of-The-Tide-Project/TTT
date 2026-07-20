@@ -1,9 +1,12 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { RichContent } from "@/components/ui/rich-text/RichContent";
 import { SectionShell } from "@/components/home/SectionShell";
 import { dirFor } from "@/i18n/dir";
 import type { FounderQuoteLocaleFields } from "@/services/magazine-page.service";
+import type { ImageFraming } from "@/lib/image-framing";
 import { MagImage } from "./MagImage";
 import { coverSrc, initial } from "./ui";
 
@@ -14,17 +17,19 @@ import { coverSrc, initial } from "./ui";
  * The founder quote was defined in the CMS but never rendered on the old page —
  * this surfaces it for the first time. Renders nothing when there is no quote.
  */
-export async function MagFounderNote({
+export function MagFounderNote({
   founder,
   avatar,
+  avatarFraming,
   locale,
 }: {
   founder: FounderQuoteLocaleFields;
   avatar?: string;
+  avatarFraming?: ImageFraming;
   locale: string;
 }) {
-  const t = await getTranslations("Home.magazine.editorialBoard");
-  const tf = await getTranslations("MagazineNext.founder");
+  const t = useTranslations("Home.magazine.editorialBoard");
+  const tf = useTranslations("MagazineNext.founder");
 
   const quote = founder.quote?.trim() || t("founderQuote");
   if (!quote) return null;
@@ -38,7 +43,14 @@ export async function MagFounderNote({
       <RevealOnScroll className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-8">
         <span className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--tott-elevated)] text-lg font-semibold text-[var(--tott-salt)] ring-1 ring-[var(--tott-card-border)]">
           {avatar ? (
-            <MagImage src={coverSrc(avatar)} alt="" fill sizes="64px" className="object-cover" />
+            <MagImage
+              src={coverSrc(avatar)}
+              alt=""
+              framing={avatarFraming}
+              fill
+              sizes="64px"
+              className="object-cover"
+            />
           ) : (
             initial(name)
           )}

@@ -21,13 +21,30 @@ import {
   MAGAZINE_PAGE_SLUG,
   findSection,
   parseHeroConfig,
+  pickHeroLocale,
   parseManifestoConfig,
   pickManifestoLocale,
   parseFounderConfig,
   pickFounderLocale,
+  parseNewsletterConfig,
+  pickNewsletterLocale,
+  parseSupportConfig,
+  pickSupportLocale,
+  type HeroLocaleFields,
   type ManifestoLocaleFields,
   type FounderQuoteLocaleFields,
+  type NewsletterCopyLocaleFields,
+  type SupportLocaleFields,
 } from "@/services/magazine-page.service";
+import type { CollaborationItem } from "@/components/home/magazine/MagazineSupport";
+import type { ImageFraming } from "@/lib/image-framing";
+import { getFramingsServer } from "@/services/image-framing.service";
+import {
+  ARTICLE_COVER_FRAMING,
+  WRITER_AVATAR_FRAMING,
+} from "@/lib/framing-placements";
+import { ISSUE_FRAMING_ENTITY, ISSUE_FRAMING_FIELD } from "./issue-framing";
+import { shortDate } from "./ui";
 import {
   writerAvatar,
   writerDisplayName,
@@ -53,6 +70,15 @@ type RawBook = {
   cover_image?: string | null;
 };
 
+type RawContribution = {
+  id: string;
+  title?: string | null;
+  description?: string | null;
+  status?: string | null;
+  submission_date?: string | null;
+  type?: { name?: string | null } | null;
+};
+
 // ─── Card types ────────────────────────────────────────────────────────
 
 export type IssueCard = {
@@ -61,6 +87,8 @@ export type IssueCard = {
   subtitle: string | null;
   slug: string | null;
   coverImage: string | null;
+  /** Admin-set framing for `coverImage`, attached by `attachIssueFraming`. */
+  coverFraming?: ImageFraming;
   excerpt: string | null;
   editionNumber: number | null;
   category: string | null;
@@ -81,6 +109,8 @@ export type ArticleCard = {
   publishedAt: string | null;
   authorName: string | null;
   authorAvatar: string | null;
+  /** Admin-set framing for `coverImage`, attached by `attachArticleFraming`. */
+  coverFraming?: ImageFraming;
 };
 
 export type BookCard = {
@@ -115,6 +145,8 @@ export type WriterCard = {
   quote: string | null;
   /** Up to two subjects, title-cased. Last resort before name-only. */
   themes: string[];
+  /** Admin-set framing for `avatar`, attached by `attachWriterFraming`. */
+  avatarFraming?: ImageFraming;
   /** ISO code of the writer's own language — their quote may be Arabic under an
    * English UI, so the card resolves `dir` from this, not from the UI locale. */
   lang: string | null;
@@ -126,11 +158,27 @@ export type WriterCard = {
  * consuming component falls back to its i18n default.
  */
 export type MagEditorialCopy = {
+  /** Hero copy is a FALLBACK ONLY — a published issue's own title/subtitle
+   * always wins the hero. Used for the window before any issue exists. */
+  hero: HeroLocaleFields;
   manifesto: ManifestoLocaleFields;
   founder: FounderQuoteLocaleFields;
   founderAvatar?: string;
   /** CMS hero artwork — hero cover fallback when no issue is published. */
   heroArtwork?: string;
+  /** Framing for `heroArtwork` specifically. It describes THAT photo, so it
+   * must not be applied when an issue cover or page-hero wins the slot. */
+  heroArtworkFraming?: ImageFraming;
+  founderAvatarFraming?: ImageFraming;
+  /** CMS hero CTA destinations. A CTA renders only when its label AND its
+   * link are both set — a labelled button with nowhere to go is worse than
+   * no button. Same fallback-only scope as `hero`. */
+  heroPrimaryHref?: string;
+  heroSecondaryHref?: string;
+  newsletter: NewsletterCopyLocaleFields;
+  newsletterFontScale?: number;
+  support: SupportLocaleFields;
+  supportFontScale?: number;
 };
 
 // ─── Mappers ────────────────────────────────────────────────────────────
@@ -270,6 +318,60 @@ export async function fetchIssues(
 }
 
 /**
+ * Attach cover framing to issue cards in ONE request for the whole set.
+ * Separate from `fetchIssues` because the hero and the carousel share a single
+ * fetch of issues, and framing should be fetched once for all of them.
+ */
+/**
+ * Attach cover framing to article cards — one request for the whole set.
+ * Callers pass every article on the page (featured + latest + videos) in a
+ * single call so the page makes one framing request, not three.
+ */
+export async function attachArticleFraming(
+  articles: ArticleCard[],
+): Promise<ArticleCard[]> {
+  if (articles.length === 0) return articles;
+  const framings = await getFramingsServer(
+    ARTICLE_COVER_FRAMING.entity,
+    articles.map((a) => a.id),
+    ARTICLE_COVER_FRAMING.field,
+  );
+  return articles.map((article) => {
+    const coverFraming = framings[article.id]?.[ARTICLE_COVER_FRAMING.field];
+    return coverFraming ? { ...article, coverFraming } : article;
+  });
+}
+
+/** Attach avatar framing to writer cards — one request for the whole set. */
+export async function attachWriterFraming(
+  writers: WriterCard[],
+): Promise<WriterCard[]> {
+  if (writers.length === 0) return writers;
+  const framings = await getFramingsServer(
+    WRITER_AVATAR_FRAMING.entity,
+    writers.map((w) => w.id),
+    WRITER_AVATAR_FRAMING.field,
+  );
+  return writers.map((writer) => {
+    const avatarFraming = framings[writer.id]?.[WRITER_AVATAR_FRAMING.field];
+    return avatarFraming ? { ...writer, avatarFraming } : writer;
+  });
+}
+
+export async function attachIssueFraming(issues: IssueCard[]): Promise<IssueCard[]> {
+  if (issues.length === 0) return issues;
+  const framings = await getFramingsServer(
+    ISSUE_FRAMING_ENTITY,
+    issues.map((i) => i.id),
+    ISSUE_FRAMING_FIELD,
+  );
+  return issues.map((issue) => {
+    const coverFraming = framings[issue.id]?.[ISSUE_FRAMING_FIELD];
+    return coverFraming ? { ...issue, coverFraming } : issue;
+  });
+}
+
+/**
  * The magazine's current issue (isCurrent = true), resolved to the viewer's
  * language server-side. Null when no issue has been marked current — callers
  * fall back to the newest published issue.
@@ -348,11 +450,38 @@ export async function fetchWriters(locale: string, limit = 8): Promise<WriterCar
 }
 
 /**
- * CMS-backed editorial copy (manifesto + founder quote) for the interstitial
- * beats. Reuses the same parsers/pickers as the legacy magazine page; a
- * missing page, invisible section, or fetch failure resolves to empty fields
- * so each beat degrades to its i18n default. `pickFounderLocale` was defined
- * but never rendered before — this surfaces the founder quote for the first time.
+ * Recent contributions, shaped for the Support / Collaborations gallery.
+ * Ported from the legacy magazine page — the CMS Support section edits this
+ * gallery's heading copy, so the gallery has to exist for that copy to land.
+ */
+export async function fetchCollaborations(
+  locale: string,
+): Promise<CollaborationItem[]> {
+  const raw = await serverGet<Envelope<RawContribution>>("/contributions", {
+    page: 1,
+    limit: 7,
+    // Load-bearing, exactly like `product` on fetchArticles. GET /contributions
+    // is unguarded and applies NO default status scoping, POST /contributions
+    // accepts guest submissions, and new rows land as draft/pending — so
+    // omitting this would publish the 7 newest unmoderated submissions,
+    // anyone's, straight onto /magazine (a flagged row included, badge and all).
+    status: "published",
+  });
+  return unwrapList(raw).map((c) => ({
+    id: c.id,
+    title: c.title || c.description?.slice(0, 60) || "Collaboration",
+    type: c.type?.name || "Contribution",
+    status: c.status ?? null,
+    timeline: shortDate(c.submission_date, locale) || null,
+    description: c.description || "",
+  }));
+}
+
+/**
+ * CMS-backed editorial copy for every admin-editable beat on this page.
+ * Reuses the same parsers/pickers as the legacy magazine page; a missing
+ * page, invisible section, or fetch failure resolves to empty fields so each
+ * beat degrades to its i18n default.
  */
 export async function fetchEditorialCopy(locale: string): Promise<MagEditorialCopy> {
   const page = await serverGet<CmsPage | { data: CmsPage }>(
@@ -369,14 +498,25 @@ export async function fetchEditorialCopy(locale: string): Promise<MagEditorialCo
 
   const manifestoCfg = parseManifestoConfig(pickVisible("manifesto"));
   const founderCfg = parseFounderConfig(pickVisible("founderQuote"));
-  // Only the artwork is taken from the hero section — this page's hero copy is
-  // the issue's own title/subtitle, not the CMS hero copy the legacy page uses.
+  // Hero copy is carried but only consumed when no issue is published — a
+  // live issue's own title/subtitle always wins the hero (see MagHero).
   const heroCfg = parseHeroConfig(pickVisible("hero"));
+  const newsletterCfg = parseNewsletterConfig(pickVisible("newsletterCopy"));
+  const supportCfg = parseSupportConfig(pickVisible("supportCuration"));
 
   return {
+    hero: pickHeroLocale(heroCfg, locale),
     manifesto: pickManifestoLocale(manifestoCfg, locale),
     founder: pickFounderLocale(founderCfg, locale),
     founderAvatar: founderCfg.avatar,
+    founderAvatarFraming: founderCfg.avatarFraming,
     heroArtwork: heroCfg.artwork,
+    heroArtworkFraming: heroCfg.artworkFraming,
+    heroPrimaryHref: heroCfg.primaryHref,
+    heroSecondaryHref: heroCfg.secondaryHref,
+    newsletter: pickNewsletterLocale(newsletterCfg, locale),
+    newsletterFontScale: newsletterCfg.fontScale,
+    support: pickSupportLocale(supportCfg, locale),
+    supportFontScale: supportCfg.fontScale,
   };
 }

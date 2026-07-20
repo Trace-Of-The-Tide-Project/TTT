@@ -426,6 +426,7 @@
         "sharedHeading": "Partagé (toutes langues)",
         "perLocaleHeading": "Contenu par langue",
         "previewHeading": "Aperçu en direct",
+        "issueWinsNote": "Ce texte n'apparaît que tant qu'aucun numéro n'est publié. Dès qu'un numéro est en ligne, le hero affiche à la place son propre titre, sous-titre, couverture et liens. Chaque bouton exige son libellé ET son lien : n'en remplir qu'un seul et le bouton reste masqué.",
         "fields": {
           "headline": "Titre",
           "headlinePlaceholder": "Des récits qui façonnent la culture moderne.",
@@ -444,6 +445,7 @@
       "manifesto": {
         "title": "Manifeste",
         "subtitle": "Philosophie, vision, mission, valeurs et citation de clôture.",
+        "renderedFieldsNote": "La page en ligne utilise cette section à deux endroits : le corps de la mission ouvre la page, et la citation de clôture, la citation de philosophie et le corps de la vision défilent dans l'intermède de citations plus bas. Les titres, la bannière et l'alignement ci-dessous ne sont pas affichés.",
         "fields": {
           "philosophyHeading": "Titre — Philosophie",
           "philosophyQuote": "Citation — Philosophie",

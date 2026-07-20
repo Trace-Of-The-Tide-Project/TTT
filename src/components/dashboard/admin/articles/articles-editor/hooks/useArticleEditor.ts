@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { usePrimaryLanguage } from "@/i18n/use-primary-language";
 import { isAxiosError } from "axios";
 import { type BlockType } from "@/components/dashboard/admin/articles/articles-editor/AvailableBlocks";
 import { type ContentBlock } from "@/components/dashboard/admin/articles/articles-editor/ContentBlocks";
@@ -120,13 +121,16 @@ export function useArticleEditor({
   const [scheduledAt, setScheduledAt] = useState<string | null>(null);
   const [category, setCategory] = useState("");
   // Primary language of the piece; in edit mode this is the loaded article's
-  // language and never changes with tab switches.
-  const [language, setLanguage] = useState(initialLanguage || "en");
+  // language and never changes with tab switches. On create with no explicit
+  // language/translation param, defaults to the editor's current CMS locale
+  // (not hardcoded "en") so authoring in Arabic starts on the Arabic tab.
+  const defaultLanguage = usePrimaryLanguage(initialLanguage);
+  const [language, setLanguage] = useState(defaultLanguage);
   // In-place language tabs (Pattern 2, see LanguageFormTabs docblock): the
   // ACTIVE tab lives in the regular title/blocks/seo states; inactive tabs are
   // stashed here on switch. A locale absent from the buffers has never been
   // opened.
-  const [activeLang, setActiveLang] = useState(initialLanguage || "en");
+  const [activeLang, setActiveLang] = useState(defaultLanguage);
   // Kept in sync via effect (not written during render) so async callbacks
   // (tab-switch fetch, sibling save) can read the truly-latest value without
   // forcing every callback to depend on activeLang/liveForm.
@@ -293,8 +297,11 @@ export function useArticleEditor({
       ? "dirty"
       : loc === language
         ? "primary"
-        : versionIds[loc] || languageBuffers[loc]
+        : versionIds[loc]
           ? "existing"
+          // A locale merely visited (clone-in-place starting point, never
+          // edited beyond it — see isLangDirty) must still read as empty,
+          // not as a required, half-done translation.
           : "empty";
   }
 

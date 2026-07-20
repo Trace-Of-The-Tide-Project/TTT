@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useId, useMemo, useRef, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Link, useRouter } from "@/i18n/navigation";
 import { ChevronLeftLargeIcon, StarIcon } from "@/components/ui/icons";
@@ -9,6 +9,7 @@ import { mutationToast } from "@/hooks/useMutationToast";
 import { formatApiError } from "@/lib/api/error-message";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { dirFor } from "@/i18n/dir";
+import { usePrimaryLanguage } from "@/i18n/use-primary-language";
 import { uploadArticleAssetKeyAndUrl } from "@/services/uploads.service";
 import { RichTextEditor } from "@/components/ui/rich-text/RichTextEditor";
 import { EditorRegistryProvider } from "@/components/ui/rich-text/editor-registry";
@@ -27,6 +28,14 @@ import {
   useUpdateMagazineIssue,
 } from "@/hooks/mutations/magazine-issues";
 import { useCreateMagazine } from "@/hooks/mutations/magazines";
+import { useImageFramings } from "@/hooks/queries/image-framing";
+import { useSaveImageFraming } from "@/hooks/mutations/image-framing";
+import { ImageFramingModal } from "@/components/dashboard/admin/media-library/ImageFramingModal";
+import {
+  ISSUE_FRAMING_ENTITY,
+  ISSUE_FRAMING_FIELD,
+} from "@/components/home/magazine-next/issue-framing";
+import type { ImageFraming } from "@/lib/image-framing";
 import type {
   MagazineIssue,
   MagazineIssueInput,
@@ -160,9 +169,40 @@ const labelClass =
 export function IssueEditor({ issueId }: { issueId?: string }) {
   const t = useTranslations("Dashboard.magazineIssues");
   const tTr = useTranslations("Dashboard.translations");
-  const locale = useLocale();
+  const tFraming = useTranslations("Dashboard.imageFraming");
   const router = useRouter();
   const isEdit = Boolean(issueId);
+
+  // Cover framing lives in its own table (the cover_image column is a bare
+  // string with nowhere to keep it) and saves independently of this form.
+  const [framingOpen, setFramingOpen] = useState(false);
+  const framingsQuery = useImageFramings(
+    ISSUE_FRAMING_ENTITY,
+    issueId ? [issueId] : [],
+    ISSUE_FRAMING_FIELD,
+  );
+  const coverFraming = issueId
+    ? framingsQuery.data?.[issueId]?.[ISSUE_FRAMING_FIELD]
+    : undefined;
+  const saveFraming = useSaveImageFraming();
+
+  async function handleFramingApply(framing: ImageFraming | undefined) {
+    if (!issueId) return;
+    try {
+      await mutationToast(
+        () =>
+          saveFraming.mutateAsync({
+            entityType: ISSUE_FRAMING_ENTITY,
+            entityId: issueId,
+            field: ISSUE_FRAMING_FIELD,
+            framing,
+          }),
+        { loading: `${tFraming("title")}…`, success: t("editor.saved") },
+      );
+    } catch {
+      // mutationToast already surfaced the error
+    }
+  }
 
   // Seed from the admin list (full rows incl. pdf_path/editors_letter/is_current).
   // GET /:id is the decorated public read and strips pdf_path, which would wipe
@@ -198,8 +238,7 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
     return map;
   }, [issues, item]);
 
-  const initialLang =
-    item?.language ?? ((LANGS as readonly string[]).includes(locale) ? locale : "en");
+  const initialLang = usePrimaryLanguage(item?.language);
   const primaryLang = item?.language ?? initialLang;
 
   const [activeLang, setActiveLang] = useState(initialLang);
@@ -236,7 +275,7 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
         ? "dirty"
         : loc === primaryLang
           ? "primary"
-          : allVersions[loc] || forms[loc]
+          : allVersions[loc]
             ? "existing"
             : "empty";
     }
@@ -257,12 +296,15 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
   const switchLanguage = (next: string) => {
     if (next === activeLang) return;
     if (!forms[next]) {
+      // Merely looking at an untranslated tab must not seed it with the
+      // primary language's content — that reads as a required, half-done
+      // draft. Only a saved sibling record hydrates the tab.
       const existing = allVersions[next];
       setForms((prev) => ({
         ...prev,
         [next]: existing
           ? { ...toForm(existing, nextEdition), language: next }
-          : { ...(prev[activeLang] ?? toForm(null, nextEdition)), language: next, status: "draft" },
+          : { ...toForm(null, nextEdition), language: next },
       }));
     }
     setActiveLang(next);
@@ -558,6 +600,24 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
               uploading={uploading}
               onFile={handleCoverFile}
             />
+            {/* Framing is a record of its own, so it needs a saved issue to
+                attach to — and it saves immediately rather than waiting for
+                the form's Save. */}
+            {isEdit && issueId && form.cover_image.trim() ? (
+              <div className="mt-2">
+                <button
+                  type="button"
+                  onClick={() => setFramingOpen(true)}
+                  className={`rounded-lg border px-3 py-1.5 text-sm font-medium ${
+                    coverFraming
+                      ? "border-[var(--tott-accent-gold)] text-[var(--tott-accent-gold)]"
+                      : "border-[var(--tott-card-border)] text-foreground"
+                  }`}
+                >
+                  {tFraming("adjust")}
+                </button>
+              </div>
+            ) : null}
             {errors.cover ? (
               <p className="mt-1 text-xs" style={{ color: "var(--tott-status-coral)" }}>
                 {errors.cover}
@@ -787,6 +847,15 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
           )}
         </div>
       </div>
+      <ImageFramingModal
+        open={framingOpen}
+        src={resolveArticleMediaSrc(form.cover_image)}
+        framing={coverFraming}
+        // The cover leads the magazine hero, which is full-bleed.
+        aspect="16/9"
+        onClose={() => setFramingOpen(false)}
+        onApply={(framing) => void handleFramingApply(framing)}
+      />
     </EditorRegistryProvider>
   );
 }

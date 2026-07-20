@@ -10,6 +10,7 @@ import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { GatewayIcon } from "./atrium-icons";
 import { safeImage } from "./atrium-image";
 import type { HeroData } from "./atrium-types";
+import { framingStyle } from "@/lib/image-framing";
 
 type AtriumHeroProps = {
   item: HeroData;
@@ -59,6 +60,10 @@ function FeaturedHero({
             priority
             sizes="100vw"
             className="select-none object-cover"
+            // Framing belongs to the article's own cover. When an admin
+            // overrides the hero image, that is a different photo and the
+            // stored crop must not follow the slot onto it.
+            style={framingStyle(heroOverrideUrl ? undefined : item.coverFraming)}
             draggable={false}
             unoptimized={cover.unoptimized}
           />

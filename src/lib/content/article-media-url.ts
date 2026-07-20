@@ -79,3 +79,16 @@ export function resolveArticleMediaSrc(ref: string): string {
   const path = s.startsWith("/") ? s : `/${s}`;
   return `${base}${path}`;
 }
+/** House placeholder for a missing or unusable image reference. */
+export const FALLBACK_IMAGE = "/images/image.png";
+
+/**
+ * Resolve a cover ref to a usable `src`, falling back to the house
+ * placeholder. Lives beside `resolveArticleMediaSrc` (its only dependency) so
+ * shared UI can import it without reaching into a feature directory.
+ */
+export function coverSrc(ref: string | null | undefined): string {
+  const s = (ref ?? "").trim();
+  if (!s) return FALLBACK_IMAGE;
+  return resolveArticleMediaSrc(s);
+}

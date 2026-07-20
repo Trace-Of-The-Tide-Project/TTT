@@ -38,6 +38,7 @@ export async function MagIssuesRow({ issues }: { issues: IssueCard[] }) {
                 <MagImage
                   src={coverSrc(issue.coverImage)}
                   alt={issue.title}
+                  framing={issue.coverFraming}
                   fill
                   sizes="256px"
                   className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"

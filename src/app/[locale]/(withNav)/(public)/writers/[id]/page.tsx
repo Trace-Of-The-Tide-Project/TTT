@@ -8,6 +8,8 @@ import {
   type WriterSocialLinks,
 } from "@/services/writers.service";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+import { getFramingsServer } from "@/services/image-framing.service";
+import { WRITER_AVATAR_FRAMING } from "@/lib/framing-placements";
 import {
   WriterDetailContent,
   type WriterDetailView,
@@ -80,6 +82,12 @@ export default async function WriterDetailPage({ params }: PageProps) {
   const writer = await getWriter(id);
   if (!writer) return notFound();
 
+  const framings = await getFramingsServer(
+    WRITER_AVATAR_FRAMING.entity,
+    [writer.id],
+    WRITER_AVATAR_FRAMING.field,
+  );
+
   const view: WriterDetailView = {
     id: writer.id,
     userId: writer.user_id ?? writer.user?.id ?? null,
@@ -95,6 +103,7 @@ export default async function WriterDetailPage({ params }: PageProps) {
     followerCount: 0,
     workCount: 0,
     avatar: writerAvatar(writer),
+    avatarFraming: framings[writer.id]?.[WRITER_AVATAR_FRAMING.field],
   };
 
   return <WriterDetailContent writer={view} />;

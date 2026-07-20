@@ -6,6 +6,7 @@ import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import { WriterProfileHero } from "@/components/writers/WriterProfileHero";
 import { WriterWorksSection } from "@/components/writers/WriterWorksSection";
+import type { ImageFraming } from "@/lib/image-framing";
 
 const TEXT_STRONG = "var(--tott-home-text-strong)";
 const ACCENT = "var(--tott-accent-gold)";
@@ -34,6 +35,8 @@ export type WriterDetailView = {
   followerCount: number;
   workCount: number;
   avatar: string | null;
+  /** Admin-set framing for `avatar`. Undefined renders as before. */
+  avatarFraming?: ImageFraming;
 };
 
 const KNOWN_SOCIAL_LABELS: Record<string, string> = {

@@ -26,8 +26,11 @@ import { LanguageFormTabs, TranslationWizard } from "@/components/dashboard/admi
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
 import type { TranslationWizardReviewLine } from "@/components/dashboard/admin/translations/TranslationWizard";
 import { routing } from "@/i18n/routing";
+import { usePrimaryLanguage } from "@/i18n/use-primary-language";
 import { UserPicker } from "./UserPicker";
 import { AvatarUploadZone, ThemesInput } from "./form-controls";
+import { AdjustImageButton } from "@/components/dashboard/admin/media-library/AdjustImageButton";
+import { WRITER_AVATAR_FRAMING } from "@/lib/framing-placements";
 
 const CREATOR_KINDS = ["musician", "writer", "visual_artist", "filmmaker", "photographer", "translator", "editor", "illustrator"] as const;
 type CreatorKind = (typeof CREATOR_KINDS)[number];
@@ -138,7 +141,7 @@ export function WriterFormContent({
   const createMutation = useCreateWriterProfile();
   const updateMutation = useUpdateWriterProfile();
 
-  const initialLang = (createLanguage || "en").trim() || "en";
+  const initialLang = usePrimaryLanguage(createLanguage);
   // Multi-language authoring: one FormState per opened locale. A locale absent
   // from `forms` has never been opened; opening it seeds it (existing version →
   // fetched row, otherwise a clone of the primary tab). `dirty` tracks which
@@ -669,6 +672,18 @@ export function WriterFormContent({
             placeholder="https://…"
           />
           <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("fields.avatarUrlFallback")}</p>
+          {/* Each language version is its own writer row with its own id, so
+              framing applies to the version being edited. Avatars render in
+              square/portrait cards, hence the 1/1 preview. */}
+          <div className="mt-2">
+            <AdjustImageButton
+              entityType={WRITER_AVATAR_FRAMING.entity}
+              entityId={writerId}
+              field={WRITER_AVATAR_FRAMING.field}
+              src={form.avatar_url}
+              aspect="1/1"
+            />
+          </div>
         </div>
       </div>
 

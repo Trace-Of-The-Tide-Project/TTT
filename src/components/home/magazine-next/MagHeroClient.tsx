@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { Link } from "@/i18n/navigation";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { fadeIn, fadeUp, revealMask, easeOut } from "@/lib/motion";
+import type { ImageFraming } from "@/lib/image-framing";
 import { MagImage } from "./MagImage";
 
 type Cta = { label: string; href: string };
@@ -14,6 +15,8 @@ type MagHeroClientProps = {
   subtitle: string | null;
   coverImage: string;
   coverAlt: string;
+  /** Admin-set framing for the cover. Undefined renders as before. */
+  coverFraming?: ImageFraming;
   /** Omitted when there is no issue to link to — the CTA row then drops. */
   primary?: Cta;
   secondary?: Cta;
@@ -34,6 +37,7 @@ export function MagHeroClient({
   subtitle,
   coverImage,
   coverAlt,
+  coverFraming,
   primary,
   secondary,
 }: MagHeroClientProps) {
@@ -49,16 +53,26 @@ export function MagHeroClient({
       className="relative min-h-[100svh] w-full overflow-hidden bg-[var(--tott-well-bg)]"
     >
       {/* Background cover — full bleed, slow drift. */}
+      {/* The drift scale lives on this wrapper and the framing zoom on the
+          image, so the two multiply instead of overwriting each other. The
+          origin has to match the framing focus, or an off-centre crop slides
+          off its subject over the 18s drift. */}
       <motion.div
         aria-hidden
         className="absolute inset-0"
         initial={reduced ? false : { scale: 1.12 }}
         animate={{ scale: 1 }}
         transition={{ duration: 18, ease: easeOut }}
+        style={
+          coverFraming
+            ? { transformOrigin: `${coverFraming.x}% ${coverFraming.y}%` }
+            : undefined
+        }
       >
         <MagImage
           src={coverImage}
           alt={coverAlt}
+          framing={coverFraming}
           fill
           priority
           sizes="100vw"

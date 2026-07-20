@@ -4,6 +4,7 @@
  * Plain module (no "use client"): importable by both the server page that
  * fetches/buckets the data and the client section components that render it.
  */
+import type { ImageFraming } from "@/lib/image-framing";
 
 /** The five content rooms the hub surfaces, keyed to their sub-routes. */
 export type GatewayType = "article" | "audio" | "gallery" | "video" | "threads";
@@ -32,6 +33,8 @@ export type AtriumItem = {
   meta?: string | null;
   /** Seconds, for audio/video runtime chips. */
   mediaDuration?: number | null;
+  /** Admin-set framing for `coverImage`. Undefined renders as before. */
+  coverFraming?: ImageFraming;
 };
 
 /** One gateway tile's data — always present so the tile renders even when empty. */
