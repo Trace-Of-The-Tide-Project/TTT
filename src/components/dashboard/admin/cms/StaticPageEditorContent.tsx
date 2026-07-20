@@ -14,7 +14,12 @@ const inputClass =
 
 type Working = { title: string; content: string; seo_title: string; meta_description: string };
 
-function seedFrom(page: { title: string; content?: string | null; seo_title?: string | null; meta_description?: string | null }): Working {
+function seedFrom(page: {
+  title: string;
+  content?: string | null;
+  seo_title?: string | null;
+  meta_description?: string | null;
+}): Working {
   return {
     title: page.title ?? "",
     content: page.content ?? "",
@@ -61,7 +66,8 @@ export function StaticPageEditorContent({ pageId }: { pageId: string }) {
     });
   };
   const handleReset = () => setWorking(seedFrom(page));
-  const handlePreview = () => window.open(`/${page.language ?? "en"}/${page.slug}`, "_blank", "noopener,noreferrer");
+  const handlePreview = () =>
+    window.open(`/${page.language ?? "en"}/${page.slug}`, "_blank", "noopener,noreferrer");
 
   return (
     <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
@@ -77,7 +83,9 @@ export function StaticPageEditorContent({ pageId }: { pageId: string }) {
           <button
             type="button"
             onClick={handlePreview}
-            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-foreground hover:bg-[var(--tott-dash-surface-inset)]"
+            disabled={page.status !== "published"}
+            title={page.status !== "published" ? t("previewDraftHint") : undefined}
+            className="rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-3 py-1.5 text-xs font-medium text-foreground hover:bg-[var(--tott-dash-surface-inset)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[var(--tott-dash-control-bg)]"
           >
             {t("preview")}
           </button>
@@ -116,7 +124,9 @@ export function StaticPageEditorContent({ pageId }: { pageId: string }) {
 
       <div className="mt-6 space-y-4">
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-foreground">{t("fields.title")}</label>
+          <label className="mb-1.5 block text-xs font-medium text-foreground">
+            {t("fields.title")}
+          </label>
           <input
             type="text"
             dir={dir}
@@ -127,7 +137,9 @@ export function StaticPageEditorContent({ pageId }: { pageId: string }) {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-foreground">{t("fields.content")}</label>
+          <label className="mb-1.5 block text-xs font-medium text-foreground">
+            {t("fields.content")}
+          </label>
           <EditorRegistryProvider>
             <div className="mb-2 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
               <EditorToolbar />
@@ -143,10 +155,14 @@ export function StaticPageEditorContent({ pageId }: { pageId: string }) {
         </div>
 
         <div className="border-t border-[var(--tott-card-border)] pt-4">
-          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--tott-muted)]">{t("seo")}</p>
+          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--tott-muted)]">
+            {t("seo")}
+          </p>
           <div className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-foreground">{t("fields.seoTitle")}</label>
+              <label className="mb-1.5 block text-xs font-medium text-foreground">
+                {t("fields.seoTitle")}
+              </label>
               <input
                 type="text"
                 dir={dir}
@@ -156,12 +172,16 @@ export function StaticPageEditorContent({ pageId }: { pageId: string }) {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-foreground">{t("fields.metaDescription")}</label>
+              <label className="mb-1.5 block text-xs font-medium text-foreground">
+                {t("fields.metaDescription")}
+              </label>
               <textarea
                 rows={3}
                 dir={dir}
                 value={working.meta_description}
-                onChange={(e) => setWorking((w) => (w ? { ...w, meta_description: e.target.value } : w))}
+                onChange={(e) =>
+                  setWorking((w) => (w ? { ...w, meta_description: e.target.value } : w))
+                }
                 className={`${inputClass} resize-none`}
               />
             </div>

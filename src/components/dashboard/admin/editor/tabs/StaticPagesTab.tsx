@@ -6,10 +6,15 @@ import { EyeIcon, FileTextIcon, PenLineIcon } from "@/components/ui/icons";
 import { HexIconOutlined } from "@/components/dashboard/admin/articles/articles-create/HexIconOutlined";
 import { useCmsPages } from "@/hooks/queries/cms";
 import { useRouter } from "@/i18n/navigation";
+import { isReservedPublicSlug } from "@/lib/cms/reserved-slugs";
 import type { CmsPage } from "@/services/cms.service";
 
 function formatDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(locale, { month: "short", day: "numeric", year: "numeric" });
+  return new Date(iso).toLocaleDateString(locale, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 export function StaticPagesTab() {
@@ -17,7 +22,12 @@ export function StaticPagesTab() {
   const locale = useLocale();
   const router = useRouter();
   const { data: allPages, isPending: loading } = useCmsPages();
-  const pages = (allPages ?? []).filter((p) => p.page_type !== "homepage");
+  // Hide the homepage and any page whose slug is served by a hardcoded route:
+  // those never render their CMS `content`, so listing them as editable would
+  // silently discard the author's edits (see reserved-slugs.ts).
+  const pages = (allPages ?? []).filter(
+    (p) => p.page_type !== "homepage" && !isReservedPublicSlug(p.slug)
+  );
 
   const handlePreview = (page: CmsPage) => {
     window.open(`/${page.language ?? locale}/${page.slug}`, "_blank", "noopener,noreferrer");
@@ -40,7 +50,9 @@ export function StaticPagesTab() {
                 </HexIconOutlined>
                 <div>
                   <p className="font-medium text-foreground">{page.title}</p>
-                  <p className="text-xs text-[var(--tott-muted)]">{t("lastEdited", { date: formatDate(page.updatedAt, locale) })}</p>
+                  <p className="text-xs text-[var(--tott-muted)]">
+                    {t("lastEdited", { date: formatDate(page.updatedAt, locale) })}
+                  </p>
                 </div>
               </div>
               <div className="flex shrink-0 items-center gap-2">
@@ -64,7 +76,9 @@ export function StaticPagesTab() {
                 <button
                   type="button"
                   onClick={() => handlePreview(page)}
-                  className="flex items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)]"
+                  disabled={page.status !== "published"}
+                  title={page.status !== "published" ? t("previewDraftHint") : undefined}
+                  className="flex items-center gap-2 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[var(--tott-dash-control-bg)]"
                 >
                   <span className="[&_svg]:h-4 [&_svg]:w-4">
                     <EyeIcon />

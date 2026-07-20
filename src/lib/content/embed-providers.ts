@@ -44,8 +44,17 @@ const PROVIDERS: ProviderDef[] = [
     id: "vimeo",
     hosts: ["vimeo.com", "player.vimeo.com"],
     extractId: (u) => {
-      const m = firstMatch(/\/(\d+)/, u.pathname);
-      return m ? m[1] : null;
+      // A naive "first numeric segment" grabs the group/album/channel id from
+      // URLs like /groups/98765/videos/123456789. Prefer the segment after
+      // `video`/`videos`, else fall back to the last purely-numeric segment
+      // (the clip id in /channels/staff/123456789, /123456789, etc.).
+      const segs = u.pathname.split("/").filter(Boolean);
+      const vi = segs.findIndex((s) => s === "video" || s === "videos");
+      if (vi >= 0 && segs[vi + 1]) return segs[vi + 1];
+      for (let i = segs.length - 1; i >= 0; i--) {
+        if (/^\d+$/.test(segs[i])) return segs[i];
+      }
+      return null;
     },
     aspect: "16 / 9",
   },

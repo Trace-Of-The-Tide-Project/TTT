@@ -110,7 +110,11 @@ export function BlockRenderer({
       );
 
     case "pull-quote": {
-      const hasAttribution = Boolean((block.quoteAttribution ?? "").trim());
+      // Presence of the key — not a non-empty value — reveals the input, so
+      // the field stays open while the author clears it. (A trimmed check meant
+      // the "+ Add attribution" seed of " " collapsed straight back to the
+      // button, making the field permanently unreachable.)
+      const hasAttribution = block.quoteAttribution != null;
       return (
         <div
           className="w-full space-y-2 rounded-e-xl border border-[var(--tott-card-border)] border-s-4 bg-[var(--tott-dash-control-bg)] p-1"
@@ -136,7 +140,7 @@ export function BlockRenderer({
           ) : (
             <button
               type="button"
-              onClick={() => onChange({ quoteAttribution: " " })}
+              onClick={() => onChange({ quoteAttribution: "" })}
               className="px-4 pb-2 text-xs font-medium underline"
               style={{ color: "var(--tott-accent-gold)" }}
             >

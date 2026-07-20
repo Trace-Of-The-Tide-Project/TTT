@@ -18,7 +18,7 @@ import type { LanguageTabStatus } from "@/components/dashboard/admin/translation
 import { routing } from "@/i18n/routing";
 import { ScheduleArticleModal } from "./modals/ScheduleArticleModal";
 import { buildOpenCallContentBlocksAndMainMedia } from "./lib/build-open-call-payload";
-import { buildArticleBlocksFromEditor } from "./lib/build-api-blocks";
+import { buildArticleBlocksFromEditor, InvalidEmbedError } from "./lib/build-api-blocks";
 import { openCallConfig, openCallAllowedBlockTypes } from "./content-form-config";
 import {
   localizeContentFormConfig,
@@ -426,7 +426,11 @@ export function OpenCallEditorLayout({
               metaDescription: f.metaDescription,
             },
           });
-        } catch {
+        } catch (e) {
+          // A bad embed URL would silently discard this whole locale's edits —
+          // surface it and block the save. Other sibling failures stay
+          // best-effort so they never block the primary.
+          if (e instanceof InvalidEmbedError) throw e;
           /* sibling may already exist — the primary stands */
         }
       }

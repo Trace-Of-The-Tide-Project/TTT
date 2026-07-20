@@ -11,9 +11,7 @@ import { parseEmbedUrl } from "@/lib/content/embed-providers";
  * serialization.
  */
 function meta(o: Record<string, unknown>): string | undefined {
-  const clean = Object.fromEntries(
-    Object.entries(o).filter(([, v]) => v != null && v !== ""),
-  );
+  const clean = Object.fromEntries(Object.entries(o).filter(([, v]) => v != null && v !== ""));
   return Object.keys(clean).length ? JSON.stringify(clean) : undefined;
 }
 
@@ -21,6 +19,21 @@ export type BuildArticleBlocksFromEditorOptions = {
   /** Called when file uploads start / finish (only if the editor has pending asset uploads). */
   onUploading?: (active: boolean) => void;
 };
+
+/**
+ * Thrown when an embed block holds a non-empty URL that isn't a supported
+ * provider. Aborts the save (surfaced by the editor's error handling) so the
+ * author's content is never silently dropped — the offending block is already
+ * flagged inline in the editor.
+ */
+export class InvalidEmbedError extends Error {
+  constructor(public readonly url: string) {
+    super(
+      "This embed URL isn't supported. Only YouTube and Vimeo links can be embedded — fix or remove the block, then save."
+    );
+    this.name = "InvalidEmbedError";
+  }
+}
 
 function editorHasPendingAssetUploads(blocks: ContentBlock[]): boolean {
   for (const b of blocks) {
@@ -32,8 +45,17 @@ function editorHasPendingAssetUploads(blocks: ContentBlock[]): boolean {
 
 export async function buildArticleBlocksFromEditor(
   blocks: ContentBlock[],
-  options?: BuildArticleBlocksFromEditorOptions,
+  options?: BuildArticleBlocksFromEditorOptions
 ): Promise<CreateArticleBlock[]> {
+  // Fail fast on unsupported embeds — before any asset upload — so a bad URL
+  // blocks the save loudly instead of vanishing, and we don't waste uploads.
+  for (const b of blocks) {
+    if (b.type === "embed") {
+      const url = (b.embedUrl ?? "").trim();
+      if (url && !parseEmbedUrl(url)) throw new InvalidEmbedError(url);
+    }
+  }
+
   const needsUpload = editorHasPendingAssetUploads(blocks);
   if (needsUpload) options?.onUploading?.(true);
 
@@ -149,9 +171,9 @@ export async function buildArticleBlocksFromEditor(
 
       if (b.type === "embed") {
         const url = (b.embedUrl ?? "").trim();
-        if (!url) continue;
+        if (!url) continue; // empty embed block — drop, same as an empty paragraph
         const parsed = parseEmbedUrl(url);
-        if (!parsed) continue; // invalid/unwhitelisted URL — silently drop, same as an empty block
+        if (!parsed) continue; // unreachable: invalid non-empty URLs already threw in the pre-scan
         out.push({
           block_order: order++,
           block_type: "embed",
@@ -204,12 +226,12 @@ export async function buildArticleBlocksFromEditor(
       // A paragraph whose TipTap content is a <ul>/<ol> is tagged "list" so
       // the reader dispatches on block_type instead of sniffing HTML twice.
       // Authoring is unchanged — this is purely a wire-format tag.
+      // The editor's block type wins first: an author-note that merely starts
+      // with a list is still an author-note (its type/styling must survive the
+      // round trip), not a bare list.
       const isList = /^<(ul|ol)\b/i.test(text);
-      const block_type: CreateArticleBlock["block_type"] = isList
-        ? "list"
-        : b.type === "author-note"
-          ? "author_note"
-          : "paragraph";
+      const block_type: CreateArticleBlock["block_type"] =
+        b.type === "author-note" ? "author_note" : isList ? "list" : "paragraph";
 
       out.push({
         block_order: order++,

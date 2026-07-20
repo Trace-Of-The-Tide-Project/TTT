@@ -7,6 +7,7 @@
       "draft": "Borrador",
       "edit": "Editar",
       "preview": "Vista previa",
+      "previewDraftHint": "Publica esta página para previsualizarla",
       "emptyState": "No se encontraron páginas estáticas."
     }
   }

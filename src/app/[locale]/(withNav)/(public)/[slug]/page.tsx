@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { callBackend } from "@/lib/auth/proxy-backend";
@@ -16,14 +17,18 @@ type CmsPageData = {
   language?: string;
 };
 
-async function fetchPublishedPage(slug: string): Promise<CmsPageData | null> {
+// Wrapped in React `cache()` so generateMetadata and the page component share
+// one backend round-trip per request — the custom AbortController signal in
+// callBackend opts the fetch out of Next's automatic request memoization.
+const fetchPublishedPage = cache(async (slug: string): Promise<CmsPageData | null> => {
   const result = await callBackend({ path: `/cms/pages/slug/${encodeURIComponent(slug)}` });
   if (!result.ok) return null;
   const body = result.json as { data?: CmsPageData } | CmsPageData | null;
-  const page = body && typeof body === "object" && "data" in body ? body.data : (body as CmsPageData | null);
+  const page =
+    body && typeof body === "object" && "data" in body ? body.data : (body as CmsPageData | null);
   if (!page?.id || page.status !== "published") return null;
   return page;
-}
+});
 
 export async function generateMetadata({
   params,
@@ -39,11 +44,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function CmsStaticPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function CmsStaticPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const page = await fetchPublishedPage(slug);
   if (!page) notFound();
