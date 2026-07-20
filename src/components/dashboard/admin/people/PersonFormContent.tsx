@@ -23,7 +23,10 @@ import { LanguageFormTabs, TranslationWizard } from "@/components/dashboard/admi
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
 import type { TranslationWizardReviewLine } from "@/components/dashboard/admin/translations/TranslationWizard";
 import { routing } from "@/i18n/routing";
+import { usePrimaryLanguage } from "@/i18n/use-primary-language";
 import { toast } from "sonner";
+import { AdjustImageButton } from "@/components/dashboard/admin/media-library/AdjustImageButton";
+import { PERSON_PORTRAIT_FRAMING } from "@/lib/framing-placements";
 
 type FormState = {
   full_name: string;
@@ -84,7 +87,7 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
   const createMutation = useCreatePerson();
   const updateMutation = useUpdatePerson();
 
-  const initialLang = (createLanguage || "en").trim() || "en";
+  const initialLang = usePrimaryLanguage(createLanguage);
   const [activeLang, setActiveLang] = useState(initialLang);
   const [primaryLang, setPrimaryLang] = useState(initialLang);
   const [forms, setForms] = useState<Record<string, FormState>>(() => ({
@@ -399,6 +402,16 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
               change: t("form.upload.change"),
             }}
           />
+          {/* Portraits render in a circle on the homepage People row. */}
+          <div className="mt-2">
+            <AdjustImageButton
+              entityType={PERSON_PORTRAIT_FRAMING.entity}
+              entityId={personId}
+              field={PERSON_PORTRAIT_FRAMING.field}
+              src={form.portrait}
+              aspect="1/1"
+            />
+          </div>
         </div>
       </div>
 

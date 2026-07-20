@@ -6,7 +6,17 @@ import { Link } from "@/i18n/navigation";
 import { mutationToast } from "@/hooks/useMutationToast";
 import { useAdminPageHeroes } from "@/hooks/queries/media-library";
 import { useUpdatePageHero } from "@/hooks/mutations/media-library";
+import { useImageFramings } from "@/hooks/queries/image-framing";
+import { useSaveImageFraming } from "@/hooks/mutations/image-framing";
+import { framingStyle, type ImageFraming } from "@/lib/image-framing";
 import { HeroPickerModal } from "./HeroPickerModal";
+import { ImageFramingModal } from "./ImageFramingModal";
+
+/** Framing placement for page heroes. The page id (not the underlying
+ * site_settings key) addresses it, because that is what both this tab and the
+ * public `getPageHero(id)` readers already hold. */
+export const PAGE_HERO_FRAMING_ENTITY = "page_hero";
+export const PAGE_HERO_FRAMING_FIELD = "image";
 
 const PAGE_LABEL_KEYS = {
   home: "home",
@@ -19,9 +29,39 @@ const PAGE_LABEL_KEYS = {
 
 export function PageHeroesTab() {
   const t = useTranslations("Dashboard.mediaLibrary");
+  const tFraming = useTranslations("Dashboard.imageFraming");
   const heroesQuery = useAdminPageHeroes();
   const updateMutation = useUpdatePageHero();
+  const saveFraming = useSaveImageFraming();
   const [pickerForPageId, setPickerForPageId] = useState<string | null>(null);
+  const [framingForPageId, setFramingForPageId] = useState<string | null>(null);
+
+  const heroes = heroesQuery.data ?? [];
+  // One request for every hero on the tab, not one per card.
+  const framingsQuery = useImageFramings(
+    PAGE_HERO_FRAMING_ENTITY,
+    heroes.map((h) => h.id),
+    PAGE_HERO_FRAMING_FIELD,
+  );
+  const framingFor = (pageId: string): ImageFraming | undefined =>
+    framingsQuery.data?.[pageId]?.[PAGE_HERO_FRAMING_FIELD];
+
+  async function handleFramingApply(pageId: string, framing: ImageFraming | undefined) {
+    try {
+      await mutationToast(
+        () =>
+          saveFraming.mutateAsync({
+            entityType: PAGE_HERO_FRAMING_ENTITY,
+            entityId: pageId,
+            field: PAGE_HERO_FRAMING_FIELD,
+            framing,
+          }),
+        { loading: `${tFraming("title")}…`, success: t("heroes.updated") },
+      );
+    } catch {
+      // mutationToast already showed the error toast
+    }
+  }
 
   async function handlePick(pageId: string, storageKey: string) {
     try {
@@ -62,7 +102,7 @@ export function PageHeroesTab() {
               </div>
             </div>
           ))}
-        {(heroesQuery.data ?? []).map((page) => (
+        {heroes.map((page) => (
           <div
             key={page.id}
             className="overflow-hidden rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)]"
@@ -70,7 +110,13 @@ export function PageHeroesTab() {
             <div className="relative aspect-[16/9] w-full bg-[var(--tott-dash-surface-inset)]">
               {page.url ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={page.url} alt="" loading="lazy" className="h-full w-full object-cover" />
+                <img
+                  src={page.url}
+                  alt=""
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                  style={framingStyle(framingFor(page.id))}
+                />
               ) : (
                 <div className="flex h-full items-center justify-center text-sm text-[var(--tott-muted)]">
                   {t("heroes.noHero")}
@@ -92,6 +138,19 @@ export function PageHeroesTab() {
                 >
                   {t("heroes.replace")}
                 </button>
+                {page.url ? (
+                  <button
+                    type="button"
+                    onClick={() => setFramingForPageId(page.id)}
+                    className={`rounded-lg border px-3 py-1.5 text-sm font-medium ${
+                      framingFor(page.id)
+                        ? "border-[var(--tott-accent-gold)] text-[var(--tott-accent-gold)]"
+                        : "border-[var(--tott-card-border)] text-foreground"
+                    }`}
+                  >
+                    {tFraming("adjust")}
+                  </button>
+                ) : null}
                 {page.storageKey ? (
                   <button
                     type="button"
@@ -120,6 +179,16 @@ export function PageHeroesTab() {
         onClose={() => setPickerForPageId(null)}
         onPick={(key) => {
           if (pickerForPageId) handlePick(pickerForPageId, key);
+        }}
+      />
+      <ImageFramingModal
+        open={framingForPageId !== null}
+        src={heroes.find((h) => h.id === framingForPageId)?.url ?? ""}
+        framing={framingForPageId ? framingFor(framingForPageId) : undefined}
+        aspect="16/9"
+        onClose={() => setFramingForPageId(null)}
+        onApply={(framing) => {
+          if (framingForPageId) handleFramingApply(framingForPageId, framing);
         }}
       />
     </div>

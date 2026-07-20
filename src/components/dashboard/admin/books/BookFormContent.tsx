@@ -20,6 +20,7 @@ import {
   translationKeys,
 } from "@/hooks/queries/translations";
 import { routing } from "@/i18n/routing";
+import { usePrimaryLanguage } from "@/i18n/use-primary-language";
 import { formatApiError } from "@/lib/api/error-message";
 import { BookChaptersPanel } from "./BookChaptersPanel";
 import { LinkBookTranslationPicker } from "./LinkBookTranslationPicker";
@@ -308,13 +309,16 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
   const currentUser = useAuthUser();
   const isTranslation = !isEdit && Boolean(translationOf);
 
-  const initialLanguage = (
-    BOOK_LANGS.includes((createLanguage ?? "") as (typeof BOOK_LANGS)[number])
-      ? createLanguage
-      : ""
-  ) as FormState["language"];
-  // The tab strip only covers the 4 site locales — "de" is a valid book
-  // language but has no translation-group tab (no admin UI locale for it).
+  // "de" is a valid book language with no admin UI locale (no translation-group
+  // tab for it), so it can only come from an explicit ?language= deep link —
+  // never from the CMS locale fallback below.
+  const explicitBookLanguage = BOOK_LANGS.includes(
+    (createLanguage ?? "") as (typeof BOOK_LANGS)[number],
+  )
+    ? (createLanguage as FormState["language"])
+    : undefined;
+  const cmsLocale = usePrimaryLanguage();
+  const initialLanguage = (explicitBookLanguage ?? cmsLocale) as FormState["language"];
   const initialLang = initialLanguage || "en";
 
   const bookQuery = useBook(bookId);

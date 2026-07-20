@@ -8,6 +8,8 @@ import { AtriumManifesto } from "@/components/content/hub/AtriumManifesto";
 import { AtriumGateways } from "@/components/content/hub/AtriumGateways";
 import { AtriumCuratedStrip } from "@/components/content/hub/AtriumCuratedStrip";
 import { AtriumNewsletter } from "@/components/content/hub/AtriumNewsletter";
+import { getFramingsServer } from "@/services/image-framing.service";
+import { ARTICLE_COVER_FRAMING } from "@/lib/framing-placements";
 import {
   GATEWAY_TYPES,
   normalizeContentType,
@@ -112,7 +114,19 @@ async function fetchAtriumData(locale: string): Promise<AtriumData> {
     viewer_lang: locale,
   });
   const rows = raw?.data ?? [];
-  const items = rows.map(toAtriumItem);
+  const mapped = rows.map(toAtriumItem);
+
+  // One framing request for every row on the page — the hero, the gateway
+  // peeks and the curated strip all read from this same list.
+  const framings = await getFramingsServer(
+    ARTICLE_COVER_FRAMING.entity,
+    mapped.map((it) => it.id),
+    ARTICLE_COVER_FRAMING.field,
+  );
+  const items = mapped.map((it) => {
+    const coverFraming = framings[it.id]?.[ARTICLE_COVER_FRAMING.field];
+    return coverFraming ? { ...it, coverFraming } : it;
+  });
 
   // Hero: the first published row (the API returns newest/curated first).
   const hero: HeroData = items[0] ?? null;

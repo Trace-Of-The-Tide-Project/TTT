@@ -12,6 +12,7 @@ import { StaggerItem } from "@/components/motion/StaggerItem";
 import { GatewayIcon } from "./atrium-icons";
 import { safeImage } from "./atrium-image";
 import { formatDuration, type AtriumItem, type GatewayData, type GatewayType } from "./atrium-types";
+import { framingStyle } from "@/lib/image-framing";
 
 /** gold = written/editorial spine; tide = media/ambient rooms. */
 const ACCENT_BY_TYPE: Record<GatewayType, string> = {
@@ -188,6 +189,7 @@ function PeekItem({ item, accent }: { item: AtriumItem; accent: string }) {
               fill
               sizes="144px"
               className="object-cover"
+              style={framingStyle(item.coverFraming)}
               unoptimized={cover.unoptimized}
             />
           ) : (

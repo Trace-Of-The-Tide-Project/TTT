@@ -114,6 +114,23 @@
           "writingRoom": "Sala de escritura"
         }
       }
+    },
+    "imageFraming": {
+      "adjust": "Ajustar",
+      "title": "Ajustar imagen",
+      "dragHint": "Arrastra la imagen para recolocarla y luego ajusta el zoom.",
+      "rotatedHint": "Las imágenes giradas un cuarto de vuelta se muestran enteras dentro del marco. Amplía para rellenarlo.",
+      "zoom": "Zoom",
+      "fit": "Encaje",
+      "fill": "Rellenar marco",
+      "contain": "Mostrar imagen completa",
+      "flipH": "Voltear horizontal",
+      "flipV": "Voltear vertical",
+      "rotate": "Girar",
+      "reset": "Restablecer",
+      "apply": "Aplicar",
+      "cancel": "Cancelar",
+      "saved": "Encuadre guardado"
     }
   }
 }

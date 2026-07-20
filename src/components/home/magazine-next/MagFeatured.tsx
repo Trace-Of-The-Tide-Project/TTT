@@ -40,6 +40,7 @@ export async function MagFeatured({
             <MagImage
               src={coverSrc(lead.coverImage)}
               alt={lead.title}
+              framing={lead.coverFraming}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
@@ -82,6 +83,7 @@ export async function MagFeatured({
                     <MagImage
                       src={coverSrc(a.coverImage)}
                       alt={a.title}
+                      framing={a.coverFraming}
                       fill
                       sizes="112px"
                       className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"

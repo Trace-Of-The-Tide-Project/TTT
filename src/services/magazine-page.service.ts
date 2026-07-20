@@ -18,6 +18,7 @@ import {
   type CmsSection,
 } from "./cms.service";
 import { routing } from "@/i18n/routing";
+import { clampFraming, type ImageFraming } from "@/lib/image-framing";
 
 export const MAGAZINE_PAGE_SLUG = "magazine";
 
@@ -76,6 +77,8 @@ export type HeroLocaleFields = {
 export type HeroConfig = {
   copy: Localized<HeroLocaleFields>;
   artwork?: string;
+  /** How `artwork` sits in the hero frame. Undefined = default framing. */
+  artworkFraming?: ImageFraming;
   primaryHref?: string;
   secondaryHref?: string;
   /** Per-section text scale (1 = current sizes). */
@@ -131,6 +134,8 @@ export type FounderQuoteLocaleFields = {
 export type FounderQuoteConfig = {
   copy: Localized<FounderQuoteLocaleFields>;
   avatar?: string;
+  /** How `avatar` sits in its circular frame. Undefined = default framing. */
+  avatarFraming?: ImageFraming;
   /** Per-section text scale (1 = current sizes). */
   fontScale?: number;
 };
@@ -254,6 +259,16 @@ function readFontScale(cfg: Record<string, unknown> | null): number | undefined 
   return typeof n === "number" && Number.isFinite(n) ? clampFontScale(n) : undefined;
 }
 
+/** Read an image-framing object out of raw config, if present and valid.
+ * These parsers rebuild config key-by-key, so a framing key that is not read
+ * here is silently dropped the next time the editor saves. */
+function readFraming(
+  cfg: Record<string, unknown> | null,
+  key: string,
+): ImageFraming | undefined {
+  return cfg ? clampFraming(cfg[key]) : undefined;
+}
+
 export function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
   const cfg = unwrapConfig(section);
   if (!cfg) return EMPTY_HERO_CONFIG;
@@ -266,6 +281,7 @@ export function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
   return {
     copy,
     artwork: typeof cfg.artwork === "string" ? cfg.artwork : undefined,
+    artworkFraming: readFraming(cfg, "artworkFraming"),
     primaryHref:
       typeof cfg.primaryHref === "string" ? cfg.primaryHref : undefined,
     secondaryHref:
@@ -338,6 +354,7 @@ export function parseFounderConfig(
   return {
     copy: base.copy,
     avatar: typeof cfg.avatar === "string" ? cfg.avatar : undefined,
+    avatarFraming: readFraming(cfg, "avatarFraming"),
     fontScale: readFontScale(cfg),
   };
 }

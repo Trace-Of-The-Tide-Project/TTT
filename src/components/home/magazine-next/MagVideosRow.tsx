@@ -35,6 +35,7 @@ export async function MagVideosRow({ videos }: { videos: ArticleCard[] }) {
                 <MagImage
                   src={coverSrc(v.coverImage)}
                   alt={v.title}
+                  framing={v.coverFraming}
                   fill
                   sizes="320px"
                   className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"

@@ -108,6 +108,7 @@ export async function MagVoices({
                       // Decorative: the name below is the link's accessible
                       // name; alt here would announce every writer twice.
                       alt=""
+                      framing={w.avatarFraming}
                       fill
                       sizes={
                         lead

@@ -16,18 +16,26 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { formatApiError } from "@/lib/api/error-message";
-import { EyeIcon, RefreshCwIcon } from "@/components/ui/icons";
-import { MagazineHero } from "@/components/home/magazine/MagazineHero";
-import { MagazineManifesto } from "@/components/home/magazine/MagazineManifesto";
-import { MagazineEditorialBoard } from "@/components/home/magazine/MagazineEditorialBoard";
+import { CloudUploadIcon, EyeIcon, RefreshCwIcon } from "@/components/ui/icons";
 import { MagazineNewsletter } from "@/components/home/magazine/MagazineNewsletter";
 import { MagazineSupport } from "@/components/home/magazine/MagazineSupport";
+// Previews render the SAME components the live /magazine page uses
+// (magazine-next), so what an editor sees is what ships.
+import { MagHeroClient } from "@/components/home/magazine-next/MagHeroClient";
+import { MagOpeningLine } from "@/components/home/magazine-next/MagOpeningLine";
+import { MagQuoteBreak } from "@/components/home/magazine-next/MagQuoteBreak";
+import { MagFounderNote } from "@/components/home/magazine-next/MagFounderNote";
+import { heroCta, stripHtml } from "@/components/home/magazine-next/ui";
 import {
   RichTextEditor,
   EditorToolbar as RichTextToolbar,
   EditorRegistryProvider,
 } from "@/components/ui/rich-text";
 import { LocaleTabs } from "@/components/dashboard/admin/translations";
+import { HeroPickerModal } from "@/components/dashboard/admin/media-library/HeroPickerModal";
+import { ImageFramingModal } from "@/components/dashboard/admin/media-library/ImageFramingModal";
+import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+import type { ImageFraming } from "@/lib/image-framing";
 import { useEnsureMagazinePage } from "@/hooks/queries/cms";
 import { usePublishCmsPage, useToggleCmsSection, useUpdateCmsSection } from "@/hooks/mutations/cms";
 import {
@@ -288,6 +296,7 @@ type EditorProps = {
 
 function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.hero");
+  const tHero = useTranslations("MagazineNext.hero");
 
   const {
     draft,
@@ -316,8 +325,6 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
-        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
-        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
 
       <EditorRegistryProvider>
@@ -326,6 +333,9 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
         </div>
         <FormCard>
           <div className="space-y-6">
+            <div className="rounded-lg border border-dashed border-[var(--tott-status-amber)]/50 bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-[var(--tott-muted)]">
+              {t("issueWinsNote")}
+            </div>
             <FieldGroup label={t("perLocaleHeading")}>
               <Field label={t("fields.headline")}>
                 <TextInput
@@ -362,16 +372,20 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
             </FieldGroup>
 
             <FieldGroup label={t("sharedHeading")}>
-              <Field label={t("fields.artworkUrl")}>
-                <TextInput
-                  value={draft.artwork ?? ""}
-                  onChange={(v) => setSharedField("artwork", v)}
-                  placeholder="/images/home/magazine-thumbnail.svg"
-                />
-                <p className="mt-1 text-xs text-[var(--tott-muted)]">
-                  {t("fields.artworkUrlHint")}
-                </p>
-              </Field>
+              <ImageUrlField
+                label={t("fields.artworkUrl")}
+                value={draft.artwork ?? ""}
+                onChange={(v) => setSharedField("artwork", v)}
+                placeholder="/images/home/magazine-thumbnail.svg"
+                hint={t("fields.artworkUrlHint")}
+                framing={draft.artworkFraming}
+                onFramingChange={(f) =>
+                  setDraft((prev) => ({ ...prev, artworkFraming: f }))
+                }
+                // The hero is full-bleed; 16/9 is the closest honest stand-in
+                // for a viewport-height banner on a desktop screen.
+                frameAspect="16/9"
+              />
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label={t("fields.primaryHref")}>
                   <TextInput
@@ -393,16 +407,20 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
         </FormCard>
       </EditorRegistryProvider>
 
+      {/* The live hero renders this CMS copy only in the no-issue state (a
+          published issue's own title/subtitle wins), so the preview
+          reproduces that state exactly — same components, same heroCta
+          pairing rule, so a button shown here is a button that ships. */}
       <PreviewFrame locale={activeLocale}>
-        <MagazineHero
-          fontScale={draft.fontScale}
-          artwork={draft.artwork || undefined}
-          title={localeFields.title}
-          subtitle={localeFields.subtitle}
-          primaryCtaLabel={localeFields.primaryCtaLabel}
-          secondaryCtaLabel={localeFields.secondaryCtaLabel}
-          primaryHref={draft.primaryHref || "/magazine#magazine-content"}
-          secondaryHref={draft.secondaryHref || "/magazine#newsletter-heading"}
+        <MagHeroClient
+          eyebrow={tHero("brandLead")}
+          title={localeFields.title?.trim() || tHero("brandStatement")}
+          subtitle={stripHtml(localeFields.subtitle) || null}
+          coverImage={draft.artwork || "/images/image.png"}
+          coverAlt={tHero("brandCoverAlt")}
+          coverFraming={draft.artworkFraming}
+          primary={heroCta(localeFields.primaryCtaLabel, draft.primaryHref)}
+          secondary={heroCta(localeFields.secondaryCtaLabel, draft.secondaryHref)}
         />
       </PreviewFrame>
     </>
@@ -415,6 +433,101 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">{label}</label>
       {children}
     </div>
+  );
+}
+
+/**
+ * Image URL field with a Media Library picker beside it. The picker
+ * (HeroPickerModal) already carries both a library tab and an upload tab, so
+ * an admin never has to leave the editor to paste a URL by hand — the field
+ * stays editable for external URLs. `onPick` hands back a storage key, which
+ * resolveArticleMediaSrc turns into the public URL the page will render.
+ */
+function ImageUrlField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  hint,
+  framing,
+  onFramingChange,
+  frameAspect = "16/9",
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  hint?: string;
+  /** Framing controls appear only when `onFramingChange` is supplied, so
+   * fields that have nowhere to store framing are unaffected. */
+  framing?: ImageFraming;
+  onFramingChange?: (f: ImageFraming | undefined) => void;
+  /** Aspect ratio of the live frame, so the adjust preview is honest. */
+  frameAspect?: string;
+}) {
+  const tMedia = useTranslations("Dashboard.mediaLibrary.heroes");
+  const tFraming = useTranslations("Dashboard.imageFraming");
+  // null = closed; otherwise the tab the modal opens on, so "Upload" lands on
+  // the upload tab instead of making admins hunt for it behind the library.
+  const [picker, setPicker] = useState<"library" | "upload" | null>(null);
+  const [framingOpen, setFramingOpen] = useState(false);
+
+  // A crop tuned for one photo is meaningless on another, so swapping the
+  // image drops its framing rather than silently re-applying it.
+  const changeImage = (next: string) => {
+    if (next !== value) onFramingChange?.(undefined);
+    onChange(next);
+  };
+
+  const buttonClass =
+    "shrink-0 whitespace-nowrap rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] px-3 py-2 text-xs font-semibold text-foreground transition-colors hover:border-[var(--tott-accent-gold)]/60 hover:text-[var(--tott-accent-gold)]";
+
+  return (
+    <Field label={label}>
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="min-w-[12rem] flex-1">
+          <TextInput type="url" value={value} onChange={changeImage} placeholder={placeholder} />
+        </div>
+        <button type="button" onClick={() => setPicker("library")} className={buttonClass}>
+          {tMedia("pickFromLibrary")}
+        </button>
+        <button
+          type="button"
+          onClick={() => setPicker("upload")}
+          className={`${buttonClass} inline-flex items-center gap-1.5 [&_svg]:h-3.5 [&_svg]:w-3.5`}
+        >
+          <CloudUploadIcon />
+          {tMedia("uploadNew")}
+        </button>
+        {onFramingChange && value ? (
+          <button
+            type="button"
+            onClick={() => setFramingOpen(true)}
+            className={framing ? `${buttonClass} !border-[var(--tott-accent-gold)] !text-[var(--tott-accent-gold)]` : buttonClass}
+          >
+            {tFraming("adjust")}
+          </button>
+        ) : null}
+      </div>
+      {hint ? <p className="mt-1 text-xs text-[var(--tott-muted)]">{hint}</p> : null}
+      <HeroPickerModal
+        open={picker !== null}
+        initialMode={picker ?? "library"}
+        onClose={() => setPicker(null)}
+        title={label}
+        onPick={(storageKey) => changeImage(resolveArticleMediaSrc(storageKey))}
+      />
+      {onFramingChange ? (
+        <ImageFramingModal
+          open={framingOpen}
+          src={value}
+          framing={framing}
+          aspect={frameAspect}
+          onClose={() => setFramingOpen(false)}
+          onApply={onFramingChange}
+        />
+      ) : null}
+    </Field>
   );
 }
 
@@ -675,15 +788,26 @@ function PreviewFrame({ locale, children }: { locale: MagazineLocale; children: 
         </span>
       </div>
 
+      {/* The whole mockup is dir="ltr", including under an Arabic admin UI.
+          The scaled box is a fixed 1392px wide inside a frame of width W < 1392.
+          An RTL parent aligns that box's RIGHT edge to the frame and lets it
+          overflow leftward; `transform-origin: top left` then scales it about
+          that off-frame edge, leaving only (2W - 1392) of the preview visible
+          with a dead gutter on the right. Keeping the frame LTR makes the box
+          start at x=0 so `scale(W/1392)` maps it exactly onto the frame.
+          Locale direction is applied to the previewed content instead — see
+          the inner wrapper below. It also keeps the browser chrome (traffic
+          lights, then the URL) looking like a real browser in both UI locales. */}
       <div
         ref={frameRef}
+        dir="ltr"
         className="w-full overflow-hidden rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] shadow-lg"
       >
         <div className="flex items-center gap-1.5 border-b border-[var(--tott-card-border)] bg-[var(--tott-elevated)] px-3 py-2">
           <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#28C840]/70" />
-          <span className="ml-3 truncate rounded bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[10px] font-mono text-[var(--tott-muted)]">
+          <span className="ms-3 truncate rounded bg-[var(--tott-dash-input-bg)] px-2 py-0.5 text-[10px] font-mono text-[var(--tott-muted)]">
             /magazine
           </span>
         </div>
@@ -698,7 +822,6 @@ function PreviewFrame({ locale, children }: { locale: MagazineLocale; children: 
           <div
             ref={contentRef}
             aria-hidden
-            dir={RTL_LOCALES.has(locale) ? "rtl" : "ltr"}
             style={{
               width: PREVIEW_DESIGN_WIDTH,
               transform: `scale(${scale})`,
@@ -706,7 +829,9 @@ function PreviewFrame({ locale, children }: { locale: MagazineLocale; children: 
               userSelect: "none",
             }}
           >
-            {children}
+            {/* Direction of the previewed page itself — the locale being
+                edited, not the admin's own UI locale. */}
+            <div dir={RTL_LOCALES.has(locale) ? "rtl" : "ltr"}>{children}</div>
           </div>
           {/* Click shield — sits above the scaled component and
               swallows every click/tap/focus, so links and buttons
@@ -867,8 +992,6 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
-        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
-        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
 
       <EditorRegistryProvider>
@@ -877,6 +1000,9 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
         </div>
         <FormCard>
           <div className="space-y-6">
+            <div className="rounded-lg border border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-[var(--tott-muted)]">
+              {t("renderedFieldsNote")}
+            </div>
             <FieldGroup label={tShared("perLocaleHeading")}>
               <Field label={t("fields.philosophyHeading")}>
                 <TextInput
@@ -935,14 +1061,12 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
             </FieldGroup>
 
             <FieldGroup label={tShared("sharedHeading")}>
-              <Field label={t("fields.bannerUrl")}>
-                <TextInput
-                  type="url"
-                  value={draft.banner ?? ""}
-                  onChange={(v) => setDraft((prev) => ({ ...prev, banner: v || undefined }))}
-                  placeholder="/images/home/hero-silk.png"
-                />
-              </Field>
+              <ImageUrlField
+                label={t("fields.bannerUrl")}
+                value={draft.banner ?? ""}
+                onChange={(v) => setDraft((prev) => ({ ...prev, banner: v || undefined }))}
+                placeholder="/images/home/hero-silk.png"
+              />
               <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
                 <input
                   type="checkbox"
@@ -963,21 +1087,13 @@ function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: Edit
         </FormCard>
       </EditorRegistryProvider>
 
+      {/* The live page splits this section in two beats: the mission body
+          opens the page, and the closing/philosophy/vision quotes cycle in
+          the quote break further down. Headings, banner, and alignment are
+          not rendered by either. */}
       <PreviewFrame locale={activeLocale}>
-        <MagazineManifesto
-          fontScale={draft.fontScale}
-          textAlign={draft.textAlign}
-          philosophyHeadingOverride={localeFields.philosophyHeading}
-          philosophyQuoteOverride={localeFields.philosophyQuote}
-          visionHeadingOverride={localeFields.visionHeading}
-          visionBodyOverride={localeFields.visionBody}
-          missionHeadingOverride={localeFields.missionHeading}
-          missionBodyOverride={localeFields.missionBody}
-          valuesHeadingOverride={localeFields.valuesHeading}
-          closingQuoteOverride={localeFields.closingQuote}
-          bannerOverride={draft.banner}
-          bannerHidden={draft.bannerHidden}
-        />
+        <MagOpeningLine copy={localeFields} />
+        <MagQuoteBreak copy={localeFields} locale={activeLocale} />
       </PreviewFrame>
     </>
   );
@@ -1012,8 +1128,6 @@ function FounderQuoteEditor({ section, onSave, isSaving, registerDraftState }: E
         isSaving={isSaving}
         onReset={reset}
         onSave={() => onSave(JSON.stringify(draft))}
-        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
-        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
       />
 
       <EditorRegistryProvider>
@@ -1048,27 +1162,28 @@ function FounderQuoteEditor({ section, onSave, isSaving, registerDraftState }: E
             </FieldGroup>
 
             <FieldGroup label={t("sharedHeading")}>
-              <Field label={t("fields.avatarUrl")}>
-                <TextInput
-                  type="url"
-                  value={draft.avatar ?? ""}
-                  onChange={(v) => setDraft((prev) => ({ ...prev, avatar: v || undefined }))}
-                />
-              </Field>
+              <ImageUrlField
+                label={t("fields.avatarUrl")}
+                value={draft.avatar ?? ""}
+                onChange={(v) => setDraft((prev) => ({ ...prev, avatar: v || undefined }))}
+                framing={draft.avatarFraming}
+                onFramingChange={(f) =>
+                  setDraft((prev) => ({ ...prev, avatarFraming: f }))
+                }
+                // The founder avatar renders in a circle.
+                frameAspect="1/1"
+              />
             </FieldGroup>
           </div>
         </FormCard>
       </EditorRegistryProvider>
 
       <PreviewFrame locale={activeLocale}>
-        <MagazineEditorialBoard
-          fontScale={draft.fontScale}
-          lessReadArticles={[]}
-          writers={[]}
-          founder={{
-            quote: localeFields.quote ?? "",
-            name: localeFields.name ?? "",
-          }}
+        <MagFounderNote
+          founder={localeFields}
+          avatar={draft.avatar}
+          avatarFraming={draft.avatarFraming}
+          locale={activeLocale}
         />
       </PreviewFrame>
     </>

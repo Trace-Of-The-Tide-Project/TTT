@@ -114,6 +114,23 @@
           "writingRoom": "Salle d'écriture"
         }
       }
+    },
+    "imageFraming": {
+      "adjust": "Ajuster",
+      "title": "Ajuster l'image",
+      "dragHint": "Faites glisser l'image pour la repositionner, puis ajustez le zoom.",
+      "rotatedHint": "Les images pivotées d'un quart de tour s'affichent entières dans le cadre. Zoomez pour le remplir.",
+      "zoom": "Zoom",
+      "fit": "Cadrage",
+      "fill": "Remplir le cadre",
+      "contain": "Afficher l'image entière",
+      "flipH": "Miroir horizontal",
+      "flipV": "Miroir vertical",
+      "rotate": "Pivoter",
+      "reset": "Réinitialiser",
+      "apply": "Appliquer",
+      "cancel": "Annuler",
+      "saved": "Cadrage enregistré"
     }
   }
 }

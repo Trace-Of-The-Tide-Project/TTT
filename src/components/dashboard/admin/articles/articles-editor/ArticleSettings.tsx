@@ -7,6 +7,8 @@ import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import type { AdminTagItem } from "@/services/admin-tags.service";
 import { useAdminTags } from "@/hooks/queries/admin-tags";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+import { ARTICLE_COVER_FRAMING } from "@/lib/framing-placements";
+import { AdjustImageButton } from "@/components/dashboard/admin/media-library/AdjustImageButton";
 import { TranslationOfPicker } from "./TranslationOfPicker";
 import { WriterPicker } from "@/components/dashboard/admin/writers/WriterPicker";
 import { UserPicker } from "@/components/dashboard/admin/writers/UserPicker";
@@ -310,6 +312,16 @@ export function ContentSettings({
                 {t("cover.remove")}
               </button>
             ) : null}
+            {/* excludeId is this article's own id — present only once the
+                article is saved, which is exactly when framing can attach. */}
+            <AdjustImageButton
+              entityType={ARTICLE_COVER_FRAMING.entity}
+              entityId={excludeId}
+              field={ARTICLE_COVER_FRAMING.field}
+              src={coverImage}
+              aspect="16/10"
+              className="shrink-0 rounded-[7.5px] border border-[var(--tott-card-border)] px-3 py-2.5 text-sm text-[var(--tott-muted)] transition-colors hover:text-foreground"
+            />
           </div>
         </div>
 

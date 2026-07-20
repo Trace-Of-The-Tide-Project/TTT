@@ -426,6 +426,7 @@
         "sharedHeading": "Shared (all locales)",
         "perLocaleHeading": "Per-locale content",
         "previewHeading": "Live preview",
+        "issueWinsNote": "This copy only appears while no issue is published. Once an issue is live, the hero shows that issue's own title, subtitle, cover, and links instead. Each button needs both its label and its link filled in — set only one and the button is hidden.",
         "fields": {
           "headline": "Headline",
           "headlinePlaceholder": "Stories shaping modern culture.",
@@ -444,6 +445,7 @@
       "manifesto": {
         "title": "Manifesto",
         "subtitle": "Philosophy, vision, mission, values, and closing quote.",
+        "renderedFieldsNote": "The live page uses this section for two beats: the mission body opens the page, and the closing quote, philosophy quote, and vision body cycle in the quote break further down. The headings, banner, and alignment below are not rendered.",
         "fields": {
           "philosophyHeading": "Philosophy heading",
           "philosophyQuote": "Philosophy quote",

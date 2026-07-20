@@ -17,6 +17,7 @@ import {
   translationKeys,
 } from "@/hooks/queries/translations";
 import { routing } from "@/i18n/routing";
+import { usePrimaryLanguage } from "@/i18n/use-primary-language";
 import { formatApiError } from "@/lib/api/error-message";
 import {
   createCollection,
@@ -150,7 +151,7 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
 
   const groupQuery = useTranslationGroup("collection", collectionId);
 
-  const initialLang = (createLanguage || "en").trim() || "en";
+  const initialLang = usePrimaryLanguage(createLanguage);
   const [activeLang, setActiveLang] = useState(initialLang);
   const [primaryLang, setPrimaryLang] = useState(initialLang);
   const [forms, setForms] = useState<Record<string, FormState>>(() => ({

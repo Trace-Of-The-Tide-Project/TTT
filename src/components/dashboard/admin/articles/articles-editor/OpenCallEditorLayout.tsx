@@ -16,6 +16,7 @@ import { EditorRegistryProvider } from "./lib/editor-registry";
 import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
 import { routing } from "@/i18n/routing";
+import { usePrimaryLanguage } from "@/i18n/use-primary-language";
 import { ScheduleArticleModal } from "./modals/ScheduleArticleModal";
 import { buildOpenCallContentBlocksAndMainMedia } from "./lib/build-open-call-payload";
 import { buildArticleBlocksFromEditor, InvalidEmbedError } from "./lib/build-api-blocks";
@@ -141,7 +142,7 @@ export function OpenCallEditorLayout({
 
   const config = openCallConfig;
 
-  const primaryLang = apiLanguage(initialLanguage ?? "en");
+  const primaryLang = apiLanguage(usePrimaryLanguage(initialLanguage));
   // Multi-language authoring (Pattern 2, see WriterFormContent): one LangForm
   // per opened locale. A locale absent from `forms` has never been opened;
   // opening it clones the primary tab. `dirty` tracks which tabs the admin

@@ -13,6 +13,7 @@ import { StaggerItem } from "@/components/motion/StaggerItem";
 import { GatewayIcon } from "./atrium-icons";
 import { safeImage } from "./atrium-image";
 import { formatDuration, type AtriumItem } from "./atrium-types";
+import { framingStyle } from "@/lib/image-framing";
 
 type AtriumCuratedStripProps = {
   items: AtriumItem[];
@@ -98,6 +99,7 @@ function LeadCard({ item }: { item: AtriumItem }) {
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
+                style={framingStyle(item.coverFraming)}
                 unoptimized={cover.unoptimized}
               />
             ) : (
@@ -155,6 +157,7 @@ function CuratedCard({ item }: { item: AtriumItem }) {
                   fill
                   sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                   className="object-cover"
+                  style={framingStyle(item.coverFraming)}
                   unoptimized={cover.unoptimized}
                 />
               ) : (

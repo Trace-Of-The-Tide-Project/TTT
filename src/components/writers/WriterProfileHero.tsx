@@ -13,6 +13,7 @@ import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 import { FollowButton } from "@/components/writers/FollowButton";
 import type { WriterDetailView } from "@/components/writers/WriterDetailContent";
+import { framingStyle } from "@/lib/image-framing";
 
 /** Editorial type system — Plex Serif for the display moments (name + quote),
  * Plex Sans for everything utilitarian. Mirrors WritersShowContent. */
@@ -120,6 +121,7 @@ export function WriterProfileHero({ writer }: { writer: WriterDetailView }) {
                   // 502s on these); load directly.
                   unoptimized
                   className="select-none object-cover"
+                  style={framingStyle(writer.avatarFraming)}
                   draggable={false}
                 />
               ) : (

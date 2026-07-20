@@ -426,6 +426,7 @@
         "sharedHeading": "Compartido (todos los idiomas)",
         "perLocaleHeading": "Contenido por idioma",
         "previewHeading": "Vista previa en vivo",
+        "issueWinsNote": "Este texto solo aparece mientras no haya ningún número publicado. Cuando un número esté activo, el hero mostrará su propio título, subtítulo, portada y enlaces en su lugar. Cada botón necesita su etiqueta y su enlace: si solo rellenas uno, el botón queda oculto.",
         "fields": {
           "headline": "Titular",
           "headlinePlaceholder": "Historias que dan forma a la cultura moderna.",
@@ -444,6 +445,7 @@
       "manifesto": {
         "title": "Manifiesto",
         "subtitle": "Filosofía, visión, misión, valores y cita de cierre.",
+        "renderedFieldsNote": "La página en vivo usa esta sección en dos momentos: el cuerpo de la misión abre la página, y la cita de cierre, la cita de filosofía y el cuerpo de la visión se alternan en el intermedio de citas más abajo. Los títulos, el banner y la alineación de abajo no se muestran.",
         "fields": {
           "philosophyHeading": "Título — Filosofía",
           "philosophyQuote": "Cita — Filosofía",

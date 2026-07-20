@@ -114,6 +114,23 @@
           "writingRoom": "Writing Room"
         }
       }
+    },
+    "imageFraming": {
+      "adjust": "Adjust",
+      "title": "Adjust image",
+      "dragHint": "Drag the image to reposition it, then zoom to taste.",
+      "rotatedHint": "Quarter-turned images are shown whole inside the frame. Zoom in to fill it.",
+      "zoom": "Zoom",
+      "fit": "Fit",
+      "fill": "Fill frame",
+      "contain": "Show whole image",
+      "flipH": "Flip horizontal",
+      "flipV": "Flip vertical",
+      "rotate": "Rotate",
+      "reset": "Reset",
+      "apply": "Apply",
+      "cancel": "Cancel",
+      "saved": "Framing saved"
     }
   }
 }

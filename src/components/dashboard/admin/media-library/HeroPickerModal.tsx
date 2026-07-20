@@ -6,8 +6,9 @@ import { useTranslations } from "next-intl";
 import { Modal } from "@/components/ui/Modal";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { CloudUploadIcon } from "@/components/ui/icons";
+import { useQueryClient } from "@tanstack/react-query";
 import { AssetGrid } from "./AssetGrid";
-import { useMediaAssets } from "@/hooks/queries/media-library";
+import { mediaLibraryKeys, useMediaAssets } from "@/hooks/queries/media-library";
 import {
   uploadToMediaLibrary,
   type MediaAsset,
@@ -22,12 +23,27 @@ export interface HeroPickerModalProps {
   title?: string;
   /** Restricts the library tab to images only. Defaults to true. */
   images_only?: boolean;
+  /** Tab to land on each time the modal opens. Defaults to the library. Let
+   * a caller with its own "Upload" button open straight onto the upload tab. */
+  initialMode?: PickerMode;
 }
+
+type PickerMode = "library" | "upload";
 
 export function HeroPickerModal(props: HeroPickerModalProps) {
   const t = useTranslations("Dashboard.mediaLibrary");
-  const [mode, setMode] = useState<"library" | "upload">("library");
+  const initialMode = props.initialMode ?? "library";
+  const [mode, setMode] = useState<PickerMode>(initialMode);
   const imagesOnly = props.images_only ?? true;
+
+  // The modal stays mounted while closed, so without this it would reopen on
+  // whichever tab was last used and ignore the button the admin just clicked.
+  // Adjusting during render (not in an effect) per the codebase's React 19 rule.
+  const [prevOpen, setPrevOpen] = useState(props.open);
+  if (prevOpen !== props.open) {
+    setPrevOpen(props.open);
+    if (props.open) setMode(initialMode);
+  }
 
   const handlePick = (storageKey: string) => {
     props.onPick(storageKey);
@@ -92,6 +108,7 @@ function UploadPicker({
   accept?: string;
 }) {
   const t = useTranslations("Dashboard.mediaLibrary");
+  const queryClient = useQueryClient();
   const [uploading, setUploading] = useState(false);
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -101,6 +118,10 @@ function UploadPicker({
     setUploading(true);
     try {
       const asset = await uploadToMediaLibrary(file);
+      // The upload goes straight through the service, so nothing else
+      // refreshes the cached asset lists — without this the file just
+      // uploaded is missing from the library tab and the Media Library page.
+      queryClient.invalidateQueries({ queryKey: mediaLibraryKeys.all });
       onPick(asset.storage_key);
     } catch {
       toast.error(t("upload.failed"));

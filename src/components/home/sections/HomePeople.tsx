@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { theme } from "@/lib/theme";
 import type { HomePerson } from "@/lib/home/fetch-home-data";
 import { HomeSectionShell } from "./HomeSectionShell";
+import { framingStyle } from "@/lib/image-framing";
 
 function year(iso: string | null): string | null {
   if (!iso) return null;
@@ -67,6 +68,7 @@ export function HomePeople({
                       alt={person.name}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                      style={framingStyle(person.framing)}
                       sizes="(min-width: 1024px) 16vw, 40vw"
                       loading="lazy"
                       unoptimized
