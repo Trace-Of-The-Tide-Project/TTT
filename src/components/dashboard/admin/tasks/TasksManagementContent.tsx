@@ -23,6 +23,7 @@ const emptyMeta: TasksListMeta = { total: 0, page: 1, limit: PAGE_LIMIT, totalPa
 
 export function TasksManagementContent() {
   const t = useTranslations("Dashboard.tasks.management");
+  const tTask = useTranslations("Dashboard.tasks");
 
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -114,7 +115,7 @@ export function TasksManagementContent() {
         header: t("headers.status"),
         width: "16%",
         cellClassName: "px-5 py-3 flex items-center",
-        cell: (task) => <StatusBadge status={task.status} label={t(`status.${task.status}`)} />,
+        cell: (task) => <StatusBadge status={task.status} label={tTask(`status.${task.status}`)} />,
       },
       {
         key: "priority",
@@ -122,7 +123,7 @@ export function TasksManagementContent() {
         width: "12%",
         cellClassName: "px-5 py-3 flex items-center",
         cell: (task) => (
-          <PriorityBadge priority={task.priority} label={t(`priority.${task.priority}`)} />
+          <PriorityBadge priority={task.priority} label={tTask(`priority.${task.priority}`)} />
         ),
       },
       {
@@ -195,7 +196,7 @@ export function TasksManagementContent() {
           <option value="">{t("filters.allStatuses")}</option>
           {STATUSES.map((s) => (
             <option key={s} value={s}>
-              {t(`status.${s}`)}
+              {tTask(`status.${s}`)}
             </option>
           ))}
         </select>
@@ -207,7 +208,7 @@ export function TasksManagementContent() {
           <option value="">{t("filters.allPriorities")}</option>
           {PRIORITIES.map((p) => (
             <option key={p} value={p}>
-              {t(`priority.${p}`)}
+              {tTask(`priority.${p}`)}
             </option>
           ))}
         </select>

@@ -52,6 +52,7 @@ type Props = { taskId?: string };
 
 export function TaskFormContent({ taskId }: Props) {
   const t = useTranslations("Dashboard.tasks.form");
+  const tTask = useTranslations("Dashboard.tasks");
   const router = useRouter();
   const isEdit = Boolean(taskId);
 
@@ -191,7 +192,7 @@ export function TaskFormContent({ taskId }: Props) {
               <select className={inputClass} value={form.priority} onChange={set("priority")}>
                 {PRIORITIES.map((p) => (
                   <option key={p} value={p}>
-                    {t(`priority.${p}`)}
+                    {tTask(`priority.${p}`)}
                   </option>
                 ))}
               </select>
@@ -207,7 +208,7 @@ export function TaskFormContent({ taskId }: Props) {
               <select className={inputClass} value={form.status} onChange={set("status")}>
                 {STATUSES.map((s) => (
                   <option key={s} value={s}>
-                    {t(`status.${s}`)}
+                    {tTask(`status.${s}`)}
                   </option>
                 ))}
               </select>

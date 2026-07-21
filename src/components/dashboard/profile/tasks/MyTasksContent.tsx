@@ -26,6 +26,7 @@ const NEXT_STATUS: Partial<Record<TaskStatus, TaskStatus[]>> = {
 
 export function MyTasksContent() {
   const t = useTranslations("Dashboard.tasks.myTasks");
+  const tTask = useTranslations("Dashboard.tasks");
   const [filter, setFilter] = useState<TaskStatus | "all">("all");
   const [page, setPage] = useState(1);
 
@@ -94,7 +95,7 @@ export function MyTasksContent() {
         width: "12%",
         cellClassName: "px-5 py-3 flex items-center",
         cell: (task) => (
-          <PriorityBadge priority={task.priority} label={t(`priority.${task.priority}`)} />
+          <PriorityBadge priority={task.priority} label={tTask(`priority.${task.priority}`)} />
         ),
       },
       {
@@ -109,7 +110,7 @@ export function MyTasksContent() {
         header: t("headers.status"),
         width: "14%",
         cellClassName: "px-5 py-3 flex items-center",
-        cell: (task) => <StatusBadge status={task.status} label={t(`status.${task.status}`)} />,
+        cell: (task) => <StatusBadge status={task.status} label={tTask(`status.${task.status}`)} />,
       },
       {
         key: "actions",
@@ -154,10 +155,10 @@ export function MyTasksContent() {
         }}
         options={[
           { id: "all", label: t("filters.all") },
-          { id: "pending", label: t("status.pending") },
-          { id: "in_progress", label: t("status.in_progress") },
-          { id: "completed", label: t("status.completed") },
-          { id: "cancelled", label: t("status.cancelled") },
+          { id: "pending", label: tTask("status.pending") },
+          { id: "in_progress", label: tTask("status.in_progress") },
+          { id: "completed", label: tTask("status.completed") },
+          { id: "cancelled", label: tTask("status.cancelled") },
         ]}
       />
 
