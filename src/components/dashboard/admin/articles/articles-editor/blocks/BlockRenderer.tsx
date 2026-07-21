@@ -7,10 +7,17 @@ import type { ContentFormConfig, MainMediaEditorCopy } from "../content-form-con
 import { theme } from "@/lib/theme";
 import type { ContentBlock } from "../ContentBlocks";
 import type { BlockType } from "../AvailableBlocks";
-import { SelectedFileRow, SUPPORTED_FILE_ACCEPT, SUPPORTED_FILE_LABEL } from "./BlockFileUpload";
+import {
+  SelectedFileRow,
+  SUPPORTED_FILE_ACCEPT,
+  SUPPORTED_FILE_LABEL,
+  useObjectUrl,
+} from "./BlockFileUpload";
 import { HeroPickerModal } from "@/components/dashboard/admin/media-library/HeroPickerModal";
+import { ImageFramingModal } from "@/components/dashboard/admin/media-library/ImageFramingModal";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { parseEmbedUrl } from "@/lib/content/embed-providers";
+import { framingStyle } from "@/lib/image-framing";
 
 const fieldShell =
   "w-full rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]";
@@ -48,6 +55,8 @@ export function BlockRenderer({
 }: BlockRendererProps) {
   const l = { ...DEFAULT_LABELS, ...labels };
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [framingOpen, setFramingOpen] = useState(false);
+  const filePreviewUrl = useObjectUrl(block.type === "image" ? (block.file ?? null) : null);
   switch (block.type) {
     case "paragraph":
       return (
@@ -220,7 +229,7 @@ export function BlockRenderer({
               className="hidden"
               onChange={(e) => {
                 const f = e.target.files?.[0];
-                if (f) onChange({ file: f, imageUrl: "" });
+                if (f) onChange({ file: f, imageUrl: "", imageFraming: undefined });
                 e.target.value = "";
               }}
             />
@@ -240,10 +249,58 @@ export function BlockRenderer({
                 onClose={() => setLibraryOpen(false)}
                 title="Choose image"
                 onPick={(storageKey) =>
-                  onChange({ imageUrl: resolveArticleMediaSrc(storageKey), file: null })
+                  onChange({
+                    imageUrl: resolveArticleMediaSrc(storageKey),
+                    file: null,
+                    imageFraming: undefined,
+                  })
                 }
               />
             </>
+          ) : null}
+          {block.type === "image" && (filePreviewUrl || block.imageUrl) ? (
+            <div className="space-y-2">
+              <div
+                className="relative w-full overflow-hidden rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)]"
+                style={{ aspectRatio: "16/9" }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element -- transient editor preview */}
+                <img
+                  src={filePreviewUrl ?? block.imageUrl}
+                  alt=""
+                  className="h-full w-full"
+                  style={framingStyle(block.imageFraming)}
+                />
+              </div>
+              {block.imageUrl ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setFramingOpen(true)}
+                    className={
+                      block.imageFraming
+                        ? "text-sm font-medium underline !text-[var(--tott-accent-gold)]"
+                        : "text-sm font-medium underline"
+                    }
+                    style={{ color: "var(--tott-accent-gold)" }}
+                  >
+                    Adjust image
+                  </button>
+                  <ImageFramingModal
+                    open={framingOpen}
+                    src={block.imageUrl}
+                    framing={block.imageFraming}
+                    aspect="16/9"
+                    onClose={() => setFramingOpen(false)}
+                    onApply={(framing) => onChange({ imageFraming: framing })}
+                  />
+                </>
+              ) : (
+                <p className="text-xs text-[var(--tott-muted)]">
+                  Adjust becomes available after this image is picked from the library or the article is saved.
+                </p>
+              )}
+            </div>
           ) : null}
           {isCoverImageBlock ? (
             <div>

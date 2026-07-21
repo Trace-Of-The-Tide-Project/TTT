@@ -1,5 +1,6 @@
 import type { ArticleDetailBlock } from "@/services/articles.service";
 import type { ContentBlock } from "../ContentBlocks";
+import { clampFraming } from "@/lib/image-framing";
 
 function parseMetadataObject(raw: ArticleDetailBlock["metadata"]): Record<string, unknown> | null {
   if (raw == null) return null;
@@ -58,6 +59,7 @@ export function articleDetailBlocksToContentBlocks(blocks: ArticleDetailBlock[])
           type: editorType,
           imageUrl: url || undefined,
           ...(caption ? { imageCaption: caption } : {}),
+          ...(editorType === "image" ? { imageFraming: clampFraming(obj?.framing) } : {}),
           dir: parseDir(obj),
         });
         break;

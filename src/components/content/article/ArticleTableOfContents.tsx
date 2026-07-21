@@ -82,7 +82,7 @@ export function ArticleTableOfContents({
     <nav aria-label={title}>
       {/* Desktop: sticky panel */}
       <div
-        className="hidden rounded-2xl border p-5 lg:block"
+        className="hidden rounded-2xl border p-5 md:block"
         style={{ borderColor: theme.cardBorder, backgroundColor: theme.homeSurface }}
       >
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--tott-muted)]">
@@ -92,7 +92,7 @@ export function ArticleTableOfContents({
       </div>
       {/* Mobile: collapsed */}
       <details
-        className="rounded-2xl border p-4 lg:hidden"
+        className="rounded-2xl border p-4 md:hidden"
         style={{ borderColor: theme.cardBorder, backgroundColor: theme.homeSurface }}
       >
         <summary className="cursor-pointer text-xs font-semibold uppercase tracking-wide text-[var(--tott-muted)]">

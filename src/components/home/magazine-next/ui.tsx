@@ -54,7 +54,11 @@ export function initial(name: string | null | undefined): string {
   return (name ?? "").trim().charAt(0).toUpperCase() || "•";
 }
 
-/** Reader link for an article by id (matches the public reader route). */
-export function articleHref(id: string): string {
-  return "/content/article?id=" + encodeURIComponent(id);
+/**
+ * Reader link for a magazine-next article. Magazine-product articles must
+ * route through /magazine/articles/[slug] — the main-site /content/article
+ * reader rejects them as a product mismatch ("not found").
+ */
+export function articleHref(id: string, slug?: string | null): string {
+  return slug ? `/magazine/articles/${encodeURIComponent(slug)}` : "/content/article?id=" + encodeURIComponent(id);
 }

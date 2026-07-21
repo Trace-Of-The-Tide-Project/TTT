@@ -27,7 +27,7 @@ export function formatFileSize(bytes: number): string {
 
 const fileRowGlyphClass = "h-5 w-5 shrink-0 text-[var(--tott-muted)]";
 
-function useObjectUrl(file: File | null): string | null {
+export function useObjectUrl(file: File | null): string | null {
   const [url, setUrl] = useState<string | null>(null);
 
   useEffect(() => {

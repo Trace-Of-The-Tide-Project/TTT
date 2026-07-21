@@ -89,13 +89,38 @@ function parseContributionUploadResponse(data: unknown): ContributionUploadAsset
   return mimeType ? { storageKey, mimeType } : { storageKey };
 }
 
-/** Single POST /upload used by article editor and contribution form (same multipart field as articles). */
+/** Single POST /upload used by the (authenticated) article editor. */
 async function postUploadFile(file: File): Promise<unknown> {
   const formData = new FormData();
   formData.append("file", file);
 
   const { data } = await api.post<unknown>("/upload", formData, {
     // Large media (book PDFs, video) needs far more than the 20s default.
+    timeout: 600_000,
+    transformRequest: [
+      (body, headers) => {
+        if (body instanceof FormData) {
+          delete headers["Content-Type"];
+        }
+        return body;
+      },
+    ],
+  });
+
+  return data;
+}
+
+/**
+ * POST /contributions/upload — guest-accessible file upload (no JWT required, unlike
+ * /upload which is JwtAuthGuard-only). Used by the public contribute form so logged-out
+ * visitors can attach files; capped at 20MB per file (contribution limit, not the 500MB
+ * general /upload limit).
+ */
+async function postContributionUploadFile(file: File): Promise<unknown> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const { data } = await api.post<unknown>("/contributions/upload", formData, {
     timeout: 600_000,
     transformRequest: [
       (body, headers) => {
@@ -158,12 +183,12 @@ export async function uploadArticleAssetKeyAndUrl(
 }
 
 /**
- * Same POST /upload as {@link uploadArticleAsset}; returns the **storage key** (`data.path`) for
+ * POST /contributions/upload (guest-accessible). Returns the **storage key** (`data.path`) for
  * contribution multipart `files` filenames (not the signed URL — avoids backend "invalid query"),
  * plus optional `mimeType` from the envelope. Display URLs match articles via signed `url` when present.
  */
 export async function uploadFileForContribution(file: File): Promise<ContributionUploadAsset> {
-  const data = await postUploadFile(file);
+  const data = await postContributionUploadFile(file);
   const parsed = parseContributionUploadResponse(data);
   if (parsed) return parsed;
   throw new Error("Upload response did not include a path or URL.");

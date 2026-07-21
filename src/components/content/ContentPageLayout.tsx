@@ -14,6 +14,7 @@ import { ContentContributors } from "./sidebar/ContentContributors";
 import { ContentCollection } from "./sidebar/ContentCollection";
 import { RelatedContent } from "./related/RelatedContent";
 import { ReadingProgressBar } from "./article/ReadingProgressBar";
+import { FinishedReadingBadge } from "./article/FinishedReadingBadge";
 import {
   ArticleTableOfContents,
   tocEntriesFromSections,
@@ -99,7 +100,7 @@ export function ContentPageLayout({
   const isAudio = media.type === "audio";
   const tocEntries = tocEntriesFromSections(article.sections);
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden" style={{ backgroundColor: theme.homeSurface }}>
+    <div className="relative min-h-screen w-full" style={{ backgroundColor: theme.homeSurface }}>
       <ReadingProgressBar />
       {isAudio && media.thumbnail ? (
         /* Audio hero band — a full-bleed blurred cover image behind the
@@ -180,7 +181,7 @@ export function ContentPageLayout({
 
       {/* Two-column: article body + sidebar */}
       <div className="mx-auto max-w-7xl px-6 pb-8 pt-8 sm:px-10 sm:pb-10 sm:pt-8">
-        <div className="flex flex-col gap-10 lg:flex-row lg:gap-8">
+        <div className="flex flex-col gap-10 md:flex-row md:gap-8">
           {/* Left — article body. dir/lang follow the CONTENT language, which
               can differ from the UI locale (e.g. Arabic piece on English UI). */}
           <div
@@ -189,6 +190,7 @@ export function ContentPageLayout({
             lang={article.language}
           >
             <ContentArticleBody sections={article.sections} />
+            <div id="article-body-end" aria-hidden className="h-px" />
             {isOpenCall && (openCallId || articleId) && (
               <SpringLink
                 href={`/open-calls/${openCallId || articleId}`}
@@ -205,9 +207,12 @@ export function ContentPageLayout({
           </div>
 
           {/* Right — sidebar */}
-          <aside className="flex w-full shrink-0 flex-col gap-6 lg:sticky lg:top-6 lg:w-[24rem] lg:self-start">
+          <aside className="flex w-full shrink-0 flex-col gap-6 md:w-[24rem]">
             {tocEntries.length >= 2 ? (
-              <ArticleTableOfContents entries={tocEntries} title="On this page" />
+              <div className="md:sticky md:top-6">
+                <ArticleTableOfContents entries={tocEntries} title="On this page" />
+                <FinishedReadingBadge />
+              </div>
             ) : null}
             <div
               className="rounded-2xl border border-[var(--tott-card-border)] p-5"
