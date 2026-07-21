@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { CMS_TABS, type CmsTabId } from "./cms-tabs-config";
 import { HomePageTab, StaticPagesTab, NavigationsFooterTab, BrandingTab } from "./tabs";
+import { useVisualEditorTab } from "./VisualEditorTabContext";
 
 function TabContent({ activeTab }: { activeTab: CmsTabId }) {
   switch (activeTab) {
@@ -21,7 +21,7 @@ function TabContent({ activeTab }: { activeTab: CmsTabId }) {
 
 export function VisualEditorContent() {
   const t = useTranslations("Dashboard.cmsEditor");
-  const [activeTab, setActiveTab] = useState<CmsTabId>("home");
+  const { activeTab, setActiveTab } = useVisualEditorTab();
 
   return (
     <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">

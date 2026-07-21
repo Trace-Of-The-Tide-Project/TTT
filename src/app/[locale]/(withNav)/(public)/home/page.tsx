@@ -4,9 +4,11 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { serverGet } from "@/lib/api/isomorphic-fetch";
+import { isCmsPreviewAuthorized } from "@/lib/auth/cms-preview-gate";
 import type { CmsPage } from "@/services/cms.service";
 import { HOME_PAGE_SLUG } from "@/services/home-page.service";
 import { HomePage } from "@/components/home/HomePage";
+import { CmsPreviewBridge } from "@/components/cms-preview/CmsPreviewBridge";
 import { SITE_URL } from "@/lib/constants";
 
 export async function generateMetadata({
@@ -77,10 +79,13 @@ const JSON_LD = {
 
 export default async function Home({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ cmsPreview?: string }>;
 }) {
   const { locale } = await params;
+  const { cmsPreview } = await searchParams;
 
   // CMS framing for the rebuilt homepage's `home_next_*` sections. Failure
   // tolerant — serverGet returns null when the page hasn't been seeded yet,
@@ -93,16 +98,31 @@ export default async function Home({
       ? (pageRaw as { data: CmsPage }).data
       : (pageRaw as CmsPage | null);
 
+  // `?cmsPreview=1` requests the live-draft render used by the admin CMS
+  // editor's inline iframe preview. The flag alone grants nothing: it only
+  // ever engages after `isCmsPreviewAuthorized()` verifies (against the
+  // backend, not a client-trusted cookie) that the caller is a logged-in
+  // admin — see src/lib/auth/cms-preview-gate.ts for the full chain. Every
+  // other visitor, and every non-preview request, renders exactly as before.
+  const wantsPreview = cmsPreview === "1";
+  const previewAuthorized = wantsPreview && (await isCmsPreviewAuthorized());
+
+  const body = previewAuthorized ? (
+    <CmsPreviewBridge serverPage={page}>
+      {(draftOrServerPage) => <HomePage page={draftOrServerPage} locale={locale} />}
+    </CmsPreviewBridge>
+  ) : (
+    <HomePage page={page} locale={locale} />
+  );
+
+  const jsonLd = JSON.stringify(JSON_LD).replace(/</g, "\\u003c");
+
   return (
     <>
-      {/* Static, fully server-controlled JSON (no user input) — safe to inline. */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(JSON_LD).replace(/</g, "\\u003c"),
-        }}
-      />
-      <HomePage page={page} locale={locale} />
+      {/* Static, fully server-controlled JSON (no user input, not from the
+          CMS draft above) — safe to inline without an HTML sanitizer. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+      {body}
     </>
   );
 }

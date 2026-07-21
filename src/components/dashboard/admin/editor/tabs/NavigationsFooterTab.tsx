@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { GripVerticalIcon, PlusIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
 import { useCmsSettings } from "@/hooks/queries/cms";
 import { useUpdateCmsSetting } from "@/hooks/mutations/cms";
+import { CmsPreviewFrame } from "@/components/dashboard/admin/editor/preview/CmsPreviewFrame";
 
 type NavLink = { id: string; text: string; path: string; enabled: boolean };
 
@@ -50,6 +51,7 @@ function SaveButton({ state, onSave }: { state: SaveState; onSave: () => void })
 
 export function NavigationsFooterTab() {
   const t = useTranslations("Dashboard.cmsNav");
+  const locale = useLocale();
   const [navLinks, setNavLinks] = useState<NavLink[]>([]);
   const [footerText, setFooterText] = useState("");
   const [twitter, setTwitter] = useState("");
@@ -159,8 +161,16 @@ export function NavigationsFooterTab() {
     );
   };
 
+  // Draft posted into the preview iframe's NavbarDynamic bridge — only
+  // enabled nav links, matching how the public Navbar consumes cmsNavLinks.
+  const navDraft = {
+    links: navLinks
+      .filter((l) => l.enabled)
+      .map((l) => ({ id: l.id, text: l.text, path: l.path, enabled: l.enabled })),
+  };
+
   return (
-    <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2" role="region" aria-label={t("regionLabel")}>
+    <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-3" role="region" aria-label={t("regionLabel")}>
       {/* Header Navigation */}
       <div
         className="isolate min-w-0 overflow-visible rounded-xl border border-[var(--tott-card-border)] p-6"
@@ -256,6 +266,19 @@ export function NavigationsFooterTab() {
           </div>
         </div>
         <SaveButton state={footerSave} onSave={handleSaveFooter} />
+      </div>
+
+      {/* Live preview — the homepage navbar, fed the in-progress nav links
+          via the same postMessage channel, so a renamed/reordered link
+          shows up in the navbar without saving first. */}
+      <div className="min-w-0">
+        <CmsPreviewFrame
+          src={`/${locale}/home?cmsPreview=1`}
+          locale={locale}
+          urlLabel={`/${locale}/home`}
+          draft={navDraft}
+          messageType="tott:cms-nav-preview"
+        />
       </div>
     </div>
   );

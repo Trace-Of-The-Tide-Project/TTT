@@ -23,7 +23,10 @@
         "title": "Éditeur CMS / Visuel",
         "subtitle": "Modifiez l'interface, les sections de la page d'accueil et les pages statiques.",
         "preview": "Aperçu",
-        "publishChanges": "Publier les modifications"
+        "publishChanges": "Publier les modifications",
+        "publishing": "Publication…",
+        "published": "Publié !",
+        "publishError": "Erreur"
       },
       "engagements": {
         "title": "Engagement",

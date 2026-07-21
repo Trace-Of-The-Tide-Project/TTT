@@ -23,7 +23,10 @@
         "title": "CMS / المحرر المرئي",
         "subtitle": "تعديل واجهة المنصة وأقسام الصفحة الرئيسية والصفحات الثابتة.",
         "preview": "معاينة",
-        "publishChanges": "نشر التغييرات"
+        "publishChanges": "نشر التغييرات",
+        "publishing": "جارٍ النشر…",
+        "published": "تم النشر!",
+        "publishError": "خطأ"
       },
       "engagements": {
         "title": "التفاعل",

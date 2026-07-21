@@ -67,7 +67,10 @@ function AvatarBadge({
   );
 }
 
-export function Navbar({ cmsNavLinks }: { cmsNavLinks?: CmsNavLink[] | null } = {}) {
+export function Navbar({
+  cmsNavLinks,
+  logoUrl,
+}: { cmsNavLinks?: CmsNavLink[] | null; logoUrl?: string | null } = {}) {
   const t = useTranslations("Navbar");
   const router = useRouter();
   const pathname = usePathname();
@@ -193,23 +196,30 @@ export function Navbar({ cmsNavLinks }: { cmsNavLinks?: CmsNavLink[] | null } = 
             aria-label={t("brand")}
           >
             {/* Wordmark rendered as a CSS mask so its color tracks the theme
-                via --tott-logo (gold on light/dark, deep sea on the sand tide). */}
-            <span
-              role="img"
-              aria-hidden
-              className="block h-8 w-[3.1rem]"
-              style={{
-                backgroundColor: "var(--tott-logo)",
-                maskImage: "url(/images/tott-wordmark-gold.svg)",
-                WebkitMaskImage: "url(/images/tott-wordmark-gold.svg)",
-                maskRepeat: "no-repeat",
-                WebkitMaskRepeat: "no-repeat",
-                maskPosition: "center",
-                WebkitMaskPosition: "center",
-                maskSize: "contain",
-                WebkitMaskSize: "contain",
-              }}
-            />
+                via --tott-logo (gold on light/dark, deep sea on the sand tide).
+                Admin-uploaded logo (CMS Branding tab) replaces it with a plain
+                image when present — the bundled mask asset is the fallback. */}
+            {logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- arbitrary uploaded/preview URL, not worth remotePatterns config
+              <img src={logoUrl} alt="" aria-hidden className="block h-8 w-auto max-w-[6rem] object-contain" />
+            ) : (
+              <span
+                role="img"
+                aria-hidden
+                className="block h-8 w-[3.1rem]"
+                style={{
+                  backgroundColor: "var(--tott-logo)",
+                  maskImage: "url(/images/tott-wordmark-gold.svg)",
+                  WebkitMaskImage: "url(/images/tott-wordmark-gold.svg)",
+                  maskRepeat: "no-repeat",
+                  WebkitMaskRepeat: "no-repeat",
+                  maskPosition: "center",
+                  WebkitMaskPosition: "center",
+                  maskSize: "contain",
+                  WebkitMaskSize: "contain",
+                }}
+              />
+            )}
           </Link>
           {desktopNavLinks}
         </div>
