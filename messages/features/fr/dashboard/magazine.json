@@ -386,6 +386,25 @@
           "editor": "Éditeur",
           "reviewer": "Relecteur"
         }
+      },
+      "sections": {
+        "label": "Départements / Sections",
+        "loading": "Chargement…",
+        "empty": "Aucune section pour l'instant.",
+        "add": "Ajouter une section",
+        "adding": "Ajout…",
+        "namePlaceholder": "Nom de la section (p. ex. Essais)",
+        "remove": "Supprimer",
+        "moveUp": "Monter",
+        "moveDown": "Descendre",
+        "visible": "Visible",
+        "hidden": "Masquée",
+        "layout": {
+          "label": "Disposition",
+          "list": "Liste",
+          "grid": "Grille",
+          "feature": "Mise en avant"
+        }
       }
     },
     "magazinePageEditor": {

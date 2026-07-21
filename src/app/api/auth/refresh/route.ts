@@ -27,7 +27,14 @@ export async function POST() {
     body: { refreshToken },
   });
 
-  if (!result.ok || result.status >= 400) {
+  if (!result.ok) {
+    // Backend unreachable or returned garbage — transient, not proof the
+    // session is dead. Leave cookies intact so the next attempt can recover
+    // instead of logging an idle user out over a network blip.
+    return NextResponse.json({ user: null }, { status: 503 });
+  }
+
+  if (result.status >= 400) {
     const res = NextResponse.json({ user: null }, { status: 401 });
     clearSessionCookies(res);
     return res;

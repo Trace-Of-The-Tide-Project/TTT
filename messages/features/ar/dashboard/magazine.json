@@ -386,6 +386,25 @@
           "editor": "محرر",
           "reviewer": "مراجع"
         }
+      },
+      "sections": {
+        "label": "الأقسام",
+        "loading": "جارٍ التحميل…",
+        "empty": "لا أقسام بعد.",
+        "add": "إضافة قسم",
+        "adding": "جارٍ الإضافة…",
+        "namePlaceholder": "اسم القسم (مثل: مقالات)",
+        "remove": "إزالة",
+        "moveUp": "تحريك لأعلى",
+        "moveDown": "تحريك لأسفل",
+        "visible": "ظاهر",
+        "hidden": "مخفي",
+        "layout": {
+          "label": "التخطيط",
+          "list": "قائمة",
+          "grid": "شبكة",
+          "feature": "مميز"
+        }
       }
     },
     "magazinePageEditor": {

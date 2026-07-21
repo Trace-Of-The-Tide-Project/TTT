@@ -46,7 +46,12 @@
         "people": "Personas del archivo",
         "trips": "Viajes patrimoniales",
         "bookClub": "Club de lectura",
-        "contributeCta": "Contribuir"
+        "contributeCta": "Contribuir",
+        "heroNext": "Portada (nueva página de inicio)",
+        "pillars": "Pilares",
+        "archiveFeed": "Flujo del archivo",
+        "voices": "Voces",
+        "editions": "Ediciones"
       }
     }
   }

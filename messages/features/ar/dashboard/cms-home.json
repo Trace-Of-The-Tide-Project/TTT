@@ -46,7 +46,12 @@
         "people": "شخصيات الأرشيف",
         "trips": "رحلات التراث",
         "bookClub": "نادي الكتاب",
-        "contributeCta": "المساهمة"
+        "contributeCta": "المساهمة",
+        "heroNext": "الواجهة الرئيسية (الجديدة)",
+        "pillars": "الركائز",
+        "archiveFeed": "تغذية الأرشيف",
+        "voices": "الأصوات",
+        "editions": "الإصدارات"
       }
     }
   }

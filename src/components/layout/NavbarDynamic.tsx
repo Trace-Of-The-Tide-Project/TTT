@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import type { CmsNavLink } from "@/lib/nav/cms-nav-links";
 
 function NavbarFallback() {
   // Must match the real Navbar's layout mode: it renders an ABSOLUTE header
@@ -19,6 +20,6 @@ const Navbar = dynamic(
   { ssr: false, loading: () => <NavbarFallback /> },
 );
 
-export function NavbarDynamic() {
-  return <Navbar />;
+export function NavbarDynamic({ cmsNavLinks }: { cmsNavLinks?: CmsNavLink[] | null }) {
+  return <Navbar cmsNavLinks={cmsNavLinks} />;
 }

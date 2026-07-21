@@ -78,6 +78,19 @@ const SECTION_SCHEMA: Record<
     ],
     flat: [{ key: "openCallId", labelKey: "fields.openCallId", kind: "text" }],
   },
+  // The Sessions 0–6 homepage rebuild's sections (components/home/HomePage.tsx).
+  heroNext: {
+    localized: [
+      { key: "eyebrow", labelKey: "fields.eyebrow", kind: "text" },
+      { key: "title", labelKey: "fields.title", kind: "text" },
+      { key: "subtitle", labelKey: "fields.missionSubtitle", kind: "textarea" },
+    ],
+    flat: [],
+  },
+  pillars: { localized: RAIL_FIELDS, flat: [] },
+  archiveFeed: { localized: RAIL_FIELDS, flat: [] },
+  voices: { localized: RAIL_FIELDS, flat: [] },
+  editions: { localized: RAIL_FIELDS, flat: [] },
 };
 
 // ── Config helpers ─────────────────────────────────────────────────

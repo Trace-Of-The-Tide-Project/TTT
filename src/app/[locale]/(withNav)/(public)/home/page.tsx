@@ -3,6 +3,9 @@
 // Coming Soon page lives on as the shared `@/components/ui/ComingSoon`.
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { serverGet } from "@/lib/api/isomorphic-fetch";
+import type { CmsPage } from "@/services/cms.service";
+import { HOME_PAGE_SLUG } from "@/services/home-page.service";
 import { HomePage } from "@/components/home/HomePage";
 import { SITE_URL } from "@/lib/constants";
 
@@ -72,16 +75,34 @@ const JSON_LD = {
   ],
 };
 
-export default function Home() {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+
+  // CMS framing for the rebuilt homepage's `home_next_*` sections. Failure
+  // tolerant — serverGet returns null when the page hasn't been seeded yet,
+  // and HomePage falls back to its seed order in that case.
+  const pageRaw = await serverGet<CmsPage | { data: CmsPage }>(
+    `/cms/pages/slug/${HOME_PAGE_SLUG}`,
+  );
+  const page =
+    pageRaw && typeof pageRaw === "object" && "data" in pageRaw
+      ? (pageRaw as { data: CmsPage }).data
+      : (pageRaw as CmsPage | null);
+
   return (
     <>
+      {/* Static, fully server-controlled JSON (no user input) — safe to inline. */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(JSON_LD).replace(/</g, "\\u003c"),
         }}
       />
-      <HomePage />
+      <HomePage page={page} locale={locale} />
     </>
   );
 }

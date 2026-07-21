@@ -103,7 +103,10 @@ type ArchiveItem = {
 const KICKER_CLASS =
   "block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--tott-gold-muted)]";
 
-export async function ArchiveFeed() {
+/** CMS override copy for this section — falls back to i18n when absent. */
+export type RailCopyOverride = { heading?: string; subheading?: string };
+
+export async function ArchiveFeed({ copy }: { copy?: RailCopyOverride } = {}) {
   const [locale, t] = await Promise.all([
     getLocale(),
     getTranslations("HomeNext"),
@@ -135,8 +138,8 @@ export async function ArchiveFeed() {
     <SectionShell
       id="archive"
       eyebrow={t("archive.eyebrow")}
-      title={t("archive.title")}
-      standfirst={t("archive.standfirst")}
+      title={copy?.heading || t("archive.title")}
+      standfirst={copy?.subheading || t("archive.standfirst")}
     >
       <div className="space-y-14">
         {feat ? (

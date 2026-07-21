@@ -21,13 +21,16 @@ const GROUPS: readonly {
   { heading: "fieldsHeading", keys: ["harbour", "courtyard", "hill"] },
 ];
 
-export async function Pillars() {
+/** CMS override copy for this section — falls back to i18n when absent. */
+export type RailCopyOverride = { heading?: string; subheading?: string };
+
+export async function Pillars({ copy }: { copy?: RailCopyOverride } = {}) {
   const t = await getTranslations("HomeNext");
   return (
     <SectionShell
       id="pillars"
       eyebrow={t("pillars.eyebrow")}
-      title={t("pillars.title")}
+      title={copy?.heading || t("pillars.title")}
     >
       <div className="space-y-14">
         {GROUPS.map((group) => (
