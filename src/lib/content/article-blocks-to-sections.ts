@@ -1,5 +1,8 @@
 import type { ArticleDetailBlock } from "@/services/articles.service";
-import type { ContentArticleSection, ListItem } from "@/components/content/article/ContentArticleBody";
+import type {
+  ContentArticleSection,
+  ListItem,
+} from "@/components/content/article/ContentArticleBody";
 import { isLikelyAudioUrl, isLikelyVideoUrl } from "@/lib/content/media-url";
 import { parseEmbedUrl, embedSrc, embedAspect } from "@/lib/content/embed-providers";
 
@@ -34,12 +37,32 @@ function htmlToParagraphs(html: string): string[] {
     .replace(/<\/(p|div|h[1-6])>/gi, "\n")
     .split(/\n+/)
     .map((s) => s.trim())
+    .filter(Boolean)
+    .map((chunk) =>
+      // ContentArticleBody wraps every paragraph string in a `<p>`, so a chunk
+      // still carrying block-level list/quote markup would be invalid HTML and
+      // trip a React hydration mismatch. Lists authored at a block's start are
+      // tagged block_type "list" upstream and never reach here; only a stray
+      // mid-paragraph `<ul>`/`<blockquote>` hits this — flatten it to safe
+      // inline text (the readable plain-text behavior readers had before).
+      /<(ul|ol|blockquote|pre)\b/i.test(chunk) ? htmlToText(chunk) : chunk
+    )
     .filter(Boolean);
 }
 
 /** Single-line plain text from HTML — for headings/quotes/callouts. */
 function htmlToText(html: string): string {
-  return decodeEntities(html.replace(/<[^>]+>/g, "")).trim();
+  // Insert a boundary at every `<br>` and block-closing tag before stripping,
+  // then join with a space — otherwise text split across paragraphs/list items
+  // ("<p>World</p><p>Peace</p>") fuses into "WorldPeace".
+  const spaced = html
+    .replace(/<\s*br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|h[1-6]|li|blockquote)>/gi, "\n");
+  return decodeEntities(spaced.replace(/<[^>]+>/g, ""))
+    .split(/\n+/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .join(" ");
 }
 
 /** API may return metadata as a JSON string or a parsed object. */
@@ -76,30 +99,66 @@ function parseBlockDir(b: ArticleDetailBlock): "ltr" | "rtl" | undefined {
   return dir === "rtl" || dir === "ltr" ? dir : undefined;
 }
 
+/**
+ * Returns the innerHTML of each *direct-child* `<li>` of the first list in
+ * `listHtml`, tracking `<ul>`/`<ol>` nesting depth so a sub-list's `<li>` never
+ * leak up as top-level siblings. A lazy `/<li>...<\/li>/` regex can't do this:
+ * it stops at the first (inner) `</li>` and shatters any nested list.
+ */
+function directListItemsHtml(listHtml: string): string[] {
+  const open = /<(ul|ol)\b[^>]*>/i.exec(listHtml);
+  if (!open) return [];
+  const items: string[] = [];
+  const token = /<(\/?)(ul|ol|li)\b[^>]*>/gi;
+  token.lastIndex = open.index + open[0].length;
+  let depth = 0; // nested-list depth below the outer list
+  let liStart = -1;
+  let m: RegExpExecArray | null = token.exec(listHtml);
+  while (m) {
+    const closing = m[1] === "/";
+    const tag = m[2].toLowerCase();
+    if (tag === "li") {
+      if (depth === 0) {
+        if (closing) {
+          if (liStart >= 0) {
+            items.push(listHtml.slice(liStart, m.index));
+            liStart = -1;
+          }
+        } else {
+          liStart = m.index + m[0].length;
+        }
+      }
+      // depth > 0: belongs to a nested list — skip.
+    } else if (closing) {
+      if (depth === 0) break; // outer list closed
+      depth--;
+    } else {
+      depth++;
+    }
+    m = token.exec(listHtml);
+  }
+  return items;
+}
+
 /** Parses a `<ul>`/`<ol>` HTML string into structured list items (one nesting level). */
 function parseListItems(html: string): { ordered: boolean; items: ListItem[] } {
   const ordered = /^\s*<ol\b/i.test(html);
   const items: ListItem[] = [];
-  const liPattern = /<li\b[^>]*>([\s\S]*?)<\/li>/gi;
-  let match = liPattern.exec(html);
-  while (match) {
-    const inner = match[1];
-    const nested = /<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/i.exec(inner);
+  for (const li of directListItemsHtml(html)) {
+    const nested = /<(ul|ol)\b[^>]*>[\s\S]*<\/\1>/i.exec(li);
     if (nested) {
-      const before = inner.slice(0, nested.index).trim();
-      const subItems: string[] = [];
-      const subPattern = /<li\b[^>]*>([\s\S]*?)<\/li>/gi;
-      let subMatch = subPattern.exec(nested[2]);
-      while (subMatch) {
-        subItems.push(subMatch[1].trim());
-        subMatch = subPattern.exec(nested[2]);
-      }
+      const before = li.slice(0, nested.index).trim();
+      const after = li.slice(nested.index + nested[0].length).trim();
+      const subItems = directListItemsHtml(nested[0])
+        .map((s) => s.trim())
+        .filter(Boolean);
       if (before) items.push(before);
       if (subItems.length) items.push({ items: subItems });
+      if (after) items.push(after);
     } else {
-      items.push(inner.trim());
+      const t = li.trim();
+      if (t) items.push(t);
     }
-    match = liPattern.exec(html);
   }
   return { ordered, items };
 }
@@ -274,8 +333,7 @@ export function articleBlocksToSections(
       pushParas();
       breakOpenHeading();
       const obj = parseMetadataObject(b.metadata);
-      const attribution =
-        obj && typeof obj.attribution === "string" ? obj.attribution.trim() : "";
+      const attribution = obj && typeof obj.attribution === "string" ? obj.attribution.trim() : "";
       const text = htmlToText(b.content ?? "");
       if (text) {
         sections.push({
@@ -328,9 +386,7 @@ export function articleBlocksToSections(
       pushParas();
       breakOpenHeading();
       const obj = parseMetadataObject(b.metadata);
-      const parsed = parseEmbedUrl(
-        (typeof obj?.url === "string" && obj.url) || b.content || ""
-      );
+      const parsed = parseEmbedUrl((typeof obj?.url === "string" && obj.url) || b.content || "");
       if (parsed) {
         sections.push({
           paragraphs: [],

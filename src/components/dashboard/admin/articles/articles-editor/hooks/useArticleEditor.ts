@@ -32,7 +32,7 @@ import type { WriterProfile } from "@/services/writers.service";
 import { useTranslations as useTranslationGroup } from "@/hooks/queries/translations";
 import type { LanguageTabStatus } from "@/components/dashboard/admin/translations/LanguageFormTabs";
 import { uploadArticleAssetPath } from "@/services/uploads.service";
-import { buildArticleBlocksFromEditor } from "../lib/build-api-blocks";
+import { buildArticleBlocksFromEditor, InvalidEmbedError } from "../lib/build-api-blocks";
 import { articleDetailBlocksToContentBlocks } from "../lib/api-blocks-to-content-blocks";
 import { editPatchFromPayload } from "../lib/edit-patch";
 import type { ArticleWorkflowStatus } from "../ArticleSettings";
@@ -564,7 +564,11 @@ export function useArticleEditor({
               meta_description: f.metaDescription.trim() || undefined,
             });
           }
-        } catch {
+        } catch (e) {
+          // A bad embed URL would silently discard this whole locale's edits —
+          // surface it and block the save. Other sibling failures (already
+          // exists, network) stay best-effort so they never block the primary.
+          if (e instanceof InvalidEmbedError) throw e;
           /* sibling may already exist or fail validation — primary stands */
         }
       }
