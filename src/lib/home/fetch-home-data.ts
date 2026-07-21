@@ -162,7 +162,7 @@ function mapArticle(a: Record<string, unknown>): HomeArticle {
     viewCount: num(a.view_count),
     authorName: authorName(a),
     isFeatured: a.is_featured === true,
-    href: previewHrefForContentType(str(a.content_type), id, str(a.slug), str(a.product)),
+    href: previewHrefForContentType(str(a.content_type) ?? undefined, id, str(a.slug), str(a.product)),
   };
 }
 
