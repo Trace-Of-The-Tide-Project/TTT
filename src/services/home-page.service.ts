@@ -47,6 +47,14 @@ export const HOME_SECTION_TYPES = {
   trips: "home_trips",
   bookClub: "home_book_club",
   contributeCta: "home_contribute_cta",
+  // The Sessions 0–6 homepage rebuild (components/home/HomePage.tsx). New
+  // prefix so these coexist with the legacy `home_*` rows above — the two
+  // renderers read disjoint section_type sets from the same CMS page.
+  heroNext: "home_next_hero",
+  pillars: "home_next_pillars",
+  archiveFeed: "home_next_archive_feed",
+  voices: "home_next_voices",
+  editions: "home_next_editions",
 } as const;
 
 export type HomeSectionKey = keyof typeof HOME_SECTION_TYPES;
@@ -132,6 +140,19 @@ export const SEED_SECTIONS: Array<{
   { key: "contributeCta", title: "Contribute", order: 9 },
 ];
 
+/** Seed order for the rebuilt homepage (components/home/HomePage.tsx). */
+export const HOME_NEXT_SEED_SECTIONS: Array<{
+  key: HomeSectionKey;
+  title: string;
+  order: number;
+}> = [
+  { key: "heroNext", title: "Hero", order: 1 },
+  { key: "pillars", title: "Pillars", order: 2 },
+  { key: "archiveFeed", title: "Archive Feed", order: 3 },
+  { key: "voices", title: "Voices", order: 4 },
+  { key: "editions", title: "Editions", order: 5 },
+];
+
 /**
  * Ensure the home CMS page + all seed sections exist. Idempotent: safe
  * to call on every admin mount. Mirrors `ensureMagazinePage`.
@@ -149,7 +170,8 @@ export async function ensureHomePage(): Promise<CmsPage> {
   }
 
   const existingTypes = new Set(page.sections.map((s) => s.section_type));
-  const missing = SEED_SECTIONS.filter(
+  const allSeeds = [...SEED_SECTIONS, ...HOME_NEXT_SEED_SECTIONS];
+  const missing = allSeeds.filter(
     (s) => !existingTypes.has(HOME_SECTION_TYPES[s.key]),
   );
 
@@ -192,6 +214,38 @@ function unwrapConfig(
     }
   }
   return raw as Record<string, unknown>;
+}
+
+/**
+ * Resolve render order + visibility for a set of `home_*` sections from the
+ * CMS page, restricted to `keys` (so the legacy renderer and the rebuild
+ * renderer each see only their own section_type family on one shared page).
+ * Falls back to seed order when the page or all of `keys` are absent, so a
+ * freshly-seeded or partial page never renders blank.
+ */
+export function resolveSectionOrder(
+  page: CmsPage | null | undefined,
+  seeds: ReadonlyArray<{ key: HomeSectionKey }>,
+): Array<{ key: HomeSectionKey; section: CmsSection | undefined }> {
+  const keySet = new Set(seeds.map((s) => s.key));
+  if (page) {
+    const known = page.sections
+      .filter((s) => {
+        const key = HOME_SECTION_KEY_BY_TYPE[s.section_type];
+        return key && keySet.has(key);
+      })
+      .sort((a, b) => a.section_order - b.section_order)
+      .map((s) => ({
+        key: HOME_SECTION_KEY_BY_TYPE[s.section_type]!,
+        section: s as CmsSection | undefined,
+      }));
+    const present = new Set(known.map((k) => k.key));
+    const missing = seeds
+      .filter((s) => !present.has(s.key))
+      .map((s) => ({ key: s.key, section: undefined as CmsSection | undefined }));
+    if (known.length > 0) return [...known, ...missing];
+  }
+  return seeds.map((s) => ({ key: s.key, section: undefined }));
 }
 
 export function findHomeSection(

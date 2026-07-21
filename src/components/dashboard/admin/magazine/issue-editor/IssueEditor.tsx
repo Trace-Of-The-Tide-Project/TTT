@@ -42,6 +42,7 @@ import type {
 } from "@/services/magazine-issues.service";
 import { IssueArticlesPanel } from "../IssueArticlesPanel";
 import { IssueContributorsPanel } from "../IssueContributorsPanel";
+import { IssueSectionsPanel } from "../IssueSectionsPanel";
 
 const KINDS = ["editorial", "crowdfunded"] as const;
 const STATUSES = ["published", "draft", "archived"] as const;
@@ -837,6 +838,7 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
           {/* Assignments — edit mode only */}
           {isEdit && item ? (
             <div className="space-y-4 border-t border-[var(--tott-card-border)] pt-6" dir="ltr">
+              <IssueSectionsPanel issueId={item.id} />
               <IssueArticlesPanel issueId={item.id} magazineId={item.magazine_id ?? null} />
               <IssueContributorsPanel issueId={item.id} />
             </div>

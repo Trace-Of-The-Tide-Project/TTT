@@ -31,6 +31,8 @@
       "management": "Management",
       "users": "Users",
       "rolesPermissions": "Roles & Permissions",
+      "tasks": "Tasks",
+      "myTasks": "My Tasks",
       "content": "Content",
       "contentLibrary": "Content Library",
       "mediaLibrary": "Media Library",
@@ -71,7 +73,8 @@
       "addPerson": "Add Person",
       "subscription": "Subscription",
       "subscriptions": "Subscriptions",
-      "collections": "Collections"
+      "collections": "Collections",
+      "tags": "Tags"
     },
     "systemSettings": {
       "tabs": {

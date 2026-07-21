@@ -1,0 +1,53 @@
+{
+  "Dashboard": {
+    "tags": {
+      "list": {
+        "pageTitle": "الوسوم",
+        "addNew": "إضافة وسم",
+        "searchPlaceholder": "ابحث عن الوسوم…",
+        "loading": "جارٍ التحميل…",
+        "empty": {
+          "none": "لا توجد وسوم بعد.",
+          "noMatch": "لا توجد وسوم مطابقة لبحثك."
+        },
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "form": {
+        "createTitle": "إضافة وسم",
+        "editTitle": "تعديل الوسم",
+        "cancel": "إلغاء",
+        "saving": "جارٍ الحفظ…",
+        "save": "حفظ التغييرات",
+        "create": "إنشاء",
+        "fields": {
+          "name": "الاسم",
+          "namePlaceholder": "مثال: شعر",
+          "description": "الوصف",
+          "descriptionPlaceholder": "وصف موجز للوسم",
+          "translations": "الترجمات"
+        }
+      },
+      "errors": {
+        "nameRequired": "الاسم مطلوب.",
+        "createFailed": "تعذّر إنشاء الوسم.",
+        "updateFailed": "تعذّر تحديث الوسم.",
+        "deleteFailed": "تعذّر حذف الوسم."
+      },
+      "toasts": {
+        "creating": "جارٍ إنشاء الوسم…",
+        "created": "تم إنشاء الوسم",
+        "updating": "جارٍ تحديث الوسم…",
+        "updated": "تم تحديث الوسم",
+        "deleted": "تم حذف الوسم"
+      },
+      "deleteModal": {
+        "title": "حذف الوسم",
+        "description": "هل تريد حذف «{name}»؟ لا يمكن التراجع عن هذا الإجراء.",
+        "cancel": "إلغاء",
+        "confirm": "حذف",
+        "confirmBusy": "جارٍ الحذف…"
+      }
+    }
+  }
+}

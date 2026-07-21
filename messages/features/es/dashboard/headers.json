@@ -23,7 +23,10 @@
         "title": "CMS / Editor visual",
         "subtitle": "Edita la interfaz de la plataforma, las secciones de la página principal y las páginas estáticas.",
         "preview": "Vista previa",
-        "publishChanges": "Publicar cambios"
+        "publishChanges": "Publicar cambios",
+        "publishing": "Publicando…",
+        "published": "¡Publicado!",
+        "publishError": "Error"
       },
       "engagements": {
         "title": "Participación",

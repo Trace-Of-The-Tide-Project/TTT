@@ -56,7 +56,12 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
     currency: issue.currency ?? "USD",
     isFree: Boolean(issue.is_free),
     isOwned: Boolean(issue.is_owned),
-    sections: (issue.sections ?? []).map((s) => ({ id: s.id, title: s.title })),
+    sections: (issue.sections ?? []).map((s) => ({
+      id: s.id,
+      title: s.title,
+      isVisible: s.is_visible !== false,
+      layout: (s.layout ?? "list") as "list" | "grid" | "feature",
+    })),
     bodySections: issue.body_blocks?.length
       ? articleBlocksToSections(issue.body_blocks)
       : [],

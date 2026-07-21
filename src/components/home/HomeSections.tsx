@@ -1,14 +1,13 @@
 import type { CmsPage, CmsSection } from "@/services/cms.service";
 import {
-  HOME_SECTION_KEY_BY_TYPE,
   HOME_SECTION_TYPES,
   SEED_SECTIONS,
-  findHomeSection,
   parseContributeConfig,
   parseHeroConfig,
   parseRailConfig,
   parseSpotlightConfig,
   pickLocale,
+  resolveSectionOrder,
   type HomeSectionKey,
 } from "@/services/home-page.service";
 import type { HomeData, HomeOpenCall } from "@/lib/home/fetch-home-data";
@@ -49,7 +48,7 @@ export function HomeSections({
   // `home_*` sections; sections missing from the CMS still render
   // (visible) in their seed position so a freshly-seeded or partial page
   // is never blank.
-  const ordered = resolveOrder(page);
+  const ordered = resolveSectionOrder(page, SEED_SECTIONS);
 
   return (
     <>
@@ -59,29 +58,6 @@ export function HomeSections({
       })}
     </>
   );
-}
-
-function resolveOrder(
-  page: CmsPage | null,
-): Array<{ key: HomeSectionKey; section: CmsSection | undefined }> {
-  if (page) {
-    const known = page.sections
-      .filter((s) => HOME_SECTION_KEY_BY_TYPE[s.section_type])
-      .sort((a, b) => a.section_order - b.section_order)
-      .map((s) => ({
-        key: HOME_SECTION_KEY_BY_TYPE[s.section_type]!,
-        section: s as CmsSection | undefined,
-      }));
-    const present = new Set(known.map((k) => k.key));
-    // Append any seed sections the CMS page doesn't have yet, in seed order.
-    const missing = SEED_SECTIONS.filter((s) => !present.has(s.key)).map((s) => ({
-      key: s.key,
-      section: undefined as CmsSection | undefined,
-    }));
-    if (known.length > 0) return [...known, ...missing];
-  }
-  // No CMS page — pure seed order.
-  return SEED_SECTIONS.map((s) => ({ key: s.key, section: undefined }));
 }
 
 function renderSection(

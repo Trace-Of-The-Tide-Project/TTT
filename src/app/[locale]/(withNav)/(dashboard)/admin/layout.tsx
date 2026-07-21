@@ -13,6 +13,7 @@ import { UsersPageHeader } from "@/components/dashboard/admin/users/UsersPageHea
 import { RolesPageHeader } from "@/components/dashboard/admin/roles/RolesPageHeader";
 import { ContentLibraryPageHeader } from "@/components/dashboard/admin/content/ContentLibraryPageHeader";
 import { VisualEditorPageHeader } from "@/components/dashboard/admin/editor/VisualEditorPageHeader";
+import { VisualEditorTabProvider } from "@/components/dashboard/admin/editor/VisualEditorTabContext";
 import { EngagementsPageHeader } from "@/components/dashboard/admin/engagements/EngagementsPageHeader";
 import { MessagingPageHeader } from "@/components/dashboard/admin/messaging/MessagingPageHeader";
 import { FinancePageHeader } from "@/components/dashboard/admin/finance/FinancePageHeader";
@@ -83,15 +84,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AdminAuthGate>
-      <DashboardLayout
-        config={adminConfig}
-        header={<AdminTopbar />}
-        commandCenter={commandCenter}
-        mobileBarTitle={mobileBarTitle}
-        badgeOverrides={badgeOverrides}
-      >
-        {children}
-      </DashboardLayout>
+      {/* Shared ancestor of the /admin/editor header (mounted here via
+          commandCenter) and its tab content (mounted by the route's own
+          page.tsx, rendered as `children`) — see VisualEditorTabContext. */}
+      <VisualEditorTabProvider>
+        <DashboardLayout
+          config={adminConfig}
+          header={<AdminTopbar />}
+          commandCenter={commandCenter}
+          mobileBarTitle={mobileBarTitle}
+          badgeOverrides={badgeOverrides}
+        >
+          {children}
+        </DashboardLayout>
+      </VisualEditorTabProvider>
     </AdminAuthGate>
   );
 }

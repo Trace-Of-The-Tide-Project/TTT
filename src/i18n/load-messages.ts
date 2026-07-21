@@ -14,6 +14,7 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/users-management.json`),
     import(`../../messages/features/${locale}/dashboard/people.json`),
     import(`../../messages/features/${locale}/dashboard/collections-admin.json`),
+    import(`../../messages/features/${locale}/dashboard/tags-admin.json`),
     import(`../../messages/features/${locale}/dashboard/subscriptions.json`),
     import(`../../messages/features/${locale}/dashboard/analytics.json`),
     import(`../../messages/features/${locale}/dashboard/trips.json`),
@@ -39,6 +40,7 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/cms-nav.json`),
     import(`../../messages/features/${locale}/dashboard/books.json`),
     import(`../../messages/features/${locale}/dashboard/writers.json`),
+    import(`../../messages/features/${locale}/dashboard/tasks.json`),
     import(`../../messages/features/${locale}/dashboard/media-library.json`),
     /**
      * Shell merged last so `Dashboard.sidebar` (system settings, profile, etc.),

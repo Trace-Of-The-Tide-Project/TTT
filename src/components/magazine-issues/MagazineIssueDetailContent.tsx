@@ -25,6 +25,8 @@ export type IssueIndexArticle = {
 export type IssueSectionEntry = {
   id: string;
   title: string;
+  isVisible?: boolean;
+  layout?: "list" | "grid" | "feature";
 };
 export type IssueEditorsLetterEntry = {
   id: string;
@@ -110,16 +112,25 @@ export function MagazineIssueDetailContent({
       if (bucket) bucket.push(a);
       else bySection.set(key, [a]);
     }
-    const ordered: { id: string; label: string | null; items: IssueIndexArticle[] }[] = [];
+    const ordered: {
+      id: string;
+      label: string | null;
+      layout: "list" | "grid" | "feature";
+      items: IssueIndexArticle[];
+    }[] = [];
     for (const s of issue.sections) {
+      if (s.isVisible === false) continue;
       const items = bySection.get(s.id);
-      if (items?.length) ordered.push({ id: s.id, label: s.title, items });
+      if (items?.length) {
+        ordered.push({ id: s.id, label: s.title, layout: s.layout ?? "list", items });
+      }
     }
     const ungrouped = bySection.get(null);
     if (ungrouped?.length) {
       ordered.push({
         id: "__ungrouped",
         label: issue.sections.length > 0 ? t("ungrouped") : null,
+        layout: "list",
         items: ungrouped,
       });
     }
@@ -306,7 +317,15 @@ export function MagazineIssueDetailContent({
                       {g.label}
                     </h3>
                   ) : null}
-                  <ul className="flex flex-col gap-2">
+                  <ul
+                    className={
+                      g.layout === "grid"
+                        ? "grid grid-cols-1 gap-3 sm:grid-cols-2"
+                        : g.layout === "feature"
+                          ? "flex flex-col gap-4"
+                          : "flex flex-col gap-2"
+                    }
+                  >
                     {g.items.map((a) => {
                       const href = a.slug ? articleHref(a.slug) : null;
                       const lock = a.locked ? (
@@ -319,19 +338,24 @@ export function MagazineIssueDetailContent({
                           <LockIcon />
                         </span>
                       ) : null;
+                      const textClass =
+                        g.layout === "feature" ? "text-xl font-medium" : "text-base";
                       return (
                         <li key={a.id}>
                           {href ? (
                             <Link
                               href={href}
-                              className="inline-flex items-center gap-2 text-base transition-opacity hover:opacity-90"
+                              className={`inline-flex items-center gap-2 transition-opacity hover:opacity-90 ${textClass}`}
                               style={{ color: ACCENT }}
                             >
                               {a.title}
                               {lock}
                             </Link>
                           ) : (
-                            <span className="inline-flex items-center gap-2 text-base" style={{ color: TEXT_MUTED }}>
+                            <span
+                              className={`inline-flex items-center gap-2 ${textClass}`}
+                              style={{ color: TEXT_MUTED }}
+                            >
                               {a.title}
                               {lock}
                             </span>

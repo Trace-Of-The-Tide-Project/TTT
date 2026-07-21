@@ -46,7 +46,12 @@
         "people": "People of the Archive",
         "trips": "Heritage Trips",
         "bookClub": "Book Club",
-        "contributeCta": "Contribute"
+        "contributeCta": "Contribute",
+        "heroNext": "Hero (new homepage)",
+        "pillars": "Pillars",
+        "archiveFeed": "Archive Feed",
+        "voices": "Voices",
+        "editions": "Editions"
       }
     }
   }

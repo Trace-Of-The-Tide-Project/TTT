@@ -1,0 +1,129 @@
+{
+  "Dashboard": {
+    "tasks": {
+      "status": {
+        "pending": "Pendiente",
+        "in_progress": "En curso",
+        "completed": "Completada",
+        "cancelled": "Cancelada"
+      },
+      "priority": {
+        "low": "Baja",
+        "medium": "Media",
+        "high": "Alta"
+      },
+      "management": {
+        "pageTitle": "Tareas",
+        "addNew": "Nueva tarea",
+        "edit": "Editar",
+        "searchPlaceholder": "Buscar título, estado, prioridad…",
+        "loading": "Cargando tareas…",
+        "tryAgain": "Intentar de nuevo",
+        "empty": {
+          "none": "Todavía no hay tareas.",
+          "noMatch": "Ninguna tarea coincide con tu búsqueda."
+        },
+        "headers": {
+          "title": "Tarea",
+          "assignee": "Asignado a",
+          "status": "Estado",
+          "priority": "Prioridad",
+          "dueDate": "Fecha límite"
+        },
+        "filters": {
+          "allStatuses": "Todos los estados",
+          "allPriorities": "Todas las prioridades"
+        },
+        "pagination": {
+          "pageOf": "Página {page} de {totalPages}",
+          "previous": "Anterior",
+          "next": "Siguiente"
+        },
+        "errors": {
+          "loadFailed": "No se pudieron cargar las tareas",
+          "deleteFailed": "No se pudo eliminar la tarea"
+        },
+        "delete": {
+          "title": "Eliminar tarea",
+          "description": "¿Eliminar la tarea \"{title}\"? Esta acción no se puede deshacer.",
+          "cancel": "Cancelar",
+          "confirm": "Eliminar",
+          "confirmBusy": "Eliminando…"
+        }
+      },
+      "form": {
+        "createTitle": "Crear tarea",
+        "editTitle": "Editar tarea",
+        "backToList": "Volver a tareas",
+        "loading": "Cargando tarea…",
+        "notFound": "Tarea no encontrada.",
+        "sections": {
+          "details": "Detalles",
+          "assignee": "Asignado a"
+        },
+        "fields": {
+          "title": "Título",
+          "description": "Descripción",
+          "priority": "Prioridad",
+          "dueDate": "Fecha límite",
+          "status": "Estado"
+        },
+        "assignee": {
+          "searchPlaceholder": "Buscar usuarios por nombre o correo…",
+          "searching": "Buscando…",
+          "noResults": "No se encontraron usuarios.",
+          "clear": "Cambiar"
+        },
+        "toasts": {
+          "created": "Tarea creada",
+          "updated": "Tarea actualizada"
+        },
+        "errors": {
+          "assigneeRequired": "Selecciona un responsable.",
+          "saveFailed": "No se pudo guardar la tarea"
+        },
+        "create": "Crear tarea",
+        "creating": "Creando…",
+        "save": "Guardar cambios",
+        "saving": "Guardando…",
+        "cancel": "Cancelar"
+      },
+      "myTasks": {
+        "pageTitle": "Mis tareas",
+        "filterLabel": "Filtrar por estado",
+        "loading": "Cargando tus tareas…",
+        "empty": "No tienes tareas asignadas.",
+        "tryAgain": "Intentar de nuevo",
+        "filters": {
+          "all": "Todas"
+        },
+        "headers": {
+          "title": "Tarea",
+          "assignedBy": "Asignada por",
+          "priority": "Prioridad",
+          "dueDate": "Fecha límite",
+          "status": "Estado"
+        },
+        "actions": {
+          "in_progress": "Iniciar",
+          "completed": "Completar",
+          "cancelled": "Cancelar"
+        },
+        "toasts": {
+          "in_progress": "Tarea iniciada",
+          "completed": "Tarea completada",
+          "cancelled": "Tarea cancelada"
+        },
+        "errors": {
+          "loadFailed": "No se pudieron cargar tus tareas",
+          "updateFailed": "No se pudo actualizar la tarea"
+        },
+        "pagination": {
+          "pageOf": "Página {page} de {totalPages}",
+          "previous": "Anterior",
+          "next": "Siguiente"
+        }
+      }
+    }
+  }
+}

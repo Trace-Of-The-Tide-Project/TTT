@@ -386,6 +386,25 @@
           "editor": "Editor",
           "reviewer": "Revisor"
         }
+      },
+      "sections": {
+        "label": "Departamentos / Secciones",
+        "loading": "Cargando…",
+        "empty": "Aún no hay secciones.",
+        "add": "Añadir sección",
+        "adding": "Añadiendo…",
+        "namePlaceholder": "Nombre de la sección (p. ej. Ensayos)",
+        "remove": "Eliminar",
+        "moveUp": "Subir",
+        "moveDown": "Bajar",
+        "visible": "Visible",
+        "hidden": "Oculta",
+        "layout": {
+          "label": "Diseño",
+          "list": "Lista",
+          "grid": "Cuadrícula",
+          "feature": "Destacado"
+        }
       }
     },
     "magazinePageEditor": {

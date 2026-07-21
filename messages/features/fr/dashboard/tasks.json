@@ -1,0 +1,129 @@
+{
+  "Dashboard": {
+    "tasks": {
+      "status": {
+        "pending": "En attente",
+        "in_progress": "En cours",
+        "completed": "Terminée",
+        "cancelled": "Annulée"
+      },
+      "priority": {
+        "low": "Basse",
+        "medium": "Moyenne",
+        "high": "Haute"
+      },
+      "management": {
+        "pageTitle": "Tâches",
+        "addNew": "Nouvelle tâche",
+        "edit": "Modifier",
+        "searchPlaceholder": "Rechercher par titre, statut, priorité…",
+        "loading": "Chargement des tâches…",
+        "tryAgain": "Réessayer",
+        "empty": {
+          "none": "Aucune tâche pour le moment.",
+          "noMatch": "Aucune tâche ne correspond à votre recherche."
+        },
+        "headers": {
+          "title": "Tâche",
+          "assignee": "Assigné à",
+          "status": "Statut",
+          "priority": "Priorité",
+          "dueDate": "Échéance"
+        },
+        "filters": {
+          "allStatuses": "Tous les statuts",
+          "allPriorities": "Toutes les priorités"
+        },
+        "pagination": {
+          "pageOf": "Page {page} sur {totalPages}",
+          "previous": "Précédent",
+          "next": "Suivant"
+        },
+        "errors": {
+          "loadFailed": "Échec du chargement des tâches",
+          "deleteFailed": "Échec de la suppression de la tâche"
+        },
+        "delete": {
+          "title": "Supprimer la tâche",
+          "description": "Supprimer la tâche « {title} » ? Cette action est irréversible.",
+          "cancel": "Annuler",
+          "confirm": "Supprimer",
+          "confirmBusy": "Suppression…"
+        }
+      },
+      "form": {
+        "createTitle": "Créer une tâche",
+        "editTitle": "Modifier la tâche",
+        "backToList": "Retour aux tâches",
+        "loading": "Chargement de la tâche…",
+        "notFound": "Tâche introuvable.",
+        "sections": {
+          "details": "Détails",
+          "assignee": "Assigné à"
+        },
+        "fields": {
+          "title": "Titre",
+          "description": "Description",
+          "priority": "Priorité",
+          "dueDate": "Échéance",
+          "status": "Statut"
+        },
+        "assignee": {
+          "searchPlaceholder": "Rechercher un utilisateur par nom ou e-mail…",
+          "searching": "Recherche…",
+          "noResults": "Aucun utilisateur trouvé.",
+          "clear": "Changer"
+        },
+        "toasts": {
+          "created": "Tâche créée",
+          "updated": "Tâche mise à jour"
+        },
+        "errors": {
+          "assigneeRequired": "Sélectionnez un responsable.",
+          "saveFailed": "Échec de l'enregistrement de la tâche"
+        },
+        "create": "Créer la tâche",
+        "creating": "Création…",
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "cancel": "Annuler"
+      },
+      "myTasks": {
+        "pageTitle": "Mes tâches",
+        "filterLabel": "Filtrer par statut",
+        "loading": "Chargement de vos tâches…",
+        "empty": "Aucune tâche ne vous est assignée.",
+        "tryAgain": "Réessayer",
+        "filters": {
+          "all": "Toutes"
+        },
+        "headers": {
+          "title": "Tâche",
+          "assignedBy": "Assignée par",
+          "priority": "Priorité",
+          "dueDate": "Échéance",
+          "status": "Statut"
+        },
+        "actions": {
+          "in_progress": "Démarrer",
+          "completed": "Terminer",
+          "cancelled": "Annuler"
+        },
+        "toasts": {
+          "in_progress": "Tâche démarrée",
+          "completed": "Tâche terminée",
+          "cancelled": "Tâche annulée"
+        },
+        "errors": {
+          "loadFailed": "Échec du chargement de vos tâches",
+          "updateFailed": "Échec de la mise à jour de la tâche"
+        },
+        "pagination": {
+          "pageOf": "Page {page} sur {totalPages}",
+          "previous": "Précédent",
+          "next": "Suivant"
+        }
+      }
+    }
+  }
+}

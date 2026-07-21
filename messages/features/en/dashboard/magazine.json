@@ -386,6 +386,25 @@
           "editor": "Editor",
           "reviewer": "Reviewer"
         }
+      },
+      "sections": {
+        "label": "Departments / Sections",
+        "loading": "Loading…",
+        "empty": "No sections yet.",
+        "add": "Add section",
+        "adding": "Adding…",
+        "namePlaceholder": "Section name (e.g. Essays)",
+        "remove": "Remove",
+        "moveUp": "Move up",
+        "moveDown": "Move down",
+        "visible": "Visible",
+        "hidden": "Hidden",
+        "layout": {
+          "label": "Layout",
+          "list": "List",
+          "grid": "Grid",
+          "feature": "Feature"
+        }
       }
     },
     "magazinePageEditor": {

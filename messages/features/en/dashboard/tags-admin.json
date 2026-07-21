@@ -1,0 +1,53 @@
+{
+  "Dashboard": {
+    "tags": {
+      "list": {
+        "pageTitle": "Tags",
+        "addNew": "Add tag",
+        "searchPlaceholder": "Search tags…",
+        "loading": "Loading…",
+        "empty": {
+          "none": "No tags yet.",
+          "noMatch": "No tags match your search."
+        },
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "form": {
+        "createTitle": "Add tag",
+        "editTitle": "Edit tag",
+        "cancel": "Cancel",
+        "saving": "Saving…",
+        "save": "Save changes",
+        "create": "Create",
+        "fields": {
+          "name": "Name",
+          "namePlaceholder": "e.g. Poetry",
+          "description": "Description",
+          "descriptionPlaceholder": "A short description of the tag",
+          "translations": "Translations"
+        }
+      },
+      "errors": {
+        "nameRequired": "Name is required.",
+        "createFailed": "Could not create the tag.",
+        "updateFailed": "Could not update the tag.",
+        "deleteFailed": "Could not delete the tag."
+      },
+      "toasts": {
+        "creating": "Creating tag…",
+        "created": "Tag created",
+        "updating": "Updating tag…",
+        "updated": "Tag updated",
+        "deleted": "Tag deleted"
+      },
+      "deleteModal": {
+        "title": "Delete tag",
+        "description": "Delete “{name}”? This cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete",
+        "confirmBusy": "Deleting…"
+      }
+    }
+  }
+}

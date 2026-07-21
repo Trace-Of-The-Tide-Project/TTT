@@ -7,11 +7,15 @@ import type { CreateArticleBlock, ArticleDetailBlock } from "./articles.service"
  * to what the magazine "Issues" pane actually renders.
  */
 /** A department/section within an issue (from the issue detail response). */
+export type IssueSectionLayout = "list" | "grid" | "feature";
+
 export type IssueSectionRef = {
   id: string;
   title: string;
   slug?: string | null;
   position?: number | null;
+  is_visible?: boolean | null;
+  layout?: IssueSectionLayout | null;
 };
 
 /** The issue's editor's letter — a linked article, basic fields only. */
@@ -358,6 +362,83 @@ export async function reorderIssueContributors(
     { contributor_ids: contributorIds },
   );
   return unwrapContributors(data);
+}
+
+function unwrapSections(raw: unknown): IssueSectionRef[] {
+  if (Array.isArray(raw)) return raw as IssueSectionRef[];
+  if (
+    raw &&
+    typeof raw === "object" &&
+    Array.isArray((raw as Record<string, unknown>).data)
+  ) {
+    return (raw as Record<string, unknown>).data as IssueSectionRef[];
+  }
+  return [];
+}
+
+/** List an issue's departments/sections, in display order. Public endpoint. */
+export async function getIssueSections(
+  issueId: string,
+): Promise<IssueSectionRef[]> {
+  const path = `/magazine-issues/${encodeURIComponent(issueId)}/sections`;
+  if (typeof window === "undefined") {
+    return unwrapSections(await serverGet<unknown>(path));
+  }
+  const { data } = await api.get<unknown>(path);
+  return unwrapSections(data);
+}
+
+/** Admin — create a section/department on an issue. */
+export async function createIssueSection(
+  issueId: string,
+  input: { title: string; slug?: string; position?: number },
+): Promise<IssueSectionRef[]> {
+  const { data } = await api.post<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/sections`,
+    input,
+  );
+  return unwrapSections(data);
+}
+
+/** Admin — rename/toggle-visibility/change layout on a section. */
+export async function updateIssueSection(
+  issueId: string,
+  sectionId: string,
+  input: {
+    title?: string;
+    slug?: string;
+    is_visible?: boolean;
+    layout?: IssueSectionLayout;
+  },
+): Promise<IssueSectionRef[]> {
+  const { data } = await api.patch<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/sections/${encodeURIComponent(sectionId)}`,
+    input,
+  );
+  return unwrapSections(data);
+}
+
+/** Admin — remove a section. Its articles fall back to "ungrouped". */
+export async function removeIssueSection(
+  issueId: string,
+  sectionId: string,
+): Promise<IssueSectionRef[]> {
+  const { data } = await api.delete<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/sections/${encodeURIComponent(sectionId)}`,
+  );
+  return unwrapSections(data);
+}
+
+/** Admin — persist the full display order for an issue's sections. */
+export async function reorderIssueSections(
+  issueId: string,
+  sectionIds: string[],
+): Promise<IssueSectionRef[]> {
+  const { data } = await api.patch<unknown>(
+    `/magazine-issues/${encodeURIComponent(issueId)}/sections/reorder`,
+    { section_ids: sectionIds },
+  );
+  return unwrapSections(data);
 }
 
 export async function getMagazineIssueBySlug(

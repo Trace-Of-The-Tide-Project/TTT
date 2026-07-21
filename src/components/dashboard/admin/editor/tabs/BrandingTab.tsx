@@ -1,18 +1,25 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { CloudUploadIcon } from "@/components/ui/icons";
 import { theme } from "@/lib/theme";
 import { useCmsSettings } from "@/hooks/queries/cms";
 import { useUpdateCmsSetting } from "@/hooks/mutations/cms";
 import { uploadFileToUrl } from "@/services/uploads.service";
+import { CmsPreviewFrame } from "@/components/dashboard/admin/editor/preview/CmsPreviewFrame";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
+/** Same pattern the branding reader validates against server-side
+ *  (`src/lib/nav/cms-nav-links.ts`) — never trust a user-typed color
+ *  string into CSS without this check first. */
+const HEX_COLOR_PATTERN = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
 export function BrandingTab() {
   const t = useTranslations("Dashboard.cmsBranding");
+  const locale = useLocale();
   const [primaryColor, setPrimaryColor] = useState<string>(theme.accentGoldFocus);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const faviconInputRef = useRef<HTMLInputElement>(null);
@@ -113,7 +120,20 @@ export function BrandingTab() {
     }
   };
 
+  // Reject any non-hex string before it ever reaches the preview draft's
+  // postMessage payload (the receiving public layout re-validates this
+  // independently — see the CSS-var override in src/app/[locale]/layout.tsx
+  // — but never forward something invalid in the first place).
+  const validColor = HEX_COLOR_PATTERN.test(primaryColor) ? primaryColor : undefined;
+  const brandingDraft = {
+    primaryColor: validColor,
+    // Local file uploads preview from their blob URL before the actual
+    // upload/save round-trip; falls back to the last-saved remote URL.
+    logoUrl: logoPreview,
+  };
+
   return (
+    <div className="grid gap-6 lg:grid-cols-2">
     <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
       <h3 className="text-sm font-semibold text-foreground">{t("title")}</h3>
       <p className="mt-1 text-xs text-[var(--tott-muted)]">{t("subtitle")}</p>
@@ -292,6 +312,22 @@ export function BrandingTab() {
                 ? t("errorRetry")
                 : t("save")}
         </button>
+      </div>
+    </div>
+
+      {/* Live preview — same homepage iframe, fed the draft accent color +
+          logo. An invalid color (e.g. "red; }") never reaches this payload —
+          validColor is undefined unless it matched the strict hex pattern
+          above, so the preview (and the eventual real site, which
+          re-validates independently) both fall back to the token instead. */}
+      <div className="min-w-0">
+        <CmsPreviewFrame
+          src={`/${locale}/home?cmsPreview=1`}
+          locale={locale}
+          urlLabel={`/${locale}/home`}
+          draft={brandingDraft}
+          messageType="tott:cms-nav-preview"
+        />
       </div>
     </div>
   );

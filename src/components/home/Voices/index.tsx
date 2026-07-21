@@ -14,7 +14,10 @@ import { VoicesStrip, type VoiceCard } from "./VoicesStrip";
  * translation group). getFeaturedWriters returns [] on failure, so the
  * section degrades to header + view-all link — never empty boxes.
  */
-export async function Voices() {
+/** CMS override copy for this section — falls back to i18n when absent. */
+export type RailCopyOverride = { heading?: string; subheading?: string };
+
+export async function Voices({ copy }: { copy?: RailCopyOverride } = {}) {
   const [locale, t] = await Promise.all([
     getLocale(),
     getTranslations("HomeNext"),
@@ -35,7 +38,7 @@ export async function Voices() {
     <SectionShell
       id="voices"
       eyebrow={t("voices.eyebrow")}
-      title={t("voices.title")}
+      title={copy?.heading || t("voices.title")}
       fullBleed
     >
       {cards.length > 0 ? (

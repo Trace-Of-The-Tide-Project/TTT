@@ -19,17 +19,24 @@ export const api = axios.create({
   },
 });
 
-let refreshInFlight: Promise<boolean> | null = null;
+type RefreshOutcome = "refreshed" | "invalid" | "transient";
 
-async function attemptRefresh(): Promise<boolean> {
-  if (typeof window === "undefined") return false;
+let refreshInFlight: Promise<RefreshOutcome> | null = null;
+
+async function attemptRefresh(): Promise<RefreshOutcome> {
+  if (typeof window === "undefined") return "transient";
   if (!refreshInFlight) {
     refreshInFlight = fetch("/api/auth/refresh", {
       method: "POST",
       credentials: "include",
     })
-      .then((res) => res.ok)
-      .catch(() => false)
+      .then((res): RefreshOutcome => {
+        if (res.ok) return "refreshed";
+        // 503 = backend unreachable/timed out — not proof the session is
+        // dead. Only a genuine 401 means the refresh token itself is invalid.
+        return res.status === 503 ? "transient" : "invalid";
+      })
+      .catch((): RefreshOutcome => "transient")
       .finally(() => {
         refreshInFlight = null;
       });
@@ -62,11 +69,15 @@ api.interceptors.response.use(
 
     if (status === 401 && original && !original._authRetry) {
       original._authRetry = true;
-      const refreshed = await attemptRefresh();
-      if (refreshed) {
+      const outcome = await attemptRefresh();
+      if (outcome === "refreshed") {
         return api.request(original);
       }
-      redirectToLogin();
+      if (outcome === "invalid") {
+        redirectToLogin();
+      }
+      // "transient" (backend unreachable/timed out): don't log the user out
+      // over a network blip — just let this request fail and try again later.
     }
 
     return Promise.reject(error);

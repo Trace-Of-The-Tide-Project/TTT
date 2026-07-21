@@ -23,13 +23,18 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { isAdmin } from "@/lib/auth/roles";
 import { theme } from "@/lib/theme";
+import type { CmsNavLink } from "@/lib/nav/cms-nav-links";
 
-const navLinks = [
+const DEFAULT_NAV_LINKS = [
   { href: "/fields", messageKey: "fields" as const, icon: GridIcon },
   { href: "/be-a-neighbor", messageKey: "beANeighbor" as const, icon: PersonPlusIcon },
   { href: "/gift-a-trace", messageKey: "giftATrace" as const, icon: GiftIcon },
   { href: "/contribute", messageKey: "traceAStory" as const, icon: PenLineIcon },
 ];
+
+/** A resolved nav entry — either a default link (icon + i18n label) or an
+ * admin-authored CMS link (generic icon + literal label). */
+type ResolvedNavLink = { href: string; label: string; icon: typeof GridIcon };
 
 function getInitial(name: string | null | undefined, email: string | null | undefined): string {
   if (name?.trim()) return name.trim()[0].toUpperCase();
@@ -62,10 +67,19 @@ function AvatarBadge({
   );
 }
 
-export function Navbar() {
+export function Navbar({
+  cmsNavLinks,
+  logoUrl,
+}: { cmsNavLinks?: CmsNavLink[] | null; logoUrl?: string | null } = {}) {
   const t = useTranslations("Navbar");
   const router = useRouter();
   const pathname = usePathname();
+  // Admin-authored links (CMS Navigation tab) win when present; otherwise
+  // fall back to the hardcoded defaults with their per-link icon + i18n label.
+  const navLinks: ResolvedNavLink[] =
+    cmsNavLinks && cmsNavLinks.length > 0
+      ? cmsNavLinks.map((l) => ({ href: l.path, label: l.text, icon: GridIcon }))
+      : DEFAULT_NAV_LINKS.map((l) => ({ href: l.href, label: t(l.messageKey), icon: l.icon }));
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -130,14 +144,14 @@ export function Navbar() {
   /* Desktop primary nav links — rendered next to the logo (see <nav> below). */
   const desktopNavLinks = (
     <div className="hidden items-center gap-2 lg:flex lg:gap-4">
-      {navLinks.map(({ href, messageKey, icon: Icon }) => (
+      {navLinks.map(({ href, label, icon: Icon }) => (
         <Link
           key={href}
           href={href}
           className={`flex items-center gap-2 transition-colors ${navMuted}`}
         >
           <Icon />
-          <span>{t(messageKey)}</span>
+          <span>{label}</span>
         </Link>
       ))}
       {/* Feed is reader-only and auth-gated — show it just for signed-in users
@@ -182,23 +196,30 @@ export function Navbar() {
             aria-label={t("brand")}
           >
             {/* Wordmark rendered as a CSS mask so its color tracks the theme
-                via --tott-logo (gold on light/dark, deep sea on the sand tide). */}
-            <span
-              role="img"
-              aria-hidden
-              className="block h-8 w-[3.1rem]"
-              style={{
-                backgroundColor: "var(--tott-logo)",
-                maskImage: "url(/images/tott-wordmark-gold.svg)",
-                WebkitMaskImage: "url(/images/tott-wordmark-gold.svg)",
-                maskRepeat: "no-repeat",
-                WebkitMaskRepeat: "no-repeat",
-                maskPosition: "center",
-                WebkitMaskPosition: "center",
-                maskSize: "contain",
-                WebkitMaskSize: "contain",
-              }}
-            />
+                via --tott-logo (gold on light/dark, deep sea on the sand tide).
+                Admin-uploaded logo (CMS Branding tab) replaces it with a plain
+                image when present — the bundled mask asset is the fallback. */}
+            {logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- arbitrary uploaded/preview URL, not worth remotePatterns config
+              <img src={logoUrl} alt="" aria-hidden className="block h-8 w-auto max-w-[6rem] object-contain" />
+            ) : (
+              <span
+                role="img"
+                aria-hidden
+                className="block h-8 w-[3.1rem]"
+                style={{
+                  backgroundColor: "var(--tott-logo)",
+                  maskImage: "url(/images/tott-wordmark-gold.svg)",
+                  WebkitMaskImage: "url(/images/tott-wordmark-gold.svg)",
+                  maskRepeat: "no-repeat",
+                  WebkitMaskRepeat: "no-repeat",
+                  maskPosition: "center",
+                  WebkitMaskPosition: "center",
+                  maskSize: "contain",
+                  WebkitMaskSize: "contain",
+                }}
+              />
+            )}
           </Link>
           {desktopNavLinks}
         </div>
@@ -409,7 +430,7 @@ export function Navbar() {
           </div>
 
           <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-4">
-            {navLinks.map(({ href, messageKey, icon: Icon }) => (
+            {navLinks.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
                 href={href}
@@ -417,7 +438,7 @@ export function Navbar() {
                 className={`flex items-center gap-3 rounded-md px-4 py-3 transition-colors ${navMuted} ${navRowHover}`}
               >
                 <Icon />
-                <span>{t(messageKey)}</span>
+                <span>{label}</span>
               </Link>
             ))}
             {user ? (

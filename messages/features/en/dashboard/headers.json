@@ -23,7 +23,10 @@
         "title": "CMS / Visual Editor",
         "subtitle": "Edit platform UI, homepage sections, and static pages.",
         "preview": "Preview",
-        "publishChanges": "Publish changes"
+        "publishChanges": "Publish changes",
+        "publishing": "Publishing…",
+        "published": "Published!",
+        "publishError": "Error"
       },
       "engagements": {
         "title": "Engagement",

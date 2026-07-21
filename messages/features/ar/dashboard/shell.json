@@ -31,6 +31,8 @@
       "management": "الإدارة",
       "users": "المستخدمون",
       "rolesPermissions": "الأدوار والصلاحيات",
+      "tasks": "المهام",
+      "myTasks": "مهامي",
       "content": "المحتوى",
       "contentLibrary": "مكتبة المحتوى",
       "mediaLibrary": "مكتبة الوسائط",
@@ -71,7 +73,8 @@
       "addPerson": "إضافة شخصية",
       "subscription": "الاشتراك",
       "subscriptions": "الاشتراكات",
-      "collections": "المجموعات"
+      "collections": "المجموعات",
+      "tags": "الوسوم"
     },
     "systemSettings": {
       "tabs": {

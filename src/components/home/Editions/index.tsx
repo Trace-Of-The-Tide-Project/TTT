@@ -78,7 +78,10 @@ function stripQuotes(s: string): string {
   return s.replace(/^["“]+/, "").replace(/["”]+$/, "").trim();
 }
 
-export async function Editions() {
+/** CMS override copy for this section — falls back to i18n when absent. */
+export type RailCopyOverride = { heading?: string; subheading?: string };
+
+export async function Editions({ copy }: { copy?: RailCopyOverride } = {}) {
   const [locale, t] = await Promise.all([
     getLocale(),
     getTranslations("HomeNext"),
@@ -127,8 +130,8 @@ export async function Editions() {
     <SectionShell
       id="editions"
       eyebrow={t("editions.eyebrow")}
-      title={t("editions.title")}
-      standfirst={t("editions.standfirst")}
+      title={copy?.heading || t("editions.title")}
+      standfirst={copy?.subheading || t("editions.standfirst")}
       fullBleed
       className="relative overflow-hidden bg-[color-mix(in_srgb,var(--tott-status-amber)_5%,var(--tott-well-bg))]"
     >

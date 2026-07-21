@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { EyeIcon, RefreshCwIcon } from "@/components/ui/icons";
 import { useEnsureHomePage } from "@/hooks/queries/cms";
 import {
@@ -9,7 +9,7 @@ import {
   useToggleCmsSection,
   useUpdateCmsSection,
 } from "@/hooks/mutations/cms";
-import type { CmsSection } from "@/services/cms.service";
+import type { CmsPage, CmsSection } from "@/services/cms.service";
 import {
   HOME_SECTION_KEY_BY_TYPE,
   SUPPORTED_LOCALES,
@@ -17,6 +17,8 @@ import {
   type HomeSectionKey,
 } from "@/services/home-page.service";
 import { LocaleTabs } from "@/components/dashboard/admin/translations";
+import { CmsPreviewFrame } from "@/components/dashboard/admin/editor/preview/CmsPreviewFrame";
+import { useVisualEditorTab } from "@/components/dashboard/admin/editor/VisualEditorTabContext";
 
 /**
  * Admin editor for the redesigned homepage. Mirrors the magazine page
@@ -78,6 +80,19 @@ const SECTION_SCHEMA: Record<
     ],
     flat: [{ key: "openCallId", labelKey: "fields.openCallId", kind: "text" }],
   },
+  // The Sessions 0–6 homepage rebuild's sections (components/home/HomePage.tsx).
+  heroNext: {
+    localized: [
+      { key: "eyebrow", labelKey: "fields.eyebrow", kind: "text" },
+      { key: "title", labelKey: "fields.title", kind: "text" },
+      { key: "subtitle", labelKey: "fields.missionSubtitle", kind: "textarea" },
+    ],
+    flat: [],
+  },
+  pillars: { localized: RAIL_FIELDS, flat: [] },
+  archiveFeed: { localized: RAIL_FIELDS, flat: [] },
+  voices: { localized: RAIL_FIELDS, flat: [] },
+  editions: { localized: RAIL_FIELDS, flat: [] },
 };
 
 // ── Config helpers ─────────────────────────────────────────────────
@@ -172,10 +187,12 @@ function VariantPicker({
 
 export function HomePageEditorContent() {
   const t = useTranslations("Dashboard.cmsHome");
+  const locale = useLocale();
   const { data: page, isPending } = useEnsureHomePage();
   const updateSection = useUpdateCmsSection();
   const toggleSection = useToggleCmsSection();
   const publishPage = usePublishCmsPage();
+  const { registerDraftState } = useVisualEditorTab();
 
   const sections: CmsSection[] = page
     ? [...page.sections]
@@ -210,6 +227,48 @@ export function HomePageEditorContent() {
     setWorking(parseConfig(selected));
   }
 
+  // Register this tab's dirty/save state (header's global Publish button
+  // flushes it before publishing) — mirrors the magazine editor's
+  // useRegisterDraftState. Kept as a plain effect here (not the ref-based
+  // helper) since save() closes over page/selected/working directly and
+  // this component already re-renders on every keystroke.
+  const isDirty =
+    !!selected && !!working && JSON.stringify(working) !== JSON.stringify(parseConfig(selected));
+  useEffect(() => {
+    if (!page) {
+      registerDraftState(null);
+      return () => registerDraftState(null);
+    }
+    registerDraftState({
+      isDirty,
+      pageId: page.id,
+      save: async () => {
+        if (!selected || !working) return;
+        await updateSection.mutateAsync({
+          pageId: page.id,
+          sectionId: selected.id,
+          data: { config: serializeConfig(working) },
+        });
+      },
+    });
+    return () => registerDraftState(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-register whenever the tab's dirty/save inputs change
+  }, [page, selected, working, isDirty]);
+
+  // Build the preview's draft CmsPage by cloning `page` and swapping the
+  // selected section's config for the in-progress `working` state, so the
+  // iframe shows unsaved edits without a save round-trip.
+  const previewPage: CmsPage | null = page
+    ? {
+        ...page,
+        sections: page.sections.map((s) =>
+          selected && s.id === selected.id && working
+            ? { ...s, config: JSON.parse(serializeConfig(working)) as Record<string, unknown> }
+            : s,
+        ),
+      }
+    : null;
+
   if (isPending || !page) {
     return (
       <div className="flex items-center justify-center py-20 text-sm text-[var(--tott-muted)]">
@@ -243,7 +302,7 @@ export function HomePageEditorContent() {
   const handleReset = () => selected && setWorking(parseConfig(selected));
 
   return (
-    <div className="grid gap-9 lg:grid-cols-[320px_1fr]">
+    <div className="grid gap-9 lg:grid-cols-[280px_1fr_1fr] xl:grid-cols-[320px_1fr_1fr]">
       {/* Section list */}
       <div className="rounded-xl border border-[var(--tott-card-border)] p-6">
         <div className="flex items-center justify-between">
@@ -397,6 +456,18 @@ export function HomePageEditorContent() {
             {t("emptyState")}
           </div>
         )}
+      </div>
+
+      {/* Live preview — real /home route in an iframe, fed the in-progress
+          `working` config over postMessage so it updates as the admin
+          types, with no save round-trip. */}
+      <div className="min-w-0">
+        <CmsPreviewFrame
+          src={`/${locale}/home?cmsPreview=1`}
+          locale={locale}
+          urlLabel={`/${locale}/home`}
+          draft={previewPage}
+        />
       </div>
     </div>
   );
