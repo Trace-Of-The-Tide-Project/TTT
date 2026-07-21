@@ -1,0 +1,129 @@
+{
+  "Dashboard": {
+    "tasks": {
+      "status": {
+        "pending": "قيد الانتظار",
+        "in_progress": "قيد التنفيذ",
+        "completed": "مكتملة",
+        "cancelled": "ملغاة"
+      },
+      "priority": {
+        "low": "منخفضة",
+        "medium": "متوسطة",
+        "high": "عالية"
+      },
+      "management": {
+        "pageTitle": "المهام",
+        "addNew": "مهمة جديدة",
+        "edit": "تعديل",
+        "searchPlaceholder": "ابحث بالعنوان أو الحالة أو الأولوية…",
+        "loading": "جارٍ تحميل المهام…",
+        "tryAgain": "حاول مرة أخرى",
+        "empty": {
+          "none": "لا توجد مهام بعد.",
+          "noMatch": "لا توجد مهام مطابقة لبحثك."
+        },
+        "headers": {
+          "title": "المهمة",
+          "assignee": "المُكلَّف",
+          "status": "الحالة",
+          "priority": "الأولوية",
+          "dueDate": "تاريخ الاستحقاق"
+        },
+        "filters": {
+          "allStatuses": "كل الحالات",
+          "allPriorities": "كل الأولويات"
+        },
+        "pagination": {
+          "pageOf": "صفحة {page} من {totalPages}",
+          "previous": "السابق",
+          "next": "التالي"
+        },
+        "errors": {
+          "loadFailed": "فشل تحميل المهام",
+          "deleteFailed": "فشل حذف المهمة"
+        },
+        "delete": {
+          "title": "حذف المهمة",
+          "description": "هل تريد حذف المهمة \"{title}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+          "cancel": "إلغاء",
+          "confirm": "حذف",
+          "confirmBusy": "جارٍ الحذف…"
+        }
+      },
+      "form": {
+        "createTitle": "إنشاء مهمة",
+        "editTitle": "تعديل المهمة",
+        "backToList": "العودة إلى المهام",
+        "loading": "جارٍ تحميل المهمة…",
+        "notFound": "المهمة غير موجودة.",
+        "sections": {
+          "details": "التفاصيل",
+          "assignee": "المُكلَّف"
+        },
+        "fields": {
+          "title": "العنوان",
+          "description": "الوصف",
+          "priority": "الأولوية",
+          "dueDate": "تاريخ الاستحقاق",
+          "status": "الحالة"
+        },
+        "assignee": {
+          "searchPlaceholder": "ابحث عن مستخدم بالاسم أو البريد الإلكتروني…",
+          "searching": "جارٍ البحث…",
+          "noResults": "لا يوجد مستخدمون.",
+          "clear": "تغيير"
+        },
+        "toasts": {
+          "created": "تم إنشاء المهمة",
+          "updated": "تم تحديث المهمة"
+        },
+        "errors": {
+          "assigneeRequired": "اختر مُكلَّفًا بالمهمة.",
+          "saveFailed": "فشل حفظ المهمة"
+        },
+        "create": "إنشاء المهمة",
+        "creating": "جارٍ الإنشاء…",
+        "save": "حفظ التغييرات",
+        "saving": "جارٍ الحفظ…",
+        "cancel": "إلغاء"
+      },
+      "myTasks": {
+        "pageTitle": "مهامي",
+        "filterLabel": "تصفية حسب الحالة",
+        "loading": "جارٍ تحميل مهامك…",
+        "empty": "لا توجد مهام مسندة إليك.",
+        "tryAgain": "حاول مرة أخرى",
+        "filters": {
+          "all": "الكل"
+        },
+        "headers": {
+          "title": "المهمة",
+          "assignedBy": "المُكلِّف",
+          "priority": "الأولوية",
+          "dueDate": "تاريخ الاستحقاق",
+          "status": "الحالة"
+        },
+        "actions": {
+          "in_progress": "بدء",
+          "completed": "إكمال",
+          "cancelled": "إلغاء"
+        },
+        "toasts": {
+          "in_progress": "بدأت المهمة",
+          "completed": "اكتملت المهمة",
+          "cancelled": "أُلغيت المهمة"
+        },
+        "errors": {
+          "loadFailed": "فشل تحميل مهامك",
+          "updateFailed": "فشل تحديث المهمة"
+        },
+        "pagination": {
+          "pageOf": "صفحة {page} من {totalPages}",
+          "previous": "السابق",
+          "next": "التالي"
+        }
+      }
+    }
+  }
+}

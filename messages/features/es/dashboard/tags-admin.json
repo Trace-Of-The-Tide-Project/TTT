@@ -1,0 +1,53 @@
+{
+  "Dashboard": {
+    "tags": {
+      "list": {
+        "pageTitle": "Etiquetas",
+        "addNew": "Añadir etiqueta",
+        "searchPlaceholder": "Buscar etiquetas…",
+        "loading": "Cargando…",
+        "empty": {
+          "none": "Aún no hay etiquetas.",
+          "noMatch": "Ninguna etiqueta coincide con tu búsqueda."
+        },
+        "edit": "Editar",
+        "delete": "Eliminar"
+      },
+      "form": {
+        "createTitle": "Añadir etiqueta",
+        "editTitle": "Editar etiqueta",
+        "cancel": "Cancelar",
+        "saving": "Guardando…",
+        "save": "Guardar cambios",
+        "create": "Crear",
+        "fields": {
+          "name": "Nombre",
+          "namePlaceholder": "p. ej. Poesía",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Una breve descripción de la etiqueta",
+          "translations": "Traducciones"
+        }
+      },
+      "errors": {
+        "nameRequired": "El nombre es obligatorio.",
+        "createFailed": "No se pudo crear la etiqueta.",
+        "updateFailed": "No se pudo actualizar la etiqueta.",
+        "deleteFailed": "No se pudo eliminar la etiqueta."
+      },
+      "toasts": {
+        "creating": "Creando etiqueta…",
+        "created": "Etiqueta creada",
+        "updating": "Actualizando etiqueta…",
+        "updated": "Etiqueta actualizada",
+        "deleted": "Etiqueta eliminada"
+      },
+      "deleteModal": {
+        "title": "Eliminar etiqueta",
+        "description": "¿Eliminar “{name}”? Esto no se puede deshacer.",
+        "cancel": "Cancelar",
+        "confirm": "Eliminar",
+        "confirmBusy": "Eliminando…"
+      }
+    }
+  }
+}

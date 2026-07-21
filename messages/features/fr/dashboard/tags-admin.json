@@ -1,0 +1,53 @@
+{
+  "Dashboard": {
+    "tags": {
+      "list": {
+        "pageTitle": "Étiquettes",
+        "addNew": "Ajouter une étiquette",
+        "searchPlaceholder": "Rechercher des étiquettes…",
+        "loading": "Chargement…",
+        "empty": {
+          "none": "Aucune étiquette pour le moment.",
+          "noMatch": "Aucune étiquette ne correspond à votre recherche."
+        },
+        "edit": "Modifier",
+        "delete": "Supprimer"
+      },
+      "form": {
+        "createTitle": "Ajouter une étiquette",
+        "editTitle": "Modifier l'étiquette",
+        "cancel": "Annuler",
+        "saving": "Enregistrement…",
+        "save": "Enregistrer les modifications",
+        "create": "Créer",
+        "fields": {
+          "name": "Nom",
+          "namePlaceholder": "p. ex. Poésie",
+          "description": "Description",
+          "descriptionPlaceholder": "Une courte description de l'étiquette",
+          "translations": "Traductions"
+        }
+      },
+      "errors": {
+        "nameRequired": "Le nom est requis.",
+        "createFailed": "Impossible de créer l'étiquette.",
+        "updateFailed": "Impossible de mettre à jour l'étiquette.",
+        "deleteFailed": "Impossible de supprimer l'étiquette."
+      },
+      "toasts": {
+        "creating": "Création de l'étiquette…",
+        "created": "Étiquette créée",
+        "updating": "Mise à jour de l'étiquette…",
+        "updated": "Étiquette mise à jour",
+        "deleted": "Étiquette supprimée"
+      },
+      "deleteModal": {
+        "title": "Supprimer l'étiquette",
+        "description": "Supprimer « {name} » ? Cette action est irréversible.",
+        "cancel": "Annuler",
+        "confirm": "Supprimer",
+        "confirmBusy": "Suppression…"
+      }
+    }
+  }
+}

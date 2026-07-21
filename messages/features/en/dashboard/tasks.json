@@ -1,0 +1,129 @@
+{
+  "Dashboard": {
+    "tasks": {
+      "status": {
+        "pending": "Pending",
+        "in_progress": "In progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "priority": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "management": {
+        "pageTitle": "Tasks",
+        "addNew": "New task",
+        "edit": "Edit",
+        "searchPlaceholder": "Search title, status, priority…",
+        "loading": "Loading tasks…",
+        "tryAgain": "Try again",
+        "empty": {
+          "none": "No tasks yet.",
+          "noMatch": "No tasks match your search."
+        },
+        "headers": {
+          "title": "Task",
+          "assignee": "Assignee",
+          "status": "Status",
+          "priority": "Priority",
+          "dueDate": "Due date"
+        },
+        "filters": {
+          "allStatuses": "All statuses",
+          "allPriorities": "All priorities"
+        },
+        "pagination": {
+          "pageOf": "Page {page} of {totalPages}",
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "errors": {
+          "loadFailed": "Failed to load tasks",
+          "deleteFailed": "Failed to delete task"
+        },
+        "delete": {
+          "title": "Delete task",
+          "description": "Delete the task \"{title}\"? This cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Delete",
+          "confirmBusy": "Deleting…"
+        }
+      },
+      "form": {
+        "createTitle": "Create task",
+        "editTitle": "Edit task",
+        "backToList": "Back to tasks",
+        "loading": "Loading task…",
+        "notFound": "Task not found.",
+        "sections": {
+          "details": "Details",
+          "assignee": "Assignee"
+        },
+        "fields": {
+          "title": "Title",
+          "description": "Description",
+          "priority": "Priority",
+          "dueDate": "Due date",
+          "status": "Status"
+        },
+        "assignee": {
+          "searchPlaceholder": "Search users by name or email…",
+          "searching": "Searching…",
+          "noResults": "No users found.",
+          "clear": "Change"
+        },
+        "toasts": {
+          "created": "Task created",
+          "updated": "Task updated"
+        },
+        "errors": {
+          "assigneeRequired": "Select an assignee.",
+          "saveFailed": "Failed to save the task"
+        },
+        "create": "Create task",
+        "creating": "Creating…",
+        "save": "Save changes",
+        "saving": "Saving…",
+        "cancel": "Cancel"
+      },
+      "myTasks": {
+        "pageTitle": "My tasks",
+        "filterLabel": "Filter by status",
+        "loading": "Loading your tasks…",
+        "empty": "No tasks assigned to you.",
+        "tryAgain": "Try again",
+        "filters": {
+          "all": "All"
+        },
+        "headers": {
+          "title": "Task",
+          "assignedBy": "Assigned by",
+          "priority": "Priority",
+          "dueDate": "Due date",
+          "status": "Status"
+        },
+        "actions": {
+          "in_progress": "Start",
+          "completed": "Complete",
+          "cancelled": "Cancel"
+        },
+        "toasts": {
+          "in_progress": "Task started",
+          "completed": "Task completed",
+          "cancelled": "Task cancelled"
+        },
+        "errors": {
+          "loadFailed": "Failed to load your tasks",
+          "updateFailed": "Failed to update the task"
+        },
+        "pagination": {
+          "pageOf": "Page {page} of {totalPages}",
+          "previous": "Previous",
+          "next": "Next"
+        }
+      }
+    }
+  }
+}

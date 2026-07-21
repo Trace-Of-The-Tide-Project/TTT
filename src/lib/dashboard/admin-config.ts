@@ -38,6 +38,7 @@ import {
   ClockIcon,
   CompassIcon,
   ImageInsertIcon,
+  SquareCheckIcon,
 } from "@/components/ui/icons";
 import type { DashboardConfig } from "./types";
 
@@ -104,6 +105,12 @@ export const adminConfig: DashboardConfig = {
               href: "/admin/roles",
               icon: ShieldIcon,
             },
+            {
+              kind: "item",
+              labelKey: "sidebar.tasks",
+              href: "/admin/tasks",
+              icon: SquareCheckIcon,
+            },
           ],
         },
         {
@@ -129,6 +136,12 @@ export const adminConfig: DashboardConfig = {
               labelKey: "sidebar.collections",
               href: "/admin/collections",
               icon: GridIcon,
+            },
+            {
+              kind: "item",
+              labelKey: "sidebar.tags",
+              href: "/admin/tags",
+              icon: FlagIcon,
             },
             {
               kind: "item",
