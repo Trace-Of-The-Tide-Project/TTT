@@ -17,6 +17,7 @@ import { stripHtml } from "@/components/home/magazine-next/ui";
 import { getFramingsServer } from "@/services/image-framing.service";
 import { PERSON_PORTRAIT_FRAMING } from "@/lib/framing-placements";
 import type { ImageFraming } from "@/lib/image-framing";
+import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 
 // ── Normalized rail item shapes ────────────────────────────────────
 
@@ -161,7 +162,7 @@ function mapArticle(a: Record<string, unknown>): HomeArticle {
     viewCount: num(a.view_count),
     authorName: authorName(a),
     isFeatured: a.is_featured === true,
-    href: `/content/article?id=${encodeURIComponent(id)}`,
+    href: previewHrefForContentType(str(a.content_type), id, str(a.slug), str(a.product)),
   };
 }
 

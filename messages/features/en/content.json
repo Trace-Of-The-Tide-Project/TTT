@@ -107,7 +107,8 @@
       "notFoundBody": "No article exists for this link.",
       "backToContent": "Back to content",
       "loadError": "Could not load article",
-      "loadErrorBody": "Check your connection or try again later."
+      "loadErrorBody": "Check your connection or try again later.",
+      "finishedReading": "You finished reading"
     }
   }
 }

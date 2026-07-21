@@ -32,7 +32,7 @@ export async function MagFeatured({
     <SectionShell id="magazine-featured" eyebrow={t("eyebrow")} title={t("title")}>
       <RevealOnScroll className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Lead */}
-        <Link href={articleHref(lead.id)} className="group flex flex-col">
+        <Link href={articleHref(lead.id, lead.slug)} className="group flex flex-col">
           <div
             className="relative w-full overflow-hidden"
             style={{ aspectRatio: "16 / 10", backgroundColor: "var(--tott-card-border)" }}
@@ -75,7 +75,7 @@ export async function MagFeatured({
           <ul className="flex flex-col divide-y divide-[var(--tott-card-border)]">
             {secondaries.map((a) => (
               <li key={a.id} className="py-5 first:pt-0">
-                <Link href={articleHref(a.id)} className="group flex items-start gap-4">
+                <Link href={articleHref(a.id, a.slug)} className="group flex items-start gap-4">
                   <div
                     className="relative hidden h-20 w-28 shrink-0 overflow-hidden sm:block"
                     style={{ backgroundColor: "var(--tott-card-border)" }}

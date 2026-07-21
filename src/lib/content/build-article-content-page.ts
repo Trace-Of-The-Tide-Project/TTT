@@ -135,9 +135,9 @@ export function buildArticleContentPageProps(article: ArticleDetail): ContentPag
     };
   });
 
-  const firstCover = getFirstCoverHeroFromBlocks(article.blocks);
   const fromApiCover = article.cover_image?.trim() || null;
-  const heroCandidate = firstCover?.src ?? fromApiCover;
+  const firstCover = fromApiCover ? null : getFirstCoverHeroFromBlocks(article.blocks);
+  const heroCandidate = fromApiCover ?? firstCover?.src ?? null;
   const heroTrimmed = heroCandidate?.trim() || "";
   const heroKind =
     firstCover?.kind ??

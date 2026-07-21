@@ -29,26 +29,26 @@ export type ContentFormConfig = {
   disableHero?: boolean;
 };
 
-/** Article block set — the seven blocks the design calls for (no heading). */
+/** Article block set — full palette. */
 export const articleAllowedBlockTypes: BlockType[] = [
   "paragraph",
+  "heading",
   "quote",
+  "pull-quote",
   "image",
+  "video",
+  "audio",
   "gallery",
   "callout",
   "author-note",
-  "divider",
-];
-
-/** Magazine issue block set — article set plus heading, video, audio, caption text, meta data. */
-export const issueAllowedBlockTypes: BlockType[] = [
-  ...articleAllowedBlockTypes,
-  "heading",
-  "video",
-  "audio",
   "caption-text",
   "meta-data",
+  "divider",
+  "embed",
 ];
+
+/** Magazine issue block set — same as article (full palette). */
+export const issueAllowedBlockTypes: BlockType[] = [...articleAllowedBlockTypes];
 
 /** Artwork block set — paragraph, quote, image, gallery, caption text, author note, meta data, divider. */
 export const artworkAllowedBlockTypes: BlockType[] = [

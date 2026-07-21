@@ -11,6 +11,11 @@ import {
   TrashIcon,
 } from "@/components/ui/icons";
 import { COUNTRY_CODES } from "@/lib/constants";
+import {
+  RichTextEditor,
+  SlimEditorToolbar,
+  EditorRegistryProvider,
+} from "@/components/ui/rich-text";
 
 // Brand "Leading Icon-5" — 32×28 SVG with four small rhombus
 // shapes arranged in a diamond pattern (the decorative glyph that
@@ -54,6 +59,7 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [countryCode, setCountryCode] = useState("+20");
+  const [description, setDescription] = useState("");
 
   const addFiles = useCallback((fileList: FileList | null) => {
     if (!fileList?.length) return;
@@ -94,9 +100,6 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
     const form = e.currentTarget;
     const title =
       (form.elements.namedItem("title") as HTMLInputElement | null)?.value ?? "";
-    const description =
-      (form.elements.namedItem("description") as HTMLTextAreaElement | null)
-        ?.value ?? "";
     const contributorName =
       (form.elements.namedItem("name") as HTMLInputElement | null)?.value ?? "";
     const contributorEmail =
@@ -224,47 +227,28 @@ export function ContributionForm({ selectedTypeId }: ContributionFormProps) {
         </span>
       </Field>
 
-      {/* Description */}
+      {/* Description — rich text (bold/italic/lists/quote/link) via the
+          shared TipTap editor, trimmed to a slim guest-facing toolbar
+          (no font/color/image controls — see SlimEditorToolbar). */}
       <Field label={t("descriptionLabel")}>
-        <span
-          className="relative w-full"
+        <div
+          className="w-full overflow-hidden"
           style={{
             backgroundColor: FIELD_BG,
             border: `1px solid ${FIELD_BORDER}`,
             borderRadius: `${FIELD_RADIUS}px`,
           }}
         >
-          <textarea
-            name="description"
-            rows={5}
-            placeholder={t("descriptionPlaceholder")}
-            className="block w-full resize-y bg-transparent focus:outline-none"
-            style={{
-              height: "112px",
-              padding: "8px 12px",
-              color: LABEL_COLOR,
-              fontFamily: "'Inter', var(--font-sans, sans-serif)",
-              fontWeight: 400,
-              fontSize: "14px",
-              lineHeight: "20px",
-              letterSpacing: "0.005em",
-              border: "none",
-              borderRadius: `${FIELD_RADIUS}px`,
-              boxSizing: "border-box",
-            }}
-          />
-          <span
-            aria-hidden
-            className="pointer-events-none absolute"
-            style={{
-              width: "6px",
-              height: "6px",
-              right: "8px",
-              bottom: "8px",
-              backgroundColor: "var(--tott-home-text-muted)",
-            }}
-          />
-        </span>
+          <EditorRegistryProvider>
+            <SlimEditorToolbar />
+            <RichTextEditor
+              value={description}
+              onChange={setDescription}
+              placeholder={t("descriptionPlaceholder")}
+              className="min-h-[112px]"
+            />
+          </EditorRegistryProvider>
+        </div>
       </Field>
 
       {/* Upload */}

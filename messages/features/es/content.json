@@ -107,7 +107,8 @@
       "notFoundBody": "No existe ningún artículo para este enlace.",
       "backToContent": "Volver al contenido",
       "loadError": "No se pudo cargar el artículo",
-      "loadErrorBody": "Comprueba tu conexión o inténtalo de nuevo más tarde."
+      "loadErrorBody": "Comprueba tu conexión o inténtalo de nuevo más tarde.",
+      "finishedReading": "Terminaste de leer"
     }
   }
 }

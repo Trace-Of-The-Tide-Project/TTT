@@ -3,6 +3,12 @@ import type { CreateArticleBlock } from "@/services/articles.service";
 import type { ContentBlock } from "../ContentBlocks";
 import { isLikelyAudioUrl, isLikelyVideoUrl } from "@/lib/content/media-url";
 import { parseEmbedUrl } from "@/lib/content/embed-providers";
+import { isDefaultFraming, type ImageFraming } from "@/lib/image-framing";
+
+/** Drops default/no-op framing so a never-adjusted image serializes identically to before this feature. */
+function framingMeta(f: ImageFraming | undefined): ImageFraming | undefined {
+  return f && !isDefaultFraming(f) ? f : undefined;
+}
 
 /**
  * Builds a metadata JSON string, omitting null/empty values and returning
@@ -108,7 +114,13 @@ export async function buildArticleBlocksFromEditor(
           block_order: order++,
           block_type,
           content: null,
-          metadata: meta({ url, alt: "", caption, dir: b.dir }),
+          metadata: meta({
+            url,
+            alt: "",
+            caption,
+            dir: b.dir,
+            framing: block_type === "image" ? framingMeta(b.imageFraming) : undefined,
+          }),
         });
         continue;
       }

@@ -41,7 +41,7 @@ export async function MagLatestFeed({
           return (
             <StaggerItem key={a.id}>
               <Link
-                href={articleHref(a.id)}
+                href={articleHref(a.id, a.slug)}
                 className="group flex h-full flex-col overflow-hidden border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] transition-colors hover:border-[color-mix(in_srgb,var(--tott-accent-gold)_45%,var(--tott-card-border))]"
               >
                 <div

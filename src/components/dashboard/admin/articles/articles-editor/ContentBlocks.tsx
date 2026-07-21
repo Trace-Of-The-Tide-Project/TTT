@@ -6,6 +6,7 @@ import type { ContentFormConfig, MainMediaEditorCopy } from "./content-form-conf
 import { mainMediaEditorCopy } from "./content-form-config";
 import { BlockActions, blockActionsModeFor, BLOCK_DRAG_MIME } from "./blocks/BlockActions";
 import { BlockRenderer } from "./blocks/BlockRenderer";
+import type { ImageFraming } from "@/lib/image-framing";
 
 export type ContentBlock = {
   id: string;
@@ -19,6 +20,8 @@ export type ContentBlock = {
   imageUrl?: string;
   /** Caption under image on the public article. */
   imageCaption?: string;
+  /** How `imageUrl` sits inside its frame (pan/zoom/fit/flip/rotate). */
+  imageFraming?: ImageFraming;
   galleryUrls?: string[];
   /** Per-block placeholder override — wins over the type-level `blockLabels` when set. */
   placeholder?: string;

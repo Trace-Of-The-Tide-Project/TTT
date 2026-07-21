@@ -195,7 +195,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
         />
 
         {config.showToolbar ? (
-          <div className="mb-4 shrink-0">
+          <div className="sticky top-0 z-20 mb-4 shrink-0">
             <EditorToolbar />
           </div>
         ) : null}
@@ -269,9 +269,9 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
           </div>
         )}
 
-        <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:overflow-hidden">
+        <div className="flex flex-1 flex-col gap-6 lg:flex-row">
           <div
-            className="min-w-0 flex-1 space-y-6 lg:overflow-y-auto"
+            className="min-w-0 flex-1 space-y-6"
             dir={contentDir}
             lang={contentDir === "rtl" ? "ar" : undefined}
           >
@@ -308,7 +308,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
             />
           </div>
 
-          <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-64 lg:overflow-y-auto">
+          <aside className="flex w-full shrink-0 flex-col gap-4 lg:sticky lg:top-4 lg:w-64 lg:self-start">
             <AvailableBlocks
               onAddBlock={addBlock}
               allowedBlockTypes={config.allowedBlockTypes}
