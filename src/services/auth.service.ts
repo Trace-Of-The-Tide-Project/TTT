@@ -11,13 +11,11 @@ import { api } from "./api";
 /**
  * Browser-side event emitted when the local session changes (login / logout).
  * Components can listen to refresh user-dependent UI without re-mounting.
+ * Defined in `lib/auth/auth-events` and re-exported here for existing callers.
  */
-export const AUTH_STATE_CHANGED_EVENT = "tot:auth-state-changed";
+import { emitAuthStateChanged } from "@/lib/auth/auth-events";
 
-export function emitAuthStateChanged(): void {
-  if (typeof window === "undefined") return;
-  window.dispatchEvent(new Event(AUTH_STATE_CHANGED_EVENT));
-}
+export { AUTH_STATE_CHANGED_EVENT, emitAuthStateChanged } from "@/lib/auth/auth-events";
 
 async function postJson<T>(url: string, body?: unknown): Promise<T> {
   const res = await fetch(url, {
