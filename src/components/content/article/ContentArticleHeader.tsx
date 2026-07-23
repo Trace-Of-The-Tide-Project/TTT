@@ -12,8 +12,10 @@ type ContentArticleHeaderProps = {
   publishedDate?: string;
   readingTime?: string;
   viewCount?: number;
-  /** When provided, renders a bookmark toggle button. */
+  /** When provided, renders a bookmark toggle button and a short share link. */
   articleId?: string;
+  /** Author name — woven into the share sentence and the story card. */
+  authorName?: string;
   /** Show folder/calendar/clock icons before the meta items (Thread Figma). */
   metaIcons?: boolean;
 };
@@ -64,6 +66,7 @@ export function ContentArticleHeader({
   readingTime,
   viewCount,
   articleId,
+  authorName,
   metaIcons = false,
 }: ContentArticleHeaderProps) {
   const t = useTranslations("Content");
@@ -74,7 +77,7 @@ export function ContentArticleHeader({
           {title}
         </h1>
         <div className="flex shrink-0 items-center gap-2">
-          <ShareButton title={title} />
+          <ShareButton title={title} author={authorName} shortLinkId={articleId} />
           {articleId && <BookmarkButton articleId={articleId} />}
         </div>
       </div>

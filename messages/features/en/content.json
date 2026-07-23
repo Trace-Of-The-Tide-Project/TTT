@@ -112,11 +112,20 @@
     },
     "share": {
       "action": "Share",
-      "title": "Share this",
+      "title": "Share this piece",
+      "text": "Read “{title}” by {author} on Trace of the Tide",
+      "textNoAuthor": "Read “{title}” on Trace of the Tide",
+      "by": "by",
+      "brand": "Trace of the Tide",
       "copyLink": "Copy link",
       "copied": "Link copied",
       "copyFailed": "Couldn't copy the link",
-      "email": "Email"
+      "email": "Email",
+      "story": "Instagram story",
+      "storyHint": "A ready-made story card with the title and author",
+      "storyRendering": "Preparing your story…",
+      "storyDownloaded": "Story image saved — open Instagram and add it to your story",
+      "storyFailed": "Couldn't create the story image"
     },
     "bookmark": {
       "save": "Save",

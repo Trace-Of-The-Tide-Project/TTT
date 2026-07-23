@@ -103,5 +103,7 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  // `a/` is the short share-link route handler — it redirects to the localized
+  // URL itself, so next-intl must not prefix it with a locale first.
+  matcher: ["/((?!api|a/|_next|_vercel|.*\\..*).*)"],
 };
