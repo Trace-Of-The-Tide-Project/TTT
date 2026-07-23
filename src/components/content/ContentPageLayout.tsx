@@ -164,6 +164,7 @@ export function ContentPageLayout({
             readingTime={article.readingTime}
             viewCount={article.viewCount}
             articleId={articleId}
+            authorName={author.name}
           />
           {/* Show which languages this piece is available in; lets the reader
               switch versions. Renders nothing when only one language exists. */}

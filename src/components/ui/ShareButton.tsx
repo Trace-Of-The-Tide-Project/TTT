@@ -1,36 +1,53 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/Modal";
 import { EmailIcon, FacebookIcon, LinkIcon, TwitterXIcon } from "@/components/ui/icons";
+import { renderStoryCard } from "@/lib/share/story-card";
 
 type ShareButtonProps = {
-  /** Title used by the native share sheet and prefilled into share targets. */
+  /** Title used by the native share sheet, share text and story card. */
   title: string;
-  /** Absolute URL to share. Defaults to the current page URL. */
+  /** Author name, woven into the share sentence ("Read X by Y on ..."). */
+  author?: string;
+  /** Absolute URL to share. Defaults to the short link, then the current URL. */
   url?: string;
+  /**
+   * Article id — enables the short link `/a/<id>`, which avoids the
+   * hundreds-of-characters percent-encoded Arabic slug.
+   */
+  shortLinkId?: string;
 };
 
 /**
  * Share control for public content (articles, issues, books...).
  * Uses the native share sheet when the browser exposes one (mobile), and
- * falls back to a themed modal with copy-link plus the usual targets.
+ * falls back to a themed modal with copy-link, social targets and a
+ * downloadable Instagram-story card.
  */
-export function ShareButton({ title, url }: ShareButtonProps) {
+export function ShareButton({ title, author, url, shortLinkId }: ShareButtonProps) {
   const t = useTranslations("Content.share");
+  const locale = useLocale();
   const [open, setOpen] = useState(false);
+  const [storyBusy, setStoryBusy] = useState(false);
 
   function resolveUrl() {
-    return url ?? (typeof window === "undefined" ? "" : window.location.href);
+    if (url) return url;
+    if (typeof window === "undefined") return "";
+    return shortLinkId ? `${window.location.origin}/a/${shortLinkId}` : window.location.href;
+  }
+
+  function shareText() {
+    return author ? t("text", { title, author }) : t("textNoAuthor", { title });
   }
 
   async function onShareClick() {
     const shareUrl = resolveUrl();
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
-        await navigator.share({ title, url: shareUrl });
+        await navigator.share({ title, text: shareText(), url: shareUrl });
         return;
       } catch {
         // ponytail: user dismissed the sheet, or the browser refused it — fall through to the modal.
@@ -40,9 +57,8 @@ export function ShareButton({ title, url }: ShareButtonProps) {
   }
 
   async function copyLink() {
-    const shareUrl = resolveUrl();
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(resolveUrl());
       toast.success(t("copied"));
       setOpen(false);
     } catch {
@@ -50,15 +66,51 @@ export function ShareButton({ title, url }: ShareButtonProps) {
     }
   }
 
+  async function shareStory() {
+    if (storyBusy) return;
+    setStoryBusy(true);
+    try {
+      const shareUrl = resolveUrl();
+      const blob = await renderStoryCard({
+        title,
+        author,
+        url: shareUrl,
+        locale,
+        brand: t("brand"),
+        byLabel: t("by"),
+      });
+      const file = new File([blob], "trace-of-the-tide-story.png", { type: "image/png" });
+
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title, text: shareText() });
+        setOpen(false);
+        return;
+      }
+
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = file.name;
+      link.click();
+      URL.revokeObjectURL(objectUrl);
+      toast.success(t("storyDownloaded"));
+      setOpen(false);
+    } catch {
+      toast.error(t("storyFailed"));
+    } finally {
+      setStoryBusy(false);
+    }
+  }
+
   const shareUrl = open ? resolveUrl() : "";
   const encodedUrl = encodeURIComponent(shareUrl);
-  const encodedTitle = encodeURIComponent(title);
+  const encodedText = encodeURIComponent(shareText());
 
   const targets = [
     {
       key: "x",
       label: "X",
-      href: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+      href: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`,
       icon: <TwitterXIcon />,
     },
     {
@@ -70,16 +122,19 @@ export function ShareButton({ title, url }: ShareButtonProps) {
     {
       key: "whatsapp",
       label: "WhatsApp",
-      href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+      href: `https://wa.me/?text=${encodedText}%20${encodedUrl}`,
       icon: <WhatsAppIcon />,
     },
     {
       key: "email",
       label: t("email"),
-      href: `mailto:?subject=${encodedTitle}&body=${encodedUrl}`,
+      href: `mailto:?subject=${encodeURIComponent(title)}&body=${encodedText}%20${encodedUrl}`,
       icon: <EmailIcon />,
     },
   ];
+
+  const rowClassName =
+    "flex items-center gap-3 rounded-lg border border-[var(--tott-card-border)] px-3 py-2.5 text-start text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)] disabled:opacity-50";
 
   return (
     <>
@@ -100,11 +155,22 @@ export function ShareButton({ title, url }: ShareButtonProps) {
 
       <Modal open={open} title={t("title")} onClose={() => setOpen(false)}>
         <div className="flex flex-col gap-2">
+          <p className="mb-1 text-sm leading-relaxed text-[var(--tott-muted)]">{shareText()}</p>
+
           <button
             type="button"
-            onClick={copyLink}
-            className="flex items-center gap-3 rounded-lg border border-[var(--tott-card-border)] px-3 py-2.5 text-start text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
+            onClick={shareStory}
+            disabled={storyBusy}
+            className={`${rowClassName} border-[var(--tott-accent-gold)]`}
           >
+            <InstagramStoryIcon />
+            <span className="flex flex-col">
+              <span>{storyBusy ? t("storyRendering") : t("story")}</span>
+              <span className="text-xs text-[var(--tott-muted)]">{t("storyHint")}</span>
+            </span>
+          </button>
+
+          <button type="button" onClick={copyLink} className={rowClassName}>
             <LinkIcon />
             {t("copyLink")}
           </button>
@@ -116,7 +182,7 @@ export function ShareButton({ title, url }: ShareButtonProps) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-lg border border-[var(--tott-card-border)] px-3 py-2.5 text-start text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
+              className={rowClassName}
             >
               {target.icon}
               {target.label}
@@ -145,6 +211,26 @@ function ShareIcon() {
       <circle cx="6" cy="12" r="3" />
       <circle cx="18" cy="19" r="3" />
       <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" />
+    </svg>
+  );
+}
+
+function InstagramStoryIcon() {
+  return (
+    <svg
+      width={16}
+      height={16}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <rect x="3" y="2" width="18" height="20" rx="4" />
+      <circle cx="12" cy="10" r="3.2" />
+      <path d="M7.5 18.5h9" />
     </svg>
   );
 }

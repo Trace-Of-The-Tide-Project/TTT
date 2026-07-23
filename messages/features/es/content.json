@@ -112,11 +112,20 @@
     },
     "share": {
       "action": "Compartir",
-      "title": "Compartir esto",
+      "title": "Compartir esta pieza",
+      "text": "Lee «{title}» de {author} en Trace of the Tide",
+      "textNoAuthor": "Lee «{title}» en Trace of the Tide",
+      "by": "de",
+      "brand": "Trace of the Tide",
       "copyLink": "Copiar enlace",
       "copied": "Enlace copiado",
       "copyFailed": "No se pudo copiar el enlace",
-      "email": "Correo electrónico"
+      "email": "Correo electrónico",
+      "story": "Historia de Instagram",
+      "storyHint": "Una tarjeta lista con el título y el autor",
+      "storyRendering": "Preparando tu historia…",
+      "storyDownloaded": "Imagen guardada — abre Instagram y añádela a tu historia",
+      "storyFailed": "No se pudo crear la imagen de la historia"
     },
     "bookmark": {
       "save": "Guardar",
