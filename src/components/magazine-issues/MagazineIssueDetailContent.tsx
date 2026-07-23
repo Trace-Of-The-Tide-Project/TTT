@@ -10,6 +10,7 @@ import { IssuePurchaseActions } from "./IssuePurchaseActions";
 import { nameInitials } from "@/components/dashboard/admin/writers/initials";
 import { AvailableLanguagesBadge } from "@/components/content/AvailableLanguagesBadge";
 import { LockIcon } from "@/components/ui/icons";
+import { ShareButton } from "@/components/ui/ShareButton";
 import {
   ContentArticleBody,
   type ContentArticleSection,
@@ -187,12 +188,17 @@ export function MagazineIssueDetailContent({
           </p>
         ) : null}
 
-        <h1
-          className="mt-3 text-3xl font-medium tracking-tight sm:text-4xl"
-          style={{ color: TEXT_STRONG }}
-        >
-          {issue.title}
-        </h1>
+        <div className="mt-3 flex items-start justify-between gap-4">
+          <h1
+            className="text-3xl font-medium tracking-tight sm:text-4xl"
+            style={{ color: TEXT_STRONG }}
+          >
+            {issue.title}
+          </h1>
+          <div className="shrink-0 pt-1">
+            <ShareButton title={issue.title} />
+          </div>
+        </div>
 
         {issue.excerpt ? (
           <p

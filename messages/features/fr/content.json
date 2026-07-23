@@ -109,6 +109,20 @@
       "loadError": "Impossible de charger l'article",
       "loadErrorBody": "Vérifiez votre connexion ou réessayez plus tard.",
       "finishedReading": "Vous avez terminé la lecture"
+    },
+    "share": {
+      "action": "Partager",
+      "title": "Partager ceci",
+      "copyLink": "Copier le lien",
+      "copied": "Lien copié",
+      "copyFailed": "Impossible de copier le lien",
+      "email": "E-mail"
+    },
+    "bookmark": {
+      "save": "Enregistrer",
+      "saved": "Enregistré",
+      "add": "Enregistrer l'article",
+      "remove": "Retirer des enregistrements"
     }
   }
 }

@@ -109,6 +109,20 @@
       "loadError": "Could not load article",
       "loadErrorBody": "Check your connection or try again later.",
       "finishedReading": "You finished reading"
+    },
+    "share": {
+      "action": "Share",
+      "title": "Share this",
+      "copyLink": "Copy link",
+      "copied": "Link copied",
+      "copyFailed": "Couldn't copy the link",
+      "email": "Email"
+    },
+    "bookmark": {
+      "save": "Save",
+      "saved": "Saved",
+      "add": "Bookmark article",
+      "remove": "Remove bookmark"
     }
   }
 }
