@@ -1,9 +1,11 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useBookmarkCheck } from "@/hooks/queries/bookmarks";
 import { useAddBookmark, useRemoveBookmark } from "@/hooks/mutations/bookmarks";
 
 export function BookmarkButton({ articleId }: { articleId: string }) {
+  const t = useTranslations("Content.bookmark");
   const { data } = useBookmarkCheck(articleId);
   const isBookmarked = data?.isBookmarked ?? false;
   const add = useAddBookmark(articleId);
@@ -23,7 +25,7 @@ export function BookmarkButton({ articleId }: { articleId: string }) {
     <button
       onClick={toggle}
       disabled={pending}
-      aria-label={isBookmarked ? "Remove bookmark" : "Bookmark article"}
+      aria-label={isBookmarked ? t("remove") : t("add")}
       aria-pressed={isBookmarked}
       className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-opacity hover:opacity-80 disabled:opacity-50"
       style={{
@@ -33,7 +35,7 @@ export function BookmarkButton({ articleId }: { articleId: string }) {
       }}
     >
       <BookmarkIcon filled={isBookmarked} />
-      {isBookmarked ? "Saved" : "Save"}
+      {isBookmarked ? t("saved") : t("save")}
     </button>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { formatViewCount } from "@/lib/format-view-count";
+import { ShareButton } from "@/components/ui/ShareButton";
 import { BookmarkButton } from "./BookmarkButton";
 
 type ContentArticleHeaderProps = {
@@ -72,7 +73,10 @@ export function ContentArticleHeader({
         <h1 className="text-2xl font-medium leading-tight text-foreground sm:text-[2rem] sm:leading-10">
           {title}
         </h1>
-        {articleId && <BookmarkButton articleId={articleId} />}
+        <div className="flex shrink-0 items-center gap-2">
+          <ShareButton title={title} />
+          {articleId && <BookmarkButton articleId={articleId} />}
+        </div>
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-[var(--tott-home-text-muted)]">
