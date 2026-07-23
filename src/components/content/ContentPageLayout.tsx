@@ -172,7 +172,7 @@ export function ContentPageLayout({
               contentType="article"
               contentId={articleId}
               currentLanguage={article.language}
-              viewBasePath="/content/article"
+              statusFilter={(v) => !v.status || v.status === "published"}
               className="mt-3"
             />
           ) : null}

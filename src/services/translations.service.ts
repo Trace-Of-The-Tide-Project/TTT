@@ -32,6 +32,12 @@ export type TranslationVersion = {
   /** Books only: whether this edition has a PDF attached. Undefined for
    * every other content type. */
   has_pdf?: boolean;
+  /** Articles only — a sibling version can live on a different public reader
+   * than the one currently open ('magazine' product → /magazine* routes,
+   * video/audio/gallery/thread → their own routes). Undefined elsewhere. */
+  product?: "main" | "magazine" | null;
+  issue_id?: string | null;
+  content_type?: string | null;
 };
 
 export type TranslationGroup = {
