@@ -7,6 +7,7 @@ import {
   type TranslatableType,
   type TranslationVersion,
 } from "@/services/translations.service";
+import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 
 type AvailableLanguagesBadgeProps = {
   /** Content type, so the right translations endpoint is queried. */
@@ -18,7 +19,9 @@ type AvailableLanguagesBadgeProps = {
   /**
    * Public route base used to switch to another version, e.g.
    * "/content/article". The sibling id is appended as `?id=<id>`. Ignored
-   * when `hrefFor` is given.
+   * when `hrefFor` is given, and ignored for `contentType="article"` — article
+   * versions resolve their own reader from the sibling's product/content_type
+   * (see `versionHref` below).
    */
   viewBasePath?: string;
   /**
@@ -33,6 +36,26 @@ type AvailableLanguagesBadgeProps = {
 };
 
 const DEFAULT_VIEW_PATH = "/content/article";
+
+/**
+ * Where a sibling *article* version is readable. Each language version is its
+ * own `articles` row and may sit on a different reader than the one currently
+ * open: magazine-product rows only render under /magazine* (the main-site
+ * reader rejects them as a product mismatch and shows "not found"), and
+ * video/audio/gallery/thread rows have their own routes. Falls back to the
+ * `?id=` reader when the backend hasn't sent product/content_type.
+ */
+function articleVersionHref(v: TranslationVersion, viewBasePath: string): string {
+  if (!v.product && !v.content_type) {
+    return `${viewBasePath}?id=${encodeURIComponent(v.id)}`;
+  }
+  return previewHrefForContentType(
+    v.content_type ?? undefined,
+    v.id,
+    v.slug,
+    v.product ?? undefined,
+  );
+}
 
 /**
  * Public "Also available in EN · AR" badge. Lists the languages a piece exists
@@ -76,10 +99,15 @@ export function AvailableLanguagesBadge({
             </span>
           );
         }
+        const href = hrefFor
+          ? hrefFor(v)
+          : contentType === "article"
+            ? articleVersionHref(v, viewBasePath)
+            : `${viewBasePath}?id=${encodeURIComponent(v.id)}`;
         return (
           <Link
             key={v.id}
-            href={hrefFor ? hrefFor(v) : `${viewBasePath}?id=${encodeURIComponent(v.id)}`}
+            href={href}
             locale={v.language as "en" | "ar" | "es" | "fr"}
             className="rounded-full border border-[var(--tott-card-border)] px-2.5 py-0.5 text-xs font-medium text-blue-400 hover:underline"
           >
