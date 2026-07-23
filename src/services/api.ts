@@ -1,9 +1,5 @@
 import axios, { isAxiosError } from "axios";
-import { routing } from "@/i18n/routing";
-import {
-  getLeadingLocaleFromPath,
-  stripLocalePrefixesFromPath,
-} from "@/lib/i18n/strip-locale-from-path";
+import { emitAuthStateChanged } from "@/lib/auth/auth-events";
 
 /**
  * All API traffic is funnelled through Next.js's `/api/proxy/...` catch-all so the
@@ -44,18 +40,6 @@ async function attemptRefresh(): Promise<RefreshOutcome> {
   return refreshInFlight;
 }
 
-let redirectingToLogin = false;
-
-function redirectToLogin(): void {
-  if (redirectingToLogin || typeof window === "undefined") return;
-  redirectingToLogin = true;
-  const pathname = window.location.pathname;
-  const locale = getLeadingLocaleFromPath(pathname) ?? routing.defaultLocale;
-  const path = stripLocalePrefixesFromPath(`${pathname}${window.location.search}`);
-  const next = encodeURIComponent(path);
-  window.location.assign(`/${locale}/auth/login?callbackUrl=${next}`);
-}
-
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
@@ -74,7 +58,13 @@ api.interceptors.response.use(
         return api.request(original);
       }
       if (outcome === "invalid") {
-        redirectToLogin();
+        // The session is genuinely dead (/api/auth/refresh already cleared the
+        // cookies). Announce it so AuthProvider re-resolves to
+        // "unauthenticated" — DO NOT redirect. This site is built for guests:
+        // a dead session on a public page must degrade to the guest view, not
+        // throw a visitor off the magazine onto a login screen. Protected
+        // surfaces send guests to login themselves via DashboardAuthGate.
+        emitAuthStateChanged();
       }
       // "transient" (backend unreachable/timed out): don't log the user out
       // over a network blip — just let this request fail and try again later.
