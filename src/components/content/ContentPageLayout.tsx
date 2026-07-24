@@ -7,8 +7,9 @@ import { ShareYourStory } from "@/components/contribute/ShareYourStory";
 import { ContentBreadcrumb } from "./related/ContentBreadcrumb";
 import { ContentMediaPlayer } from "./media/ContentMediaPlayer";
 import { ContentArticleHeader } from "./article/ContentArticleHeader";
-import { AvailableLanguagesBadge } from "./AvailableLanguagesBadge";
+import { ContentLanguageNotice } from "./ContentLanguageNotice";
 import { ContentArticleBody, type ContentArticleSection } from "./article/ContentArticleBody";
+import type { TranslationVersion } from "@/services/translations.service";
 import { ContentAuthorCard } from "./sidebar/ContentAuthorCard";
 import { ContentContributors } from "./sidebar/ContentContributors";
 import { ContentCollection } from "./sidebar/ContentCollection";
@@ -52,8 +53,11 @@ export type ContentPageLayoutProps = {
     readingTime?: string;
     /** Shown in article header (e.g. after POST /articles/:id/view). */
     viewCount?: number;
-    /** Language this version is written in — drives the available-languages badge. */
+    /** Language this version is written in — drives the language notice. */
     language?: string;
+    /** Sibling versions already fetched with the article (avoids a second
+     * /translations request in ContentLanguageNotice). */
+    availableLanguages?: TranslationVersion[];
     sections: ContentArticleSection[];
   };
   author: {
@@ -166,14 +170,15 @@ export function ContentPageLayout({
             articleId={articleId}
             authorName={author.name}
           />
-          {/* Show which languages this piece is available in; lets the reader
-              switch versions. Renders nothing when only one language exists. */}
+          {/* Tell the reader when this version isn't in their UI language
+              (fed by the article's own `available_languages` — no extra
+              request), or quietly list siblings when languages match. */}
           {articleId ? (
-            <AvailableLanguagesBadge
+            <ContentLanguageNotice
               contentType="article"
               contentId={articleId}
-              currentLanguage={article.language}
-              statusFilter={(v) => !v.status || v.status === "published"}
+              contentLanguage={article.language}
+              preloadedVersions={article.availableLanguages}
               className="mt-3"
             />
           ) : null}

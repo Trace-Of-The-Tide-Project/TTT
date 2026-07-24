@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { SectionShell } from "@/components/home/SectionShell";
+import { ContentLanguageChip } from "@/components/content/ContentLanguageChip";
 import { MagImage } from "./MagImage";
 import type { ArticleCard } from "./data";
 import { articleHref, coverSrc, shortDate, stripHtml } from "./ui";
@@ -46,9 +47,14 @@ export async function MagFeatured({
               className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             />
           </div>
-          {lead.category ? (
-            <span className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--tott-accent-gold)]">
-              {lead.category}
+          {lead.category || lead.language ? (
+            <span className="mt-5 flex items-center gap-2">
+              {lead.category ? (
+                <span className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--tott-accent-gold)]">
+                  {lead.category}
+                </span>
+              ) : null}
+              <ContentLanguageChip contentLanguage={lead.language} uiLocale={locale} />
             </span>
           ) : null}
           <h3
@@ -90,9 +96,14 @@ export async function MagFeatured({
                     />
                   </div>
                   <div className="min-w-0">
-                    {a.category ? (
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--tott-accent-gold)]">
-                        {a.category}
+                    {a.category || a.language ? (
+                      <span className="flex items-center gap-2">
+                        {a.category ? (
+                          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--tott-accent-gold)]">
+                            {a.category}
+                          </span>
+                        ) : null}
+                        <ContentLanguageChip contentLanguage={a.language} uiLocale={locale} />
                       </span>
                     ) : null}
                     <h4 className="mt-1 text-base font-medium leading-snug text-[var(--tott-home-text-strong)] group-hover:text-[var(--tott-gold-bright)]">

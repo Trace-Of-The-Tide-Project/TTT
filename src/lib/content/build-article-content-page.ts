@@ -207,6 +207,7 @@ export function buildArticleContentPageProps(article: ArticleDetail): ContentPag
           ? article.view_count
           : undefined,
       language: article.language,
+      availableLanguages: article.available_languages,
       sections: articleBlocksToSections(article.blocks, {
         omitCoverSrc: firstCover?.src ?? undefined,
       }),

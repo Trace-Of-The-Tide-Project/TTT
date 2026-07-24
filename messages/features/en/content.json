@@ -48,6 +48,13 @@
         "fr": "French"
       }
     },
+    "languageNotice": {
+      "switchBody": "You're reading this in {contentLanguage}.",
+      "switchCta": "Read in {language}",
+      "fallbackBody": "Not yet available in {userLanguage} — you're reading the {contentLanguage} version.",
+      "issueFallbackBody": "This issue isn't available in {userLanguage} yet — you're reading the {contentLanguage} edition.",
+      "dismiss": "Dismiss"
+    },
     "hub": {
       "heroTitle": "The Atrium",
       "heroIntro": "Five ways into the archive — stories, sound, image, film, and thread, gathered under one roof.",

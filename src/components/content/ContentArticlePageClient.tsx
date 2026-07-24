@@ -94,6 +94,7 @@ function mapRelated(
       date: formatShortDate(a.published_at),
       edition: a.edition || a.category || fallbacks.article,
       href: previewHrefForContentType(a.content_type ?? undefined, a.id, a.slug),
+      language: a.language,
     }));
 }
 

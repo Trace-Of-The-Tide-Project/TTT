@@ -8,7 +8,7 @@ import HexBackground from "@/components/ui/HexBackground";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { IssuePurchaseActions } from "./IssuePurchaseActions";
 import { nameInitials } from "@/components/dashboard/admin/writers/initials";
-import { AvailableLanguagesBadge } from "@/components/content/AvailableLanguagesBadge";
+import { ContentLanguageNotice } from "@/components/content/ContentLanguageNotice";
 import { LockIcon } from "@/components/ui/icons";
 import { ShareButton } from "@/components/ui/ShareButton";
 import {
@@ -209,10 +209,11 @@ export function MagazineIssueDetailContent({
           </p>
         ) : null}
 
-        <AvailableLanguagesBadge
+        <ContentLanguageNotice
           contentType="issue"
           contentId={issue.id}
-          currentLanguage={issue.language}
+          contentLanguage={issue.language}
+          variant="issue"
           statusFilter={(v) => v.status === "published"}
           hrefFor={(v) => `/magazine-issues/${v.slug ?? v.id}`}
           className="mt-3"
