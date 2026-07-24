@@ -1,6 +1,7 @@
 import { api } from "./api";
 import { isAxiosError } from "axios";
 import type { WriterProfile } from "./writers.service";
+import type { TranslationVersion } from "./translations.service";
 
 export type CreateArticleBlock = {
   block_order: number;
@@ -366,6 +367,10 @@ export type ArticleDetail = {
   price?: number | null;
   currency?: string | null;
   locked?: boolean;
+  /** Sibling versions in this article's translation group (published-only
+   * for anonymous/non-staff viewers) — lets the reader show a
+   * language-mismatch notice without a second /translations request. */
+  available_languages?: TranslationVersion[];
 };
 
 function unwrapArticleDetailPayload(raw: unknown): ArticleDetail | null {
@@ -449,6 +454,7 @@ export type RelatedArticleItem = {
   edition?: string | null;
   category?: string | null;
   content_type?: string | null;
+  language?: string | null;
   author?: { id: string; username?: string; full_name?: string | null } | null;
 };
 

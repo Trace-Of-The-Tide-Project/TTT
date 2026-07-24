@@ -111,6 +111,8 @@ export type ArticleCard = {
   authorAvatar: string | null;
   /** Admin-set framing for `coverImage`, attached by `attachArticleFraming`. */
   coverFraming?: ImageFraming;
+  /** Content language of this article — drives the language mismatch chip. */
+  language: string | null;
 };
 
 export type BookCard = {
@@ -226,6 +228,7 @@ function toArticleCard(a: ArticleListItem): ArticleCard {
     publishedAt: a.published_at ?? null,
     authorName: name,
     authorAvatar: a.author?.profile?.avatar ?? null,
+    language: a.language ?? null,
   };
 }
 

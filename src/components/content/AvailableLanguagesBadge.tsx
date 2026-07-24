@@ -7,7 +7,10 @@ import {
   type TranslatableType,
   type TranslationVersion,
 } from "@/services/translations.service";
-import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
+import {
+  DEFAULT_TRANSLATION_VIEW_PATH,
+  resolveVersionHref,
+} from "@/lib/content/translation-href";
 
 type AvailableLanguagesBadgeProps = {
   /** Content type, so the right translations endpoint is queried. */
@@ -35,27 +38,7 @@ type AvailableLanguagesBadgeProps = {
   className?: string;
 };
 
-const DEFAULT_VIEW_PATH = "/content/article";
-
-/**
- * Where a sibling *article* version is readable. Each language version is its
- * own `articles` row and may sit on a different reader than the one currently
- * open: magazine-product rows only render under /magazine* (the main-site
- * reader rejects them as a product mismatch and shows "not found"), and
- * video/audio/gallery/thread rows have their own routes. Falls back to the
- * `?id=` reader when the backend hasn't sent product/content_type.
- */
-function articleVersionHref(v: TranslationVersion, viewBasePath: string): string {
-  if (!v.product && !v.content_type) {
-    return `${viewBasePath}?id=${encodeURIComponent(v.id)}`;
-  }
-  return previewHrefForContentType(
-    v.content_type ?? undefined,
-    v.id,
-    v.slug,
-    v.product ?? undefined,
-  );
-}
+const DEFAULT_VIEW_PATH = DEFAULT_TRANSLATION_VIEW_PATH;
 
 /**
  * Public "Also available in EN · AR" badge. Lists the languages a piece exists
@@ -101,9 +84,7 @@ export function AvailableLanguagesBadge({
         }
         const href = hrefFor
           ? hrefFor(v)
-          : contentType === "article"
-            ? articleVersionHref(v, viewBasePath)
-            : `${viewBasePath}?id=${encodeURIComponent(v.id)}`;
+          : resolveVersionHref(contentType, v, viewBasePath);
         return (
           <Link
             key={v.id}

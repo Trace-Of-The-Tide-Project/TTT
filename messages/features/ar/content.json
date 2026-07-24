@@ -48,6 +48,13 @@
         "fr": "الفرنسية"
       }
     },
+    "languageNotice": {
+      "switchBody": "أنت تقرأ هذا المحتوى بـ{contentLanguage}.",
+      "switchCta": "اقرأ بـ{language}",
+      "fallbackBody": "غير متوفر بعد بـ{userLanguage} — أنت تقرأ نسخة {contentLanguage}.",
+      "issueFallbackBody": "هذا العدد غير متوفر بعد بـ{userLanguage} — أنت تقرأ نسخة {contentLanguage}.",
+      "dismiss": "إغلاق"
+    },
     "hub": {
       "heroTitle": "الأَتْريوم",
       "heroIntro": "خمسة مداخل إلى الأرشيف — حكايات وصوت وصورة وفيلم وخيط، تجتمع تحت سقف واحد.",

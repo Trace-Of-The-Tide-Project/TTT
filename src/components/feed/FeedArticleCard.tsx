@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+import { ContentLanguageChip } from "@/components/content/ContentLanguageChip";
 import type { ArticleListItem } from "@/services/articles.service";
 
 const TEXT_STRONG = "var(--tott-home-text-strong)";
@@ -32,6 +34,7 @@ function authorName(a: ArticleListItem["author"]): string {
  * to the public reader at /content/article?id=<id>.
  */
 export function FeedArticleCard({ article }: { article: ArticleListItem }) {
+  const uiLocale = useLocale();
   const cover = article.cover_image
     ? resolveArticleMediaSrc(article.cover_image)
     : null;
@@ -77,12 +80,17 @@ export function FeedArticleCard({ article }: { article: ArticleListItem }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
-        {badge ? (
-          <span
-            className="text-xs font-medium uppercase tracking-wide"
-            style={{ color: ACCENT }}
-          >
-            {badge}
+        {badge || article.language ? (
+          <span className="flex items-center gap-2">
+            {badge ? (
+              <span
+                className="text-xs font-medium uppercase tracking-wide"
+                style={{ color: ACCENT }}
+              >
+                {badge}
+              </span>
+            ) : null}
+            <ContentLanguageChip contentLanguage={article.language} uiLocale={uiLocale} />
           </span>
         ) : null}
         <h3

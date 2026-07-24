@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { StaggerContainer } from "@/components/motion/StaggerContainer";
 import { StaggerItem } from "@/components/motion/StaggerItem";
 import { SectionShell } from "@/components/home/SectionShell";
+import { ContentLanguageChip } from "@/components/content/ContentLanguageChip";
 import { MagImage } from "./MagImage";
 import type { ArticleCard } from "./data";
 import { articleHref, coverSrc, initial, shortDate, stripHtml } from "./ui";
@@ -58,9 +59,14 @@ export async function MagLatestFeed({
                   />
                 </div>
                 <div className="flex flex-1 flex-col gap-2 p-5">
-                  {a.category ? (
-                    <span className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--tott-accent-gold)]">
-                      {a.category}
+                  {a.category || a.language ? (
+                    <span className="flex items-center gap-2">
+                      {a.category ? (
+                        <span className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--tott-accent-gold)]">
+                          {a.category}
+                        </span>
+                      ) : null}
+                      <ContentLanguageChip contentLanguage={a.language} uiLocale={locale} />
                     </span>
                   ) : null}
                   <h3 className="text-lg font-medium leading-snug text-[var(--tott-home-text-strong)]">

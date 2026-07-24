@@ -48,6 +48,13 @@
         "fr": "Français"
       }
     },
+    "languageNotice": {
+      "switchBody": "Vous lisez ceci en {contentLanguage}.",
+      "switchCta": "Lire en {language}",
+      "fallbackBody": "Pas encore disponible en {userLanguage} — vous lisez la version en {contentLanguage}.",
+      "issueFallbackBody": "Ce numéro n'est pas encore disponible en {userLanguage} — vous lisez l'édition en {contentLanguage}.",
+      "dismiss": "Fermer"
+    },
     "hub": {
       "heroTitle": "L'Atrium",
       "heroIntro": "Cinq entrées dans les archives — récits, son, image, film et fil, réunis sous un même toit.",

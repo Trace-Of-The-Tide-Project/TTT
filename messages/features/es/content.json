@@ -48,6 +48,13 @@
         "fr": "Francés"
       }
     },
+    "languageNotice": {
+      "switchBody": "Estás leyendo esto en {contentLanguage}.",
+      "switchCta": "Leer en {language}",
+      "fallbackBody": "Aún no disponible en {userLanguage} — estás leyendo la versión en {contentLanguage}.",
+      "issueFallbackBody": "Este número aún no está disponible en {userLanguage} — estás leyendo la edición en {contentLanguage}.",
+      "dismiss": "Cerrar"
+    },
     "hub": {
       "heroTitle": "El Atrio",
       "heroIntro": "Cinco maneras de entrar al archivo — relatos, sonido, imagen, película e hilo, reunidos bajo un mismo techo.",
