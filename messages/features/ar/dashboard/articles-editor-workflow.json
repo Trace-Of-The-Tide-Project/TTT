@@ -33,7 +33,8 @@
           "validationOpenCallBlocksPublish": "النشر يتطلب كتلة محتوى واحدة على الأقل بمحتوى.",
           "validationOpenCallBlocksSchedule": "الجدولة تتطلب كتلة محتوى واحدة على الأقل بمحتوى.",
           "backToMagazine": "العودة إلى مقالات المجلة",
-          "magazineBadge": "مقال مجلة"
+          "magazineBadge": "مقال مجلة",
+          "importFromDrive": "استيراد من Google Drive"
         },
         "footer": {
           "schedule": "جدولة",
@@ -203,6 +204,25 @@
             "cancel": "إلغاء",
             "confirm": "جدولة",
             "confirmBusy": "جاري الجدولة…"
+          },
+          "importDrive": {
+            "title": "استيراد من Google Drive",
+            "subtitle": "الصق رابط مستند Google Docs، أو ملف .docx، أو ملف نصي/Markdown.",
+            "urlLabel": "رابط Google Drive",
+            "urlPlaceholder": "https://docs.google.com/document/d/…",
+            "shareHint": "يجب أن يكون الملف مشاركًا بخيار \"أي شخص لديه الرابط\" — لا يمكن استيراد الملفات الخاصة.",
+            "errorEmpty": "الصق رابط Google Drive أولًا.",
+            "cancel": "إلغاء",
+            "submit": "استيراد",
+            "submitBusy": "جارٍ الاستيراد…",
+            "overwriteTitle": "استبدال المحتوى الحالي؟",
+            "overwriteDescription": "سيؤدي الاستيراد إلى استبدال العنوان والكتل الموجودة بالفعل في هذا التبويب. لا يمكن التراجع عن ذلك.",
+            "overwriteConfirm": "استبدال واستيراد",
+            "overwriteCancel": "إلغاء",
+            "toastLoading": "جارٍ الاستيراد من Google Drive…",
+            "toastSuccess": "تم الاستيراد — راجع المحتوى قبل الحفظ",
+            "toastError": "فشل الاستيراد",
+            "imagesImported": "{count, plural, =0 {} one {تم استيراد صورة واحدة.} other {تم استيراد # صور.}}"
           }
         },
         "settings": {
@@ -240,7 +260,12 @@
             "allSelected": "تم اختيار كل الوسوم المتاحة.",
             "unknownName": "وسم ({prefix})",
             "fallbackName": "وسم",
-            "removeAria": "إزالة {name}"
+            "removeAria": "إزالة {name}",
+            "createOption": "إنشاء وسم \"{name}\"",
+            "creating": "جاري إنشاء الوسم…",
+            "created": "تم إنشاء الوسم",
+            "createFailed": "فشل إنشاء الوسم",
+            "hint": "اكتب اسمًا للبحث — إذا لم يكن موجودًا يمكنك إنشاؤه."
           },
           "language": {
             "label": "اللغة",

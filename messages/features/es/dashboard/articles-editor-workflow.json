@@ -33,7 +33,8 @@
           "validationOpenCallBlocksPublish": "Para publicar se necesita al menos un bloque de contenido con contenido.",
           "validationOpenCallBlocksSchedule": "Para programar se necesita al menos un bloque de contenido con contenido.",
           "backToMagazine": "Volver a los artículos de la revista",
-          "magazineBadge": "Artículo de revista"
+          "magazineBadge": "Artículo de revista",
+          "importFromDrive": "Importar desde Google Drive"
         },
         "footer": {
           "schedule": "Programar",
@@ -203,6 +204,25 @@
             "cancel": "Cancelar",
             "confirm": "Programar",
             "confirmBusy": "Programando…"
+          },
+          "importDrive": {
+            "title": "Importar desde Google Drive",
+            "subtitle": "Pega el enlace a un Google Doc, un archivo .docx o un archivo de texto/Markdown.",
+            "urlLabel": "Enlace de Google Drive",
+            "urlPlaceholder": "https://docs.google.com/document/d/…",
+            "shareHint": "El archivo debe compartirse como \"Cualquier persona con el enlace\" — los archivos privados no se pueden importar.",
+            "errorEmpty": "Pega primero un enlace de Google Drive.",
+            "cancel": "Cancelar",
+            "submit": "Importar",
+            "submitBusy": "Importando…",
+            "overwriteTitle": "¿Reemplazar el contenido actual?",
+            "overwriteDescription": "Importar reemplazará el título y los bloques ya añadidos en esta pestaña. Esto no se puede deshacer.",
+            "overwriteConfirm": "Reemplazar e importar",
+            "overwriteCancel": "Cancelar",
+            "toastLoading": "Importando desde Google Drive…",
+            "toastSuccess": "Importado — revisa antes de guardar",
+            "toastError": "Error al importar",
+            "imagesImported": "{count, plural, =0 {} one {1 imagen importada.} other {# imágenes importadas.}}"
           }
         },
         "settings": {
@@ -240,7 +260,12 @@
             "allSelected": "Todas las etiquetas disponibles están seleccionadas.",
             "unknownName": "Etiqueta ({prefix})",
             "fallbackName": "etiqueta",
-            "removeAria": "Eliminar {name}"
+            "removeAria": "Eliminar {name}",
+            "createOption": "Crear etiqueta \"{name}\"",
+            "creating": "Creando etiqueta…",
+            "created": "Etiqueta creada",
+            "createFailed": "Error al crear la etiqueta",
+            "hint": "Escribe un nombre para buscar; si no existe, puedes crearlo."
           },
           "language": {
             "label": "Idioma",

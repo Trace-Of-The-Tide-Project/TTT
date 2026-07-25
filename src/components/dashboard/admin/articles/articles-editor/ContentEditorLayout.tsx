@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "@/i18n/navigation";
 import { AvailableBlocks } from "@/components/dashboard/admin/articles/articles-editor/AvailableBlocks";
@@ -11,6 +11,7 @@ import { ContentSettings } from "@/components/dashboard/admin/articles/articles-
 import { ContributorsPanel } from "@/components/dashboard/admin/articles/articles-editor/ContributorsPanel";
 import { ContentEditorFooter } from "@/components/dashboard/admin/articles/articles-editor/ContentEditorFooter";
 import { ScheduleArticleModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ScheduleArticleModal";
+import { ImportFromDriveModal } from "@/components/dashboard/admin/articles/articles-editor/modals/ImportFromDriveModal";
 import { LanguageFormTabs } from "@/components/dashboard/admin/translations";
 import { dirFor } from "@/i18n/dir";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
@@ -31,7 +32,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
     t, tLayout, isEditMode, localizedConfig, localizedMainMedia, config,
     articleLoading, loadError,
     title, setTitle,
-    blocks,
+    blocks, setBlocks,
     workflowStatus, setWorkflowStatus,
     scheduledAt,
     category, setCategory,
@@ -63,6 +64,19 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
 
   const { articleId } = props;
   const contentDir = dirFor(activeLang);
+
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const hasExistingContent =
+    Boolean((title ?? "").trim()) ||
+    (blocks ?? []).some(
+      (b) =>
+        Boolean(b.content?.trim()) ||
+        Boolean(b.imageUrl) ||
+        Boolean(b.file) ||
+        (b.files?.length ?? 0) > 0 ||
+        Boolean(b.embedUrl) ||
+        (b.galleryUrls?.length ?? 0) > 0,
+    );
 
   // Magazine authoring context: entered via ?product=magazine or ?issue_id.
   // Surfaces a badge + a back link to the magazine so the shared editor
@@ -193,6 +207,15 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
           onClose={() => !busy && setScheduleModalOpen(false)}
           onConfirm={handleScheduleConfirm}
         />
+        <ImportFromDriveModal
+          open={importModalOpen}
+          hasExistingContent={hasExistingContent}
+          onClose={() => setImportModalOpen(false)}
+          onImported={({ title: importedTitle, blocks: importedBlocks }) => {
+            if (!title.trim()) setTitle(importedTitle);
+            setBlocks(importedBlocks);
+          }}
+        />
 
         {config.showToolbar ? (
           <div className="sticky top-0 z-20 mb-4 shrink-0">
@@ -288,24 +311,36 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
                 </Link>
               </div>
             ) : null}
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder={localizedConfig.titlePlaceholder}
-              className={titleClass}
-              dir={contentDir}
-              lang={contentDir === "rtl" ? "ar" : undefined}
-            />
-            <ContentBlocks
-              blocks={blocks}
-              onUpdateBlock={updateBlock}
-              onAddCoverBlock={addCoverBlock}
-              onReorderBlock={reorderBlocks}
-              onRemoveBlock={removeBlock}
-              config={localizedConfig}
-              mainMediaCopy={localizedMainMedia}
-            />
+            <div className="flex items-center justify-between gap-3">
+              <input
+                id="article-title-input"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder={localizedConfig.titlePlaceholder}
+                className={titleClass}
+                dir={contentDir}
+                lang={contentDir === "rtl" ? "ar" : undefined}
+              />
+              <button
+                type="button"
+                onClick={() => setImportModalOpen(true)}
+                className="shrink-0 whitespace-nowrap rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-[var(--tott-accent-gold)]/50 hover:bg-[var(--tott-elevated-hover)]"
+              >
+                {tLayout("importFromDrive")}
+              </button>
+            </div>
+            <div id="article-content-blocks">
+              <ContentBlocks
+                blocks={blocks}
+                onUpdateBlock={updateBlock}
+                onAddCoverBlock={addCoverBlock}
+                onReorderBlock={reorderBlocks}
+                onRemoveBlock={removeBlock}
+                config={localizedConfig}
+                mainMediaCopy={localizedMainMedia}
+              />
+            </div>
           </div>
 
           <aside className="flex w-full shrink-0 flex-col gap-4 lg:sticky lg:top-4 lg:w-64 lg:self-start">

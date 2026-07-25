@@ -33,7 +33,8 @@
           "validationOpenCallBlocksPublish": "Publishing requires at least one content block with content.",
           "validationOpenCallBlocksSchedule": "Scheduling requires at least one content block with content.",
           "backToMagazine": "Back to magazine articles",
-          "magazineBadge": "Magazine article"
+          "magazineBadge": "Magazine article",
+          "importFromDrive": "Import from Google Drive"
         },
         "footer": {
           "schedule": "Schedule",
@@ -203,6 +204,25 @@
             "cancel": "Cancel",
             "confirm": "Schedule",
             "confirmBusy": "Scheduling…"
+          },
+          "importDrive": {
+            "title": "Import from Google Drive",
+            "subtitle": "Paste a link to a Google Doc, .docx, or text/markdown file.",
+            "urlLabel": "Google Drive link",
+            "urlPlaceholder": "https://docs.google.com/document/d/…",
+            "shareHint": "The file must be shared \"Anyone with the link\" — private files can't be imported.",
+            "errorEmpty": "Paste a Google Drive link first.",
+            "cancel": "Cancel",
+            "submit": "Import",
+            "submitBusy": "Importing…",
+            "overwriteTitle": "Replace current content?",
+            "overwriteDescription": "Importing will replace the title and blocks already in this tab. This can't be undone.",
+            "overwriteConfirm": "Replace & Import",
+            "overwriteCancel": "Cancel",
+            "toastLoading": "Importing from Google Drive…",
+            "toastSuccess": "Imported — review before saving",
+            "toastError": "Import failed",
+            "imagesImported": "{count, plural, =0 {} one {1 image imported.} other {# images imported.}}"
           }
         },
         "settings": {
@@ -240,7 +260,12 @@
             "allSelected": "All available tags are selected.",
             "unknownName": "Tag ({prefix})",
             "fallbackName": "tag",
-            "removeAria": "Remove {name}"
+            "removeAria": "Remove {name}",
+            "createOption": "Create tag \"{name}\"",
+            "creating": "Creating tag…",
+            "created": "Tag created",
+            "createFailed": "Failed to create tag",
+            "hint": "Type a name to search — if it doesn't exist yet, you can create it."
           },
           "language": {
             "label": "Language",

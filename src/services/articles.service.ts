@@ -152,6 +152,21 @@ export function getArticleIdFromCreateResponse(data: ArticleCreateResponse): str
   return extractArticleId(data);
 }
 
+export type ImportedGoogleDoc = {
+  title: string;
+  html: string;
+  source: "gdoc" | "docx" | "text";
+  images: number;
+};
+
+/** POST — fetch a Google Drive doc (Doc/.docx/text) and normalize it to HTML
+ * for the editor to convert into blocks. The doc must be shared "Anyone with
+ * the link"; no OAuth, nothing is persisted server-side. */
+export async function importFromGoogleDrive(url: string) {
+  const { data } = await api.post<{ data: ImportedGoogleDoc }>("/articles/import/google-doc", { url });
+  return data.data;
+}
+
 export type ArticlePublishResponse = {
   id: string;
   status: string;
