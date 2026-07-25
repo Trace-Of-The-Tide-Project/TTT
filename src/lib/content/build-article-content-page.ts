@@ -31,7 +31,13 @@ type ContributorLike = {
   username?: string;
   full_name?: string;
   role?: string;
-  user?: { username?: string; full_name?: string };
+  avatar_url?: string | null;
+  profile?: { avatar?: string | null } | null;
+  user?: {
+    username?: string;
+    full_name?: string;
+    profile?: { avatar?: string | null } | null;
+  };
 };
 
 function collectionLabelFromArticle(article: ArticleDetail): string | null {
@@ -128,10 +134,12 @@ export function buildArticleContentPageProps(article: ArticleDetail): ContentPag
       row.username ||
       row.user?.username ||
       "Contributor";
+    const avatarUrl = row.profile?.avatar || row.user?.profile?.avatar || row.avatar_url || null;
     return {
       name,
       role: row.role || "Contributor",
       initials: initialsFromName(name),
+      avatarUrl,
     };
   });
 
@@ -216,6 +224,7 @@ export function buildArticleContentPageProps(article: ArticleDetail): ContentPag
       id: article.author?.id,
       name: authorName,
       initials: initialsFromName(authorName),
+      avatarUrl: article.author?.profile?.avatar || null,
     },
     contributors,
     collection: {

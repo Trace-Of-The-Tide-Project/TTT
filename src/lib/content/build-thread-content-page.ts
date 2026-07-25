@@ -175,8 +175,8 @@ export type ThreadPageData = {
   mainPublishedDate?: string;
   mainReadingTime?: string;
   entries: ThreadEntry[];
-  author: { id?: string; name: string; initials: string };
-  contributors: { name: string; role: string; initials: string }[];
+  author: { id?: string; name: string; initials: string; avatarUrl?: string | null };
+  contributors: { name: string; role: string; initials: string; avatarUrl?: string | null }[];
 };
 
 function initialsFromName(name: string): string {
@@ -187,7 +187,9 @@ function initialsFromName(name: string): string {
 
 type ContributorLike = {
   name?: string; username?: string; full_name?: string; role?: string;
-  user?: { username?: string; full_name?: string };
+  avatar_url?: string | null;
+  profile?: { avatar?: string | null } | null;
+  user?: { username?: string; full_name?: string; profile?: { avatar?: string | null } | null };
 };
 
 export function buildThreadContentPageProps(article: ArticleDetail): ThreadPageData {
@@ -198,7 +200,8 @@ export function buildThreadContentPageProps(article: ArticleDetail): ThreadPageD
   const contributors = contributorsRaw.map((c) => {
     const row = c as ContributorLike;
     const name = row.name || row.full_name || row.user?.full_name || row.username || row.user?.username || "Contributor";
-    return { name, role: row.role || "Contributor", initials: initialsFromName(name) };
+    const avatarUrl = row.profile?.avatar || row.user?.profile?.avatar || row.avatar_url || null;
+    return { name, role: row.role || "Contributor", initials: initialsFromName(name), avatarUrl };
   });
 
   const publishedDate = formatPublished(article.published_at);
@@ -227,7 +230,12 @@ export function buildThreadContentPageProps(article: ArticleDetail): ThreadPageD
     mainPublishedDate: publishedDate,
     mainReadingTime: readingTime,
     entries,
-    author: { id: article.author?.id, name: authorName, initials: initialsFromName(authorName) },
+    author: {
+      id: article.author?.id,
+      name: authorName,
+      initials: initialsFromName(authorName),
+      avatarUrl: article.author?.profile?.avatar || null,
+    },
     contributors,
   };
 }

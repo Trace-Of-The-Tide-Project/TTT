@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { theme } from "@/lib/theme";
 import { dirFor } from "@/i18n/dir";
 import { SpringLink } from "@/components/motion/SpringLink";
@@ -66,12 +67,14 @@ export type ContentPageLayoutProps = {
     initials: string;
     link?: string;
     color?: string;
+    avatarUrl?: string | null;
   };
   contributors: {
     name: string;
     role: string;
     initials: string;
     color?: string;
+    avatarUrl?: string | null;
   }[];
   collection: {
     articleCount: number;
@@ -99,6 +102,7 @@ export function ContentPageLayout({
   collection,
   relatedContent,
 }: ContentPageLayoutProps) {
+  const t = useTranslations("Content");
   const isOpenCall =
     contentType === "open_call" || contentType === "open-call" || contentType === "opencall";
   const isAudio = media.type === "audio";
@@ -216,7 +220,7 @@ export function ContentPageLayout({
           <aside className="flex w-full shrink-0 flex-col gap-6 md:w-[24rem]">
             {tocEntries.length >= 2 ? (
               <div className="md:sticky md:top-6">
-                <ArticleTableOfContents entries={tocEntries} title="On this page" />
+                <ArticleTableOfContents entries={tocEntries} title={t("onThisPage")} />
                 <FinishedReadingBadge />
               </div>
             ) : null}

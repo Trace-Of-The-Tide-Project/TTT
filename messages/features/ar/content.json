@@ -18,8 +18,28 @@
     "category": "التصنيف",
     "readingTime": "وقت القراءة",
     "breadcrumbCollections": "المجموعات",
+    "onThisPage": "في هذه الصفحة",
     "fallbackAuthor": "الكاتب",
     "fallbackArticle": "مقالة",
+    "browseEyebrow": "الأرشيف",
+    "itemCount": "{count} في الأرشيف",
+    "comingSoonEyebrow": "قريبًا",
+    "allArticles": {
+      "heading": "جميع المقالات",
+      "subtitle": "كل مقالة منشورة في الأرشيف.",
+      "empty": "لا توجد مقالات منشورة بعد.",
+      "prev": "السابق",
+      "next": "التالي",
+      "pageOf": "صفحة {page} من {totalPages}"
+    },
+    "allAudio": {
+      "heading": "جميع المقاطع الصوتية",
+      "subtitle": "كل مقطع صوتي منشور في الأرشيف.",
+      "empty": "لا توجد مقاطع صوتية بعد — المزيد في الطريق قريبًا.",
+      "prev": "السابق",
+      "next": "التالي",
+      "pageOf": "صفحة {page} من {totalPages}"
+    },
     "buyGate": {
       "heading": "اشترِ هذه المقالة",
       "body": "اشترِ هذه المقالة لقراءتها كاملة.",

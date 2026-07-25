@@ -41,12 +41,14 @@ type ThreadsPageLayoutProps = {
     initials: string;
     link?: string;
     color?: string;
+    avatarUrl?: string | null;
   };
   contributors: {
     name: string;
     role: string;
     initials: string;
     color?: string;
+    avatarUrl?: string | null;
   }[];
   collection: {
     articleCount: number;

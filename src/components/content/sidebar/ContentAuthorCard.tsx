@@ -12,6 +12,7 @@ type ContentAuthorCardProps = {
   initials: string;
   link?: string;
   color?: string;
+  avatarUrl?: string | null;
 };
 
 export function ContentAuthorCard({
@@ -20,6 +21,7 @@ export function ContentAuthorCard({
   initials,
   link,
   color = "var(--tott-gold-chip-bg)",
+  avatarUrl,
 }: ContentAuthorCardProps) {
   const t = useTranslations("Content");
   const { status } = useAuth();
@@ -35,12 +37,21 @@ export function ContentAuthorCard({
 
   return (
     <div className="flex items-center gap-4">
-      <div
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-medium"
-        style={{ backgroundColor: color, color: "var(--tott-gold-chip-ink)" }}
-      >
-        {initials}
-      </div>
+      {avatarUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element -- signed, short-lived URL; not worth next/image's remote-pattern config
+        <img
+          src={avatarUrl}
+          alt=""
+          className="h-10 w-10 shrink-0 rounded-full object-cover"
+        />
+      ) : (
+        <div
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-medium"
+          style={{ backgroundColor: color, color: "var(--tott-gold-chip-ink)" }}
+        >
+          {initials}
+        </div>
+      )}
 
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-2">
