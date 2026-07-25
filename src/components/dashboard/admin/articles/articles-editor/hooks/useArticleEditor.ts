@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { usePrimaryLanguage } from "@/i18n/use-primary-language";
@@ -165,6 +166,19 @@ export function useArticleEditor({
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Surfaces a validation failure as both the inline footer banner and a
+  // toast, and jumps the user straight to the offending field — so they
+  // don't have to guess which required field is empty.
+  const failField = useCallback((message: string, fieldId: string) => {
+    setError(message);
+    toast.error(message);
+    const el = document.getElementById(fieldId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.focus({ preventScroll: true });
+    }
+  }, []);
   const [loadKey, setLoadKey] = useState(0);
   const [portalReady, setPortalReady] = useState(false);
 
@@ -578,13 +592,13 @@ export function useArticleEditor({
 
   const handleSaveDraft = useCallback(async () => {
     const pf = getPrimaryForm();
-    if (!pf.title.trim()) { setError(tLayout("validationTitle")); return; }
-    if (!category.trim()) { setError(tLayout("validationCategory")); return; }
+    if (!pf.title.trim()) { failField(tLayout("validationTitle"), "article-title-input"); return; }
+    if (!category.trim()) { failField(tLayout("validationCategory"), "article-settings-category"); return; }
     setError(null);
     setBusy(true);
     try {
       const payload = await buildPayload(pf);
-      if (payload.blocks.length === 0) { setError(tLayout("validationBlocksDraft")); return; }
+      if (payload.blocks.length === 0) { failField(tLayout("validationBlocksDraft"), "article-content-blocks"); return; }
       if (isEditMode && articleId) {
         const status: ArticleLifecycleStatus =
           workflowStatus === "draft" ? "draft"
@@ -607,19 +621,19 @@ export function useArticleEditor({
   }, [
     getPrimaryForm, category, buildPayload, notifySuccessAndLeave, destinationAfterSave,
     isEditMode, articleId, workflowStatus, tLayout, translateErr,
-    saveDirtySiblings, translationOf,
+    saveDirtySiblings, translationOf, failField,
   ]);
 
   const handlePublish = useCallback(async () => {
     if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
     const pf = getPrimaryForm();
-    if (!pf.title.trim()) { setError(tLayout("validationTitle")); return; }
-    if (!category.trim()) { setError(tLayout("validationCategory")); return; }
+    if (!pf.title.trim()) { failField(tLayout("validationTitle"), "article-title-input"); return; }
+    if (!category.trim()) { failField(tLayout("validationCategory"), "article-settings-category"); return; }
     setError(null);
     setBusy(true);
     try {
       const payload = await buildPayload(pf);
-      if (payload.blocks.length === 0) { setError(tLayout("validationBlocksPublish")); return; }
+      if (payload.blocks.length === 0) { failField(tLayout("validationBlocksPublish"), "article-content-blocks"); return; }
       if (isEditMode && articleId) {
         await updateArticle(articleId, editPatchFromPayload(payload));
         if (initialWasDraftRef.current || workflowStatus === "scheduled") {
@@ -646,20 +660,20 @@ export function useArticleEditor({
   }, [
     workflowStatus, getPrimaryForm, category, buildPayload, notifySuccessAndLeave,
     destinationAfterSave, isEditMode, articleId, tLayout, translateErr,
-    saveDirtySiblings, translationOf,
+    saveDirtySiblings, translationOf, failField,
   ]);
 
   const handleScheduleConfirm = useCallback(
     async (iso: string) => {
       if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
       const pf = getPrimaryForm();
-      if (!pf.title.trim()) { setError(tLayout("validationTitle")); setScheduleModalOpen(false); return; }
-      if (!category.trim()) { setError(tLayout("validationCategory")); setScheduleModalOpen(false); return; }
+      if (!pf.title.trim()) { failField(tLayout("validationTitle"), "article-title-input"); setScheduleModalOpen(false); return; }
+      if (!category.trim()) { failField(tLayout("validationCategory"), "article-settings-category"); setScheduleModalOpen(false); return; }
       setError(null);
       setBusy(true);
       try {
         const payload = await buildPayload(pf);
-        if (payload.blocks.length === 0) { setError(tLayout("validationBlocksSchedule")); setScheduleModalOpen(false); return; }
+        if (payload.blocks.length === 0) { failField(tLayout("validationBlocksSchedule"), "article-content-blocks"); setScheduleModalOpen(false); return; }
         if (isEditMode && articleId) {
           await updateArticle(articleId, { ...editPatchFromPayload(payload), status: "scheduled" });
           await scheduleArticle(articleId, iso);
@@ -685,7 +699,7 @@ export function useArticleEditor({
     [
       workflowStatus, getPrimaryForm, category, buildPayload, notifySuccessAndLeave,
       destinationAfterSave, isEditMode, articleId, tLayout, translateErr,
-      saveDirtySiblings, translationOf,
+      saveDirtySiblings, translationOf, failField,
     ],
   );
 

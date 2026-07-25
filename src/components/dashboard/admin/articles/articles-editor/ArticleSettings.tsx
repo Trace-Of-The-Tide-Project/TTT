@@ -1,11 +1,21 @@
 "use client";
 
-import { useCallback, useMemo, useState, type ReactNode, type SelectHTMLAttributes } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type SelectHTMLAttributes,
+} from "react";
 import { useTranslations } from "next-intl";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { routing } from "@/i18n/routing";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
-import type { AdminTagItem } from "@/services/admin-tags.service";
-import { useAdminTags } from "@/hooks/queries/admin-tags";
+import { createTag, type AdminTagItem } from "@/services/admin-tags.service";
+import { adminTagsKeys, useAdminTags } from "@/hooks/queries/admin-tags";
+import { mutationToast } from "@/hooks/useMutationToast";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { ARTICLE_COVER_FRAMING } from "@/lib/framing-placements";
 import { AdjustImageButton } from "@/components/dashboard/admin/media-library/AdjustImageButton";
@@ -202,7 +212,10 @@ export function ContentSettings({
   );
   const tagsLoading = tagsQuery.isPending;
   const tagsError = tagsQuery.error ? t("tagsLoadError") : null;
-  const [tagPicker, setTagPicker] = useState("");
+  const [tagQuery, setTagQuery] = useState("");
+  const [tagDropdownOpen, setTagDropdownOpen] = useState(false);
+  const tagBoxRef = useRef<HTMLDivElement | null>(null);
+  const qc = useQueryClient();
 
   const tagNameById = useMemo(() => {
     const m = new Map<string, string>();
@@ -221,7 +234,7 @@ export function ContentSettings({
     (id: string) => {
       if (!id || tagIds.includes(id)) return;
       onTagIdsChange([...tagIds, id]);
-      setTagPicker("");
+      setTagQuery("");
     },
     [onTagIdsChange, tagIds],
   );
@@ -230,6 +243,58 @@ export function ContentSettings({
     () => adminTags.filter((tag) => !tagIds.includes(tag.id)),
     [adminTags, tagIds],
   );
+
+  const trimmedTagQuery = tagQuery.trim();
+  const exactTagMatch = useMemo(
+    () => adminTags.find((tag) => tag.name.toLowerCase() === trimmedTagQuery.toLowerCase()),
+    [adminTags, trimmedTagQuery],
+  );
+  const filteredTagsToAdd = useMemo(
+    () =>
+      trimmedTagQuery
+        ? tagsAvailableToAdd.filter((tag) =>
+            tag.name.toLowerCase().includes(trimmedTagQuery.toLowerCase()),
+          )
+        : tagsAvailableToAdd,
+    [tagsAvailableToAdd, trimmedTagQuery],
+  );
+
+  const createTagMutation = useMutation({
+    mutationFn: (name: string) =>
+      mutationToast(() => createTag({ name }), {
+        loading: t("tags.creating"),
+        success: t("tags.created"),
+        error: t("tags.createFailed"),
+      }),
+    onSuccess: (tag) => {
+      if (!tag) return;
+      qc.setQueryData<AdminTagItem[]>(adminTagsKeys.all, (old) =>
+        old ? [...old, tag] : [tag],
+      );
+      qc.invalidateQueries({ queryKey: adminTagsKeys.all });
+      addTagFromPicker(tag.id);
+    },
+  });
+
+  const commitTagQuery = useCallback(() => {
+    if (!trimmedTagQuery) return;
+    if (exactTagMatch) {
+      addTagFromPicker(exactTagMatch.id);
+      return;
+    }
+    createTagMutation.mutate(trimmedTagQuery);
+  }, [trimmedTagQuery, exactTagMatch, addTagFromPicker, createTagMutation]);
+
+  // Close the tag dropdown on outside click.
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (tagBoxRef.current && !tagBoxRef.current.contains(e.target as Node)) {
+        setTagDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
 
   const scheduledLabel = formatScheduledAtHint(scheduledAt ?? null);
 
@@ -367,26 +432,66 @@ export function ContentSettings({
               })}
             </div>
           ) : null}
-          <FieldSelect
-            id="article-settings-tag-add"
-            value={tagPicker}
-            aria-busy={tagsLoading}
-            onChange={(e) => {
-              const v = e.target.value;
-              if (v) addTagFromPicker(v);
-              else setTagPicker("");
-            }}
-          >
-            <option value="">
-              {tagsLoading ? t("tags.loading") : t("tags.addPlaceholder")}
-            </option>
-            {tagsAvailableToAdd.map((tag) => (
-              <option key={tag.id} value={tag.id}>
-                {tag.name}
-              </option>
-            ))}
-          </FieldSelect>
-          {tagsError ? <p className="mt-1.5 text-xs text-amber-400">{tagsError}</p> : null}
+          <div ref={tagBoxRef} className="relative">
+            <input
+              id="article-settings-tag-add"
+              type="text"
+              value={tagQuery}
+              aria-busy={tagsLoading}
+              disabled={tagsLoading}
+              onChange={(e) => {
+                setTagQuery(e.target.value);
+                setTagDropdownOpen(true);
+              }}
+              onFocus={() => setTagDropdownOpen(true)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  commitTagQuery();
+                }
+              }}
+              placeholder={tagsLoading ? t("tags.loading") : t("tags.addPlaceholder")}
+              className={FIELD_BASE}
+            />
+            {tagDropdownOpen ? (
+              <div className="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-[7.5px] border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] py-1 shadow-xl">
+                {filteredTagsToAdd.map((tag) => (
+                  <button
+                    key={tag.id}
+                    type="button"
+                    onClick={() => {
+                      addTagFromPicker(tag.id);
+                      setTagDropdownOpen(false);
+                    }}
+                    className="block w-full px-3 py-2 text-start text-sm text-foreground transition-colors hover:bg-[var(--tott-elevated-hover)]"
+                  >
+                    {tag.name}
+                  </button>
+                ))}
+                {trimmedTagQuery && !exactTagMatch ? (
+                  <button
+                    type="button"
+                    disabled={createTagMutation.isPending}
+                    onClick={() => {
+                      commitTagQuery();
+                      setTagDropdownOpen(false);
+                    }}
+                    className="block w-full px-3 py-2 text-start text-sm text-[var(--tott-gold)] transition-colors hover:bg-[var(--tott-elevated-hover)] disabled:opacity-40"
+                  >
+                    {t("tags.createOption", { name: trimmedTagQuery })}
+                  </button>
+                ) : null}
+                {!filteredTagsToAdd.length && !trimmedTagQuery ? (
+                  <p className="px-3 py-2 text-xs text-[var(--tott-muted)]">{t("tags.allSelected")}</p>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+          {tagsError ? (
+            <p className="mt-1.5 text-xs text-amber-400">{tagsError}</p>
+          ) : (
+            <p className="mt-1.5 text-xs text-[var(--tott-muted)]">{t("tags.hint")}</p>
+          )}
         </div>
 
         <div>
