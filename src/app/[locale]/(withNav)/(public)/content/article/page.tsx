@@ -1,6 +1,26 @@
-import { ContentArticlePageClient } from "@/components/content/ContentArticlePageClient";
-import { CONTENT_ARTICLE_FULL } from "@/lib/constants";
+import {
+  AllContentListingPage,
+  buildListingMetadata,
+} from "@/components/content/hub/AllContentListing";
 
-export default function ContentArticlePage() {
-  return <ContentArticlePageClient demoArticle={CONTENT_ARTICLE_FULL} />;
+// Highly dynamic (new articles publish anytime) — never cache, same as the
+// /content hub.
+export const dynamic = "force-dynamic";
+
+export const generateMetadata = () => buildListingMetadata("allArticles");
+
+/** `/content/article` — browse-all-articles page (linked from the Atrium's "see everything" end cap). */
+export default function ArticlesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  return (
+    <AllContentListingPage
+      contentType="article"
+      routePath="/content/article"
+      keyPrefix="allArticles"
+      searchParams={searchParams}
+    />
+  );
 }

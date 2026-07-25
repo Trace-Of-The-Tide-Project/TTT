@@ -339,6 +339,7 @@ export type ArticleDetailAuthor = {
   id: string;
   username: string;
   full_name?: string | null;
+  profile?: ArticleAuthorProfile | null;
 };
 
 export type ArticleDetail = {

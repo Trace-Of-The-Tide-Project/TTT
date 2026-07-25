@@ -18,8 +18,28 @@
     "category": "Catégorie",
     "readingTime": "Temps de lecture",
     "breadcrumbCollections": "Collections",
+    "onThisPage": "Sur cette page",
     "fallbackAuthor": "Auteur",
     "fallbackArticle": "Article",
+    "browseEyebrow": "Archives",
+    "itemCount": "{count} dans les archives",
+    "comingSoonEyebrow": "Bientôt disponible",
+    "allArticles": {
+      "heading": "Tous les articles",
+      "subtitle": "Chaque article publié dans les archives.",
+      "empty": "Aucun article publié pour le moment.",
+      "prev": "Précédent",
+      "next": "Suivant",
+      "pageOf": "Page {page} sur {totalPages}"
+    },
+    "allAudio": {
+      "heading": "Tout l'audio",
+      "subtitle": "Chaque contenu audio publié dans les archives.",
+      "empty": "Aucun audio pour le moment — plus de contenu arrive bientôt.",
+      "prev": "Précédent",
+      "next": "Suivant",
+      "pageOf": "Page {page} sur {totalPages}"
+    },
     "buyGate": {
       "heading": "Achetez cet article",
       "body": "Achetez cet article pour le lire en entier.",

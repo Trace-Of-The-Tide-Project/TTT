@@ -54,6 +54,7 @@ export function ChamferedSurface({
             background: borderColor,
             clipPath: clip,
             WebkitClipPath: clip,
+            zIndex: -1,
           }}
         >
           <span

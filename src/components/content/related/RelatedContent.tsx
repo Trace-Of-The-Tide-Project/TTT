@@ -14,6 +14,8 @@ type RelatedContentProps = {
 export function RelatedContent({ items, viewMoreHref = "#" }: RelatedContentProps) {
   const t = useTranslations("Content");
 
+  if (items.length === 0) return null;
+
   const hexItems: FeaturedHexItem[] = items.map((item, i) => ({
     id: item.id ?? `related-${i}`,
     title: item.title,

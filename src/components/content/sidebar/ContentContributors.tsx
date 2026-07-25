@@ -10,6 +10,7 @@ type Contributor = {
   role: string;
   initials: string;
   color?: string;
+  avatarUrl?: string | null;
 };
 
 type ContentContributorsProps = {
@@ -42,12 +43,21 @@ export function ContentContributors({
             transition={springs.gentle}
             className="flex cursor-pointer items-center gap-3 rounded-xl px-2 py-1 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
           >
-            <div
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-base"
-              style={{ backgroundColor: c.color || "var(--tott-gold-chip-bg)", color: "var(--tott-gold-chip-ink)" }}
-            >
-              {c.initials}
-            </div>
+            {c.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- signed, short-lived URL; not worth next/image's remote-pattern config
+              <img
+                src={c.avatarUrl}
+                alt=""
+                className="h-10 w-10 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <div
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-base"
+                style={{ backgroundColor: c.color || "var(--tott-gold-chip-bg)", color: "var(--tott-gold-chip-ink)" }}
+              >
+                {c.initials}
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-[var(--tott-dash-gold-label)]">
                 {c.name}

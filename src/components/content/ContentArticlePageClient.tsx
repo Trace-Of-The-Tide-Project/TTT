@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { ContentPageLayout } from "@/components/content/ContentPageLayout";
 import { buildArticleContentPageProps } from "@/lib/content/build-article-content-page";
 import {
@@ -17,59 +17,10 @@ import { useRecordArticleView } from "@/hooks/mutations/articles";
 import { theme } from "@/lib/theme";
 import type { ContentPageLayoutProps } from "@/components/content/ContentPageLayout";
 import type { RelatedContentCardData } from "@/components/content/related/RelatedContentCard";
-import {
-  CONTENT_MEDIA_ARTICLE,
-  CONTENT_ARTICLE,
-  CONTENT_ARTICLE_FULL,
-  CONTENT_AUTHOR,
-  CONTENT_CONTRIBUTORS,
-  CONTENT_COLLECTION,
-  CONTENT_RELATED,
-} from "@/lib/constants";
 import { useOptionalArticleReadingHeader } from "@/components/layout/ArticleReadingHeaderContext";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import PremiumGate from "@/components/content/PremiumGate";
 import ArticleBuyGate from "@/components/content/ArticleBuyGate";
-
-type DemoArticle = typeof CONTENT_ARTICLE | typeof CONTENT_ARTICLE_FULL;
-
-function StaticArticleDemo({
-  media,
-  article = CONTENT_ARTICLE,
-}: {
-  media: ContentPageLayoutProps["media"];
-  article?: DemoArticle;
-}) {
-  const t = useTranslations("Content");
-  return (
-    <ContentPageLayout
-      breadcrumbs={[{ label: t("breadcrumbCollections"), href: "/content" }, { label: article.title }]}
-      media={media}
-      article={{
-        title: article.title,
-        edition: article.edition,
-        category: article.category,
-        publishedDate: article.publishedDate,
-        readingTime: article.readingTime,
-        sections: article.sections.map((s) => ({
-          heading: "heading" in s ? s.heading : undefined,
-          paragraphs: [...s.paragraphs],
-          quote: "quote" in s ? s.quote : undefined,
-          images: "images" in s ? s.images.map((im) => ({ ...im })) : undefined,
-          stats: "stats" in s ? s.stats.map((st) => ({ ...st })) : undefined,
-        })),
-      }}
-      author={{ ...CONTENT_AUTHOR }}
-      contributors={[...CONTENT_CONTRIBUTORS].map((c) => ({ ...c }))}
-      collection={{
-        articleCount: CONTENT_COLLECTION.articleCount,
-        duration: CONTENT_COLLECTION.duration,
-        items: [...CONTENT_COLLECTION.items].map((item) => ({ ...item })),
-      }}
-      relatedContent={[...CONTENT_RELATED].map((r) => ({ ...r }))}
-    />
-  );
-}
 
 const FALLBACK_IMAGE = "/images/image.png";
 
@@ -85,17 +36,15 @@ function mapRelated(
   items: Awaited<ReturnType<typeof getRelatedArticles>>,
   fallbacks: { author: string; article: string },
 ): RelatedContentCardData[] {
-  return items
-    .filter((a) => !!a.cover_image)
-    .map((a) => ({
-      image: a.cover_image!,
-      title: a.title,
-      author: a.author?.full_name || a.author?.username || fallbacks.author,
-      date: formatShortDate(a.published_at),
-      edition: a.edition || a.category || fallbacks.article,
-      href: previewHrefForContentType(a.content_type ?? undefined, a.id, a.slug),
-      language: a.language,
-    }));
+  return items.map((a) => ({
+    image: a.cover_image || FALLBACK_IMAGE,
+    title: a.title,
+    author: a.author?.full_name || a.author?.username || fallbacks.author,
+    date: formatShortDate(a.published_at),
+    edition: a.edition || a.category || fallbacks.article,
+    href: previewHrefForContentType(a.content_type ?? undefined, a.id, a.slug),
+    language: a.language,
+  }));
 }
 
 function mapCollection(
@@ -297,19 +246,16 @@ function ArticleByIdLoader({
 }
 
 function ContentArticlePageInner({
-  demoMedia,
-  demoArticle,
   slug,
   expectedProduct,
   requiredIssueId,
 }: {
-  demoMedia: ContentPageLayoutProps["media"];
-  demoArticle?: DemoArticle;
   slug?: string;
   expectedProduct?: ArticleProduct;
   requiredIssueId?: string;
 }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const setArticleHeaderMeta = useOptionalArticleReadingHeader()?.setArticleHeaderMeta;
   const id = searchParams.get("id")?.trim();
   const key = slug || id;
@@ -318,9 +264,11 @@ function ContentArticlePageInner({
     if (!key && setArticleHeaderMeta) setArticleHeaderMeta(null);
   }, [key, setArticleHeaderMeta]);
 
-  if (!key) {
-    return <StaticArticleDemo media={demoMedia} article={demoArticle} />;
-  }
+  useEffect(() => {
+    if (!key) router.replace("/content");
+  }, [key, router]);
+
+  if (!key) return null;
 
   return (
     <ArticleByIdLoader
@@ -333,23 +281,15 @@ function ContentArticlePageInner({
 }
 
 /**
- * Shared client for the article/video/audio content pages. With `?id=` it
- * loads a real article (media type derived from its content); without one it
- * renders the static demo. `demoMedia` picks the demo hero so `/content/video`
- * shows the video player and `/content/audio` the audio player — defaulting to
- * the image hero for `/content/article`. `demoArticle` swaps the demo body so
- * `/content/article` can render its richer Figma layout (stats, inline figure,
- * pull quote) while the video/audio demos keep the shorter shared content.
+ * Shared client for the article/video/audio content pages. With `?id=` or a
+ * `slug` it loads the real article (media type derived from its content);
+ * without either, it redirects to the /content hub (there's nothing to show).
  */
 export function ContentArticlePageClient({
-  demoMedia = { ...CONTENT_MEDIA_ARTICLE },
-  demoArticle,
   slug,
   expectedProduct,
   requiredIssueId,
 }: {
-  demoMedia?: ContentPageLayoutProps["media"];
-  demoArticle?: DemoArticle;
   slug?: string;
   /** Which product this reader serves; articles from the other product render as not-found. */
   expectedProduct?: ArticleProduct;
@@ -368,8 +308,6 @@ export function ContentArticlePageClient({
       }
     >
       <ContentArticlePageInner
-        demoMedia={demoMedia}
-        demoArticle={demoArticle}
         slug={slug}
         expectedProduct={expectedProduct}
         requiredIssueId={requiredIssueId}
