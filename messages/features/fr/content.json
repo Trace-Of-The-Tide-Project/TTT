@@ -158,7 +158,15 @@
       "save": "Enregistrer",
       "saved": "Enregistré",
       "add": "Enregistrer l'article",
-      "remove": "Retirer des enregistrements"
+      "remove": "Retirer des enregistrements",
+      "saving": "Enregistrement...",
+      "removing": "Suppression...",
+      "removed": "Retiré des enregistrements",
+      "saveFailed": "Impossible d'enregistrer l'article",
+      "removeFailed": "Impossible de retirer le marque-page",
+      "loginRequired": "Connectez-vous pour enregistrer des articles",
+      "loginRequiredHint": "Créez un compte gratuit ou connectez-vous pour enregistrer ceci.",
+      "logIn": "Se connecter"
     }
   }
 }

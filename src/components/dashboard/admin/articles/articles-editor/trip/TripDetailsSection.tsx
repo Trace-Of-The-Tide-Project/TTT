@@ -7,6 +7,8 @@ const inputClass =
   "w-full rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] outline-none focus:border-[var(--tott-card-border)]";
 
 type TripDetailsSectionProps = {
+  category: string;
+  onCategoryChange: (v: string) => void;
   startLocation: string;
   onStartLocationChange: (v: string) => void;
   endLocation: string;
@@ -62,6 +64,8 @@ function CalendarGlyph() {
 }
 
 export function TripDetailsSection({
+  category,
+  onCategoryChange,
   startLocation,
   onStartLocationChange,
   endLocation,
@@ -87,6 +91,19 @@ export function TripDetailsSection({
       </h3>
 
       <div className="space-y-4">
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-[var(--tott-muted)]">
+            {t("category")}
+          </label>
+          <input
+            type="text"
+            value={category}
+            onChange={(e) => onCategoryChange(e.target.value)}
+            placeholder={t("categoryPlaceholder")}
+            className={inputClass}
+          />
+        </div>
+
         <p className="text-xs uppercase tracking-wide text-[var(--tott-muted)]">{t("route")}</p>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

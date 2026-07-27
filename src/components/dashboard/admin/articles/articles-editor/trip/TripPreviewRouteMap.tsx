@@ -25,7 +25,7 @@ export type RouteMapPoint = {
   lng: number;
 };
 
-function isValidCoord(lat: number, lng: number): boolean {
+export function isValidCoord(lat: number, lng: number): boolean {
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
   if (lat === 0 && lng === 0) return false;
   return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;

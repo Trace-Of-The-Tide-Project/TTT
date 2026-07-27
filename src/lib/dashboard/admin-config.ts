@@ -203,6 +203,20 @@ export const adminConfig: DashboardConfig = {
         },
         {
           kind: "group",
+          groupId: "trips",
+          labelKey: "sidebar.trips",
+          icon: CompassIcon,
+          items: [
+            {
+              kind: "item",
+              labelKey: "sidebar.allTrips",
+              href: "/admin/trips",
+              icon: CompassIcon,
+            },
+          ],
+        },
+        {
+          kind: "group",
           groupId: "writers",
           labelKey: "sidebar.writers",
           icon: PenLineIcon,

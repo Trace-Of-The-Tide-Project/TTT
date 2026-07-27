@@ -1,5 +1,14 @@
 {
   "Dashboard": {
+    "savedArticles": {
+      "title": "Articles enregistrés",
+      "subtitle": "Articles que vous avez enregistrés pour plus tard.",
+      "loading": "Chargement des articles enregistrés...",
+      "empty": "Vous n'avez encore enregistré aucun article.",
+      "loadFailed": "Impossible de charger les articles enregistrés.",
+      "tryAgain": "Réessayer",
+      "remove": "Retirer"
+    },
     "analyticsExtra": {
       "allArticlesSubtitle": "Consultez et gérez vos articles publiés.",
       "allArticlesTitle": "Tous les articles",

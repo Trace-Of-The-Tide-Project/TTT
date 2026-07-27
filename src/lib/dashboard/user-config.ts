@@ -14,6 +14,7 @@ import {
   UserCheckIcon,
   CreditCardIcon,
   SquareCheckIcon,
+  BookmarkIcon,
 } from "@/components/ui/icons";
 import type { DashboardConfig } from "./types";
 
@@ -33,6 +34,12 @@ export const userConfig: DashboardConfig = {
           labelKey: "sidebar.myTasks",
           href: "/profile/tasks",
           icon: SquareCheckIcon,
+        },
+        {
+          kind: "item",
+          labelKey: "sidebar.savedArticles",
+          href: "/profile/saved",
+          icon: BookmarkIcon,
         },
         {
           kind: "group",

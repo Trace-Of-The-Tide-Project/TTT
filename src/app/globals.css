@@ -1237,3 +1237,32 @@ html[data-theme="dark"] .prose-inline [style*="color"]:not(a):not(mark) {
   opacity: 1;
 }
 
+/* Admin trip preview: animaps-react ships a full route-builder/recorder UI
+   with no prop to hide it (chrome visibility is internal useState). We only
+   want the animated route on the map canvas — hide every overlay and let
+   TripPreviewAnimatedRouteMap auto-trigger playback via .animaps-play. */
+.ttt-animaps .animaps-overlay,
+.ttt-animaps .animaps-builder-reveal,
+.ttt-animaps .animaps-export-overlay,
+.ttt-animaps .animaps-loading {
+  display: none !important;
+}
+
+.ttt-animaps .animaps-map,
+.ttt-animaps .animaps-canvas {
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+}
+
+.ttt-animaps {
+  --animaps-route: var(--tott-accent-gold);
+}
+
+/* Place-name labels are drawn by maplibre-gl straight onto <canvas> inside
+   .animaps-canvas — not individual DOM/SVG nodes, so no selector here can
+   target or hide them. The only real lever against overlap is width: the
+   dedicated preview page gives the map a ~480px sticky rail (vs. the old
+   240px modal column), which is where the fix lives. See
+   TripPreviewBody.tsx `layout="page"` mapRailClass. */
+

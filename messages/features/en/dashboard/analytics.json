@@ -1,5 +1,14 @@
 {
   "Dashboard": {
+    "savedArticles": {
+      "title": "Saved Articles",
+      "subtitle": "Articles you've bookmarked to read later.",
+      "loading": "Loading saved articles...",
+      "empty": "You haven't saved any articles yet.",
+      "loadFailed": "Couldn't load saved articles.",
+      "tryAgain": "Try again",
+      "remove": "Remove"
+    },
     "analyticsExtra": {
       "allArticlesSubtitle": "View and manage your published articles.",
       "allArticlesTitle": "All Articles",

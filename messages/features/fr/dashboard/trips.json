@@ -80,6 +80,40 @@
           "price": "Prix",
           "placeholder": "—"
         },
+        "preview": {
+          "noRoute": "Ajoutez la latitude et la longitude aux étapes de l'itinéraire pour afficher le trajet sur la carte.",
+          "backToArchive": "Retour aux archives",
+          "tripNameFallback": "Nom du voyage",
+          "free": "Gratuit",
+          "close": "Fermer",
+          "notFound": {
+            "heading": "Voyage introuvable",
+            "body": "Ce voyage a peut-être été supprimé ou le lien est incorrect.",
+            "cta": "Retour aux archives"
+          },
+          "status": {
+            "published": "Publié",
+            "draft": "Brouillon"
+          },
+          "stats": {
+            "date": "Date",
+            "duration": "Durée",
+            "groupSize": "Taille du groupe",
+            "languages": "Langues",
+            "location": "Lieu"
+          },
+          "sections": {
+            "description": { "gold": "Description", "rest": "du voyage" },
+            "highlights": { "gold": "Points", "rest": "forts du voyage" },
+            "gallery": { "gold": "Galerie du", "rest": "voyageur" },
+            "timeline": { "gold": "Itinéraire", "rest": "et carte du trajet" }
+          },
+          "stop": {
+            "finish": "Arrivée",
+            "numbered": "Étape {number}",
+            "coords": "Lat : {lat}, Lng : {lng}"
+          }
+        },
         "basicInfo": {
           "heading": "Informations de base",
           "tripTitle": "Titre du voyage",

@@ -80,6 +80,40 @@
           "price": "السعر",
           "placeholder": "—"
         },
+        "preview": {
+          "noRoute": "أضف خطي الطول والعرض لمحطات البرنامج لعرض المسار على الخريطة.",
+          "backToArchive": "العودة إلى الأرشيف",
+          "tripNameFallback": "اسم الرحلة",
+          "free": "مجانًا",
+          "close": "إغلاق",
+          "notFound": {
+            "heading": "الرحلة غير موجودة",
+            "body": "ربما تمت إزالة هذه الرحلة أو أن الرابط غير صحيح.",
+            "cta": "العودة إلى الأرشيف"
+          },
+          "status": {
+            "published": "منشورة",
+            "draft": "مسودة"
+          },
+          "stats": {
+            "date": "التاريخ",
+            "duration": "المدة",
+            "groupSize": "حجم المجموعة",
+            "languages": "اللغات",
+            "location": "الموقع"
+          },
+          "sections": {
+            "description": { "gold": "وصف", "rest": "الرحلة" },
+            "highlights": { "gold": "أبرز", "rest": "معالم الرحلة" },
+            "gallery": { "gold": "معرض", "rest": "المسافر" },
+            "timeline": { "gold": "الجدول الزمني", "rest": "ومسار الرحلة" }
+          },
+          "stop": {
+            "finish": "نهاية الرحلة",
+            "numbered": "المحطة {number}",
+            "coords": "خط العرض: {lat}، خط الطول: {lng}"
+          }
+        },
         "basicInfo": {
           "heading": "معلومات أساسية",
           "tripTitle": "عنوان الرحلة",
