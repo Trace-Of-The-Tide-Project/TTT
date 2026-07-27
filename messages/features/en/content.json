@@ -158,7 +158,15 @@
       "save": "Save",
       "saved": "Saved",
       "add": "Bookmark article",
-      "remove": "Remove bookmark"
+      "remove": "Remove bookmark",
+      "saving": "Saving...",
+      "removing": "Removing...",
+      "removed": "Removed from saved",
+      "saveFailed": "Couldn't save article",
+      "removeFailed": "Couldn't remove bookmark",
+      "loginRequired": "Log in to save articles",
+      "loginRequiredHint": "Create a free account or log in to bookmark this for later.",
+      "logIn": "Log in"
     }
   }
 }

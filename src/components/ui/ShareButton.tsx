@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/Modal";
@@ -32,6 +33,7 @@ export function ShareButton({ title, author, url, shortLinkId }: ShareButtonProp
   const locale = useLocale();
   const [open, setOpen] = useState(false);
   const [storyBusy, setStoryBusy] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   function resolveUrl() {
     if (url) return url;
@@ -138,20 +140,52 @@ export function ShareButton({ title, author, url, shortLinkId }: ShareButtonProp
 
   return (
     <>
-      <button
+      <motion.button
         type="button"
         onClick={onShareClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onFocus={() => setIsHovered(true)}
+        onBlur={() => setIsHovered(false)}
         aria-label={t("action")}
-        className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-opacity hover:opacity-80"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.96 }}
+        className="relative inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-full border px-4 text-xs font-medium transition-colors duration-150"
         style={{
-          backgroundColor: "transparent",
+          backgroundColor: "var(--tott-panel-bg)",
+          borderColor: "var(--tott-card-border)",
           color: "var(--tott-home-text-muted)",
-          border: "1px solid var(--tott-card-border)",
         }}
       >
-        <ShareIcon />
+        <span className="relative inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center">
+          <AnimatePresence mode="popLayout" initial={false}>
+            {!isHovered ? (
+              <motion.span
+                key="link"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.5, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 600, damping: 25 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <ShareIcon />
+              </motion.span>
+            ) : (
+              <motion.span
+                key="send"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.5, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 600, damping: 25 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <SendIcon />
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </span>
         {t("action")}
-      </button>
+      </motion.button>
 
       <Modal open={open} title={t("title")} onClose={() => setOpen(false)}>
         <div className="flex flex-col gap-2">
@@ -211,6 +245,25 @@ function ShareIcon() {
       <circle cx="6" cy="12" r="3" />
       <circle cx="18" cy="19" r="3" />
       <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" />
+    </svg>
+  );
+}
+
+function SendIcon() {
+  return (
+    <svg
+      width={14}
+      height={14}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="m22 2-7 20-4-9-9-4Z" />
+      <path d="M22 2 11 13" />
     </svg>
   );
 }

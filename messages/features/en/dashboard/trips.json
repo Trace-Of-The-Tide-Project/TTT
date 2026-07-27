@@ -80,6 +80,40 @@
           "price": "Price",
           "placeholder": "—"
         },
+        "preview": {
+          "noRoute": "Add latitude and longitude to itinerary stops to show the route on the map.",
+          "backToArchive": "Back to archive",
+          "tripNameFallback": "Trip Name",
+          "free": "Free",
+          "close": "Close",
+          "notFound": {
+            "heading": "Trip not found",
+            "body": "This trip may have been removed or the link is incorrect.",
+            "cta": "Back to archive"
+          },
+          "status": {
+            "published": "Published",
+            "draft": "Draft"
+          },
+          "stats": {
+            "date": "Date",
+            "duration": "Duration",
+            "groupSize": "Group size",
+            "languages": "Languages",
+            "location": "Location"
+          },
+          "sections": {
+            "description": { "gold": "Trip", "rest": "Description" },
+            "highlights": { "gold": "Trip", "rest": "highlights" },
+            "gallery": { "gold": "Traveller's", "rest": "Gallery" },
+            "timeline": { "gold": "Trip", "rest": "Timeline & Route Map" }
+          },
+          "stop": {
+            "finish": "Finish",
+            "numbered": "Stop {number}",
+            "coords": "Lat: {lat}, Lng: {lng}"
+          }
+        },
         "basicInfo": {
           "heading": "Basic information",
           "tripTitle": "Trip title",

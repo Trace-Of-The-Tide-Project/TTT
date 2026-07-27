@@ -80,6 +80,40 @@
           "price": "Precio",
           "placeholder": "—"
         },
+        "preview": {
+          "noRoute": "Añade latitud y longitud a las paradas del itinerario para mostrar la ruta en el mapa.",
+          "backToArchive": "Volver al archivo",
+          "tripNameFallback": "Nombre del viaje",
+          "free": "Gratis",
+          "close": "Cerrar",
+          "notFound": {
+            "heading": "Viaje no encontrado",
+            "body": "Es posible que este viaje se haya eliminado o que el enlace sea incorrecto.",
+            "cta": "Volver al archivo"
+          },
+          "status": {
+            "published": "Publicado",
+            "draft": "Borrador"
+          },
+          "stats": {
+            "date": "Fecha",
+            "duration": "Duración",
+            "groupSize": "Tamaño del grupo",
+            "languages": "Idiomas",
+            "location": "Ubicación"
+          },
+          "sections": {
+            "description": { "gold": "Descripción", "rest": "del viaje" },
+            "highlights": { "gold": "Puntos", "rest": "destacados del viaje" },
+            "gallery": { "gold": "Galería", "rest": "del viajero" },
+            "timeline": { "gold": "Itinerario", "rest": "y mapa de ruta" }
+          },
+          "stop": {
+            "finish": "Fin",
+            "numbered": "Parada {number}",
+            "coords": "Lat: {lat}, Lng: {lng}"
+          }
+        },
         "basicInfo": {
           "heading": "Información básica",
           "tripTitle": "Título del viaje",

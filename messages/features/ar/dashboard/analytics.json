@@ -1,5 +1,14 @@
 {
   "Dashboard": {
+    "savedArticles": {
+      "title": "المقالات المحفوظة",
+      "subtitle": "المقالات التي حفظتها لتقرأها لاحقًا.",
+      "loading": "جارٍ تحميل المقالات المحفوظة...",
+      "empty": "لم تحفظ أي مقال بعد.",
+      "loadFailed": "تعذّر تحميل المقالات المحفوظة.",
+      "tryAgain": "أعد المحاولة",
+      "remove": "إزالة"
+    },
     "analyticsExtra": {
       "allArticlesSubtitle": "اعرض مقالاتك المنشورة وأدِرها.",
       "allArticlesTitle": "جميع المقالات",

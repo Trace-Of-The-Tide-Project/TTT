@@ -158,7 +158,15 @@
       "save": "Guardar",
       "saved": "Guardado",
       "add": "Guardar artículo",
-      "remove": "Quitar de guardados"
+      "remove": "Quitar de guardados",
+      "saving": "Guardando...",
+      "removing": "Quitando...",
+      "removed": "Quitado de guardados",
+      "saveFailed": "No se pudo guardar el artículo",
+      "removeFailed": "No se pudo quitar el marcador",
+      "loginRequired": "Inicia sesión para guardar artículos",
+      "loginRequiredHint": "Crea una cuenta gratuita o inicia sesión para guardar esto.",
+      "logIn": "Iniciar sesión"
     }
   }
 }

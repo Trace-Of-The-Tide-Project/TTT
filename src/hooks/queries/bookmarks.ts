@@ -16,11 +16,11 @@ export function useBookmarks(params?: { page?: number; limit?: number }) {
   });
 }
 
-export function useBookmarkCheck(articleId: string | null | undefined) {
+export function useBookmarkCheck(articleId: string | null | undefined, enabled = true) {
   return useQuery({
     queryKey: bookmarksKeys.check(articleId ?? ""),
     queryFn: () => checkBookmark(articleId as string),
-    enabled: Boolean(articleId),
+    enabled: Boolean(articleId) && enabled,
     meta: { silent: true },
   });
 }

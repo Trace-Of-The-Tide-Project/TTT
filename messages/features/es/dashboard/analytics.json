@@ -1,5 +1,14 @@
 {
   "Dashboard": {
+    "savedArticles": {
+      "title": "Artículos guardados",
+      "subtitle": "Artículos que has guardado para leer más tarde.",
+      "loading": "Cargando artículos guardados...",
+      "empty": "Todavía no has guardado ningún artículo.",
+      "loadFailed": "No se pudieron cargar los artículos guardados.",
+      "tryAgain": "Intentar de nuevo",
+      "remove": "Quitar"
+    },
     "analyticsExtra": {
       "allArticlesSubtitle": "Consulta y gestiona tus artículos publicados.",
       "allArticlesTitle": "Todos los artículos",

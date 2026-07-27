@@ -200,7 +200,6 @@ export function TripEditorLayout() {
   }, [validateBeforeSubmit, buildPayload, router, t]);
 
   const handlePublish = useCallback(async () => {
-    if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
     const v = validateBeforeSubmit();
     if (v) { setError(v); return; }
     setError(null);
@@ -213,11 +212,10 @@ export function TripEditorLayout() {
     } finally {
       setBusy(false);
     }
-  }, [workflowStatus, validateBeforeSubmit, buildPayload, router, t]);
+  }, [validateBeforeSubmit, buildPayload, router, t]);
 
   const handleScheduleConfirm = useCallback(
     async (_iso: string) => {
-      if (workflowStatus !== "published" && workflowStatus !== "scheduled") return;
       const v = validateBeforeSubmit();
       if (v) { setError(v); setScheduleModalOpen(false); return; }
       setError(null);
@@ -233,7 +231,7 @@ export function TripEditorLayout() {
         setBusy(false);
       }
     },
-    [workflowStatus, validateBeforeSubmit, buildPayload, router, t],
+    [validateBeforeSubmit, buildPayload, router, t],
   );
 
   return (
@@ -283,6 +281,8 @@ export function TripEditorLayout() {
           />
 
           <TripDetailsSection
+            category={category}
+            onCategoryChange={setCategory}
             startLocation={startLocation}
             onStartLocationChange={setStartLocation}
             endLocation={endLocation}

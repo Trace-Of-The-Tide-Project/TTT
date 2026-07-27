@@ -1,5 +1,12 @@
 import type { EditorStop } from "./ItineraryBuilder";
-import { tripStopImageUrl, type TripStop } from "@/services/trips.service";
+import {
+  parseTripHighlights,
+  parseTripLanguages,
+  tripMaxPrice,
+  tripStopImageUrl,
+  type TripListItem,
+  type TripStop,
+} from "@/services/trips.service";
 
 export type PreviewStop = {
   title: string;
@@ -20,6 +27,54 @@ export function editorStopToPreview(s: EditorStop): PreviewStop {
     latitude: s.latitude,
     longitude: s.longitude,
     imageUrl: s.imageUrl?.trim() || null,
+  };
+}
+
+export type ResolvedTripPreview = {
+  title: string;
+  description: string;
+  moderatorName: string;
+  category: string;
+  difficulty: string;
+  startDate: string;
+  endDate: string;
+  durationHours: number;
+  maxParticipants: number;
+  minParticipants: number;
+  price: string;
+  currency: string;
+  priceCapFromApi: string | null;
+  languages: string[];
+  highlights: string[];
+  stops: PreviewStop[];
+  routeSummary: string | null;
+  /** Status straight off the trip record — takes precedence over dataStatus. */
+  tripStatus?: string;
+  dataStatus?: string;
+};
+
+/** Maps a full API trip record into the shared preview shape (archive list + preview page). */
+export function resolveFromTrip(trip: TripListItem): ResolvedTripPreview {
+  return {
+    title: trip.title,
+    description: trip.description,
+    moderatorName: trip.moderator_name ?? "",
+    category: trip.category,
+    difficulty: trip.difficulty,
+    startDate: trip.start_date,
+    endDate: trip.end_date ?? "",
+    durationHours: trip.duration_hours,
+    maxParticipants: trip.max_participants,
+    minParticipants: trip.min_participants ?? 0,
+    price: trip.price,
+    currency: trip.currency,
+    priceCapFromApi: tripMaxPrice(trip),
+    languages: parseTripLanguages(trip.languages),
+    highlights: parseTripHighlights(trip.highlights),
+    stops: (trip.stops ?? []).map(tripStopToPreview),
+    routeSummary: trip.route_summary,
+    tripStatus: trip.status,
+    dataStatus: undefined,
   };
 }
 
@@ -51,16 +106,16 @@ export function formatLangList(langs: string[]): string {
   return langs.map((l) => LANG_LABELS[l.toUpperCase()] ?? l).join(", ");
 }
 
-export function formatDateLong(iso: string): string {
+export function formatDateLong(iso: string, locale?: string): string {
   if (!iso) return "—";
   const d = new Date(iso);
-  return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+  return d.toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" });
 }
 
-export function formatTime(iso: string): string {
+export function formatTime(iso: string, locale?: string): string {
   if (!iso) return "";
   const d = new Date(iso);
-  return d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
 }
 
 export function formatStayLabel(startIso: string, endIso: string, durationHours: number): string {
@@ -99,18 +154,18 @@ export function buildRouteHeading(stops: PreviewStop[], routeSummary: string | n
 
 export function statusLabel(
   tripStatus: string | undefined,
-  dataStatus: string | undefined
+  dataStatus: string | undefined,
+  labels?: { published: string; draft: string },
 ): string {
+  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   if (tripStatus) {
     const s = tripStatus.toLowerCase();
-    if (s === "published") return "Published";
-    if (s === "draft") return "Draft";
-    return tripStatus.charAt(0).toUpperCase() + tripStatus.slice(1);
+    if (s === "published") return labels?.published ?? "Published";
+    if (s === "draft") return labels?.draft ?? "Draft";
+    return cap(tripStatus);
   }
-  if (dataStatus) {
-    return dataStatus.charAt(0).toUpperCase() + dataStatus.slice(1);
-  }
-  return "Draft";
+  if (dataStatus) return cap(dataStatus);
+  return labels?.draft ?? "Draft";
 }
 
 export function difficultyLabel(d: string): string {

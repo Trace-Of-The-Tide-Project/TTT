@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { isAxiosError } from "axios";
 import { PlusIcon, EyeIcon, TrashIcon } from "@/components/ui/icons";
 import type { TripListItem } from "@/services/trips.service";
@@ -12,7 +12,6 @@ import { useDeleteTrip } from "@/hooks/mutations/trips";
 import { TripEditorLayout } from "@/components/dashboard/admin/articles/articles-editor/trip/TripEditorLayout";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import { ChamferedCap } from "@/components/ui/ChamferedCap";
-import { TripPreviewModal } from "@/components/dashboard/admin/articles/articles-editor/trip/TripPreviewModal";
 
 const ROWS_PER_PAGE = 6;
 
@@ -71,10 +70,9 @@ type ArchiveViewProps = {
   onRetry: () => void;
   onDelete: (id: string) => void;
   deletingId: string | null;
-  onPreview: (trip: TripListItem) => void;
 };
 
-function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onPreview }: ArchiveViewProps) {
+function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId }: ArchiveViewProps) {
   const t = useTranslations("Dashboard.trips");
   const locale = useLocale();
   const [search, setSearch] = useState("");
@@ -193,14 +191,13 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
                         {st.label}
                       </div>
                       <div className="flex items-center justify-end gap-2 px-4 py-3">
-                        <button
-                          type="button"
-                          onClick={() => onPreview(trip)}
+                        <Link
+                          href={`/admin/trips/${trip.id}/preview`}
                           className="text-[var(--tott-muted)] transition-colors hover:text-foreground"
                           aria-label={t("management.previewAria", { title: trip.title })}
                         >
                           <EyeIcon />
-                        </button>
+                        </Link>
                         <button
                           type="button"
                           disabled={deletingId === trip.id}
@@ -228,14 +225,13 @@ function ArchiveView({ trips, loading, error, onRetry, onDelete, deletingId, onP
                       <div className="mb-2 flex items-start justify-between gap-2">
                         <span className="text-sm font-medium text-foreground">{trip.title}</span>
                         <div className="flex shrink-0 items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => onPreview(trip)}
+                          <Link
+                            href={`/admin/trips/${trip.id}/preview`}
                             className="text-[var(--tott-muted)] transition-colors hover:text-foreground"
                             aria-label={t("management.previewAria", { title: trip.title })}
                           >
                             <EyeIcon />
-                          </button>
+                          </Link>
                           <button
                             type="button"
                             disabled={deletingId === trip.id}
@@ -330,8 +326,6 @@ export function TripsManagementContent() {
     [router],
   );
 
-  const [previewTrip, setPreviewTrip] = useState<TripListItem | null>(null);
-
   const tripsQuery = useTrips();
   const trips = tripsQuery.data ?? [];
   const tripsLoading = tripsQuery.isFetching;
@@ -351,12 +345,6 @@ export function TripsManagementContent() {
 
   return (
     <div className="space-y-4">
-      <TripPreviewModal
-        open={previewTrip !== null}
-        onClose={() => setPreviewTrip(null)}
-        trip={previewTrip ?? undefined}
-      />
-
       <div className="flex w-full gap-1 rounded-xl bg-[var(--tott-elevated)] p-1">
         <button
           type="button"
@@ -394,7 +382,6 @@ export function TripsManagementContent() {
           onRetry={() => void tripsQuery.refetch()}
           onDelete={(id) => void handleDelete(id)}
           deletingId={deletingId}
-          onPreview={setPreviewTrip}
         />
       </div>
     </div>
