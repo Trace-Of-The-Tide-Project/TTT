@@ -75,7 +75,13 @@
           "featureLoading": "Updating…",
           "featureSuccess": "Added to the homepage.",
           "unfeatureSuccess": "Removed from the homepage.",
-          "featureFailed": "Could not update the homepage feature"
+          "featureFailed": "Could not update the homepage feature",
+          "makePrivate": "Make private",
+          "makePublic": "Make public",
+          "visibilityLoading": "Updating…",
+          "makePrivateSuccess": "Article is now private.",
+          "makePublicSuccess": "Article is now public.",
+          "visibilityFailed": "Could not update visibility"
         }
       }
     }

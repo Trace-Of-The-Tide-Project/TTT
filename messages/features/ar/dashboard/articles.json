@@ -75,7 +75,13 @@
           "featureLoading": "جارٍ التحديث…",
           "featureSuccess": "أُضيفت إلى الصفحة الرئيسية.",
           "unfeatureSuccess": "أُزيلت من الصفحة الرئيسية.",
-          "featureFailed": "تعذّر تحديث الإبراز على الصفحة الرئيسية"
+          "featureFailed": "تعذّر تحديث الإبراز على الصفحة الرئيسية",
+          "makePrivate": "جعله خاصًا",
+          "makePublic": "جعله عامًا",
+          "visibilityLoading": "جارٍ التحديث…",
+          "makePrivateSuccess": "أصبح المقال خاصًا الآن.",
+          "makePublicSuccess": "أصبح المقال عامًا الآن.",
+          "visibilityFailed": "تعذّر تحديث الظهور"
         }
       }
     }

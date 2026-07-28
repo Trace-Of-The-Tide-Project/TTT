@@ -9,9 +9,9 @@ import { PILLAR_MOTIFS, type PillarKey } from "./motifs";
 /**
  * The pillar taxonomy has no data model (labels only — see PLAN.md Session 2
  * handoff), so groups/keys are static; copy lives in the HomeNext i18n slice.
- * All cards funnel to /content until a real pillar route exists.
+ * All cards funnel to /fields (Coming Soon) until a real pillar route exists.
  */
-const PILLAR_HREF = "/content";
+const PILLAR_HREF = "/fields";
 
 const GROUPS: readonly {
   heading: "palestineHeading" | "fieldsHeading";

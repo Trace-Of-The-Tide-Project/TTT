@@ -75,7 +75,13 @@
           "featureLoading": "Mise à jour…",
           "featureSuccess": "Ajouté à la page d'accueil.",
           "unfeatureSuccess": "Retiré de la page d'accueil.",
-          "featureFailed": "Impossible de mettre à jour la mise en avant"
+          "featureFailed": "Impossible de mettre à jour la mise en avant",
+          "makePrivate": "Rendre privé",
+          "makePublic": "Rendre public",
+          "visibilityLoading": "Mise à jour…",
+          "makePrivateSuccess": "L'article est désormais privé.",
+          "makePublicSuccess": "L'article est désormais public.",
+          "visibilityFailed": "Impossible de mettre à jour la visibilité"
         }
       }
     }

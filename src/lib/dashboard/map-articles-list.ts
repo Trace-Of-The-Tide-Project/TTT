@@ -140,5 +140,6 @@ export function mapArticleListItemToTableRow(a: ArticleListItem): ArticleRow {
     supporters: contributors > 0 ? String(contributors) : "—",
     product: a.product ?? "main",
     isFeatured: Boolean(a.is_featured),
+    visibility: a.visibility === "private" ? "private" : "public",
   };
 }

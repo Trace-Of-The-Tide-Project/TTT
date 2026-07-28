@@ -47,6 +47,7 @@ export type ArticleRow = {
   product?: ArticleProduct;
   /** Featured on its product homepage (main or magazine). */
   isFeatured?: boolean;
+  visibility?: "public" | "private";
 };
 
 /** ArticleRow enriched for rendering: translation-group primary/child role + display fields. */
@@ -161,6 +162,7 @@ export function ArticlesTable({
   const [deleteTarget, setDeleteTarget] = useState<ArticleRow | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [featureBusyId, setFeatureBusyId] = useState<string | null>(null);
+  const [visibilityBusyId, setVisibilityBusyId] = useState<string | null>(null);
   const deleteMutation = useDeleteArticle({ silent: true });
   const deleteBusy = deleteMutation.isPending;
   const updateMutation = useUpdateArticle();
@@ -475,6 +477,23 @@ export function ArticlesTable({
     [updateMutation, closeArticleMenu, t],
   );
 
+  const toggleVisibility = useCallback(
+    (row: ArticleRow) => {
+      const next = row.visibility === "private" ? "public" : "private";
+      setVisibilityBusyId(row.id);
+      closeArticleMenu();
+      void mutationToast(
+        () => updateMutation.mutateAsync({ articleId: row.id, payload: { visibility: next } }),
+        {
+          loading: t("table.visibilityLoading"),
+          success: next === "private" ? t("table.makePrivateSuccess") : t("table.makePublicSuccess"),
+          error: t("table.visibilityFailed"),
+        },
+      ).finally(() => setVisibilityBusyId(null));
+    },
+    [updateMutation, closeArticleMenu, t],
+  );
+
   const closeDeleteModal = useCallback(() => {
     if (deleteBusy) return;
     setDeleteTarget(null);
@@ -551,6 +570,19 @@ export function ArticlesTable({
                     {openMenuRow.isFeatured
                       ? t("table.removeFromHomepage")
                       : t("table.featureOnHomepage")}
+                  </button>
+                </li>
+                <li role="none">
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className="w-full px-4 py-2 text-start text-sm text-foreground transition-colors hover:bg-[var(--tott-dash-ghost-hover)] disabled:cursor-not-allowed disabled:opacity-40"
+                    disabled={visibilityBusyId === openMenuRow.id}
+                    onClick={() => toggleVisibility(openMenuRow)}
+                  >
+                    {openMenuRow.visibility === "private"
+                      ? t("table.makePublic")
+                      : t("table.makePrivate")}
                   </button>
                 </li>
                 <li role="none">

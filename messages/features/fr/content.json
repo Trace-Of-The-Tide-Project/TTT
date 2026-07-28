@@ -48,6 +48,24 @@
       "redirecting": "Redirection…",
       "error": "Impossible de démarrer le paiement. Veuillez réessayer."
     },
+    "premiumGate": {
+      "heading": "Contenu premium",
+      "body": "Abonnez-vous pour continuer la lecture.",
+      "expiredHeading": "Abonnement expiré",
+      "expiredBody": "Renouvelez votre abonnement pour retrouver l'accès.",
+      "renew": "Renouveler",
+      "requiresPlan": "Nécessite {plan}",
+      "requiresPlanBody": "Ce contenu nécessite le plan {plan} ({price}/mois).",
+      "upgrade": "Mettre à niveau",
+      "availableOnPlan": "Disponible avec le plan {plan} ({price}/mois) ou supérieur.",
+      "subscribe": "S'abonner",
+      "viewPlans": "Voir les plans"
+    },
+    "previewCta": {
+      "heading": "Continuer la lecture",
+      "body": "Vous aimez cet article ? Abonnez-vous pour débloquer la suite et soutenir une publication indépendante.",
+      "subscribe": "S'abonner"
+    },
     "threads": {
       "loading": "Chargement du fil…",
       "notFound": "Fil introuvable",

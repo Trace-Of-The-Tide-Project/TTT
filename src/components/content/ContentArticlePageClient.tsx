@@ -19,8 +19,6 @@ import type { ContentPageLayoutProps } from "@/components/content/ContentPageLay
 import type { RelatedContentCardData } from "@/components/content/related/RelatedContentCard";
 import { useOptionalArticleReadingHeader } from "@/components/layout/ArticleReadingHeaderContext";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
-import PremiumGate from "@/components/content/PremiumGate";
-import ArticleBuyGate from "@/components/content/ArticleBuyGate";
 
 const FALLBACK_IMAGE = "/images/image.png";
 
@@ -221,25 +219,26 @@ function ArticleByIdLoader({
 
   if (article) {
     const props = buildArticleContentPageProps(article);
-    const layout = (
+    return (
       <ContentPageLayout
         {...props}
         article={{ ...props.article, viewCount: displayViewCount ?? props.article.viewCount }}
         collection={liveCollection ?? props.collection}
         relatedContent={liveRelated.length > 0 ? liveRelated : props.relatedContent}
+        gate={
+          article.locked
+            ? {
+                accessLevel: article.access_level === "paid" ? "paid" : "subscriber",
+                articleId: article.id,
+                price: article.price,
+                currency: article.currency,
+              }
+            : undefined
+        }
+        previewTruncated={article.preview_truncated}
+        totalBlockCount={article.total_block_count}
       />
     );
-    if (article.locked && article.access_level === "paid") {
-      return (
-        <ArticleBuyGate articleId={article.id} price={article.price} currency={article.currency}>
-          {layout}
-        </ArticleBuyGate>
-      );
-    }
-    if (article.locked || article.is_premium) {
-      return <PremiumGate feature="archive">{layout}</PremiumGate>;
-    }
-    return layout;
   }
 
   return null;

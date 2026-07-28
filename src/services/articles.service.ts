@@ -383,6 +383,17 @@ export type ArticleDetail = {
   price?: number | null;
   currency?: string | null;
   locked?: boolean;
+  /** access_level='preview' only: true when preview_block_count truncated the
+   * blocks array — the reader should show a continue-reading CTA. False for
+   * every other level, and for a full (owner/staff/unlocked) response. */
+  preview_truncated?: boolean;
+  /** access_level='preview' only: total block count before truncation, so the
+   * reader can size the "N more blocks" ghost tail. */
+  total_block_count?: number;
+  /** True when this full response was returned via the staff/author bypass in
+   * applyAccessGate rather than because the article's access_level is 'open'.
+   * Informational only — the reader must not gate on 'locked' alone. */
+  access_bypass?: boolean;
   /** Sibling versions in this article's translation group (published-only
    * for anonymous/non-staff viewers) — lets the reader show a
    * language-mismatch notice without a second /translations request. */
@@ -562,6 +573,7 @@ export type UpdateArticlePayload = {
   product?: ArticleProduct;
   /** Feature/unfeature on the article's product homepage (main or magazine). */
   is_featured?: boolean;
+  visibility?: "public" | "private";
   access_level?: ArticleAccessLevel;
   preview_block_count?: number | null;
   price?: number | null;

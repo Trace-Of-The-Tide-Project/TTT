@@ -10,6 +10,9 @@ import { ContentMediaPlayer } from "./media/ContentMediaPlayer";
 import { ContentArticleHeader } from "./article/ContentArticleHeader";
 import { ContentLanguageNotice } from "./ContentLanguageNotice";
 import { ContentArticleBody, type ContentArticleSection } from "./article/ContentArticleBody";
+import ArticlePreviewCTA from "./ArticlePreviewCTA";
+import PremiumGate from "./PremiumGate";
+import ArticleBuyGate from "./ArticleBuyGate";
 import type { TranslationVersion } from "@/services/translations.service";
 import { ContentAuthorCard } from "./sidebar/ContentAuthorCard";
 import { ContentContributors } from "./sidebar/ContentContributors";
@@ -88,6 +91,19 @@ export type ContentPageLayoutProps = {
     }[];
   };
   relatedContent: RelatedContentCardData[];
+  /** Present only when the viewer does not have access to the rest of the
+   * body (subscriber/paid gating). Absent for 'open' and 'preview' — a
+   * preview is readable, so it never sets this. */
+  gate?: {
+    accessLevel: "subscriber" | "paid";
+    articleId: string;
+    price?: number | null;
+    currency?: string | null;
+  };
+  /** access_level='preview': true when blocks were truncated server-side —
+   * shows the continue-reading CTA under the visible blocks. */
+  previewTruncated?: boolean;
+  totalBlockCount?: number;
 };
 
 export function ContentPageLayout({
@@ -101,6 +117,8 @@ export function ContentPageLayout({
   contributors,
   collection,
   relatedContent,
+  gate,
+  previewTruncated,
 }: ContentPageLayoutProps) {
   const t = useTranslations("Content");
   const isOpenCall =
@@ -199,7 +217,29 @@ export function ContentPageLayout({
             dir={dirFor(article.language)}
             lang={article.language}
           >
-            <ContentArticleBody sections={article.sections} />
+            {gate ? (
+              // Subscriber/paid: the backend ships zero blocks, so there is
+              // nothing real to blur — render a ghost skeleton body instead
+              // of blurring an empty <div>, then wrap it in the paywall.
+              gate.accessLevel === "paid" ? (
+                <ArticleBuyGate
+                  articleId={gate.articleId}
+                  price={gate.price}
+                  currency={gate.currency}
+                >
+                  <GhostBody />
+                </ArticleBuyGate>
+              ) : (
+                <PremiumGate feature="archive">
+                  <GhostBody />
+                </PremiumGate>
+              )
+            ) : (
+              <>
+                <ContentArticleBody sections={article.sections} />
+                {previewTruncated ? <ArticlePreviewCTA /> : null}
+              </>
+            )}
             <div id="article-body-end" aria-hidden className="h-px" />
             {isOpenCall && (openCallId || articleId) && (
               <SpringLink
@@ -244,6 +284,24 @@ export function ContentPageLayout({
 
       {/* Share your story */}
       <ShareYourStory surface={theme.homeSurface} />
+    </div>
+  );
+}
+
+// Ghost paragraph skeleton for a gated (subscriber/paid) body — the backend
+// strips all blocks for an unentitled viewer, so there is no real content to
+// blur; this stands in for it under the gate overlay.
+const GHOST_BODY_WIDTHS = ["100%", "96%", "88%", "100%", "70%"];
+function GhostBody() {
+  return (
+    <div aria-hidden className="space-y-3">
+      {GHOST_BODY_WIDTHS.map((w, i) => (
+        <div
+          key={i}
+          className="h-4 animate-pulse rounded-full"
+          style={{ width: w, backgroundColor: "var(--tott-panel-bg)" }}
+        />
+      ))}
     </div>
   );
 }
