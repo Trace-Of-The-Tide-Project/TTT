@@ -1,0 +1,57 @@
+{
+  "MagazineV3": {
+    "meta": {
+      "title": "Magazine — Trace of the Tide",
+      "description": "Récits du littoral, voix de la communauté et les dernières actualités du magazine Trace of the Tide."
+    },
+    "hero": {
+      "title": "Récits du littoral : voix de la communauté",
+      "standfirst": "Histoires, essais et témoignages de celles et ceux qui portent la marée avec eux.",
+      "cta": "Voir le contenu"
+    },
+    "carousel": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "board": {
+      "heading": "Le comité éditorial"
+    },
+    "actions": {
+      "join": {
+        "title": "Rejoindre le collectif",
+        "body": "Faites partie des écrivains et lecteurs qui façonnent Trace of the Tide.",
+        "cta": "Rejoindre maintenant !"
+      },
+      "gift": {
+        "title": "Offrir un abonnement",
+        "body": "Offrez un abonnement à quelqu'un qui aime les belles histoires.",
+        "cta": "Offrir maintenant"
+      },
+      "share": {
+        "title": "Partagez votre histoire",
+        "body": "Soumettez votre propre texte, art ou témoignage au magazine.",
+        "cta": "Partagez avec nous"
+      }
+    },
+    "feature": {
+      "title": "Contenu à la une",
+      "standfirst": "Histoires sélectionnées par la rédaction pour cette édition."
+    },
+    "collections": {
+      "title": "Collections",
+      "standfirst": "Regroupements thématiques choisis à travers les éditions."
+    },
+    "latest": {
+      "title": "Derniers contenus",
+      "standfirst": "Les ajouts les plus récents au magazine."
+    },
+    "viewMore": "Voir plus",
+    "edition": "Édition",
+    "articleCount": "{count} articles",
+    "shareStory": {
+      "heading": "Partagez votre histoire",
+      "standfirst": "Chaque histoire compte. Aidez-nous à préserver la mémoire collective en contribuant vos expériences personnelles, témoignages ou connaissances d'événements historiques.",
+      "cta": "Contribuer maintenant !"
+    }
+  }
+}

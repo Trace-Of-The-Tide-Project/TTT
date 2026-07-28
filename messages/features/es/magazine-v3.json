@@ -1,0 +1,57 @@
+{
+  "MagazineV3": {
+    "meta": {
+      "title": "Revista — Trace of the Tide",
+      "description": "Narrativas costeras, voces de la comunidad y lo último de la revista Trace of the Tide."
+    },
+    "hero": {
+      "title": "Narrativas de la costa: voces de la comunidad",
+      "standfirst": "Historias, ensayos y testimonios de quienes llevan la marea consigo.",
+      "cta": "Ver contenido"
+    },
+    "carousel": {
+      "prev": "Anterior",
+      "next": "Siguiente"
+    },
+    "board": {
+      "heading": "El consejo editorial"
+    },
+    "actions": {
+      "join": {
+        "title": "Únete al colectivo",
+        "body": "Forma parte de los escritores y lectores que dan forma a Trace of the Tide.",
+        "cta": "¡Únete ahora!"
+      },
+      "gift": {
+        "title": "Enviar regalo",
+        "body": "Regala una suscripción a alguien que ame una buena historia.",
+        "cta": "Enviar ahora"
+      },
+      "share": {
+        "title": "Comparte tu historia",
+        "body": "Envía tu propio texto, arte o testimonio a la revista.",
+        "cta": "Comparte con nosotros"
+      }
+    },
+    "feature": {
+      "title": "Contenido destacado",
+      "standfirst": "Historias seleccionadas por la redacción para esta edición."
+    },
+    "collections": {
+      "title": "Colecciones",
+      "standfirst": "Agrupaciones curadas por temas y ediciones."
+    },
+    "latest": {
+      "title": "Contenido más reciente",
+      "standfirst": "Las últimas incorporaciones a la revista."
+    },
+    "viewMore": "Ver más",
+    "edition": "Edición",
+    "articleCount": "{count} artículos",
+    "shareStory": {
+      "heading": "Comparte tu historia",
+      "standfirst": "Cada historia importa. Ayúdanos a preservar la memoria colectiva contribuyendo tus experiencias personales, testimonios o conocimiento de acontecimientos históricos.",
+      "cta": "¡Contribuye ahora!"
+    }
+  }
+}
