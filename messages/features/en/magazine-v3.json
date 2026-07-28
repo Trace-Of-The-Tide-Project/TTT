@@ -1,0 +1,57 @@
+{
+  "MagazineV3": {
+    "meta": {
+      "title": "Magazine — Trace of the Tide",
+      "description": "Shoreline narratives, community voices, and the latest from Trace of the Tide magazine."
+    },
+    "hero": {
+      "title": "Shoreline Narratives: Community Voices",
+      "standfirst": "Stories, essays, and testimonies from the people who carry the tide with them.",
+      "cta": "View content"
+    },
+    "carousel": {
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "board": {
+      "heading": "The Board"
+    },
+    "actions": {
+      "join": {
+        "title": "Join Collective",
+        "body": "Become part of the writers and readers shaping Trace of the Tide.",
+        "cta": "Join now!"
+      },
+      "gift": {
+        "title": "Send Gift",
+        "body": "Give a subscription to someone who loves a good story.",
+        "cta": "Send now"
+      },
+      "share": {
+        "title": "Share Story",
+        "body": "Submit your own writing, art, or testimony to the magazine.",
+        "cta": "Share with us"
+      }
+    },
+    "feature": {
+      "title": "Feature content",
+      "standfirst": "Editor-selected stories from this edition."
+    },
+    "collections": {
+      "title": "Collections",
+      "standfirst": "Curated groupings across themes and editions."
+    },
+    "latest": {
+      "title": "Latest content",
+      "standfirst": "Newest additions to the magazine."
+    },
+    "viewMore": "View more",
+    "edition": "Edition",
+    "articleCount": "{count} articles",
+    "shareStory": {
+      "heading": "Share your story",
+      "standfirst": "Every story matters. Help us preserve the collective memory by contributing your personal experiences, testimonies, or knowledge of historical events.",
+      "cta": "Contribute Now!"
+    }
+  }
+}

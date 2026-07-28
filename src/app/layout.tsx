@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Amiri, IBM_Plex_Sans, IBM_Plex_Sans_Arabic, IBM_Plex_Mono, IBM_Plex_Serif } from "next/font/google";
+import { Amiri, IBM_Plex_Sans, IBM_Plex_Sans_Arabic, IBM_Plex_Mono, IBM_Plex_Serif, Inter } from "next/font/google";
 import { hasLocale } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -41,6 +41,14 @@ const amiri = Amiri({
   display: "swap",
 });
 
+/** magazine-v3 body/UI face (Figma spec), via --font-body-ui. Latin only. */
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "Trace of The Tide",
@@ -72,7 +80,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <body
-        className={`${plexSans.variable} ${plexArabic.variable} ${plexMono.variable} ${plexSerif.variable} ${amiri.variable} min-h-screen bg-background text-foreground antialiased`}
+        className={`${plexSans.variable} ${plexArabic.variable} ${plexMono.variable} ${plexSerif.variable} ${amiri.variable} ${inter.variable} min-h-screen bg-background text-foreground antialiased`}
         suppressHydrationWarning
       >
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />

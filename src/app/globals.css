@@ -153,6 +153,9 @@ html {
   --tott-gold-chip-ink: #332217;
   --tott-content-quote-border: #bd9352;
   --tott-content-stat-label: #a3a3a3;
+  /* magazine-v3 (Figma) body/meta text on dark card scrims. */
+  --tott-text-secondary: #a3a3a3;
+  --tott-text-secondary-soft: #d6d6d6;
   --tott-glass-bg: rgba(var(--tott-home-surface-rgb), 0.64);
   --tott-glass-highlight: rgba(255, 255, 255, 0.08);
   --tott-wave-near: rgba(255, 255, 255, 0.8);
@@ -244,6 +247,8 @@ html {
     --tott-dark-pill: #1f2937;
     --tott-dark-pill-fg: #ffffff;
     --tott-content-stat-label: #6b7280;
+    --tott-text-secondary: #6b7280;
+    --tott-text-secondary-soft: #4b3c2e;
     --tott-wave-near: rgba(23, 23, 23, 0.7);
     --tott-wave-far: rgba(23, 23, 23, 0.35);
 
@@ -345,6 +350,8 @@ html[data-theme="light"] {
   --tott-dark-pill: #1f2937;
   --tott-dark-pill-fg: #ffffff;
   --tott-content-stat-label: #6b7280;
+  --tott-text-secondary: #6b7280;
+  --tott-text-secondary-soft: #4b3c2e;
   --tott-wave-near: rgba(23, 23, 23, 0.7);
   --tott-wave-far: rgba(23, 23, 23, 0.35);
 
@@ -467,6 +474,8 @@ html[data-theme="tide"] {
   --tott-gold-chip-ink: #00263c;
   --tott-content-quote-border: #2f8aa0;
   --tott-content-stat-label: #4d6273;
+  --tott-text-secondary: #4d6273;
+  --tott-text-secondary-soft: #114d70;
   --tott-glass-bg: rgba(var(--tott-home-surface-rgb), 0.64);
   --tott-glass-highlight: rgba(255, 255, 255, 0.5);
   --tott-wave-near: rgba(0, 43, 71, 0.7);
@@ -506,6 +515,8 @@ html[lang="ar"] {
   --font-serif: var(--font-plex-serif), var(--font-plex-arabic), Georgia, serif;
   /* Homepage display face: Plex Serif for Latin, Amiri (Naskh serif) for Arabic. */
   --font-display: var(--font-plex-serif), var(--font-amiri), var(--font-plex-arabic), Georgia, serif;
+  /* magazine-v3 body/UI face (Figma spec). Latin only — RTL still reads Plex Arabic via --font-sans fallback chain below. */
+  --font-body-ui: var(--font-inter), var(--font-plex-arabic), system-ui, sans-serif;
 }
 
 /* /content hub ("The Tideline") ambient loops — pure CSS so reduced-motion
