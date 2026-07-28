@@ -48,6 +48,24 @@
       "redirecting": "جارٍ التحويل…",
       "error": "تعذّر بدء عملية الدفع. حاول مرة أخرى."
     },
+    "premiumGate": {
+      "heading": "محتوى مميز",
+      "body": "اشترك للمتابعة في القراءة.",
+      "expiredHeading": "انتهى الاشتراك",
+      "expiredBody": "جدد اشتراكك لاستعادة الوصول.",
+      "renew": "تجديد",
+      "requiresPlan": "يتطلب {plan}",
+      "requiresPlanBody": "يتطلب هذا المحتوى خطة {plan} ({price}/شهريًا).",
+      "upgrade": "ترقية",
+      "availableOnPlan": "متاح على خطة {plan} ({price}/شهريًا) وما فوق.",
+      "subscribe": "اشترك",
+      "viewPlans": "عرض الخطط"
+    },
+    "previewCta": {
+      "heading": "متابعة القراءة",
+      "body": "هل تستمتع بهذه المقالة؟ اشترك لفتح الباقي ودعم النشر المستقل.",
+      "subscribe": "اشترك"
+    },
     "threads": {
       "loading": "جارٍ تحميل الخيط…",
       "notFound": "الخيط غير موجود",

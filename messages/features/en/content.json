@@ -48,6 +48,24 @@
       "redirecting": "Redirecting…",
       "error": "Could not start checkout. Please try again."
     },
+    "premiumGate": {
+      "heading": "Premium content",
+      "body": "Subscribe to continue reading.",
+      "expiredHeading": "Subscription expired",
+      "expiredBody": "Renew your subscription to regain access.",
+      "renew": "Renew",
+      "requiresPlan": "Requires {plan}",
+      "requiresPlanBody": "This content requires {plan} ({price}/mo).",
+      "upgrade": "Upgrade",
+      "availableOnPlan": "Available on {plan} ({price}/mo) and above.",
+      "subscribe": "Subscribe",
+      "viewPlans": "View Plans"
+    },
+    "previewCta": {
+      "heading": "Continue Reading",
+      "body": "Enjoying this article? Subscribe to unlock the rest and support independent publishing.",
+      "subscribe": "Subscribe"
+    },
     "threads": {
       "loading": "Loading thread…",
       "notFound": "Thread not found",

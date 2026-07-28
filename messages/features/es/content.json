@@ -48,6 +48,24 @@
       "redirecting": "Redirigiendo…",
       "error": "No se pudo iniciar el pago. Inténtalo de nuevo."
     },
+    "premiumGate": {
+      "heading": "Contenido premium",
+      "body": "Suscríbete para seguir leyendo.",
+      "expiredHeading": "Suscripción vencida",
+      "expiredBody": "Renueva tu suscripción para recuperar el acceso.",
+      "renew": "Renovar",
+      "requiresPlan": "Requiere {plan}",
+      "requiresPlanBody": "Este contenido requiere el plan {plan} ({price}/mes).",
+      "upgrade": "Mejorar plan",
+      "availableOnPlan": "Disponible en el plan {plan} ({price}/mes) o superior.",
+      "subscribe": "Suscribirse",
+      "viewPlans": "Ver planes"
+    },
+    "previewCta": {
+      "heading": "Continuar leyendo",
+      "body": "¿Te está gustando este artículo? Suscríbete para desbloquear el resto y apoyar la publicación independiente.",
+      "subscribe": "Suscribirse"
+    },
     "threads": {
       "loading": "Cargando hilo…",
       "notFound": "Hilo no encontrado",

@@ -75,7 +75,13 @@
           "featureLoading": "Actualizando…",
           "featureSuccess": "Añadido a la página de inicio.",
           "unfeatureSuccess": "Quitado de la página de inicio.",
-          "featureFailed": "No se pudo actualizar el destacado de la página de inicio"
+          "featureFailed": "No se pudo actualizar el destacado de la página de inicio",
+          "makePrivate": "Hacer privado",
+          "makePublic": "Hacer público",
+          "visibilityLoading": "Actualizando…",
+          "makePrivateSuccess": "El artículo ahora es privado.",
+          "makePublicSuccess": "El artículo ahora es público.",
+          "visibilityFailed": "No se pudo actualizar la visibilidad"
         }
       }
     }

@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useSubscription } from '@/context/SubscriptionContext';
 import type { SubscriptionFeature } from './PremiumGate.types';
 
@@ -22,6 +23,7 @@ function isActiveAccess(sub: { status: string; grace_period_end: string | null }
 }
 
 export default function PremiumGate({ feature, children, upgradeMessage }: Props) {
+  const t = useTranslations('Content.premiumGate');
   const { subscription, plans, loading } = useSubscription();
 
   if (loading) {
@@ -50,29 +52,35 @@ export default function PremiumGate({ feature, children, upgradeMessage }: Props
   // Needs upgrade case: active sub but plan doesn't include feature
   const needsUpgrade = active && !hasFeature;
 
-  let heading = 'Premium content';
-  let body = upgradeMessage ?? 'Subscribe to continue reading.';
-  let actionLabel = 'View Plans';
+  let heading = t('heading');
+  let body = upgradeMessage ?? t('body');
+  let actionLabel = t('viewPlans');
   let actionHref = '/subscribe';
 
   if (isExpired) {
-    heading = 'Subscription expired';
-    body = upgradeMessage ?? 'Renew your subscription to regain access.';
-    actionLabel = 'Renew';
+    heading = t('expiredHeading');
+    body = upgradeMessage ?? t('expiredBody');
+    actionLabel = t('renew');
     actionHref = '/settings/subscription';
   } else if (needsUpgrade && cheapestUnlock) {
-    heading = `Requires ${cheapestUnlock.display_name}`;
+    heading = t('requiresPlan', { plan: cheapestUnlock.display_name });
     body =
       upgradeMessage ??
-      `This content requires ${cheapestUnlock.display_name} (£${cheapestUnlock.price_monthly}/mo).`;
-    actionLabel = 'Upgrade';
+      t('requiresPlanBody', {
+        plan: cheapestUnlock.display_name,
+        price: `£${cheapestUnlock.price_monthly}`,
+      });
+    actionLabel = t('upgrade');
     actionHref = '/settings/subscription';
   } else if (!subscription && cheapestUnlock) {
-    heading = 'Premium content';
+    heading = t('heading');
     body =
       upgradeMessage ??
-      `Available on ${cheapestUnlock.display_name} (£${cheapestUnlock.price_monthly}/mo) and above.`;
-    actionLabel = 'Subscribe';
+      t('availableOnPlan', {
+        plan: cheapestUnlock.display_name,
+        price: `£${cheapestUnlock.price_monthly}`,
+      });
+    actionLabel = t('subscribe');
     actionHref = '/subscribe';
   }
 
