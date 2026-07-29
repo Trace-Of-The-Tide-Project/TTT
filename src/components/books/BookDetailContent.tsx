@@ -10,6 +10,7 @@ import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 import { BookDetailBreadcrumb, DataRow, CategoryChip, AvatarCircle, AvatarStack, formatCoAuthors, DATA_VALUE_STYLE } from "./detail/BookMeta";
 import { ReviewsSection, PartialStar } from "./reviews/BookReviews";
 import { BookDetailBanner } from "./detail/BookDetailBanner";
+import { BookChapterList } from "./detail/BookChapterList";
 
 const PREVIEW_ICON = "/images/books/preview-icon.svg";
 
@@ -180,6 +181,8 @@ export function BookDetailContent({ book, reviews }: { book: BookDetail; reviews
                 </section>
               </RevealOnScroll>
             ) : null}
+
+            <BookChapterList bookId={book.id} />
 
             <ReviewsSection
               bookId={book.id}

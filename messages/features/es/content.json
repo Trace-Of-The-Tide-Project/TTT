@@ -153,7 +153,12 @@
       "backToContent": "Volver al contenido",
       "loadError": "No se pudo cargar el artículo",
       "loadErrorBody": "Comprueba tu conexión o inténtalo de nuevo más tarde.",
-      "finishedReading": "Terminaste de leer"
+      "finishedReading": "Terminaste de leer",
+      "bookNav": {
+        "previous": "Capítulo anterior",
+        "next": "Capítulo siguiente",
+        "nextLocked": "El próximo capítulo se publica pronto"
+      }
     },
     "share": {
       "action": "Compartir",

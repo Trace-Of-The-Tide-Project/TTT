@@ -19,6 +19,7 @@ import type { ContentPageLayoutProps } from "@/components/content/ContentPageLay
 import type { RelatedContentCardData } from "@/components/content/related/RelatedContentCard";
 import { useOptionalArticleReadingHeader } from "@/components/layout/ArticleReadingHeaderContext";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
+import { ArticleBookChapterNav } from "@/components/content/article/ArticleBookChapterNav";
 
 const FALLBACK_IMAGE = "/images/image.png";
 
@@ -220,24 +221,27 @@ function ArticleByIdLoader({
   if (article) {
     const props = buildArticleContentPageProps(article);
     return (
-      <ContentPageLayout
-        {...props}
-        article={{ ...props.article, viewCount: displayViewCount ?? props.article.viewCount }}
-        collection={liveCollection ?? props.collection}
-        relatedContent={liveRelated.length > 0 ? liveRelated : props.relatedContent}
-        gate={
-          article.locked
-            ? {
-                accessLevel: article.access_level === "paid" ? "paid" : "subscriber",
-                articleId: article.id,
-                price: article.price,
-                currency: article.currency,
-              }
-            : undefined
-        }
-        previewTruncated={article.preview_truncated}
-        totalBlockCount={article.total_block_count}
-      />
+      <>
+        <ContentPageLayout
+          {...props}
+          article={{ ...props.article, viewCount: displayViewCount ?? props.article.viewCount }}
+          collection={liveCollection ?? props.collection}
+          relatedContent={liveRelated.length > 0 ? liveRelated : props.relatedContent}
+          gate={
+            article.locked
+              ? {
+                  accessLevel: article.access_level === "paid" ? "paid" : "subscriber",
+                  articleId: article.id,
+                  price: article.price,
+                  currency: article.currency,
+                }
+              : undefined
+          }
+          previewTruncated={article.preview_truncated}
+          totalBlockCount={article.total_block_count}
+        />
+        {!article.locked ? <ArticleBookChapterNav articleId={article.id} /> : null}
+      </>
     );
   }
 

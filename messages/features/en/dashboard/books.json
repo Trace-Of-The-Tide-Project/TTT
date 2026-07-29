@@ -128,8 +128,8 @@
           "editions": "Editions"
         },
         "chapters": {
-          "label": "Compiled from",
-          "hint": "Record which articles this book was compiled from, for editorial tracking. Uploaded PDF above remains the readable file.",
+          "label": "Chapters",
+          "hint": "Each chapter is a readable article. Order them here, then schedule a sequential release. The uploaded PDF above, if any, is the optional collected edition.",
           "loading": "Loading chapters…",
           "empty": "No articles linked yet.",
           "searchPlaceholder": "Search articles to add as a chapter…",
@@ -138,7 +138,18 @@
           "add": "Add",
           "remove": "Remove",
           "moveUp": "Move up",
-          "moveDown": "Move down"
+          "moveDown": "Move down",
+          "statusPublished": "Published",
+          "statusScheduled": "Scheduled for {date}",
+          "statusUnscheduled": "Not scheduled",
+          "orderWarning": "Release dates are out of order with chapter order — a later chapter unlocks before an earlier one.",
+          "scheduleLabel": "Schedule release",
+          "startDate": "Start date",
+          "intervalDays": "Days between chapters",
+          "scheduleAction": "Schedule chapters",
+          "scheduling": "Scheduling…",
+          "scheduled": "Chapters scheduled",
+          "scheduleFailed": "Could not schedule chapters"
         },
         "hints": {
           "priceFree": "Leave blank to mark as free",

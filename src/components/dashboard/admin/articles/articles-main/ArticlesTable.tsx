@@ -20,6 +20,7 @@ import {
   type ChamferedTableColumn,
 } from "@/components/ui/ChamferedTable";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { ArticleBookBadge } from "./ArticleBookBadge";
 import {
   CreatePageFilters,
   type FilterOption,
@@ -709,6 +710,7 @@ export function ArticlesTable({
                     {t("table.magazineBadge")}
                   </span>
                 ) : null}
+                <ArticleBookBadge articleId={row.id} />
                 {row.isFeatured ? (
                   <span
                     className="shrink-0 rounded bg-[var(--tott-accent-gold)]/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-accent-gold)]"

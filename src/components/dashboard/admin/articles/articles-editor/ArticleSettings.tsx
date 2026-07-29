@@ -24,6 +24,7 @@ import { WriterPicker } from "@/components/dashboard/admin/writers/WriterPicker"
 import { UserPicker } from "@/components/dashboard/admin/writers/UserPicker";
 import type { AdminUserListItem } from "@/services/users.service";
 import type { WriterProfile } from "@/services/writers.service";
+import { BelongsToSection } from "./BelongsToSection";
 
 /**
  * Resolve the cover value for the `<img>` preview. Fresh picks are local
@@ -137,7 +138,9 @@ type ContentSettingsProps = {
   onSeoTitleChange: (v: string) => void;
   metaDescription: string;
   onMetaDescriptionChange: (v: string) => void;
-  /** Kept for parent state compatibility — not rendered in this design. */
+  /** Read-only display in the "Belongs to" section below (see
+   * BelongsToSection) — resolved to a name via useCollections. The setter
+   * is unused here; collection assignment happens elsewhere. */
   collectionId: string;
   onCollectionIdChange: (v: string) => void;
   tagIds: string[];
@@ -195,6 +198,7 @@ export function ContentSettings({
   onSeoTitleChange,
   metaDescription,
   onMetaDescriptionChange,
+  collectionId,
   tagIds,
   onTagIdsChange,
   coverImage,
@@ -339,6 +343,8 @@ export function ContentSettings({
             aria-required="true"
           />
         </div>
+
+        {excludeId ? <BelongsToSection articleId={excludeId} collectionId={collectionId} /> : null}
 
         <div>
           <SectionLabel icon={<ImageIcon />}>{t("cover.label")}</SectionLabel>

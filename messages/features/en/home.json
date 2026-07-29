@@ -292,6 +292,12 @@
       "buyPrint": "Buy print copy",
       "owned": "Owned",
       "preview": "Preview",
+      "chapters": {
+        "heading": "Chapters",
+        "untitled": "Untitled chapter",
+        "releasesOn": "Releases {date}",
+        "locked": "Not yet released"
+      },
       "reviewsHeading": "Reviews",
       "seeAllReviews": "See all reviews",
       "writeReviewPlaceholder": "Write a review",

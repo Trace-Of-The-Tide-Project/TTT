@@ -241,6 +241,12 @@
             "label": "Catégorie",
             "placeholder": "Ex. : Documentaire, Art"
           },
+          "belongsTo": {
+            "label": "Appartient à",
+            "collection": "Collection",
+            "book": "Livre",
+            "chapterNumber": " (chapitre {n})"
+          },
           "cover": {
             "label": "Image de couverture",
             "choose": "Choisir une image",

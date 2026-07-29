@@ -6,7 +6,14 @@ export type BookChapter = {
   article_id: string;
   chapter_order: number;
   chapter_title: string | null;
-  article?: { id: string; title: string; slug: string } | null;
+  article?: {
+    id: string;
+    title: string;
+    slug: string;
+    status?: string;
+    published_at?: string | null;
+    scheduled_at?: string | null;
+  } | null;
 };
 
 function unwrapList(raw: unknown): BookChapter[] {
@@ -31,5 +38,20 @@ export async function setBookChapters(
   const { data } = await api.put<unknown>(`/knowledge/books/${encodeURIComponent(bookId)}/chapters`, {
     chapters,
   });
+  return unwrapList(data);
+}
+
+/** POST /knowledge/books/:id/chapters/schedule — sequential release, one
+ *  chapter per intervalDays starting at startAt, in chapter_order. Chapters
+ *  already published are left alone. */
+export async function scheduleBookChapters(
+  bookId: string,
+  startAt: string,
+  intervalDays: number,
+): Promise<BookChapter[]> {
+  const { data } = await api.post<unknown>(
+    `/knowledge/books/${encodeURIComponent(bookId)}/chapters/schedule`,
+    { start_at: startAt, interval_days: intervalDays },
+  );
   return unwrapList(data);
 }

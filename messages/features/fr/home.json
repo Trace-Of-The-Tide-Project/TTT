@@ -288,6 +288,12 @@
       "buyNow": "Acheter maintenant",
       "buyPrint": "Acheter la version imprimée",
       "preview": "Aperçu",
+      "chapters": {
+        "heading": "Chapitres",
+        "untitled": "Chapitre sans titre",
+        "releasesOn": "Publié le {date}",
+        "locked": "Pas encore publié"
+      },
       "reviewsHeading": "Avis",
       "seeAllReviews": "Voir tous les avis",
       "writeReviewPlaceholder": "Rédiger un avis",

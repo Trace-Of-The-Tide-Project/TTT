@@ -153,7 +153,12 @@
       "backToContent": "العودة إلى المحتوى",
       "loadError": "تعذّر تحميل المقال",
       "loadErrorBody": "تحقّق من اتصالك أو حاول مرة أخرى لاحقًا.",
-      "finishedReading": "أنهيت القراءة"
+      "finishedReading": "أنهيت القراءة",
+      "bookNav": {
+        "previous": "الفصل السابق",
+        "next": "الفصل التالي",
+        "nextLocked": "الفصل التالي يُنشر قريباً"
+      }
     },
     "share": {
       "action": "مشاركة",
