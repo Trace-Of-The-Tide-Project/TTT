@@ -288,6 +288,12 @@
       "buyNow": "اشترِ الآن",
       "buyPrint": "شراء نسخة ورقية",
       "preview": "معاينة",
+      "chapters": {
+        "heading": "الفصول",
+        "untitled": "فصل بلا عنوان",
+        "releasesOn": "يُنشر في {date}",
+        "locked": "لم يُنشر بعد"
+      },
       "reviewsHeading": "المراجعات",
       "seeAllReviews": "عرض كل المراجعات",
       "writeReviewPlaceholder": "اكتب مراجعة",

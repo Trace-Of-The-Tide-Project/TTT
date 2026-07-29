@@ -241,6 +241,12 @@
             "label": "Category",
             "placeholder": "e.g., Documentary, Art"
           },
+          "belongsTo": {
+            "label": "Belongs to",
+            "collection": "Collection",
+            "book": "Book",
+            "chapterNumber": " (chapter {n})"
+          },
           "cover": {
             "label": "Cover image",
             "choose": "Choose image",

@@ -241,6 +241,12 @@
             "label": "التصنيف",
             "placeholder": "مثال: وثائقي، فن"
           },
+          "belongsTo": {
+            "label": "ينتمي إلى",
+            "collection": "مجموعة",
+            "book": "كتاب",
+            "chapterNumber": " (الفصل {n})"
+          },
           "cover": {
             "label": "صورة الغلاف",
             "choose": "اختيار صورة",

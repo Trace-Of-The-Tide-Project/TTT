@@ -128,8 +128,8 @@
           "editions": "Éditions"
         },
         "chapters": {
-          "label": "Compilé à partir de",
-          "hint": "Indiquez à partir de quels articles ce livre a été compilé, à des fins de suivi éditorial. Le PDF téléversé ci-dessus reste le fichier lisible.",
+          "label": "Chapitres",
+          "hint": "Chaque chapitre est un article lisible. Classez-les ici, puis planifiez une publication séquentielle. Le PDF téléversé ci-dessus, s'il existe, est l'édition recueillie optionnelle.",
           "loading": "Chargement des chapitres…",
           "empty": "Aucun article lié pour le moment.",
           "searchPlaceholder": "Rechercher des articles à ajouter comme chapitre…",
@@ -138,7 +138,18 @@
           "add": "Ajouter",
           "remove": "Retirer",
           "moveUp": "Monter",
-          "moveDown": "Descendre"
+          "moveDown": "Descendre",
+          "statusPublished": "Publié",
+          "statusScheduled": "Programmé pour le {date}",
+          "statusUnscheduled": "Non programmé",
+          "orderWarning": "Les dates de publication ne correspondent pas à l'ordre des chapitres — un chapitre ultérieur se débloque avant un chapitre précédent.",
+          "scheduleLabel": "Planifier la publication",
+          "startDate": "Date de début",
+          "intervalDays": "Jours entre les chapitres",
+          "scheduleAction": "Planifier les chapitres",
+          "scheduling": "Planification…",
+          "scheduled": "Chapitres planifiés",
+          "scheduleFailed": "Impossible de planifier les chapitres"
         },
         "hints": {
           "priceFree": "Laisser vide pour marquer comme gratuit",

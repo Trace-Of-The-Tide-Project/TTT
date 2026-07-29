@@ -128,8 +128,8 @@
           "editions": "Ediciones"
         },
         "chapters": {
-          "label": "Compilado a partir de",
-          "hint": "Registra de qué artículos se compiló este libro, para seguimiento editorial. El PDF subido arriba sigue siendo el archivo legible.",
+          "label": "Capítulos",
+          "hint": "Cada capítulo es un artículo legible. Ordénalos aquí y luego programa una publicación secuencial. El PDF subido arriba, si existe, es la edición recopilatoria opcional.",
           "loading": "Cargando capítulos…",
           "empty": "Aún no hay artículos vinculados.",
           "searchPlaceholder": "Buscar artículos para añadir como capítulo…",
@@ -138,7 +138,18 @@
           "add": "Añadir",
           "remove": "Eliminar",
           "moveUp": "Subir",
-          "moveDown": "Bajar"
+          "moveDown": "Bajar",
+          "statusPublished": "Publicado",
+          "statusScheduled": "Programado para {date}",
+          "statusUnscheduled": "Sin programar",
+          "orderWarning": "Las fechas de publicación no coinciden con el orden de los capítulos — un capítulo posterior se desbloquea antes que uno anterior.",
+          "scheduleLabel": "Programar publicación",
+          "startDate": "Fecha de inicio",
+          "intervalDays": "Días entre capítulos",
+          "scheduleAction": "Programar capítulos",
+          "scheduling": "Programando…",
+          "scheduled": "Capítulos programados",
+          "scheduleFailed": "No se pudieron programar los capítulos"
         },
         "hints": {
           "priceFree": "Dejar en blanco para marcarlo como gratis",
