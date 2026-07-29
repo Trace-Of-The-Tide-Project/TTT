@@ -1,52 +1,104 @@
 import { getTranslations } from "next-intl/server";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { getPageHero } from "@/services/media-library.service";
-import { PersonPlusIcon, GiftIcon, PenLineIcon } from "@/components/ui/icons";
+import { getFramingsServer } from "@/services/image-framing.service";
+import { PenLineIcon } from "@/components/ui/icons";
 import {
   attachArticleFraming,
   attachWriterFraming,
+  attachIssueFraming,
   fetchArticles,
-  fetchCollections,
   fetchWriters,
+  fetchIssues,
+  fetchCurrentIssue,
+  fetchEditorialCopy,
+  fetchUpcomingIssues,
+  fetchPlansSafe,
+  fetchCollections,
   V3_SECTION_SIZES,
 } from "./data";
 import { shortDate } from "@/components/home/magazine-next/ui";
-import { dirFor } from "@/i18n/dir";
-import { V3Hero, V3HeroSlider, type HeroSlide } from "./V3Hero";
-import { V3ActionTiles, type ActionTile } from "./V3ActionTiles";
-import { V3SectionHeader } from "./V3SectionHeader";
+import { V3Hero, type HeroSlide } from "./V3Hero";
+import { V3QuoteBreak } from "./V3QuoteBreak";
+import { V3SectionDivider } from "./V3SectionDivider";
+import { V3UpcomingIssues } from "./V3UpcomingIssues";
+import { V3FeaturedRail, V3LatestRail } from "./V3FeaturedRail";
 import { V3ContentCard } from "./V3ContentCard";
-import { V3Honeycomb, V3HoneycombFallback, chunkHoneycombRows } from "./V3Honeycomb";
-import { V3CollectionCard } from "./V3CollectionCard";
+import { V3CollectionsRow } from "./V3CollectionsRow";
+import { V3Philosophy } from "./V3Philosophy";
+import { V3ReadingExperience } from "./V3ReadingExperience";
+import { V3Plans } from "./V3Plans";
 import { V3ShareStory } from "./V3ShareStory";
 
+function formatReleaseDate(locale: string, iso: string): string {
+  const formatter = new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" });
+  return formatter.format(new Date(iso));
+}
+
 /**
- * Figma-redesign magazine homepage preview (`/magazine-v3`). Server
- * component: all data in one Promise.all, each fetch resolves to [] on
- * failure, each section renders null with no data — page always renders.
+ * Premium editorial magazine homepage (`/magazine-v3`). Server component:
+ * all data in one Promise.all, each fetch resolves to a safe empty value on
+ * failure, each section renders null with no data — the page always renders.
  *
- * Only the six sections present in the Figma frame ship here: Hero, Action
- * tiles, Feature content, Collections, Latest content, Share your story.
- * Everything else on the live /magazine (issues, books, videos, voices,
- * founder note, newsletter) is intentionally NOT carried over — see the
- * plan's "Not doing" section.
+ * Section order: Hero → Editorial quote → Upcoming issues → Featured
+ * articles → Magazine philosophy (incl. the editorial board strip) →
+ * Reading experience → Subscription plans → Closing CTA. See the redesign
+ * plan for what replaced the previous action-tiles/collections layout.
  */
 export async function MagazineV3Page({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "MagazineV3" });
+  // Plan feature slugs (e.g. "shop_discount") are translated via the same
+  // `subscribe.features.*` table the live /subscribe page uses, so both
+  // pages agree on copy and a new plan feature only needs adding once.
+  const tSubscribe = await getTranslations({ locale, namespace: "subscribe" });
+  const featureLabel = (slug: string) => {
+    try {
+      return tSubscribe(`features.${slug}` as Parameters<typeof tSubscribe>[0]);
+    } catch {
+      return slug;
+    }
+  };
 
-  const [featuredRaw, latestRaw, collections, pageHeroUrl, boardWriters] = await Promise.all([
+  const [
+    featuredRaw,
+    latestRaw,
+    pageHeroUrl,
+    boardWriters,
+    upcomingIssues,
+    plans,
+    issues,
+    currentIssue,
+    editorial,
+    collections,
+    pageHeroFramings,
+  ] = await Promise.all([
     fetchArticles(locale, { limit: V3_SECTION_SIZES.featured, is_featured: true }),
     fetchArticles(locale, { limit: V3_SECTION_SIZES.latest }),
-    fetchCollections(locale, V3_SECTION_SIZES.collections),
     getPageHero("magazine-landing"),
     fetchWriters(locale, V3_SECTION_SIZES.boardWriters),
+    fetchUpcomingIssues(V3_SECTION_SIZES.upcoming),
+    fetchPlansSafe(),
+    fetchIssues(locale, 1),
+    fetchCurrentIssue(locale),
+    fetchEditorialCopy(locale),
+    fetchCollections(locale, V3_SECTION_SIZES.collections),
+    getFramingsServer("page_hero", ["magazine-landing"], "image"),
   ]);
 
+  // Same hero resolution as the live /magazine hero (MagazineNextPage.tsx):
+  // the admin-chosen current issue leads; else the newest published issue.
+  const framedIssues = await attachIssueFraming(
+    currentIssue && !issues.some((i) => i.id === currentIssue.id)
+      ? [...issues, currentIssue]
+      : issues,
+  );
+  const heroIssue = currentIssue
+    ? (framedIssues.find((i) => i.id === currentIssue.id) ?? currentIssue)
+    : framedIssues[0];
+
   // Feature falls back to the newest articles when nothing is admin-flagged,
-  // same pattern as magazine-next. When falling back, cap the borrow to
-  // roughly half the pool instead of the full featured-section size — with
-  // few real articles, slicing the whole pool into "featured" left nothing
-  // for "latest" and the section silently vanished. Latest excludes
+  // same pattern as magazine-next: cap the borrow to roughly half the pool
+  // so a small article count doesn't leave "latest" empty. Latest excludes
   // whatever featured took so the two grids don't repeat cards.
   const featured =
     featuredRaw.length > 0
@@ -55,14 +107,10 @@ export async function MagazineV3Page({ locale }: { locale: string }) {
   const featuredIds = new Set(featured.map((a) => a.id));
   const latest = latestRaw.filter((a) => !featuredIds.has(a.id));
 
-  // Framing fetched once for the union of every article on the page.
   const framedArticles = await attachArticleFraming([...featured, ...latest]);
   const framedById = new Map(framedArticles.map((a) => [a.id, a]));
-  const withFraming = (list: typeof featured) =>
-    list.map((a) => framedById.get(a.id) ?? a);
+  const withFraming = (list: typeof featured) => list.map((a) => framedById.get(a.id) ?? a);
 
-  // Hero slider shows the Board (editorial_board=true, toggled in the admin
-  // Writers table) — the masthead strip, not a content feed.
   const framedWriters = await attachWriterFraming(boardWriters);
   const heroSlides: HeroSlide[] = framedWriters.map((w) => ({
     id: w.id,
@@ -72,38 +120,24 @@ export async function MagazineV3Page({ locale }: { locale: string }) {
     lang: w.lang,
   }));
 
-  // getPageHero("magazine-landing") returns null when no admin has set a
-  // hero image for this slot in the media library — fall back to the first
-  // featured article's cover so the hero background is never empty in
-  // practice. (Not a writer avatar — a portrait isn't a hero-worthy backdrop.)
-  const heroBackground = pageHeroUrl || withFraming(featured)[0]?.coverImage || null;
+  // Hero cover fallback for the window before any issue is published — same
+  // two admin-controlled sources the live /magazine hero uses, in the same
+  // order; the issue's own cover still wins once an issue exists. Framing
+  // follows the image it was tuned for, never the slot.
+  const heroFallbackArtwork = pageHeroUrl || editorial.heroArtwork || null;
+  const heroFallbackFraming = pageHeroUrl
+    ? pageHeroFramings["magazine-landing"]?.image
+    : editorial.heroArtwork
+      ? editorial.heroArtworkFraming
+      : undefined;
 
-  const actionTiles: ActionTile[] = [
-    {
-      id: "join",
-      icon: <PersonPlusIcon />,
-      title: t("actions.join.title"),
-      body: t("actions.join.body"),
-      ctaLabel: t("actions.join.cta"),
-      href: "/subscribe",
-    },
-    {
-      id: "gift",
-      icon: <GiftIcon />,
-      title: t("actions.gift.title"),
-      body: t("actions.gift.body"),
-      ctaLabel: t("actions.gift.cta"),
-      href: "/subscribe?intent=gift",
-    },
-    {
-      id: "share",
-      icon: <PenLineIcon />,
-      title: t("actions.share.title"),
-      body: t("actions.share.body"),
-      ctaLabel: t("actions.share.cta"),
-      href: "/writing-room",
-    },
-  ];
+  const heroBackground =
+    heroIssue?.coverImage || heroFallbackArtwork || withFraming(featured)[0]?.coverImage || "/images/image.png";
+  const heroBackgroundFraming = heroIssue?.coverImage
+    ? heroIssue.coverFraming
+    : heroFallbackArtwork
+      ? heroFallbackFraming
+      : undefined;
 
   const featuredCards = withFraming(featured).map((article) => (
     <V3ContentCard
@@ -122,81 +156,106 @@ export async function MagazineV3Page({ locale }: { locale: string }) {
     />
   ));
 
+  const philosophyBeats = [
+    { title: t("philosophy.beats.1.title"), body: t("philosophy.beats.1.body") },
+    { title: t("philosophy.beats.2.title"), body: t("philosophy.beats.2.body") },
+    { title: t("philosophy.beats.3.title"), body: t("philosophy.beats.3.body") },
+  ];
+
+  const readingFeatures = [1, 2, 3, 4, 5, 6].map((n) => ({
+    title: t(`reading.features.${n}.title`),
+    body: t(`reading.features.${n}.body`),
+  }));
+
   return (
     <SmoothScroll>
-      <main className="min-h-screen bg-[var(--tott-home-surface)] text-[var(--tott-home-text-warm)]" style={{ fontFamily: "var(--font-body-ui)" }}>
+      <main
+        className="min-h-screen bg-[var(--tott-home-surface)] text-[var(--tott-home-text-warm)]"
+        style={{ fontFamily: "var(--font-body-ui)" }}
+      >
         <V3Hero
+          eyebrow={t("meta.eyebrow")}
           title={t("hero.title")}
           standfirst={t("hero.standfirst")}
-          ctaLabel={t("hero.cta")}
-          ctaHref="/content/magazine"
+          readCtaLabel={t("hero.ctaRead")}
+          readCtaHref={heroIssue?.slug ? `/magazine-issues/${encodeURIComponent(heroIssue.slug)}` : "/content/magazine"}
+          subscribeCtaLabel={t("hero.ctaSubscribe")}
+          subscribeCtaHref="/subscribe"
           backgroundImage={heroBackground}
+          backgroundFraming={heroBackgroundFraming}
+          issueLabel={heroIssue?.title ?? null}
         />
 
-        <V3HeroSlider
-          heading={t("board.heading")}
-          slides={heroSlides}
-          prevLabel={t("carousel.prev")}
-          nextLabel={t("carousel.next")}
-          isRtl={dirFor(locale) === "rtl"}
+        <V3QuoteBreak quote={t("quote.text")} attribution={t("quote.attribution")} />
+
+        <V3SectionDivider />
+
+        <V3UpcomingIssues
+          issues={upcomingIssues}
+          title={t("upcoming.title")}
+          standfirst={t("upcoming.standfirst")}
+          viewMoreLabel={t("viewMore")}
+          statusLabels={{
+            comingSoon: t("upcoming.status.comingSoon"),
+            inProduction: t("upcoming.status.inProduction"),
+            researchPhase: t("upcoming.status.researchPhase"),
+          }}
+          releaseTbaLabel={t("upcoming.releaseTba")}
+          formatReleaseLabel={(iso) => formatReleaseDate(locale, iso)}
         />
 
-        <div className="py-16">
-          <V3ActionTiles tiles={actionTiles} />
-        </div>
+        <V3FeaturedRail
+          cards={featuredCards}
+          title={t("featured.title")}
+          standfirst={t("featured.standfirst")}
+          viewMoreLabel={t("viewMore")}
+        />
 
-        {featured.length > 0 ? (
-          <section id="feature-content" className="py-8">
-            <V3SectionHeader
-              id="feature-content-heading"
-              title={t("feature.title")}
-              standfirst={t("feature.standfirst")}
-              viewMoreLabel={t("viewMore")}
-              viewMoreHref="/magazine"
-            />
-            <div className="mt-10">
-              <V3Honeycomb rows={chunkHoneycombRows(featuredCards)} />
-              <V3HoneycombFallback items={featuredCards} />
-            </div>
-          </section>
-        ) : null}
+        <V3CollectionsRow
+          collections={collections}
+          title={t("collections.title")}
+          standfirst={t("collections.standfirst")}
+          viewMoreLabel={t("viewMore")}
+          articleCountLabel={(count) => t("articleCount", { count })}
+        />
 
-        {collections.length > 0 ? (
-          <section id="collections" className="py-8">
-            <V3SectionHeader
-              id="collections-heading"
-              title={t("collections.title")}
-              standfirst={t("collections.standfirst")}
-              viewMoreLabel={t("viewMore")}
-              viewMoreHref="/collections"
-            />
-            <div className="mt-10 flex items-start justify-center gap-2 overflow-x-auto px-6 pb-2 sm:px-10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {collections.map((c) => (
-                <V3CollectionCard
-                  key={c.id}
-                  collection={c}
-                  articlesLabel={c.articleCount > 0 ? t("articleCount", { count: c.articleCount }) : null}
-                />
-              ))}
-            </div>
-          </section>
-        ) : null}
+        <V3LatestRail
+          cards={latestCards}
+          title={t("latest.title")}
+          standfirst={t("latest.standfirst")}
+          viewMoreLabel={t("viewMore")}
+        />
 
-        {latest.length > 0 ? (
-          <section id="latest-content" className="py-8">
-            <V3SectionHeader
-              id="latest-content-heading"
-              title={t("latest.title")}
-              standfirst={t("latest.standfirst")}
-              viewMoreLabel={t("viewMore")}
-              viewMoreHref="/magazine"
-            />
-            <div className="mt-10">
-              <V3Honeycomb rows={chunkHoneycombRows(latestCards)} />
-              <V3HoneycombFallback items={latestCards} />
-            </div>
-          </section>
-        ) : null}
+        <V3SectionDivider />
+
+        <V3Philosophy
+          title={t("philosophy.title")}
+          beats={philosophyBeats}
+          boardHeading={t("board.heading")}
+          boardSlides={heroSlides}
+          carouselPrevLabel={t("carousel.prev")}
+          carouselNextLabel={t("carousel.next")}
+          locale={locale}
+        />
+
+        <V3ReadingExperience
+          title={t("reading.title")}
+          standfirst={t("reading.standfirst")}
+          features={readingFeatures}
+        />
+
+        <V3SectionDivider />
+
+        <V3Plans
+          plans={plans}
+          title={t("plans.title")}
+          standfirst={t("plans.standfirst")}
+          locale={locale}
+          perMonthLabel={t("plans.perMonth")}
+          recommendedLabel={t("plans.recommended")}
+          ctaLabel={t("plans.cta")}
+          featureLabel={featureLabel}
+        />
 
         <V3ShareStory
           icon={<PenLineIcon />}
