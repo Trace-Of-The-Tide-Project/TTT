@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Link } from "@/i18n/navigation";
 import { TOTT_AUTH_HEX_CLIP_PATH } from "@/components/auth/shared/authHexClipPath";
 import { dirFor } from "@/i18n/dir";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { HeroSlide } from "./V3Hero";
 
 /**
@@ -29,16 +30,37 @@ export function V3BoardCoverflow({
   isRtl: boolean;
 }) {
   const [activeIndex, setActiveIndex] = useState(() => Math.floor((slides.length - 1) / 2));
+  const [paused, setPaused] = useState(false);
   const flip = isRtl ? -1 : 1;
 
   const goTo = (index: number) => setActiveIndex(Math.max(0, Math.min(slides.length - 1, index)));
   const toPrev = () => goTo(activeIndex - 1);
   const toNext = () => goTo(activeIndex + 1);
 
+  // Autoplay: advance every 5s, looping back to the start. Paused on
+  // hover/focus so it doesn't fight a reader who's actively browsing, and
+  // disabled entirely under reduced motion.
+  const reduced = useReducedMotion();
+
+  useEffect(() => {
+    if (reduced || paused || slides.length <= 1) return;
+    const id = window.setInterval(() => {
+      setActiveIndex((i) => (i + 1) % slides.length);
+    }, 5000);
+    return () => window.clearInterval(id);
+  }, [reduced, paused, slides.length]);
+
   if (slides.length === 0) return null;
 
   return (
-    <div className="flex w-full flex-col items-center" style={{ perspective: "1600px" }}>
+    <div
+      className="flex w-full flex-col items-center"
+      style={{ perspective: "1600px" }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+    >
       <div
         className="relative flex h-[420px] w-full items-center justify-center"
         style={{ transformStyle: "preserve-3d" }}
