@@ -4,6 +4,8 @@ import {
   getWriters,
   getWriter,
   getWritersAdmin,
+  getWriterSupportSummary,
+  getWriterTopWorks,
   type GetWritersParams,
 } from "@/services/writers.service";
 
@@ -15,6 +17,9 @@ export const writersKeys = {
   adminList: (params?: GetWritersParams) =>
     ["writers", "adminList", params ?? {}] as const,
   byId: (id: string) => ["writers", "byId", id] as const,
+  supportSummary: (id: string) => ["writers", "supportSummary", id] as const,
+  topWorks: (id: string, limit?: number) =>
+    ["writers", "topWorks", id, limit ?? null] as const,
 };
 
 export function useFeaturedWriters() {
@@ -47,5 +52,24 @@ export function useWriter(writerId: string | null | undefined) {
     enabled: Boolean(writerId),
     refetchOnWindowFocus: false,
     staleTime: Infinity,
+  });
+}
+
+export function useWriterSupportSummary(writerId: string | null | undefined) {
+  return useQuery({
+    queryKey: writersKeys.supportSummary(writerId ?? ""),
+    queryFn: () => getWriterSupportSummary(writerId as string),
+    enabled: Boolean(writerId),
+  });
+}
+
+export function useWriterTopWorks(
+  writerId: string | null | undefined,
+  limit = 4,
+) {
+  return useQuery({
+    queryKey: writersKeys.topWorks(writerId ?? "", limit),
+    queryFn: () => getWriterTopWorks(writerId as string, limit),
+    enabled: Boolean(writerId),
   });
 }

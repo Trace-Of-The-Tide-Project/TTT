@@ -1,230 +1,228 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
-import { motion, animate, useInView, useMotionValue } from "motion/react";
+import { useTranslations, useFormatter } from "next-intl";
+import { motion } from "motion/react";
 import { staggerParent, staggerChild, springs } from "@/lib/motion";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { Parallax } from "@/components/motion/Parallax";
-import HexBackground from "@/components/ui/HexBackground";
-import { ChamferedSurface } from "@/components/ui/ChamferedSurface";
-import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
+import {
+  CalendarIcon,
+  MapPinIcon,
+  EmailIcon,
+  LinkIcon,
+  MoreDotsIcon,
+} from "@/components/ui/icons";
 import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 import { FollowButton } from "@/components/writers/FollowButton";
 import type { WriterDetailView } from "@/components/writers/WriterDetailContent";
 import { framingStyle } from "@/lib/image-framing";
 
-/** Editorial type system — Plex Serif for the display moments (name + quote),
- * Plex Sans for everything utilitarian. Mirrors WritersShowContent. */
 const SERIF = "var(--font-plex-serif), 'IBM Plex Serif', Georgia, serif";
 const SANS = "var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif";
-
 const CARD_BORDER = "var(--tott-card-border)";
-const ACCENT = "var(--tott-accent-gold)";
+const MUTED = "var(--tott-home-text-muted)";
 
-/** Strip stray leading/trailing quotes — we render our own curly quotes. */
-function stripQuotes(s: string): string {
-  return s.replace(/^["“]+/, "").replace(/["”]+$/, "").trim();
-}
-
-/** Animated integer that counts up when scrolled into view. Falls back to the
- * final number with no animation under reduced-motion. */
-function CountUp({ value }: { value: number }) {
-  const reduced = useReducedMotion();
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-  const mv = useMotionValue(0);
-  const [display, setDisplay] = useState(reduced ? value : 0);
-
-  useEffect(() => {
-    if (reduced || !inView) return;
-    const controls = animate(mv, value, {
-      duration: 1.1,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate: (v) => setDisplay(Math.round(v)),
-    });
-    return () => controls.stop();
-  }, [inView, reduced, value, mv]);
-
-  return <span ref={ref}>{display}</span>;
-}
-
-function StatTile({ value, label }: { value: number; label: string }) {
+function MetaItem({
+  icon,
+  children,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
-    <ChamferedPanel size={12}>
-      <div className="flex flex-col items-start gap-1 px-5 py-4">
-        <span
-          className="text-4xl font-medium tabular-nums sm:text-5xl"
-          style={{ color: ACCENT, fontFamily: SERIF }}
-        >
-          <CountUp value={value} />
-        </span>
-        <span
-          className="text-xs uppercase tracking-wide"
-          style={{ color: "var(--tott-home-text-muted)" }}
-        >
-          {label}
-        </span>
-      </div>
-    </ChamferedPanel>
+    <span
+      className="inline-flex items-center gap-1.5 text-sm"
+      style={{ color: MUTED, fontFamily: SANS }}
+    >
+      <span aria-hidden style={{ color: MUTED }}>
+        {icon}
+      </span>
+      {children}
+    </span>
   );
 }
 
 export function WriterProfileHero({ writer }: { writer: WriterDetailView }) {
   const t = useTranslations("Writers");
+  const format = useFormatter();
+  const [menuOpen, setMenuOpen] = useState(false);
   const initial = (writer.name || "?").trim().charAt(0).toUpperCase();
-  const quote = writer.quote ? stripQuotes(writer.quote) : null;
-  const hasStats = writer.followerCount > 0 || writer.workCount > 0;
+
+  const joinedLabel = writer.joinedAt
+    ? t("hero.joined", {
+        date: format.dateTime(new Date(writer.joinedAt), {
+          year: "numeric",
+          month: "long",
+        }),
+      })
+    : null;
 
   return (
     <section className="relative">
-      {/* Decorative hex band, drifting on scroll (self-gates reduced-motion). */}
-      <Parallax
-        distance={40}
-        className="pointer-events-none absolute inset-x-0 top-0 h-96"
-      >
-        <div
-          aria-hidden
-          className="h-full w-full"
-          style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
-        >
-          <HexBackground />
-        </div>
-      </Parallax>
-
       <div className="relative z-10 mx-auto max-w-6xl px-6 pt-24 sm:px-10 sm:pt-28">
         <motion.div
           variants={staggerParent}
           initial="hidden"
           animate="visible"
-          className="grid items-start gap-10 lg:grid-cols-[minmax(0,320px)_1fr] lg:gap-14"
+          className="flex flex-col items-start gap-6 sm:flex-row sm:items-start sm:gap-6"
         >
-          {/* Portrait — chamfered surface, image or gold-wash initial. */}
+          {/* Avatar — 72px round */}
           <motion.div
             variants={staggerChild}
             transition={springs.gentle}
-            className="mx-auto w-full max-w-[320px] lg:mx-0"
+            className="relative size-[72px] shrink-0 overflow-hidden rounded-full"
+            style={{ border: `1px solid ${CARD_BORDER}` }}
           >
-            <ChamferedSurface
-              chamfer={20}
-              borderColor={CARD_BORDER}
-              className="aspect-[4/5] w-full"
-            >
-              {writer.avatar ? (
-                <Image
-                  src={writer.avatar}
-                  alt=""
-                  fill
-                  sizes="320px"
-                  // External signed GCS URL — bypass the Next optimizer (it
-                  // 502s on these); load directly.
-                  unoptimized
-                  className="select-none object-cover"
-                  style={framingStyle(writer.avatarFraming)}
-                  draggable={false}
-                />
-              ) : (
-                <div
-                  className="flex h-full w-full items-center justify-center"
+            {writer.avatar ? (
+              <Image
+                src={writer.avatar}
+                alt=""
+                fill
+                sizes="72px"
+                unoptimized
+                className="select-none object-cover"
+                style={framingStyle(writer.avatarFraming)}
+                draggable={false}
+              />
+            ) : (
+              <div
+                className="flex h-full w-full items-center justify-center"
+                style={{
+                  background:
+                    "color-mix(in srgb, var(--tott-accent-gold) 14%, var(--tott-home-surface))",
+                }}
+              >
+                <span
+                  aria-hidden
                   style={{
-                    background:
-                      "color-mix(in srgb, var(--tott-accent-gold) 14%, var(--tott-home-surface))",
+                    fontFamily: SERIF,
+                    fontWeight: 500,
+                    fontSize: 28,
+                    lineHeight: 1,
+                    color: "var(--tott-home-text-strong)",
+                    opacity: 0.8,
                   }}
                 >
-                  <span
-                    aria-hidden
-                    style={{
-                      fontFamily: SERIF,
-                      fontWeight: 500,
-                      fontSize: 96,
-                      lineHeight: 1,
-                      color: "var(--tott-home-text-strong)",
-                      opacity: 0.8,
-                    }}
-                  >
-                    {initial}
-                  </span>
-                </div>
-              )}
-            </ChamferedSurface>
+                  {initial}
+                </span>
+              </div>
+            )}
           </motion.div>
 
           {/* Editorial block */}
-          <div className="min-w-0">
-            <motion.h1
-              variants={staggerChild}
-              transition={springs.gentle}
-              className="text-[2.75rem] font-medium leading-[1.02] tracking-[-0.02em] sm:text-6xl lg:text-7xl"
-              style={{ fontFamily: SERIF, overflowWrap: "anywhere" }}
-            >
-              <FirstWordGold raw={writer.name} />
-            </motion.h1>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <motion.h1
+                  variants={staggerChild}
+                  transition={springs.gentle}
+                  className="text-[2rem] font-medium leading-[1.1] tracking-[-0.02em] sm:text-[2.25rem]"
+                  style={{ fontFamily: SERIF, overflowWrap: "anywhere" }}
+                >
+                  <FirstWordGold raw={writer.name} />
+                </motion.h1>
 
-            {writer.headline ? (
-              <motion.p
+                {writer.headline || writer.bio ? (
+                  <motion.p
+                    variants={staggerChild}
+                    transition={springs.gentle}
+                    className="mt-2 max-w-2xl text-sm leading-relaxed sm:text-base"
+                    style={{ color: MUTED, fontFamily: SANS }}
+                  >
+                    {writer.headline || writer.bio}
+                  </motion.p>
+                ) : null}
+
+                <motion.div
+                  variants={staggerChild}
+                  transition={springs.gentle}
+                  className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5"
+                >
+                  {joinedLabel ? (
+                    <MetaItem icon={<CalendarIcon />}>{joinedLabel}</MetaItem>
+                  ) : null}
+                  {writer.location ? (
+                    <MetaItem icon={<MapPinIcon />}>{writer.location}</MetaItem>
+                  ) : null}
+                  {writer.email ? (
+                    <MetaItem icon={<EmailIcon />}>
+                      <a
+                        href={`mailto:${writer.email}`}
+                        className="hover:opacity-80"
+                      >
+                        {writer.email}
+                      </a>
+                    </MetaItem>
+                  ) : null}
+                  {writer.externalLink ? (
+                    <MetaItem icon={<LinkIcon />}>
+                      <a
+                        href={writer.externalLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:opacity-80"
+                      >
+                        {writer.externalLink.replace(/^https?:\/\//, "")}
+                      </a>
+                    </MetaItem>
+                  ) : null}
+                </motion.div>
+              </div>
+
+              {/* Actions */}
+              <motion.div
                 variants={staggerChild}
                 transition={springs.gentle}
-                className="mt-4 max-w-xl text-base leading-relaxed sm:text-lg"
-                style={{ color: "var(--tott-home-text-muted)", fontFamily: SANS }}
+                className="flex shrink-0 items-center gap-2 sm:mt-1"
               >
-                {writer.headline}
-              </motion.p>
-            ) : null}
+                <div className="relative">
+                  <button
+                    type="button"
+                    aria-label={t("hero.menu")}
+                    aria-haspopup="menu"
+                    aria-expanded={menuOpen}
+                    onClick={() => setMenuOpen((v) => !v)}
+                    className="inline-flex size-10 items-center justify-center rounded-lg transition-opacity hover:opacity-80"
+                    style={{ border: `1px solid ${CARD_BORDER}`, color: MUTED }}
+                  >
+                    <MoreDotsIcon />
+                  </button>
+                  {menuOpen ? (
+                    <div
+                      role="menu"
+                      className="absolute end-0 top-12 z-20 min-w-[160px] overflow-hidden rounded-lg"
+                      style={{
+                        border: `1px solid ${CARD_BORDER}`,
+                        backgroundColor: "var(--tott-elevated)",
+                      }}
+                    >
+                      <a
+                        role="menuitem"
+                        href="#support-panel"
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-4 py-2.5 text-start text-sm transition-colors hover:opacity-80"
+                        style={{ color: "var(--tott-home-text-strong)" }}
+                      >
+                        {t("hero.support")}
+                      </a>
+                    </div>
+                  ) : null}
+                </div>
 
-            {quote ? (
-              <motion.blockquote
-                variants={staggerChild}
-                transition={springs.gentle}
-                className="mt-8 max-w-2xl"
-              >
-                <p
-                  className="text-2xl leading-snug sm:text-[2rem] sm:leading-[1.28]"
+                <a
+                  href="#support-panel"
+                  className="inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium transition-opacity hover:opacity-90"
                   style={{
-                    fontFamily: SERIF,
+                    border: `1px solid ${CARD_BORDER}`,
                     color: "var(--tott-home-text-strong)",
                   }}
                 >
-                  <span aria-hidden style={{ color: ACCENT }}>
-                    “
-                  </span>
-                  {quote}
-                  <span aria-hidden style={{ color: ACCENT }}>
-                    ”
-                  </span>
-                </p>
-              </motion.blockquote>
-            ) : null}
+                  {t("hero.support")}
+                </a>
 
-            {writer.userId ? (
-              <motion.div
-                variants={staggerChild}
-                transition={springs.gentle}
-                className="mt-8"
-              >
-                <FollowButton targetUserId={writer.userId} />
+                {writer.userId ? <FollowButton targetUserId={writer.userId} /> : null}
               </motion.div>
-            ) : null}
-
-            {hasStats ? (
-              <motion.div
-                className="mt-8 grid max-w-xs grid-cols-2 gap-4"
-                variants={staggerParent}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-              >
-                <motion.div variants={staggerChild} transition={springs.gentle}>
-                  <StatTile
-                    value={writer.followerCount}
-                    label={t("stats.followers")}
-                  />
-                </motion.div>
-                <motion.div variants={staggerChild} transition={springs.gentle}>
-                  <StatTile value={writer.workCount} label={t("stats.works")} />
-                </motion.div>
-              </motion.div>
-            ) : null}
+            </div>
           </div>
         </motion.div>
       </div>

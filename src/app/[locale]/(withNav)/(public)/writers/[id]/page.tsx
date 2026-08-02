@@ -61,6 +61,9 @@ function buildView(p: WriterProfileFull, fallbackName: string, avatar: string | 
     followerCount: num(p.follower_count),
     workCount: num(p.work_count),
     avatar,
+    joinedAt: p.joined_at ?? null,
+    email: p.email ?? null,
+    externalLink: p.external_link ?? null,
   };
 }
 
@@ -104,6 +107,9 @@ export default async function WriterDetailPage({ params }: PageProps) {
     workCount: 0,
     avatar: writerAvatar(writer),
     avatarFraming: framings[writer.id]?.[WRITER_AVATAR_FRAMING.field],
+    joinedAt: null,
+    email: null,
+    externalLink: null,
   };
 
   return <WriterDetailContent writer={view} />;
