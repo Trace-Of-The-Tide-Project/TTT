@@ -45,10 +45,15 @@
       "followers": "Followers",
       "works": "Works"
     },
+    "hero": {
+      "joined": "Joined {date}",
+      "menu": "More options",
+      "support": "Support"
+    },
     "about": {
-      "heading": "About",
+      "heading": "About the artist",
       "biography": "Biography",
-      "themes": "Themes",
+      "themes": "Themes & Interests",
       "basedIn": "Based in",
       "collaborations": "Collaborations",
       "recognition": "Recognition"
@@ -60,6 +65,57 @@
       "eyebrow": "Published",
       "title": "Selected Works",
       "empty": "No published works yet."
+    },
+    "latest": {
+      "eyebrow": "Latest Release"
+    },
+    "publications": {
+      "heading": "Published Writings ({count})",
+      "read": "Read",
+      "filters": {
+        "all": "All",
+        "essay": "Essays",
+        "article": "Articles",
+        "collection": "Collections"
+      }
+    },
+    "topReading": {
+      "eyebrow": "Top Reading",
+      "subtitle": "Explore top reading articles",
+      "viewMore": "View more",
+      "prev": "Previous article",
+      "next": "Next article"
+    },
+    "support": {
+      "heading": "Support my work",
+      "subtitle": "Love my content? Support me and help me create more amazing content for everyone!",
+      "totalTips": "Total Tips",
+      "supporters": "Supporters",
+      "monthlyGoal": "Monthly Goal",
+      "custom": "Custom",
+      "recentSupporters": "Recent Supporters",
+      "showAllSupporters": "Show all supporters",
+      "supporterCount": "{shown}/{total}",
+      "beFirst": "Be the first to support this writer.",
+      "anonymous": "Anonymous",
+      "sending": "Sending your support…",
+      "sent": "Thank you for your support!",
+      "sendFailed": "Couldn't send your support"
+    },
+    "connect": {
+      "eyebrow": "Connect",
+      "heading": "Support this Writer",
+      "subtitle": "Help {name} continue creating by following, supporting, or reaching out directly.",
+      "followArtist": "Follow Artist",
+      "collaborate": "Collaborate",
+      "support": "Support",
+      "collaborateName": "Your name",
+      "collaborateEmail": "Your email",
+      "collaborateMessage": "Your message",
+      "collaborateSubmit": "Send request",
+      "sending": "Sending your request…",
+      "sent": "Request sent!",
+      "sendFailed": "Couldn't send your request"
     },
     "show": {
       "title": "The Voices of TTT",

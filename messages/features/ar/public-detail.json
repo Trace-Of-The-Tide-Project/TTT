@@ -45,10 +45,15 @@
       "followers": "المتابعون",
       "works": "الأعمال"
     },
+    "hero": {
+      "joined": "انضم في {date}",
+      "menu": "خيارات إضافية",
+      "support": "دعم"
+    },
     "about": {
-      "heading": "نبذة",
+      "heading": "عن الفنان",
       "biography": "السيرة",
-      "themes": "المواضيع",
+      "themes": "المواضيع والاهتمامات",
       "basedIn": "مقيم في",
       "collaborations": "التعاونات",
       "recognition": "التكريمات"
@@ -60,6 +65,57 @@
       "eyebrow": "منشور",
       "title": "أعمال مختارة",
       "empty": "لا توجد أعمال منشورة بعد."
+    },
+    "latest": {
+      "eyebrow": "أحدث إصدار"
+    },
+    "publications": {
+      "heading": "الكتابات المنشورة ({count})",
+      "read": "قراءة",
+      "filters": {
+        "all": "الكل",
+        "essay": "مقالات مطولة",
+        "article": "مقالات",
+        "collection": "مجموعات"
+      }
+    },
+    "topReading": {
+      "eyebrow": "الأكثر قراءة",
+      "subtitle": "استكشف أبرز المقالات المقروءة",
+      "viewMore": "عرض المزيد",
+      "prev": "المقال السابق",
+      "next": "المقال التالي"
+    },
+    "support": {
+      "heading": "ادعم عملي",
+      "subtitle": "أعجبك ما أكتبه؟ ادعمني وساعدني على إنشاء المزيد من المحتوى الرائع للجميع!",
+      "totalTips": "إجمالي الدعم",
+      "supporters": "الداعمون",
+      "monthlyGoal": "الهدف الشهري",
+      "custom": "مبلغ آخر",
+      "recentSupporters": "أحدث الداعمين",
+      "showAllSupporters": "عرض جميع الداعمين",
+      "supporterCount": "{shown}/{total}",
+      "beFirst": "كن أول من يدعم هذا الكاتب.",
+      "anonymous": "مجهول",
+      "sending": "جارٍ إرسال دعمك…",
+      "sent": "شكرًا لدعمك!",
+      "sendFailed": "تعذر إرسال الدعم"
+    },
+    "connect": {
+      "eyebrow": "تواصل",
+      "heading": "ادعم هذا الكاتب",
+      "subtitle": "ساعد {name} على مواصلة الإبداع بالمتابعة أو الدعم أو التواصل المباشر.",
+      "followArtist": "متابعة الفنان",
+      "collaborate": "تعاون",
+      "support": "دعم",
+      "collaborateName": "اسمك",
+      "collaborateEmail": "بريدك الإلكتروني",
+      "collaborateMessage": "رسالتك",
+      "collaborateSubmit": "إرسال الطلب",
+      "sending": "جارٍ إرسال طلبك…",
+      "sent": "تم إرسال الطلب!",
+      "sendFailed": "تعذر إرسال الطلب"
     },
     "show": {
       "title": "أصوات TTT",

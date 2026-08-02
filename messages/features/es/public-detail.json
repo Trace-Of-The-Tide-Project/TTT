@@ -45,10 +45,15 @@
       "followers": "Seguidores",
       "works": "Obras"
     },
+    "hero": {
+      "joined": "Se unió en {date}",
+      "menu": "Más opciones",
+      "support": "Apoyar"
+    },
     "about": {
-      "heading": "Acerca de",
+      "heading": "Sobre el artista",
       "biography": "Biografía",
-      "themes": "Temas",
+      "themes": "Temas e intereses",
       "basedIn": "Reside en",
       "collaborations": "Colaboraciones",
       "recognition": "Reconocimientos"
@@ -60,6 +65,57 @@
       "eyebrow": "Publicado",
       "title": "Obras seleccionadas",
       "empty": "Aún no hay obras publicadas."
+    },
+    "latest": {
+      "eyebrow": "Última publicación"
+    },
+    "publications": {
+      "heading": "Escritos publicados ({count})",
+      "read": "Leer",
+      "filters": {
+        "all": "Todo",
+        "essay": "Ensayos",
+        "article": "Artículos",
+        "collection": "Colecciones"
+      }
+    },
+    "topReading": {
+      "eyebrow": "Lo más leído",
+      "subtitle": "Explora los artículos más leídos",
+      "viewMore": "Ver más",
+      "prev": "Artículo anterior",
+      "next": "Artículo siguiente"
+    },
+    "support": {
+      "heading": "Apoya mi trabajo",
+      "subtitle": "¿Te gusta mi contenido? ¡Apóyame y ayúdame a crear más contenido increíble para todos!",
+      "totalTips": "Propinas totales",
+      "supporters": "Colaboradores",
+      "monthlyGoal": "Meta mensual",
+      "custom": "Personalizado",
+      "recentSupporters": "Colaboradores recientes",
+      "showAllSupporters": "Ver todos los colaboradores",
+      "supporterCount": "{shown}/{total}",
+      "beFirst": "Sé el primero en apoyar a este escritor.",
+      "anonymous": "Anónimo",
+      "sending": "Enviando tu apoyo…",
+      "sent": "¡Gracias por tu apoyo!",
+      "sendFailed": "No se pudo enviar tu apoyo"
+    },
+    "connect": {
+      "eyebrow": "Conecta",
+      "heading": "Apoya a este escritor",
+      "subtitle": "Ayuda a {name} a seguir creando siguiéndolo, apoyándolo o contactándolo directamente.",
+      "followArtist": "Seguir al artista",
+      "collaborate": "Colaborar",
+      "support": "Apoyar",
+      "collaborateName": "Tu nombre",
+      "collaborateEmail": "Tu correo electrónico",
+      "collaborateMessage": "Tu mensaje",
+      "collaborateSubmit": "Enviar solicitud",
+      "sending": "Enviando tu solicitud…",
+      "sent": "¡Solicitud enviada!",
+      "sendFailed": "No se pudo enviar la solicitud"
     },
     "show": {
       "title": "Las voces de TTT",

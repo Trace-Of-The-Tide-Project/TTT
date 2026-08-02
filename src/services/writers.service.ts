@@ -203,6 +203,110 @@ export async function getWriterProfileFull(
   }
 }
 
+export type WriterSupporter = {
+  name: string;
+  amount: number;
+  anonymous: boolean;
+  created_at: string;
+};
+
+/** GET /writers/{id}/support-summary response — public "Support my work" panel data. */
+export type WriterSupportSummary = {
+  recipient_id: string | null;
+  total_tips: number;
+  currency: string;
+  supporter_count: number;
+  monthly_goal: number | null;
+  monthly_raised: number;
+  preset_amounts: number[];
+  recent_supporters: WriterSupporter[];
+  writer_id: string;
+};
+
+export type WriterTopWork = {
+  id: string;
+  title: string;
+  content_type: string;
+  subtype?: string | null;
+  cover_url: string | null;
+  views: number;
+  published_at: string | null;
+};
+
+export type SupportPayload = {
+  amount: number;
+  type: "one-time" | "monthly";
+  message?: string;
+  anonymous?: boolean;
+  guest_email?: string;
+};
+
+export type CollaboratePayload = {
+  name: string;
+  email: string;
+  message: string;
+};
+
+function unwrapData<T>(raw: unknown): T | null {
+  if (!raw || typeof raw !== "object") return null;
+  if ("data" in (raw as object)) {
+    return (raw as { data?: unknown }).data as T;
+  }
+  return raw as T;
+}
+
+/** GET /writers/{id}/support-summary — public. Returns null on 404 / error. */
+export async function getWriterSupportSummary(
+  id: string,
+): Promise<WriterSupportSummary | null> {
+  const path = `/writers/${encodeURIComponent(id)}/support-summary`;
+  if (typeof window === "undefined") {
+    return unwrapData<WriterSupportSummary>(await serverGet<unknown>(path));
+  }
+  try {
+    const { data } = await api.get<unknown>(path);
+    return unwrapData<WriterSupportSummary>(data);
+  } catch {
+    return null;
+  }
+}
+
+/** GET /writers/{id}/top-works — public. Articles sorted by view_count DESC. */
+export async function getWriterTopWorks(
+  id: string,
+  limit = 4,
+): Promise<WriterTopWork[]> {
+  const path = `/writers/${encodeURIComponent(id)}/top-works`;
+  const params = { limit };
+  if (typeof window === "undefined") {
+    const raw = await serverGet<{ items?: WriterTopWork[] }>(path, params);
+    return raw?.items ?? [];
+  }
+  try {
+    const { data } = await api.get<unknown>(path, { params });
+    const inner = unwrapData<{ items?: WriterTopWork[] }>(data);
+    return inner?.items ?? [];
+  } catch {
+    return [];
+  }
+}
+
+/** POST /writers/{id}/support — works for guests (OptionalJwtAuthGuard). */
+export async function sendWriterSupport(
+  id: string,
+  payload: SupportPayload,
+): Promise<void> {
+  await api.post(`/writers/${encodeURIComponent(id)}/support`, payload);
+}
+
+/** POST /writers/{id}/collaborate — public. */
+export async function sendWriterCollaboration(
+  id: string,
+  payload: CollaboratePayload,
+): Promise<void> {
+  await api.post(`/writers/${encodeURIComponent(id)}/collaborate`, payload);
+}
+
 /** Pick the best display name from the writer record (falls back
  * through profile.display_name → pen_name → user.full_name → username). */
 export function writerDisplayName(w: WriterProfile): string {
