@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 /**
  * Admin editor for the public Magazine page (`/magazine`).
