@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 /**
  * Admin editor for the public Magazine page (`/magazine`).
@@ -16,21 +16,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { formatApiError } from "@/lib/api/error-message";
-import { CloudUploadIcon, EyeIcon, RefreshCwIcon } from "@/components/ui/icons";
-import { MagazineNewsletter } from "@/components/home/magazine/MagazineNewsletter";
-import { MagazineSupport } from "@/components/home/magazine/MagazineSupport";
-// Previews render the SAME components the live /magazine page uses
-// (magazine-next), so what an editor sees is what ships.
-import { MagHeroClient } from "@/components/home/magazine-next/MagHeroClient";
-import { MagOpeningLine } from "@/components/home/magazine-next/MagOpeningLine";
-import { MagQuoteBreak } from "@/components/home/magazine-next/MagQuoteBreak";
-import { MagFounderNote } from "@/components/home/magazine-next/MagFounderNote";
-import { heroCta, stripHtml } from "@/components/home/magazine-next/ui";
-import {
-  RichTextEditor,
-  EditorToolbar as RichTextToolbar,
-  EditorRegistryProvider,
-} from "@/components/ui/rich-text";
+import { CloudUploadIcon, EyeIcon, RefreshCwIcon, PersonPlusIcon, GiftIcon, PenLineIcon } from "@/components/ui/icons";
+// Previews render the SAME components the live /magazine page uses, so
+// what an editor sees is what ships.
+import { Hero } from "@/components/home/magazine-page/Hero";
+import { ActionCard } from "@/components/home/magazine-page/InnerSectionCards";
+import { SectionHeader } from "@/components/home/magazine-page/SectionHeader";
+import { ShareStory } from "@/components/home/magazine-page/ShareStory";
 import { LocaleTabs } from "@/components/dashboard/admin/translations";
 import { HeroPickerModal } from "@/components/dashboard/admin/media-library/HeroPickerModal";
 import { ImageFramingModal } from "@/components/dashboard/admin/media-library/ImageFramingModal";
@@ -41,25 +33,18 @@ import { usePublishCmsPage, useToggleCmsSection, useUpdateCmsSection } from "@/h
 import {
   MAGAZINE_SECTION_TYPES,
   SUPPORTED_LOCALES,
-  MAGAZINE_FONT_PRESETS,
-  DEFAULT_FONT_SCALE,
-  clampFontScale,
   parseHeroConfig,
-  parseManifestoConfig,
-  parseFounderConfig,
-  parseNewsletterConfig,
-  parseSupportConfig,
+  parseActionCardConfig,
+  parseRailHeaderConfig,
+  parseClosingCtaConfig,
   type HeroConfig,
   type HeroLocaleFields,
-  type ManifestoConfig,
-  type MagazineTextAlign,
-  type ManifestoLocaleFields,
-  type FounderQuoteConfig,
-  type FounderQuoteLocaleFields,
-  type NewsletterCopyConfig,
-  type NewsletterCopyLocaleFields,
-  type SupportConfig,
-  type SupportLocaleFields,
+  type ActionCardConfig,
+  type ActionCardLocaleFields,
+  type RailHeaderConfig,
+  type RailHeaderLocaleFields,
+  type ClosingCtaConfig,
+  type ClosingCtaLocaleFields,
   type MagazineLocale,
   type MagazineSectionKey,
 } from "@/services/magazine-page.service";
@@ -75,18 +60,14 @@ type SectionRow = {
 
 const SECTION_ROWS: SectionRow[] = [
   { key: "hero", labelKey: "sections.hero", hasForm: true },
-  { key: "manifesto", labelKey: "sections.manifesto", hasForm: true },
-  { key: "founderQuote", labelKey: "sections.founderQuote", hasForm: true },
-  {
-    key: "newsletterCopy",
-    labelKey: "sections.newsletterCopy",
-    hasForm: true,
-  },
-  {
-    key: "supportCuration",
-    labelKey: "sections.supportCuration",
-    hasForm: true,
-  },
+  { key: "actionCardJoin", labelKey: "sections.actionCardJoin", hasForm: true },
+  { key: "actionCardGift", labelKey: "sections.actionCardGift", hasForm: true },
+  { key: "actionCardShare", labelKey: "sections.actionCardShare", hasForm: true },
+  { key: "featuredHeader", labelKey: "sections.featuredHeader", hasForm: true },
+  { key: "collectionsHeader", labelKey: "sections.collectionsHeader", hasForm: true },
+  { key: "latestHeader", labelKey: "sections.latestHeader", hasForm: true },
+  { key: "plansHeader", labelKey: "sections.plansHeader", hasForm: true },
+  { key: "closingCta", labelKey: "sections.closingCta", hasForm: true },
 ];
 
 export function MagazinePageEditorContent() {
@@ -265,14 +246,46 @@ export function MagazinePageEditorContent() {
             switch (activeSection) {
               case "hero":
                 return <HeroEditor {...props} />;
-              case "manifesto":
-                return <ManifestoEditor {...props} />;
-              case "founderQuote":
-                return <FounderQuoteEditor {...props} />;
-              case "newsletterCopy":
-                return <NewsletterCopyEditor {...props} />;
-              case "supportCuration":
-                return <SupportEditor {...props} />;
+              case "actionCardJoin":
+                return (
+                  <ActionCardEditor
+                    {...props}
+                    icon={<PersonPlusIcon />}
+                    defaultHref="/collectives"
+                    titleKey="actionCard.title"
+                    subtitleKey="actionCard.subtitle"
+                  />
+                );
+              case "actionCardGift":
+                return (
+                  <ActionCardEditor
+                    {...props}
+                    icon={<GiftIcon />}
+                    defaultHref="/subscribe"
+                    titleKey="actionCard.title"
+                    subtitleKey="actionCard.subtitle"
+                  />
+                );
+              case "actionCardShare":
+                return (
+                  <ActionCardEditor
+                    {...props}
+                    icon={<PenLineIcon />}
+                    defaultHref="/writing-room"
+                    titleKey="actionCard.title"
+                    subtitleKey="actionCard.subtitle"
+                  />
+                );
+              case "featuredHeader":
+                return <RailHeaderEditor {...props} viewMoreHref="/magazine" />;
+              case "collectionsHeader":
+                return <RailHeaderEditor {...props} viewMoreHref="/collections" />;
+              case "latestHeader":
+                return <RailHeaderEditor {...props} viewMoreHref="/magazine" />;
+              case "plansHeader":
+                return <RailHeaderEditor {...props} viewMoreHref="/subscribe" />;
+              case "closingCta":
+                return <ClosingCtaEditor {...props} />;
               default:
                 return null;
             }
@@ -296,7 +309,6 @@ type EditorProps = {
 
 function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
   const t = useTranslations("Dashboard.magazinePageEditor.hero");
-  const tHero = useTranslations("MagazineNext.hero");
 
   const {
     draft,
@@ -311,8 +323,6 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
   useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
 
   const isRtl = RTL_LOCALES.has(activeLocale);
-  const setSharedField = (key: "artwork" | "primaryHref" | "secondaryHref", value: string) =>
-    setDraft((prev) => ({ ...prev, [key]: value || undefined }));
 
   return (
     <>
@@ -327,100 +337,317 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
         onSave={() => onSave(JSON.stringify(draft))}
       />
 
-      <EditorRegistryProvider>
-        <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
-          <RichTextToolbar />
-        </div>
-        <FormCard>
-          <div className="space-y-6">
-            <div className="rounded-lg border border-dashed border-[var(--tott-status-amber)]/50 bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-[var(--tott-muted)]">
-              {t("issueWinsNote")}
-            </div>
-            <FieldGroup label={t("perLocaleHeading")}>
-              <Field label={t("fields.headline")}>
-                <TextInput
-                  value={localeFields.title ?? ""}
-                  onChange={(v) => setLocaleField("title", v)}
-                  placeholder={t("fields.headlinePlaceholder")}
-                  rtl={isRtl}
-                />
-              </Field>
-              <RichField
-                label={t("fields.subheadline")}
-                value={localeFields.subtitle ?? ""}
-                onChange={(v) => setLocaleField("subtitle", v)}
+      <FormCard>
+        <div className="space-y-6">
+          <div className="rounded-lg border border-dashed border-[var(--tott-status-amber)]/50 bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-[var(--tott-muted)]">
+            {t("issueWinsNote")}
+          </div>
+          <FieldGroup label={t("perLocaleHeading")}>
+            <Field label={t("fields.headline")}>
+              <TextInput
+                value={localeFields.title ?? ""}
+                onChange={(v) => setLocaleField("title", v)}
+                placeholder={t("fields.headlinePlaceholder")}
                 rtl={isRtl}
               />
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label={t("fields.primaryCta")}>
-                  <TextInput
-                    value={localeFields.primaryCtaLabel ?? ""}
-                    onChange={(v) => setLocaleField("primaryCtaLabel", v)}
-                    placeholder={t("fields.primaryCtaPlaceholder")}
-                    rtl={isRtl}
-                  />
-                </Field>
-                <Field label={t("fields.secondaryCta")}>
-                  <TextInput
-                    value={localeFields.secondaryCtaLabel ?? ""}
-                    onChange={(v) => setLocaleField("secondaryCtaLabel", v)}
-                    placeholder={t("fields.secondaryCtaPlaceholder")}
-                    rtl={isRtl}
-                  />
-                </Field>
-              </div>
-            </FieldGroup>
-
-            <FieldGroup label={t("sharedHeading")}>
-              <ImageUrlField
-                label={t("fields.artworkUrl")}
-                value={draft.artwork ?? ""}
-                onChange={(v) => setSharedField("artwork", v)}
-                placeholder="/images/home/magazine-thumbnail.svg"
-                hint={t("fields.artworkUrlHint")}
-                framing={draft.artworkFraming}
-                onFramingChange={(f) =>
-                  setDraft((prev) => ({ ...prev, artworkFraming: f }))
-                }
-                // The hero is full-bleed; 16/9 is the closest honest stand-in
-                // for a viewport-height banner on a desktop screen.
-                frameAspect="16/9"
+            </Field>
+            <Field label={t("fields.standfirst")}>
+              <TextInput
+                value={localeFields.standfirst ?? ""}
+                onChange={(v) => setLocaleField("standfirst", v)}
+                placeholder={t("fields.standfirstPlaceholder")}
+                rtl={isRtl}
               />
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label={t("fields.primaryHref")}>
-                  <TextInput
-                    value={draft.primaryHref ?? ""}
-                    onChange={(v) => setSharedField("primaryHref", v)}
-                    placeholder="/magazine#magazine-content"
-                  />
-                </Field>
-                <Field label={t("fields.secondaryHref")}>
-                  <TextInput
-                    value={draft.secondaryHref ?? ""}
-                    onChange={(v) => setSharedField("secondaryHref", v)}
-                    placeholder="/magazine#newsletter-heading"
-                  />
-                </Field>
-              </div>
-            </FieldGroup>
-          </div>
-        </FormCard>
-      </EditorRegistryProvider>
+            </Field>
+            <Field label={t("fields.ctaLabel")}>
+              <TextInput
+                value={localeFields.ctaLabel ?? ""}
+                onChange={(v) => setLocaleField("ctaLabel", v)}
+                placeholder={t("fields.ctaLabelPlaceholder")}
+                rtl={isRtl}
+              />
+            </Field>
+          </FieldGroup>
 
-      {/* The live hero renders this CMS copy only in the no-issue state (a
-          published issue's own title/subtitle wins), so the preview
-          reproduces that state exactly — same components, same heroCta
-          pairing rule, so a button shown here is a button that ships. */}
+          <FieldGroup label={t("sharedHeading")}>
+            <ImageUrlField
+              label={t("fields.artworkUrl")}
+              value={draft.artwork ?? ""}
+              onChange={(v) => setDraft((prev) => ({ ...prev, artwork: v || undefined }))}
+              placeholder="/images/home/magazine-thumbnail.svg"
+              hint={t("fields.artworkUrlHint")}
+              framing={draft.artworkFraming}
+              onFramingChange={(f) =>
+                setDraft((prev) => ({ ...prev, artworkFraming: f }))
+              }
+              frameAspect="16/9"
+            />
+          </FieldGroup>
+        </div>
+      </FormCard>
+
       <PreviewFrame locale={activeLocale}>
-        <MagHeroClient
-          eyebrow={tHero("brandLead")}
-          title={localeFields.title?.trim() || tHero("brandStatement")}
-          subtitle={stripHtml(localeFields.subtitle) || null}
-          coverImage={draft.artwork || "/images/image.png"}
-          coverAlt={tHero("brandCoverAlt")}
-          coverFraming={draft.artworkFraming}
-          primary={heroCta(localeFields.primaryCtaLabel, draft.primaryHref)}
-          secondary={heroCta(localeFields.secondaryCtaLabel, draft.secondaryHref)}
+        <Hero
+          eyebrow={undefined}
+          title={localeFields.title?.trim() || t("fields.headlinePlaceholder")}
+          standfirst={localeFields.standfirst?.trim() || ""}
+          readCtaLabel={localeFields.ctaLabel?.trim() || t("fields.ctaLabelPlaceholder")}
+          readCtaHref={null}
+          noIssueLabel=""
+          backgroundImage={draft.artwork || "/images/image.png"}
+          backgroundFraming={draft.artworkFraming}
+          issueLabel={null}
+          slides={[]}
+          carouselPrevLabel=""
+          carouselNextLabel=""
+          isRtl={isRtl}
+        />
+      </PreviewFrame>
+    </>
+  );
+}
+
+// ─── Action card editor (generic — used for Join/Gift/Share) ──────
+
+function ActionCardEditor({
+  section,
+  onSave,
+  isSaving,
+  registerDraftState,
+  icon,
+  defaultHref,
+  titleKey,
+  subtitleKey,
+}: EditorProps & {
+  icon: React.ReactNode;
+  defaultHref: string;
+  titleKey: string;
+  subtitleKey: string;
+}) {
+  const t = useTranslations(`Dashboard.magazinePageEditor.${titleKey.split(".")[0]}`);
+  const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
+  const {
+    draft,
+    setDraft,
+    activeLocale,
+    setActiveLocale,
+    localeFields,
+    setLocaleField,
+    isDirty,
+    reset,
+  } = useLocalizedDraft<ActionCardLocaleFields, ActionCardConfig>(section, parseActionCardConfig);
+  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
+  const isRtl = RTL_LOCALES.has(activeLocale);
+
+  return (
+    <>
+      <EditorToolbar
+        title={t(titleKey.split(".")[1])}
+        subtitle={t(subtitleKey.split(".")[1])}
+        activeLocale={activeLocale}
+        onLocaleChange={setActiveLocale}
+        isDirty={isDirty}
+        isSaving={isSaving}
+        onReset={reset}
+        onSave={() => onSave(JSON.stringify(draft))}
+      />
+
+      <FormCard>
+        <div className="space-y-6">
+          <FieldGroup label={tShared("perLocaleHeading")}>
+            <Field label={t("fields.title")}>
+              <TextInput
+                value={localeFields.title ?? ""}
+                onChange={(v) => setLocaleField("title", v)}
+                rtl={isRtl}
+              />
+            </Field>
+            <Field label={t("fields.body")}>
+              <TextInput
+                value={localeFields.body ?? ""}
+                onChange={(v) => setLocaleField("body", v)}
+                rtl={isRtl}
+              />
+            </Field>
+            <Field label={t("fields.ctaLabel")}>
+              <TextInput
+                value={localeFields.ctaLabel ?? ""}
+                onChange={(v) => setLocaleField("ctaLabel", v)}
+                rtl={isRtl}
+              />
+            </Field>
+          </FieldGroup>
+          <FieldGroup label={tShared("sharedHeading")}>
+            <Field label={t("fields.ctaHref")}>
+              <TextInput
+                value={draft.ctaHref ?? ""}
+                onChange={(v) => setDraft((prev) => ({ ...prev, ctaHref: v || undefined }))}
+                placeholder={defaultHref}
+              />
+            </Field>
+          </FieldGroup>
+        </div>
+      </FormCard>
+
+      <PreviewFrame locale={activeLocale}>
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-6 py-16 sm:px-10 md:grid-cols-3">
+          <ActionCard
+            icon={icon}
+            title={localeFields.title?.trim() || t("fields.title")}
+            body={localeFields.body?.trim() || ""}
+            ctaLabel={localeFields.ctaLabel?.trim() || t("fields.ctaLabel")}
+            ctaHref={draft.ctaHref || defaultHref}
+          />
+        </div>
+      </PreviewFrame>
+    </>
+  );
+}
+
+// ─── Rail header editor (generic — used for Featured/Collections/Latest/Plans) ──
+
+function RailHeaderEditor({
+  section,
+  onSave,
+  isSaving,
+  registerDraftState,
+  viewMoreHref,
+}: EditorProps & { viewMoreHref: string }) {
+  const t = useTranslations("Dashboard.magazinePageEditor.railHeader");
+  const {
+    draft,
+    activeLocale,
+    setActiveLocale,
+    localeFields,
+    setLocaleField,
+    isDirty,
+    reset,
+  } = useLocalizedDraft<RailHeaderLocaleFields, RailHeaderConfig>(section, parseRailHeaderConfig);
+  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
+  const isRtl = RTL_LOCALES.has(activeLocale);
+
+  return (
+    <>
+      <EditorToolbar
+        title={t("title")}
+        subtitle={t("subtitle")}
+        activeLocale={activeLocale}
+        onLocaleChange={setActiveLocale}
+        isDirty={isDirty}
+        isSaving={isSaving}
+        onReset={reset}
+        onSave={() => onSave(JSON.stringify(draft))}
+      />
+
+      <FormCard>
+        <FieldGroup label={t("perLocaleHeading")}>
+          <Field label={t("fields.title")}>
+            <TextInput
+              value={localeFields.title ?? ""}
+              onChange={(v) => setLocaleField("title", v)}
+              rtl={isRtl}
+            />
+          </Field>
+          <Field label={t("fields.standfirst")}>
+            <TextInput
+              value={localeFields.standfirst ?? ""}
+              onChange={(v) => setLocaleField("standfirst", v)}
+              rtl={isRtl}
+            />
+          </Field>
+        </FieldGroup>
+      </FormCard>
+
+      <PreviewFrame locale={activeLocale}>
+        <div className="py-8">
+          <SectionHeader
+            id="preview-heading"
+            title={localeFields.title?.trim() || t("fields.title")}
+            standfirst={localeFields.standfirst?.trim() || ""}
+            viewMoreLabel={t("viewMoreLabel")}
+            viewMoreHref={viewMoreHref}
+          />
+        </div>
+      </PreviewFrame>
+    </>
+  );
+}
+
+// ─── Closing CTA editor ────────────────────────────────────────────
+
+function ClosingCtaEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
+  const t = useTranslations("Dashboard.magazinePageEditor.closingCta");
+  const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
+  const {
+    draft,
+    setDraft,
+    activeLocale,
+    setActiveLocale,
+    localeFields,
+    setLocaleField,
+    isDirty,
+    reset,
+  } = useLocalizedDraft<ClosingCtaLocaleFields, ClosingCtaConfig>(section, parseClosingCtaConfig);
+  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
+  const isRtl = RTL_LOCALES.has(activeLocale);
+
+  return (
+    <>
+      <EditorToolbar
+        title={t("title")}
+        subtitle={t("subtitle")}
+        activeLocale={activeLocale}
+        onLocaleChange={setActiveLocale}
+        isDirty={isDirty}
+        isSaving={isSaving}
+        onReset={reset}
+        onSave={() => onSave(JSON.stringify(draft))}
+      />
+
+      <FormCard>
+        <div className="space-y-6">
+          <FieldGroup label={tShared("perLocaleHeading")}>
+            <Field label={t("fields.heading")}>
+              <TextInput
+                value={localeFields.heading ?? ""}
+                onChange={(v) => setLocaleField("heading", v)}
+                rtl={isRtl}
+              />
+            </Field>
+            <Field label={t("fields.standfirst")}>
+              <TextInput
+                value={localeFields.standfirst ?? ""}
+                onChange={(v) => setLocaleField("standfirst", v)}
+                rtl={isRtl}
+              />
+            </Field>
+            <Field label={t("fields.ctaLabel")}>
+              <TextInput
+                value={localeFields.ctaLabel ?? ""}
+                onChange={(v) => setLocaleField("ctaLabel", v)}
+                rtl={isRtl}
+              />
+            </Field>
+          </FieldGroup>
+          <FieldGroup label={tShared("sharedHeading")}>
+            <Field label={t("fields.ctaHref")}>
+              <TextInput
+                value={draft.ctaHref ?? ""}
+                onChange={(v) => setDraft((prev) => ({ ...prev, ctaHref: v || undefined }))}
+                placeholder="/writing-room"
+              />
+            </Field>
+          </FieldGroup>
+        </div>
+      </FormCard>
+
+      <PreviewFrame locale={activeLocale}>
+        <ShareStory
+          icon={<PenLineIcon />}
+          heading={localeFields.heading?.trim() || t("fields.heading")}
+          standfirst={localeFields.standfirst?.trim() || ""}
+          ctaLabel={localeFields.ctaLabel?.trim() || t("fields.ctaLabel")}
+          ctaHref={draft.ctaHref || "/writing-room"}
         />
       </PreviewFrame>
     </>
@@ -531,91 +758,6 @@ function ImageUrlField({
   );
 }
 
-/** Per-section text-size preset buttons. Sets the section config's
- * `fontScale`; "Default" (1×) matches the site's current sizing. */
-function FontSizeField({
-  value,
-  onChange,
-}: {
-  value: number;
-  onChange: (scale: number) => void;
-}) {
-  const t = useTranslations("Dashboard.magazinePageEditor.fontSize");
-  const current = clampFontScale(value);
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
-        {t("label")}
-      </span>
-      <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
-        {MAGAZINE_FONT_PRESETS.map((p) => {
-          const active = Math.abs(current - p.scale) < 0.001;
-          return (
-            <button
-              key={p.key}
-              type="button"
-              onClick={() => onChange(p.scale)}
-              className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors ${
-                active
-                  ? "bg-[var(--tott-dash-surface-inset)] text-foreground shadow-sm"
-                  : "text-[var(--tott-tab-inactive)] hover:text-foreground"
-              }`}
-            >
-              {t(p.key)}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-/** Per-section text-alignment buttons (start / center / end / justify).
- *  Direction-relative so it reads correctly under LTR and RTL. */
-const TEXT_ALIGN_OPTIONS: { key: string; value: MagazineTextAlign }[] = [
-  { key: "start", value: "start" },
-  { key: "center", value: "center" },
-  { key: "end", value: "end" },
-  { key: "justify", value: "justify" },
-];
-
-function TextAlignField({
-  value,
-  onChange,
-}: {
-  value: MagazineTextAlign | undefined;
-  onChange: (v: MagazineTextAlign) => void;
-}) {
-  const t = useTranslations("Dashboard.magazinePageEditor.textAlign");
-  const current = value ?? "start";
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--tott-muted)]">
-        {t("label")}
-      </span>
-      <div className="flex gap-0.5 rounded-lg bg-[var(--tott-elevated)] p-0.5">
-        {TEXT_ALIGN_OPTIONS.map((o) => {
-          const active = current === o.value;
-          return (
-            <button
-              key={o.key}
-              type="button"
-              onClick={() => onChange(o.value)}
-              className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors ${
-                active
-                  ? "bg-[var(--tott-dash-surface-inset)] text-foreground shadow-sm"
-                  : "text-[var(--tott-tab-inactive)] hover:text-foreground"
-              }`}
-            >
-              {t(o.key)}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 const INPUT_CLASS =
   "w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-accent-gold)]/60 focus:outline-none focus:ring-1 focus:ring-[var(--tott-accent-gold)]/30 transition";
 
@@ -644,29 +786,6 @@ function TextInput({
   );
 }
 
-/** Long-form field backed by the shared rich-text editor. The section's
- *  EditorRegistryProvider + RichTextToolbar (mounted by the section editor)
- *  drive whichever RichField is focused. */
-function RichField({
-  label,
-  value,
-  onChange,
-  rtl,
-}: {
-  label: string;
-  value: string;
-  onChange: (html: string) => void;
-  rtl?: boolean;
-}) {
-  return (
-    <Field label={label}>
-      <div className="mag-rich-field overflow-hidden rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
-        <RichTextEditor value={value} onChange={onChange} dir={rtl ? "rtl" : "ltr"} />
-      </div>
-    </Field>
-  );
-}
-
 // ─── Shared editor toolbar (sticky bar with title, locale, actions) ──
 
 const PREVIEW_DESIGN_WIDTH = 1392;
@@ -680,8 +799,6 @@ function EditorToolbar({
   isSaving,
   onReset,
   onSave,
-  fontScale,
-  onFontScaleChange,
 }: {
   title: string;
   subtitle: string;
@@ -691,8 +808,6 @@ function EditorToolbar({
   isSaving: boolean;
   onReset: () => void;
   onSave: () => void;
-  fontScale?: number;
-  onFontScaleChange?: (scale: number) => void;
 }) {
   const t = useTranslations("Dashboard.magazinePageEditor.hero");
   return (
@@ -730,14 +845,6 @@ function EditorToolbar({
           </button>
         </div>
       </div>
-      {onFontScaleChange ? (
-        <div className="mt-3 border-t border-[var(--tott-card-border)] pt-3">
-          <FontSizeField
-            value={fontScale ?? DEFAULT_FONT_SCALE}
-            onChange={onFontScaleChange}
-          />
-        </div>
-      ) : null}
     </div>
   );
 }
@@ -961,372 +1068,4 @@ function useLocalizedDraft<T extends object, C extends { copy: Record<string, T>
     reset,
     initial,
   };
-}
-
-// ─── Manifesto editor ──────────────────────────────────────────────
-
-function ManifestoEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
-  const t = useTranslations("Dashboard.magazinePageEditor.manifesto");
-  const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
-  const {
-    draft,
-    setDraft,
-    activeLocale,
-    setActiveLocale,
-    localeFields,
-    setLocaleField,
-    isDirty,
-    reset,
-  } = useLocalizedDraft<ManifestoLocaleFields, ManifestoConfig>(section, parseManifestoConfig);
-  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
-  const isRtl = RTL_LOCALES.has(activeLocale);
-
-  return (
-    <>
-      <EditorToolbar
-        title={t("title")}
-        subtitle={t("subtitle")}
-        activeLocale={activeLocale}
-        onLocaleChange={setActiveLocale}
-        isDirty={isDirty}
-        isSaving={isSaving}
-        onReset={reset}
-        onSave={() => onSave(JSON.stringify(draft))}
-      />
-
-      <EditorRegistryProvider>
-        <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
-          <RichTextToolbar />
-        </div>
-        <FormCard>
-          <div className="space-y-6">
-            <div className="rounded-lg border border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-[var(--tott-muted)]">
-              {t("renderedFieldsNote")}
-            </div>
-            <FieldGroup label={tShared("perLocaleHeading")}>
-              <Field label={t("fields.philosophyHeading")}>
-                <TextInput
-                  value={localeFields.philosophyHeading ?? ""}
-                  onChange={(v) => setLocaleField("philosophyHeading", v)}
-                  rtl={isRtl}
-                />
-              </Field>
-              <RichField
-                label={t("fields.philosophyQuote")}
-                value={localeFields.philosophyQuote ?? ""}
-                onChange={(v) => setLocaleField("philosophyQuote", v)}
-                rtl={isRtl}
-              />
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label={t("fields.visionHeading")}>
-                  <TextInput
-                    value={localeFields.visionHeading ?? ""}
-                    onChange={(v) => setLocaleField("visionHeading", v)}
-                    rtl={isRtl}
-                  />
-                </Field>
-                <Field label={t("fields.missionHeading")}>
-                  <TextInput
-                    value={localeFields.missionHeading ?? ""}
-                    onChange={(v) => setLocaleField("missionHeading", v)}
-                    rtl={isRtl}
-                  />
-                </Field>
-                <RichField
-                  label={t("fields.visionBody")}
-                  value={localeFields.visionBody ?? ""}
-                  onChange={(v) => setLocaleField("visionBody", v)}
-                  rtl={isRtl}
-                />
-                <RichField
-                  label={t("fields.missionBody")}
-                  value={localeFields.missionBody ?? ""}
-                  onChange={(v) => setLocaleField("missionBody", v)}
-                  rtl={isRtl}
-                />
-              </div>
-              <Field label={t("fields.valuesHeading")}>
-                <TextInput
-                  value={localeFields.valuesHeading ?? ""}
-                  onChange={(v) => setLocaleField("valuesHeading", v)}
-                  rtl={isRtl}
-                />
-              </Field>
-              <RichField
-                label={t("fields.closingQuote")}
-                value={localeFields.closingQuote ?? ""}
-                onChange={(v) => setLocaleField("closingQuote", v)}
-                rtl={isRtl}
-              />
-            </FieldGroup>
-
-            <FieldGroup label={tShared("sharedHeading")}>
-              <ImageUrlField
-                label={t("fields.bannerUrl")}
-                value={draft.banner ?? ""}
-                onChange={(v) => setDraft((prev) => ({ ...prev, banner: v || undefined }))}
-                placeholder="/images/home/hero-silk.png"
-              />
-              <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-                <input
-                  type="checkbox"
-                  checked={draft.bannerHidden ?? false}
-                  onChange={(e) =>
-                    setDraft((prev) => ({ ...prev, bannerHidden: e.target.checked }))
-                  }
-                  className="h-4 w-4 accent-[var(--tott-gold)]"
-                />
-                {t("fields.bannerHidden")}
-              </label>
-              <TextAlignField
-                value={draft.textAlign}
-                onChange={(v) => setDraft((prev) => ({ ...prev, textAlign: v }))}
-              />
-            </FieldGroup>
-          </div>
-        </FormCard>
-      </EditorRegistryProvider>
-
-      {/* The live page splits this section in two beats: the mission body
-          opens the page, and the closing/philosophy/vision quotes cycle in
-          the quote break further down. Headings, banner, and alignment are
-          not rendered by either. */}
-      <PreviewFrame locale={activeLocale}>
-        <MagOpeningLine copy={localeFields} />
-        <MagQuoteBreak copy={localeFields} locale={activeLocale} />
-      </PreviewFrame>
-    </>
-  );
-}
-
-// ─── Founder quote editor ──────────────────────────────────────────
-
-function FounderQuoteEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
-  const t = useTranslations("Dashboard.magazinePageEditor.founderQuote");
-  const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
-  const {
-    draft,
-    setDraft,
-    activeLocale,
-    setActiveLocale,
-    localeFields,
-    setLocaleField,
-    isDirty,
-    reset,
-  } = useLocalizedDraft<FounderQuoteLocaleFields, FounderQuoteConfig>(section, parseFounderConfig);
-  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
-  const isRtl = RTL_LOCALES.has(activeLocale);
-
-  return (
-    <>
-      <EditorToolbar
-        title={t("title")}
-        subtitle={t("subtitle")}
-        activeLocale={activeLocale}
-        onLocaleChange={setActiveLocale}
-        isDirty={isDirty}
-        isSaving={isSaving}
-        onReset={reset}
-        onSave={() => onSave(JSON.stringify(draft))}
-      />
-
-      <EditorRegistryProvider>
-        <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
-          <RichTextToolbar />
-        </div>
-        <FormCard>
-          <div className="space-y-6">
-            <FieldGroup label={tShared("perLocaleHeading")}>
-              <RichField
-                label={t("fields.quote")}
-                value={localeFields.quote ?? ""}
-                onChange={(v) => setLocaleField("quote", v)}
-                rtl={isRtl}
-              />
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label={t("fields.name")}>
-                  <TextInput
-                    value={localeFields.name ?? ""}
-                    onChange={(v) => setLocaleField("name", v)}
-                    rtl={isRtl}
-                  />
-                </Field>
-                <Field label={t("fields.role")}>
-                  <TextInput
-                    value={localeFields.role ?? ""}
-                    onChange={(v) => setLocaleField("role", v)}
-                    rtl={isRtl}
-                  />
-                </Field>
-              </div>
-            </FieldGroup>
-
-            <FieldGroup label={t("sharedHeading")}>
-              <ImageUrlField
-                label={t("fields.avatarUrl")}
-                value={draft.avatar ?? ""}
-                onChange={(v) => setDraft((prev) => ({ ...prev, avatar: v || undefined }))}
-                framing={draft.avatarFraming}
-                onFramingChange={(f) =>
-                  setDraft((prev) => ({ ...prev, avatarFraming: f }))
-                }
-                // The founder avatar renders in a circle.
-                frameAspect="1/1"
-              />
-            </FieldGroup>
-          </div>
-        </FormCard>
-      </EditorRegistryProvider>
-
-      <PreviewFrame locale={activeLocale}>
-        <MagFounderNote
-          founder={localeFields}
-          avatar={draft.avatar}
-          avatarFraming={draft.avatarFraming}
-          locale={activeLocale}
-        />
-      </PreviewFrame>
-    </>
-  );
-}
-
-// ─── Newsletter copy editor ────────────────────────────────────────
-
-function NewsletterCopyEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
-  const t = useTranslations("Dashboard.magazinePageEditor.newsletterCopy");
-  const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
-  const { draft, setDraft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
-    useLocalizedDraft<NewsletterCopyLocaleFields, NewsletterCopyConfig>(
-      section,
-      parseNewsletterConfig
-    );
-  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
-  const isRtl = RTL_LOCALES.has(activeLocale);
-
-  return (
-    <>
-      <EditorToolbar
-        title={t("title")}
-        subtitle={t("subtitle")}
-        activeLocale={activeLocale}
-        onLocaleChange={setActiveLocale}
-        isDirty={isDirty}
-        isSaving={isSaving}
-        onReset={reset}
-        onSave={() => onSave(JSON.stringify(draft))}
-        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
-        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
-      />
-      <EditorRegistryProvider>
-        <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
-          <RichTextToolbar />
-        </div>
-        <FormCard>
-          <FieldGroup label={tShared("perLocaleHeading")}>
-            <Field label={t("fields.title")}>
-              <TextInput
-                value={localeFields.title ?? ""}
-                onChange={(v) => setLocaleField("title", v)}
-                rtl={isRtl}
-              />
-            </Field>
-            <RichField
-              label={t("fields.body")}
-              value={localeFields.body ?? ""}
-              onChange={(v) => setLocaleField("body", v)}
-              rtl={isRtl}
-            />
-          </FieldGroup>
-        </FormCard>
-      </EditorRegistryProvider>
-
-      <PreviewFrame locale={activeLocale}>
-        <MagazineNewsletter fontScale={draft.fontScale} titleOverride={localeFields.title} bodyOverride={localeFields.body} />
-      </PreviewFrame>
-    </>
-  );
-}
-
-// ─── Support / Collaborations editor ───────────────────────────────
-
-const PREVIEW_COLLABS_PLACEHOLDER = [
-  {
-    id: "preview-1",
-    title: "Sample Collaboration",
-    type: "Co-writing",
-    status: "Completed",
-    timeline: "Mar 2025",
-    description:
-      "Placeholder collaboration shown only inside the editor preview — your live page draws from real contributions.",
-  },
-  {
-    id: "preview-2",
-    title: "Illustration partnership",
-    type: "Illustration",
-    status: "Active",
-    timeline: "Q2 2025",
-    description: "Another placeholder card to show the carousel layout.",
-  },
-];
-
-function SupportEditor({ section, onSave, isSaving, registerDraftState }: EditorProps) {
-  const t = useTranslations("Dashboard.magazinePageEditor.support");
-  const tShared = useTranslations("Dashboard.magazinePageEditor.hero");
-  const { draft, setDraft, activeLocale, setActiveLocale, localeFields, setLocaleField, isDirty, reset } =
-    useLocalizedDraft<SupportLocaleFields, SupportConfig>(section, parseSupportConfig);
-  useRegisterDraftState(registerDraftState, isDirty, draft, onSave);
-  const isRtl = RTL_LOCALES.has(activeLocale);
-
-  return (
-    <>
-      <EditorToolbar
-        title={t("title")}
-        subtitle={t("subtitle")}
-        activeLocale={activeLocale}
-        onLocaleChange={setActiveLocale}
-        isDirty={isDirty}
-        isSaving={isSaving}
-        onReset={reset}
-        onSave={() => onSave(JSON.stringify(draft))}
-        fontScale={draft.fontScale ?? DEFAULT_FONT_SCALE}
-        onFontScaleChange={(n) => setDraft((prev) => ({ ...prev, fontScale: n }))}
-      />
-      <EditorRegistryProvider>
-        <div className="mb-3 rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)]">
-          <RichTextToolbar />
-        </div>
-        <FormCard>
-          <div className="space-y-6">
-            <FieldGroup label={tShared("perLocaleHeading")}>
-              <Field label={t("fields.heading")}>
-                <TextInput
-                  value={localeFields.heading ?? ""}
-                  onChange={(v) => setLocaleField("heading", v)}
-                  rtl={isRtl}
-                />
-              </Field>
-              <RichField
-                label={t("fields.subheading")}
-                value={localeFields.subheading ?? ""}
-                onChange={(v) => setLocaleField("subheading", v)}
-                rtl={isRtl}
-              />
-            </FieldGroup>
-            <div className="rounded-lg border border-dashed border-[var(--tott-card-border)] bg-[var(--tott-dash-surface-inset)] p-3 text-xs text-[var(--tott-muted)]">
-              {t("curationNote")}
-            </div>
-          </div>
-        </FormCard>
-      </EditorRegistryProvider>
-
-      <PreviewFrame locale={activeLocale}>
-        <MagazineSupport
-          fontScale={draft.fontScale}
-          collaborations={PREVIEW_COLLABS_PLACEHOLDER}
-          headingOverride={localeFields.heading}
-          subheadingOverride={localeFields.subheading}
-        />
-      </PreviewFrame>
-    </>
-  );
 }
