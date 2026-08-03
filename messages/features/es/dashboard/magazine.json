@@ -431,10 +431,14 @@
       "showSection": "Mostrar sección",
       "sections": {
         "hero": "Hero",
-        "manifesto": "Manifiesto",
-        "founderQuote": "Cita del fundador",
-        "newsletterCopy": "Texto del boletín",
-        "supportCuration": "Apoyo / Colaboraciones"
+        "actionCardJoin": "Action Card — Join Collective",
+        "actionCardGift": "Action Card — Send Gift",
+        "actionCardShare": "Action Card — Share Story",
+        "featuredHeader": "Featured Content Header",
+        "collectionsHeader": "Collections Header",
+        "latestHeader": "Latest Content Header",
+        "plansHeader": "Plans Header",
+        "closingCta": "Closing CTA"
       },
       "hero": {
         "title": "Hero",
@@ -449,61 +453,42 @@
         "fields": {
           "headline": "Titular",
           "headlinePlaceholder": "Historias que dan forma a la cultura moderna.",
-          "subheadline": "Subtítulo",
-          "subheadlinePlaceholder": "Una revista que explora la intersección del arte, el diseño y el cine…",
-          "primaryCta": "CTA principal",
-          "primaryCtaPlaceholder": "Explorar publicaciones",
-          "secondaryCta": "CTA secundario",
-          "secondaryCtaPlaceholder": "Último número",
+          "standfirst": "Standfirst",
+          "standfirstPlaceholder": "One-line subtitle under the headline",
+          "ctaLabel": "Button label",
+          "ctaLabelPlaceholder": "Read latest issue",
           "artworkUrl": "URL de la imagen de fondo",
-          "artworkUrlHint": "Se sustituye si hay una imagen de héroe definida en la Biblioteca de medios.",
-          "primaryHref": "Enlace del CTA principal",
-          "secondaryHref": "Enlace del CTA secundario"
+          "artworkUrlHint": "Se sustituye si hay una imagen de héroe definida en la Biblioteca de medios."
         }
       },
-      "manifesto": {
-        "title": "Manifiesto",
-        "subtitle": "Filosofía, visión, misión, valores y cita de cierre.",
-        "renderedFieldsNote": "La página en vivo usa esta sección en dos momentos: el cuerpo de la misión abre la página, y la cita de cierre, la cita de filosofía y el cuerpo de la visión se alternan en el intermedio de citas más abajo. Los títulos, el banner y la alineación de abajo no se muestran.",
+      "actionCard": {
+        "title": "Action Card",
+        "subtitle": "One of the three cards below the hero",
         "fields": {
-          "philosophyHeading": "Título — Filosofía",
-          "philosophyQuote": "Cita — Filosofía",
-          "visionHeading": "Título — Visión",
-          "visionBody": "Cuerpo — Visión",
-          "missionHeading": "Título — Misión",
-          "missionBody": "Cuerpo — Misión",
-          "valuesHeading": "Título — Valores",
-          "closingQuote": "Cita de cierre",
-          "bannerUrl": "URL de la imagen del banner",
-          "bannerHidden": "Ocultar la imagen del banner"
+          "title": "Title",
+          "body": "Body text",
+          "ctaLabel": "Button label",
+          "ctaHref": "Button link"
         }
       },
-      "founderQuote": {
-        "title": "Cita del fundador",
-        "subtitle": "Cita mostrada en la pestaña Comité editorial.",
-        "sharedHeading": "Compartido (todos los idiomas)",
+      "railHeader": {
+        "title": "Section Header",
+        "subtitle": "Title and standfirst shown above this rail",
+        "perLocaleHeading": "Per-locale copy",
+        "viewMoreLabel": "View more",
         "fields": {
-          "quote": "Cita",
-          "name": "Nombre",
-          "role": "Rol",
-          "avatarUrl": "URL del avatar"
+          "title": "Title",
+          "standfirst": "Standfirst"
         }
       },
-      "newsletterCopy": {
-        "title": "Sección del boletín",
-        "subtitle": "Título y cuerpo mostrados sobre el campo de correo.",
+      "closingCta": {
+        "title": "Closing CTA",
+        "subtitle": "The full-width \"Share your story\" section at the page's end",
         "fields": {
-          "title": "Título",
-          "body": "Cuerpo"
-        }
-      },
-      "support": {
-        "title": "Apoyo / Colaboraciones",
-        "subtitle": "Editar el título y subtítulo de la sección.",
-        "curationNote": "El carrusel se alimenta de las contribuciones aprobadas. La selección de cuáles aparecen llegará más adelante.",
-        "fields": {
-          "heading": "Título",
-          "subheading": "Subtítulo"
+          "heading": "Heading",
+          "standfirst": "Standfirst",
+          "ctaLabel": "Button label",
+          "ctaHref": "Button link"
         }
       },
       "richEditor": {
@@ -512,21 +497,6 @@
         "pasteImageUrl": "…o pega la URL de una imagen",
         "linkPlaceholder": "https://example.com",
         "removeLink": "Quitar enlace"
-      },
-      "fontSize": {
-        "label": "Tamaño del texto",
-        "hint": "Escala el texto de esta sección. El valor predeterminado coincide con el tamaño actual del sitio.",
-        "small": "Pequeño",
-        "default": "Predeterminado",
-        "large": "Grande",
-        "xl": "Extra grande"
-      },
-      "textAlign": {
-        "label": "Alineación",
-        "start": "Inicio",
-        "center": "Centro",
-        "end": "Fin",
-        "justify": "Justificado"
       }
     },
     "magazineArticles": {

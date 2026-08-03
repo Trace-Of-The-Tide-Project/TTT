@@ -6,7 +6,19 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { staggerParent, staggerChild, revealItem } from "@/lib/motion";
-import type { MagazineIssueItem } from "./MagazineIssuesV2";
+
+export type MagazineIssueItem = {
+  id: string;
+  title: string;
+  kind?: string | null;
+  pageCount?: number | null;
+  coverImage?: string | null;
+  excerpt?: string | null;
+  edition?: string | null;
+  category?: string | null;
+  publishedAt?: string | null;
+  slug?: string | null;
+};
 
 // Figma "Icon Wrapper" assets — 56×64 chamfered hex with the glyph
 // (writing / heart-handshake) baked in, inset shadow filter included.

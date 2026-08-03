@@ -430,11 +430,15 @@
       "hideSection": "إخفاء القسم",
       "showSection": "إظهار القسم",
       "sections": {
-        "hero": "الواجهة الرئيسية",
-        "manifesto": "البيان",
-        "founderQuote": "اقتباس المؤسس",
-        "newsletterCopy": "نص النشرة البريدية",
-        "supportCuration": "الدعم / التعاونات"
+        "hero": "Hero",
+        "actionCardJoin": "Action Card — Join Collective",
+        "actionCardGift": "Action Card — Send Gift",
+        "actionCardShare": "Action Card — Share Story",
+        "featuredHeader": "Featured Content Header",
+        "collectionsHeader": "Collections Header",
+        "latestHeader": "Latest Content Header",
+        "plansHeader": "Plans Header",
+        "closingCta": "Closing CTA"
       },
       "hero": {
         "title": "الواجهة الرئيسية",
@@ -449,61 +453,42 @@
         "fields": {
           "headline": "العنوان",
           "headlinePlaceholder": "حكايات تصنع الثقافة الحديثة.",
-          "subheadline": "العنوان الفرعي",
-          "subheadlinePlaceholder": "مجلة تستكشف تقاطع الفن والتصميم والسينما…",
-          "primaryCta": "نص الزر الأساسي",
-          "primaryCtaPlaceholder": "استكشف الإصدارات",
-          "secondaryCta": "نص الزر الثانوي",
-          "secondaryCtaPlaceholder": "أحدث عدد",
+          "standfirst": "Standfirst",
+          "standfirstPlaceholder": "One-line subtitle under the headline",
+          "ctaLabel": "Button label",
+          "ctaLabelPlaceholder": "Read latest issue",
           "artworkUrl": "رابط صورة الخلفية",
-          "artworkUrlHint": "تتجاوزه صورة الواجهة الرئيسية المعيّنة من مكتبة الوسائط، إن وُجدت.",
-          "primaryHref": "رابط الزر الأساسي",
-          "secondaryHref": "رابط الزر الثانوي"
+          "artworkUrlHint": "تتجاوزه صورة الواجهة الرئيسية المعيّنة من مكتبة الوسائط، إن وُجدت."
         }
       },
-      "manifesto": {
-        "title": "البيان",
-        "subtitle": "الفلسفة والرؤية والرسالة والقيم والاقتباس الختامي.",
-        "renderedFieldsNote": "تستخدم الصفحة الحيّة هذا القسم في موضعين: نص الرسالة يفتتح الصفحة، والاقتباس الختامي واقتباس الفلسفة ونص الرؤية تتناوب في فاصل الاقتباسات لاحقًا. أما العناوين واللافتة والمحاذاة أدناه فلا تُعرض.",
+      "actionCard": {
+        "title": "Action Card",
+        "subtitle": "One of the three cards below the hero",
         "fields": {
-          "philosophyHeading": "عنوان الفلسفة",
-          "philosophyQuote": "اقتباس الفلسفة",
-          "visionHeading": "عنوان الرؤية",
-          "visionBody": "نص الرؤية",
-          "missionHeading": "عنوان الرسالة",
-          "missionBody": "نص الرسالة",
-          "valuesHeading": "عنوان القيم",
-          "closingQuote": "الاقتباس الختامي",
-          "bannerUrl": "رابط صورة اللافتة",
-          "bannerHidden": "إخفاء صورة اللافتة"
+          "title": "Title",
+          "body": "Body text",
+          "ctaLabel": "Button label",
+          "ctaHref": "Button link"
         }
       },
-      "founderQuote": {
-        "title": "اقتباس المؤسس",
-        "subtitle": "اقتباس بارز يظهر في تبويب هيئة التحرير.",
-        "sharedHeading": "مشترك (كل اللغات)",
+      "railHeader": {
+        "title": "Section Header",
+        "subtitle": "Title and standfirst shown above this rail",
+        "perLocaleHeading": "Per-locale copy",
+        "viewMoreLabel": "View more",
         "fields": {
-          "quote": "الاقتباس",
-          "name": "الاسم",
-          "role": "المنصب",
-          "avatarUrl": "رابط الصورة الشخصية"
+          "title": "Title",
+          "standfirst": "Standfirst"
         }
       },
-      "newsletterCopy": {
-        "title": "قسم النشرة البريدية",
-        "subtitle": "العنوان والنص فوق حقل البريد.",
+      "closingCta": {
+        "title": "Closing CTA",
+        "subtitle": "The full-width \"Share your story\" section at the page's end",
         "fields": {
-          "title": "العنوان",
-          "body": "النص"
-        }
-      },
-      "support": {
-        "title": "الدعم / التعاونات",
-        "subtitle": "تحرير عنوان القسم والعنوان الفرعي.",
-        "curationNote": "يُستمد المعرض الدوّار نفسه من المساهمات المعتمدة. أما اختيار المساهمات الظاهرة فسيأتي في تحديث لاحق.",
-        "fields": {
-          "heading": "العنوان",
-          "subheading": "العنوان الفرعي"
+          "heading": "Heading",
+          "standfirst": "Standfirst",
+          "ctaLabel": "Button label",
+          "ctaHref": "Button link"
         }
       },
       "richEditor": {
@@ -512,21 +497,6 @@
         "pasteImageUrl": "…أو الصق رابط الصورة",
         "linkPlaceholder": "https://example.com",
         "removeLink": "إزالة الرابط"
-      },
-      "fontSize": {
-        "label": "حجم النص",
-        "hint": "يضبط حجم نص هذا القسم. الافتراضي يطابق الأحجام الحالية للموقع.",
-        "small": "صغير",
-        "default": "افتراضي",
-        "large": "كبير",
-        "xl": "كبير جدًا"
-      },
-      "textAlign": {
-        "label": "المحاذاة",
-        "start": "البداية",
-        "center": "المنتصف",
-        "end": "النهاية",
-        "justify": "ضبط"
       }
     },
     "magazineArticles": {

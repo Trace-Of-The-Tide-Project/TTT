@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -26,6 +26,19 @@ const JOIN_ROOM_ICON = "/images/writing-room/join-room-icon.svg";
 // silk fill (transparent outside the hex), and Icon-4.svg is the
 // pre-baked 48×48 top-of-card icon.
 const WRITER_CARD = "/images/home/Image-2.png";
+// Clip a real cover photo to the exact silk-hex silhouette using the
+// frame PNG's own alpha as a mask — same technique as the shared
+// FeaturedHexCard / Editorial Board carousel card.
+const HEX_PHOTO_MASK: CSSProperties = {
+  WebkitMaskImage: `url(${WRITER_CARD})`,
+  maskImage: `url(${WRITER_CARD})`,
+  WebkitMaskSize: "100% auto",
+  maskSize: "100% auto",
+  WebkitMaskPosition: "center center",
+  maskPosition: "center center",
+  WebkitMaskRepeat: "no-repeat",
+  maskRepeat: "no-repeat",
+};
 const WRITER_TOP_ICON = "/images/home/Icon-4.svg";
 const FILLER = "/images/home/Content Grid Filler.png";
 const CHIP_CHAMFER =
@@ -1148,7 +1161,7 @@ function FeaturedWritingRow({
             width: `calc(${Math.min(visible, itemCount)} * var(--carousel-card-w) + ${Math.max(0, Math.min(visible, itemCount) - 1)} * var(--carousel-gap))`,
           }}
         >
-        <div className="relative overflow-hidden">
+        <div className="relative w-full overflow-hidden">
         <div
           className="relative flex items-start"
           style={{
@@ -1434,16 +1447,6 @@ function FeaturedWritingCard({
         flexShrink: 0,
       }}
     >
-      {item.coverImage ? (
-        <Image
-          src={item.coverImage}
-          alt=""
-          fill
-          className="absolute inset-0 select-none object-cover opacity-70 mix-blend-luminosity"
-          sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
-          draggable={false}
-        />
-      ) : null}
       <Image
         src={WRITER_CARD}
         alt=""
@@ -1452,6 +1455,18 @@ function FeaturedWritingCard({
         sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
         draggable={false}
       />
+      {item.coverImage ? (
+        <Image
+          src={item.coverImage}
+          alt=""
+          fill
+          className="absolute inset-0 select-none object-cover"
+          style={HEX_PHOTO_MASK}
+          sizes="(min-width: 1920px) 360px, (min-width: 1600px) 320px, 276px"
+          draggable={false}
+          unoptimized
+        />
+      ) : null}
 
       <div
         aria-hidden

@@ -1,0 +1,71 @@
+{
+  "Magazine": {
+    "meta": {
+      "title": "Magazine — Trace of the Tide",
+      "description": "Shoreline narratives, community voices, and the latest from Trace of the Tide magazine.",
+      "eyebrow": "Trace of the Tide"
+    },
+    "hero": {
+      "title": "Shoreline Narratives: Community Voices",
+      "standfirst": "Stories, essays, and testimonies from the people who carry the tide with them.",
+      "ctaRead": "Read latest issue",
+      "noIssue": "No issue published yet — check back soon."
+    },
+    "carousel": {
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "innerCards": {
+      "1": {
+        "title": "Join Collective",
+        "body": "Connect with writers, artists, and archivists shaping every issue together.",
+        "cta": "Join now!"
+      },
+      "2": {
+        "title": "Send Gift",
+        "body": "Give a subscription and share the tide with someone who'd love these stories.",
+        "cta": "Send a gift"
+      },
+      "3": {
+        "title": "Share Story",
+        "body": "Every story matters — contribute your own experiences, testimonies, or research.",
+        "cta": "Share your story"
+      }
+    },
+    "featured": {
+      "title": "Feature content",
+      "standfirst": "Editor-selected stories from this edition."
+    },
+    "collections": {
+      "title": "Collections",
+      "standfirst": "Curated groupings across themes and editions."
+    },
+    "latest": {
+      "title": "Latest content",
+      "standfirst": "Newest additions to the magazine."
+    },
+    "articleCount": "{count} articles",
+    "plans": {
+      "title": "Become a subscriber",
+      "standfirst": "Support independent editorial work and unlock every issue.",
+      "perMonth": "/ month",
+      "recommended": "Most popular",
+      "cta": "Choose plan",
+      "showMore": "+{count} more",
+      "showLess": "Show less"
+    },
+    "viewMore": "View more",
+    "edition": "Edition",
+    "shareStory": {
+      "heading": "Share your story",
+      "standfirst": "Every story matters. Help us preserve the collective memory by contributing your personal experiences, testimonies, or knowledge of historical events.",
+      "cta": "Contribute Now!"
+    },
+    "issueNotFound": {
+      "badge": "Coming soon",
+      "title": "We don't have this issue yet",
+      "description": "This issue isn't available right now — it may still be in the works or no longer exists. Head back to the magazine for what's live today.",
+      "cta": "Back to magazine"
+    }
+  }
+}

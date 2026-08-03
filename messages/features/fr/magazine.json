@@ -1,0 +1,71 @@
+{
+  "Magazine": {
+    "meta": {
+      "title": "Magazine — Trace of the Tide",
+      "description": "Récits du littoral, voix de la communauté, et les dernières parutions du magazine Trace of the Tide.",
+      "eyebrow": "Trace of the Tide"
+    },
+    "hero": {
+      "title": "Récits du littoral : voix de la communauté",
+      "standfirst": "Récits, essais et témoignages de celles et ceux qui portent la marée avec eux.",
+      "ctaRead": "Lire le dernier numéro",
+      "noIssue": "Aucun numéro publié pour le moment — revenez bientôt."
+    },
+    "carousel": {
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "innerCards": {
+      "1": {
+        "title": "Rejoindre le collectif",
+        "body": "Connectez-vous avec les écrivains, artistes et archivistes qui façonnent chaque numéro ensemble.",
+        "cta": "Rejoindre maintenant !"
+      },
+      "2": {
+        "title": "Offrir un abonnement",
+        "body": "Offrez un abonnement et partagez la marée avec quelqu'un qui aimerait ces récits.",
+        "cta": "Envoyer un cadeau"
+      },
+      "3": {
+        "title": "Partager votre histoire",
+        "body": "Chaque histoire compte — partagez vos expériences, témoignages ou recherches.",
+        "cta": "Partager votre histoire"
+      }
+    },
+    "featured": {
+      "title": "À la une",
+      "standfirst": "Des récits sélectionnés par la rédaction pour cette édition."
+    },
+    "collections": {
+      "title": "Collections",
+      "standfirst": "Regroupements thématiques choisis à travers les éditions."
+    },
+    "latest": {
+      "title": "Derniers contenus",
+      "standfirst": "Les ajouts les plus récents au magazine."
+    },
+    "articleCount": "{count} articles",
+    "plans": {
+      "title": "Devenez abonné·e",
+      "standfirst": "Soutenez un travail éditorial indépendant et accédez à tous les numéros.",
+      "perMonth": "/ mois",
+      "recommended": "Le plus populaire",
+      "cta": "Choisir cette formule",
+      "showMore": "+{count} de plus",
+      "showLess": "Voir moins"
+    },
+    "viewMore": "Voir plus",
+    "edition": "Édition",
+    "shareStory": {
+      "heading": "Partagez votre histoire",
+      "standfirst": "Chaque histoire compte. Aidez-nous à préserver la mémoire collective en partageant vos expériences personnelles, témoignages ou connaissances d'événements historiques.",
+      "cta": "Contribuer maintenant !"
+    },
+    "issueNotFound": {
+      "badge": "Bientôt disponible",
+      "title": "Ce numéro n'est pas encore disponible",
+      "description": "Ce numéro n'est pas disponible pour le moment — il est peut-être encore en préparation ou n'existe plus. Retournez au magazine pour découvrir ce qui est disponible aujourd'hui.",
+      "cta": "Retour au magazine"
+    }
+  }
+}

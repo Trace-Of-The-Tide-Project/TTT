@@ -263,7 +263,7 @@ export function FeaturedHexRow({
             width: `calc(${Math.min(visible, itemCount)} * var(--carousel-card-w) + ${Math.max(0, Math.min(visible, itemCount) - 1)} * var(--carousel-gap))`,
           }}
         >
-          <div className="relative overflow-hidden">
+          <div className="relative w-full overflow-hidden">
             <div
               className="relative flex items-start"
               style={{

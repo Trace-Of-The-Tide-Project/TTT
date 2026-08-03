@@ -41,7 +41,7 @@ const amiri = Amiri({
   display: "swap",
 });
 
-/** magazine-v3 body/UI face (Figma spec), via --font-body-ui. Latin only. */
+/** Magazine body/UI face (Figma spec), via --font-body-ui. Latin only. */
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin", "latin-ext"],

@@ -14,28 +14,8 @@ import {
   type ArticleListItem,
   type ArticleProduct,
 } from "@/services/articles.service";
-import type { CmsPage } from "@/services/cms.service";
 import type { MagazineIssue } from "@/services/magazine-issues.service";
 import { getMagazines } from "@/services/magazines.service";
-import {
-  MAGAZINE_PAGE_SLUG,
-  findSection,
-  parseHeroConfig,
-  pickHeroLocale,
-  parseManifestoConfig,
-  pickManifestoLocale,
-  parseFounderConfig,
-  pickFounderLocale,
-  parseNewsletterConfig,
-  pickNewsletterLocale,
-  parseSupportConfig,
-  pickSupportLocale,
-  type HeroLocaleFields,
-  type ManifestoLocaleFields,
-  type FounderQuoteLocaleFields,
-  type NewsletterCopyLocaleFields,
-  type SupportLocaleFields,
-} from "@/services/magazine-page.service";
 import type { CollaborationItem } from "@/components/home/magazine/MagazineSupport";
 import type { ImageFraming } from "@/lib/image-framing";
 import { getFramingsServer } from "@/services/image-framing.service";
@@ -152,35 +132,6 @@ export type WriterCard = {
   /** ISO code of the writer's own language — their quote may be Arabic under an
    * English UI, so the card resolves `dir` from this, not from the UI locale. */
   lang: string | null;
-};
-
-/**
- * CMS-editable editorial copy woven between the content sections. Each field
- * is already locale-resolved; empty strings mean "no override" and the
- * consuming component falls back to its i18n default.
- */
-export type MagEditorialCopy = {
-  /** Hero copy is a FALLBACK ONLY — a published issue's own title/subtitle
-   * always wins the hero. Used for the window before any issue exists. */
-  hero: HeroLocaleFields;
-  manifesto: ManifestoLocaleFields;
-  founder: FounderQuoteLocaleFields;
-  founderAvatar?: string;
-  /** CMS hero artwork — hero cover fallback when no issue is published. */
-  heroArtwork?: string;
-  /** Framing for `heroArtwork` specifically. It describes THAT photo, so it
-   * must not be applied when an issue cover or page-hero wins the slot. */
-  heroArtworkFraming?: ImageFraming;
-  founderAvatarFraming?: ImageFraming;
-  /** CMS hero CTA destinations. A CTA renders only when its label AND its
-   * link are both set — a labelled button with nowhere to go is worse than
-   * no button. Same fallback-only scope as `hero`. */
-  heroPrimaryHref?: string;
-  heroSecondaryHref?: string;
-  newsletter: NewsletterCopyLocaleFields;
-  newsletterFontScale?: number;
-  support: SupportLocaleFields;
-  supportFontScale?: number;
 };
 
 // ─── Mappers ────────────────────────────────────────────────────────────
@@ -478,48 +429,4 @@ export async function fetchCollaborations(
     timeline: shortDate(c.submission_date, locale) || null,
     description: c.description || "",
   }));
-}
-
-/**
- * CMS-backed editorial copy for every admin-editable beat on this page.
- * Reuses the same parsers/pickers as the legacy magazine page; a missing
- * page, invisible section, or fetch failure resolves to empty fields so each
- * beat degrades to its i18n default.
- */
-export async function fetchEditorialCopy(locale: string): Promise<MagEditorialCopy> {
-  const page = await serverGet<CmsPage | { data: CmsPage }>(
-    `/cms/pages/slug/${MAGAZINE_PAGE_SLUG}`,
-  );
-  const unwrapped = page
-    ? ((page as { data?: CmsPage }).data ?? (page as CmsPage))
-    : null;
-
-  const pickVisible = (key: Parameters<typeof findSection>[1]) => {
-    const s = findSection(unwrapped, key);
-    return s && s.is_visible ? s : undefined;
-  };
-
-  const manifestoCfg = parseManifestoConfig(pickVisible("manifesto"));
-  const founderCfg = parseFounderConfig(pickVisible("founderQuote"));
-  // Hero copy is carried but only consumed when no issue is published — a
-  // live issue's own title/subtitle always wins the hero (see MagHero).
-  const heroCfg = parseHeroConfig(pickVisible("hero"));
-  const newsletterCfg = parseNewsletterConfig(pickVisible("newsletterCopy"));
-  const supportCfg = parseSupportConfig(pickVisible("supportCuration"));
-
-  return {
-    hero: pickHeroLocale(heroCfg, locale),
-    manifesto: pickManifestoLocale(manifestoCfg, locale),
-    founder: pickFounderLocale(founderCfg, locale),
-    founderAvatar: founderCfg.avatar,
-    founderAvatarFraming: founderCfg.avatarFraming,
-    heroArtwork: heroCfg.artwork,
-    heroArtworkFraming: heroCfg.artworkFraming,
-    heroPrimaryHref: heroCfg.primaryHref,
-    heroSecondaryHref: heroCfg.secondaryHref,
-    newsletter: pickNewsletterLocale(newsletterCfg, locale),
-    newsletterFontScale: newsletterCfg.fontScale,
-    support: pickSupportLocale(supportCfg, locale),
-    supportFontScale: supportCfg.fontScale,
-  };
 }

@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import ComingSoon from "@/components/ui/ComingSoon";
 import {
   isUsableArticleMediaRef,
   resolveArticleMediaSrc,
@@ -21,9 +22,20 @@ type PageProps = {
 };
 
 export default async function MagazineIssueDetailPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const issue = await getMagazineIssueBySlug(slug);
-  if (!issue) return notFound();
+  if (!issue) {
+    const t = await getTranslations({ locale, namespace: "Magazine.issueNotFound" });
+    return (
+      <ComingSoon
+        badge={t("badge")}
+        title={t("title")}
+        description={t("description")}
+        ctaLabel={t("cta")}
+        ctaHref="/magazine"
+      />
+    );
+  }
 
   const [articles, contributors] = await Promise.all([
     getIssueArticles(issue.id),

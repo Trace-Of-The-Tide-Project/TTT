@@ -431,10 +431,14 @@
       "showSection": "Show section",
       "sections": {
         "hero": "Hero",
-        "manifesto": "Manifesto",
-        "founderQuote": "Founder quote",
-        "newsletterCopy": "Newsletter copy",
-        "supportCuration": "Support / Collaborations"
+        "actionCardJoin": "Action Card — Join Collective",
+        "actionCardGift": "Action Card — Send Gift",
+        "actionCardShare": "Action Card — Share Story",
+        "featuredHeader": "Featured Content Header",
+        "collectionsHeader": "Collections Header",
+        "latestHeader": "Latest Content Header",
+        "plansHeader": "Plans Header",
+        "closingCta": "Closing CTA"
       },
       "hero": {
         "title": "Hero",
@@ -449,61 +453,42 @@
         "fields": {
           "headline": "Headline",
           "headlinePlaceholder": "Stories shaping modern culture.",
-          "subheadline": "Subheadline",
-          "subheadlinePlaceholder": "A journal exploring the intersection of art, design, cinema…",
-          "primaryCta": "Primary CTA",
-          "primaryCtaPlaceholder": "Explore Publications",
-          "secondaryCta": "Secondary CTA",
-          "secondaryCtaPlaceholder": "Latest Issue",
+          "standfirst": "Standfirst",
+          "standfirstPlaceholder": "One-line subtitle under the headline",
+          "ctaLabel": "Button label",
+          "ctaLabelPlaceholder": "Read latest issue",
           "artworkUrl": "Background image URL",
-          "artworkUrlHint": "Overridden by a Media Library page-hero, if one is set.",
-          "primaryHref": "Primary CTA link",
-          "secondaryHref": "Secondary CTA link"
+          "artworkUrlHint": "Overridden by a Media Library page-hero, if one is set."
         }
       },
-      "manifesto": {
-        "title": "Manifesto",
-        "subtitle": "Philosophy, vision, mission, values, and closing quote.",
-        "renderedFieldsNote": "The live page uses this section for two beats: the mission body opens the page, and the closing quote, philosophy quote, and vision body cycle in the quote break further down. The headings, banner, and alignment below are not rendered.",
-        "fields": {
-          "philosophyHeading": "Philosophy heading",
-          "philosophyQuote": "Philosophy quote",
-          "visionHeading": "Vision heading",
-          "visionBody": "Vision body",
-          "missionHeading": "Mission heading",
-          "missionBody": "Mission body",
-          "valuesHeading": "Values heading",
-          "closingQuote": "Closing quote",
-          "bannerUrl": "Banner image URL",
-          "bannerHidden": "Hide the banner image"
-        }
-      },
-      "founderQuote": {
-        "title": "Founder quote",
-        "subtitle": "Pull-quote shown on the Editorial Board tab.",
-        "sharedHeading": "Shared (all locales)",
-        "fields": {
-          "quote": "Quote",
-          "name": "Name",
-          "role": "Role",
-          "avatarUrl": "Avatar URL"
-        }
-      },
-      "newsletterCopy": {
-        "title": "Newsletter section",
-        "subtitle": "Title and body shown above the email field.",
+      "actionCard": {
+        "title": "Action Card",
+        "subtitle": "One of the three cards below the hero",
         "fields": {
           "title": "Title",
-          "body": "Body"
+          "body": "Body text",
+          "ctaLabel": "Button label",
+          "ctaHref": "Button link"
         }
       },
-      "support": {
-        "title": "Support / Collaborations",
-        "subtitle": "Edit the section heading and subheading.",
-        "curationNote": "The carousel itself is fed by approved contributions. Curating which contributions appear is coming in a follow-up.",
+      "railHeader": {
+        "title": "Section Header",
+        "subtitle": "Title and standfirst shown above this rail",
+        "perLocaleHeading": "Per-locale copy",
+        "viewMoreLabel": "View more",
+        "fields": {
+          "title": "Title",
+          "standfirst": "Standfirst"
+        }
+      },
+      "closingCta": {
+        "title": "Closing CTA",
+        "subtitle": "The full-width \"Share your story\" section at the page's end",
         "fields": {
           "heading": "Heading",
-          "subheading": "Subheading"
+          "standfirst": "Standfirst",
+          "ctaLabel": "Button label",
+          "ctaHref": "Button link"
         }
       },
       "richEditor": {
@@ -512,21 +497,6 @@
         "pasteImageUrl": "…or paste an image URL",
         "linkPlaceholder": "https://example.com",
         "removeLink": "Remove link"
-      },
-      "fontSize": {
-        "label": "Text size",
-        "hint": "Scales this section's text. Default matches the site's current sizing.",
-        "small": "Small",
-        "default": "Default",
-        "large": "Large",
-        "xl": "Extra large"
-      },
-      "textAlign": {
-        "label": "Alignment",
-        "start": "Start",
-        "center": "Center",
-        "end": "End",
-        "justify": "Justify"
       }
     },
     "magazineArticles": {
