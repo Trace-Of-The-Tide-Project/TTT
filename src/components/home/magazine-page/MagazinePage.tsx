@@ -112,11 +112,11 @@ export async function MagazinePage({ locale }: { locale: string }) {
   // two admin-controlled sources the live /magazine hero uses, in the same
   // order; the issue's own cover still wins once an issue exists. Framing
   // follows the image it was tuned for, never the slot.
-  const heroFallbackArtwork = pageHeroUrl || editorial.heroArtwork || null;
-  const heroFallbackFraming = pageHeroUrl
-    ? pageHeroFramings["magazine-landing"]?.image
-    : editorial.heroArtwork
-      ? editorial.heroArtworkFraming
+  const heroFallbackArtwork = editorial.heroArtwork || pageHeroUrl || null;
+  const heroFallbackFraming = editorial.heroArtwork
+    ? editorial.heroArtworkFraming
+    : pageHeroUrl
+      ? pageHeroFramings["magazine-landing"]?.image
       : undefined;
 
   const heroBackground =
@@ -154,9 +154,9 @@ export async function MagazinePage({ locale }: { locale: string }) {
       >
         <Hero
           eyebrow={t("meta.eyebrow")}
-          title={t("hero.title")}
-          standfirst={t("hero.standfirst")}
-          readCtaLabel={t("hero.ctaRead")}
+          title={heroIssue?.title || editorial.hero.title || t("hero.title")}
+          standfirst={editorial.hero.standfirst || t("hero.standfirst")}
+          readCtaLabel={editorial.hero.ctaLabel || t("hero.ctaRead")}
           readCtaHref={heroIssue?.slug ? `/magazine-issues/${encodeURIComponent(heroIssue.slug)}` : null}
           noIssueLabel={t("hero.noIssue")}
           backgroundImage={heroBackground}
@@ -170,48 +170,58 @@ export async function MagazinePage({ locale }: { locale: string }) {
 
         <InnerSectionCards locale={locale} />
 
-        <FeaturedRail
-          cards={featuredCards}
-          title={t("featured.title")}
-          standfirst={t("featured.standfirst")}
-          viewMoreLabel={t("viewMore")}
-        />
+        {editorial.visibility.featuredHeader !== false ? (
+          <FeaturedRail
+            cards={featuredCards}
+            title={editorial.featuredHeader.title || t("featured.title")}
+            standfirst={editorial.featuredHeader.standfirst || t("featured.standfirst")}
+            viewMoreLabel={t("viewMore")}
+          />
+        ) : null}
 
-        <CollectionsRow
-          collections={collections}
-          title={t("collections.title")}
-          standfirst={t("collections.standfirst")}
-          viewMoreLabel={t("viewMore")}
-          articleCountLabel={(count) => t("articleCount", { count })}
-        />
+        {editorial.visibility.collectionsHeader !== false ? (
+          <CollectionsRow
+            collections={collections}
+            title={editorial.collectionsHeader.title || t("collections.title")}
+            standfirst={editorial.collectionsHeader.standfirst || t("collections.standfirst")}
+            viewMoreLabel={t("viewMore")}
+            articleCountLabel={(count) => t("articleCount", { count })}
+          />
+        ) : null}
 
-        <LatestRail
-          cards={latestCards}
-          title={t("latest.title")}
-          standfirst={t("latest.standfirst")}
-          viewMoreLabel={t("viewMore")}
-        />
+        {editorial.visibility.latestHeader !== false ? (
+          <LatestRail
+            cards={latestCards}
+            title={editorial.latestHeader.title || t("latest.title")}
+            standfirst={editorial.latestHeader.standfirst || t("latest.standfirst")}
+            viewMoreLabel={t("viewMore")}
+          />
+        ) : null}
 
-        <Plans
-          plans={plans}
-          title={t("plans.title")}
-          standfirst={t("plans.standfirst")}
-          locale={locale}
-          perMonthLabel={t("plans.perMonth")}
-          recommendedLabel={t("plans.recommended")}
-          ctaLabel={t("plans.cta")}
-          featureLabel={featureLabel}
-          showMoreLabel={(count) => t("plans.showMore", { count })}
-          showLessLabel={t("plans.showLess")}
-        />
+        {editorial.visibility.plansHeader !== false ? (
+          <Plans
+            plans={plans}
+            title={editorial.plansHeader.title || t("plans.title")}
+            standfirst={editorial.plansHeader.standfirst || t("plans.standfirst")}
+            locale={locale}
+            perMonthLabel={t("plans.perMonth")}
+            recommendedLabel={t("plans.recommended")}
+            ctaLabel={t("plans.cta")}
+            featureLabel={featureLabel}
+            showMoreLabel={(count) => t("plans.showMore", { count })}
+            showLessLabel={t("plans.showLess")}
+          />
+        ) : null}
 
-        <ShareStory
-          icon={<PenLineIcon />}
-          heading={t("shareStory.heading")}
-          standfirst={t("shareStory.standfirst")}
-          ctaLabel={t("shareStory.cta")}
-          ctaHref="/writing-room"
-        />
+        {editorial.visibility.closingCta !== false ? (
+          <ShareStory
+            icon={<PenLineIcon />}
+            heading={editorial.closingCta.heading || t("shareStory.heading")}
+            standfirst={editorial.closingCta.standfirst || t("shareStory.standfirst")}
+            ctaLabel={editorial.closingCta.ctaLabel || t("shareStory.cta")}
+            ctaHref={editorial.closingCtaHref || "/writing-room"}
+          />
+        ) : null}
       </main>
     </SmoothScroll>
   );
