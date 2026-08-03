@@ -168,7 +168,26 @@ export async function MagazinePage({ locale }: { locale: string }) {
           isRtl={isRtl}
         />
 
-        <InnerSectionCards locale={locale} />
+        <InnerSectionCards
+          join={{
+            title: editorial.actionCardJoin.title || t("innerCards.1.title"),
+            body: editorial.actionCardJoin.body || t("innerCards.1.body"),
+            ctaLabel: editorial.actionCardJoin.ctaLabel || t("innerCards.1.cta"),
+            ctaHref: editorial.actionCardJoinHref || "/collectives",
+          }}
+          gift={{
+            title: editorial.actionCardGift.title || t("innerCards.2.title"),
+            body: editorial.actionCardGift.body || t("innerCards.2.body"),
+            ctaLabel: editorial.actionCardGift.ctaLabel || t("innerCards.2.cta"),
+            ctaHref: editorial.actionCardGiftHref || "/subscribe",
+          }}
+          share={{
+            title: editorial.actionCardShare.title || t("innerCards.3.title"),
+            body: editorial.actionCardShare.body || t("innerCards.3.body"),
+            ctaLabel: editorial.actionCardShare.ctaLabel || t("innerCards.3.cta"),
+            ctaHref: editorial.actionCardShareHref || "/writing-room",
+          }}
+        />
 
         {editorial.visibility.featuredHeader !== false ? (
           <FeaturedRail
