@@ -55,116 +55,71 @@ export function clampFontScale(value: unknown): number {
 
 export const MAGAZINE_SECTION_TYPES = {
   hero: "magazine_hero",
-  manifesto: "magazine_manifesto",
-  founderQuote: "magazine_founder_quote",
-  newsletterCopy: "magazine_newsletter_copy",
-  supportCuration: "magazine_support_curation",
+  actionCardJoin: "magazine_action_card_join",
+  actionCardGift: "magazine_action_card_gift",
+  actionCardShare: "magazine_action_card_share",
+  featuredHeader: "magazine_featured_header",
+  collectionsHeader: "magazine_collections_header",
+  latestHeader: "magazine_latest_header",
+  plansHeader: "magazine_plans_header",
+  closingCta: "magazine_closing_cta",
 } as const;
 
 export type MagazineSectionKey = keyof typeof MAGAZINE_SECTION_TYPES;
 
 // ── Per-section config shapes ──────────────────────────────────────
 
-/** Hero section editable fields. Locale-keyed. */
+/** Hero section editable fields. Locale-keyed. Field names match the new
+ * page's Hero component props (title/standfirst/readCtaLabel). */
 export type HeroLocaleFields = {
   title?: string;
-  subtitle?: string;
-  primaryCtaLabel?: string;
-  secondaryCtaLabel?: string;
+  standfirst?: string;
+  ctaLabel?: string;
 };
 
-/** Hero config also carries non-localized fields (image, links). */
+/** Hero config also carries non-localized fields (background image). */
 export type HeroConfig = {
   copy: Localized<HeroLocaleFields>;
   artwork?: string;
   /** How `artwork` sits in the hero frame. Undefined = default framing. */
   artworkFraming?: ImageFraming;
-  primaryHref?: string;
-  secondaryHref?: string;
-  /** Per-section text scale (1 = current sizes). */
-  fontScale?: number;
 };
 
 export const EMPTY_HERO_CONFIG: HeroConfig = { copy: {} };
 
-/** Manifesto — long-form per-locale copy plus the silk banner image
- * (shared across locales, same as Hero artwork). */
-export type ManifestoLocaleFields = {
-  philosophyHeading?: string;
-  philosophyQuote?: string;
-  visionHeading?: string;
-  visionBody?: string;
-  missionHeading?: string;
-  missionBody?: string;
-  valuesHeading?: string;
-  closingQuote?: string;
-};
-/** Text alignment for prose sections. Direction-relative (`start`/`end`)
- *  so it reads correctly under both LTR and RTL locales. Unset = `start`. */
-export type MagazineTextAlign = "start" | "center" | "end" | "justify";
-
-/** Validate a stored value into a supported alignment, else undefined. */
-export function readTextAlign(
-  cfg: Record<string, unknown> | null,
-): MagazineTextAlign | undefined {
-  const v = cfg?.textAlign;
-  return v === "start" || v === "center" || v === "end" || v === "justify"
-    ? v
-    : undefined;
-}
-
-export type ManifestoConfig = {
-  copy: Localized<ManifestoLocaleFields>;
-  banner?: string;
-  /** Admin toggle — when true the silk banner image is hidden on the page. */
-  bannerHidden?: boolean;
-  /** Per-section text scale (1 = current sizes). */
-  fontScale?: number;
-  /** Per-section text alignment (unset = start). */
-  textAlign?: MagazineTextAlign;
-};
-export const EMPTY_MANIFESTO_CONFIG: ManifestoConfig = { copy: {} };
-
-/** Founder quote — quote/name/role per locale, avatar URL shared. */
-export type FounderQuoteLocaleFields = {
-  quote?: string;
-  name?: string;
-  role?: string;
-};
-export type FounderQuoteConfig = {
-  copy: Localized<FounderQuoteLocaleFields>;
-  avatar?: string;
-  /** How `avatar` sits in its circular frame. Undefined = default framing. */
-  avatarFraming?: ImageFraming;
-  /** Per-section text scale (1 = current sizes). */
-  fontScale?: number;
-};
-export const EMPTY_FOUNDER_CONFIG: FounderQuoteConfig = { copy: {} };
-
-/** Newsletter section copy — title + body per locale. */
-export type NewsletterCopyLocaleFields = {
+/** Action card — one shape, reused for the 3 action-card sections
+ * (Join Collective / Send Gift / Share Story). */
+export type ActionCardLocaleFields = {
   title?: string;
   body?: string;
+  ctaLabel?: string;
 };
-export type NewsletterCopyConfig = {
-  copy: Localized<NewsletterCopyLocaleFields>;
-  /** Per-section text scale (1 = current sizes). */
-  fontScale?: number;
+export type ActionCardConfig = {
+  copy: Localized<ActionCardLocaleFields>;
+  ctaHref?: string;
 };
-export const EMPTY_NEWSLETTER_CONFIG: NewsletterCopyConfig = { copy: {} };
+export const EMPTY_ACTION_CARD_CONFIG: ActionCardConfig = { copy: {} };
 
-/** Support / Collaborations heading copy. Curation (which
- * contributions appear) is deferred — only copy is editable now. */
-export type SupportLocaleFields = {
+/** Rail header — one shape, reused for Featured/Collections/Latest/Plans
+ * section headers. No shared (non-localized) fields. */
+export type RailHeaderLocaleFields = {
+  title?: string;
+  standfirst?: string;
+};
+export type RailHeaderConfig = { copy: Localized<RailHeaderLocaleFields> };
+export const EMPTY_RAIL_HEADER_CONFIG: RailHeaderConfig = { copy: {} };
+
+/** Closing CTA — the full-width "Share your story" section at the page's end. */
+export type ClosingCtaLocaleFields = {
   heading?: string;
-  subheading?: string;
+  standfirst?: string;
+  ctaLabel?: string;
 };
-export type SupportConfig = {
-  copy: Localized<SupportLocaleFields>;
-  /** Per-section text scale (1 = current sizes). */
-  fontScale?: number;
+export type ClosingCtaConfig = {
+  copy: Localized<ClosingCtaLocaleFields>;
+  ctaHref?: string;
 };
-export const EMPTY_SUPPORT_CONFIG: SupportConfig = { copy: {} };
+export const EMPTY_CLOSING_CTA_CONFIG: ClosingCtaConfig = { copy: {} };
 
 // ── Bootstrap ──────────────────────────────────────────────────────
 
@@ -173,11 +128,15 @@ const SEED_SECTIONS: Array<{
   title: string;
   order: number;
 }> = [
-  { key: "hero", title: "Magazine Hero", order: 1 },
-  { key: "manifesto", title: "Manifesto", order: 2 },
-  { key: "founderQuote", title: "Founder Quote", order: 3 },
-  { key: "newsletterCopy", title: "Newsletter Copy", order: 4 },
-  { key: "supportCuration", title: "Support / Collaborations", order: 5 },
+  { key: "hero", title: "Hero", order: 1 },
+  { key: "actionCardJoin", title: "Action Card — Join Collective", order: 2 },
+  { key: "actionCardGift", title: "Action Card — Send Gift", order: 3 },
+  { key: "actionCardShare", title: "Action Card — Share Story", order: 4 },
+  { key: "featuredHeader", title: "Featured Content Header", order: 5 },
+  { key: "collectionsHeader", title: "Collections Header", order: 6 },
+  { key: "latestHeader", title: "Latest Content Header", order: 7 },
+  { key: "plansHeader", title: "Plans Header", order: 8 },
+  { key: "closingCta", title: "Closing CTA", order: 9 },
 ];
 
 /**
@@ -282,11 +241,6 @@ export function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
     copy,
     artwork: typeof cfg.artwork === "string" ? cfg.artwork : undefined,
     artworkFraming: readFraming(cfg, "artworkFraming"),
-    primaryHref:
-      typeof cfg.primaryHref === "string" ? cfg.primaryHref : undefined,
-    secondaryHref:
-      typeof cfg.secondaryHref === "string" ? cfg.secondaryHref : undefined,
-    fontScale: readFontScale(cfg),
   };
 }
 
@@ -326,83 +280,60 @@ function parseLocaleKeyed<T>(
   return { copy };
 }
 
-export function parseManifestoConfig(
+export function parseActionCardConfig(
   section: CmsSection | undefined,
-): ManifestoConfig {
-  const base = parseLocaleKeyed<ManifestoLocaleFields>(
+): ActionCardConfig {
+  const base = parseLocaleKeyed<ActionCardLocaleFields>(
     section,
-    EMPTY_MANIFESTO_CONFIG,
+    EMPTY_ACTION_CARD_CONFIG,
   );
   const cfg = unwrapConfig(section) ?? {};
   return {
     copy: base.copy,
-    banner: typeof cfg.banner === "string" ? cfg.banner : undefined,
-    bannerHidden: cfg.bannerHidden === true,
-    fontScale: readFontScale(cfg),
-    textAlign: readTextAlign(cfg),
+    ctaHref: typeof cfg.ctaHref === "string" ? cfg.ctaHref : undefined,
   };
 }
 
-export function parseFounderConfig(
+export function parseRailHeaderConfig(
   section: CmsSection | undefined,
-): FounderQuoteConfig {
-  const base = parseLocaleKeyed<FounderQuoteLocaleFields>(
+): RailHeaderConfig {
+  return parseLocaleKeyed<RailHeaderLocaleFields>(
     section,
-    EMPTY_FOUNDER_CONFIG,
+    EMPTY_RAIL_HEADER_CONFIG,
+  );
+}
+
+export function parseClosingCtaConfig(
+  section: CmsSection | undefined,
+): ClosingCtaConfig {
+  const base = parseLocaleKeyed<ClosingCtaLocaleFields>(
+    section,
+    EMPTY_CLOSING_CTA_CONFIG,
   );
   const cfg = unwrapConfig(section) ?? {};
   return {
     copy: base.copy,
-    avatar: typeof cfg.avatar === "string" ? cfg.avatar : undefined,
-    avatarFraming: readFraming(cfg, "avatarFraming"),
-    fontScale: readFontScale(cfg),
+    ctaHref: typeof cfg.ctaHref === "string" ? cfg.ctaHref : undefined,
   };
 }
 
-export function parseNewsletterConfig(
-  section: CmsSection | undefined,
-): NewsletterCopyConfig {
-  const base = parseLocaleKeyed<NewsletterCopyLocaleFields>(
-    section,
-    EMPTY_NEWSLETTER_CONFIG,
-  );
-  return { copy: base.copy, fontScale: readFontScale(unwrapConfig(section)) };
-}
-
-export function parseSupportConfig(
-  section: CmsSection | undefined,
-): SupportConfig {
-  const base = parseLocaleKeyed<SupportLocaleFields>(
-    section,
-    EMPTY_SUPPORT_CONFIG,
-  );
-  return { copy: base.copy, fontScale: readFontScale(unwrapConfig(section)) };
-}
-
-export function pickManifestoLocale(
-  cfg: ManifestoConfig,
+export function pickActionCardLocale(
+  cfg: ActionCardConfig,
   locale: string,
-): ManifestoLocaleFields {
-  return pickLocale(cfg.copy, locale) as ManifestoLocaleFields;
+): ActionCardLocaleFields {
+  return pickLocale(cfg.copy, locale) as ActionCardLocaleFields;
 }
 
-export function pickFounderLocale(
-  cfg: FounderQuoteConfig,
+export function pickRailHeaderLocale(
+  cfg: RailHeaderConfig,
   locale: string,
-): FounderQuoteLocaleFields {
-  return pickLocale(cfg.copy, locale) as FounderQuoteLocaleFields;
+): RailHeaderLocaleFields {
+  return pickLocale(cfg.copy, locale) as RailHeaderLocaleFields;
 }
 
-export function pickNewsletterLocale(
-  cfg: NewsletterCopyConfig,
+export function pickClosingCtaLocale(
+  cfg: ClosingCtaConfig,
   locale: string,
-): NewsletterCopyLocaleFields {
-  return pickLocale(cfg.copy, locale) as NewsletterCopyLocaleFields;
-}
-
-export function pickSupportLocale(
-  cfg: SupportConfig,
-  locale: string,
-): SupportLocaleFields {
-  return pickLocale(cfg.copy, locale) as SupportLocaleFields;
+): ClosingCtaLocaleFields {
+  return pickLocale(cfg.copy, locale) as ClosingCtaLocaleFields;
 }
