@@ -8,6 +8,26 @@
  */
 import { fetchPlans, type SubscriptionPlan } from "@/lib/api/subscriptions";
 import { getCollections, type CollectionItem } from "@/services/collections.service";
+import { serverGet } from "@/lib/api/isomorphic-fetch";
+import type { CmsPage } from "@/services/cms.service";
+import type { ImageFraming } from "@/lib/image-framing";
+import {
+  MAGAZINE_PAGE_SLUG,
+  findSection,
+  parseHeroConfig,
+  pickHeroLocale,
+  parseActionCardConfig,
+  pickActionCardLocale,
+  parseRailHeaderConfig,
+  pickRailHeaderLocale,
+  parseClosingCtaConfig,
+  pickClosingCtaLocale,
+  type HeroLocaleFields,
+  type ActionCardLocaleFields,
+  type RailHeaderLocaleFields,
+  type ClosingCtaLocaleFields,
+  type MagazineSectionKey,
+} from "@/services/magazine-page.service";
 
 export {
   attachArticleFraming,
@@ -17,7 +37,6 @@ export {
   fetchWriters,
   fetchIssues,
   fetchCurrentIssue,
-  fetchEditorialCopy,
   type ArticleCard,
   type IssueCard,
 } from "@/components/home/magazine-next/data";
@@ -104,4 +123,104 @@ export async function fetchPlansSafe(): Promise<PlanCard[]> {
   const idx = recommendedIndex >= 0 ? recommendedIndex : Math.floor((active.length - 1) / 2);
 
   return active.map((plan, i) => ({ ...plan, recommended: i === idx }));
+}
+
+/**
+ * CMS-editable editorial copy for every admin-editable section on this page.
+ * Each field is already locale-resolved; empty strings mean "no override"
+ * and the caller falls back to its i18n default. `visibility` reports which
+ * sections are toggled on, so the caller can hide a whole rail (header +
+ * cards) rather than just its header text.
+ */
+export type MagEditorialCopy = {
+  hero: HeroLocaleFields;
+  /** CMS hero artwork override — read at the FRONT of the existing hero
+   * background fallback chain (issue cover > page-hero > CMS editorial >
+   * first featured article > default image). */
+  heroArtwork?: string;
+  heroArtworkFraming?: ImageFraming;
+  actionCardJoin: ActionCardLocaleFields;
+  actionCardJoinHref?: string;
+  actionCardGift: ActionCardLocaleFields;
+  actionCardGiftHref?: string;
+  actionCardShare: ActionCardLocaleFields;
+  actionCardShareHref?: string;
+  featuredHeader: RailHeaderLocaleFields;
+  collectionsHeader: RailHeaderLocaleFields;
+  latestHeader: RailHeaderLocaleFields;
+  plansHeader: RailHeaderLocaleFields;
+  closingCta: ClosingCtaLocaleFields;
+  closingCtaHref?: string;
+  /** Whether each CMS section is currently visible. Missing key = treat as
+   * visible (matches `is_visible` defaulting to `true` on section create). */
+  visibility: Partial<Record<MagazineSectionKey, boolean>>;
+};
+
+const EMPTY_EDITORIAL_COPY: MagEditorialCopy = {
+  hero: {},
+  actionCardJoin: {},
+  actionCardGift: {},
+  actionCardShare: {},
+  featuredHeader: {},
+  collectionsHeader: {},
+  latestHeader: {},
+  plansHeader: {},
+  closingCta: {},
+  visibility: {},
+};
+
+/**
+ * CMS-backed editorial copy for `/magazine`. A missing page, invisible
+ * section, or fetch failure resolves to empty fields so every section
+ * degrades to its i18n default — same graceful-degradation contract as
+ * every other fetch in this file.
+ */
+export async function fetchEditorialCopy(locale: string): Promise<MagEditorialCopy> {
+  let page: CmsPage | { data?: CmsPage } | null;
+  try {
+    page = await serverGet<CmsPage | { data: CmsPage }>(
+      `/cms/pages/slug/${MAGAZINE_PAGE_SLUG}`,
+    );
+  } catch {
+    return EMPTY_EDITORIAL_COPY;
+  }
+  const unwrapped = page
+    ? ((page as { data?: CmsPage }).data ?? (page as CmsPage))
+    : null;
+
+  const visibility: Partial<Record<MagazineSectionKey, boolean>> = {};
+  const pickVisible = (key: MagazineSectionKey) => {
+    const s = findSection(unwrapped, key);
+    visibility[key] = s?.is_visible ?? true;
+    return s && s.is_visible ? s : undefined;
+  };
+
+  const heroCfg = parseHeroConfig(pickVisible("hero"));
+  const joinCfg = parseActionCardConfig(pickVisible("actionCardJoin"));
+  const giftCfg = parseActionCardConfig(pickVisible("actionCardGift"));
+  const shareCfg = parseActionCardConfig(pickVisible("actionCardShare"));
+  const featuredCfg = parseRailHeaderConfig(pickVisible("featuredHeader"));
+  const collectionsCfg = parseRailHeaderConfig(pickVisible("collectionsHeader"));
+  const latestCfg = parseRailHeaderConfig(pickVisible("latestHeader"));
+  const plansCfg = parseRailHeaderConfig(pickVisible("plansHeader"));
+  const closingCfg = parseClosingCtaConfig(pickVisible("closingCta"));
+
+  return {
+    hero: pickHeroLocale(heroCfg, locale),
+    heroArtwork: heroCfg.artwork,
+    heroArtworkFraming: heroCfg.artworkFraming,
+    actionCardJoin: pickActionCardLocale(joinCfg, locale),
+    actionCardJoinHref: joinCfg.ctaHref,
+    actionCardGift: pickActionCardLocale(giftCfg, locale),
+    actionCardGiftHref: giftCfg.ctaHref,
+    actionCardShare: pickActionCardLocale(shareCfg, locale),
+    actionCardShareHref: shareCfg.ctaHref,
+    featuredHeader: pickRailHeaderLocale(featuredCfg, locale),
+    collectionsHeader: pickRailHeaderLocale(collectionsCfg, locale),
+    latestHeader: pickRailHeaderLocale(latestCfg, locale),
+    plansHeader: pickRailHeaderLocale(plansCfg, locale),
+    closingCta: pickClosingCtaLocale(closingCfg, locale),
+    closingCtaHref: closingCfg.ctaHref,
+    visibility,
+  };
 }
