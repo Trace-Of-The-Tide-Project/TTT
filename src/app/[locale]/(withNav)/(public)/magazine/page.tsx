@@ -1,10 +1,8 @@
-// The rebuilt scroll-first magazine homepage. The previous tab-based
-// magazine page is preserved verbatim in `./_magazine-original.tsx`.
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { MagazineNextPage } from "@/components/home/magazine-next/MagazineNextPage";
+import { MagazinePage } from "@/components/home/magazine-page/MagazinePage";
 
-// Highly dynamic (issues, articles, books, writers change any time).
+// Highly dynamic (articles, collections change any time).
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
@@ -13,7 +11,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "MagazineNext" });
+  const t = await getTranslations({ locale, namespace: "Magazine" });
   return {
     title: t("meta.title"),
     description: t("meta.description"),
@@ -36,5 +34,5 @@ export default async function Magazine({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  return <MagazineNextPage locale={locale} />;
+  return <MagazinePage locale={locale} />;
 }

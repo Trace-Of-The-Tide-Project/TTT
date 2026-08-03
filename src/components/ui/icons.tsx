@@ -538,9 +538,9 @@ export function MoreDotsIcon() {
   );
 }
 
-export function CalendarIcon() {
+export function CalendarIcon({ size = 14 }: { size?: number } = {}) {
   return (
-    <svg {...iconProps} width={14} height={14} viewBox="0 0 24 24">
+    <svg {...iconProps} width={size} height={size} viewBox="0 0 24 24">
       <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
       <line x1="16" y1="2" x2="16" y2="6" />
       <line x1="8" y1="2" x2="8" y2="6" />
@@ -579,9 +579,9 @@ export function LayoutDashboardIcon() {
   );
 }
 
-export function FolderIcon() {
+export function FolderIcon({ size = 18 }: { size?: number } = {}) {
   return (
-    <svg {...iconProps}>
+    <svg {...iconProps} width={size} height={size}>
       <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
     </svg>
   );

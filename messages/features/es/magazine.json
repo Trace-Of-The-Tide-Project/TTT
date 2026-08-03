@@ -1,0 +1,71 @@
+{
+  "Magazine": {
+    "meta": {
+      "title": "Revista — Trace of the Tide",
+      "description": "Narrativas de la costa, voces de la comunidad y lo último de la revista Trace of the Tide.",
+      "eyebrow": "Trace of the Tide"
+    },
+    "hero": {
+      "title": "Narrativas de la costa: voces de la comunidad",
+      "standfirst": "Historias, ensayos y testimonios de quienes llevan la marea consigo.",
+      "ctaRead": "Leer el último número",
+      "noIssue": "Aún no hay ningún número publicado — vuelve pronto."
+    },
+    "carousel": {
+      "prev": "Anterior",
+      "next": "Siguiente"
+    },
+    "innerCards": {
+      "1": {
+        "title": "Únete al Colectivo",
+        "body": "Conecta con escritores, artistas y archivistas que dan forma a cada número juntos.",
+        "cta": "¡Únete ahora!"
+      },
+      "2": {
+        "title": "Regala una suscripción",
+        "body": "Regala una suscripción y comparte la marea con quien disfrutaría estas historias.",
+        "cta": "Enviar regalo"
+      },
+      "3": {
+        "title": "Comparte tu historia",
+        "body": "Cada historia importa: comparte tus experiencias, testimonios o investigaciones.",
+        "cta": "Comparte tu historia"
+      }
+    },
+    "featured": {
+      "title": "Contenido destacado",
+      "standfirst": "Historias seleccionadas por la redacción de esta edición."
+    },
+    "collections": {
+      "title": "Colecciones",
+      "standfirst": "Agrupaciones curadas por temas y ediciones."
+    },
+    "latest": {
+      "title": "Contenido más reciente",
+      "standfirst": "Las últimas incorporaciones a la revista."
+    },
+    "articleCount": "{count} artículos",
+    "plans": {
+      "title": "Hazte suscriptor",
+      "standfirst": "Apoya el trabajo editorial independiente y accede a todos los números.",
+      "perMonth": "/ mes",
+      "recommended": "Más popular",
+      "cta": "Elegir plan",
+      "showMore": "+{count} más",
+      "showLess": "Ver menos"
+    },
+    "viewMore": "Ver más",
+    "edition": "Edición",
+    "shareStory": {
+      "heading": "Comparte tu historia",
+      "standfirst": "Cada historia importa. Ayúdanos a preservar la memoria colectiva compartiendo tus experiencias personales, testimonios o conocimiento de hechos históricos.",
+      "cta": "¡Colabora ahora!"
+    },
+    "issueNotFound": {
+      "badge": "Próximamente",
+      "title": "Aún no tenemos este número",
+      "description": "Este número no está disponible por ahora — puede que siga en preparación o que ya no exista. Vuelve a la revista para ver lo que sí está disponible.",
+      "cta": "Volver a la revista"
+    }
+  }
+}

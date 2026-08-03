@@ -153,7 +153,7 @@ html {
   --tott-gold-chip-ink: #332217;
   --tott-content-quote-border: #bd9352;
   --tott-content-stat-label: #a3a3a3;
-  /* magazine-v3 (Figma) body/meta text on dark card scrims. */
+  /* Magazine page (Figma) body/meta text on dark card scrims. */
   --tott-text-secondary: #a3a3a3;
   --tott-text-secondary-soft: #d6d6d6;
   --tott-glass-bg: rgba(var(--tott-home-surface-rgb), 0.64);
@@ -515,7 +515,7 @@ html[lang="ar"] {
   --font-serif: var(--font-plex-serif), var(--font-plex-arabic), Georgia, serif;
   /* Homepage display face: Plex Serif for Latin, Amiri (Naskh serif) for Arabic. */
   --font-display: var(--font-plex-serif), var(--font-amiri), var(--font-plex-arabic), Georgia, serif;
-  /* magazine-v3 body/UI face (Figma spec). Latin only — RTL still reads Plex Arabic via --font-sans fallback chain below. */
+  /* Magazine page body/UI face (Figma spec). Latin only — RTL still reads Plex Arabic via --font-sans fallback chain below. */
   --font-body-ui: var(--font-inter), var(--font-plex-arabic), system-ui, sans-serif;
 }
 
