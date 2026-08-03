@@ -27,30 +27,6 @@ export type MagazineLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export type Localized<T> = Partial<Record<MagazineLocale, T>>;
 
-// ── Font size (per-section) ────────────────────────────────────────
-
-/** Default scale — reproduces the components' built-in sizes exactly. */
-export const DEFAULT_FONT_SCALE = 1;
-
-/** Admin presets shown as buttons in the editor. `default` (1×) is the
- * current site sizing; the others scale a section's text up/down together. */
-export const MAGAZINE_FONT_PRESETS = [
-  { key: "small", scale: 0.9 },
-  { key: "default", scale: 1 },
-  { key: "large", scale: 1.15 },
-  { key: "xl", scale: 1.3 },
-] as const;
-
-export type MagazineFontPresetKey = (typeof MAGAZINE_FONT_PRESETS)[number]["key"];
-
-/** Clamp an arbitrary stored value into the supported range, defaulting to 1. */
-export function clampFontScale(value: unknown): number {
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return Math.min(2, Math.max(0.5, value));
-  }
-  return DEFAULT_FONT_SCALE;
-}
-
 // ── Section type registry ──────────────────────────────────────────
 
 export const MAGAZINE_SECTION_TYPES = {
@@ -182,7 +158,7 @@ export function findSection(
   page: CmsPage | null | undefined,
   key: MagazineSectionKey,
 ): CmsSection | undefined {
-  if (!page) return undefined;
+  if (!page || !Array.isArray(page.sections)) return undefined;
   return page.sections.find(
     (s) => s.section_type === MAGAZINE_SECTION_TYPES[key],
   );
@@ -209,13 +185,6 @@ function unwrapConfig(
     }
   }
   return raw as Record<string, unknown>;
-}
-
-/** Read the per-section font scale from raw config, if present and valid. */
-function readFontScale(cfg: Record<string, unknown> | null): number | undefined {
-  if (!cfg) return undefined;
-  const n = cfg.fontScale;
-  return typeof n === "number" && Number.isFinite(n) ? clampFontScale(n) : undefined;
 }
 
 /** Read an image-framing object out of raw config, if present and valid.
