@@ -17,8 +17,8 @@
           "kind": "Discipline",
           "location": "Lieu",
           "account": "Compte",
-          "featured": "Accueil",
-          "editorialBoard": "Comité"
+          "featured": "Principal",
+          "editorialBoard": "Magazine"
         },
         "account": {
           "linked": "A un compte",

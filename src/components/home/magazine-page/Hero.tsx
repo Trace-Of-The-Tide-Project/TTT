@@ -41,6 +41,7 @@ export function Hero({
   carouselPrevLabel,
   carouselNextLabel,
   isRtl,
+  titleFontSize,
 }: {
   eyebrow?: string;
   title: string;
@@ -59,6 +60,8 @@ export function Hero({
   carouselPrevLabel: string;
   carouselNextLabel: string;
   isRtl: boolean;
+  /** Admin-set title font size (px). Undefined = default 40px from the class. */
+  titleFontSize?: number;
 }) {
   const reduced = useReducedMotion();
   const textVariant = reduced ? fadeIn : fadeUp;
@@ -170,6 +173,8 @@ export function Hero({
                 className="font-['IBM_Plex_Sans'] text-[40px] font-medium leading-[48px] text-[var(--tott-home-text-warm)]"
                 style={{
                   textShadow: "0 4px 32px color-mix(in srgb, var(--tott-well-bg) 70%, transparent)",
+                  fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
+                  lineHeight: titleFontSize ? 1.2 : undefined,
                 }}
               >
                 {title}

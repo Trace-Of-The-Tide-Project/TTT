@@ -1,6 +1,7 @@
 import { api } from "./api";
 import { serverGet } from "@/lib/api/isomorphic-fetch";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+import { normalizeArticlesListPayload, type ArticleListItem } from "./articles.service";
 
 /**
  * Writer profile — surface for the "Follow our Writers" row. The
@@ -289,6 +290,25 @@ export async function getWriterTopWorks(
   } catch {
     return [];
   }
+}
+
+/** GET /writers/{id}/works — public. Every article credited to this writer
+ * (owner, byline, or contributor), newest first. */
+export async function getWriterWorks(
+  id: string,
+  params?: Record<string, string | number | undefined>,
+): Promise<{ status: number; results: number; data: ArticleListItem[] }> {
+  const path = `/writers/${encodeURIComponent(id)}/works`;
+  const data =
+    typeof window === "undefined"
+      ? await serverGet<unknown>(path, params)
+      : (await api.get<unknown>(path, { params })).data;
+  const list = normalizeArticlesListPayload(data);
+  const o = data && typeof data === "object" ? (data as Record<string, unknown>) : {};
+  const results =
+    typeof o.results === "number" && Number.isFinite(o.results) ? o.results : list.length;
+  const status = typeof o.status === "number" && Number.isFinite(o.status) ? o.status : 200;
+  return { status, results, data: list };
 }
 
 /** POST /writers/{id}/support — works for guests (OptionalJwtAuthGuard). */

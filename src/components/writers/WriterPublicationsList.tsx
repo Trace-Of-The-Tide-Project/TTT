@@ -30,20 +30,16 @@ function RowSkeleton() {
 }
 
 export function WriterPublicationsList({
-  userId,
   works,
   isPending,
   isError,
 }: {
-  userId: string | null;
   works: ArticleListItem[];
   isPending: boolean;
   isError: boolean;
 }) {
   const t = useTranslations("Writers");
   const [filter, setFilter] = useState<FilterId>("all");
-
-  if (!userId) return null;
 
   const filtered =
     filter === "all" ? works : works.filter((a) => a.content_type === filter);

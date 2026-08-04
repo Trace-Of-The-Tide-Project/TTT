@@ -59,6 +59,8 @@ export type HeroConfig = {
   artwork?: string;
   /** How `artwork` sits in the hero frame. Undefined = default framing. */
   artworkFraming?: ImageFraming;
+  /** Admin-set title font size (px). Undefined = component default. */
+  titleFontSize?: number;
 };
 
 export const EMPTY_HERO_CONFIG: HeroConfig = { copy: {} };
@@ -73,6 +75,7 @@ export type ActionCardLocaleFields = {
 export type ActionCardConfig = {
   copy: Localized<ActionCardLocaleFields>;
   ctaHref?: string;
+  titleFontSize?: number;
 };
 export const EMPTY_ACTION_CARD_CONFIG: ActionCardConfig = { copy: {} };
 
@@ -82,7 +85,10 @@ export type RailHeaderLocaleFields = {
   title?: string;
   standfirst?: string;
 };
-export type RailHeaderConfig = { copy: Localized<RailHeaderLocaleFields> };
+export type RailHeaderConfig = {
+  copy: Localized<RailHeaderLocaleFields>;
+  titleFontSize?: number;
+};
 export const EMPTY_RAIL_HEADER_CONFIG: RailHeaderConfig = { copy: {} };
 
 /** Closing CTA — the full-width "Share your story" section at the page's end. */
@@ -94,6 +100,7 @@ export type ClosingCtaLocaleFields = {
 export type ClosingCtaConfig = {
   copy: Localized<ClosingCtaLocaleFields>;
   ctaHref?: string;
+  titleFontSize?: number;
 };
 export const EMPTY_CLOSING_CTA_CONFIG: ClosingCtaConfig = { copy: {} };
 
@@ -197,6 +204,16 @@ function readFraming(
   return cfg ? clampFraming(cfg[key]) : undefined;
 }
 
+/** Read a numeric px font size out of raw config, clamped to a sane range. */
+function readFontSize(
+  cfg: Record<string, unknown> | null,
+  key = "titleFontSize",
+): number | undefined {
+  const v = cfg?.[key];
+  if (typeof v !== "number" || !Number.isFinite(v)) return undefined;
+  return Math.min(120, Math.max(10, Math.round(v)));
+}
+
 export function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
   const cfg = unwrapConfig(section);
   if (!cfg) return EMPTY_HERO_CONFIG;
@@ -210,6 +227,7 @@ export function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
     copy,
     artwork: typeof cfg.artwork === "string" ? cfg.artwork : undefined,
     artworkFraming: readFraming(cfg, "artworkFraming"),
+    titleFontSize: readFontSize(cfg),
   };
 }
 
@@ -260,16 +278,19 @@ export function parseActionCardConfig(
   return {
     copy: base.copy,
     ctaHref: typeof cfg.ctaHref === "string" ? cfg.ctaHref : undefined,
+    titleFontSize: readFontSize(cfg),
   };
 }
 
 export function parseRailHeaderConfig(
   section: CmsSection | undefined,
 ): RailHeaderConfig {
-  return parseLocaleKeyed<RailHeaderLocaleFields>(
+  const base = parseLocaleKeyed<RailHeaderLocaleFields>(
     section,
     EMPTY_RAIL_HEADER_CONFIG,
   );
+  const cfg = unwrapConfig(section);
+  return { copy: base.copy, titleFontSize: readFontSize(cfg) };
 }
 
 export function parseClosingCtaConfig(
@@ -283,6 +304,7 @@ export function parseClosingCtaConfig(
   return {
     copy: base.copy,
     ctaHref: typeof cfg.ctaHref === "string" ? cfg.ctaHref : undefined,
+    titleFontSize: readFontSize(cfg),
   };
 }
 

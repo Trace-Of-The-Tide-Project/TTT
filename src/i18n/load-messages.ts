@@ -42,6 +42,8 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/writers.json`),
     import(`../../messages/features/${locale}/dashboard/tasks.json`),
     import(`../../messages/features/${locale}/dashboard/media-library.json`),
+    import(`../../messages/features/${locale}/dashboard/help.json`),
+    import(`../../messages/features/${locale}/dashboard/messages.json`),
     /**
      * Shell merged last so `Dashboard.sidebar` (system settings, profile, etc.),
      * layout, topbar, and shared placeholders are never overwritten by other slices.

@@ -15,6 +15,7 @@ export function CollectionsRow({
   standfirst,
   viewMoreLabel,
   articleCountLabel,
+  titleFontSize,
 }: {
   collections: CollectionCardData[];
   title: string;
@@ -22,6 +23,7 @@ export function CollectionsRow({
   viewMoreLabel: string;
   /** i18n interpolator, e.g. (count) => t("articleCount", { count }). */
   articleCountLabel: (count: number) => string;
+  titleFontSize?: number;
 }) {
   if (collections.length === 0) return null;
 
@@ -33,6 +35,7 @@ export function CollectionsRow({
         standfirst={standfirst}
         viewMoreLabel={viewMoreLabel}
         viewMoreHref="/collections"
+        titleFontSize={titleFontSize}
       />
       <div className="mt-10 flex items-start gap-2 overflow-x-auto px-6 pb-2 sm:px-10 lg:justify-center lg:overflow-visible [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {collections.map((c) => (

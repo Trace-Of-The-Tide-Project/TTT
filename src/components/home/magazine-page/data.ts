@@ -139,18 +139,27 @@ export type MagEditorialCopy = {
    * first featured article > default image). */
   heroArtwork?: string;
   heroArtworkFraming?: ImageFraming;
+  heroTitleFontSize?: number;
   actionCardJoin: ActionCardLocaleFields;
   actionCardJoinHref?: string;
+  actionCardJoinTitleFontSize?: number;
   actionCardGift: ActionCardLocaleFields;
   actionCardGiftHref?: string;
+  actionCardGiftTitleFontSize?: number;
   actionCardShare: ActionCardLocaleFields;
   actionCardShareHref?: string;
+  actionCardShareTitleFontSize?: number;
   featuredHeader: RailHeaderLocaleFields;
+  featuredHeaderTitleFontSize?: number;
   collectionsHeader: RailHeaderLocaleFields;
+  collectionsHeaderTitleFontSize?: number;
   latestHeader: RailHeaderLocaleFields;
+  latestHeaderTitleFontSize?: number;
   plansHeader: RailHeaderLocaleFields;
+  plansHeaderTitleFontSize?: number;
   closingCta: ClosingCtaLocaleFields;
   closingCtaHref?: string;
+  closingCtaTitleFontSize?: number;
   /** Whether each CMS section is currently visible. Missing key = treat as
    * visible (matches `is_visible` defaulting to `true` on section create). */
   visibility: Partial<Record<MagazineSectionKey, boolean>>;
@@ -209,18 +218,27 @@ export async function fetchEditorialCopy(locale: string): Promise<MagEditorialCo
     hero: pickHeroLocale(heroCfg, locale),
     heroArtwork: heroCfg.artwork,
     heroArtworkFraming: heroCfg.artworkFraming,
+    heroTitleFontSize: heroCfg.titleFontSize,
     actionCardJoin: pickActionCardLocale(joinCfg, locale),
     actionCardJoinHref: joinCfg.ctaHref,
+    actionCardJoinTitleFontSize: joinCfg.titleFontSize,
     actionCardGift: pickActionCardLocale(giftCfg, locale),
     actionCardGiftHref: giftCfg.ctaHref,
+    actionCardGiftTitleFontSize: giftCfg.titleFontSize,
     actionCardShare: pickActionCardLocale(shareCfg, locale),
     actionCardShareHref: shareCfg.ctaHref,
+    actionCardShareTitleFontSize: shareCfg.titleFontSize,
     featuredHeader: pickRailHeaderLocale(featuredCfg, locale),
+    featuredHeaderTitleFontSize: featuredCfg.titleFontSize,
     collectionsHeader: pickRailHeaderLocale(collectionsCfg, locale),
+    collectionsHeaderTitleFontSize: collectionsCfg.titleFontSize,
     latestHeader: pickRailHeaderLocale(latestCfg, locale),
+    latestHeaderTitleFontSize: latestCfg.titleFontSize,
     plansHeader: pickRailHeaderLocale(plansCfg, locale),
+    plansHeaderTitleFontSize: plansCfg.titleFontSize,
     closingCta: pickClosingCtaLocale(closingCfg, locale),
     closingCtaHref: closingCfg.ctaHref,
+    closingCtaTitleFontSize: closingCfg.titleFontSize,
     visibility,
   };
 }

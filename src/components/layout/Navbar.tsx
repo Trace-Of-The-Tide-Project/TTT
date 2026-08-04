@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   GridIcon,
   PersonPlusIcon,
@@ -64,6 +65,55 @@ function AvatarBadge({
     >
       {initial}
     </span>
+  );
+}
+
+const THEME_ICONS = { dark: MoonIcon, light: SunIcon, tide: WaveIcon } as const;
+
+/** Morphs its icon to the *current* scheme; clicking cycles dark → light → tide → dark. */
+function ThemeToggleButton({
+  scheme,
+  onClick,
+  label,
+  className,
+  style,
+  children,
+}: {
+  scheme: "dark" | "light" | "tide";
+  onClick: () => void;
+  label: string;
+  className: string;
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
+}) {
+  const Icon = THEME_ICONS[scheme];
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.96 }}
+      className={className}
+      style={style}
+      aria-label={label}
+      title={label}
+    >
+      <span className="relative flex h-[1em] w-[1em] shrink-0 items-center justify-center [&_svg]:h-4 [&_svg]:w-4">
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.span
+            key={scheme}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.5, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 600, damping: 25 }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <Icon />
+          </motion.span>
+        </AnimatePresence>
+      </span>
+      {children}
+    </motion.button>
   );
 }
 
@@ -135,7 +185,6 @@ export function Navbar({
   /* Theme toggle cycles dark → light → tide → dark. The button shows the
      icon/label of the theme it switches *to* (matches the prior 2-state UX). */
   const nextScheme = scheme === "dark" ? "light" : scheme === "light" ? "tide" : "dark";
-  const ThemeIcon = nextScheme === "light" ? SunIcon : nextScheme === "tide" ? WaveIcon : MoonIcon;
   const themeAriaKey =
     nextScheme === "light" ? "switchToLight" : nextScheme === "tide" ? "switchToTide" : "switchToDark";
   const themeLabelKey =
@@ -234,19 +283,17 @@ export function Navbar({
           </div>
 
           {/* Desktop theme toggle */}
-          <button
-            type="button"
+          <ThemeToggleButton
+            scheme={scheme}
             onClick={toggleScheme}
+            label={t(themeAriaKey)}
             className={`hidden lg:flex h-9 w-9 items-center justify-center rounded-lg border transition-colors ${
               isDark
                 ? "border-[color:var(--tott-card-border)] text-gray-400 hover:text-white"
                 : "border-[color:var(--tott-card-border)] text-[color:var(--tott-muted)] hover:text-foreground"
             }`}
             style={{ backgroundColor: chipBg }}
-            aria-label={t(themeAriaKey)}
-          >
-            <ThemeIcon />
-          </button>
+          />
 
           {authResolving ? null : user ? (
             <>
@@ -536,15 +583,14 @@ export function Navbar({
             <span className="my-2 h-px w-full bg-[color:var(--tott-card-border)]" />
 
             {/* Theme toggle — kept in mobile drawer */}
-            <button
-              type="button"
+            <ThemeToggleButton
+              scheme={scheme}
               onClick={toggleScheme}
+              label={t(themeAriaKey)}
               className={`flex w-full items-center gap-3 rounded-md px-4 py-3 text-left transition-colors ${navMuted} ${navRowHover}`}
-              aria-label={t(themeAriaKey)}
             >
-              <ThemeIcon />
               <span>{t(themeLabelKey)}</span>
-            </button>
+            </ThemeToggleButton>
           </div>
         </div>
       </div>

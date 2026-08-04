@@ -16,6 +16,7 @@ import { FirstWordGold } from "@/components/home/magazine/FirstWordGold";
 import { FollowButton } from "@/components/writers/FollowButton";
 import type { WriterDetailView } from "@/components/writers/WriterDetailContent";
 import { framingStyle } from "@/lib/image-framing";
+import { TOTT_HEX_CLIP_PATH } from "@/components/ui/hexClipPath";
 
 const SERIF = "var(--font-plex-serif), 'IBM Plex Serif', Georgia, serif";
 const SANS = "var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif";
@@ -66,47 +67,54 @@ export function WriterProfileHero({ writer }: { writer: WriterDetailView }) {
           animate="visible"
           className="flex flex-col items-start gap-6 sm:flex-row sm:items-start sm:gap-6"
         >
-          {/* Avatar — 72px round */}
+          {/* Avatar — 112px hexagon. A CSS border can't follow a clip-path, so the
+           * outer div is a hex of border colour and the inner one is the same hex
+           * inset by 1px, leaving a hairline edge. */}
           <motion.div
             variants={staggerChild}
             transition={springs.gentle}
-            className="relative size-[72px] shrink-0 overflow-hidden rounded-full"
-            style={{ border: `1px solid ${CARD_BORDER}` }}
+            className="relative size-[160px] shrink-0"
+            style={{ clipPath: TOTT_HEX_CLIP_PATH, background: CARD_BORDER }}
           >
-            {writer.avatar ? (
-              <Image
-                src={writer.avatar}
-                alt=""
-                fill
-                sizes="72px"
-                unoptimized
-                className="select-none object-cover"
-                style={framingStyle(writer.avatarFraming)}
-                draggable={false}
-              />
-            ) : (
-              <div
-                className="flex h-full w-full items-center justify-center"
-                style={{
-                  background:
-                    "color-mix(in srgb, var(--tott-accent-gold) 14%, var(--tott-home-surface))",
-                }}
-              >
-                <span
-                  aria-hidden
+            <div
+              className="absolute inset-[1px] overflow-hidden"
+              style={{ clipPath: TOTT_HEX_CLIP_PATH }}
+            >
+              {writer.avatar ? (
+                <Image
+                  src={writer.avatar}
+                  alt=""
+                  fill
+                  sizes="160px"
+                  unoptimized
+                  className="select-none object-cover"
+                  style={framingStyle(writer.avatarFraming)}
+                  draggable={false}
+                />
+              ) : (
+                <div
+                  className="flex h-full w-full items-center justify-center"
                   style={{
-                    fontFamily: SERIF,
-                    fontWeight: 500,
-                    fontSize: 28,
-                    lineHeight: 1,
-                    color: "var(--tott-home-text-strong)",
-                    opacity: 0.8,
+                    background:
+                      "color-mix(in srgb, var(--tott-accent-gold) 14%, var(--tott-home-surface))",
                   }}
                 >
-                  {initial}
-                </span>
-              </div>
-            )}
+                  <span
+                    aria-hidden
+                    style={{
+                      fontFamily: SERIF,
+                      fontWeight: 500,
+                      fontSize: 60,
+                      lineHeight: 1,
+                      color: "var(--tott-home-text-strong)",
+                      opacity: 0.8,
+                    }}
+                  >
+                    {initial}
+                  </span>
+                </div>
+              )}
+            </div>
           </motion.div>
 
           {/* Editorial block */}

@@ -32,6 +32,7 @@ export function Plans({
   featureLabel,
   showMoreLabel,
   showLessLabel,
+  titleFontSize,
 }: {
   plans: PlanCardData[];
   title: string;
@@ -43,6 +44,7 @@ export function Plans({
   featureLabel: (slug: string) => string;
   showMoreLabel: (count: number) => string;
   showLessLabel: string;
+  titleFontSize?: number;
 }) {
   if (plans.length === 0) return null;
 
@@ -58,6 +60,7 @@ export function Plans({
           style={{
             lineHeight: "var(--tott-display-leading)",
             letterSpacing: "var(--tott-display-tracking)",
+            fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
           }}
         >
           {title}

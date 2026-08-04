@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { SettingsIcon, HelpCircleIcon, SearchIcon } from "@/components/ui/icons";
 import { NotificationDropdown } from "./NotificationDropdown";
 
@@ -23,20 +24,22 @@ export function AdminTopbar() {
 
       {/* Right icons */}
       <div className="flex items-center gap-3">
-        <button
-          type="button"
+        <Link
+          href="/admin/help"
           className="p-2 text-[var(--tott-stat-icon)] transition-colors hover:opacity-80"
           aria-label={t("help")}
+          title={t("help")}
         >
           <HelpCircleIcon />
-        </button>
-        <button
-          type="button"
+        </Link>
+        <Link
+          href="/admin/settings"
           className="p-2 text-[var(--tott-stat-icon)] transition-colors hover:opacity-80"
           aria-label={t("settings")}
+          title={t("settings")}
         >
           <SettingsIcon />
-        </button>
+        </Link>
         <NotificationDropdown />
 
         <span

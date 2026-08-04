@@ -1,0 +1,67 @@
+{
+  "Dashboard": {
+    "help": {
+      "title": "Centre d'aide",
+      "subtitle": "Réponses, raccourcis et moyens de nous contacter.",
+      "searchPlaceholder": "Rechercher dans l'aide…",
+      "quickLinksHeading": "Liens rapides",
+      "quickLinks": {
+        "articles": {
+          "title": "Articles",
+          "subtitle": "Gérer le contenu publié"
+        },
+        "users": {
+          "title": "Utilisateurs",
+          "subtitle": "Comptes et permissions"
+        },
+        "settings": {
+          "title": "Paramètres système",
+          "subtitle": "Catégories, tags, badges"
+        },
+        "security": {
+          "title": "Sécurité et accès",
+          "subtitle": "Sessions et contrôle d'accès"
+        }
+      },
+      "faqHeading": "Questions fréquentes",
+      "faqEmpty": "Aucun résultat pour votre recherche.",
+      "faq": {
+        "publishArticle": {
+          "question": "Comment publier un article ?",
+          "answer": "Ouvrez l'article dans l'éditeur de blocs, passez son statut à Approuvé, puis utilisez Publier. Les articles programmés se publient automatiquement à la date prévue."
+        },
+        "manageRoles": {
+          "question": "Comment modifier le rôle ou les permissions d'un utilisateur ?",
+          "answer": "Allez dans Gestion → Rôles et permissions pour modifier les rôles, ou ouvrez un utilisateur dans Utilisateurs pour lui assigner un rôle directement."
+        },
+        "featureWriter": {
+          "question": "Comment mettre en avant un écrivain sur la page d'accueil ou le magazine ?",
+          "answer": "Dans Écrivains, utilisez les interrupteurs Principal et Magazine sur la ligne de l'écrivain — Principal le met en avant sur la page d'accueil, Magazine l'ajoute au comité éditorial."
+        },
+        "moderateContent": {
+          "question": "Où sont examinées les contributions envoyées par les utilisateurs ?",
+          "answer": "Les contributions se trouvent dans Contenu → Bibliothèque de contenu, séparément des Articles. Vérifiez leur statut là avant qu'elles ne deviennent des articles publiés."
+        },
+        "resetPassword": {
+          "question": "Comment réinitialiser le mot de passe d'un utilisateur ?",
+          "answer": "Ouvrez l'utilisateur dans Utilisateurs et utilisez le menu d'actions du compte pour envoyer une réinitialisation, ou créez un mot de passe temporaire en liant un nouveau compte écrivain."
+        },
+        "webhookIssues": {
+          "question": "Un paiement Stripe n'apparaît pas dans l'application — que vérifier ?",
+          "answer": "Vérifiez la transaction dans Finance et paiements, puis confirmez que le point de terminaison webhook Stripe est accessible et que l'événement a été reçu dans votre tableau de bord Stripe."
+        }
+      },
+      "contactHeading": "Contact",
+      "contact": {
+        "email": {
+          "title": "Support par e-mail"
+        },
+        "messaging": {
+          "title": "Messagerie interne",
+          "subtitle": "Contacter l'équipe directement"
+        }
+      },
+      "footerNote": "Les réponses du support arrivent généralement sous un jour ouvré."
+    }
+  }
+}

@@ -15,6 +15,7 @@ function ArticleHoneycombSection({
   standfirst,
   viewMoreLabel,
   viewMoreHref,
+  titleFontSize,
 }: {
   cards: ReactNode[];
   sectionId: string;
@@ -22,6 +23,7 @@ function ArticleHoneycombSection({
   standfirst: string;
   viewMoreLabel: string;
   viewMoreHref: string;
+  titleFontSize?: number;
 }) {
   if (cards.length === 0) return null;
   const headingId = `${sectionId}-heading`;
@@ -34,6 +36,7 @@ function ArticleHoneycombSection({
         standfirst={standfirst}
         viewMoreLabel={viewMoreLabel}
         viewMoreHref={viewMoreHref}
+        titleFontSize={titleFontSize}
       />
       <div className="mt-10">
         <Honeycomb rows={chunkHoneycombRows(cards)} />
@@ -48,6 +51,7 @@ export function FeaturedRail(props: {
   title: string;
   standfirst: string;
   viewMoreLabel: string;
+  titleFontSize?: number;
 }) {
   return (
     <ArticleHoneycombSection
@@ -63,6 +67,7 @@ export function LatestRail(props: {
   title: string;
   standfirst: string;
   viewMoreLabel: string;
+  titleFontSize?: number;
 }) {
   return (
     <ArticleHoneycombSection

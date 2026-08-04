@@ -42,7 +42,7 @@ export function CreateAccountModal({ writer, busy, onClose, onSubmit }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm space-y-4 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-xl"

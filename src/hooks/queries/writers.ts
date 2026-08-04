@@ -6,6 +6,7 @@ import {
   getWritersAdmin,
   getWriterSupportSummary,
   getWriterTopWorks,
+  getWriterWorks,
   type GetWritersParams,
 } from "@/services/writers.service";
 
@@ -20,6 +21,8 @@ export const writersKeys = {
   supportSummary: (id: string) => ["writers", "supportSummary", id] as const,
   topWorks: (id: string, limit?: number) =>
     ["writers", "topWorks", id, limit ?? null] as const,
+  works: (id: string, params?: Record<string, string | number | undefined>) =>
+    ["writers", "works", id, params ?? {}] as const,
 };
 
 export function useFeaturedWriters() {
@@ -70,6 +73,17 @@ export function useWriterTopWorks(
   return useQuery({
     queryKey: writersKeys.topWorks(writerId ?? "", limit),
     queryFn: () => getWriterTopWorks(writerId as string, limit),
+    enabled: Boolean(writerId),
+  });
+}
+
+export function useWriterWorks(
+  writerId: string | null | undefined,
+  params?: Record<string, string | number | undefined>,
+) {
+  return useQuery({
+    queryKey: writersKeys.works(writerId ?? "", params),
+    queryFn: () => getWriterWorks(writerId as string, params),
     enabled: Boolean(writerId),
   });
 }

@@ -17,8 +17,8 @@
           "kind": "Discipline",
           "location": "Location",
           "account": "Account",
-          "featured": "Homepage",
-          "editorialBoard": "Board"
+          "featured": "Main",
+          "editorialBoard": "Magazine"
         },
         "account": {
           "linked": "Has account",

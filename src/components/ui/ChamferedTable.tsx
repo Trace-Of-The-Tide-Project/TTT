@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { ChamferedCap } from "./ChamferedCap";
 
 export type ChamferedTableAlign = "start" | "center" | "end";
@@ -53,6 +53,8 @@ type ChamferedTableProps<T> = {
   /** Skip the chamfered top + bottom caps (e.g. when the parent already supplies them). */
   capless?: boolean;
   className?: string;
+  /** Pixel width below which the narrow layout takes over. Default 504. */
+  narrowBreakpoint?: number;
 };
 
 const HEADER_CELL_BASE =
@@ -85,19 +87,30 @@ export function ChamferedTable<T>({
   footerNarrow,
   capless,
   className,
+  narrowBreakpoint = 504,
 }: ChamferedTableProps<T>) {
   const gridTemplateColumns = columns.map((c) => c.width).join(" ");
   const gridStyle = { gridTemplateColumns } as const;
 
   const placeholder = loading ? loadingLabel : rows.length === 0 ? emptyLabel : null;
   const narrowFooter = footerNarrow ?? footer;
+  const reactId = useId();
+  const scopeClass = `ct-${reactId.replace(/[:]/g, "")}`;
 
   return (
-    <div className={className}>
+    <div className={`${scopeClass} ${className ?? ""}`}>
+      {renderNarrow ? (
+        <style>{`
+          @media (min-width: ${narrowBreakpoint}px) {
+            .${scopeClass} .ct-wide { display: block; }
+            .${scopeClass} .ct-narrow { display: none; }
+          }
+        `}</style>
+      ) : null}
       {capless ? null : <ChamferedCap direction="top" />}
 
-      {/* Wide layout — true grid table. ≥504px. */}
-      <div className={renderNarrow ? "hidden min-[504px]:block" : "block"}>
+      {/* Wide layout — true grid table. */}
+      <div className={renderNarrow ? "ct-wide hidden" : "block"}>
         <div
           className="grid border-x border-y border-[var(--tott-card-border)]"
           style={gridStyle}
@@ -152,9 +165,9 @@ export function ChamferedTable<T>({
         ) : null}
       </div>
 
-      {/* Narrow layout — caller-supplied stack. <504px. */}
+      {/* Narrow layout — caller-supplied stack. Below narrowBreakpoint. */}
       {renderNarrow ? (
-        <div className="border-x border-y border-[var(--tott-card-border)] min-[504px]:hidden">
+        <div className="ct-narrow border-x border-y border-[var(--tott-card-border)]">
           {placeholder ? (
             <div className="px-3 py-12 text-center text-sm text-[var(--tott-muted)]">
               {placeholder}

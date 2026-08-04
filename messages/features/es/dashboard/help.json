@@ -1,0 +1,67 @@
+{
+  "Dashboard": {
+    "help": {
+      "title": "Centro de ayuda",
+      "subtitle": "Respuestas, atajos y formas de contactarnos.",
+      "searchPlaceholder": "Buscar artículos de ayuda…",
+      "quickLinksHeading": "Enlaces rápidos",
+      "quickLinks": {
+        "articles": {
+          "title": "Artículos",
+          "subtitle": "Gestionar contenido publicado"
+        },
+        "users": {
+          "title": "Usuarios",
+          "subtitle": "Cuentas y permisos"
+        },
+        "settings": {
+          "title": "Ajustes del sistema",
+          "subtitle": "Categorías, etiquetas, insignias"
+        },
+        "security": {
+          "title": "Seguridad y acceso",
+          "subtitle": "Sesiones y control de acceso"
+        }
+      },
+      "faqHeading": "Preguntas frecuentes",
+      "faqEmpty": "Sin resultados para tu búsqueda.",
+      "faq": {
+        "publishArticle": {
+          "question": "¿Cómo publico un artículo?",
+          "answer": "Abre el artículo en el editor de bloques, cambia su estado a Aprobado y usa Publicar. Los artículos programados se publican automáticamente en la fecha establecida."
+        },
+        "manageRoles": {
+          "question": "¿Cómo cambio el rol o los permisos de un usuario?",
+          "answer": "Ve a Gestión → Roles y permisos para editar los roles, o abre un usuario en Usuarios para asignarle un rol directamente."
+        },
+        "featureWriter": {
+          "question": "¿Cómo destaco a un escritor en la página principal o la revista?",
+          "answer": "En Escritores, usa los interruptores Principal y Revista en la fila del escritor — Principal lo destaca en la página principal, Revista lo añade al consejo editorial."
+        },
+        "moderateContent": {
+          "question": "¿Dónde se revisan las contribuciones enviadas por usuarios?",
+          "answer": "Las contribuciones están en Contenido → Biblioteca de contenido, separadas de Artículos. Revisa su estado ahí antes de que se conviertan en artículos publicados."
+        },
+        "resetPassword": {
+          "question": "¿Cómo restablezco la contraseña de un usuario?",
+          "answer": "Abre el usuario en Usuarios y usa el menú de acciones de cuenta para enviar un restablecimiento, o crea una contraseña temporal al vincular una nueva cuenta de escritor."
+        },
+        "webhookIssues": {
+          "question": "Un pago de Stripe no se refleja en la app — ¿qué reviso?",
+          "answer": "Revisa la transacción en Finanzas y pagos, y confirma que el endpoint del webhook de Stripe sea accesible y que el evento se haya recibido en tu panel de Stripe."
+        }
+      },
+      "contactHeading": "Contacto",
+      "contact": {
+        "email": {
+          "title": "Soporte por correo"
+        },
+        "messaging": {
+          "title": "Mensajería interna",
+          "subtitle": "Contacta al equipo directamente"
+        }
+      },
+      "footerNote": "Las respuestas de soporte suelen llegar en un día hábil."
+    }
+  }
+}

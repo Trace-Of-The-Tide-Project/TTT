@@ -458,7 +458,8 @@
           "ctaLabel": "Button label",
           "ctaLabelPlaceholder": "Read latest issue",
           "artworkUrl": "URL de la imagen de fondo",
-          "artworkUrlHint": "Se sustituye si hay una imagen de héroe definida en la Biblioteca de medios."
+          "artworkUrlHint": "Se sustituye si hay una imagen de héroe definida en la Biblioteca de medios.",
+          "titleFontSize": "Tamaño de fuente del título (px)"
         }
       },
       "actionCard": {
@@ -478,7 +479,8 @@
         "viewMoreLabel": "View more",
         "fields": {
           "title": "Title",
-          "standfirst": "Standfirst"
+          "standfirst": "Standfirst",
+          "titleFontSize": "Tamaño de fuente del título (px)"
         }
       },
       "closingCta": {

@@ -1,0 +1,19 @@
+{
+  "Dashboard": {
+    "messages": {
+      "title": "Messages",
+      "subtitle": "Conversations directes avec d'autres membres.",
+      "newMessage": "Nouveau message",
+      "searchUsersPlaceholder": "Rechercher par nom ou identifiant…",
+      "searching": "Recherche…",
+      "noUsersFound": "Aucun utilisateur trouvé.",
+      "cancel": "Annuler",
+      "loading": "Chargement…",
+      "noConversations": "Aucune conversation pour le moment.",
+      "noMessagesYet": "Pas encore de messages",
+      "selectConversation": "Sélectionnez une conversation pour commencer à discuter.",
+      "messagePlaceholder": "Écrire un message…",
+      "send": "Envoyer"
+    }
+  }
+}

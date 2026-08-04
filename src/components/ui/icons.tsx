@@ -115,6 +115,14 @@ export function PenLineIcon() {
   );
 }
 
+export function CheckIcon() {
+  return (
+    <svg {...iconProps}>
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
 export function LanguagesIcon() {
   return (
     <svg

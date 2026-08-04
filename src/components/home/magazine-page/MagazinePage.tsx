@@ -166,6 +166,7 @@ export async function MagazinePage({ locale }: { locale: string }) {
           carouselPrevLabel={t("carousel.prev")}
           carouselNextLabel={t("carousel.next")}
           isRtl={isRtl}
+          titleFontSize={editorial.heroTitleFontSize}
         />
 
         <InnerSectionCards
@@ -174,18 +175,21 @@ export async function MagazinePage({ locale }: { locale: string }) {
             body: editorial.actionCardJoin.body || t("innerCards.1.body"),
             ctaLabel: editorial.actionCardJoin.ctaLabel || t("innerCards.1.cta"),
             ctaHref: editorial.actionCardJoinHref || "/collectives",
+            titleFontSize: editorial.actionCardJoinTitleFontSize,
           }}
           gift={{
             title: editorial.actionCardGift.title || t("innerCards.2.title"),
             body: editorial.actionCardGift.body || t("innerCards.2.body"),
             ctaLabel: editorial.actionCardGift.ctaLabel || t("innerCards.2.cta"),
             ctaHref: editorial.actionCardGiftHref || "/subscribe",
+            titleFontSize: editorial.actionCardGiftTitleFontSize,
           }}
           share={{
             title: editorial.actionCardShare.title || t("innerCards.3.title"),
             body: editorial.actionCardShare.body || t("innerCards.3.body"),
             ctaLabel: editorial.actionCardShare.ctaLabel || t("innerCards.3.cta"),
             ctaHref: editorial.actionCardShareHref || "/writing-room",
+            titleFontSize: editorial.actionCardShareTitleFontSize,
           }}
         />
 
@@ -195,6 +199,7 @@ export async function MagazinePage({ locale }: { locale: string }) {
             title={editorial.featuredHeader.title || t("featured.title")}
             standfirst={editorial.featuredHeader.standfirst || t("featured.standfirst")}
             viewMoreLabel={t("viewMore")}
+            titleFontSize={editorial.featuredHeaderTitleFontSize}
           />
         ) : null}
 
@@ -205,6 +210,7 @@ export async function MagazinePage({ locale }: { locale: string }) {
             standfirst={editorial.collectionsHeader.standfirst || t("collections.standfirst")}
             viewMoreLabel={t("viewMore")}
             articleCountLabel={(count) => t("articleCount", { count })}
+            titleFontSize={editorial.collectionsHeaderTitleFontSize}
           />
         ) : null}
 
@@ -214,6 +220,7 @@ export async function MagazinePage({ locale }: { locale: string }) {
             title={editorial.latestHeader.title || t("latest.title")}
             standfirst={editorial.latestHeader.standfirst || t("latest.standfirst")}
             viewMoreLabel={t("viewMore")}
+            titleFontSize={editorial.latestHeaderTitleFontSize}
           />
         ) : null}
 
@@ -229,6 +236,7 @@ export async function MagazinePage({ locale }: { locale: string }) {
             featureLabel={featureLabel}
             showMoreLabel={(count) => t("plans.showMore", { count })}
             showLessLabel={t("plans.showLess")}
+            titleFontSize={editorial.plansHeaderTitleFontSize}
           />
         ) : null}
 
@@ -239,6 +247,7 @@ export async function MagazinePage({ locale }: { locale: string }) {
             standfirst={editorial.closingCta.standfirst || t("shareStory.standfirst")}
             ctaLabel={editorial.closingCta.ctaLabel || t("shareStory.cta")}
             ctaHref={editorial.closingCtaHref || "/writing-room"}
+            titleFontSize={editorial.closingCtaTitleFontSize}
           />
         ) : null}
       </main>
