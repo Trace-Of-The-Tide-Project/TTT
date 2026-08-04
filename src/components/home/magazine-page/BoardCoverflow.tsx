@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Link } from "@/i18n/navigation";
@@ -52,11 +52,34 @@ export function BoardCoverflow({
   nextLabel: string;
   isRtl: boolean;
 }) {
-  const [activeIndex, setActiveIndex] = useState(() => Math.floor((slides.length - 1) / 2));
+  const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const flip = isRtl ? -1 : 1;
 
-  const goTo = (index: number) => setActiveIndex(Math.max(0, Math.min(slides.length - 1, index)));
+  // How many full cards fit in the viewport track — derived from live
+  // container width so the max index can stop at "last card flush with
+  // the edge" instead of always centering the active card (which leaves
+  // blank track past the last card once there's nothing left to center
+  // against on one side).
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const [visibleCount, setVisibleCount] = useState(1);
+
+  useLayoutEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+    const measure = () => setVisibleCount(Math.max(1, Math.round(el.clientWidth / CARD_PITCH)));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const maxIndex = Math.max(0, slides.length - visibleCount);
+  useEffect(() => {
+    setActiveIndex((i) => Math.min(i, maxIndex));
+  }, [maxIndex]);
+
+  const goTo = (index: number) => setActiveIndex(Math.max(0, Math.min(maxIndex, index)));
   const toPrev = () => goTo(activeIndex - 1);
   const toNext = () => goTo(activeIndex + 1);
 
@@ -68,10 +91,10 @@ export function BoardCoverflow({
   useEffect(() => {
     if (reduced || paused || slides.length <= 1) return;
     const id = window.setInterval(() => {
-      setActiveIndex((i) => (i + 1) % slides.length);
+      setActiveIndex((i) => (i >= maxIndex ? 0 : i + 1));
     }, 8000);
     return () => window.clearInterval(id);
-  }, [reduced, paused, slides.length]);
+  }, [reduced, paused, slides.length, maxIndex]);
 
   if (slides.length === 0) return null;
 
@@ -93,11 +116,11 @@ export function BoardCoverflow({
         <Chevron dir="start" />
       </button>
 
-      <div className="relative h-[281px] flex-1 overflow-hidden">
+      <div ref={viewportRef} className="relative h-[281px] flex-1 overflow-hidden">
         <div
-          className="absolute inset-y-0 start-1/2 flex items-center gap-2"
+          className="absolute inset-y-0 start-0 flex items-center gap-2"
           style={{
-            transform: `translateX(${(-activeIndex * CARD_PITCH - CARD_WIDTH / 2) * flip}px)`,
+            transform: `translateX(${-activeIndex * CARD_PITCH * flip}px)`,
             transition: "transform 0.9s cubic-bezier(0.22, 1, 0.36, 1)",
           }}
         >
@@ -163,7 +186,7 @@ export function BoardCoverflow({
         type="button"
         aria-label={nextLabel}
         onClick={toNext}
-        disabled={activeIndex === slides.length - 1}
+        disabled={activeIndex >= maxIndex}
         className="z-20 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--tott-card-border)] bg-[color-mix(in_srgb,var(--tott-well-bg)_78%,transparent)] text-[var(--tott-home-text-warm)] backdrop-blur transition-colors hover:bg-white/10 disabled:pointer-events-none disabled:opacity-30"
       >
         <Chevron dir="end" />

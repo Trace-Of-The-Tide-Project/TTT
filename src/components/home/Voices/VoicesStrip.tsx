@@ -26,10 +26,13 @@ function initialsOf(name: string): string {
     .join("");
 }
 
-/* Strip start/end aligns with SectionShell's constrained header
- * (max-w-6xl px-6 sm:px-10) while staying full-bleed scrollable. */
+/* Strip start aligns with SectionShell's constrained header
+ * (max-w-6xl px-6 sm:px-10) while staying full-bleed scrollable.
+ * End pad stays flat (not viewport-centered) — it's counted inside
+ * scrollWidth, so a responsive centering pad here would leave a
+ * blank gap after the last card once atEnd's clamp is satisfied. */
 const EDGE_PAD =
-  "ps-6 pe-6 sm:ps-[max(2.5rem,calc((100vw-72rem)/2+2.5rem))] sm:pe-[max(2.5rem,calc((100vw-72rem)/2+2.5rem))]";
+  "ps-6 pe-6 sm:ps-[max(2.5rem,calc((100vw-72rem)/2+2.5rem))] sm:pe-10";
 
 const ARROW_BUTTON_CLASS =
   "grid h-10 w-10 shrink-0 place-items-center border border-[color-mix(in_srgb,var(--tott-salt)_35%,transparent)] text-[var(--tott-gold-primary)] transition-colors hover:border-[var(--tott-gold-muted)] hover:text-[var(--tott-gold-bright)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-gold-bright)] disabled:cursor-default disabled:opacity-35 disabled:hover:border-[color-mix(in_srgb,var(--tott-salt)_35%,transparent)] disabled:hover:text-[var(--tott-gold-primary)]";
