@@ -27,6 +27,8 @@ export type ActionCardProps = {
   body: string;
   ctaLabel: string;
   ctaHref: string;
+  /** Admin-set title font size (px). Undefined = default from the class. */
+  titleFontSize?: number;
 };
 
 /**
@@ -35,7 +37,7 @@ export type ActionCardProps = {
  * gold CTA button. Exported so the admin editor preview can render a single
  * card without importing the 3-card grid wrapper.
  */
-export function ActionCard({ icon, title, body, ctaLabel, ctaHref }: ActionCardProps) {
+export function ActionCard({ icon, title, body, ctaLabel, ctaHref, titleFontSize }: ActionCardProps) {
   return (
     <div className="flex flex-col items-center gap-6 px-8 text-center">
       <div
@@ -48,7 +50,13 @@ export function ActionCard({ icon, title, body, ctaLabel, ctaHref }: ActionCardP
         {icon}
       </div>
       <div className="flex flex-col items-center gap-2">
-        <h3 className="font-['IBM_Plex_Sans'] text-base font-medium leading-5 text-[var(--tott-accent-gold-focus)]">
+        <h3
+          className="font-['IBM_Plex_Sans'] text-base font-medium leading-5 text-[var(--tott-accent-gold-focus)]"
+          style={{
+            fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
+            lineHeight: titleFontSize ? 1.25 : undefined,
+          }}
+        >
           {title}
         </h3>
         <p

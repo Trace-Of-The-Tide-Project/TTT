@@ -10,6 +10,7 @@ import {
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { getFramingsServer } from "@/services/image-framing.service";
 import { WRITER_AVATAR_FRAMING } from "@/lib/framing-placements";
+import type { ImageFraming } from "@/lib/image-framing";
 import {
   WriterDetailContent,
   type WriterDetailView,
@@ -45,8 +46,25 @@ function num(v: number | null | undefined): number {
   return typeof v === "number" && Number.isFinite(v) ? v : 0;
 }
 
-function buildView(p: WriterProfileFull, fallbackName: string, avatar: string | null): WriterDetailView {
+/** Framing for one writer's avatar, keyed on the writer_profiles row id (which,
+ * for a translated profile, differs from the route id). */
+async function avatarFramingFor(id: string) {
+  const framings = await getFramingsServer(
+    WRITER_AVATAR_FRAMING.entity,
+    [id],
+    WRITER_AVATAR_FRAMING.field,
+  );
+  return framings[id]?.[WRITER_AVATAR_FRAMING.field];
+}
+
+function buildView(
+  p: WriterProfileFull,
+  fallbackName: string,
+  avatar: string | null,
+  avatarFraming: ImageFraming | undefined,
+): WriterDetailView {
   return {
+    avatarFraming,
     id: p.id,
     userId: p.user_id ?? null,
     name: p.display_name?.trim() || p.pen_name?.trim() || fallbackName || "Writer",
@@ -76,7 +94,12 @@ export default async function WriterDetailPage({ params }: PageProps) {
     const avatar = full.avatar_url?.trim()
       ? resolveArticleMediaSrc(full.avatar_url.trim())
       : null;
-    const view = buildView(full, full.display_name?.trim() || "", avatar);
+    const view = buildView(
+      full,
+      full.display_name?.trim() || "",
+      avatar,
+      await avatarFramingFor(full.id || id),
+    );
     return <WriterDetailContent writer={view} />;
   }
 
@@ -84,12 +107,6 @@ export default async function WriterDetailPage({ params }: PageProps) {
   // page still renders the name/avatar/follow button instead of 404ing.
   const writer = await getWriter(id);
   if (!writer) return notFound();
-
-  const framings = await getFramingsServer(
-    WRITER_AVATAR_FRAMING.entity,
-    [writer.id],
-    WRITER_AVATAR_FRAMING.field,
-  );
 
   const view: WriterDetailView = {
     id: writer.id,
@@ -106,7 +123,7 @@ export default async function WriterDetailPage({ params }: PageProps) {
     followerCount: 0,
     workCount: 0,
     avatar: writerAvatar(writer),
-    avatarFraming: framings[writer.id]?.[WRITER_AVATAR_FRAMING.field],
+    avatarFraming: await avatarFramingFor(writer.id),
     joinedAt: null,
     email: null,
     externalLink: null,

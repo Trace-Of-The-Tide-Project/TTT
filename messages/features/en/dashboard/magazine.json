@@ -458,7 +458,8 @@
           "ctaLabel": "Button label",
           "ctaLabelPlaceholder": "Read latest issue",
           "artworkUrl": "Background image URL",
-          "artworkUrlHint": "Overridden by a Media Library page-hero, if one is set."
+          "artworkUrlHint": "Overridden by a Media Library page-hero, if one is set.",
+          "titleFontSize": "Title font size (px)"
         }
       },
       "actionCard": {
@@ -478,7 +479,8 @@
         "viewMoreLabel": "View more",
         "fields": {
           "title": "Title",
-          "standfirst": "Standfirst"
+          "standfirst": "Standfirst",
+          "titleFontSize": "Title font size (px)"
         }
       },
       "closingCta": {

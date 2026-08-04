@@ -458,7 +458,8 @@
           "ctaLabel": "Button label",
           "ctaLabelPlaceholder": "Read latest issue",
           "artworkUrl": "رابط صورة الخلفية",
-          "artworkUrlHint": "تتجاوزه صورة الواجهة الرئيسية المعيّنة من مكتبة الوسائط، إن وُجدت."
+          "artworkUrlHint": "تتجاوزه صورة الواجهة الرئيسية المعيّنة من مكتبة الوسائط، إن وُجدت.",
+          "titleFontSize": "حجم خط العنوان (بكسل)"
         }
       },
       "actionCard": {
@@ -478,7 +479,8 @@
         "viewMoreLabel": "View more",
         "fields": {
           "title": "Title",
-          "standfirst": "Standfirst"
+          "standfirst": "Standfirst",
+          "titleFontSize": "حجم خط العنوان (بكسل)"
         }
       },
       "closingCta": {

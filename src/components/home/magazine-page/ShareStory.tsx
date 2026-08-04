@@ -15,12 +15,14 @@ export function ShareStory({
   standfirst,
   ctaLabel,
   ctaHref,
+  titleFontSize,
 }: {
   icon: React.ReactNode;
   heading: string;
   standfirst: string;
   ctaLabel: string;
   ctaHref: string;
+  titleFontSize?: number;
 }) {
   return (
     <section className="relative overflow-hidden py-24 sm:py-28">
@@ -52,6 +54,7 @@ export function ShareStory({
             style={{
               lineHeight: "var(--tott-display-leading)",
               letterSpacing: "var(--tott-display-tracking)",
+              fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
             }}
           >
             {heading}

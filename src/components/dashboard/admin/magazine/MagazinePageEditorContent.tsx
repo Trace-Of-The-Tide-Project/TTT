@@ -15,8 +15,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "motion/react";
 import { formatApiError } from "@/lib/api/error-message";
-import { CloudUploadIcon, EyeIcon, RefreshCwIcon, PersonPlusIcon, GiftIcon, PenLineIcon } from "@/components/ui/icons";
+import { CloudUploadIcon, EyeIcon, EyeOffIcon, RefreshCwIcon, PersonPlusIcon, GiftIcon, PenLineIcon } from "@/components/ui/icons";
 // Previews render the SAME components the live /magazine page uses, so
 // what an editor sees is what ships.
 import { Hero } from "@/components/home/magazine-page/Hero";
@@ -69,6 +70,58 @@ const SECTION_ROWS: SectionRow[] = [
   { key: "plansHeader", labelKey: "sections.plansHeader", hasForm: true },
   { key: "closingCta", labelKey: "sections.closingCta", hasForm: true },
 ];
+
+function VisibilityToggleButton({
+  visible,
+  onClick,
+  label,
+}: {
+  visible: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.96 }}
+      aria-label={label}
+      title={label}
+      className={`relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-opacity hover:opacity-80 ${
+        visible ? "text-[var(--tott-muted)]" : "text-[var(--tott-muted)] opacity-40"
+      }`}
+    >
+      <span className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center [&_svg]:h-3.5 [&_svg]:w-3.5">
+        <AnimatePresence mode="popLayout" initial={false}>
+          {visible ? (
+            <motion.span
+              key="eye"
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 600, damping: 25 }}
+              className="absolute inset-0 flex items-center justify-center"
+            >
+              <EyeIcon />
+            </motion.span>
+          ) : (
+            <motion.span
+              key="eyeOff"
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 600, damping: 25 }}
+              className="absolute inset-0 flex items-center justify-center"
+            >
+              <EyeOffIcon />
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </span>
+    </motion.button>
+  );
+}
 
 export function MagazinePageEditorContent() {
   const t = useTranslations("Dashboard.magazinePageEditor");
@@ -186,8 +239,8 @@ export function MagazinePageEditorContent() {
                     >
                       {t(row.labelKey)}
                     </button>
-                    <button
-                      type="button"
+                    <VisibilityToggleButton
+                      visible={visible}
                       onClick={() =>
                         section &&
                         toggleSection.mutate({
@@ -195,15 +248,8 @@ export function MagazinePageEditorContent() {
                           sectionId: section.id,
                         })
                       }
-                      aria-label={visible ? t("hideSection") : t("showSection")}
-                      className={`shrink-0 rounded p-1 transition-opacity hover:opacity-80 ${
-                        visible ? "text-[var(--tott-muted)]" : "text-[var(--tott-muted)] opacity-40"
-                      }`}
-                    >
-                      <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">
-                        <EyeIcon />
-                      </span>
-                    </button>
+                      label={visible ? t("hideSection") : t("showSection")}
+                    />
                   </div>
                 </li>
               );
@@ -351,6 +397,12 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
                 rtl={isRtl}
               />
             </Field>
+            <FontSizeSlider
+              label={t("fields.titleFontSize")}
+              value={draft.titleFontSize}
+              defaultPx={40}
+              onChange={(v) => setDraft((prev) => ({ ...prev, titleFontSize: v }))}
+            />
             <Field label={t("fields.standfirst")}>
               <TextInput
                 value={localeFields.standfirst ?? ""}
@@ -401,6 +453,7 @@ function HeroEditor({ section, onSave, isSaving, registerDraftState }: EditorPro
           carouselPrevLabel=""
           carouselNextLabel=""
           isRtl={isRtl}
+          titleFontSize={draft.titleFontSize}
         />
       </PreviewFrame>
     </>
@@ -462,6 +515,12 @@ function ActionCardEditor({
                 rtl={isRtl}
               />
             </Field>
+            <FontSizeSlider
+              label={tShared("fields.titleFontSize")}
+              value={draft.titleFontSize}
+              defaultPx={16}
+              onChange={(v) => setDraft((prev) => ({ ...prev, titleFontSize: v }))}
+            />
             <Field label={t("fields.body")}>
               <TextInput
                 value={localeFields.body ?? ""}
@@ -497,6 +556,7 @@ function ActionCardEditor({
             body={localeFields.body?.trim() || ""}
             ctaLabel={localeFields.ctaLabel?.trim() || t("fields.ctaLabel")}
             ctaHref={draft.ctaHref || defaultHref}
+            titleFontSize={draft.titleFontSize}
           />
         </div>
       </PreviewFrame>
@@ -516,6 +576,7 @@ function RailHeaderEditor({
   const t = useTranslations("Dashboard.magazinePageEditor.railHeader");
   const {
     draft,
+    setDraft,
     activeLocale,
     setActiveLocale,
     localeFields,
@@ -548,6 +609,12 @@ function RailHeaderEditor({
               rtl={isRtl}
             />
           </Field>
+          <FontSizeSlider
+            label={t("fields.titleFontSize")}
+            value={draft.titleFontSize}
+            defaultPx={24}
+            onChange={(v) => setDraft((prev) => ({ ...prev, titleFontSize: v }))}
+          />
           <Field label={t("fields.standfirst")}>
             <TextInput
               value={localeFields.standfirst ?? ""}
@@ -566,6 +633,7 @@ function RailHeaderEditor({
             standfirst={localeFields.standfirst?.trim() || ""}
             viewMoreLabel={t("viewMoreLabel")}
             viewMoreHref={viewMoreHref}
+            titleFontSize={draft.titleFontSize}
           />
         </div>
       </PreviewFrame>
@@ -614,6 +682,12 @@ function ClosingCtaEditor({ section, onSave, isSaving, registerDraftState }: Edi
                 rtl={isRtl}
               />
             </Field>
+            <FontSizeSlider
+              label={tShared("fields.titleFontSize")}
+              value={draft.titleFontSize}
+              defaultPx={36}
+              onChange={(v) => setDraft((prev) => ({ ...prev, titleFontSize: v }))}
+            />
             <Field label={t("fields.standfirst")}>
               <TextInput
                 value={localeFields.standfirst ?? ""}
@@ -648,6 +722,7 @@ function ClosingCtaEditor({ section, onSave, isSaving, registerDraftState }: Edi
           standfirst={localeFields.standfirst?.trim() || ""}
           ctaLabel={localeFields.ctaLabel?.trim() || t("fields.ctaLabel")}
           ctaHref={draft.ctaHref || "/writing-room"}
+          titleFontSize={draft.titleFontSize}
         />
       </PreviewFrame>
     </>
@@ -760,6 +835,67 @@ function ImageUrlField({
 
 const INPUT_CLASS =
   "w-full rounded-md border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--tott-muted)] focus:border-[var(--tott-accent-gold)]/60 focus:outline-none focus:ring-1 focus:ring-[var(--tott-accent-gold)]/30 transition";
+
+/** Title font-size (px) control — slider + stepper, live value shown next
+ * to the label. `defaultPx` is the component's own unstyled size (used as
+ * the slider's starting position and shown as "(default)" until the admin
+ * moves it). Sits directly under the field it resizes, not buried in a
+ * shared group, so the effect of dragging is obvious from the label above. */
+function FontSizeSlider({
+  label,
+  value,
+  defaultPx,
+  onChange,
+}: {
+  label: string;
+  value: number | undefined;
+  defaultPx: number;
+  onChange: (v: number | undefined) => void;
+}) {
+  const shown = value ?? defaultPx;
+  const step = (delta: number) =>
+    onChange(Math.min(120, Math.max(10, shown + delta)));
+  return (
+    <Field label={label}>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => step(-1)}
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[var(--tott-card-border)] text-sm text-foreground transition-colors hover:border-[var(--tott-accent-gold)]/60 hover:text-[var(--tott-accent-gold)]"
+        >
+          −
+        </button>
+        <input
+          type="range"
+          min={10}
+          max={120}
+          value={shown}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="h-1.5 flex-1 accent-[var(--tott-accent-gold)]"
+        />
+        <button
+          type="button"
+          onClick={() => step(1)}
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[var(--tott-card-border)] text-sm text-foreground transition-colors hover:border-[var(--tott-accent-gold)]/60 hover:text-[var(--tott-accent-gold)]"
+        >
+          +
+        </button>
+        <span className="w-16 shrink-0 text-end text-xs tabular-nums text-[var(--tott-muted)]">
+          {shown}px{value === undefined ? " (default)" : ""}
+        </span>
+        {value !== undefined ? (
+          <button
+            type="button"
+            onClick={() => onChange(undefined)}
+            className="shrink-0 text-xs text-[var(--tott-muted)] underline underline-offset-2 hover:text-foreground"
+          >
+            reset
+          </button>
+        ) : null}
+      </div>
+    </Field>
+  );
+}
 
 function TextInput({
   value,

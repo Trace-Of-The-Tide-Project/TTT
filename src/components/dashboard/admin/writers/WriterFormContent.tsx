@@ -674,7 +674,8 @@ export function WriterFormContent({
           <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("fields.avatarUrlFallback")}</p>
           {/* Each language version is its own writer row with its own id, so
               framing applies to the version being edited. Avatars render in
-              square/portrait cards, hence the 1/1 preview. */}
+              square cards and as a hexagon on the public writer page; the
+              preview stays 1/1 since it can't mask to the hex. */}
           <div className="mt-2">
             <AdjustImageButton
               entityType={WRITER_AVATAR_FRAMING.entity}

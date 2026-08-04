@@ -8,7 +8,7 @@ import { WriterPublicationsList } from "@/components/writers/WriterPublicationsL
 import { WriterTopReading } from "@/components/writers/WriterTopReading";
 import { WriterAboutSection } from "@/components/writers/WriterAboutSection";
 import { WriterConnectBand } from "@/components/writers/WriterConnectBand";
-import { useArticles } from "@/hooks/queries/articles";
+import { useWriterWorks } from "@/hooks/queries/writers";
 import type { ImageFraming } from "@/lib/image-framing";
 
 const ACCENT = "var(--tott-accent-gold)";
@@ -45,9 +45,7 @@ export type WriterDetailView = {
 export function WriterDetailContent({ writer }: { writer: WriterDetailView }) {
   const t = useTranslations("Writers");
 
-  const worksQuery = useArticles(
-    writer.userId ? { author: writer.userId, status: "published" } : undefined,
-  );
+  const worksQuery = useWriterWorks(writer.id, { status: "published" });
   const works = worksQuery.data?.data ?? [];
 
   return (
@@ -60,13 +58,12 @@ export function WriterDetailContent({ writer }: { writer: WriterDetailView }) {
       <WriterLatestRelease works={works} />
 
       <WriterPublicationsList
-        userId={writer.userId}
         works={works}
         isPending={worksQuery.isPending}
         isError={worksQuery.isError}
       />
 
-      <WriterTopReading writerId={writer.userId} />
+      <WriterTopReading writerId={writer.id} />
 
       <WriterAboutSection writer={writer} />
 

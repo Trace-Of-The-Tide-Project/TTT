@@ -1,0 +1,67 @@
+{
+  "Dashboard": {
+    "help": {
+      "title": "Help center",
+      "subtitle": "Answers, shortcuts, and ways to reach us.",
+      "searchPlaceholder": "Search help articles…",
+      "quickLinksHeading": "Quick links",
+      "quickLinks": {
+        "articles": {
+          "title": "Articles",
+          "subtitle": "Manage published content"
+        },
+        "users": {
+          "title": "Users",
+          "subtitle": "Accounts and permissions"
+        },
+        "settings": {
+          "title": "System settings",
+          "subtitle": "Categories, tags, badges"
+        },
+        "security": {
+          "title": "Security & Auth",
+          "subtitle": "Sessions and access control"
+        }
+      },
+      "faqHeading": "Frequently asked",
+      "faqEmpty": "No results for your search.",
+      "faq": {
+        "publishArticle": {
+          "question": "How do I publish an article?",
+          "answer": "Open the article in the block editor under Articles, move its status to Approved, then use Publish. Scheduled articles publish automatically at their set time."
+        },
+        "manageRoles": {
+          "question": "How do I change a user's role or permissions?",
+          "answer": "Go to Management → Roles & Permissions to edit role definitions, or open a user under Users to assign a role directly."
+        },
+        "featureWriter": {
+          "question": "How do I feature a writer on the homepage or magazine?",
+          "answer": "In Writers, use the Main and Magazine toggles on a writer's row — Main features them on the homepage, Magazine adds them to the editorial board."
+        },
+        "moderateContent": {
+          "question": "Where do user-submitted contributions get reviewed?",
+          "answer": "Contributions live under Content → Content Library, separate from Articles. Review status and moderate them there before they become published articles."
+        },
+        "resetPassword": {
+          "question": "How do I reset a user's password?",
+          "answer": "Open the user under Users and use the account actions menu to send a password reset, or create a temporary password when linking a new writer account."
+        },
+        "webhookIssues": {
+          "question": "A Stripe payment isn't reflecting in the app — what do I check?",
+          "answer": "Check Finance & Payout for the transaction, then confirm the Stripe webhook endpoint is reachable and the event was received in your Stripe dashboard."
+        }
+      },
+      "contactHeading": "Contact",
+      "contact": {
+        "email": {
+          "title": "Email support"
+        },
+        "messaging": {
+          "title": "In-app messaging",
+          "subtitle": "Reach the team directly"
+        }
+      },
+      "footerNote": "Support responses typically arrive within one business day."
+    }
+  }
+}

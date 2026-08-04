@@ -12,17 +12,23 @@ export function SectionHeader({
   standfirst,
   viewMoreLabel,
   viewMoreHref,
+  titleFontSize,
 }: {
   id: string;
   title: string;
   standfirst: string;
   viewMoreLabel: string;
   viewMoreHref: string;
+  /** Admin-set title font size (px). Undefined = default from the class. */
+  titleFontSize?: number;
 }) {
   return (
     <div className="mx-auto flex max-w-6xl items-end justify-between gap-4 px-6 sm:px-10">
       <div id={id}>
-        <h2 className="font-['IBM_Plex_Sans'] text-2xl font-medium text-[var(--tott-home-text-warm)]">
+        <h2
+          className="font-['IBM_Plex_Sans'] text-2xl font-medium text-[var(--tott-home-text-warm)]"
+          style={{ fontSize: titleFontSize ? `${titleFontSize}px` : undefined }}
+        >
           {title}
         </h2>
         <p className="mt-1 text-sm leading-5 text-[var(--tott-salt)]">{standfirst}</p>

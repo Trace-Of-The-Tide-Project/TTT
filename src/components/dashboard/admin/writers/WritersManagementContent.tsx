@@ -3,11 +3,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "motion/react";
 import { Link } from "@/i18n/navigation";
 import {
   PlusIcon,
   TrashIcon,
   PenLineIcon,
+  CheckIcon,
   ChevronRightIcon,
 } from "@/components/ui/icons";
 import {
@@ -47,6 +49,82 @@ function writerRowName(w: WriterProfile): string {
     w.pen_name?.trim() ||
     writerDisplayName(w) ||
     "—"
+  );
+}
+
+function EditButton({ href, label }: { href: string; label: string }) {
+  const [isHovered, setIsHovered] = useState(false);
+  return (
+    <motion.div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.96 }}
+      className="inline-block"
+    >
+      <Link
+        href={href}
+        title={label}
+        aria-label={label}
+        className="relative flex h-[30px] shrink-0 items-center justify-center rounded-[40px] border border-white/5 bg-white/[0.04] px-3 text-[var(--tott-muted)] transition-colors duration-150 hover:bg-white/[0.06] hover:text-foreground"
+      >
+        <span className="relative flex h-4 w-4 shrink-0 items-center justify-center">
+          <AnimatePresence mode="popLayout" initial={false}>
+            {!isHovered ? (
+              <motion.span
+                key="pen"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.5, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 600, damping: 25 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <PenLineIcon />
+              </motion.span>
+            ) : (
+              <motion.span
+                key="check"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.5, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 600, damping: 25 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <CheckIcon />
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </span>
+      </Link>
+    </motion.div>
+  );
+}
+
+function DeleteButton({ label, onClick }: { label: string; onClick: () => void }) {
+  const [isHovered, setIsHovered] = useState(false);
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.96 }}
+      title={label}
+      aria-label={label}
+      className="relative flex h-[30px] shrink-0 items-center justify-center rounded-[40px] border border-red-400/10 bg-red-400/[0.04] px-3 text-red-400 transition-colors duration-150 hover:bg-red-400/[0.08]"
+    >
+      <motion.span
+        className="flex h-4 w-4 shrink-0 items-center justify-center"
+        animate={{
+          y: isHovered ? [0, -2, 0, -2, 0] : 0,
+          rotate: isHovered ? [0, -10, 10, -10, 0] : 0,
+        }}
+        transition={{ duration: 0.4 }}
+      >
+        <TrashIcon />
+      </motion.span>
+    </motion.button>
   );
 }
 
@@ -449,25 +527,157 @@ export function WritersManagementContent() {
         cellClassName: "flex items-center justify-center gap-2 px-3 py-3",
         cell: (w) => (
           <>
-            <Link
-              href={`/admin/writers/${w.id}/edit`}
-              className="rounded p-1 text-[var(--tott-muted)] hover:text-foreground"
-              title={t("edit")}
-            >
-              <PenLineIcon />
-            </Link>
-            <button
-              type="button"
-              onClick={() => openDelete(w)}
-              className="rounded p-1 text-[var(--tott-muted)] hover:text-red-400"
-              title={t("delete.confirm")}
-            >
-              <TrashIcon />
-            </button>
+            <EditButton href={`/admin/writers/${w.id}/edit`} label={t("edit")} />
+            <DeleteButton label={t("delete.confirm")} onClick={() => openDelete(w)} />
           </>
         ),
       },
     ],
+    [t, locale, toggleFeatured, toggleBoard, openDelete, toggleGroup, featuredMutation.isPending, boardMutation.isPending],
+  );
+
+  const renderNarrow = useCallback(
+    (w: DisplayWriter) => {
+      const avatar = writerAvatar(w);
+      return (
+        <div className={`flex gap-3 px-4 py-3 ${w.isChild ? "ps-9" : ""}`}>
+          {avatar ? (
+            // eslint-disable-next-line @next/next/no-img-element -- small admin thumbnail, varied hosts
+            <img
+              src={avatar}
+              alt=""
+              className="h-10 w-10 shrink-0 rounded-full object-cover border border-[var(--tott-card-border)]"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+          ) : (
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--tott-elevated)] text-xs font-semibold text-[var(--tott-gold)]">
+              {nameInitials(writerRowName(w))}
+            </span>
+          )}
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <p
+              className={`truncate text-sm font-medium ${
+                w.isChild ? "text-[var(--tott-muted)]" : "text-[var(--tott-dash-gold-text)]"
+              }`}
+            >
+              {writerRowName(w)}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--tott-muted)]">
+              {w.language ? (
+                <span className="shrink-0 rounded bg-[var(--tott-elevated)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+                  {w.language}
+                </span>
+              ) : null}
+              {w.isPrimary && w.siblingCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(w.groupId)}
+                  className="shrink-0 text-[10px] font-semibold uppercase tracking-wider underline"
+                >
+                  {t("translations.count", { count: w.siblingCount })}
+                </button>
+              ) : null}
+              {w.isPrimary && w.missingLocale ? (
+                <span
+                  className="shrink-0 rounded bg-[var(--tott-status-coral)]/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--tott-status-coral)]"
+                  title={t("translations.needsTranslationTooltip", { locale })}
+                >
+                  {t("translations.needsTranslation")}
+                </span>
+              ) : null}
+            </div>
+
+            {w.headline?.trim() ? (
+              <p className="truncate text-xs text-[var(--tott-muted)]">{w.headline.trim()}</p>
+            ) : null}
+            {w.location?.trim() ? (
+              <p className="truncate text-xs text-[var(--tott-muted)]">{w.location.trim()}</p>
+            ) : null}
+
+            {!w.isChild && (
+              <div className="flex flex-wrap items-center gap-4 pt-1">
+                <div className="flex items-center gap-1.5 leading-none">
+                  <span className="text-[10px] font-medium leading-none text-[var(--tott-dash-gold-label)]">
+                    {t("headers.featured")}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => toggleFeatured(w)}
+                    disabled={featuredMutation.isPending}
+                    title={w.featured ? t("featuredOn") : t("featuredOff")}
+                    aria-label={w.featured ? t("featuredOn") : t("featuredOff")}
+                    className={[
+                      "relative h-5 w-9 rounded-full transition-colors disabled:opacity-50",
+                      w.featured
+                        ? "bg-[var(--tott-gold)]"
+                        : "border border-[var(--tott-card-border)] bg-[var(--tott-elevated)]",
+                    ].join(" ")}
+                  >
+                    <span
+                      className={[
+                        "absolute top-0.5 h-4 w-4 rounded-full bg-[var(--tott-dash-surface)] transition-all",
+                        w.featured ? "start-4" : "start-0.5",
+                      ].join(" ")}
+                    />
+                  </button>
+                </div>
+                <div className="flex items-center gap-1.5 leading-none">
+                  <span className="text-[10px] font-medium leading-none text-[var(--tott-dash-gold-label)]">
+                    {t("headers.editorialBoard")}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => toggleBoard(w)}
+                    disabled={boardMutation.isPending}
+                    title={w.editorial_board ? t("boardOn") : t("boardOff")}
+                    aria-label={w.editorial_board ? t("boardOn") : t("boardOff")}
+                    className={[
+                      "relative h-5 w-9 rounded-full transition-colors disabled:opacity-50",
+                      w.editorial_board
+                        ? "bg-[var(--tott-gold)]"
+                        : "border border-[var(--tott-card-border)] bg-[var(--tott-elevated)]",
+                    ].join(" ")}
+                  >
+                    <span
+                      className={[
+                        "absolute top-0.5 h-4 w-4 rounded-full bg-[var(--tott-dash-surface)] transition-all",
+                        w.editorial_board ? "start-4" : "start-0.5",
+                      ].join(" ")}
+                    />
+                  </button>
+                </div>
+                {w.isChild ? null : w.user_id ? (
+                  <span className="inline-flex items-center gap-1.5 self-center rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">
+                    {t("account.linked")}
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setAccountTarget(w)}
+                    className="inline-flex items-center gap-1.5 self-center rounded-full border border-[var(--tott-gold)]/60 bg-[var(--tott-gold)]/10 px-2.5 py-1 text-xs font-medium text-[var(--tott-gold)] hover:bg-[var(--tott-gold)]/20 transition-colors"
+                  >
+                    {t("account.createAction")}
+                  </button>
+                )}
+                <div className="ms-auto flex shrink-0 items-center gap-2 self-center">
+                  <EditButton href={`/admin/writers/${w.id}/edit`} label={t("edit")} />
+                  <DeleteButton label={t("delete.confirm")} onClick={() => openDelete(w)} />
+                </div>
+              </div>
+            )}
+            {w.isChild && (
+              <div className="flex items-center gap-2 pt-1">
+                <EditButton href={`/admin/writers/${w.id}/edit`} label={t("edit")} />
+                <DeleteButton label={t("delete.confirm")} onClick={() => openDelete(w)} />
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    },
     [t, locale, toggleFeatured, toggleBoard, openDelete, toggleGroup, featuredMutation.isPending, boardMutation.isPending],
   );
 
@@ -519,6 +729,8 @@ export function WritersManagementContent() {
         loading={loading}
         loadingLabel={t("loading")}
         emptyLabel={debouncedSearch ? t("empty.noMatch") : t("empty.none")}
+        renderNarrow={renderNarrow}
+        narrowBreakpoint={900}
       />
 
       {totalPages > 1 && (
@@ -568,7 +780,7 @@ export function WritersManagementContent() {
       )}
 
       {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
           <div
             className="w-full max-w-sm rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-surface)] p-6 shadow-xl"
           >

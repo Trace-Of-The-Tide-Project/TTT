@@ -1,0 +1,19 @@
+{
+  "Dashboard": {
+    "messages": {
+      "title": "الرسائل",
+      "subtitle": "محادثات مباشرة مع أعضاء آخرين.",
+      "newMessage": "رسالة جديدة",
+      "searchUsersPlaceholder": "ابحث بالاسم أو اسم المستخدم…",
+      "searching": "جارٍ البحث…",
+      "noUsersFound": "لم يتم العثور على مستخدمين.",
+      "cancel": "إلغاء",
+      "loading": "جارٍ التحميل…",
+      "noConversations": "لا توجد محادثات بعد.",
+      "noMessagesYet": "لا توجد رسائل بعد",
+      "selectConversation": "اختر محادثة لبدء الدردشة.",
+      "messagePlaceholder": "اكتب رسالة…",
+      "send": "إرسال"
+    }
+  }
+}
