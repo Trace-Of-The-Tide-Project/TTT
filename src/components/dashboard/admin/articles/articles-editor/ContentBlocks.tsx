@@ -23,6 +23,8 @@ export type ContentBlock = {
   /** How `imageUrl` sits inside its frame (pan/zoom/fit/flip/rotate). */
   imageFraming?: ImageFraming;
   galleryUrls?: string[];
+  /** Per-image framing for gallery blocks, keyed by the image's URL. */
+  galleryFraming?: Record<string, ImageFraming>;
   /** Per-block placeholder override — wins over the type-level `blockLabels` when set. */
   placeholder?: string;
   /** Heading level. 2 (default, omitted from payload) or 3. H1 is reserved for the article title. */

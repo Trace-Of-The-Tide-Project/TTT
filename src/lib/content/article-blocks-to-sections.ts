@@ -5,8 +5,9 @@ import type {
 } from "@/components/content/article/ContentArticleBody";
 import { isLikelyAudioUrl, isLikelyVideoUrl } from "@/lib/content/media-url";
 import { parseEmbedUrl, embedSrc, embedAspect } from "@/lib/content/embed-providers";
+import { clampFraming, type ImageFraming } from "@/lib/image-framing";
 
-type Figure = { src: string; alt?: string; caption?: string };
+type Figure = { src: string; alt?: string; caption?: string; framing?: ImageFraming };
 
 /** Decode the handful of HTML entities that survive tag stripping. */
 function decodeEntities(s: string): string {
@@ -171,7 +172,8 @@ function parseImageFigure(b: ArticleDetailBlock): Figure | null {
   if (!url) return null;
   const alt = obj && typeof obj.alt === "string" ? obj.alt : undefined;
   const caption = obj && typeof obj.caption === "string" ? obj.caption : undefined;
-  return { src: url, alt, caption };
+  const framing = clampFraming(obj?.framing);
+  return { src: url, alt, caption, framing };
 }
 
 function imageFallbackText(b: ArticleDetailBlock): string {
@@ -204,6 +206,7 @@ function parseGalleryFigures(b: ArticleDetailBlock): Figure[] {
       src: url,
       alt: typeof row.alt === "string" ? row.alt : undefined,
       caption: typeof row.caption === "string" ? row.caption : undefined,
+      framing: clampFraming(row.framing),
     });
   }
   return out;

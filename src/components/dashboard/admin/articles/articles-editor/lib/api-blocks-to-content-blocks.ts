@@ -1,6 +1,6 @@
 import type { ArticleDetailBlock } from "@/services/articles.service";
 import type { ContentBlock } from "../ContentBlocks";
-import { clampFraming } from "@/lib/image-framing";
+import { clampFraming, type ImageFraming } from "@/lib/image-framing";
 
 function parseMetadataObject(raw: ArticleDetailBlock["metadata"]): Record<string, unknown> | null {
   if (raw == null) return null;
@@ -69,17 +69,25 @@ export function articleDetailBlocksToContentBlocks(blocks: ArticleDetailBlock[])
         const obj = parseMetadataObject(b.metadata);
         const imgs = obj?.images;
         const urls: string[] = [];
+        const framing: Record<string, ImageFraming> = {};
         if (Array.isArray(imgs)) {
           for (const im of imgs) {
             if (!im || typeof im !== "object") continue;
-            const u = (im as Record<string, unknown>).url;
-            if (typeof u === "string" && u.trim()) urls.push(u.trim());
+            const row = im as Record<string, unknown>;
+            const u = row.url;
+            if (typeof u === "string" && u.trim()) {
+              const url = u.trim();
+              urls.push(url);
+              const f = clampFraming(row.framing);
+              if (f) framing[url] = f;
+            }
           }
         }
         out.push({
           id,
           type: "gallery",
           galleryUrls: urls.length ? urls : undefined,
+          galleryFraming: Object.keys(framing).length ? framing : undefined,
           dir: parseDir(obj),
         });
         break;

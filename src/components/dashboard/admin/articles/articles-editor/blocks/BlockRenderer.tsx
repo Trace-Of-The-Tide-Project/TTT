@@ -56,6 +56,7 @@ export function BlockRenderer({
   const l = { ...DEFAULT_LABELS, ...labels };
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [framingOpen, setFramingOpen] = useState(false);
+  const [galleryFramingUrl, setGalleryFramingUrl] = useState<string | null>(null);
   const filePreviewUrl = useObjectUrl(block.type === "image" ? (block.file ?? null) : null);
   switch (block.type) {
     case "paragraph":
@@ -407,6 +408,51 @@ export function BlockRenderer({
               className={`${inputClass} resize-y font-mono text-xs`}
             />
           </div>
+          {(block.galleryUrls?.length ?? 0) > 0 ? (
+            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3" aria-label="Gallery image sizing">
+              {(block.galleryUrls ?? []).map((url) => (
+                <li key={url} className="space-y-1">
+                  <div
+                    className="relative w-full overflow-hidden rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-well-bg)]"
+                    style={{ aspectRatio: "16/9" }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element -- transient editor preview */}
+                    <img
+                      src={url}
+                      alt=""
+                      className="h-full w-full"
+                      style={framingStyle(block.galleryFraming?.[url])}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setGalleryFramingUrl(url)}
+                    className={
+                      block.galleryFraming?.[url]
+                        ? "text-xs font-medium underline !text-[var(--tott-accent-gold)]"
+                        : "text-xs font-medium underline"
+                    }
+                    style={{ color: "var(--tott-accent-gold)" }}
+                  >
+                    Adjust image
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <ImageFramingModal
+            open={galleryFramingUrl != null}
+            src={galleryFramingUrl ?? ""}
+            framing={galleryFramingUrl ? block.galleryFraming?.[galleryFramingUrl] : undefined}
+            aspect="16/9"
+            onClose={() => setGalleryFramingUrl(null)}
+            onApply={(framing) => {
+              if (!galleryFramingUrl) return;
+              onChange({
+                galleryFraming: { ...(block.galleryFraming ?? {}), [galleryFramingUrl]: framing },
+              });
+            }}
+          />
         </div>
       );
 
