@@ -3,6 +3,7 @@ import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { ArticleBodyVideo } from "@/components/content/article/ArticleBodyVideo";
 import { ArticleBodyAudio } from "@/components/content/article/ArticleBodyAudio";
 import { RichContent } from "@/components/ui/rich-text/RichContent";
+import { framingStyle, type ImageFraming } from "@/lib/image-framing";
 
 export type ContentArticleCallout = string | { title: string; body: string };
 
@@ -17,7 +18,7 @@ export type ContentArticleSection = {
   /** API divider block — horizontal rule (not body text) */
   divider?: boolean;
   /** Inline figures from API image / gallery blocks */
-  images?: { src: string; alt?: string; caption?: string }[];
+  images?: { src: string; alt?: string; caption?: string; framing?: ImageFraming }[];
   /** Highlighted figures shown as a 3-up grid of stat cards */
   stats?: { value: string; label: string }[];
   /** Pull quote — distinct from `quote`: larger type, gold accent, optional attribution. */
@@ -170,6 +171,7 @@ export function ContentArticleBody({ sections }: ContentArticleBodyProps) {
                       src={resolveArticleMediaSrc(img.src)}
                       alt={img.alt ?? ""}
                       className="aspect-[16/9] w-full rounded-2xl border border-[var(--tott-card-border)] object-cover"
+                      style={framingStyle(img.framing)}
                       loading="lazy"
                       decoding="async"
                     />

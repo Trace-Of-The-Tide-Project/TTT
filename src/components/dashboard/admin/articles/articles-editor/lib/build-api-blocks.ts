@@ -126,6 +126,7 @@ export async function buildArticleBlocksFromEditor(
       }
 
       if (b.type === "gallery") {
+        const framingFor = (url: string) => framingMeta(b.galleryFraming?.[url]);
         const files = b.files ?? [];
         if (files.length) {
           const urls: string[] = [];
@@ -135,7 +136,7 @@ export async function buildArticleBlocksFromEditor(
             block_type: "gallery",
             content: null,
             metadata: JSON.stringify({
-              images: urls.map((url) => ({ url, alt: "", caption: "" })),
+              images: urls.map((url) => ({ url, alt: "", caption: "", framing: framingFor(url) })),
               ...(b.dir ? { dir: b.dir } : {}),
             }),
           });
@@ -148,7 +149,7 @@ export async function buildArticleBlocksFromEditor(
           block_type: "gallery",
           content: null,
           metadata: JSON.stringify({
-            images: existing.map((url) => ({ url, alt: "", caption: "" })),
+            images: existing.map((url) => ({ url, alt: "", caption: "", framing: framingFor(url) })),
             ...(b.dir ? { dir: b.dir } : {}),
           }),
         });
