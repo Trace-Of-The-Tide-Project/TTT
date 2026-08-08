@@ -448,9 +448,10 @@ export function BlockRenderer({
             onClose={() => setGalleryFramingUrl(null)}
             onApply={(framing) => {
               if (!galleryFramingUrl) return;
-              onChange({
-                galleryFraming: { ...(block.galleryFraming ?? {}), [galleryFramingUrl]: framing },
-              });
+              const next = { ...(block.galleryFraming ?? {}) };
+              if (framing) next[galleryFramingUrl] = framing;
+              else delete next[galleryFramingUrl];
+              onChange({ galleryFraming: next });
             }}
           />
         </div>
