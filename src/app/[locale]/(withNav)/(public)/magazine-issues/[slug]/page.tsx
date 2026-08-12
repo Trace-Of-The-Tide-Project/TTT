@@ -44,7 +44,8 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
   const priceNum =
     issue.price == null || issue.price === "" ? null : Number(issue.price);
 
-  const ref = issue.cover_image?.trim();
+  // The cover bucket has no public-read grant; prefer the backend's signed URL.
+  const ref = (issue.cover_image_url ?? issue.cover_image)?.trim();
   const cover =
     ref && isUsableArticleMediaRef(ref) ? resolveArticleMediaSrc(ref) : null;
 

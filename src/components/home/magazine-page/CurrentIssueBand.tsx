@@ -4,6 +4,7 @@ import { ChamferedSurface } from "@/components/ui/ChamferedSurface";
 import { MagImage } from "@/components/home/magazine-next/MagImage";
 import { shortDate } from "@/components/home/magazine-next/ui";
 import type { IssueCard } from "@/components/home/magazine-next/data";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 /**
  * Current Issue band — sits directly below the (now CMS-only) Hero. The
@@ -23,22 +24,27 @@ export async function CurrentIssueBand({
   if (!issue) return null;
   const t = await getTranslations({ locale, namespace: "Magazine" });
 
+  const letterHtml = issue.editorsLetterHtml?.trim()
+    ? sanitizeHtml(issue.editorsLetterHtml)
+    : null;
+
   return (
     <section className="px-6 py-12 sm:px-10 lg:px-[156px]" aria-labelledby="current-issue-heading">
       <ChamferedSurface
+        className="mx-auto max-w-4xl"
         chamfer={25}
         borderColor="var(--tott-card-border)"
         innerFill="var(--tott-elevated)"
       >
         <div className="flex flex-col gap-6 p-6 sm:flex-row sm:gap-8 sm:p-8">
-          <div className="relative aspect-[4/5] w-full shrink-0 overflow-hidden sm:w-64">
+          <div className="relative aspect-[4/5] w-full shrink-0 overflow-hidden sm:w-56">
             {issue.coverImage ? (
               <MagImage
                 src={issue.coverImage}
                 alt={issue.title}
                 framing={issue.coverFraming}
                 fill
-                sizes="(min-width: 640px) 256px, 100vw"
+                sizes="(min-width: 640px) 224px, 100vw"
                 className="object-cover"
               />
             ) : null}
@@ -66,8 +72,14 @@ export async function CurrentIssueBand({
               {issue.editionNumber && issue.publishedAt ? <span aria-hidden>·</span> : null}
               {shortDate(issue.publishedAt, locale) || null}
             </p>
-            {issue.excerpt ? (
-              <p className="mt-4 line-clamp-3 text-base leading-relaxed text-[var(--tott-salt)]">
+            {letterHtml ? (
+              // Sanitized via sanitizeHtml (DOMPurify) above — never render raw admin HTML.
+              <div
+                className="mt-4 line-clamp-4 text-base leading-relaxed text-[var(--tott-salt)] [&_p]:mt-2 first:[&_p]:mt-0"
+                dangerouslySetInnerHTML={{ __html: letterHtml }}
+              />
+            ) : issue.excerpt ? (
+              <p className="mt-4 line-clamp-4 text-base leading-relaxed text-[var(--tott-salt)]">
                 {issue.excerpt}
               </p>
             ) : null}

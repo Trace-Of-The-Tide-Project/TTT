@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import {
   useAddIssueToCart,
@@ -11,6 +10,7 @@ import {
 } from "@/hooks/mutations/commerce";
 import { getIssueDownloadUrl } from "@/services/magazine-issues.service";
 import { formatApiError } from "@/lib/api/error-message";
+import { AuthPromptModal } from "@/components/commerce/AuthPromptModal";
 
 const BTN =
   "inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-60";
@@ -60,18 +60,18 @@ export function IssuePurchaseActions({
   const t = useTranslations("MagazineIssueDetail");
   const tCommerce = useTranslations("Home.Commerce");
   const locale = useLocale();
-  const router = useRouter();
   const { user, status } = useAuth();
 
   const addToCart = useAddIssueToCart();
   const checkout = useCreateCheckout();
   const [busy, setBusy] = useState(false);
+  const [authPromptOpen, setAuthPromptOpen] = useState(false);
 
   const backTo = "/magazine-issues/" + (slug ?? issueId);
 
   function requireLogin(): boolean {
     if (status === "authenticated" && user) return true;
-    router.push("/auth/login?callbackUrl=" + encodeURIComponent(backTo));
+    setAuthPromptOpen(true);
     return false;
   }
 
@@ -109,17 +109,28 @@ export function IssuePurchaseActions({
     }
   }
 
+  const authModal = (
+    <AuthPromptModal
+      open={authPromptOpen}
+      onClose={() => setAuthPromptOpen(false)}
+      callbackUrl={backTo}
+    />
+  );
+
   if (isFree || isOwned) {
     return (
-      <button
-        type="button"
-        onClick={handleDownload}
-        disabled={busy}
-        className={BTN}
-        style={GOLD}
-      >
-        {t("downloadPdf")}
-      </button>
+      <>
+        <button
+          type="button"
+          onClick={handleDownload}
+          disabled={busy}
+          className={BTN}
+          style={GOLD}
+        >
+          {t("downloadPdf")}
+        </button>
+        {authModal}
+      </>
     );
   }
 
@@ -146,6 +157,7 @@ export function IssuePurchaseActions({
       >
         {t("addToCart")}
       </button>
+      {authModal}
     </>
   );
 }

@@ -74,6 +74,8 @@ export type IssueCard = {
   category: string | null;
   publishedAt: string | null;
   isCurrent: boolean;
+  /** Rich-text intro authored on the issue — sanitize before rendering. */
+  editorsLetterHtml: string | null;
 };
 
 export type ArticleCard = {
@@ -151,12 +153,15 @@ function toIssueCard(it: MagazineIssue): IssueCard {
     title: it.title,
     subtitle: it.subtitle ?? null,
     slug: it.slug ?? null,
-    coverImage: it.cover_image ?? null,
+    // The cover bucket has no public-read grant, so the raw key 403s in the
+    // browser — always prefer the backend's freshly-signed cover_image_url.
+    coverImage: it.cover_image_url ?? it.cover_image ?? null,
     excerpt: it.excerpt ?? null,
     editionNumber: it.edition_number ?? null,
     category: it.category ?? null,
     publishedAt: it.published_at ?? null,
     isCurrent: it.is_current ?? false,
+    editorsLetterHtml: it.editors_letter_html ?? null,
   };
 }
 

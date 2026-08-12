@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useAddToCart, useCreateCheckout } from "@/hooks/mutations/commerce";
 import { checkOwnership, createPrintCheckout } from "@/services/commerce.service";
 import { getBookDownloadUrl } from "@/services/books.service";
 import { formatApiError } from "@/lib/api/error-message";
 import { DownloadIcon } from "@/components/ui/icons";
+import { AuthPromptModal } from "@/components/commerce/AuthPromptModal";
 
 const BUY_ICON = "/images/books/buy-icon.svg";
 
@@ -70,18 +70,18 @@ export function BookActionButtons({
   const t = useTranslations("Home.bookDetail");
   const tCommerce = useTranslations("Home.Commerce");
   const locale = useLocale();
-  const router = useRouter();
   const { user, status } = useAuth();
 
   const [owned, setOwned] = useState(isOwnedInitial);
   const addToCart = useAddToCart();
   const checkout = useCreateCheckout();
   const [printBusy, setPrintBusy] = useState(false);
+  const [authPromptOpen, setAuthPromptOpen] = useState(false);
+  const backTo = `/books/${bookId}`;
 
   function requireLoginForPrint(): boolean {
     if (status === "authenticated" && user) return true;
-    const next = encodeURIComponent(`/books/${bookId}`);
-    router.push(`/auth/login?callbackUrl=${next}`);
+    setAuthPromptOpen(true);
     return false;
   }
 
@@ -140,10 +140,17 @@ export function BookActionButtons({
 
   function requireLogin(): boolean {
     if (status === "authenticated" && user) return true;
-    const next = encodeURIComponent(`/books/${bookId}`);
-    router.push(`/auth/login?callbackUrl=${next}`);
+    setAuthPromptOpen(true);
     return false;
   }
+
+  const authModal = (
+    <AuthPromptModal
+      open={authPromptOpen}
+      onClose={() => setAuthPromptOpen(false)}
+      callbackUrl={backTo}
+    />
+  );
 
   // ── Owned or free: read/download ──
   if (isFree || owned) {
@@ -151,6 +158,7 @@ export function BookActionButtons({
       <div className="flex w-full flex-col" style={{ gap: "12px" }}>
         <DownloadButton bookId={bookId} label={t("readDownload")} />
         {printButton}
+        {authModal}
       </div>
     );
   }
@@ -228,6 +236,7 @@ export function BookActionButtons({
         {t("addToCart")}
       </button>
       {printButton}
+      {authModal}
     </div>
   );
 }
@@ -235,15 +244,15 @@ export function BookActionButtons({
 /** Gold "Read / Download" button that fetches a fresh short-lived signed URL. */
 function DownloadButton({ bookId, label }: { bookId: string; label: string }) {
   const t = useTranslations("Home.Commerce");
-  const router = useRouter();
   const { user, status } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [authPromptOpen, setAuthPromptOpen] = useState(false);
 
   async function handleDownload() {
-    // The download endpoint requires a session even for free books; redirect
+    // The download endpoint requires a session even for free books; prompt
     // guests up front instead of letting the 401 interceptor do it mid-flight.
     if (status !== "authenticated" || !user) {
-      router.push(`/auth/login?callbackUrl=${encodeURIComponent(`/books/${bookId}`)}`);
+      setAuthPromptOpen(true);
       return;
     }
     setLoading(true);
@@ -262,18 +271,25 @@ function DownloadButton({ bookId, label }: { bookId: string; label: string }) {
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleDownload}
-      disabled={loading}
-      className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90 disabled:opacity-60 min-[1600px]:h-14! min-[1600px]:text-base!"
-      style={GOLD_BUTTON_STYLE}
-    >
-      <span aria-hidden className="[&>svg]:h-5 [&>svg]:w-5">
-        <DownloadIcon />
-      </span>
-      {label}
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={handleDownload}
+        disabled={loading}
+        className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90 disabled:opacity-60 min-[1600px]:h-14! min-[1600px]:text-base!"
+        style={GOLD_BUTTON_STYLE}
+      >
+        <span aria-hidden className="[&>svg]:h-5 [&>svg]:w-5">
+          <DownloadIcon />
+        </span>
+        {label}
+      </button>
+      <AuthPromptModal
+        open={authPromptOpen}
+        onClose={() => setAuthPromptOpen(false)}
+        callbackUrl={`/books/${bookId}`}
+      />
+    </>
   );
 }
 
@@ -289,13 +305,13 @@ export function BookDownloadLink({
   label: string;
 }) {
   const t = useTranslations("Home.Commerce");
-  const router = useRouter();
   const { user, status } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [authPromptOpen, setAuthPromptOpen] = useState(false);
 
   async function handleClick() {
     if (status !== "authenticated" || !user) {
-      router.push(`/auth/login?callbackUrl=${encodeURIComponent(`/books/${bookId}`)}`);
+      setAuthPromptOpen(true);
       return;
     }
     setLoading(true);
@@ -311,28 +327,35 @@ export function BookDownloadLink({
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={loading}
-      className="inline-flex items-center transition-opacity hover:opacity-90 disabled:opacity-60"
-      style={{
-        gap: "6px",
-        background: "none",
-        border: "none",
-        padding: 0,
-        cursor: "pointer",
-        color: "var(--tott-dash-gold-label)",
-        fontFamily: "'Inter', var(--font-sans, sans-serif)",
-        fontWeight: 500,
-        fontSize: "12px",
-        lineHeight: "16px",
-      }}
-    >
-      <span aria-hidden className="[&>svg]:h-4 [&>svg]:w-4">
-        <DownloadIcon />
-      </span>
-      {label}
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={loading}
+        className="inline-flex items-center transition-opacity hover:opacity-90 disabled:opacity-60"
+        style={{
+          gap: "6px",
+          background: "none",
+          border: "none",
+          padding: 0,
+          cursor: "pointer",
+          color: "var(--tott-dash-gold-label)",
+          fontFamily: "'Inter', var(--font-sans, sans-serif)",
+          fontWeight: 500,
+          fontSize: "12px",
+          lineHeight: "16px",
+        }}
+      >
+        <span aria-hidden className="[&>svg]:h-4 [&>svg]:w-4">
+          <DownloadIcon />
+        </span>
+        {label}
+      </button>
+      <AuthPromptModal
+        open={authPromptOpen}
+        onClose={() => setAuthPromptOpen(false)}
+        callbackUrl={`/books/${bookId}`}
+      />
+    </>
   );
 }

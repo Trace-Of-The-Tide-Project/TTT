@@ -130,7 +130,9 @@
       "reset": "Reset",
       "apply": "Apply",
       "cancel": "Cancel",
-      "saved": "Framing saved"
+      "saved": "Framing saved",
+      "replaceImage": "Edit image",
+      "replacing": "Uploading…"
     }
   }
 }

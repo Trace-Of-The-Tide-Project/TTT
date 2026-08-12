@@ -389,7 +389,9 @@ function IssueCard({
   onUnpublish: () => void;
 }) {
   const s = normStatus(issue.status);
-  const cover = issue.cover_image ? resolveArticleMediaSrc(issue.cover_image) : "";
+  // The cover bucket has no public-read grant; prefer the backend's signed URL.
+  const coverRef = issue.cover_image_url ?? issue.cover_image;
+  const cover = coverRef ? resolveArticleMediaSrc(coverRef) : "";
   const isPublished = s === "published";
   const publishedDate =
     isPublished && issue.published_at ? new Date(issue.published_at) : null;
