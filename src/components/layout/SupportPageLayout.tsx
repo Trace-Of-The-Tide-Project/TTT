@@ -16,7 +16,7 @@ export function SupportPageLayout({ title, subtitle, children }: SupportPageLayo
     >
       <div className="relative">
         <div className="absolute inset-0">
-          <HexBackground />
+          <HexBackground twinkle />
         </div>
         <div className="relative z-10 mx-auto max-w-3xl px-6 pt-16 pb-10 sm:pt-24">
           <div className="flex flex-col items-baseline gap-4">

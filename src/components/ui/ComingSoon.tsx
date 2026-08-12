@@ -122,7 +122,7 @@ export default function ComingSoon({
           WebkitMaskImage: "linear-gradient(to bottom, black, transparent)",
         }}
       >
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
 
       <motion.div

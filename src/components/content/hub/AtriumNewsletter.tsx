@@ -39,7 +39,7 @@ export function AtriumNewsletter() {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 h-40 overflow-hidden opacity-40"
       >
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
 
       <div className="tott-bottle-float relative">

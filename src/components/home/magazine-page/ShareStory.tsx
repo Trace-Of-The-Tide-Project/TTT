@@ -27,7 +27,7 @@ export function ShareStory({
   return (
     <section className="relative overflow-hidden py-24 sm:py-28">
       <div aria-hidden className="absolute inset-0 opacity-40">
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
       <div
         aria-hidden

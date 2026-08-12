@@ -103,7 +103,7 @@ export function WriterConnectBand({
   return (
     <section className="relative mx-auto mt-24 max-w-6xl overflow-hidden px-6 py-16 sm:px-10 sm:py-24">
       <div aria-hidden className="pointer-events-none absolute inset-0 opacity-40">
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
 
       <RevealOnScroll className="relative mx-auto flex max-w-xl flex-col items-center gap-4 text-center">

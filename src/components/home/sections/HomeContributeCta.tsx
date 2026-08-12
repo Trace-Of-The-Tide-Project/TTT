@@ -38,7 +38,7 @@ export function HomeContributeCta({
         className="pointer-events-none absolute inset-0 overflow-hidden"
         style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
       >
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
       <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-5 px-6 text-center">
         <h2

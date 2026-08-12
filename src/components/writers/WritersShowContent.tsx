@@ -209,7 +209,7 @@ export function WritersShowContent({
           className="h-full w-full"
           style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
         >
-          <HexBackground />
+          <HexBackground twinkle />
         </div>
       </Parallax>
 

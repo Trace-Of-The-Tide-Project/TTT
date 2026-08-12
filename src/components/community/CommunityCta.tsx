@@ -24,7 +24,7 @@ export function CommunityCta() {
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-30"
       >
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
 
       <div className="relative flex max-w-2xl flex-col items-center">
