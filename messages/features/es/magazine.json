@@ -56,6 +56,20 @@
     },
     "viewMore": "Ver más",
     "edition": "Edición",
+    "currentIssue": {
+      "eyebrow": "Número actual",
+      "readCta": "Leer este número",
+      "allIssues": "Todos los números"
+    },
+    "issuesArchive": {
+      "title": "Números",
+      "standfirst": "Todas las ediciones de Trace of the Tide, desde el número actual hasta el archivo completo.",
+      "currentHeading": "Número actual",
+      "previousHeading": "Números anteriores",
+      "empty": "Aún no hay números publicados — vuelve pronto.",
+      "backToAll": "Todos los números",
+      "editionLabel": "Edición"
+    },
     "shareStory": {
       "heading": "Comparte tu historia",
       "standfirst": "Cada historia importa. Ayúdanos a preservar la memoria colectiva compartiendo tus experiencias personales, testimonios o conocimiento de hechos históricos.",

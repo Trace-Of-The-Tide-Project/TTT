@@ -56,6 +56,20 @@
     },
     "viewMore": "View more",
     "edition": "Edition",
+    "currentIssue": {
+      "eyebrow": "Current Issue",
+      "readCta": "Read this issue",
+      "allIssues": "All issues"
+    },
+    "issuesArchive": {
+      "title": "Issues",
+      "standfirst": "Every edition of Trace of the Tide, from the current issue back through the archive.",
+      "currentHeading": "Current issue",
+      "previousHeading": "Previous issues",
+      "empty": "No issues published yet — check back soon.",
+      "backToAll": "All issues",
+      "editionLabel": "Edition"
+    },
     "shareStory": {
       "heading": "Share your story",
       "standfirst": "Every story matters. Help us preserve the collective memory by contributing your personal experiences, testimonies, or knowledge of historical events.",

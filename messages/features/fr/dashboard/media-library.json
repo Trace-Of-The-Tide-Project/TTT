@@ -130,7 +130,9 @@
       "reset": "Réinitialiser",
       "apply": "Appliquer",
       "cancel": "Annuler",
-      "saved": "Cadrage enregistré"
+      "saved": "Cadrage enregistré",
+      "replaceImage": "Modifier l'image",
+      "replacing": "Import…"
     }
   }
 }

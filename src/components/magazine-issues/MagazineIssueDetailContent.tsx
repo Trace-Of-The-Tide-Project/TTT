@@ -173,6 +173,16 @@ export function MagazineIssueDetailContent({
           </div>
         ) : null}
 
+        {/* Back to archive */}
+        <Link
+          href="/magazine-issues"
+          className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
+          style={{ color: ACCENT }}
+        >
+          <span aria-hidden className="inline-block rtl:-scale-x-100">←</span>
+          {t("allIssues")}
+        </Link>
+
         {/* Meta row */}
         {meta.length > 0 ? (
           <p

@@ -31,6 +31,7 @@ const _HexMark = ({ size = 22 }: { size?: number }) => (
 
 const STREAM_ITEMS = [
   { label: "Magazine", labelAr: "المجلة", desc: "Current & archival issues", descAr: "الأعداد الحالية والأرشيفية", href: "/magazine" },
+  { label: "Issues", labelAr: "الأعداد", desc: "Browse the archive", descAr: "تصفح الأرشيف", href: "/magazine-issues" },
   { label: "Writing Room", labelAr: "غرفة الكتابة", desc: "Open calls & residencies", descAr: "دعوات مفتوحة وإقامات", href: "/writing-room" },
   { label: "Books", labelAr: "الكتب", desc: "Curated reading selections", descAr: "اختيارات مقروءة منتقاة", href: "/books" },
   { label: "Open Calls", labelAr: "دعوات مفتوحة", desc: "Submit your work", descAr: "قدّم عملك", href: "/open-calls" },

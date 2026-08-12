@@ -10,7 +10,7 @@ import { formatApiError } from "@/lib/api/error-message";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { dirFor } from "@/i18n/dir";
 import { usePrimaryLanguage } from "@/i18n/use-primary-language";
-import { uploadArticleAssetKeyAndUrl } from "@/services/uploads.service";
+import { uploadArticleAssetKeyAndUrl, uploadArticleAssetPath } from "@/services/uploads.service";
 import { RichTextEditor } from "@/components/ui/rich-text/RichTextEditor";
 import { EditorRegistryProvider } from "@/components/ui/rich-text/editor-registry";
 import { EditorToolbar } from "@/components/ui/rich-text/EditorToolbar";
@@ -254,6 +254,7 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
   const [coverPreview, setCoverPreview] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<FieldErrors>({});
   const [uploading, setUploading] = useState(false);
+  const [pdfUploading, setPdfUploading] = useState(false);
   const [seeded, setSeeded] = useState(false);
 
   // In edit mode the list resolves after mount; seed the primary form once.
@@ -262,12 +263,15 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
     base.language = item.language ?? initialLang;
     setForms({ [base.language]: base });
     setActiveLang(base.language);
+    if (item.cover_image_url) {
+      setCoverPreview((prev) => ({ ...prev, [base.language]: item.cover_image_url! }));
+    }
     setSeeded(true);
   }
 
   const form = forms[activeLang] ?? toForm(null, nextEdition);
   const saving = create.isPending || update.isPending || createMagazine.isPending;
-  const busy = saving || uploading;
+  const busy = saving || uploading || pdfUploading;
 
   const tabStatus = useMemo(() => {
     const map: Record<string, LanguageTabStatus> = {};
@@ -307,6 +311,9 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
           ? { ...toForm(existing, nextEdition), language: next }
           : { ...toForm(null, nextEdition), language: next },
       }));
+      if (existing?.cover_image_url) {
+        setCoverPreview((prev) => ({ ...prev, [next]: existing.cover_image_url! }));
+      }
     }
     setActiveLang(next);
   };
@@ -338,6 +345,22 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
       /* surfaced via toast */
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handlePdfFile = async (file: File) => {
+    setPdfUploading(true);
+    try {
+      const path = await mutationToast(() => uploadArticleAssetPath(file), {
+        loading: t("editor.pdfUploading"),
+        success: t("editor.pdfUploaded"),
+        error: t("editor.pdfUploadError"),
+      });
+      updateForm((prev) => ({ ...prev, pdf_path: path }));
+    } catch {
+      /* surfaced via toast */
+    } finally {
+      setPdfUploading(false);
     }
   };
 
@@ -790,14 +813,12 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
                 placeholder="USD"
               />
             </div>
-            <div>
+            <div className="sm:col-span-3">
               <label className={labelClass}>{t("published.form.fields.pdfPath")}</label>
-              <input
-                type="text"
-                className={inputClass}
+              <IssuePdfUpload
                 value={form.pdf_path}
-                onChange={set("pdf_path")}
-                placeholder={t("published.form.fields.pdfPathPlaceholder")}
+                uploading={pdfUploading}
+                onFile={handlePdfFile}
               />
             </div>
           </div>
@@ -851,12 +872,14 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
       </div>
       <ImageFramingModal
         open={framingOpen}
-        src={resolveArticleMediaSrc(form.cover_image)}
+        src={coverPreview[activeLang] || resolveArticleMediaSrc(form.cover_image)}
         framing={coverFraming}
         // The cover leads the magazine hero, which is full-bleed.
         aspect="16/9"
         onClose={() => setFramingOpen(false)}
         onApply={(framing) => void handleFramingApply(framing)}
+        onReplaceImage={(file) => void handleCoverFile(file)}
+        replacingImage={uploading}
       />
     </EditorRegistryProvider>
   );
@@ -958,6 +981,107 @@ function IssueCoverUpload({
         <span className="px-4 py-6 text-center text-xs font-medium text-[var(--tott-muted)]">
           {t("published.form.uploadHint")}
         </span>
+      )}
+    </label>
+  );
+}
+
+/** Drag/click upload for the issue's paid PDF. Persists the stable storage
+ * key returned by the upload endpoint (re-signed fresh on read). */
+function IssuePdfUpload({
+  value,
+  uploading,
+  onFile,
+}: {
+  value: string;
+  uploading: boolean;
+  onFile: (file: File) => void;
+}) {
+  const t = useTranslations("Dashboard.magazineIssues");
+  const id = useId();
+  const [dragging, setDragging] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) onFile(file);
+  };
+
+  if (value && !uploading) {
+    return (
+      <div className="mt-1 flex items-center gap-3 rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] px-4 py-3">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-red-400">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+        </svg>
+        <span className="flex-1 truncate text-xs text-[var(--tott-muted)]">
+          {value.split("/").pop()?.split("?")[0] || t("editor.pdfFallback")}
+        </span>
+        <span className="shrink-0 rounded-full bg-green-500/15 px-2 py-0.5 text-[10px] font-medium text-green-400">
+          {t("editor.pdfReady")}
+        </span>
+        <label htmlFor={id} className="shrink-0 cursor-pointer text-[10px] text-[var(--tott-muted)] underline hover:text-foreground">
+          {t("editor.pdfReplace")}
+          <input
+            id={id}
+            ref={inputRef}
+            type="file"
+            accept=".pdf"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              e.target.value = "";
+              if (f) onFile(f);
+            }}
+          />
+        </label>
+      </div>
+    );
+  }
+
+  return (
+    <label
+      htmlFor={id}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setDragging(true);
+      }}
+      onDragLeave={() => setDragging(false)}
+      onDrop={onDrop}
+      className={[
+        "mt-1 flex min-h-[100px] cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed transition-colors",
+        dragging
+          ? "border-[var(--tott-accent-gold)] bg-[color-mix(in_srgb,var(--tott-accent-gold)_6%,transparent)]"
+          : "border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)] hover:border-[color-mix(in_srgb,var(--tott-accent-gold)_50%,transparent)]",
+      ].join(" ")}
+    >
+      <input
+        id={id}
+        ref={inputRef}
+        type="file"
+        accept=".pdf"
+        className="hidden"
+        disabled={uploading}
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          e.target.value = "";
+          if (f) onFile(f);
+        }}
+      />
+      {uploading ? (
+        <div className="flex flex-col items-center gap-2 py-5">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--tott-card-border)] border-t-[var(--tott-accent-gold)]" />
+          <span className="text-xs text-[var(--tott-muted)]">{t("editor.pdfUploading")}</span>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-1 px-4 py-5 text-center">
+          <span className="text-xs font-medium text-[var(--tott-muted)]">{t("editor.pdfUploadHint")}</span>
+          <span className="text-[10px] text-[var(--tott-muted)]">{t("editor.pdfUploadFormats")}</span>
+        </div>
       )}
     </label>
   );

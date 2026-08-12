@@ -4,6 +4,7 @@
     "pages": "{count, plural, =1 {صفحة واحدة} other {# صفحات}}",
     "supportCta": "ادعم هذا العدد",
     "backToMagazine": "العودة إلى المجلة",
+    "allIssues": "جميع الأعداد",
     "contents": "في هذا العدد",
     "buyNow": "اشترِ الآن",
     "addToCart": "أضف إلى السلة",

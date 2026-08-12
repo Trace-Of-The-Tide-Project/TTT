@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useId, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Modal } from "@/components/ui/Modal";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
@@ -29,6 +29,12 @@ export type ImageFramingModalProps = {
   /** Receives undefined when the result is default framing, so a no-op
    * adjustment never persists a key. */
   onApply: (framing: ImageFraming | undefined) => void;
+  /** When supplied, shows an "Edit image" button that lets the caller swap
+   * the underlying image (e.g. re-upload) without leaving the modal. Omit
+   * for callers that only need framing (this modal is shared). */
+  onReplaceImage?: (file: File) => void;
+  /** Disables the replace control and shows a busy state while uploading. */
+  replacingImage?: boolean;
 };
 
 const ROTATIONS = [0, 90, 180, 270] as const;
@@ -49,8 +55,11 @@ export function ImageFramingModal({
   aspect,
   onClose,
   onApply,
+  onReplaceImage,
+  replacingImage,
 }: ImageFramingModalProps) {
   const t = useTranslations("Dashboard.imageFraming");
+  const replaceInputId = useId();
   const [draft, setDraft] = useState<ImageFraming>(framing ?? DEFAULT_FRAMING);
   const [dragging, setDragging] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
@@ -114,9 +123,31 @@ export function ImageFramingModal({
       maxWidthClassName="max-w-2xl"
       footer={
         <div className="flex items-center justify-between gap-2">
-          <button type="button" onClick={() => setDraft(DEFAULT_FRAMING)} className={GHOST_BTN}>
-            {t("reset")}
-          </button>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={() => setDraft(DEFAULT_FRAMING)} className={GHOST_BTN}>
+              {t("reset")}
+            </button>
+            {onReplaceImage ? (
+              <label
+                htmlFor={replaceInputId}
+                className={`cursor-pointer ${GHOST_BTN} ${replacingImage ? "pointer-events-none opacity-50" : ""}`}
+              >
+                {replacingImage ? t("replacing") : t("replaceImage")}
+                <input
+                  id={replaceInputId}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  disabled={replacingImage}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    e.target.value = "";
+                    if (f) onReplaceImage(f);
+                  }}
+                />
+              </label>
+            ) : null}
+          </div>
           <div className="flex items-center gap-2">
             <button type="button" onClick={onClose} className={GHOST_BTN}>
               {t("cancel")}

@@ -130,7 +130,9 @@
       "reset": "Restablecer",
       "apply": "Aplicar",
       "cancel": "Cancelar",
-      "saved": "Encuadre guardado"
+      "saved": "Encuadre guardado",
+      "replaceImage": "Editar imagen",
+      "replacing": "Subiendo…"
     }
   }
 }

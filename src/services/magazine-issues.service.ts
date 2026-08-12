@@ -39,6 +39,11 @@ export type MagazineIssue = {
   status?: string | null;
   language?: string | null;
   cover_image?: string | null;
+  /** Signed URL for `cover_image` — the bucket has no public-read grant, so
+   * every read path signs it fresh. Prefer this over resolving `cover_image`
+   * directly; `cover_image` (the raw key) is kept only for the editor to
+   * round-trip on save. */
+  cover_image_url?: string | null;
   excerpt?: string | null;
   description?: string | null;
   page_count?: number | null;
