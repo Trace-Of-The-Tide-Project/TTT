@@ -66,6 +66,7 @@ const HexImg = ({
 const PLATFORM_ITEMS = [
   { label: "Articles", labelAr: "مقالات", desc: "Essays & reportage", descAr: "مقالات وتحقيقات", href: "/content" },
   { label: "Magazine", labelAr: "المجلة", desc: "Issues & features", descAr: "الأعداد والمواد", href: "/magazine" },
+  { label: "Issues", labelAr: "الأعداد", desc: "Browse the archive", descAr: "تصفح الأرشيف", href: "/magazine-issues" },
   { label: "Writing Room", labelAr: "غرفة الكتابة", desc: "Workshops & residency", descAr: "ورش عمل وإقامات", href: "/writing-room" },
   { label: "Books", labelAr: "الكتب", desc: "Library & reading", descAr: "المكتبة والقراءة", href: "/books" },
   { label: "Open Calls", labelAr: "دعوات مفتوحة", desc: "Submit & fund", descAr: "قدّم وادعم", href: "/open-calls" },

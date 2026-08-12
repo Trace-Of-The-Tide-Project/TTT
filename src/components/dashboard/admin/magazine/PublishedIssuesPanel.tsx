@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   SearchIcon,
@@ -10,6 +10,8 @@ import {
   TrashIcon,
   RefreshCwIcon,
   StarIcon,
+  EyeIcon,
+  EyeOffIcon,
 } from "@/components/ui/icons";
 import { mutationToast } from "@/hooks/useMutationToast";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
@@ -20,6 +22,7 @@ import { useMagazineIssues } from "@/hooks/queries/magazine-issues";
 import {
   useDeleteMagazineIssue,
   useSetCurrentIssue,
+  useUpdateMagazineIssue,
 } from "@/hooks/mutations/magazine-issues";
 import type { MagazineIssue } from "@/services/magazine-issues.service";
 
@@ -46,6 +49,7 @@ function normStatus(s: string | null | undefined): string {
 
 export function PublishedIssuesPanel() {
   const t = useTranslations("Dashboard.magazineIssues");
+  const locale = useLocale();
   const statusLabel = (s: string) =>
     STATUS_KEYS.includes(s) ? t(`statuses.${s}`) : s;
   const kindLabel = (k: string | null | undefined) => {
@@ -59,12 +63,14 @@ export function PublishedIssuesPanel() {
 
   const remove = useDeleteMagazineIssue();
   const setCurrent = useSetCurrentIssue();
+  const updateIssue = useUpdateMagazineIssue();
 
   const [tab, setTab] = useState<Tab>("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [deleting, setDeleting] = useState<MagazineIssue | null>(null);
   const [makingCurrent, setMakingCurrent] = useState<MagazineIssue | null>(null);
+  const [unpublishing, setUnpublishing] = useState<MagazineIssue | null>(null);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: issues.length };
@@ -100,6 +106,16 @@ export function PublishedIssuesPanel() {
   const loadError = query.error
     ? formatApiError(query.error, t("published.list.loadError"))
     : null;
+
+  const doUnpublish = (issue: MagazineIssue) =>
+    mutationToast(
+      () => updateIssue.mutateAsync({ id: issue.id, payload: { status: "draft" } }),
+      {
+        loading: t("published.card.publishing"),
+        success: t("published.card.publishDone"),
+        error: t("published.card.publishError"),
+      },
+    ).catch(() => {});
 
   return (
     <div className="space-y-4">
@@ -211,8 +227,32 @@ export function PublishedIssuesPanel() {
                   editLabel={t("published.list.edit")}
                   deleteLabel={t("published.list.delete")}
                   setCurrentLabel={t("published.card.setCurrent")}
+                  publishLabel={t("published.card.publish")}
+                  unpublishLabel={t("published.card.unpublish")}
+                  publishedOnLabel={(date) => t("published.card.publishedOn", { date })}
+                  locale={locale}
                   onSetCurrent={() => setMakingCurrent(it)}
                   onDelete={() => setDeleting(it)}
+                  onPublish={() =>
+                    mutationToast(
+                      () =>
+                        updateIssue.mutateAsync({
+                          id: it.id,
+                          payload: {
+                            status: "published",
+                            published_at: new Date().toISOString().slice(0, 10),
+                          },
+                        }),
+                      {
+                        loading: t("published.card.publishing"),
+                        success: t("published.card.publishDone"),
+                        error: t("published.card.publishError"),
+                      },
+                    ).catch(() => {})
+                  }
+                  onUnpublish={() =>
+                    it.is_current ? setUnpublishing(it) : void doUnpublish(it)
+                  }
                 />
               ))}
             </div>
@@ -275,6 +315,23 @@ export function PublishedIssuesPanel() {
       />
 
       <ConfirmDialog
+        open={Boolean(unpublishing)}
+        title={t("published.card.unpublishTitle")}
+        description={
+          unpublishing ? t("published.card.unpublishBody", { title: unpublishing.title }) : undefined
+        }
+        confirmLabel={t("published.card.unpublish")}
+        confirmBusyLabel={t("published.card.publishing")}
+        destructive
+        busy={updateIssue.isPending}
+        onClose={() => !updateIssue.isPending && setUnpublishing(null)}
+        onConfirm={() => {
+          if (!unpublishing) return;
+          doUnpublish(unpublishing).then(() => setUnpublishing(null));
+        }}
+      />
+
+      <ConfirmDialog
         open={Boolean(deleting)}
         title={t("published.delete.title")}
         description={deleting ? t("published.delete.body", { title: deleting.title }) : undefined}
@@ -306,8 +363,14 @@ function IssueCard({
   editLabel,
   deleteLabel,
   setCurrentLabel,
+  publishLabel,
+  unpublishLabel,
+  publishedOnLabel,
+  locale,
   onSetCurrent,
   onDelete,
+  onPublish,
+  onUnpublish,
 }: {
   issue: MagazineIssue;
   statusLabel: (s: string) => string;
@@ -316,15 +379,32 @@ function IssueCard({
   editLabel: string;
   deleteLabel: string;
   setCurrentLabel: string;
+  publishLabel: string;
+  unpublishLabel: string;
+  publishedOnLabel: (date: string) => string;
+  locale: string;
   onSetCurrent: () => void;
   onDelete: () => void;
+  onPublish: () => void;
+  onUnpublish: () => void;
 }) {
   const s = normStatus(issue.status);
   const cover = issue.cover_image ? resolveArticleMediaSrc(issue.cover_image) : "";
   const isPublished = s === "published";
+  const publishedDate =
+    isPublished && issue.published_at ? new Date(issue.published_at) : null;
+  const publishedText =
+    publishedDate && !Number.isNaN(publishedDate.getTime())
+      ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(publishedDate)
+      : null;
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border border-[var(--tott-card-border)] bg-[var(--tott-dash-input-bg)]">
+    <div
+      className="flex flex-col overflow-hidden rounded-xl border bg-[var(--tott-dash-input-bg)]"
+      style={{
+        borderColor: issue.is_current ? "var(--tott-accent-gold)" : "var(--tott-card-border)",
+      }}
+    >
       <div className="relative aspect-[16/10] bg-[var(--tott-elevated)]">
         {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -367,6 +447,11 @@ function IssueCard({
         <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-foreground">
           {issue.title}
         </h3>
+        {publishedText ? (
+          <p className="mt-1 text-[11px]" style={{ color: "var(--tott-muted)" }}>
+            {publishedOnLabel(publishedText)}
+          </p>
+        ) : null}
 
         <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-[var(--tott-card-border)] pt-3">
           <Link
@@ -390,6 +475,25 @@ function IssueCard({
               {setCurrentLabel}
             </button>
           ) : null}
+          {isPublished ? (
+            <button
+              type="button"
+              onClick={onUnpublish}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] [&_svg]:h-3.5 [&_svg]:w-3.5"
+            >
+              <EyeOffIcon />
+              {unpublishLabel}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onPublish}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] [&_svg]:h-3.5 [&_svg]:w-3.5"
+            >
+              <EyeIcon />
+              {publishLabel}
+            </button>
+          )}
           <button
             type="button"
             onClick={onDelete}

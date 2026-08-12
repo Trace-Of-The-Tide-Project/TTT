@@ -19,6 +19,7 @@ import {
 } from "./data";
 import { shortDate } from "@/components/home/magazine-next/ui";
 import { Hero, type HeroSlide } from "./Hero";
+import { CurrentIssueBand } from "./CurrentIssueBand";
 import { InnerSectionCards } from "./InnerSectionCards";
 import { FeaturedRail, LatestRail } from "./FeaturedRail";
 import { ContentCard } from "./ContentCard";
@@ -67,22 +68,25 @@ export async function MagazinePage({ locale }: { locale: string }) {
     getPageHero("magazine-landing"),
     fetchWriters(locale, SECTION_SIZES.boardWriters),
     fetchPlansSafe(),
-    fetchIssues(locale, 1),
+    fetchIssues(locale, 4),
     fetchCurrentIssue(locale),
     fetchEditorialCopy(locale),
     fetchCollections(locale, SECTION_SIZES.collections),
     getFramingsServer("page_hero", ["magazine-landing"], "image"),
   ]);
 
-  // Admin-chosen current issue leads; else the newest published issue.
+  // Admin-chosen current issue leads; else the newest published issue. The
+  // hero itself no longer reads from this — it's CMS-only — but the Current
+  // Issue band below it still needs the framed current + recent issues.
   const framedIssues = await attachIssueFraming(
     currentIssue && !issues.some((i) => i.id === currentIssue.id)
       ? [...issues, currentIssue]
       : issues,
   );
-  const heroIssue = currentIssue
+  const bandCurrentIssue = currentIssue
     ? (framedIssues.find((i) => i.id === currentIssue.id) ?? currentIssue)
-    : framedIssues[0];
+    : (framedIssues[0] ?? null);
+  const bandRecentIssues = framedIssues.filter((i) => i.id !== bandCurrentIssue?.id);
 
   // Feature falls back to the newest articles when nothing is admin-flagged,
   // same pattern as magazine-next: cap the borrow to roughly half the pool
@@ -119,13 +123,8 @@ export async function MagazinePage({ locale }: { locale: string }) {
       ? pageHeroFramings["magazine-landing"]?.image
       : undefined;
 
-  const heroBackground =
-    heroIssue?.coverImage || heroFallbackArtwork || withFraming(featured)[0]?.coverImage || "/images/image.png";
-  const heroBackgroundFraming = heroIssue?.coverImage
-    ? heroIssue.coverFraming
-    : heroFallbackArtwork
-      ? heroFallbackFraming
-      : undefined;
+  const heroBackground = heroFallbackArtwork || "/images/image.png";
+  const heroBackgroundFraming = heroFallbackArtwork ? heroFallbackFraming : undefined;
 
   const featuredCards = withFraming(featured).map((article) => (
     <ContentCard
@@ -154,20 +153,22 @@ export async function MagazinePage({ locale }: { locale: string }) {
       >
         <Hero
           eyebrow={t("meta.eyebrow")}
-          title={heroIssue?.title || editorial.hero.title || t("hero.title")}
+          title={editorial.hero.title || t("hero.title")}
           standfirst={editorial.hero.standfirst || t("hero.standfirst")}
           readCtaLabel={editorial.hero.ctaLabel || t("hero.ctaRead")}
-          readCtaHref={heroIssue?.slug ? `/magazine-issues/${encodeURIComponent(heroIssue.slug)}` : null}
+          readCtaHref="/magazine-issues"
           noIssueLabel={t("hero.noIssue")}
           backgroundImage={heroBackground}
           backgroundFraming={heroBackgroundFraming}
-          issueLabel={heroIssue?.title ?? null}
+          issueLabel={editorial.hero.title || t("hero.title")}
           slides={heroSlides}
           carouselPrevLabel={t("carousel.prev")}
           carouselNextLabel={t("carousel.next")}
           isRtl={isRtl}
           titleFontSize={editorial.heroTitleFontSize}
         />
+
+        <CurrentIssueBand issue={bandCurrentIssue} recent={bandRecentIssues} locale={locale} />
 
         <InnerSectionCards
           join={{

@@ -226,7 +226,17 @@
           "setCurrentTitle": "¿Marcar como número actual?",
           "setCurrentBody": "«{title}» pasará a ser el número actual que se muestra en la página principal de la revista, en lugar del anterior.",
           "setCurrentDone": "Número actual actualizado.",
-          "setCurrentError": "No se pudo marcar el número actual"
+          "setCurrentError": "No se pudo marcar el número actual",
+          "publish": "Publicar",
+          "unpublish": "Despublicar",
+          "publishTitle": "¿Publicar este número?",
+          "publishBody": "«{title}» pasará a ser visible en el archivo público de números.",
+          "unpublishTitle": "¿Despublicar este número?",
+          "unpublishBody": "«{title}» es el número actual — despublicarlo lo elimina del archivo público y deja de ser el actual.",
+          "publishing": "Actualizando…",
+          "publishDone": "Estado del número actualizado.",
+          "publishError": "No se pudo actualizar el estado del número",
+          "publishedOn": "Publicado el {date}"
         },
         "tabs": {
           "all": "Todos",

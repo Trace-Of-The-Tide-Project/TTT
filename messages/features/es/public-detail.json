@@ -4,6 +4,7 @@
     "pages": "{count, plural, =1 {1 página} other {# páginas}}",
     "supportCta": "Apoyar este número",
     "backToMagazine": "Volver a la revista",
+    "allIssues": "Todos los números",
     "contents": "En este número",
     "buyNow": "Comprar ahora",
     "addToCart": "Añadir al carrito",

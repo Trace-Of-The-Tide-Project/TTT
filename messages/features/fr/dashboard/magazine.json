@@ -226,7 +226,17 @@
           "setCurrentTitle": "Définir comme numéro actuel ?",
           "setCurrentBody": "« {title} » deviendra le numéro actuel affiché sur la page d'accueil du magazine, à la place du précédent.",
           "setCurrentDone": "Numéro actuel mis à jour.",
-          "setCurrentError": "Impossible de définir le numéro actuel"
+          "setCurrentError": "Impossible de définir le numéro actuel",
+          "publish": "Publier",
+          "unpublish": "Dépublier",
+          "publishTitle": "Publier ce numéro ?",
+          "publishBody": "« {title} » deviendra visible dans les archives publiques des numéros.",
+          "unpublishTitle": "Dépublier ce numéro ?",
+          "unpublishBody": "« {title} » est le numéro actuel — le dépublier le retire des archives publiques et annule son statut de numéro actuel.",
+          "publishing": "Mise à jour…",
+          "publishDone": "Statut du numéro mis à jour.",
+          "publishError": "Impossible de mettre à jour le statut du numéro",
+          "publishedOn": "Publié le {date}"
         },
         "tabs": {
           "all": "Tous",
