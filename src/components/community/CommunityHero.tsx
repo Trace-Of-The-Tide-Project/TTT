@@ -77,7 +77,7 @@ export function CommunityHero({ coverImages = [] }: { coverImages?: string[] }) 
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-56 overflow-hidden opacity-60"
       >
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
 
       {/* Scrims: bottom-up for the copy, top strip for the overlaid navbar. */}
@@ -158,7 +158,7 @@ function TexturedPlate() {
         draggable={false}
       />
       <div className="absolute inset-0 opacity-70">
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
     </div>
   );

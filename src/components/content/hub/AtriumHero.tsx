@@ -158,7 +158,7 @@ function IntroHero({ t }: { t: ReturnType<typeof useTranslations> }) {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-40 overflow-hidden opacity-60"
       >
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
 
       <div className="relative mx-auto flex min-h-[100svh] w-full max-w-[1392px] flex-col items-center justify-center px-6 pb-36 pt-28 text-center sm:px-10">

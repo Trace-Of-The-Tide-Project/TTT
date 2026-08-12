@@ -42,6 +42,8 @@ function roundedHexPath(cx: number, cy: number, r: number) {
 }
 
 const R = 24;
+const TILE_W = 168;
+const TILE_H = 72;
 
 const ROW1_CENTERS = [
   { cx: 21, cy: 24 },
@@ -58,7 +60,44 @@ const ROW2_CENTERS = [
 const row1Path = ROW1_CENTERS.map((c) => roundedHexPath(c.cx, c.cy, R)).join("");
 const row2Path = ROW2_CENTERS.map((c) => roundedHexPath(c.cx, c.cy, R)).join("");
 
-export default function HexBackground() {
+// Deterministic pseudo-random to avoid hydration mismatch
+function seeded(seed: number): number {
+  const x = Math.sin(seed + 1) * 10000;
+  return x - Math.floor(x);
+}
+
+// Twinkle mode needs real (non-tiled) hex instances — SVG <pattern> reuses
+// one animated node per tile, so all copies flash in sync instead of
+// independently. Build enough tiles to cover a generously large viewport.
+const TWINKLE_COLS = 10;
+const TWINKLE_ROWS = 10;
+const TWINKLE_VIEW_W = TWINKLE_COLS * TILE_W;
+const TWINKLE_VIEW_H = TWINKLE_ROWS * TILE_H;
+
+function buildTwinkleHexes() {
+  const centers: { cx: number; cy: number }[] = [];
+  for (let row = 0; row < TWINKLE_ROWS; row++) {
+    const ty = row * TILE_H;
+    for (const c of ROW1_CENTERS) centers.push({ cx: c.cx, cy: c.cy + ty });
+    for (const c of ROW2_CENTERS) centers.push({ cx: c.cx, cy: c.cy + ty });
+  }
+  const tiled: { cx: number; cy: number }[] = [];
+  for (let col = 0; col < TWINKLE_COLS; col++) {
+    const tx = col * TILE_W;
+    for (const c of centers) tiled.push({ cx: c.cx + tx, cy: c.cy });
+  }
+  return tiled;
+}
+
+const TWINKLE_HEX_DATA = buildTwinkleHexes().map((c, i) => ({
+  d: roundedHexPath(c.cx, c.cy, R),
+  minOp: 0.06 + seeded(i * 7) * 0.08,
+  maxOp: 0.28 + seeded(i * 7 + 1) * 0.38,
+  duration: 2.2 + seeded(i * 7 + 2) * 4.5,
+  delay: seeded(i * 7 + 3) * -7,
+}));
+
+export default function HexBackground({ twinkle = false }: { twinkle?: boolean } = {}) {
   const id = useId();
   const isIdle = useIdle({ timeout: 2500 });
   const [mounted, setMounted] = useState(false);
@@ -74,6 +113,7 @@ export default function HexBackground() {
     <motion.svg
       width="100%"
       height="100%"
+      viewBox={twinkle ? `0 0 ${TWINKLE_VIEW_W} ${TWINKLE_VIEW_H}` : undefined}
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMin slice"
       animate={{ opacity: isIdle ? 0.85 : 1 }}
@@ -83,33 +123,54 @@ export default function HexBackground() {
           : { duration: 0.4 }
       }
     >
-      <defs>
-        <pattern id={patternId} x="0" y="0" width="168" height="72" patternUnits="userSpaceOnUse">
-          <path
-            d={row1Path}
+      {twinkle ? (
+        TWINKLE_HEX_DATA.map((hex, i) => (
+          <motion.path
+            key={i}
+            d={hex.d}
             fill="none"
             stroke="var(--tott-auth-hex-stroke)"
             strokeWidth="0.5"
-            strokeOpacity="var(--tott-auth-hex-stroke-opacity)"
+            animate={{ opacity: [hex.minOp, hex.maxOp, hex.minOp] }}
+            transition={{
+              duration: hex.duration,
+              delay: hex.delay,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
           />
-          <path
-            d={row2Path}
-            fill="none"
-            stroke="var(--tott-auth-hex-stroke)"
-            strokeWidth="0.5"
-            strokeOpacity="var(--tott-auth-hex-stroke-opacity)"
-          />
-        </pattern>
-        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--tott-auth-hex-mask-from)" stopOpacity="1" />
-          <stop offset="70%" stopColor="var(--tott-auth-hex-mask-from)" stopOpacity="1" />
-          <stop offset="100%" stopColor="var(--tott-auth-hex-mask-to)" stopOpacity="0" />
-        </linearGradient>
-        <mask id={maskId}>
-          <rect width="100%" height="100%" fill={`url(#${gradientId})`} />
-        </mask>
-      </defs>
-      <rect width="100%" height="100%" fill={`url(#${patternId})`} mask={`url(#${maskId})`} />
+        ))
+      ) : (
+        <>
+          <defs>
+            <pattern id={patternId} x="0" y="0" width="168" height="72" patternUnits="userSpaceOnUse">
+              <path
+                d={row1Path}
+                fill="none"
+                stroke="var(--tott-auth-hex-stroke)"
+                strokeWidth="0.5"
+                strokeOpacity="var(--tott-auth-hex-stroke-opacity)"
+              />
+              <path
+                d={row2Path}
+                fill="none"
+                stroke="var(--tott-auth-hex-stroke)"
+                strokeWidth="0.5"
+                strokeOpacity="var(--tott-auth-hex-stroke-opacity)"
+              />
+            </pattern>
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--tott-auth-hex-mask-from)" stopOpacity="1" />
+              <stop offset="70%" stopColor="var(--tott-auth-hex-mask-from)" stopOpacity="1" />
+              <stop offset="100%" stopColor="var(--tott-auth-hex-mask-to)" stopOpacity="0" />
+            </linearGradient>
+            <mask id={maskId}>
+              <rect width="100%" height="100%" fill={`url(#${gradientId})`} />
+            </mask>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#${patternId})`} mask={`url(#${maskId})`} />
+        </>
+      )}
     </motion.svg>
   );
 }

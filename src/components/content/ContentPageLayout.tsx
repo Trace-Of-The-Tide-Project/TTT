@@ -163,7 +163,7 @@ export function ContentPageLayout({
           className="pointer-events-none absolute inset-x-0 top-0 h-35 overflow-hidden"
           style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
         >
-          <HexBackground />
+          <HexBackground twinkle />
         </div>
       )}
 

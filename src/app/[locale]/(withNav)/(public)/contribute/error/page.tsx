@@ -22,7 +22,7 @@ export default async function ContributionErrorPage() {
         className="pointer-events-none absolute inset-x-0 top-0 h-72 overflow-hidden"
         style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
       >
-        <HexBackground />
+        <HexBackground twinkle />
         {/* Faint red wash over the hex pattern to hint at the
             error state without obscuring the page background. */}
         <div

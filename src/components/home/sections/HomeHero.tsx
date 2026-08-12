@@ -57,7 +57,7 @@ export function HomeHero({
         className="pointer-events-none absolute inset-0 overflow-hidden"
         style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}
       >
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
 
       <div className="relative z-10 mx-auto grid max-w-6xl gap-10 px-6 pb-16 pt-28 sm:px-10 sm:pb-20 sm:pt-32 lg:grid-cols-2 lg:items-center lg:gap-14">

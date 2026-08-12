@@ -56,7 +56,7 @@ export function BookDetailContent({ book, reviews }: { book: BookDetail; reviews
   return (
     <main className="relative min-h-screen w-full overflow-x-hidden" style={{ backgroundColor: "var(--tott-home-surface)" }}>
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-35 overflow-hidden" style={{ opacity: "var(--tott-dash-hex-opacity, 1)" }}>
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
 
       <div className="relative mx-auto w-full max-w-[1100px] px-4 pb-16 pt-24 sm:px-6 sm:pt-28 md:px-8 md:pt-32 min-[1600px]:max-w-[1400px]">

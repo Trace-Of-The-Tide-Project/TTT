@@ -14,6 +14,18 @@
     "editorsLetter": "Carta del editor",
     "readEditorsLetter": "Leer la carta del editor",
     "startReading": "Empezar a leer",
+    "buyThisIssue": "Comprar este número",
+    "exploreMore": "Explorar más números",
+    "meta": {
+      "pages": "Páginas",
+      "published": "Publicado",
+      "language": "Idioma",
+      "edition": "Edición",
+      "format": "Formato"
+    },
+    "format": {
+      "digital": "Digital · PDF"
+    },
     "ungrouped": "Más en este número",
     "locked": "Bloqueado — incluido con el número",
     "reader": {

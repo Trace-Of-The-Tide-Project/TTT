@@ -14,6 +14,18 @@
     "editorsLetter": "Édito",
     "readEditorsLetter": "Lire l'édito",
     "startReading": "Commencer la lecture",
+    "buyThisIssue": "Acheter ce numéro",
+    "exploreMore": "Explorer d'autres numéros",
+    "meta": {
+      "pages": "Pages",
+      "published": "Publié",
+      "language": "Langue",
+      "edition": "Numéro",
+      "format": "Format"
+    },
+    "format": {
+      "digital": "Numérique · PDF"
+    },
     "ungrouped": "Plus dans ce numéro",
     "locked": "Verrouillé — inclus avec le numéro",
     "reader": {

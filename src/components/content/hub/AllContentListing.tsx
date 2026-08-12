@@ -166,7 +166,7 @@ export async function AllContentListingPage({
           WebkitMaskImage: "linear-gradient(to bottom, black, transparent)",
         }}
       >
-        <HexBackground />
+        <HexBackground twinkle />
       </div>
 
       <div className="relative mx-auto w-full max-w-[1392px] px-4 py-16 sm:px-6 md:px-8">
