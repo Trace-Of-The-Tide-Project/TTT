@@ -13,7 +13,9 @@ import { formatApiError } from "@/lib/api/error-message";
 import { AuthPromptModal } from "@/components/commerce/AuthPromptModal";
 
 const BTN =
-  "inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-60";
+  "inline-flex h-12 items-center justify-center rounded-lg px-5 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
+const BTN_COMPACT =
+  "inline-flex h-10 items-center justify-center rounded-lg px-4 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
 const GOLD: React.CSSProperties = {
   backgroundColor: "var(--tott-magazine-btn-bg)",
   color: "var(--tott-auth-btn-text)",
@@ -49,6 +51,7 @@ export function IssuePurchaseActions({
   currency,
   isFree,
   isOwned,
+  variant = "default",
 }: {
   issueId: string;
   slug: string | null;
@@ -56,7 +59,10 @@ export function IssuePurchaseActions({
   currency: string;
   isFree: boolean;
   isOwned: boolean;
+  /** "compact" shrinks button height for the mobile sticky bar. */
+  variant?: "default" | "compact";
 }) {
+  const btn = variant === "compact" ? BTN_COMPACT : BTN;
   const t = useTranslations("MagazineIssueDetail");
   const tCommerce = useTranslations("Home.Commerce");
   const locale = useLocale();
@@ -124,7 +130,7 @@ export function IssuePurchaseActions({
           type="button"
           onClick={handleDownload}
           disabled={busy}
-          className={BTN}
+          className={btn}
           style={GOLD}
         >
           {t("downloadPdf")}
@@ -143,7 +149,7 @@ export function IssuePurchaseActions({
         type="button"
         onClick={handleBuyNow}
         disabled={pending}
-        className={BTN}
+        className={btn}
         style={GOLD}
       >
         {label ? t("buyNow") + " · " + label : t("buyNow")}
@@ -152,7 +158,7 @@ export function IssuePurchaseActions({
         type="button"
         onClick={handleAddToCart}
         disabled={pending}
-        className={BTN}
+        className={btn}
         style={SUBTLE}
       >
         {t("addToCart")}

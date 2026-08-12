@@ -1,16 +1,21 @@
 "use client";
 
 import { useMemo } from "react";
-import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import HexBackground from "@/components/ui/HexBackground";
+import { ChamferedFrame } from "@/components/ui/ChamferedFrame";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
-import { IssuePurchaseActions } from "./IssuePurchaseActions";
+import { IssuePurchaseModule } from "./IssuePurchaseModule";
+import { IssueStickyBuyBar } from "./IssueStickyBuyBar";
+import { RelatedIssuesStrip } from "./RelatedIssuesStrip";
 import { nameInitials } from "@/components/dashboard/admin/writers/initials";
 import { ContentLanguageNotice } from "@/components/content/ContentLanguageNotice";
 import { LockIcon } from "@/components/ui/icons";
 import { ShareButton } from "@/components/ui/ShareButton";
+import { MagImage } from "@/components/home/magazine-next/MagImage";
+import type { ImageFraming } from "@/lib/image-framing";
+import type { IssueCard } from "@/components/home/magazine-next/data";
 import {
   ContentArticleBody,
   type ContentArticleSection,
@@ -39,28 +44,34 @@ export type IssueContributorEntry = {
   id: string;
   name: string;
   role: string;
+  avatar?: string | null;
 };
 
 const TEXT_STRONG = "var(--tott-home-text-strong)";
 const TEXT_MUTED = "var(--tott-home-text-muted)";
 const ACCENT = "var(--tott-accent-gold)";
+const PURCHASE_ANCHOR_ID = "issue-purchase-module";
 
 export type MagazineIssueDetail = {
   id: string;
   title: string;
+  subtitle: string | null;
   slug: string | null;
   edition: string | null;
+  editionNumber: number | null;
   category: string | null;
   kind: string | null;
   excerpt: string | null;
   description: string | null;
   coverImage: string | null;
+  coverFraming?: ImageFraming;
   pageCount: number | null;
   publishedAt: string | null;
   price: number | null;
   currency: string;
   isFree: boolean;
   isOwned: boolean;
+  hasPdf: boolean;
   language: string;
   sections: IssueSectionEntry[];
   /** Content blocks authored directly on the issue (quote/callout/image/…). */
@@ -68,17 +79,24 @@ export type MagazineIssueDetail = {
   editorsLetter: IssueEditorsLetterEntry | null;
   articles: IssueIndexArticle[];
   contributors: IssueContributorEntry[];
+  relatedIssues: IssueCard[];
 };
 
-function formatLongDate(iso: string | null): string {
+function formatLongDate(iso: string | null, locale: string): string {
   if (!iso) return "";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  try {
+    const fmt = new Intl.DateTimeFormat(locale, { year: "numeric", month: "long", day: "numeric" });
+    return fmt.format(d);
+  } catch {
+    return "";
+  }
+}
+
+function padIndex(n: number): string {
+  const s = String(n);
+  return s.length >= 2 ? s : "0" + s;
 }
 
 export function MagazineIssueDetailContent({
@@ -87,12 +105,13 @@ export function MagazineIssueDetailContent({
   issue: MagazineIssueDetail;
 }) {
   const t = useTranslations("MagazineIssueDetail");
-  const date = formatLongDate(issue.publishedAt);
-  const meta = [
-    issue.edition ? `${t("issuePrefix")} ${issue.edition}` : "",
-    date,
+  const locale = useLocale();
+  const date = formatLongDate(issue.publishedAt, locale);
+  const eyebrowParts = [
+    issue.edition ? t("issuePrefix") + " " + issue.edition : "",
     issue.category || issue.kind || "",
   ].filter(Boolean);
+  const eyebrow = eyebrowParts.join(" · ");
 
   const articleHref = (slug: string) =>
     issue.slug
@@ -138,6 +157,22 @@ export function MagazineIssueDetailContent({
     return ordered;
   }, [issue.articles, issue.sections, t]);
 
+  // Metadata rows: only fields that actually exist show up — a thin issue
+  // shows two rows, not six placeholders.
+  const metaRows: { label: string; value: string }[] = [
+    issue.pageCount ? { label: t("meta.pages"), value: t("pages", { count: issue.pageCount }) } : null,
+    date ? { label: t("meta.published"), value: date } : null,
+    issue.language ? { label: t("meta.language"), value: issue.language.toUpperCase() } : null,
+    issue.editionNumber != null
+      ? { label: t("meta.edition"), value: String(issue.editionNumber) }
+      : null,
+    issue.hasPdf || issue.isFree || issue.isOwned
+      ? { label: t("meta.format"), value: t("format.digital") }
+      : null,
+  ].filter((r): r is { label: string; value: string } => r !== null);
+
+  const relatedIssues = issue.relatedIssues.filter((r) => r.id !== issue.id).slice(0, 4);
+
   return (
     <main
       className="relative min-h-screen w-full overflow-x-hidden"
@@ -152,132 +187,167 @@ export function MagazineIssueDetailContent({
       </div>
 
       <div
-        className="relative mx-auto w-full px-4 pb-20 pt-24 sm:px-6 sm:pt-28 md:px-8 md:pt-32"
-        style={{ maxWidth: "min(92vw, 960px)" }}
+        className="relative mx-auto w-full px-4 pb-28 pt-24 sm:px-6 sm:pt-28 md:px-8 md:pt-32 lg:pb-20"
+        style={{ maxWidth: "min(94vw, 1200px)" }}
       >
-        {/* Cover */}
-        {issue.coverImage ? (
-          <div
-            className="relative w-full overflow-hidden rounded-[20px]"
-            style={{ aspectRatio: "16 / 7" }}
-          >
-            <Image
-              src={issue.coverImage}
-              alt=""
-              fill
-              priority
-              sizes="(min-width: 960px) 960px, 100vw"
-              className="select-none object-cover"
-              draggable={false}
-            />
-          </div>
-        ) : null}
-
         {/* Back to archive */}
         <Link
           href="/magazine-issues"
-          className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
+          className="inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
           style={{ color: ACCENT }}
         >
           <span aria-hidden className="inline-block rtl:-scale-x-100">←</span>
           {t("allIssues")}
         </Link>
 
-        {/* Meta row */}
-        {meta.length > 0 ? (
-          <p
-            className="mt-8 flex flex-wrap items-center gap-2 text-sm"
-            style={{ color: TEXT_MUTED }}
-          >
-            {meta.map((m, i) => (
-              <span key={`${m}-${i}`} className="inline-flex items-center gap-2">
-                {i > 0 ? <span aria-hidden>·</span> : null}
-                {m}
-              </span>
-            ))}
-          </p>
-        ) : null}
+        {/* Hero: cover | info + purchase */}
+        <div className="mt-6 grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,420px)_1fr] lg:gap-16">
+          {/* Cover */}
+          <div className="lg:sticky lg:top-28">
+            <div className="relative mx-auto w-full max-w-[420px]">
+              <ChamferedFrame />
+              <div className="relative aspect-[4/5] w-full overflow-hidden">
+                {issue.coverImage ? (
+                  <MagImage
+                    src={issue.coverImage}
+                    alt={issue.title}
+                    framing={issue.coverFraming}
+                    fill
+                    priority
+                    sizes="(min-width: 1024px) 420px, 100vw"
+                    className="select-none object-cover"
+                    draggable={false}
+                  />
+                ) : null}
+              </div>
+            </div>
+          </div>
 
-        <div className="mt-3 flex items-start justify-between gap-4">
-          <h1
-            className="text-3xl font-medium tracking-tight sm:text-4xl"
-            style={{ color: TEXT_STRONG }}
-          >
-            {issue.title}
-          </h1>
-          <div className="shrink-0 pt-1">
-            <ShareButton title={issue.title} />
+          {/* Info + purchase */}
+          <div className="min-w-0">
+            {eyebrow ? (
+              <p
+                className="text-xs font-semibold uppercase tracking-[0.18em]"
+                style={{ color: ACCENT }}
+              >
+                {eyebrow}
+              </p>
+            ) : null}
+
+            <div className="mt-3 flex items-start justify-between gap-4">
+              <h1
+                className="font-display text-4xl sm:text-5xl lg:text-[3.25rem]"
+                style={{
+                  color: TEXT_STRONG,
+                  lineHeight: "var(--tott-display-leading)",
+                  letterSpacing: "var(--tott-display-tracking)",
+                }}
+              >
+                {issue.title}
+              </h1>
+              <div className="shrink-0 pt-1">
+                <ShareButton title={issue.title} />
+              </div>
+            </div>
+
+            {issue.subtitle ? (
+              <p className="font-display mt-2 text-lg" style={{ color: TEXT_MUTED }}>
+                {issue.subtitle}
+              </p>
+            ) : null}
+
+            {date ? (
+              <p className="mt-3 text-sm" style={{ color: TEXT_MUTED }}>
+                {date}
+              </p>
+            ) : null}
+
+            {issue.excerpt ? (
+              <p className="mt-4 text-lg leading-[1.7]" style={{ color: TEXT_MUTED }}>
+                {issue.excerpt}
+              </p>
+            ) : null}
+
+            <ContentLanguageNotice
+              contentType="issue"
+              contentId={issue.id}
+              contentLanguage={issue.language}
+              variant="issue"
+              statusFilter={(v) => v.status === "published"}
+              hrefFor={(v) => `/magazine-issues/${v.slug ?? v.id}`}
+              className="mt-3"
+            />
+
+            {/* Start reading — jump straight into the first article */}
+            {firstReadable?.slug && articleHref(firstReadable.slug) ? (
+              <Link
+                href={articleHref(firstReadable.slug) as string}
+                className="mt-5 inline-flex h-11 items-center gap-2 rounded-lg border px-5 text-sm font-medium transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                style={{
+                  borderColor: "color-mix(in srgb, var(--tott-accent-gold) 55%, transparent)",
+                  backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
+                  color: ACCENT,
+                }}
+              >
+                {t("startReading")}
+                <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
+              </Link>
+            ) : null}
+
+            {issue.description ? (
+              <p
+                className="mt-6 whitespace-pre-line text-base leading-relaxed"
+                style={{ color: TEXT_STRONG }}
+              >
+                {issue.description}
+              </p>
+            ) : null}
+
+            {/* Purchase module */}
+            <div id={PURCHASE_ANCHOR_ID} className="mt-8">
+              <IssuePurchaseModule
+                issueId={issue.id}
+                slug={issue.slug}
+                price={issue.price}
+                currency={issue.currency}
+                isFree={issue.isFree}
+                isOwned={issue.isOwned}
+              />
+            </div>
+
+            {/* Metadata */}
+            {metaRows.length > 0 ? (
+              <dl
+                className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-t pt-5 sm:grid-cols-3"
+                style={{ borderColor: "var(--tott-card-border)" }}
+              >
+                {metaRows.map((row) => (
+                  <div key={row.label}>
+                    <dt className="text-xs uppercase tracking-wider" style={{ color: TEXT_MUTED }}>
+                      {row.label}
+                    </dt>
+                    <dd className="mt-0.5 text-sm font-medium" style={{ color: TEXT_STRONG }}>
+                      {row.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
           </div>
         </div>
 
-        {issue.excerpt ? (
-          <p
-            className="mt-4 text-base leading-relaxed sm:text-lg"
-            style={{ color: TEXT_MUTED }}
-          >
-            {issue.excerpt}
-          </p>
-        ) : null}
-
-        <ContentLanguageNotice
-          contentType="issue"
-          contentId={issue.id}
-          contentLanguage={issue.language}
-          variant="issue"
-          statusFilter={(v) => v.status === "published"}
-          hrefFor={(v) => `/magazine-issues/${v.slug ?? v.id}`}
-          className="mt-3"
-        />
-
-        {/* Start reading — jump straight into the first article */}
-        {firstReadable?.slug && articleHref(firstReadable.slug) ? (
-          <RevealOnScroll className="mt-6">
-            <Link
-              href={articleHref(firstReadable.slug) as string}
-              className="inline-flex h-11 items-center gap-2 rounded-lg border px-5 text-sm font-medium transition-opacity hover:opacity-90"
-              style={{
-                borderColor: "color-mix(in srgb, var(--tott-accent-gold) 55%, transparent)",
-                backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 16%, transparent)",
-                color: ACCENT,
-              }}
-            >
-              {t("startReading")}
-              <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
-            </Link>
-          </RevealOnScroll>
-        ) : null}
-
-        {issue.description ? (
-          <RevealOnScroll
-            className="mt-8 whitespace-pre-line text-base leading-relaxed"
-            style={{ color: TEXT_STRONG }}
-          >
-            {issue.description}
-          </RevealOnScroll>
-        ) : null}
-
-        {/* Stats */}
-        {issue.pageCount ? (
-          <RevealOnScroll
-            className="mt-8 flex flex-wrap gap-x-8 gap-y-2 text-sm"
-            style={{ color: TEXT_MUTED }}
-          >
-            <span>{t("pages", { count: issue.pageCount })}</span>
-          </RevealOnScroll>
-        ) : null}
-
         {/* Issue content blocks (quote/callout/image/gallery/etc) */}
         {issue.bodySections.length > 0 ? (
-          <RevealOnScroll className="mt-10">
+          <RevealOnScroll className="mt-16">
             <ContentArticleBody sections={issue.bodySections} />
           </RevealOnScroll>
         ) : null}
 
         {/* Editor's letter */}
         {issue.editorsLetter ? (
-          <RevealOnScroll className="mt-10">
+          <RevealOnScroll className="mt-16">
             <div
-              className="rounded-2xl border p-5"
+              className="rounded-2xl border p-5 sm:p-6"
               style={{
                 borderColor: "var(--tott-card-border)",
                 backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 6%, transparent)",
@@ -289,10 +359,7 @@ export function MagazineIssueDetailContent({
               >
                 {t("editorsLetter")}
               </p>
-              <h2
-                className="mt-2 text-lg font-medium tracking-tight"
-                style={{ color: TEXT_STRONG }}
-              >
+              <h2 className="font-display mt-2 text-xl" style={{ color: TEXT_STRONG }}>
                 {issue.editorsLetter.title}
               </h2>
               {issue.editorsLetter.excerpt ? (
@@ -303,7 +370,7 @@ export function MagazineIssueDetailContent({
               {issue.editorsLetter.slug && articleHref(issue.editorsLetter.slug) ? (
                 <Link
                   href={articleHref(issue.editorsLetter.slug) as string}
-                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
+                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                   style={{ color: ACCENT }}
                 >
                   {t("readEditorsLetter")}
@@ -316,19 +383,19 @@ export function MagazineIssueDetailContent({
 
         {/* Table of contents (grouped by section) */}
         {groups.length > 0 ? (
-          <RevealOnScroll className="mt-10">
+          <RevealOnScroll className="mt-16">
             <h2
-              className="text-lg font-medium tracking-tight"
-              style={{ color: TEXT_STRONG }}
+              className="font-display border-b pb-3 text-2xl"
+              style={{ color: TEXT_STRONG, borderColor: "var(--tott-card-border)" }}
             >
               {t("contents")}
             </h2>
-            <div className="mt-4 flex flex-col gap-6">
+            <div className="mt-6 flex flex-col gap-8">
               {groups.map((g) => (
                 <div key={g.id}>
                   {g.label ? (
                     <h3
-                      className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                      className="mb-3 text-xs font-semibold uppercase tracking-wider"
                       style={{ color: TEXT_MUTED }}
                     >
                       {g.label}
@@ -338,12 +405,10 @@ export function MagazineIssueDetailContent({
                     className={
                       g.layout === "grid"
                         ? "grid grid-cols-1 gap-3 sm:grid-cols-2"
-                        : g.layout === "feature"
-                          ? "flex flex-col gap-4"
-                          : "flex flex-col gap-2"
+                        : "flex flex-col gap-1"
                     }
                   >
-                    {g.items.map((a) => {
+                    {g.items.map((a, i) => {
                       const href = a.slug ? articleHref(a.slug) : null;
                       const lock = a.locked ? (
                         <span
@@ -355,25 +420,36 @@ export function MagazineIssueDetailContent({
                           <LockIcon />
                         </span>
                       ) : null;
-                      const textClass =
-                        g.layout === "feature" ? "text-xl font-medium" : "text-base";
+                      const index = padIndex(i + 1);
+                      const textClass = g.layout === "feature" ? "text-xl font-medium" : "text-base";
+                      const rowStyle: React.CSSProperties = { borderColor: "var(--tott-card-border)" };
                       return (
                         <li key={a.id}>
                           {href ? (
                             <Link
                               href={href}
-                              className={`inline-flex items-center gap-2 transition-opacity hover:opacity-90 ${textClass}`}
-                              style={{ color: ACCENT }}
+                              className={`group flex items-center gap-3 rounded-lg border px-3 py-3 transition-colors hover:bg-[color-mix(in_srgb,var(--tott-accent-gold)_8%,transparent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${textClass}`}
+                              style={rowStyle}
                             >
-                              {a.title}
+                              <span aria-hidden className="shrink-0 text-xs tabular-nums" style={{ color: TEXT_MUTED }}>
+                                {index}
+                              </span>
+                              <span
+                                className="flex-1 truncate transition-colors group-hover:opacity-90"
+                                style={{ color: ACCENT }}
+                              >
+                                {a.title}
+                              </span>
                               {lock}
                             </Link>
                           ) : (
-                            <span
-                              className={`inline-flex items-center gap-2 ${textClass}`}
-                              style={{ color: TEXT_MUTED }}
-                            >
-                              {a.title}
+                            <span className={`flex items-center gap-3 rounded-lg border px-3 py-3 ${textClass}`} style={rowStyle}>
+                              <span aria-hidden className="shrink-0 text-xs tabular-nums" style={{ color: TEXT_MUTED }}>
+                                {index}
+                              </span>
+                              <span className="flex-1 truncate" style={{ color: TEXT_MUTED }}>
+                                {a.title}
+                              </span>
                               {lock}
                             </span>
                           )}
@@ -389,30 +465,33 @@ export function MagazineIssueDetailContent({
 
         {/* Editors / Contributors */}
         {issue.contributors.length > 0 ? (
-          <RevealOnScroll className="mt-10">
+          <RevealOnScroll className="mt-16">
             <h2
-              className="text-lg font-medium tracking-tight"
-              style={{ color: TEXT_STRONG }}
+              className="font-display border-b pb-3 text-2xl"
+              style={{ color: TEXT_STRONG, borderColor: "var(--tott-card-border)" }}
             >
               {t("contributorsHeading")}
             </h2>
-            <ul className="mt-4 flex flex-wrap gap-x-8 gap-y-4">
+            <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-5">
               {issue.contributors.map((c) => (
                 <li key={c.id} className="flex items-center gap-3">
-                  <span
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-                    style={{
-                      backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 18%, transparent)",
-                      color: ACCENT,
-                    }}
-                  >
-                    {nameInitials(c.name)}
-                  </span>
-                  <span className="min-w-0">
+                  {c.avatar ? (
+                    <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full">
+                      <MagImage src={c.avatar} alt="" fill sizes="40px" className="object-cover" />
+                    </span>
+                  ) : (
                     <span
-                      className="block truncate text-sm font-medium"
-                      style={{ color: TEXT_STRONG }}
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                      style={{
+                        backgroundColor: "color-mix(in srgb, var(--tott-accent-gold) 18%, transparent)",
+                        color: ACCENT,
+                      }}
                     >
+                      {nameInitials(c.name)}
+                    </span>
+                  )}
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-medium" style={{ color: TEXT_STRONG }}>
                       {c.name}
                     </span>
                     <span className="block truncate text-xs" style={{ color: TEXT_MUTED }}>
@@ -425,26 +504,35 @@ export function MagazineIssueDetailContent({
           </RevealOnScroll>
         ) : null}
 
-        {/* Actions */}
-        <RevealOnScroll className="mt-10 flex flex-wrap items-center gap-3">
-          <IssuePurchaseActions
-            issueId={issue.id}
-            slug={issue.slug}
-            price={issue.price}
-            currency={issue.currency}
-            isFree={issue.isFree}
-            isOwned={issue.isOwned}
-          />
+        {/* Back to magazine */}
+        <div className="mt-16">
           <Link
             href="/magazine"
-            className="inline-flex h-10 items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90"
+            className="inline-flex h-10 items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             style={{ color: ACCENT }}
           >
             {t("backToMagazine")}
             <span aria-hidden className="inline-block rtl:-scale-x-100">→</span>
           </Link>
-        </RevealOnScroll>
+        </div>
+
+        {/* Explore more issues — the page never ends on empty whitespace */}
+        {relatedIssues.length > 0 ? (
+          <RevealOnScroll className="mt-16">
+            <RelatedIssuesStrip issues={relatedIssues} />
+          </RevealOnScroll>
+        ) : null}
       </div>
+
+      <IssueStickyBuyBar
+        anchorId={PURCHASE_ANCHOR_ID}
+        issueId={issue.id}
+        slug={issue.slug}
+        price={issue.price}
+        currency={issue.currency}
+        isFree={issue.isFree}
+        isOwned={issue.isOwned}
+      />
     </main>
   );
 }

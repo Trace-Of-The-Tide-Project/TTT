@@ -14,6 +14,18 @@
     "editorsLetter": "افتتاحية العدد",
     "readEditorsLetter": "اقرأ افتتاحية المحرر",
     "startReading": "ابدأ القراءة",
+    "buyThisIssue": "اشترِ هذا العدد",
+    "exploreMore": "استكشف المزيد من الأعداد",
+    "meta": {
+      "pages": "الصفحات",
+      "published": "تاريخ النشر",
+      "language": "اللغة",
+      "edition": "العدد",
+      "format": "الصيغة"
+    },
+    "format": {
+      "digital": "رقمي · PDF"
+    },
     "ungrouped": "المزيد في هذا العدد",
     "locked": "مقفل — مضمَّن مع العدد",
     "reader": {

@@ -14,6 +14,18 @@
     "editorsLetter": "Editor's Letter",
     "readEditorsLetter": "Read the editor's letter",
     "startReading": "Start reading",
+    "buyThisIssue": "Buy this issue",
+    "exploreMore": "Explore more issues",
+    "meta": {
+      "pages": "Pages",
+      "published": "Published",
+      "language": "Language",
+      "edition": "Edition",
+      "format": "Format"
+    },
+    "format": {
+      "digital": "Digital · PDF"
+    },
     "ungrouped": "More in this issue",
     "locked": "Locked — included with the issue",
     "reader": {

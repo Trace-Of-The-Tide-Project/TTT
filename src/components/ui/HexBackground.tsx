@@ -58,7 +58,21 @@ const ROW2_CENTERS = [
 const row1Path = ROW1_CENTERS.map((c) => roundedHexPath(c.cx, c.cy, R)).join("");
 const row2Path = ROW2_CENTERS.map((c) => roundedHexPath(c.cx, c.cy, R)).join("");
 
-export default function HexBackground() {
+const TWINKLE_HEXES = [...ROW1_CENTERS, ...ROW2_CENTERS].map((c, i) => ({
+  d: roundedHexPath(c.cx, c.cy, R),
+  minOp: 0.06 + seeded(i * 7) * 0.08,
+  maxOp: 0.28 + seeded(i * 7 + 1) * 0.38,
+  duration: 2.2 + seeded(i * 7 + 2) * 4.5,
+  delay: seeded(i * 7 + 3) * -7,
+}));
+
+// Deterministic pseudo-random to avoid hydration mismatch
+function seeded(seed: number): number {
+  const x = Math.sin(seed + 1) * 10000;
+  return x - Math.floor(x);
+}
+
+export default function HexBackground({ twinkle = false }: { twinkle?: boolean } = {}) {
   const id = useId();
   const isIdle = useIdle({ timeout: 2500 });
   const [mounted, setMounted] = useState(false);
@@ -85,20 +99,41 @@ export default function HexBackground() {
     >
       <defs>
         <pattern id={patternId} x="0" y="0" width="168" height="72" patternUnits="userSpaceOnUse">
-          <path
-            d={row1Path}
-            fill="none"
-            stroke="var(--tott-auth-hex-stroke)"
-            strokeWidth="0.5"
-            strokeOpacity="var(--tott-auth-hex-stroke-opacity)"
-          />
-          <path
-            d={row2Path}
-            fill="none"
-            stroke="var(--tott-auth-hex-stroke)"
-            strokeWidth="0.5"
-            strokeOpacity="var(--tott-auth-hex-stroke-opacity)"
-          />
+          {twinkle ? (
+            TWINKLE_HEXES.map((hex, i) => (
+              <motion.path
+                key={i}
+                d={hex.d}
+                fill="none"
+                stroke="var(--tott-auth-hex-stroke)"
+                strokeWidth="0.5"
+                animate={{ opacity: [hex.minOp, hex.maxOp, hex.minOp] }}
+                transition={{
+                  duration: hex.duration,
+                  delay: hex.delay,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+            ))
+          ) : (
+            <>
+              <path
+                d={row1Path}
+                fill="none"
+                stroke="var(--tott-auth-hex-stroke)"
+                strokeWidth="0.5"
+                strokeOpacity="var(--tott-auth-hex-stroke-opacity)"
+              />
+              <path
+                d={row2Path}
+                fill="none"
+                stroke="var(--tott-auth-hex-stroke)"
+                strokeWidth="0.5"
+                strokeOpacity="var(--tott-auth-hex-stroke-opacity)"
+              />
+            </>
+          )}
         </pattern>
         <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="var(--tott-auth-hex-mask-from)" stopOpacity="1" />
