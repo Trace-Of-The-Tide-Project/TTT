@@ -15,7 +15,7 @@ import type { GiftScopeType } from "@/services/gifting.service";
 type Mode = "gift" | "in_kind" | "request";
 
 const DEFAULT_SLIDER_MAX = 500;
-const TAB_CLIP = "polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)";
+const TAB_CLIP = "polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)";
 
 function currencyLabel(locale: string, currency: string, amount: number): string {
   return new Intl.NumberFormat(locale, {
@@ -132,10 +132,10 @@ export function GiftWindowPanel({
 
   return (
     <ChamferedSurface
-      chamfer={12}
+      chamfer={20}
       borderColor="var(--tott-accent-gold)"
-      innerFill="var(--tott-panel-bg)"
-      className="w-full max-w-sm p-4"
+      innerFill="var(--tott-elevated)"
+      className="mx-auto w-full max-w-sm p-5"
     >
       <p
         className="text-center text-[11px] font-semibold tracking-wide uppercase"
