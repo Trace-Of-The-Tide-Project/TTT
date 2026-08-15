@@ -40,6 +40,39 @@
       "next": "Suivant",
       "pageOf": "Page {page} sur {totalPages}"
     },
+    "allOpinion": {
+      "heading": "Opinion",
+      "subtitle": "Des voix venues d'en dehors de la rédaction — toujours gratuites à lire.",
+      "empty": "Aucun article d'opinion publié pour le moment.",
+      "prev": "Précédent",
+      "next": "Suivant",
+      "pageOf": "Page {page} sur {totalPages}"
+    },
+    "opinion": {
+      "disclaimerLabel": "Ce texte reflète l'opinion de son auteur, non la position éditoriale de Trace of the Tide.",
+      "supportHeading": "Soutenez cet article",
+      "supportBody": "Les articles d'opinion sont toujours gratuits. Si celui-ci a valu votre temps, envisagez de donner en retour.",
+      "supportAmountLabel": "Montant du don",
+      "supportCta": "Soutenez cet article",
+      "supportRedirecting": "Redirection…",
+      "supportError": "Une erreur s'est produite. Veuillez réessayer.",
+      "submit": {
+        "heading": "Soumettre un article d'opinion",
+        "subtitle": "Ouvert à tous, sans compte requis. Nous lisons chaque soumission.",
+        "titleLabel": "Titre",
+        "bodyLabel": "Votre article",
+        "authorNameLabel": "Votre nom",
+        "authorEmailLabel": "Votre e-mail",
+        "bioLabel": "Courte biographie (facultatif)",
+        "submit": "Envoyer",
+        "submitting": "Envoi…",
+        "success": "Merci — votre soumission est désormais entre les mains d'un rédacteur.",
+        "error": "Impossible d'envoyer votre article. Veuillez réessayer.",
+        "errorRequired": "Ce champ est obligatoire.",
+        "errorEmail": "Saisissez une adresse e-mail valide.",
+        "errorTooLong": "C'est trop long — veuillez raccourcir."
+      }
+    },
     "buyGate": {
       "heading": "Achetez cet article",
       "body": "Achetez cet article pour le lire en entier.",

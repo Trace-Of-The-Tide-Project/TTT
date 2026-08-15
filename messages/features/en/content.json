@@ -40,6 +40,39 @@
       "next": "Next",
       "pageOf": "Page {page} of {totalPages}"
     },
+    "allOpinion": {
+      "heading": "Opinion",
+      "subtitle": "Views from outside the newsroom — always free to read.",
+      "empty": "No opinion pieces published yet.",
+      "prev": "Previous",
+      "next": "Next",
+      "pageOf": "Page {page} of {totalPages}"
+    },
+    "opinion": {
+      "disclaimerLabel": "This piece reflects the views of its author, not the editorial position of Trace of the Tide.",
+      "supportHeading": "Support this piece",
+      "supportBody": "Opinion pieces are always free to read. If this one was worth your time, consider giving something back.",
+      "supportAmountLabel": "Gift amount",
+      "supportCta": "Support this article",
+      "supportRedirecting": "Redirecting…",
+      "supportError": "Something went wrong. Please try again.",
+      "submit": {
+        "heading": "Submit an opinion piece",
+        "subtitle": "Open to everyone, no account required. We read every submission.",
+        "titleLabel": "Title",
+        "bodyLabel": "Your piece",
+        "authorNameLabel": "Your name",
+        "authorEmailLabel": "Your email",
+        "bioLabel": "Short bio (optional)",
+        "submit": "Submit",
+        "submitting": "Submitting…",
+        "success": "Thank you — your submission is in an editor's hands.",
+        "error": "Could not submit your piece. Please try again.",
+        "errorRequired": "This field is required.",
+        "errorEmail": "Enter a valid email address.",
+        "errorTooLong": "That's too long — please shorten it."
+      }
+    },
     "buyGate": {
       "heading": "Buy this article",
       "body": "Purchase this article to read it in full.",

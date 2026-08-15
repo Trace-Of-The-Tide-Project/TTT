@@ -40,6 +40,39 @@
       "next": "Siguiente",
       "pageOf": "Página {page} de {totalPages}"
     },
+    "allOpinion": {
+      "heading": "Opinión",
+      "subtitle": "Voces desde fuera de la redacción — siempre gratis de leer.",
+      "empty": "Todavía no hay artículos de opinión publicados.",
+      "prev": "Anterior",
+      "next": "Siguiente",
+      "pageOf": "Página {page} de {totalPages}"
+    },
+    "opinion": {
+      "disclaimerLabel": "Este artículo refleja la opinión de su autor, no la postura editorial de Trace of the Tide.",
+      "supportHeading": "Apoya este artículo",
+      "supportBody": "Los artículos de opinión siempre son gratuitos. Si este mereció tu tiempo, considera devolver algo.",
+      "supportAmountLabel": "Monto del regalo",
+      "supportCta": "Apoya este artículo",
+      "supportRedirecting": "Redirigiendo…",
+      "supportError": "Algo salió mal. Inténtalo de nuevo.",
+      "submit": {
+        "heading": "Envía un artículo de opinión",
+        "subtitle": "Abierto a todos, sin necesidad de cuenta. Leemos cada envío.",
+        "titleLabel": "Título",
+        "bodyLabel": "Tu artículo",
+        "authorNameLabel": "Tu nombre",
+        "authorEmailLabel": "Tu correo electrónico",
+        "bioLabel": "Biografía breve (opcional)",
+        "submit": "Enviar",
+        "submitting": "Enviando…",
+        "success": "Gracias — tu envío ya está en manos de un editor.",
+        "error": "No se pudo enviar tu artículo. Inténtalo de nuevo.",
+        "errorRequired": "Este campo es obligatorio.",
+        "errorEmail": "Ingresa un correo electrónico válido.",
+        "errorTooLong": "Es demasiado largo — por favor acórtalo."
+      }
+    },
     "buyGate": {
       "heading": "Compra este artículo",
       "body": "Compra este artículo para leerlo completo.",

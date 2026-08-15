@@ -246,6 +246,7 @@ function ArticleByIdLoader({
           previewTruncated={article.preview_truncated}
           totalBlockCount={article.total_block_count}
           commonsAt={!article.locked ? article.commons_at : undefined}
+          opinionDisclaimer={article.opinion_disclaimer}
         />
         {!article.locked ? <ArticleBookChapterNav articleId={article.id} /> : null}
       </>

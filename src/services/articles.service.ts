@@ -408,6 +408,8 @@ export type ArticleDetail = {
   gift_window_days?: number | null;
   commons_at?: string | null;
   gift_raised_total?: number | null;
+  /** FR-OPN-06: editorial disclaimer, only set for content_type='opinion'. */
+  opinion_disclaimer?: string | null;
   /** access_level='preview' only: true when preview_block_count truncated the
    * blocks array — the reader should show a continue-reading CTA. False for
    * every other level, and for a full (owner/staff/unlocked) response. */

@@ -15,6 +15,7 @@ import PremiumGate from "./PremiumGate";
 import ArticleBuyGate from "./ArticleBuyGate";
 import GiftGate from "@/components/gifting/GiftGate";
 import { GiftWindowPanel } from "@/components/gifting/GiftWindowPanel";
+import { SupportButton } from "@/components/gifting/SupportButton";
 import type { TranslationVersion } from "@/services/translations.service";
 import { ContentAuthorCard } from "./sidebar/ContentAuthorCard";
 import { ContentContributors } from "./sidebar/ContentContributors";
@@ -120,6 +121,10 @@ export type ContentPageLayoutProps = {
   /** Gifting model (§1.4): set when the piece has already transitioned to
    * commons (gift window closed) — shown as a note, never a gate. */
   commonsAt?: string | null;
+  /** FR-OPN-06: editorial disclaimer, only set for content_type='opinion'.
+   * Rendered above any gate — an opinion piece is never gated, but this
+   * keeps the disclaimer structurally immune to future gating changes. */
+  opinionDisclaimer?: string | null;
 };
 
 export function ContentPageLayout({
@@ -136,6 +141,7 @@ export function ContentPageLayout({
   gate,
   previewTruncated,
   commonsAt,
+  opinionDisclaimer,
 }: ContentPageLayoutProps) {
   const t = useTranslations("Content");
   const isOpenCall =
@@ -234,6 +240,11 @@ export function ContentPageLayout({
             dir={dirFor(article.language)}
             lang={article.language}
           >
+            {opinionDisclaimer ? (
+              <p className="rounded-lg bg-[var(--tott-panel-bg)] px-4 py-2 text-center text-xs text-[var(--tott-home-text-muted)]">
+                {opinionDisclaimer}
+              </p>
+            ) : null}
             {gate ? (
               // Subscriber/paid: the backend ships zero blocks, so there is
               // nothing real to blur — render a ghost skeleton body instead
@@ -282,6 +293,9 @@ export function ContentPageLayout({
                 {previewTruncated ? <ArticlePreviewCTA /> : null}
               </>
             )}
+            {contentType === "opinion" && articleId ? (
+              <SupportButton scopeId={articleId} />
+            ) : null}
             <div id="article-body-end" aria-hidden className="h-px" />
             {isOpenCall && (openCallId || articleId) && (
               <SpringLink
