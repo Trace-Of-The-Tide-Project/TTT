@@ -89,6 +89,10 @@ type FormState = {
   edition: string;
   category: string;
   published_at: string;
+  access_model: "gift_window" | "commons_immediate" | "material_only";
+  gift_value_initial: string;
+  gift_currency: string;
+  gift_window_days: string;
 };
 
 function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
@@ -116,6 +120,14 @@ function toForm(item: MagazineIssue | null, defaultEdition: number): FormState {
         : item?.edition ?? (item ? "" : String(defaultEdition)),
     category: item?.category ?? "",
     published_at: item?.published_at ? item.published_at.slice(0, 10) : "",
+    access_model: (["gift_window", "commons_immediate", "material_only"] as const).includes(
+      (item?.access_model ?? "") as "gift_window" | "commons_immediate" | "material_only",
+    )
+      ? (item!.access_model as "gift_window" | "commons_immediate" | "material_only")
+      : "gift_window",
+    gift_value_initial: item?.gift_value_initial != null ? String(item.gift_value_initial) : "",
+    gift_currency: item?.gift_currency ?? "GBP",
+    gift_window_days: item?.gift_window_days != null ? String(item.gift_window_days) : "",
   };
 }
 
@@ -139,6 +151,12 @@ function toPayload(
     is_premium: f.is_premium,
     price: f.price ? parseFloat(f.price) : null,
     currency: f.currency.trim() || "USD",
+    access_model: f.access_model,
+    gift_value_initial:
+      f.access_model === "gift_window" && f.gift_value_initial ? parseFloat(f.gift_value_initial) : null,
+    gift_currency: f.gift_currency.trim() || "GBP",
+    gift_window_days:
+      f.access_model === "gift_window" && f.gift_window_days ? parseInt(f.gift_window_days, 10) : null,
     pdf_path: f.pdf_path.trim() || null,
     cover_image: f.cover_image.trim() || null,
     excerpt: f.excerpt.trim() || null,
@@ -821,6 +839,64 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
                 onFile={handlePdfFile}
               />
             </div>
+            <div className="sm:col-span-3 border-t border-[var(--tott-border)] pt-4">
+              <label className={labelClass}>{t("published.form.fields.giftModel")}</label>
+              <select
+                className={inputClass}
+                value={form.access_model}
+                onChange={(e) =>
+                  updateForm((prev) => ({
+                    ...prev,
+                    access_model: e.target.value as "gift_window" | "commons_immediate" | "material_only",
+                  }))
+                }
+              >
+                <option value="gift_window">{t("published.form.fields.giftModelOptions.gift_window")}</option>
+                <option value="commons_immediate">
+                  {t("published.form.fields.giftModelOptions.commons_immediate")}
+                </option>
+                <option value="material_only">
+                  {t("published.form.fields.giftModelOptions.material_only")}
+                </option>
+              </select>
+            </div>
+            {form.access_model === "gift_window" ? (
+              <>
+                <div>
+                  <label className={labelClass}>{t("published.form.fields.giftValueInitial")}</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    className={inputClass}
+                    value={form.gift_value_initial}
+                    onChange={set("gift_value_initial")}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>{t("published.form.fields.currency")}</label>
+                  <input
+                    type="text"
+                    className={inputClass}
+                    value={form.gift_currency}
+                    onChange={set("gift_currency")}
+                    placeholder="GBP"
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>{t("published.form.fields.giftWindowDays")}</label>
+                  <input
+                    type="number"
+                    min="1"
+                    className={inputClass}
+                    value={form.gift_window_days}
+                    onChange={set("gift_window_days")}
+                    placeholder="30"
+                  />
+                </div>
+              </>
+            ) : null}
           </div>
 
           {/* Editor's letter — the rich-text intro */}

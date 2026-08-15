@@ -317,6 +317,17 @@
               "paid": "Los lectores deben comprar este artículo individualmente."
             }
           },
+          "gift": {
+            "label": "Regalo",
+            "model": {
+              "gift_window": "Ventana de regalo (dominio público tras N días)",
+              "commons_immediate": "Dominio público inmediato (siempre gratis)",
+              "material_only": "Solo apoyo material (sin transición automática a dominio público)"
+            },
+            "valuePlaceholder": "Monto de regalo sugerido",
+            "windowDaysPlaceholder": "Ventana de regalo (días)",
+            "windowHint": "Tras este número de días desde la publicación, la pieza pasa automáticamente a dominio público (gratis) a menos que un editor fije una fecha manualmente."
+          },
           "seo": {
             "label": "Vista previa SEO",
             "previewTitlePlaceholder": "Título del artículo",

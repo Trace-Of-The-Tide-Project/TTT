@@ -56,6 +56,10 @@ type FormState = {
   print_enabled: boolean;
   print_price: string;
   magazine_id: string;
+  access_model: "gift_window" | "commons_immediate" | "material_only";
+  gift_value_initial: string;
+  gift_currency: string;
+  gift_window_days: string;
 };
 
 const EMPTY: FormState = {
@@ -76,6 +80,10 @@ const EMPTY: FormState = {
   print_enabled: false,
   print_price: "",
   magazine_id: "",
+  access_model: "gift_window",
+  gift_value_initial: "",
+  gift_currency: "GBP",
+  gift_window_days: "",
 };
 
 /** Drag-and-drop + click-to-upload zone for cover images */
@@ -297,6 +305,14 @@ function seedFromBook(b: Book): FormState {
     print_enabled: Boolean(b.print_enabled),
     print_price: b.print_price != null ? String(b.print_price) : "",
     magazine_id: b.magazine_id ?? "",
+    access_model: (["gift_window", "commons_immediate", "material_only"] as const).includes(
+      (b.access_model ?? "") as "gift_window" | "commons_immediate" | "material_only",
+    )
+      ? (b.access_model as "gift_window" | "commons_immediate" | "material_only")
+      : "gift_window",
+    gift_value_initial: b.gift_value_initial != null ? String(b.gift_value_initial) : "",
+    gift_currency: b.gift_currency ?? "GBP",
+    gift_window_days: b.gift_window_days != null ? String(b.gift_window_days) : "",
   };
 }
 
@@ -557,6 +573,12 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
     magazine_id: f.magazine_id || null,
     created_by: currentUser?.id ?? null,
     translation_of: opts.translationOf ?? undefined,
+    access_model: f.access_model,
+    gift_value_initial:
+      f.access_model === "gift_window" && f.gift_value_initial ? parseFloat(f.gift_value_initial) : null,
+    gift_currency: f.gift_currency || null,
+    gift_window_days:
+      f.access_model === "gift_window" && f.gift_window_days ? parseInt(f.gift_window_days, 10) : null,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -783,6 +805,65 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
               disabled={isEdit && !isPrimaryTab}
             />
           </div>
+        </div>
+        <div className="border-t border-[var(--tott-border)] pt-4">
+          <label className={labelClass}>{t("fields.giftModel")}</label>
+          <select
+            className={`${inputClass} disabled:opacity-60 disabled:cursor-not-allowed`}
+            value={form.access_model}
+            onChange={(e) =>
+              updateForm((prev) => ({
+                ...prev,
+                access_model: e.target.value as "gift_window" | "commons_immediate" | "material_only",
+              }))
+            }
+            disabled={isEdit && !isPrimaryTab}
+          >
+            <option value="gift_window">{t("fields.giftModelOptions.gift_window")}</option>
+            <option value="commons_immediate">{t("fields.giftModelOptions.commons_immediate")}</option>
+            <option value="material_only">{t("fields.giftModelOptions.material_only")}</option>
+          </select>
+
+          {form.access_model === "gift_window" ? (
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="sm:col-span-2">
+                <label className={labelClass}>{t("fields.giftValueInitial")}</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  className={`${inputClass} disabled:opacity-60 disabled:cursor-not-allowed`}
+                  placeholder={t("fields.giftValueInitial")}
+                  value={form.gift_value_initial}
+                  onChange={set("gift_value_initial")}
+                  disabled={isEdit && !isPrimaryTab}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>{t("fields.currency")}</label>
+                <input
+                  type="text"
+                  className={`${inputClass} disabled:opacity-60 disabled:cursor-not-allowed`}
+                  value={form.gift_currency}
+                  onChange={set("gift_currency")}
+                  disabled={isEdit && !isPrimaryTab}
+                />
+              </div>
+              <div className="sm:col-span-3">
+                <label className={labelClass}>{t("fields.giftWindowDays")}</label>
+                <input
+                  type="number"
+                  min="1"
+                  className={`${inputClass} disabled:opacity-60 disabled:cursor-not-allowed`}
+                  placeholder={t("fields.giftWindowDays")}
+                  value={form.gift_window_days}
+                  onChange={set("gift_window_days")}
+                  disabled={isEdit && !isPrimaryTab}
+                />
+                <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.giftWindow")}</p>
+              </div>
+            </div>
+          ) : null}
         </div>
         <div>
           <label className="flex items-center gap-2 text-sm text-foreground">

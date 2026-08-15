@@ -111,7 +111,15 @@
           "printPrice": "Prix de l'exemplaire physique",
           "printPricePlaceholder": "ex. 19.99",
           "magazine_id": "ID du magazine (optionnel)",
-          "magazine_idPlaceholder": "Laisser vide si non lié à un magazine"
+          "magazine_idPlaceholder": "Laisser vide si non lié à un magazine",
+          "giftModel": "Don",
+          "giftModelOptions": {
+            "gift_window": "Période de don (bien commun après N jours)",
+            "commons_immediate": "Bien commun immédiat (toujours gratuit)",
+            "material_only": "Soutien matériel uniquement (pas de transition automatique en bien commun)"
+          },
+          "giftValueInitial": "Montant de don suggéré",
+          "giftWindowDays": "Période de don (jours)"
         },
         "languages": {
           "en": "Anglais",
@@ -153,6 +161,7 @@
         },
         "hints": {
           "priceFree": "Laisser vide pour marquer comme gratuit",
+          "giftWindow": "Après ce nombre de jours suivant la publication, le livre devient automatiquement un bien commun (gratuit), sauf si un éditeur fixe une date manuellement.",
           "printPriceCurrency": "Facturé dans la devise définie ci-dessus",
           "coverUrl": "Ou collez directement l'URL d'une image",
           "pdfUrl": "Ou collez directement l'URL d'un PDF",

@@ -1,0 +1,40 @@
+{
+  "Dashboard": {
+    "gifts": {
+      "heading": "Gifts",
+      "subheading": "In-kind gifts and access requests waiting for editor review.",
+      "loading": "Loading…",
+      "empty": "Nothing pending review.",
+      "type": {
+        "monetary": "Monetary gift",
+        "in_kind": "In-kind gift",
+        "request_access": "Access request",
+        "editorial": "Editorial grant"
+      },
+      "scope": {
+        "contribution": "Article",
+        "issue": "Issue",
+        "book": "Book",
+        "session": "Session",
+        "platform": "Platform-wide"
+      },
+      "table": {
+        "type": "Type",
+        "scope": "Scope",
+        "detail": "Detail",
+        "submitted": "Submitted",
+        "approve": "Approve"
+      },
+      "approveDialog": {
+        "title": "Approve this gift?",
+        "description": "This grants the requester access ({type}). This cannot be undone.",
+        "confirm": "Approve",
+        "confirmBusy": "Approving…"
+      },
+      "toasts": {
+        "approved": "Gift approved — access granted.",
+        "approveFailed": "Could not approve this gift."
+      }
+    }
+  }
+}

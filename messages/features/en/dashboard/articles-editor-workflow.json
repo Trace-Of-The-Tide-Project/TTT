@@ -317,6 +317,17 @@
               "paid": "Readers must purchase this article individually."
             }
           },
+          "gift": {
+            "label": "Gifting",
+            "model": {
+              "gift_window": "Gift window (commons after N days)",
+              "commons_immediate": "Commons immediately (always free)",
+              "material_only": "Material support only (no automatic commons)"
+            },
+            "valuePlaceholder": "Suggested gift amount",
+            "windowDaysPlaceholder": "Gift window (days)",
+            "windowHint": "After this many days from publish, the piece automatically becomes commons (free) unless an editor sets a date manually."
+          },
           "seo": {
             "label": "SEO Preview",
             "previewTitlePlaceholder": "Article Title",

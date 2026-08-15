@@ -48,6 +48,25 @@
       "redirecting": "Redirigiendo…",
       "error": "No se pudo iniciar el pago. Inténtalo de nuevo."
     },
+    "giftGate": {
+      "heading": "Esta pieza es un regalo, no una compra",
+      "body": "Apoya esta pieza con un regalo de cualquier cantidad, ofrece algo en especie o simplemente solicita acceso.",
+      "bodyWithSuggested": "Otros han regalado alrededor de {price} por esta pieza — da lo que te parezca justo, ofrece algo en especie o simplemente solicita acceso.",
+      "tabGift": "Regalar",
+      "tabInKind": "Ofrecer algo",
+      "tabRequest": "Solicitar acceso",
+      "giveGift": "Enviar regalo",
+      "offer": "Enviar oferta",
+      "requestAccess": "Solicitar acceso",
+      "inKindPlaceholder": "Describe qué te gustaría ofrecer en su lugar: una habilidad, un objeto, tu tiempo…",
+      "requestNotePlaceholder": "Una nota breve para los editores (opcional)",
+      "submitting": "Enviando…",
+      "redirecting": "Redirigiendo…",
+      "inKindSubmitted": "Gracias — un editor revisará tu oferta.",
+      "requestSubmitted": "Solicitud enviada — tendrás acceso dentro de 72 horas de cualquier forma.",
+      "commonsNotice": "La ventana de regalo de esta pieza se ha cerrado — ahora pertenece a todos.",
+      "error": "Algo salió mal. Inténtalo de nuevo."
+    },
     "premiumGate": {
       "heading": "Contenido premium",
       "body": "Suscríbete para seguir leyendo.",

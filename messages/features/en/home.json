@@ -574,6 +574,21 @@
       "continueShopping": "Continue shopping",
       "libraryTitle": "My Library",
       "libraryEmpty": "You don't own any books yet.",
+      "giftsTitle": "My Gifts",
+      "giftsEmpty": "You haven't gifted anything yet.",
+      "giftType": {
+        "monetary": "Monetary gift",
+        "in_kind": "In-kind gift",
+        "request_access": "Access request",
+        "editorial": "Editorial grant"
+      },
+      "giftStatus": {
+        "pending": "Pending review",
+        "approved": "Approved",
+        "active": "Active",
+        "expired": "Expired",
+        "revoked": "Revoked"
+      },
       "read": "Read / Download",
       "purchasedOn": "Purchased {date}",
       "successTitle": "Payment received",

@@ -1,0 +1,40 @@
+{
+  "Dashboard": {
+    "gifts": {
+      "heading": "Regalos",
+      "subheading": "Regalos en especie y solicitudes de acceso pendientes de revisión editorial.",
+      "loading": "Cargando…",
+      "empty": "Nada pendiente de revisión.",
+      "type": {
+        "monetary": "Regalo monetario",
+        "in_kind": "Regalo en especie",
+        "request_access": "Solicitud de acceso",
+        "editorial": "Concesión editorial"
+      },
+      "scope": {
+        "contribution": "Artículo",
+        "issue": "Número",
+        "book": "Libro",
+        "session": "Sesión",
+        "platform": "Toda la plataforma"
+      },
+      "table": {
+        "type": "Tipo",
+        "scope": "Alcance",
+        "detail": "Detalle",
+        "submitted": "Enviado",
+        "approve": "Aprobar"
+      },
+      "approveDialog": {
+        "title": "¿Aprobar este regalo?",
+        "description": "Esto otorga acceso al solicitante ({type}). No se puede deshacer.",
+        "confirm": "Aprobar",
+        "confirmBusy": "Aprobando…"
+      },
+      "toasts": {
+        "approved": "Regalo aprobado — acceso concedido.",
+        "approveFailed": "No se pudo aprobar este regalo."
+      }
+    }
+  }
+}

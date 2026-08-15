@@ -1,0 +1,40 @@
+{
+  "Dashboard": {
+    "gifts": {
+      "heading": "Dons",
+      "subheading": "Dons en nature et demandes d'accès en attente d'examen éditorial.",
+      "loading": "Chargement…",
+      "empty": "Rien en attente d'examen.",
+      "type": {
+        "monetary": "Don monétaire",
+        "in_kind": "Don en nature",
+        "request_access": "Demande d'accès",
+        "editorial": "Attribution éditoriale"
+      },
+      "scope": {
+        "contribution": "Article",
+        "issue": "Numéro",
+        "book": "Livre",
+        "session": "Session",
+        "platform": "Toute la plateforme"
+      },
+      "table": {
+        "type": "Type",
+        "scope": "Portée",
+        "detail": "Détail",
+        "submitted": "Envoyé",
+        "approve": "Approuver"
+      },
+      "approveDialog": {
+        "title": "Approuver ce don ?",
+        "description": "Cela accorde l'accès au demandeur ({type}). Action irréversible.",
+        "confirm": "Approuver",
+        "confirmBusy": "Approbation…"
+      },
+      "toasts": {
+        "approved": "Don approuvé — accès accordé.",
+        "approveFailed": "Impossible d'approuver ce don."
+      }
+    }
+  }
+}

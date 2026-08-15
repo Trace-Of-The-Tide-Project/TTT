@@ -287,6 +287,12 @@ export const adminConfig: DashboardConfig = {
               href: "/admin/subscriptions",
               icon: CreditCardIcon,
             },
+            {
+              kind: "item",
+              labelKey: "sidebar.gifts",
+              href: "/admin/gifts",
+              icon: GiftIcon,
+            },
           ],
         },
         {

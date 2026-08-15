@@ -234,11 +234,15 @@ function ArticleByIdLoader({
                   articleId: article.id,
                   price: article.price,
                   currency: article.currency,
+                  giftMode: article.access_model === "gift_window",
+                  giftValueInitial: article.gift_value_initial,
+                  giftCurrency: article.gift_currency,
                 }
               : undefined
           }
           previewTruncated={article.preview_truncated}
           totalBlockCount={article.total_block_count}
+          commonsAt={!article.locked ? article.commons_at : undefined}
         />
         {!article.locked ? <ArticleBookChapterNav articleId={article.id} /> : null}
       </>

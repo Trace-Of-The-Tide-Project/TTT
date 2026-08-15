@@ -295,7 +295,15 @@
             "price": "السعر",
             "currency": "العملة",
             "pdfPath": "مسار ملف PDF للعدد",
-            "pdfPathPlaceholder": "مسار كائن GCS لملف PDF المدفوع"
+            "pdfPathPlaceholder": "مسار كائن GCS لملف PDF المدفوع",
+            "giftModel": "الإهداء",
+            "giftModelOptions": {
+              "gift_window": "نافذة هدية (تصبح ملكية عامة بعد N يومًا)",
+              "commons_immediate": "ملكية عامة فورًا (مجانية دائمًا)",
+              "material_only": "دعم عيني فقط (بلا انتقال تلقائي للملكية العامة)"
+            },
+            "giftValueInitial": "قيمة الهدية المقترحة",
+            "giftWindowDays": "نافذة الهدية (بالأيام)"
           },
           "errors": {
             "titleRequired": "العنوان مطلوب.",

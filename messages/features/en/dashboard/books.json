@@ -111,7 +111,15 @@
           "printPrice": "Print price",
           "printPricePlaceholder": "e.g. 19.99",
           "magazine_id": "Magazine ID (optional)",
-          "magazine_idPlaceholder": "Leave blank if not magazine-linked"
+          "magazine_idPlaceholder": "Leave blank if not magazine-linked",
+          "giftModel": "Gifting",
+          "giftModelOptions": {
+            "gift_window": "Gift window (commons after N days)",
+            "commons_immediate": "Commons immediately (always free)",
+            "material_only": "Material support only (no automatic commons)"
+          },
+          "giftValueInitial": "Suggested gift amount",
+          "giftWindowDays": "Gift window (days)"
         },
         "languages": {
           "en": "English",
@@ -153,6 +161,7 @@
         },
         "hints": {
           "priceFree": "Leave blank to mark as free",
+          "giftWindow": "After this many days from publish, the book automatically becomes commons (free) unless an editor sets a date manually.",
           "printPriceCurrency": "Charged in the currency set above",
           "coverUrl": "Or paste an image URL directly",
           "pdfUrl": "Or paste a PDF URL directly",

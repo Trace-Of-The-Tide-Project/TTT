@@ -62,6 +62,13 @@ export type MagazineIssue = {
   /** Commerce — sell the issue as a digital product like a book. */
   price?: number | string | null;
   currency?: string | null;
+  /** Gifting model (§1.4) — coexists with price above. */
+  access_model?: "gift_window" | "commons_immediate" | "material_only" | string | null;
+  gift_value_initial?: number | string | null;
+  gift_currency?: string | null;
+  gift_window_days?: number | null;
+  commons_at?: string | null;
+  gift_raised_total?: number | string | null;
   /** Computed on read for the caller. */
   is_free?: boolean | null;
   is_owned?: boolean | null;
@@ -146,6 +153,11 @@ export type MagazineIssueInput = {
   /** Commerce. null/<=0 price ⇒ free. */
   price?: number | null;
   currency?: string | null;
+  /** Gifting model (§1.4) — coexists with price above. */
+  access_model?: "gift_window" | "commons_immediate" | "material_only" | null;
+  gift_value_initial?: number | null;
+  gift_currency?: string | null;
+  gift_window_days?: number | null;
   pdf_path?: string | null;
   /** Crowdfunded issues only. */
   funding_goal?: number | null;

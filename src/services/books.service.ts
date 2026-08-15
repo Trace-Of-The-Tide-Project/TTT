@@ -39,6 +39,14 @@ export type Book = {
   print_enabled?: boolean | null;
   /** Price of the physical copy; separate from the digital `price`. */
   print_price?: number | string | null;
+  published_at?: string | null;
+  /** Gifting model (§1.4) — coexists with price above. */
+  access_model?: "gift_window" | "commons_immediate" | "material_only" | string | null;
+  gift_value_initial?: number | string | null;
+  gift_currency?: string | null;
+  gift_window_days?: number | null;
+  commons_at?: string | null;
+  gift_raised_total?: number | string | null;
 };
 
 export type BookReview = {
@@ -221,6 +229,12 @@ export type BookPayload = {
   created_by?: string | null;
   /** On create only: id of the book this is a translation of. */
   translation_of?: string | null;
+  published_at?: string | null;
+  /** Gifting model (§1.4) — coexists with price above. */
+  access_model?: "gift_window" | "commons_immediate" | "material_only" | null;
+  gift_value_initial?: number | null;
+  gift_currency?: string | null;
+  gift_window_days?: number | null;
 };
 
 /** POST /knowledge/books — requires JWT + admin role. */

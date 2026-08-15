@@ -48,6 +48,25 @@
       "redirecting": "Redirecting…",
       "error": "Could not start checkout. Please try again."
     },
+    "giftGate": {
+      "heading": "This piece is a gift, not a purchase",
+      "body": "Support this piece with a gift of any amount, offer something in kind, or simply ask for access.",
+      "bodyWithSuggested": "Others have gifted around {price} for this piece — give what feels right, offer something in kind, or simply ask for access.",
+      "tabGift": "Gift",
+      "tabInKind": "Offer something",
+      "tabRequest": "Request access",
+      "giveGift": "Give this gift",
+      "offer": "Send offer",
+      "requestAccess": "Request access",
+      "inKindPlaceholder": "Describe what you'd like to offer instead — a skill, an object, your time…",
+      "requestNotePlaceholder": "A short note for the editors (optional)",
+      "submitting": "Submitting…",
+      "redirecting": "Redirecting…",
+      "inKindSubmitted": "Thank you — an editor will review your offer.",
+      "requestSubmitted": "Request sent — you'll have access within 72 hours either way.",
+      "commonsNotice": "This piece's gift window has closed — it now belongs to everyone.",
+      "error": "Something went wrong. Please try again."
+    },
     "premiumGate": {
       "heading": "Premium content",
       "body": "Subscribe to continue reading.",

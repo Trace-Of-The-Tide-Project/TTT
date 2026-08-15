@@ -111,7 +111,15 @@
           "printPrice": "Precio de la copia física",
           "printPricePlaceholder": "ej. 19.99",
           "magazine_id": "ID de revista (opcional)",
-          "magazine_idPlaceholder": "Dejar en blanco si no está vinculado a una revista"
+          "magazine_idPlaceholder": "Dejar en blanco si no está vinculado a una revista",
+          "giftModel": "Regalo",
+          "giftModelOptions": {
+            "gift_window": "Ventana de regalo (dominio público tras N días)",
+            "commons_immediate": "Dominio público inmediato (siempre gratis)",
+            "material_only": "Solo apoyo material (sin transición automática a dominio público)"
+          },
+          "giftValueInitial": "Monto de regalo sugerido",
+          "giftWindowDays": "Ventana de regalo (días)"
         },
         "languages": {
           "en": "Inglés",
@@ -153,6 +161,7 @@
         },
         "hints": {
           "priceFree": "Dejar en blanco para marcarlo como gratis",
+          "giftWindow": "Tras este número de días desde la publicación, el libro pasa automáticamente a dominio público (gratis) a menos que un editor fije una fecha manualmente.",
           "printPriceCurrency": "Se cobra en la moneda indicada arriba",
           "coverUrl": "O pega directamente la URL de una imagen",
           "pdfUrl": "O pega directamente la URL de un PDF",
