@@ -14,8 +14,7 @@ import ArticlePreviewCTA from "./ArticlePreviewCTA";
 import PremiumGate from "./PremiumGate";
 import ArticleBuyGate from "./ArticleBuyGate";
 import GiftGate from "@/components/gifting/GiftGate";
-import { CommonsCountdown } from "@/components/gifting/CommonsCountdown";
-import { GiftProgress } from "@/components/gifting/GiftProgress";
+import { GiftWindowPanel } from "@/components/gifting/GiftWindowPanel";
 import type { TranslationVersion } from "@/services/translations.service";
 import { ContentAuthorCard } from "./sidebar/ContentAuthorCard";
 import { ContentContributors } from "./sidebar/ContentContributors";
@@ -241,26 +240,15 @@ export function ContentPageLayout({
               // of blurring an empty <div>, then wrap it in the paywall.
               gate.denyReason === "GIFT_WINDOW_ACTIVE" && gate.giftCommonsAt ? (
                 // Still within the gift window — no lock icon (SRS §6.2):
-                // show the countdown + how much has been raised so far,
-                // stacked above the existing gift CTA.
-                <div className="flex flex-col gap-3">
-                  <CommonsCountdown commonsAt={gate.giftCommonsAt} />
-                  {gate.giftValueInitial ? (
-                    <GiftProgress
-                      raisedTotal={gate.giftRaisedTotal ?? 0}
-                      valueInitial={gate.giftValueInitial}
-                      currency={gate.giftCurrency ?? "GBP"}
-                    />
-                  ) : null}
-                  <GiftGate
-                    scopeType="contribution"
-                    scopeId={gate.articleId}
-                    suggestedAmount={gate.giftValueInitial}
-                    currency={gate.giftCurrency}
-                  >
-                    <GhostBody />
-                  </GiftGate>
-                </div>
+                // one unified panel with countdown, progress, and the gift CTA.
+                <GiftWindowPanel
+                  scopeType="contribution"
+                  scopeId={gate.articleId}
+                  commonsAt={gate.giftCommonsAt}
+                  giftValueInitial={gate.giftValueInitial}
+                  giftRaisedTotal={gate.giftRaisedTotal}
+                  giftCurrency={gate.giftCurrency}
+                />
               ) : gate.accessLevel === "paid" && gate.giftMode ? (
                 <GiftGate
                   scopeType="contribution"
