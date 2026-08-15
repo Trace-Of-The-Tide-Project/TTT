@@ -71,6 +71,10 @@ export type MagazineIssueDetail = {
   currency: string;
   isFree: boolean;
   isOwned: boolean;
+  denyReason?: string | null;
+  commonsAt?: string | null;
+  giftValueInitial?: number | null;
+  giftRaisedTotal?: number | null;
   hasPdf: boolean;
   language: string;
   sections: IssueSectionEntry[];
@@ -312,6 +316,10 @@ export function MagazineIssueDetailContent({
                 currency={issue.currency}
                 isFree={issue.isFree}
                 isOwned={issue.isOwned}
+                denyReason={issue.denyReason}
+                commonsAt={issue.commonsAt}
+                giftValueInitial={issue.giftValueInitial}
+                giftRaisedTotal={issue.giftRaisedTotal}
               />
             </div>
 

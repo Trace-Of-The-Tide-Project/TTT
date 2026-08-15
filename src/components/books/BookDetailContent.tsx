@@ -11,6 +11,7 @@ import { BookDetailBreadcrumb, DataRow, CategoryChip, AvatarCircle, AvatarStack,
 import { ReviewsSection, PartialStar } from "./reviews/BookReviews";
 import { BookDetailBanner } from "./detail/BookDetailBanner";
 import { BookChapterList } from "./detail/BookChapterList";
+import { GiftWindowPanel } from "@/components/gifting/GiftWindowPanel";
 
 const PREVIEW_ICON = "/images/books/preview-icon.svg";
 
@@ -36,6 +37,10 @@ export type BookDetail = {
   currency: string;
   isFree: boolean;
   isOwned: boolean;
+  denyReason?: string | null;
+  commonsAt?: string | null;
+  giftValueInitial?: number | null;
+  giftRaisedTotal?: number | null;
   printEnabled: boolean;
   printPrice: number | null;
 };
@@ -65,15 +70,26 @@ export function BookDetailContent({ book, reviews }: { book: BookDetail; reviews
         <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-[260px_minmax(0,1fr)] min-[1600px]:gap-12 min-[1600px]:md:grid-cols-[340px_minmax(0,1fr)]">
           <div className="mx-auto flex w-full flex-col md:mx-0" style={{ maxWidth: "360px", gap: "12px" }}>
             <BookHexCover src={book.coverImage} alt={book.title} />
-            <BookActionButtons
-              bookId={book.id}
-              price={book.price}
-              currency={book.currency}
-              isFree={book.isFree}
-              isOwnedInitial={book.isOwned}
-              printEnabled={book.printEnabled}
-              printPrice={book.printPrice}
-            />
+            {!book.isOwned && book.denyReason === "GIFT_WINDOW_ACTIVE" && book.commonsAt ? (
+              <GiftWindowPanel
+                scopeType="book"
+                scopeId={book.id}
+                commonsAt={book.commonsAt}
+                giftValueInitial={book.giftValueInitial}
+                giftRaisedTotal={book.giftRaisedTotal}
+                giftCurrency={book.currency}
+              />
+            ) : (
+              <BookActionButtons
+                bookId={book.id}
+                price={book.price}
+                currency={book.currency}
+                isFree={book.isFree}
+                isOwnedInitial={book.isOwned}
+                printEnabled={book.printEnabled}
+                printPrice={book.printPrice}
+              />
+            )}
             <Link
               href={`/books/${book.id}/preview`}
               className="inline-flex w-full items-center justify-center transition-opacity hover:opacity-90 min-[1600px]:h-14! min-[1600px]:text-base!"

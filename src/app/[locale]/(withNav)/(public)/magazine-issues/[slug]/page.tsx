@@ -86,6 +86,10 @@ export default async function MagazineIssueDetailPage({ params }: PageProps) {
     currency: issue.currency ?? "USD",
     isFree: Boolean(issue.is_free),
     isOwned: Boolean(issue.is_owned),
+    denyReason: issue.deny_reason ?? null,
+    commonsAt: issue.commons_at ?? null,
+    giftValueInitial: issue.gift_value_initial != null ? Number(issue.gift_value_initial) : null,
+    giftRaisedTotal: issue.gift_raised_total != null ? Number(issue.gift_raised_total) : null,
     hasPdf: Boolean(issue.pdf_url),
     relatedIssues,
     sections: (issue.sections ?? []).map((s) => ({

@@ -35,6 +35,14 @@ export type Book = {
   is_free?: boolean;
   /** True when the current (authenticated) caller owns this paid book. */
   is_owned?: boolean;
+  /** Why access was denied when not owned — drives the reader's gate UI. */
+  deny_reason?:
+    | "GIFT_WINDOW_ACTIVE"
+    | "SEATS_FULL"
+    | "SUBSCRIPTION_REQUIRED"
+    | "PURCHASE_REQUIRED"
+    | "NOT_FOUND"
+    | null;
   /** Whether a physical copy can be purchased. */
   print_enabled?: boolean | null;
   /** Price of the physical copy; separate from the digital `price`. */

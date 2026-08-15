@@ -65,6 +65,13 @@
       "inKindSubmitted": "Thank you — an editor will review your offer.",
       "requestSubmitted": "Request sent — you'll have access within 72 hours either way.",
       "commonsNotice": "This piece's gift window has closed — it now belongs to everyone.",
+      "commonsCountdownLabel": "Joins the commons in",
+      "commonsCountdownValue": "{days}d {hours}h {minutes}m",
+      "giftProgress": "{raised} raised of {goal}",
+      "giftWindowLabel": "Gift window open",
+      "giftWindowCountdown": "{days}d {hours}h {minutes}m remaining",
+      "giftWindowProgress": "{raised} of {goal} raised",
+      "giftAmountSliderLabel": "Gift amount",
       "error": "Something went wrong. Please try again."
     },
     "premiumGate": {

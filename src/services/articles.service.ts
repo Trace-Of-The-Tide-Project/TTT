@@ -393,6 +393,14 @@ export type ArticleDetail = {
   price?: number | null;
   currency?: string | null;
   locked?: boolean;
+  /** Why access was denied when `locked` is true — drives the reader's gate UI. */
+  deny_reason?:
+    | "GIFT_WINDOW_ACTIVE"
+    | "SEATS_FULL"
+    | "SUBSCRIPTION_REQUIRED"
+    | "PURCHASE_REQUIRED"
+    | "NOT_FOUND"
+    | null;
   /** Gifting model (§1.4) — coexists with access_level/price above. */
   access_model?: "gift_window" | "commons_immediate" | "material_only" | string;
   gift_value_initial?: number | null;
