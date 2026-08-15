@@ -13,6 +13,7 @@ import { ContentArticleBody, type ContentArticleSection } from "./article/Conten
 import ArticlePreviewCTA from "./ArticlePreviewCTA";
 import PremiumGate from "./PremiumGate";
 import ArticleBuyGate from "./ArticleBuyGate";
+import GiftGate from "@/components/gifting/GiftGate";
 import type { TranslationVersion } from "@/services/translations.service";
 import { ContentAuthorCard } from "./sidebar/ContentAuthorCard";
 import { ContentContributors } from "./sidebar/ContentContributors";
@@ -99,11 +100,19 @@ export type ContentPageLayoutProps = {
     articleId: string;
     price?: number | null;
     currency?: string | null;
+    /** Gifting model (§1.4): when set, render GiftGate instead of the plain
+     * buy gate — the piece is gifted, not sold at a fixed price. */
+    giftMode?: boolean;
+    giftValueInitial?: number | null;
+    giftCurrency?: string | null;
   };
   /** access_level='preview': true when blocks were truncated server-side —
    * shows the continue-reading CTA under the visible blocks. */
   previewTruncated?: boolean;
   totalBlockCount?: number;
+  /** Gifting model (§1.4): set when the piece has already transitioned to
+   * commons (gift window closed) — shown as a note, never a gate. */
+  commonsAt?: string | null;
 };
 
 export function ContentPageLayout({
@@ -119,6 +128,7 @@ export function ContentPageLayout({
   relatedContent,
   gate,
   previewTruncated,
+  commonsAt,
 }: ContentPageLayoutProps) {
   const t = useTranslations("Content");
   const isOpenCall =
@@ -221,7 +231,16 @@ export function ContentPageLayout({
               // Subscriber/paid: the backend ships zero blocks, so there is
               // nothing real to blur — render a ghost skeleton body instead
               // of blurring an empty <div>, then wrap it in the paywall.
-              gate.accessLevel === "paid" ? (
+              gate.accessLevel === "paid" && gate.giftMode ? (
+                <GiftGate
+                  scopeType="contribution"
+                  scopeId={gate.articleId}
+                  suggestedAmount={gate.giftValueInitial}
+                  currency={gate.giftCurrency}
+                >
+                  <GhostBody />
+                </GiftGate>
+              ) : gate.accessLevel === "paid" ? (
                 <ArticleBuyGate
                   articleId={gate.articleId}
                   price={gate.price}
@@ -236,6 +255,11 @@ export function ContentPageLayout({
               )
             ) : (
               <>
+                {commonsAt ? (
+                  <p className="rounded-lg bg-[var(--tott-panel-bg)] px-4 py-2 text-center text-xs text-[var(--tott-home-text-muted)]">
+                    {t("giftGate.commonsNotice")}
+                  </p>
+                ) : null}
                 <ContentArticleBody sections={article.sections} />
                 {previewTruncated ? <ArticlePreviewCTA /> : null}
               </>

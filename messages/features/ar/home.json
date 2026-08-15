@@ -574,6 +574,21 @@
       "continueShopping": "متابعة التسوق",
       "libraryTitle": "مكتبتي",
       "libraryEmpty": "لا تملك أي كتب بعد.",
+      "giftsTitle": "هداياي",
+      "giftsEmpty": "لم تُهدِ شيئًا بعد.",
+      "giftType": {
+        "monetary": "هدية مالية",
+        "in_kind": "هدية عينية",
+        "request_access": "طلب وصول",
+        "editorial": "منحة تحريرية"
+      },
+      "giftStatus": {
+        "pending": "قيد المراجعة",
+        "approved": "تمت الموافقة",
+        "active": "نشطة",
+        "expired": "منتهية",
+        "revoked": "ملغاة"
+      },
       "read": "اقرأ / نزّل",
       "purchasedOn": "تم الشراء {date}",
       "successTitle": "تم استلام الدفعة",

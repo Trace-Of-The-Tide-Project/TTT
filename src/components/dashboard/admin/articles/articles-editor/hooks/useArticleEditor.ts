@@ -157,6 +157,12 @@ export function useArticleEditor({
   const [previewBlockCount, setPreviewBlockCount] = useState<number | null>(null);
   const [price, setPrice] = useState<number | null>(null);
   const [currency, setCurrency] = useState("USD");
+  const [accessModel, setAccessModel] = useState<
+    "gift_window" | "commons_immediate" | "material_only"
+  >("gift_window");
+  const [giftValueInitial, setGiftValueInitial] = useState<number | null>(null);
+  const [giftCurrency, setGiftCurrency] = useState("GBP");
+  const [giftWindowDays, setGiftWindowDays] = useState<number | null>(null);
   const [seoTitle, setSeoTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [collectionId, setCollectionId] = useState("");
@@ -391,6 +397,17 @@ export function useArticleEditor({
     setPreviewBlockCount(a.preview_block_count ?? null);
     setPrice(a.price ?? null);
     setCurrency(a.currency?.trim() || "USD");
+    const model = (a.access_model || "gift_window").trim().toLowerCase();
+    setAccessModel(
+      (["gift_window", "commons_immediate", "material_only"] as const).includes(
+        model as "gift_window" | "commons_immediate" | "material_only",
+      )
+        ? (model as "gift_window" | "commons_immediate" | "material_only")
+        : "gift_window",
+    );
+    setGiftValueInitial(a.gift_value_initial ?? null);
+    setGiftCurrency(a.gift_currency?.trim() || "GBP");
+    setGiftWindowDays(a.gift_window_days ?? null);
     setSeoTitle(a.seo_title?.trim() ?? "");
     setMetaDescription(a.meta_description?.trim() ?? "");
     setCollectionId(a.collection_id?.trim() ?? "");
@@ -517,6 +534,12 @@ export function useArticleEditor({
       preview_block_count: accessLevel === "preview" ? (previewBlockCount ?? undefined) : undefined,
       price: accessLevel === "paid" ? (price ?? undefined) : undefined,
       currency: accessLevel === "paid" ? currency : undefined,
+      access_model: accessLevel === "paid" ? accessModel : undefined,
+      gift_value_initial:
+        accessLevel === "paid" && accessModel === "gift_window" ? (giftValueInitial ?? undefined) : undefined,
+      gift_currency: accessLevel === "paid" && accessModel === "gift_window" ? giftCurrency : undefined,
+      gift_window_days:
+        accessLevel === "paid" && accessModel === "gift_window" ? (giftWindowDays ?? undefined) : undefined,
       seo_title: f.seoTitle.trim() || undefined,
       meta_description: f.metaDescription.trim() || undefined,
       collection_id: cid || undefined,
@@ -538,6 +561,7 @@ export function useArticleEditor({
   }, [
     config.contentType, category, language, visibility,
     accessLevel, previewBlockCount, price, currency,
+    accessModel, giftValueInitial, giftCurrency, giftWindowDays,
     collectionId, tagIds, coverImage, coverFile, translationOf,
     initialProduct, initialIssueId, initialMagazineId,
     canAssign, authorUser, writer,
@@ -745,6 +769,10 @@ export function useArticleEditor({
     previewBlockCount, setPreviewBlockCount,
     price, setPrice,
     currency, setCurrency,
+    accessModel, setAccessModel,
+    giftValueInitial, setGiftValueInitial,
+    giftCurrency, setGiftCurrency,
+    giftWindowDays, setGiftWindowDays,
     seoTitle, setSeoTitle,
     metaDescription, setMetaDescription,
     collectionId, setCollectionId,

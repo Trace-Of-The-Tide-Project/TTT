@@ -574,6 +574,21 @@
       "continueShopping": "Continuer les achats",
       "libraryTitle": "Ma bibliothèque",
       "libraryEmpty": "Vous ne possédez encore aucun livre.",
+      "giftsTitle": "Mes dons",
+      "giftsEmpty": "Vous n'avez encore rien donné.",
+      "giftType": {
+        "monetary": "Don monétaire",
+        "in_kind": "Don en nature",
+        "request_access": "Demande d'accès",
+        "editorial": "Attribution éditoriale"
+      },
+      "giftStatus": {
+        "pending": "En attente d'examen",
+        "approved": "Approuvé",
+        "active": "Actif",
+        "expired": "Expiré",
+        "revoked": "Révoqué"
+      },
       "read": "Lire / Télécharger",
       "purchasedOn": "Acheté le {date}",
       "successTitle": "Paiement reçu",

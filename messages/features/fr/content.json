@@ -48,6 +48,25 @@
       "redirecting": "Redirection…",
       "error": "Impossible de démarrer le paiement. Veuillez réessayer."
     },
+    "giftGate": {
+      "heading": "Cette œuvre est un don, pas un achat",
+      "body": "Soutenez cette œuvre avec un don du montant de votre choix, proposez quelque chose en nature, ou demandez simplement l'accès.",
+      "bodyWithSuggested": "D'autres ont donné environ {price} pour cette œuvre — donnez ce qui vous semble juste, proposez quelque chose en nature, ou demandez simplement l'accès.",
+      "tabGift": "Faire un don",
+      "tabInKind": "Proposer autre chose",
+      "tabRequest": "Demander l'accès",
+      "giveGift": "Envoyer le don",
+      "offer": "Envoyer l'offre",
+      "requestAccess": "Demander l'accès",
+      "inKindPlaceholder": "Décrivez ce que vous aimeriez proposer à la place — une compétence, un objet, votre temps…",
+      "requestNotePlaceholder": "Une brève note pour les éditeurs (facultatif)",
+      "submitting": "Envoi…",
+      "redirecting": "Redirection…",
+      "inKindSubmitted": "Merci — un éditeur examinera votre offre.",
+      "requestSubmitted": "Demande envoyée — vous aurez accès dans les 72 heures, quoi qu'il arrive.",
+      "commonsNotice": "La période de don de cette œuvre est terminée — elle appartient désormais à tous.",
+      "error": "Une erreur est survenue. Veuillez réessayer."
+    },
     "premiumGate": {
       "heading": "Contenu premium",
       "body": "Abonnez-vous pour continuer la lecture.",

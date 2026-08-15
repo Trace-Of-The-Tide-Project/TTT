@@ -9,6 +9,7 @@
  * flat, presentation-ready item instead of a raw backend row.
  */
 import { serverGet } from "@/lib/api/isomorphic-fetch";
+import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import {
   normalizeArticlesListPayload,
   type ArticleListItem,
@@ -167,10 +168,14 @@ function toIssueCard(it: MagazineIssue): IssueCard {
 
 function toArticleCard(a: ArticleListItem): ArticleCard {
   const name =
-    a.author?.full_name ??
-    a.author?.profile?.display_name ??
-    a.author?.username ??
+    a.writer?.pen_name?.trim() ||
+    a.author?.full_name ||
+    a.author?.profile?.display_name ||
+    a.author?.username ||
     null;
+  const avatar = a.writer?.avatar_url
+    ? resolveArticleMediaSrc(a.writer.avatar_url)
+    : (a.author?.profile?.avatar ?? null);
   return {
     id: a.id,
     title: a.title,
@@ -183,7 +188,7 @@ function toArticleCard(a: ArticleListItem): ArticleCard {
     readingTime: a.reading_time ?? 0,
     publishedAt: a.published_at ?? null,
     authorName: name,
-    authorAvatar: a.author?.profile?.avatar ?? null,
+    authorAvatar: avatar,
     language: a.language ?? null,
   };
 }

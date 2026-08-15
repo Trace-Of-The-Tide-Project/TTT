@@ -295,7 +295,15 @@
             "price": "Precio",
             "currency": "Moneda",
             "pdfPath": "Ruta del PDF del número",
-            "pdfPathPlaceholder": "Ruta del objeto GCS del PDF de pago"
+            "pdfPathPlaceholder": "Ruta del objeto GCS del PDF de pago",
+            "giftModel": "Regalo",
+            "giftModelOptions": {
+              "gift_window": "Ventana de regalo (dominio público tras N días)",
+              "commons_immediate": "Dominio público inmediato (siempre gratis)",
+              "material_only": "Solo apoyo material (sin transición automática a dominio público)"
+            },
+            "giftValueInitial": "Monto de regalo sugerido",
+            "giftWindowDays": "Ventana de regalo (días)"
           },
           "errors": {
             "titleRequired": "El título es obligatorio.",
@@ -498,7 +506,12 @@
         "fields": {
           "title": "Title",
           "standfirst": "Standfirst",
-          "titleFontSize": "Tamaño de fuente del título (px)"
+          "titleFontSize": "Tamaño de fuente del título (px)",
+          "layout": "Diseño"
+        },
+        "layoutOptions": {
+          "editorial": "Cuadrícula editorial",
+          "honeycomb": "Panal"
         }
       },
       "closingCta": {
@@ -545,6 +558,7 @@
         "status": "Estado",
         "issue": "Número"
       },
+      "preview": "Vista previa en la revista",
       "translations": {
         "toggle": "Mostrar traducciones",
         "count": "+{count} idiomas",

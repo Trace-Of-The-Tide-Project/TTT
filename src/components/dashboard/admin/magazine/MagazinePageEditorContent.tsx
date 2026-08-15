@@ -23,6 +23,7 @@ import { CloudUploadIcon, EyeIcon, EyeOffIcon, RefreshCwIcon, PersonPlusIcon, Gi
 import { Hero } from "@/components/home/magazine-page/Hero";
 import { ActionCard } from "@/components/home/magazine-page/InnerSectionCards";
 import { SectionHeader } from "@/components/home/magazine-page/SectionHeader";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { ShareStory } from "@/components/home/magazine-page/ShareStory";
 import { LocaleTabs } from "@/components/dashboard/admin/translations";
 import { HeroPickerModal } from "@/components/dashboard/admin/media-library/HeroPickerModal";
@@ -48,6 +49,7 @@ import {
   type ClosingCtaLocaleFields,
   type MagazineLocale,
   type MagazineSectionKey,
+  type MagazineRailLayout,
 } from "@/services/magazine-page.service";
 import type { CmsSection } from "@/services/cms.service";
 
@@ -323,11 +325,11 @@ export function MagazinePageEditorContent() {
                   />
                 );
               case "featuredHeader":
-                return <RailHeaderEditor {...props} viewMoreHref="/magazine" />;
+                return <RailHeaderEditor {...props} viewMoreHref="/magazine" showLayout />;
               case "collectionsHeader":
                 return <RailHeaderEditor {...props} viewMoreHref="/collections" />;
               case "latestHeader":
-                return <RailHeaderEditor {...props} viewMoreHref="/magazine" />;
+                return <RailHeaderEditor {...props} viewMoreHref="/magazine" showLayout />;
               case "plansHeader":
                 return <RailHeaderEditor {...props} viewMoreHref="/subscribe" />;
               case "closingCta":
@@ -572,7 +574,8 @@ function RailHeaderEditor({
   isSaving,
   registerDraftState,
   viewMoreHref,
-}: EditorProps & { viewMoreHref: string }) {
+  showLayout,
+}: EditorProps & { viewMoreHref: string; showLayout?: boolean }) {
   const t = useTranslations("Dashboard.magazinePageEditor.railHeader");
   const {
     draft,
@@ -622,6 +625,19 @@ function RailHeaderEditor({
               rtl={isRtl}
             />
           </Field>
+          {showLayout ? (
+            <Field label={t("fields.layout")}>
+              <SegmentedControl
+                ariaLabel={t("fields.layout")}
+                value={draft.layout ?? "editorial"}
+                onChange={(v) => setDraft((prev) => ({ ...prev, layout: v as MagazineRailLayout }))}
+                options={[
+                  { id: "editorial" as MagazineRailLayout, label: t("layoutOptions.editorial") },
+                  { id: "honeycomb" as MagazineRailLayout, label: t("layoutOptions.honeycomb") },
+                ]}
+              />
+            </Field>
+          ) : null}
         </FieldGroup>
       </FormCard>
 

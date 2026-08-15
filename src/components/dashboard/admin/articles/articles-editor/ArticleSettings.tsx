@@ -134,6 +134,15 @@ type ContentSettingsProps = {
   onPriceChange?: (v: number | null) => void;
   currency?: string;
   onCurrencyChange?: (v: string) => void;
+  /** Gifting model (§1.4) — coexists with price/currency above. */
+  accessModel?: "gift_window" | "commons_immediate" | "material_only";
+  onAccessModelChange?: (v: "gift_window" | "commons_immediate" | "material_only") => void;
+  giftValueInitial?: number | null;
+  onGiftValueInitialChange?: (v: number | null) => void;
+  giftCurrency?: string;
+  onGiftCurrencyChange?: (v: string) => void;
+  giftWindowDays?: number | null;
+  onGiftWindowDaysChange?: (v: number | null) => void;
   seoTitle: string;
   onSeoTitleChange: (v: string) => void;
   metaDescription: string;
@@ -194,6 +203,14 @@ export function ContentSettings({
   onPriceChange,
   currency = "USD",
   onCurrencyChange,
+  accessModel = "gift_window",
+  onAccessModelChange,
+  giftValueInitial,
+  onGiftValueInitialChange,
+  giftCurrency = "GBP",
+  onGiftCurrencyChange,
+  giftWindowDays,
+  onGiftWindowDaysChange,
   seoTitle,
   onSeoTitleChange,
   metaDescription,
@@ -611,6 +628,60 @@ export function ContentSettings({
                 maxLength={3}
                 className={`${FIELD_BASE} w-20 text-center`}
               />
+            </div>
+          ) : null}
+
+          {accessLevel === "paid" ? (
+            <div className="mt-4 border-t border-[var(--tott-border)] pt-4">
+              <SectionLabel icon={<SettingsIcon />}>{t("gift.label")}</SectionLabel>
+              <FieldSelect
+                value={accessModel}
+                onChange={(e) =>
+                  onAccessModelChange?.(
+                    e.target.value as "gift_window" | "commons_immediate" | "material_only",
+                  )
+                }
+              >
+                <option value="gift_window">{t("gift.model.gift_window")}</option>
+                <option value="commons_immediate">{t("gift.model.commons_immediate")}</option>
+                <option value="material_only">{t("gift.model.material_only")}</option>
+              </FieldSelect>
+
+              {accessModel === "gift_window" ? (
+                <>
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      value={giftValueInitial ?? ""}
+                      onChange={(e) =>
+                        onGiftValueInitialChange?.(e.target.value === "" ? null : Number(e.target.value))
+                      }
+                      placeholder={t("gift.valuePlaceholder")}
+                      className={FIELD_BASE}
+                    />
+                    <input
+                      type="text"
+                      value={giftCurrency}
+                      onChange={(e) => onGiftCurrencyChange?.(e.target.value.toUpperCase())}
+                      maxLength={3}
+                      className={`${FIELD_BASE} w-20 text-center`}
+                    />
+                  </div>
+                  <input
+                    type="number"
+                    min={1}
+                    value={giftWindowDays ?? ""}
+                    onChange={(e) =>
+                      onGiftWindowDaysChange?.(e.target.value === "" ? null : Number(e.target.value))
+                    }
+                    placeholder={t("gift.windowDaysPlaceholder")}
+                    className={`${FIELD_BASE} mt-2`}
+                  />
+                  <p className="mt-1.5 text-xs text-[var(--tott-muted)]">{t("gift.windowHint")}</p>
+                </>
+              ) : null}
             </div>
           ) : null}
         </div>

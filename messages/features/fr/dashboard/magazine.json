@@ -295,7 +295,15 @@
             "price": "Prix",
             "currency": "Devise",
             "pdfPath": "Chemin du PDF du numéro",
-            "pdfPathPlaceholder": "Chemin de l'objet GCS du PDF payant"
+            "pdfPathPlaceholder": "Chemin de l'objet GCS du PDF payant",
+            "giftModel": "Don",
+            "giftModelOptions": {
+              "gift_window": "Période de don (bien commun après N jours)",
+              "commons_immediate": "Bien commun immédiat (toujours gratuit)",
+              "material_only": "Soutien matériel uniquement (pas de transition automatique en bien commun)"
+            },
+            "giftValueInitial": "Montant de don suggéré",
+            "giftWindowDays": "Période de don (jours)"
           },
           "errors": {
             "titleRequired": "Le titre est requis.",
@@ -498,7 +506,12 @@
         "fields": {
           "title": "Title",
           "standfirst": "Standfirst",
-          "titleFontSize": "Taille de police du titre (px)"
+          "titleFontSize": "Taille de police du titre (px)",
+          "layout": "Mise en page"
+        },
+        "layoutOptions": {
+          "editorial": "Grille éditoriale",
+          "honeycomb": "Nid d'abeille"
         }
       },
       "closingCta": {
@@ -545,6 +558,7 @@
         "status": "Statut",
         "issue": "Numéro"
       },
+      "preview": "Aperçu dans le magazine",
       "translations": {
         "toggle": "Afficher les traductions",
         "count": "+{count} langues",

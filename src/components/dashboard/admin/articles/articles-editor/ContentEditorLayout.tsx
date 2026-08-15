@@ -46,6 +46,10 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
     previewBlockCount, setPreviewBlockCount,
     price, setPrice,
     currency, setCurrency,
+    accessModel, setAccessModel,
+    giftValueInitial, setGiftValueInitial,
+    giftCurrency, setGiftCurrency,
+    giftWindowDays, setGiftWindowDays,
     seoTitle, setSeoTitle,
     metaDescription, setMetaDescription,
     collectionId, setCollectionId,
@@ -383,6 +387,14 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
               onPriceChange={setPrice}
               currency={currency}
               onCurrencyChange={setCurrency}
+              accessModel={accessModel}
+              onAccessModelChange={setAccessModel}
+              giftValueInitial={giftValueInitial}
+              onGiftValueInitialChange={setGiftValueInitial}
+              giftCurrency={giftCurrency}
+              onGiftCurrencyChange={setGiftCurrency}
+              giftWindowDays={giftWindowDays}
+              onGiftWindowDaysChange={setGiftWindowDays}
               seoTitle={seoTitle}
               onSeoTitleChange={setSeoTitle}
               metaDescription={metaDescription}

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { dirFor } from "@/i18n/dir";
-import { articleHref } from "@/components/home/magazine-next/ui";
+import { articleHref, stripHtml } from "@/components/home/magazine-next/ui";
 import { CalendarIcon, FolderIcon } from "@/components/ui/icons";
-import { pillClipPath } from "@/components/ui/pillClipPath";
+import { ROUNDED_HEX_CLIP_ID } from "@/components/ui/RoundedHexClip";
 import type { ArticleCard } from "./data";
 
 /** First two words' first grapheme, e.g. "Amina K." → "AK". Grapheme-based
@@ -20,131 +20,132 @@ function initialsOf(name: string): string {
     .join("");
 }
 
-// Same silk-hex frame as FeaturedHexCard / BoardCoverflow's writer cards —
-// all hex rails on this page read as one system.
-const WRITER_CARD = "/images/home/Image-2.png";
-const WRITER_TOP_ICON = "/images/home/Icon-4.svg";
-const HEX_PHOTO_MASK: CSSProperties = {
-  WebkitMaskImage: `url(${WRITER_CARD})`,
-  maskImage: `url(${WRITER_CARD})`,
-  WebkitMaskSize: "100% auto",
-  maskSize: "100% auto",
-  WebkitMaskPosition: "center center",
-  maskPosition: "center center",
-  WebkitMaskRepeat: "no-repeat",
-  maskRepeat: "no-repeat",
-};
-
 /**
- * Article card (276×294) sharing the silk-hex frame with the Board writer
- * cards (Image-2.png + Icon-4.svg glyph, mask-clipped photo) instead of its
- * former bespoke rounded-hex SVG clip. Bottom scrim keeps this card's own
- * title + author/date/category meta row and the "Edition" pill — richer
- * than the plain writer card, so it isn't a straight `FeaturedHexCard` reuse.
- * Reused by Feature content and Latest content — both grids place these
- * inside `Honeycomb`.
+ * Editorial article card — elongated horizontal hexagon, cover image
+ * clipped inside (never distorted, `object-cover` fills the box the hex
+ * then clips), title + meta overlaid on a bottom scrim. Used by both
+ * Feature content and Latest content rails; `variant` distinguishes the
+ * single dominant center story ("feature") from the quieter side-rail
+ * cards ("rail").
  */
 export function ContentCard({
   article,
   editionLabel,
   dateLabel,
+  variant = "rail",
 }: {
   article: ArticleCard;
-  /** i18n label for the bottom pill, e.g. t("edition"). */
+  /** i18n label for the small edition tag in the meta row. */
   editionLabel: string;
   /** Already-formatted date string (shortDate helper upstream). */
   dateLabel: string | null;
+  variant?: "rail" | "feature";
 }) {
   const dir = dirFor(article.language);
-  const pillClip = pillClipPath(24);
-  // Fall back to the silk frame alone if the cover photo 404s / fails.
   const [imgOk, setImgOk] = useState(true);
   const showPhoto = Boolean(article.coverImage) && imgOk;
+  const isFeature = variant === "feature";
+  const excerpt = isFeature ? stripHtml(article.excerpt) : "";
 
   return (
     <Link
       href={articleHref(article.id, article.slug)}
-      className="group relative block h-[294px] w-[276px] shrink-0 outline-none transition-transform duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--tott-accent-gold-focus)]"
+      className="group block w-full outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--tott-accent-gold-focus)]"
     >
-      {/* Silk hex frame — base fill so a real photo (layered on top below)
-          isn't washed out by the silk texture. */}
-      <Image
-        src={WRITER_CARD}
-        alt=""
-        fill
-        className="select-none object-contain"
-        sizes="276px"
-        draggable={false}
-      />
-      {showPhoto ? (
-        <Image
-          src={article.coverImage as string}
-          alt=""
-          fill
-          sizes="276px"
-          className="absolute inset-0 select-none object-cover transition-transform duration-500 group-hover:scale-105"
-          style={HEX_PHOTO_MASK}
-          draggable={false}
-          onError={() => setImgOk(false)}
+      <div
+        className={`relative w-full overflow-hidden bg-[var(--tott-panel-bg)] ${
+          isFeature ? "aspect-[16/9] sm:aspect-[1.55/1]" : "aspect-[1.55/1]"
+        }`}
+        style={{ clipPath: `url(#${ROUNDED_HEX_CLIP_ID})` }}
+      >
+        {showPhoto ? (
+          <Image
+            src={article.coverImage as string}
+            alt=""
+            fill
+            sizes={isFeature ? "(min-width: 1024px) 60vw, 100vw" : "(min-width: 1024px) 22vw, 100vw"}
+            className="select-none object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+            draggable={false}
+            onError={() => setImgOk(false)}
+          />
+        ) : null}
+
+        {/* Scrim so overlaid text stays readable regardless of image tone. */}
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0) 75%)" }}
         />
-      ) : null}
 
-      <div
-        aria-hidden
-        className="absolute z-10"
-        style={{ width: "48px", height: "48px", left: "calc(50% - 24px)", top: "8px" }}
-      >
-        <Image src={WRITER_TOP_ICON} alt="" fill sizes="48px" className="select-none" draggable={false} />
-      </div>
-
-      {/* Bottom scrim + text zone. */}
-      <div
-        className="absolute inset-x-0 bottom-0 z-10 flex h-[164px] flex-col items-center justify-end gap-2 px-6 pb-14 pt-6"
-        style={{ background: "var(--tott-writer-card-fade)" }}
-      >
-        <p
-          dir={dir}
-          className="line-clamp-2 w-full text-center font-['IBM_Plex_Sans'] text-[20px] font-medium leading-[28px] text-[var(--tott-home-text-strong)]"
-          style={{ textShadow: "var(--tott-home-text-shadow)" }}
+        {/* Content zone — inset from the angled edges so text never
+            crosses the hex silhouette. */}
+        <div
+          className={`absolute inset-0 flex flex-col items-center justify-end text-center ${
+            isFeature ? "px-[16%] pb-[9%]" : "px-[15%] pb-[8%]"
+          }`}
         >
-          {article.title}
-        </p>
-        <div className="flex w-full flex-wrap items-center justify-center gap-x-2 gap-y-1">
-          {article.authorName ? (
-            <span className="flex items-center gap-1 text-[12px] leading-4 text-[var(--tott-text-secondary-soft)]" style={{ textShadow: "var(--tott-home-text-shadow)" }}>
-              <span className="relative flex h-4 w-4 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white text-[8.5px] font-medium text-[var(--tott-hero-cta-ink)]">
-                {article.authorAvatar ? (
-                  <Image src={article.authorAvatar} alt="" fill sizes="16px" className="object-cover" />
-                ) : (
-                  initialsOf(article.authorName)
-                )}
+          {isFeature ? (
+            <span
+              className="mb-2 text-[11px] font-medium uppercase tracking-wide text-[var(--tott-accent-gold)]"
+              style={{ textShadow: "0 1px 2px rgba(0,0,0,0.6)" }}
+            >
+              {editionLabel}
+            </span>
+          ) : null}
+
+          <h3
+            dir={dir}
+            className={`line-clamp-2 font-['IBM_Plex_Sans'] font-medium text-white ${
+              isFeature ? "text-[30px] leading-[36px]" : "text-[16px] leading-[21px]"
+            }`}
+            style={{ textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}
+          >
+            {article.title}
+          </h3>
+
+          {excerpt ? (
+            <p
+              dir={dir}
+              className="mx-auto mt-2 line-clamp-2 max-w-[46ch] text-[14px] leading-[20px] text-white/80"
+              style={{ textShadow: "0 1px 2px rgba(0,0,0,0.6)" }}
+            >
+              {excerpt}
+            </p>
+          ) : null}
+
+          <div
+            className={`mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] leading-4 text-white/85 ${
+              isFeature ? "" : "text-[10px]"
+            }`}
+            style={{ textShadow: "0 1px 2px rgba(0,0,0,0.6)" }}
+          >
+            {article.authorName ? (
+              <span className="flex items-center gap-1">
+                <span className="relative flex h-4 w-4 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white text-[8px] font-medium text-[var(--tott-hero-cta-ink)]">
+                  {article.authorAvatar ? (
+                    <Image src={article.authorAvatar} alt="" fill sizes="16px" className="object-cover" />
+                  ) : (
+                    initialsOf(article.authorName)
+                  )}
+                </span>
+                {article.authorName}
               </span>
-              {article.authorName}
-            </span>
-          ) : null}
-          {dateLabel ? (
-            <span className="flex items-center gap-1 text-[12px] leading-4 text-[var(--tott-text-secondary-soft)]" style={{ textShadow: "var(--tott-home-text-shadow)" }}>
-              <CalendarIcon size={16} />
-              {dateLabel}
-            </span>
-          ) : null}
-          {article.category ? (
-            <span className="flex items-center gap-1 text-[12px] leading-4 text-[var(--tott-text-secondary-soft)]" style={{ textShadow: "var(--tott-home-text-shadow)" }}>
-              <FolderIcon size={16} />
-              {article.category}
-            </span>
-          ) : null}
+            ) : null}
+            {dateLabel ? (
+              <span className="flex items-center gap-1">
+                <CalendarIcon size={14} />
+                {dateLabel}
+              </span>
+            ) : null}
+            {article.category ? (
+              <span className="flex items-center gap-1">
+                <FolderIcon size={14} />
+                {article.category}
+              </span>
+            ) : null}
+            <span className="text-[var(--tott-accent-gold)]">{editionLabel}</span>
+          </div>
         </div>
-      </div>
-
-      {/* Edition pill, bottom-centered, angled end-caps (Figma `Label`). */}
-      <div className="absolute inset-x-0 bottom-6 z-10 flex items-center justify-center">
-        <span
-          className="px-4 py-1 text-[12px] font-medium leading-4 text-white"
-          style={{ backgroundColor: "rgba(23,23,23,0.8)", clipPath: pillClip }}
-        >
-          {editionLabel}
-        </span>
       </div>
     </Link>
   );

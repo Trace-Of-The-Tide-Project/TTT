@@ -574,6 +574,21 @@
       "continueShopping": "Seguir comprando",
       "libraryTitle": "Mi biblioteca",
       "libraryEmpty": "Aún no tienes ningún libro.",
+      "giftsTitle": "Mis regalos",
+      "giftsEmpty": "Aún no has regalado nada.",
+      "giftType": {
+        "monetary": "Regalo monetario",
+        "in_kind": "Regalo en especie",
+        "request_access": "Solicitud de acceso",
+        "editorial": "Concesión editorial"
+      },
+      "giftStatus": {
+        "pending": "Pendiente de revisión",
+        "approved": "Aprobado",
+        "active": "Activo",
+        "expired": "Expirado",
+        "revoked": "Revocado"
+      },
       "read": "Leer / Descargar",
       "purchasedOn": "Comprado el {date}",
       "successTitle": "Pago recibido",

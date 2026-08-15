@@ -317,6 +317,17 @@
               "paid": "Les lecteurs doivent acheter cet article individuellement."
             }
           },
+          "gift": {
+            "label": "Don",
+            "model": {
+              "gift_window": "Période de don (bien commun après N jours)",
+              "commons_immediate": "Bien commun immédiat (toujours gratuit)",
+              "material_only": "Soutien matériel uniquement (pas de transition automatique en bien commun)"
+            },
+            "valuePlaceholder": "Montant de don suggéré",
+            "windowDaysPlaceholder": "Période de don (jours)",
+            "windowHint": "Après ce nombre de jours suivant la publication, l'œuvre devient automatiquement un bien commun (gratuite), sauf si un éditeur fixe une date manuellement."
+          },
           "seo": {
             "label": "Aperçu SEO",
             "previewTitlePlaceholder": "Titre de l’article",

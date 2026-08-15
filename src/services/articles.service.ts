@@ -48,6 +48,10 @@ export type CreateArticlePayload = {
   preview_block_count?: number;
   price?: number;
   currency?: string;
+  access_model?: "gift_window" | "commons_immediate" | "material_only";
+  gift_value_initial?: number | null;
+  gift_currency?: string;
+  gift_window_days?: number | null;
   seo_title?: string;
   meta_description?: string;
   collection_id?: string;
@@ -133,6 +137,10 @@ function toCreateArticleBody(payload: CreateArticlePayload): Record<string, unkn
   if (payload.preview_block_count != null) body.preview_block_count = payload.preview_block_count;
   if (payload.price != null) body.price = payload.price;
   if (payload.currency) body.currency = payload.currency;
+  if (payload.access_model) body.access_model = payload.access_model;
+  if (payload.gift_value_initial != null) body.gift_value_initial = payload.gift_value_initial;
+  if (payload.gift_currency) body.gift_currency = payload.gift_currency;
+  if (payload.gift_window_days != null) body.gift_window_days = payload.gift_window_days;
   // Magazine routing lives on these — dropping them made every magazine
   // article POST as product='main' (backend column default).
   if (payload.product) body.product = payload.product;
@@ -245,6 +253,8 @@ export type ArticleListItem = {
   createdAt: string;
   updatedAt: string;
   author: ArticleListAuthor;
+  /** Credited byline (writer_profiles row). Null = bylined to author only. */
+  writer?: WriterProfile | null;
   contributors: unknown[];
   tags: unknown[];
   collection: unknown | null;
@@ -383,6 +393,13 @@ export type ArticleDetail = {
   price?: number | null;
   currency?: string | null;
   locked?: boolean;
+  /** Gifting model (§1.4) — coexists with access_level/price above. */
+  access_model?: "gift_window" | "commons_immediate" | "material_only" | string;
+  gift_value_initial?: number | null;
+  gift_currency?: string | null;
+  gift_window_days?: number | null;
+  commons_at?: string | null;
+  gift_raised_total?: number | null;
   /** access_level='preview' only: true when preview_block_count truncated the
    * blocks array — the reader should show a continue-reading CTA. False for
    * every other level, and for a full (owner/staff/unlocked) response. */

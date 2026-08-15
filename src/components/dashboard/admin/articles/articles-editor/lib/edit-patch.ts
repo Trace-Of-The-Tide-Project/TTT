@@ -18,6 +18,10 @@ export function editPatchFromPayload(payload: CreateArticlePayload) {
     preview_block_count: payload.preview_block_count ?? null,
     price: payload.price ?? null,
     currency: payload.currency,
+    access_model: payload.access_model,
+    gift_value_initial: payload.gift_value_initial ?? null,
+    gift_currency: payload.gift_currency,
+    gift_window_days: payload.gift_window_days ?? null,
     // Re-assert product so editing a magazine article can't demote it.
     // Only ever "magazine" or undefined here; undefined is stripped downstream.
     product: payload.product,
