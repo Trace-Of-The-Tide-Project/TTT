@@ -48,6 +48,28 @@
       "next": "Next",
       "pageOf": "Page {page} of {totalPages}"
     },
+    "archive": {
+      "heading": "The Commons",
+      "subtitle": "Everything that has entered the commons — free to read, forever.",
+      "empty": "Nothing has entered the commons yet.",
+      "prev": "Previous",
+      "next": "Next",
+      "pageOf": "Page {page} of {totalPages}",
+      "searchPlaceholder": "Search the archive…",
+      "filterType": "Type",
+      "filterLanguage": "Language",
+      "typeAll": "All",
+      "typeArticle": "Articles",
+      "typeAudio": "Audio",
+      "typeVideo": "Video",
+      "typeGallery": "Gallery",
+      "typeOpinion": "Opinion",
+      "languageAll": "All",
+      "languageEn": "English",
+      "languageAr": "Arabic",
+      "languageEs": "Spanish",
+      "languageFr": "French"
+    },
     "opinion": {
       "disclaimerLabel": "This piece reflects the views of its author, not the editorial position of Trace of the Tide.",
       "supportHeading": "Support this piece",

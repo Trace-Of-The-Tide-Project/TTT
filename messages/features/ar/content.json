@@ -48,6 +48,28 @@
       "next": "التالي",
       "pageOf": "صفحة {page} من {totalPages}"
     },
+    "archive": {
+      "heading": "المشاع",
+      "subtitle": "كل ما دخل إلى المشاع — مجاني للقراءة، إلى الأبد.",
+      "empty": "لم يدخل شيء إلى المشاع بعد.",
+      "prev": "السابق",
+      "next": "التالي",
+      "pageOf": "صفحة {page} من {totalPages}",
+      "searchPlaceholder": "ابحث في الأرشيف…",
+      "filterType": "النوع",
+      "filterLanguage": "اللغة",
+      "typeAll": "الكل",
+      "typeArticle": "مقالات",
+      "typeAudio": "صوتيات",
+      "typeVideo": "فيديو",
+      "typeGallery": "معرض صور",
+      "typeOpinion": "رأي",
+      "languageAll": "الكل",
+      "languageEn": "الإنجليزية",
+      "languageAr": "العربية",
+      "languageEs": "الإسبانية",
+      "languageFr": "الفرنسية"
+    },
     "opinion": {
       "disclaimerLabel": "يعبّر هذا المقال عن رأي كاتبه، ولا يمثل الموقف التحريري لـ Trace of the Tide.",
       "supportHeading": "ادعم هذا المقال",

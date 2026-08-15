@@ -48,6 +48,28 @@
       "next": "Siguiente",
       "pageOf": "Página {page} de {totalPages}"
     },
+    "archive": {
+      "heading": "El Común",
+      "subtitle": "Todo lo que ha entrado en el común — gratis de leer, para siempre.",
+      "empty": "Todavía nada ha entrado en el común.",
+      "prev": "Anterior",
+      "next": "Siguiente",
+      "pageOf": "Página {page} de {totalPages}",
+      "searchPlaceholder": "Buscar en el archivo…",
+      "filterType": "Tipo",
+      "filterLanguage": "Idioma",
+      "typeAll": "Todos",
+      "typeArticle": "Artículos",
+      "typeAudio": "Audio",
+      "typeVideo": "Video",
+      "typeGallery": "Galería",
+      "typeOpinion": "Opinión",
+      "languageAll": "Todos",
+      "languageEn": "Inglés",
+      "languageAr": "Árabe",
+      "languageEs": "Español",
+      "languageFr": "Francés"
+    },
     "opinion": {
       "disclaimerLabel": "Este artículo refleja la opinión de su autor, no la postura editorial de Trace of the Tide.",
       "supportHeading": "Apoya este artículo",

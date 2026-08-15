@@ -48,6 +48,28 @@
       "next": "Suivant",
       "pageOf": "Page {page} sur {totalPages}"
     },
+    "archive": {
+      "heading": "Le Commun",
+      "subtitle": "Tout ce qui est entré dans le commun — gratuit à lire, pour toujours.",
+      "empty": "Rien n'est encore entré dans le commun.",
+      "prev": "Précédent",
+      "next": "Suivant",
+      "pageOf": "Page {page} sur {totalPages}",
+      "searchPlaceholder": "Rechercher dans les archives…",
+      "filterType": "Type",
+      "filterLanguage": "Langue",
+      "typeAll": "Tous",
+      "typeArticle": "Articles",
+      "typeAudio": "Audio",
+      "typeVideo": "Vidéo",
+      "typeGallery": "Galerie",
+      "typeOpinion": "Opinion",
+      "languageAll": "Toutes",
+      "languageEn": "Anglais",
+      "languageAr": "Arabe",
+      "languageEs": "Espagnol",
+      "languageFr": "Français"
+    },
     "opinion": {
       "disclaimerLabel": "Ce texte reflète l'opinion de son auteur, non la position éditoriale de Trace of the Tide.",
       "supportHeading": "Soutenez cet article",
