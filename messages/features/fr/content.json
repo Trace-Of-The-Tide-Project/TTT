@@ -68,6 +68,10 @@
       "commonsCountdownLabel": "Rejoint le domaine commun dans",
       "commonsCountdownValue": "{days}j {hours}h {minutes}m",
       "giftProgress": "{raised} collectés sur {goal}",
+      "giftWindowLabel": "Fenêtre de don ouverte",
+      "giftWindowCountdown": "{days}j {hours}h {minutes}m restantes",
+      "giftWindowProgress": "{raised} collectés sur {goal}",
+      "giftAmountSliderLabel": "Montant du don",
       "error": "Une erreur est survenue. Veuillez réessayer."
     },
     "premiumGate": {

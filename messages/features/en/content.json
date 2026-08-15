@@ -68,6 +68,10 @@
       "commonsCountdownLabel": "Joins the commons in",
       "commonsCountdownValue": "{days}d {hours}h {minutes}m",
       "giftProgress": "{raised} raised of {goal}",
+      "giftWindowLabel": "Gift window open",
+      "giftWindowCountdown": "{days}d {hours}h {minutes}m remaining",
+      "giftWindowProgress": "{raised} of {goal} raised",
+      "giftAmountSliderLabel": "Gift amount",
       "error": "Something went wrong. Please try again."
     },
     "premiumGate": {

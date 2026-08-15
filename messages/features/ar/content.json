@@ -68,6 +68,10 @@
       "commonsCountdownLabel": "ينضم إلى الملكية العامة خلال",
       "commonsCountdownValue": "{days} يوم {hours} ساعة {minutes} دقيقة",
       "giftProgress": "تم جمع {raised} من أصل {goal}",
+      "giftWindowLabel": "نافذة الهدية مفتوحة",
+      "giftWindowCountdown": "متبقٍ {days} يوم {hours} ساعة {minutes} دقيقة",
+      "giftWindowProgress": "تم جمع {raised} من أصل {goal}",
+      "giftAmountSliderLabel": "قيمة الهدية",
       "error": "حدث خطأ ما. حاول مرة أخرى."
     },
     "premiumGate": {

@@ -68,6 +68,10 @@
       "commonsCountdownLabel": "Pasa al dominio común en",
       "commonsCountdownValue": "{days}d {hours}h {minutes}m",
       "giftProgress": "{raised} recaudados de {goal}",
+      "giftWindowLabel": "Ventana de regalo abierta",
+      "giftWindowCountdown": "{days}d {hours}h {minutes}m restantes",
+      "giftWindowProgress": "{raised} recaudados de {goal}",
+      "giftAmountSliderLabel": "Importe del regalo",
       "error": "Algo salió mal. Inténtalo de nuevo."
     },
     "premiumGate": {
