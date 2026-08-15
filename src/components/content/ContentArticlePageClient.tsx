@@ -237,6 +237,9 @@ function ArticleByIdLoader({
                   giftMode: article.access_model === "gift_window",
                   giftValueInitial: article.gift_value_initial,
                   giftCurrency: article.gift_currency,
+                  denyReason: article.deny_reason,
+                  giftCommonsAt: article.commons_at,
+                  giftRaisedTotal: article.gift_raised_total,
                 }
               : undefined
           }

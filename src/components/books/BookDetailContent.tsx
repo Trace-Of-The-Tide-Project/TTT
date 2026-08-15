@@ -11,6 +11,8 @@ import { BookDetailBreadcrumb, DataRow, CategoryChip, AvatarCircle, AvatarStack,
 import { ReviewsSection, PartialStar } from "./reviews/BookReviews";
 import { BookDetailBanner } from "./detail/BookDetailBanner";
 import { BookChapterList } from "./detail/BookChapterList";
+import { CommonsCountdown } from "@/components/gifting/CommonsCountdown";
+import { GiftProgress } from "@/components/gifting/GiftProgress";
 
 const PREVIEW_ICON = "/images/books/preview-icon.svg";
 
@@ -36,6 +38,10 @@ export type BookDetail = {
   currency: string;
   isFree: boolean;
   isOwned: boolean;
+  denyReason?: string | null;
+  commonsAt?: string | null;
+  giftValueInitial?: number | null;
+  giftRaisedTotal?: number | null;
   printEnabled: boolean;
   printPrice: number | null;
 };
@@ -65,6 +71,18 @@ export function BookDetailContent({ book, reviews }: { book: BookDetail; reviews
         <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-[260px_minmax(0,1fr)] min-[1600px]:gap-12 min-[1600px]:md:grid-cols-[340px_minmax(0,1fr)]">
           <div className="mx-auto flex w-full flex-col md:mx-0" style={{ maxWidth: "360px", gap: "12px" }}>
             <BookHexCover src={book.coverImage} alt={book.title} />
+            {!book.isOwned && book.denyReason === "GIFT_WINDOW_ACTIVE" && book.commonsAt ? (
+              <div className="flex flex-col gap-3">
+                <CommonsCountdown commonsAt={book.commonsAt} />
+                {book.giftValueInitial ? (
+                  <GiftProgress
+                    raisedTotal={book.giftRaisedTotal ?? 0}
+                    valueInitial={book.giftValueInitial}
+                    currency={book.currency}
+                  />
+                ) : null}
+              </div>
+            ) : null}
             <BookActionButtons
               bookId={book.id}
               price={book.price}

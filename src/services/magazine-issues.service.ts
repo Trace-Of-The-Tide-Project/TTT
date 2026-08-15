@@ -72,6 +72,14 @@ export type MagazineIssue = {
   /** Computed on read for the caller. */
   is_free?: boolean | null;
   is_owned?: boolean | null;
+  /** Why access was denied when not owned — drives the reader's gate UI. */
+  deny_reason?:
+    | "GIFT_WINDOW_ACTIVE"
+    | "SEATS_FULL"
+    | "SUBSCRIPTION_REQUIRED"
+    | "PURCHASE_REQUIRED"
+    | "NOT_FOUND"
+    | null;
   /** Signed download URL, present only when the caller is entitled. */
   pdf_url?: string | null;
   /** Crowdfunded issues only. */

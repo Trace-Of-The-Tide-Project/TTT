@@ -65,6 +65,9 @@
       "inKindSubmitted": "Gracias — un editor revisará tu oferta.",
       "requestSubmitted": "Solicitud enviada — tendrás acceso dentro de 72 horas de cualquier forma.",
       "commonsNotice": "La ventana de regalo de esta pieza se ha cerrado — ahora pertenece a todos.",
+      "commonsCountdownLabel": "Pasa al dominio común en",
+      "commonsCountdownValue": "{days}d {hours}h {minutes}m",
+      "giftProgress": "{raised} recaudados de {goal}",
       "error": "Algo salió mal. Inténtalo de nuevo."
     },
     "premiumGate": {

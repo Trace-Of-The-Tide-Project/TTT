@@ -104,6 +104,10 @@ export default async function BookDetailPage({ params }: PageProps) {
     currency: (book.currency ?? "USD").toUpperCase(),
     isFree: book.is_free ?? (book.price == null || Number(book.price) <= 0),
     isOwned: book.is_owned ?? false,
+    denyReason: book.deny_reason ?? null,
+    commonsAt: book.commons_at ?? null,
+    giftValueInitial: book.gift_value_initial != null ? Number(book.gift_value_initial) : null,
+    giftRaisedTotal: book.gift_raised_total != null ? Number(book.gift_raised_total) : null,
     printEnabled: Boolean(book.print_enabled),
     printPrice:
       book.print_price == null || book.print_price === ""

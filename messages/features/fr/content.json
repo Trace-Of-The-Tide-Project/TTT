@@ -65,6 +65,9 @@
       "inKindSubmitted": "Merci — un éditeur examinera votre offre.",
       "requestSubmitted": "Demande envoyée — vous aurez accès dans les 72 heures, quoi qu'il arrive.",
       "commonsNotice": "La période de don de cette œuvre est terminée — elle appartient désormais à tous.",
+      "commonsCountdownLabel": "Rejoint le domaine commun dans",
+      "commonsCountdownValue": "{days}j {hours}h {minutes}m",
+      "giftProgress": "{raised} collectés sur {goal}",
       "error": "Une erreur est survenue. Veuillez réessayer."
     },
     "premiumGate": {

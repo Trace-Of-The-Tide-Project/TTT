@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { ChamferedSurface } from "@/components/ui/ChamferedSurface";
 import { IssuePurchaseActions } from "./IssuePurchaseActions";
+import { CommonsCountdown } from "@/components/gifting/CommonsCountdown";
+import { GiftProgress } from "@/components/gifting/GiftProgress";
 
 function priceLabel(price: number | null, currency: string): string {
   if (price == null) return "";
@@ -28,6 +30,10 @@ export function IssuePurchaseModule({
   isFree,
   isOwned,
   formats,
+  denyReason,
+  commonsAt,
+  giftValueInitial,
+  giftRaisedTotal,
 }: {
   issueId: string;
   slug: string | null;
@@ -36,9 +42,15 @@ export function IssuePurchaseModule({
   isFree: boolean;
   isOwned: boolean;
   formats?: { label: string }[];
+  /** Why the issue isn't owned yet — drives the gift-window countdown below. */
+  denyReason?: string | null;
+  commonsAt?: string | null;
+  giftValueInitial?: number | null;
+  giftRaisedTotal?: number | null;
 }) {
   const t = useTranslations("MagazineIssueDetail");
   const label = priceLabel(price, currency);
+  const showGiftWindow = !isOwned && denyReason === "GIFT_WINDOW_ACTIVE" && commonsAt;
 
   return (
     <ChamferedSurface
@@ -47,6 +59,18 @@ export function IssuePurchaseModule({
       innerFill="var(--tott-elevated)"
       className="inline-block w-full max-w-sm p-5"
     >
+      {showGiftWindow ? (
+        <div className="mb-4 flex flex-col gap-3">
+          <CommonsCountdown commonsAt={commonsAt} />
+          {giftValueInitial ? (
+            <GiftProgress
+              raisedTotal={giftRaisedTotal ?? 0}
+              valueInitial={giftValueInitial}
+              currency={currency}
+            />
+          ) : null}
+        </div>
+      ) : null}
       {!isFree && !isOwned && label ? (
         <p className="font-display text-3xl" style={{ color: "var(--tott-home-text-strong)" }}>
           {label}

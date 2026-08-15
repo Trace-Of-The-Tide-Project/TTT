@@ -14,6 +14,8 @@ import ArticlePreviewCTA from "./ArticlePreviewCTA";
 import PremiumGate from "./PremiumGate";
 import ArticleBuyGate from "./ArticleBuyGate";
 import GiftGate from "@/components/gifting/GiftGate";
+import { CommonsCountdown } from "@/components/gifting/CommonsCountdown";
+import { GiftProgress } from "@/components/gifting/GiftProgress";
 import type { TranslationVersion } from "@/services/translations.service";
 import { ContentAuthorCard } from "./sidebar/ContentAuthorCard";
 import { ContentContributors } from "./sidebar/ContentContributors";
@@ -105,6 +107,12 @@ export type ContentPageLayoutProps = {
     giftMode?: boolean;
     giftValueInitial?: number | null;
     giftCurrency?: string | null;
+    /** Why the gate is up — SUBSCRIPTION_REQUIRED/PURCHASE_REQUIRED/GIFT_WINDOW_ACTIVE/etc. */
+    denyReason?: string | null;
+    /** Gift window still open — commons_at is in the future. Shown as a
+     * countdown + progress bar instead of the plain buy/gift CTA. */
+    giftCommonsAt?: string | null;
+    giftRaisedTotal?: number | null;
   };
   /** access_level='preview': true when blocks were truncated server-side —
    * shows the continue-reading CTA under the visible blocks. */
@@ -231,7 +239,29 @@ export function ContentPageLayout({
               // Subscriber/paid: the backend ships zero blocks, so there is
               // nothing real to blur — render a ghost skeleton body instead
               // of blurring an empty <div>, then wrap it in the paywall.
-              gate.accessLevel === "paid" && gate.giftMode ? (
+              gate.denyReason === "GIFT_WINDOW_ACTIVE" && gate.giftCommonsAt ? (
+                // Still within the gift window — no lock icon (SRS §6.2):
+                // show the countdown + how much has been raised so far,
+                // stacked above the existing gift CTA.
+                <div className="flex flex-col gap-3">
+                  <CommonsCountdown commonsAt={gate.giftCommonsAt} />
+                  {gate.giftValueInitial ? (
+                    <GiftProgress
+                      raisedTotal={gate.giftRaisedTotal ?? 0}
+                      valueInitial={gate.giftValueInitial}
+                      currency={gate.giftCurrency ?? "GBP"}
+                    />
+                  ) : null}
+                  <GiftGate
+                    scopeType="contribution"
+                    scopeId={gate.articleId}
+                    suggestedAmount={gate.giftValueInitial}
+                    currency={gate.giftCurrency}
+                  >
+                    <GhostBody />
+                  </GiftGate>
+                </div>
+              ) : gate.accessLevel === "paid" && gate.giftMode ? (
                 <GiftGate
                   scopeType="contribution"
                   scopeId={gate.articleId}

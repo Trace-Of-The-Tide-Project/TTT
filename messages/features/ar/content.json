@@ -65,6 +65,9 @@
       "inKindSubmitted": "شكرًا لك — سيراجع أحد المحررين عرضك.",
       "requestSubmitted": "تم إرسال الطلب — ستحصل على الوصول خلال 72 ساعة في كل الأحوال.",
       "commonsNotice": "أُغلقت نافذة الهدية لهذا العمل — أصبح الآن ملكًا للجميع.",
+      "commonsCountdownLabel": "ينضم إلى الملكية العامة خلال",
+      "commonsCountdownValue": "{days} يوم {hours} ساعة {minutes} دقيقة",
+      "giftProgress": "تم جمع {raised} من أصل {goal}",
       "error": "حدث خطأ ما. حاول مرة أخرى."
     },
     "premiumGate": {
