@@ -253,6 +253,8 @@ export type ArticleListItem = {
   createdAt: string;
   updatedAt: string;
   author: ArticleListAuthor;
+  /** Credited byline (writer_profiles row). Null = bylined to author only. */
+  writer?: WriterProfile | null;
   contributors: unknown[];
   tags: unknown[];
   collection: unknown | null;
