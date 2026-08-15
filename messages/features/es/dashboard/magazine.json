@@ -506,7 +506,12 @@
         "fields": {
           "title": "Title",
           "standfirst": "Standfirst",
-          "titleFontSize": "Tamaño de fuente del título (px)"
+          "titleFontSize": "Tamaño de fuente del título (px)",
+          "layout": "Diseño"
+        },
+        "layoutOptions": {
+          "editorial": "Cuadrícula editorial",
+          "honeycomb": "Panal"
         }
       },
       "closingCta": {
@@ -553,6 +558,7 @@
         "status": "Estado",
         "issue": "Número"
       },
+      "preview": "Vista previa en la revista",
       "translations": {
         "toggle": "Mostrar traducciones",
         "count": "+{count} idiomas",

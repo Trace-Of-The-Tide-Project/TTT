@@ -22,7 +22,7 @@ import { Hero, type HeroSlide } from "./Hero";
 import { CurrentIssueBand } from "./CurrentIssueBand";
 import { InnerSectionCards } from "./InnerSectionCards";
 import { FeaturedRail, LatestRail } from "./FeaturedRail";
-import { ContentCard } from "./ContentCard";
+import { RoundedHexClipDefs } from "@/components/ui/RoundedHexClip";
 import { CollectionsRow } from "./CollectionsRow";
 import { Plans } from "./Plans";
 import { ShareStory } from "./ShareStory";
@@ -126,22 +126,10 @@ export async function MagazinePage({ locale }: { locale: string }) {
   const heroBackground = heroFallbackArtwork || "/images/image.png";
   const heroBackgroundFraming = heroFallbackArtwork ? heroFallbackFraming : undefined;
 
-  const featuredCards = withFraming(featured).map((article) => (
-    <ContentCard
-      key={article.id}
-      article={article}
-      editionLabel={t("edition")}
-      dateLabel={shortDate(article.publishedAt, locale) || null}
-    />
-  ));
-  const latestCards = withFraming(latest).map((article) => (
-    <ContentCard
-      key={article.id}
-      article={article}
-      editionLabel={t("edition")}
-      dateLabel={shortDate(article.publishedAt, locale) || null}
-    />
-  ));
+  const framedFeatured = withFraming(featured);
+  const framedLatest = withFraming(latest);
+  const railDateLabel = (article: (typeof framedFeatured)[number]) =>
+    shortDate(article.publishedAt, locale) || null;
 
   const isRtl = dirFor(locale) === "rtl";
 
@@ -167,6 +155,8 @@ export async function MagazinePage({ locale }: { locale: string }) {
           isRtl={isRtl}
           titleFontSize={editorial.heroTitleFontSize}
         />
+
+        <RoundedHexClipDefs />
 
         <CurrentIssueBand issue={bandCurrentIssue} recent={bandRecentIssues} locale={locale} />
 
@@ -196,7 +186,10 @@ export async function MagazinePage({ locale }: { locale: string }) {
 
         {editorial.visibility.featuredHeader !== false ? (
           <FeaturedRail
-            cards={featuredCards}
+            articles={framedFeatured}
+            editionLabel={t("edition")}
+            dateLabelFor={railDateLabel}
+            layout={editorial.featuredLayout}
             title={editorial.featuredHeader.title || t("featured.title")}
             standfirst={editorial.featuredHeader.standfirst || t("featured.standfirst")}
             viewMoreLabel={t("viewMore")}
@@ -217,7 +210,10 @@ export async function MagazinePage({ locale }: { locale: string }) {
 
         {editorial.visibility.latestHeader !== false ? (
           <LatestRail
-            cards={latestCards}
+            articles={framedLatest}
+            editionLabel={t("edition")}
+            dateLabelFor={railDateLabel}
+            layout={editorial.latestLayout}
             title={editorial.latestHeader.title || t("latest.title")}
             standfirst={editorial.latestHeader.standfirst || t("latest.standfirst")}
             viewMoreLabel={t("viewMore")}

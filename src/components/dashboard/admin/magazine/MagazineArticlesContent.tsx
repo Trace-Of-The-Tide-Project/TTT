@@ -4,7 +4,8 @@ import { useCallback, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
-import { PlusIcon, PenLineIcon, ChevronRightIcon, TrashIcon } from "@/components/ui/icons";
+import { PlusIcon, PenLineIcon, ChevronRightIcon, TrashIcon, EyeIcon } from "@/components/ui/icons";
+import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import { useArticles } from "@/hooks/queries/articles";
 import { useMagazineIssues } from "@/hooks/queries/magazine-issues";
 import { useDeleteArticle, useUpdateArticle } from "@/hooks/mutations/articles";
@@ -277,6 +278,15 @@ export function MagazineArticlesContent() {
                       : t("unassigned")}
                   </div>
                   <div className="flex items-center justify-end gap-2 border-t border-[var(--tott-card-border)] px-4 py-3">
+                    <Link
+                      href={previewHrefForContentType(a.content_type, a.id, a.slug, "magazine")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={t("preview")}
+                      className="inline-flex items-center justify-center rounded-lg border border-[var(--tott-card-border)] bg-[var(--tott-dash-control-bg)] p-1.5 text-foreground transition-colors hover:bg-[var(--tott-dash-control-hover)] [&_svg]:h-3.5 [&_svg]:w-3.5"
+                    >
+                      <EyeIcon />
+                    </Link>
                     <button
                       type="button"
                       aria-label={a.is_featured ? t("feature.unfeature") : t("feature.feature")}

@@ -79,6 +79,11 @@ export type ActionCardConfig = {
 };
 export const EMPTY_ACTION_CARD_CONFIG: ActionCardConfig = { copy: {} };
 
+/** Article-rail presentation: hex honeycomb (legacy) or the editorial
+ * grid (dominant center feature + two side rails). Only Featured/Latest
+ * actually render articles, so only those two read this field. */
+export type MagazineRailLayout = "honeycomb" | "editorial";
+
 /** Rail header — one shape, reused for Featured/Collections/Latest/Plans
  * section headers. No shared (non-localized) fields. */
 export type RailHeaderLocaleFields = {
@@ -88,6 +93,7 @@ export type RailHeaderLocaleFields = {
 export type RailHeaderConfig = {
   copy: Localized<RailHeaderLocaleFields>;
   titleFontSize?: number;
+  layout?: MagazineRailLayout;
 };
 export const EMPTY_RAIL_HEADER_CONFIG: RailHeaderConfig = { copy: {} };
 
@@ -214,6 +220,14 @@ function readFontSize(
   return Math.min(120, Math.max(10, Math.round(v)));
 }
 
+/** Read a rail layout mode, whitelisting the two known literals — config is
+ * hand-editable JSON, and an unvalidated string here would flow straight
+ * into a component prop. */
+function readRailLayout(cfg: Record<string, unknown> | null): MagazineRailLayout | undefined {
+  const v = cfg?.layout;
+  return v === "honeycomb" || v === "editorial" ? v : undefined;
+}
+
 export function parseHeroConfig(section: CmsSection | undefined): HeroConfig {
   const cfg = unwrapConfig(section);
   if (!cfg) return EMPTY_HERO_CONFIG;
@@ -290,7 +304,7 @@ export function parseRailHeaderConfig(
     EMPTY_RAIL_HEADER_CONFIG,
   );
   const cfg = unwrapConfig(section);
-  return { copy: base.copy, titleFontSize: readFontSize(cfg) };
+  return { copy: base.copy, titleFontSize: readFontSize(cfg), layout: readRailLayout(cfg) };
 }
 
 export function parseClosingCtaConfig(

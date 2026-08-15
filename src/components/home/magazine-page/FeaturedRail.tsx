@@ -1,15 +1,21 @@
-import type { ReactNode } from "react";
 import { SectionHeader } from "./SectionHeader";
 import { Honeycomb, HoneycombFallback, chunkHoneycombRows } from "./Honeycomb";
+import { EditorialGrid } from "./EditorialGrid";
+import { ContentCard } from "./ContentCard";
+import type { ArticleCard } from "./data";
+import type { MagazineRailLayout } from "@/services/magazine-page.service";
 
 /**
- * Generic honeycomb article-grid section — cards are pre-built by the
+ * Generic article-rail section — articles are pre-fetched/framed by the
  * caller (server component owns the article fetch + framing + i18n
- * formatting). Shared by Featured and Latest content so both grids stay
- * visually identical, just with a different id/heading/href.
+ * formatting). Shared by Featured and Latest content so both rails stay
+ * wired identically, just with a different id/heading/href/layout.
  */
-function ArticleHoneycombSection({
-  cards,
+function ArticleRailSection({
+  articles,
+  editionLabel,
+  dateLabelFor,
+  layout,
   sectionId,
   title,
   standfirst,
@@ -17,7 +23,10 @@ function ArticleHoneycombSection({
   viewMoreHref,
   titleFontSize,
 }: {
-  cards: ReactNode[];
+  articles: ArticleCard[];
+  editionLabel: string;
+  dateLabelFor: (article: ArticleCard) => string | null;
+  layout: MagazineRailLayout;
   sectionId: string;
   title: string;
   standfirst: string;
@@ -25,7 +34,7 @@ function ArticleHoneycombSection({
   viewMoreHref: string;
   titleFontSize?: number;
 }) {
-  if (cards.length === 0) return null;
+  if (articles.length === 0) return null;
   const headingId = `${sectionId}-heading`;
 
   return (
@@ -38,42 +47,47 @@ function ArticleHoneycombSection({
         viewMoreHref={viewMoreHref}
         titleFontSize={titleFontSize}
       />
-      <div className="mt-10">
-        <Honeycomb rows={chunkHoneycombRows(cards)} />
-        <HoneycombFallback items={cards} />
+      <div className="mx-auto mt-6 max-w-6xl px-6 sm:px-10">
+        {layout === "editorial" ? (
+          <EditorialGrid articles={articles} editionLabel={editionLabel} dateLabelFor={dateLabelFor} />
+        ) : (
+          (() => {
+            const cards = articles.map((article) => (
+              <ContentCard
+                key={article.id}
+                article={article}
+                editionLabel={editionLabel}
+                dateLabel={dateLabelFor(article)}
+              />
+            ));
+            return (
+              <>
+                <Honeycomb rows={chunkHoneycombRows(cards)} />
+                <HoneycombFallback items={cards} />
+              </>
+            );
+          })()
+        )}
       </div>
     </section>
   );
 }
 
-export function FeaturedRail(props: {
-  cards: ReactNode[];
+type RailProps = {
+  articles: ArticleCard[];
+  editionLabel: string;
+  dateLabelFor: (article: ArticleCard) => string | null;
+  layout: MagazineRailLayout;
   title: string;
   standfirst: string;
   viewMoreLabel: string;
   titleFontSize?: number;
-}) {
-  return (
-    <ArticleHoneycombSection
-      {...props}
-      sectionId="feature-content"
-      viewMoreHref="/magazine"
-    />
-  );
+};
+
+export function FeaturedRail(props: RailProps) {
+  return <ArticleRailSection {...props} sectionId="feature-content" viewMoreHref="/magazine" />;
 }
 
-export function LatestRail(props: {
-  cards: ReactNode[];
-  title: string;
-  standfirst: string;
-  viewMoreLabel: string;
-  titleFontSize?: number;
-}) {
-  return (
-    <ArticleHoneycombSection
-      {...props}
-      sectionId="latest-content"
-      viewMoreHref="/magazine"
-    />
-  );
+export function LatestRail(props: RailProps) {
+  return <ArticleRailSection {...props} sectionId="latest-content" viewMoreHref="/magazine" />;
 }

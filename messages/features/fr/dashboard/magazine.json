@@ -506,7 +506,12 @@
         "fields": {
           "title": "Title",
           "standfirst": "Standfirst",
-          "titleFontSize": "Taille de police du titre (px)"
+          "titleFontSize": "Taille de police du titre (px)",
+          "layout": "Mise en page"
+        },
+        "layoutOptions": {
+          "editorial": "Grille éditoriale",
+          "honeycomb": "Nid d'abeille"
         }
       },
       "closingCta": {
@@ -553,6 +558,7 @@
         "status": "Statut",
         "issue": "Numéro"
       },
+      "preview": "Aperçu dans le magazine",
       "translations": {
         "toggle": "Afficher les traductions",
         "count": "+{count} langues",

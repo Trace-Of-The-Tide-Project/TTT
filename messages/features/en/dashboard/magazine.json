@@ -506,7 +506,12 @@
         "fields": {
           "title": "Title",
           "standfirst": "Standfirst",
-          "titleFontSize": "Title font size (px)"
+          "titleFontSize": "Title font size (px)",
+          "layout": "Layout"
+        },
+        "layoutOptions": {
+          "editorial": "Editorial grid",
+          "honeycomb": "Honeycomb"
         }
       },
       "closingCta": {
@@ -553,6 +558,7 @@
         "status": "Status",
         "issue": "Issue"
       },
+      "preview": "Preview in magazine",
       "translations": {
         "toggle": "Toggle translations",
         "count": "{count, plural, one {+1 language} other {+# languages}}",

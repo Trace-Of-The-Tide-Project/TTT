@@ -27,6 +27,7 @@ import {
   type RailHeaderLocaleFields,
   type ClosingCtaLocaleFields,
   type MagazineSectionKey,
+  type MagazineRailLayout,
 } from "@/services/magazine-page.service";
 
 export {
@@ -151,10 +152,14 @@ export type MagEditorialCopy = {
   actionCardShareTitleFontSize?: number;
   featuredHeader: RailHeaderLocaleFields;
   featuredHeaderTitleFontSize?: number;
+  /** Featured content rail presentation — defaults to "editorial". */
+  featuredLayout: MagazineRailLayout;
   collectionsHeader: RailHeaderLocaleFields;
   collectionsHeaderTitleFontSize?: number;
   latestHeader: RailHeaderLocaleFields;
   latestHeaderTitleFontSize?: number;
+  /** Latest content rail presentation — defaults to "editorial". */
+  latestLayout: MagazineRailLayout;
   plansHeader: RailHeaderLocaleFields;
   plansHeaderTitleFontSize?: number;
   closingCta: ClosingCtaLocaleFields;
@@ -171,8 +176,10 @@ const EMPTY_EDITORIAL_COPY: MagEditorialCopy = {
   actionCardGift: {},
   actionCardShare: {},
   featuredHeader: {},
+  featuredLayout: "editorial",
   collectionsHeader: {},
   latestHeader: {},
+  latestLayout: "editorial",
   plansHeader: {},
   closingCta: {},
   visibility: {},
@@ -230,10 +237,12 @@ export async function fetchEditorialCopy(locale: string): Promise<MagEditorialCo
     actionCardShareTitleFontSize: shareCfg.titleFontSize,
     featuredHeader: pickRailHeaderLocale(featuredCfg, locale),
     featuredHeaderTitleFontSize: featuredCfg.titleFontSize,
+    featuredLayout: featuredCfg.layout ?? "editorial",
     collectionsHeader: pickRailHeaderLocale(collectionsCfg, locale),
     collectionsHeaderTitleFontSize: collectionsCfg.titleFontSize,
     latestHeader: pickRailHeaderLocale(latestCfg, locale),
     latestHeaderTitleFontSize: latestCfg.titleFontSize,
+    latestLayout: latestCfg.layout ?? "editorial",
     plansHeader: pickRailHeaderLocale(plansCfg, locale),
     plansHeaderTitleFontSize: plansCfg.titleFontSize,
     closingCta: pickClosingCtaLocale(closingCfg, locale),

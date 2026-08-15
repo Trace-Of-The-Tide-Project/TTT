@@ -122,7 +122,10 @@ function galleryItemsFromBlocks(blocks: ArticleDetailBlock[]): GalleryItem[] {
 
 export function buildArticleContentPageProps(article: ArticleDetail): ContentPageLayoutProps {
   const authorName =
-    article.author?.full_name?.trim() || article.author?.username?.trim() || "Author";
+    article.writer?.pen_name?.trim() ||
+    article.author?.full_name?.trim() ||
+    article.author?.username?.trim() ||
+    "Author";
 
   const contributorsRaw = Array.isArray(article.contributors) ? article.contributors : [];
   const contributors = contributorsRaw.map((c) => {
@@ -221,10 +224,12 @@ export function buildArticleContentPageProps(article: ArticleDetail): ContentPag
       }),
     },
     author: {
-      id: article.author?.id,
+      id: article.writer ? undefined : article.author?.id,
       name: authorName,
       initials: initialsFromName(authorName),
-      avatarUrl: article.author?.profile?.avatar || null,
+      avatarUrl: article.writer?.avatar_url
+        ? resolveArticleMediaSrc(article.writer.avatar_url)
+        : article.author?.profile?.avatar || null,
     },
     contributors,
     collection: {
