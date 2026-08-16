@@ -37,6 +37,7 @@ import {
   PersonPlusIcon,
   ClockIcon,
   CompassIcon,
+  CalendarIcon,
   ImageInsertIcon,
   SquareCheckIcon,
 } from "@/components/ui/icons";
@@ -212,6 +213,20 @@ export const adminConfig: DashboardConfig = {
               labelKey: "sidebar.allTrips",
               href: "/admin/trips",
               icon: CompassIcon,
+            },
+          ],
+        },
+        {
+          kind: "group",
+          groupId: "sessions",
+          labelKey: "sidebar.sessions",
+          icon: CalendarIcon,
+          items: [
+            {
+              kind: "item",
+              labelKey: "sidebar.allSessions",
+              href: "/admin/sessions",
+              icon: CalendarIcon,
             },
           ],
         },

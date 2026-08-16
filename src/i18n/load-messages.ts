@@ -18,6 +18,7 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/subscriptions.json`),
     import(`../../messages/features/${locale}/dashboard/analytics.json`),
     import(`../../messages/features/${locale}/dashboard/trips.json`),
+    import(`../../messages/features/${locale}/dashboard/sessions.json`),
     import(`../../messages/features/${locale}/dashboard/magazine.json`),
     import(`../../messages/features/${locale}/dashboard/open-call-public.json`),
     import(`../../messages/features/${locale}/dashboard/application-form.json`),

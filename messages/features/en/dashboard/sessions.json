@@ -1,0 +1,154 @@
+{
+  "Dashboard": {
+    "sessions": {
+      "list": {
+        "pageTitle": "Sessions",
+        "addNew": "Add Session",
+        "searchPlaceholder": "Search sessions…",
+        "loading": "Loading sessions…",
+        "tryAgain": "Try again",
+        "edit": "Edit",
+        "delete": "Delete",
+        "unlimited": "Unlimited",
+        "headers": {
+          "title": "Session",
+          "startsAt": "Starts",
+          "capacity": "Capacity",
+          "status": "Status"
+        },
+        "space": {
+          "all": "All spaces",
+          "writingRoom": "Writing Room",
+          "waqamh": "Waqamh Salon"
+        },
+        "status": {
+          "draft": "Draft",
+          "published": "Published",
+          "cancelled": "Cancelled",
+          "completed": "Completed"
+        },
+        "empty": {
+          "none": "No sessions yet.",
+          "noMatch": "No sessions match your search."
+        },
+        "errors": {
+          "loadFailed": "Could not load sessions.",
+          "deleteFailed": "Could not delete this session."
+        },
+        "toasts": {
+          "deleted": "Session deleted."
+        },
+        "pagination": {
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "deleteModal": {
+          "title": "Delete session?",
+          "description": "This will permanently delete \"{title}\" and its tickets.",
+          "confirm": "Delete",
+          "confirmBusy": "Deleting…",
+          "cancel": "Cancel"
+        }
+      },
+      "form": {
+        "backToList": "Back to sessions",
+        "createTitle": "New Session",
+        "editTitle": "Edit Session",
+        "loading": "Loading session…",
+        "cancel": "Cancel",
+        "save": "Save changes",
+        "create": "Create session",
+        "saving": "Saving…",
+        "sections": {
+          "basics": "Basics",
+          "scheduling": "Scheduling",
+          "seatsAccess": "Seats & Access"
+        },
+        "fields": {
+          "space": "Space",
+          "type": "Type",
+          "typePlaceholder": "e.g. workshop, reading, listening",
+          "title": "Title",
+          "titlePlaceholder": "Session title",
+          "description": "Description",
+          "facilitatorId": "Facilitator ID",
+          "facilitatorIdPlaceholder": "User ID of the facilitator",
+          "startsAt": "Starts at",
+          "durationMinutes": "Duration (minutes)",
+          "format": "Format",
+          "status": "Status",
+          "capacity": "Capacity",
+          "capacityPlaceholder": "Leave blank for unlimited",
+          "awnaSeats": "Gift (awna) seats",
+          "accessRule": "Access rule",
+          "requiredTierRank": "Required tier rank",
+          "requiredTierRankPlaceholder": "Leave blank for no tier gate",
+          "price": "Price",
+          "pricePlaceholder": "0 for free",
+          "currency": "Currency"
+        },
+        "formatOptions": {
+          "online": "Online",
+          "inPerson": "In person",
+          "hybrid": "Hybrid"
+        },
+        "accessRuleOptions": {
+          "free": "Free",
+          "paid": "Paid",
+          "memberIncluded": "Member included",
+          "mixed": "Mixed"
+        },
+        "errors": {
+          "titleRequired": "Title is required.",
+          "awnaSeatsRequired": "Every session must reserve at least 1 gift (awna) seat.",
+          "createFailed": "Could not create this session.",
+          "updateFailed": "Could not update this session."
+        },
+        "toasts": {
+          "created": "Session created.",
+          "updated": "Session updated."
+        }
+      },
+      "attendance": {
+        "statsHeading": "Attendance",
+        "loading": "Loading tickets…",
+        "empty": "No tickets yet.",
+        "markAttended": "Mark attended",
+        "attended": "Attended",
+        "headers": {
+          "user": "User",
+          "type": "Type",
+          "status": "Status"
+        },
+        "stats": {
+          "registered": "Registered",
+          "confirmed": "Confirmed",
+          "attended": "Attended",
+          "waitlisted": "Waitlisted",
+          "awnaSeats": "Gift seats used",
+          "seatsRemaining": "Seats remaining"
+        },
+        "ticketType": {
+          "free": "Free",
+          "paid": "Paid",
+          "member_included": "Member included",
+          "gift_value": "Gift",
+          "awna_seat": "Gift (awna) seat"
+        },
+        "ticketStatus": {
+          "reserved": "Reserved",
+          "confirmed": "Confirmed",
+          "attended": "Attended",
+          "canceled": "Canceled",
+          "waitlisted": "Waitlisted"
+        },
+        "errors": {
+          "markFailed": "Could not mark this ticket attended."
+        },
+        "toasts": {
+          "marked": "Ticket marked attended."
+        }
+      }
+    }
+  }
+}
