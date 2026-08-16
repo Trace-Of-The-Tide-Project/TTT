@@ -1,53 +1,78 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
+import { mutationToast } from "@/hooks/useMutationToast";
 import {
-  createSession,
-  updateSession,
-  deleteSession,
-  markTicketAttended,
-  type SessionPayload,
+  cancelTicket,
+  createDraftComment,
+  createSessionDraft,
+  registerForSession,
 } from "@/services/sessions.service";
 import { sessionsKeys } from "@/hooks/queries/sessions";
 
-export function useCreateSession() {
+export function useRegisterSession(sessionId: string) {
   const qc = useQueryClient();
+  const t = useTranslations("WritingRoomSessions");
   return useMutation({
-    mutationFn: (payload: SessionPayload) => createSession(payload),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sessionsKeys.all }),
-    meta: { silent: true },
-  });
-}
-
-export function useUpdateSession() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (args: { sessionId: string; payload: Partial<SessionPayload> }) =>
-      updateSession(args.sessionId, args.payload),
-    onSuccess: (_d, args) => {
-      qc.invalidateQueries({ queryKey: sessionsKeys.byId(args.sessionId) });
-      qc.invalidateQueries({ queryKey: sessionsKeys.all });
+    mutationFn: (opts?: { awna?: boolean }) =>
+      mutationToast(() => registerForSession(sessionId, opts), {
+        loading: t("registering"),
+        success: t("registered"),
+        error: t("registerFailed"),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: sessionsKeys.byId(sessionId) });
+      qc.invalidateQueries({ queryKey: sessionsKeys.myTickets() });
     },
-    meta: { silent: true },
   });
 }
 
-export function useDeleteSession() {
+export function useCancelTicket() {
   const qc = useQueryClient();
+  const t = useTranslations("WritingRoomSessions");
   return useMutation({
-    mutationFn: (sessionId: string) => deleteSession(sessionId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: sessionsKeys.all }),
-    meta: { silent: true },
-  });
-}
-
-export function useMarkTicketAttended() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (args: { ticketId: string; sessionId: string }) =>
-      markTicketAttended(args.ticketId),
-    onSuccess: (_d, args) => {
-      qc.invalidateQueries({ queryKey: sessionsKeys.tickets(args.sessionId) });
-      qc.invalidateQueries({ queryKey: sessionsKeys.stats(args.sessionId) });
+    mutationFn: (ticketId: string) =>
+      mutationToast(() => cancelTicket(ticketId), {
+        loading: t("cancelling"),
+        success: t("cancelled"),
+        error: t("cancelFailed"),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: sessionsKeys.myTickets() });
     },
-    meta: { silent: true },
+  });
+}
+
+export function useCreateDraft(sessionId: string) {
+  const qc = useQueryClient();
+  const t = useTranslations("WritingRoomSessions");
+  return useMutation({
+    mutationFn: (payload: { title: string; file_path: string }) =>
+      mutationToast(() => createSessionDraft(sessionId, payload), {
+        loading: t("uploadingDraft"),
+        success: t("draftUploaded"),
+        error: t("draftUploadFailed"),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: sessionsKeys.drafts(sessionId) });
+    },
+  });
+}
+
+export function useCreateComment(sessionId: string, draftId: string) {
+  const qc = useQueryClient();
+  const t = useTranslations("WritingRoomSessions");
+  return useMutation({
+    mutationFn: (payload: { body: string; parent_comment_id?: string }) =>
+      mutationToast(
+        () => createDraftComment(sessionId, draftId, payload),
+        {
+          loading: t("postingComment"),
+          success: t("commentPosted"),
+          error: t("commentFailed"),
+        },
+      ),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: sessionsKeys.comments(draftId) });
+    },
   });
 }

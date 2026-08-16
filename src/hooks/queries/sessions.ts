@@ -1,50 +1,73 @@
 import { useQuery } from "@tanstack/react-query";
 import {
-  getSessionsAdmin,
   getSession,
-  getSessionStats,
-  getSessionTickets,
-  type GetSessionsParams,
+  listDraftComments,
+  listMyCertificates,
+  listMyTickets,
+  listSessionDrafts,
+  listSessions,
 } from "@/services/sessions.service";
 
 export const sessionsKeys = {
   all: ["sessions"] as const,
-  adminList: (params?: GetSessionsParams) => ["sessions", "adminList", params ?? {}] as const,
+  list: (params?: Record<string, unknown>) =>
+    ["sessions", "list", params ?? {}] as const,
   byId: (id: string) => ["sessions", "byId", id] as const,
-  stats: (id: string) => ["sessions", "stats", id] as const,
-  tickets: (id: string) => ["sessions", "tickets", id] as const,
+  drafts: (sessionId: string) => ["sessions", "drafts", sessionId] as const,
+  comments: (draftId: string) => ["sessions", "comments", draftId] as const,
+  myTickets: () => ["sessions", "tickets", "mine"] as const,
+  myCertificates: () => ["sessions", "certificates", "mine"] as const,
 };
 
-export function useSessionsAdmin(params?: GetSessionsParams) {
+export function useSessions(params?: {
+  space?: "writing_room" | "waqamh";
+  status?: string;
+  page?: number;
+  limit?: number;
+}) {
   return useQuery({
-    queryKey: sessionsKeys.adminList(params),
-    queryFn: () => getSessionsAdmin(params),
-    placeholderData: (prev) => prev,
+    queryKey: sessionsKeys.list(params),
+    queryFn: () => listSessions(params),
   });
 }
 
-export function useSession(sessionId: string | null | undefined) {
+export function useSession(id: string | null | undefined) {
   return useQuery({
-    queryKey: sessionsKeys.byId(sessionId ?? ""),
-    queryFn: () => getSession(sessionId as string),
-    enabled: Boolean(sessionId),
-    refetchOnWindowFocus: false,
-    staleTime: Infinity,
+    queryKey: sessionsKeys.byId(id ?? ""),
+    queryFn: () => getSession(id as string),
+    enabled: Boolean(id),
   });
 }
 
-export function useSessionStats(sessionId: string | null | undefined) {
+export function useSessionDrafts(sessionId: string | null | undefined) {
   return useQuery({
-    queryKey: sessionsKeys.stats(sessionId ?? ""),
-    queryFn: () => getSessionStats(sessionId as string),
+    queryKey: sessionsKeys.drafts(sessionId ?? ""),
+    queryFn: () => listSessionDrafts(sessionId as string),
     enabled: Boolean(sessionId),
   });
 }
 
-export function useSessionTickets(sessionId: string | null | undefined) {
+export function useDraftComments(
+  sessionId: string | null | undefined,
+  draftId: string | null | undefined,
+) {
   return useQuery({
-    queryKey: sessionsKeys.tickets(sessionId ?? ""),
-    queryFn: () => getSessionTickets(sessionId as string),
-    enabled: Boolean(sessionId),
+    queryKey: sessionsKeys.comments(draftId ?? ""),
+    queryFn: () => listDraftComments(sessionId as string, draftId as string),
+    enabled: Boolean(sessionId) && Boolean(draftId),
+  });
+}
+
+export function useMyTickets() {
+  return useQuery({
+    queryKey: sessionsKeys.myTickets(),
+    queryFn: () => listMyTickets(),
+  });
+}
+
+export function useMyCertificates() {
+  return useQuery({
+    queryKey: sessionsKeys.myCertificates(),
+    queryFn: () => listMyCertificates(),
   });
 }
