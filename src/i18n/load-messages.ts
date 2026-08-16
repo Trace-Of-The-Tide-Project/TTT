@@ -72,7 +72,7 @@ async function loadDashboardMessages(locale: AppLocale): Promise<Record<string, 
  */
 export async function loadMessages(locale: AppLocale) {
 
-  const [core, navbar, home, homeNext, magazineNext, magazine, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, collections, subscribe, community, legal, writingRoomSessions, waqamh, tracks, dashboardMerged] = await Promise.all([
+  const [core, navbar, home, homeNext, magazineNext, magazine, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, collections, subscribe, community, legal, writingRoomSessions, waqamh, tracks, booksWork, dashboardMerged] = await Promise.all([
     import(`../../messages/${locale}.json`),
     import(`../../messages/features/${locale}/navbar.json`),
     import(`../../messages/features/${locale}/home.json`),
@@ -94,6 +94,7 @@ export async function loadMessages(locale: AppLocale) {
     import(`../../messages/features/${locale}/writing-room-sessions.json`),
     import(`../../messages/features/${locale}/waqamh.json`),
     import(`../../messages/features/${locale}/tracks.json`),
+    import(`../../messages/features/${locale}/books-work.json`),
     loadDashboardMessages(locale),
   ]);
 
@@ -119,6 +120,7 @@ export async function loadMessages(locale: AppLocale) {
     ...writingRoomSessions.default,
     ...waqamh.default,
     ...tracks.default,
+    ...booksWork.default,
     Dashboard: dashboardMerged,
   } as Record<string, unknown>;
 }

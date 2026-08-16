@@ -61,6 +61,14 @@ type FormState = {
   gift_value_initial: string;
   gift_currency: string;
   gift_window_days: string;
+  isbn: string;
+  edition: string;
+  imprint: string;
+  format: "print" | "digital" | "both";
+  release_mode: "integrated" | "serialized";
+  legal_deposit_status: "not_required" | "pending" | "submitted" | "confirmed";
+  cip_status: "not_required" | "pending" | "submitted" | "confirmed";
+  compiled_from_issues: string;
 };
 
 const EMPTY: FormState = {
@@ -85,6 +93,14 @@ const EMPTY: FormState = {
   gift_value_initial: "",
   gift_currency: "GBP",
   gift_window_days: "",
+  isbn: "",
+  edition: "",
+  imprint: "",
+  format: "digital",
+  release_mode: "integrated",
+  legal_deposit_status: "not_required",
+  cip_status: "not_required",
+  compiled_from_issues: "",
 };
 
 /** Drag-and-drop + click-to-upload zone for cover images */
@@ -314,6 +330,14 @@ function seedFromBook(b: Book): FormState {
     gift_value_initial: b.gift_value_initial != null ? String(b.gift_value_initial) : "",
     gift_currency: b.gift_currency ?? "GBP",
     gift_window_days: b.gift_window_days != null ? String(b.gift_window_days) : "",
+    isbn: b.isbn ?? "",
+    edition: b.edition ?? "",
+    imprint: b.imprint ?? "",
+    format: (b.format ?? "digital") as FormState["format"],
+    release_mode: (b.release_mode ?? "integrated") as FormState["release_mode"],
+    legal_deposit_status: (b.legal_deposit_status ?? "not_required") as FormState["legal_deposit_status"],
+    cip_status: (b.cip_status ?? "not_required") as FormState["cip_status"],
+    compiled_from_issues: Array.isArray(b.compiled_from_issues) ? b.compiled_from_issues.join(", ") : "",
   };
 }
 
@@ -580,6 +604,16 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
     gift_currency: f.gift_currency || null,
     gift_window_days:
       f.access_model === "gift_window" && f.gift_window_days ? parseInt(f.gift_window_days, 10) : null,
+    isbn: f.isbn || null,
+    edition: f.edition || null,
+    imprint: f.imprint || null,
+    format: f.format,
+    release_mode: f.release_mode,
+    legal_deposit_status: f.legal_deposit_status,
+    cip_status: f.cip_status,
+    compiled_from_issues: f.compiled_from_issues
+      ? f.compiled_from_issues.split(",").map((s) => s.trim()).filter(Boolean)
+      : null,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -768,6 +802,77 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
         <div>
           <label className={labelClass}>{t("fields.summary")}</label>
           <textarea rows={4} className={inputClass} placeholder={t("fields.summaryPlaceholder")} value={form.summary} onChange={set("summary")} />
+        </div>
+      </div>
+
+      {/* ── Section: Bibliographic (ISBN etc., per language edition) ── */}
+      <div className={sectionClass}>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
+          {t("sections.bibliographic")}
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={labelClass}>{t("fields.isbn")}</label>
+            <input
+              type="text"
+              dir="ltr"
+              className={inputClass}
+              placeholder={t("fields.isbnPlaceholder")}
+              value={form.isbn}
+              onChange={set("isbn")}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.edition")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.editionPlaceholder")} value={form.edition} onChange={set("edition")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.imprint")}</label>
+            <input type="text" className={inputClass} placeholder={t("fields.imprintPlaceholder")} value={form.imprint} onChange={set("imprint")} />
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.format")}</label>
+            <select className={inputClass} value={form.format} onChange={set("format")}>
+              {(["digital", "print", "both"] as const).map((f) => (
+                <option key={f} value={f}>{t(`formats.${f}`)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.release_mode")}</label>
+            <select className={inputClass} value={form.release_mode} onChange={set("release_mode")}>
+              {(["integrated", "serialized"] as const).map((m) => (
+                <option key={m} value={m}>{t(`releaseModes.${m}`)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.legal_deposit_status")}</label>
+            <select className={inputClass} value={form.legal_deposit_status} onChange={set("legal_deposit_status")}>
+              {(["not_required", "pending", "submitted", "confirmed"] as const).map((s) => (
+                <option key={s} value={s}>{t(`bibStatus.${s}`)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={labelClass}>{t("fields.cip_status")}</label>
+            <select className={inputClass} value={form.cip_status} onChange={set("cip_status")}>
+              {(["not_required", "pending", "submitted", "confirmed"] as const).map((s) => (
+                <option key={s} value={s}>{t(`bibStatus.${s}`)}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div>
+          <label className={labelClass}>{t("fields.compiled_from_issues")}</label>
+          <input
+            type="text"
+            className={inputClass}
+            placeholder={t("fields.compiled_from_issuesPlaceholder")}
+            value={form.compiled_from_issues}
+            onChange={set("compiled_from_issues")}
+          />
+          <p className="mt-1 text-[10px] text-[var(--tott-muted)]">{t("hints.compiledFromIssues")}</p>
         </div>
       </div>
 
