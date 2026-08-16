@@ -106,8 +106,11 @@ export function SessionFormContent({ sessionId }: Props) {
 
   useEffect(() => {
     if (!isEdit || seeded || !sessionQuery.data) return;
-    setForm(seedFromSession(sessionQuery.data));
-    setSeeded(true);
+    const data = sessionQuery.data;
+    queueMicrotask(() => {
+      setForm(seedFromSession(data));
+      setSeeded(true);
+    });
   }, [isEdit, seeded, sessionQuery.data]);
 
   const set = (key: keyof FormState, value: string) =>

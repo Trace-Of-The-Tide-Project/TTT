@@ -127,7 +127,7 @@ export function UsersManagementContent() {
   const exportBusyRef = useRef(false);
   const [nowMs, setNowMs] = useState(() => Date.now());
   useEffect(() => {
-    setNowMs(Date.now());
+    queueMicrotask(() => setNowMs(Date.now()));
     const id = window.setInterval(() => setNowMs(Date.now()), 60_000);
     return () => window.clearInterval(id);
   }, []);
@@ -213,7 +213,7 @@ export function UsersManagementContent() {
   const totalPages = Math.max(1, meta.totalPages);
   useEffect(() => {
     if (meta.total > 0 && page > totalPages) {
-      setPage(totalPages);
+      queueMicrotask(() => setPage(totalPages));
     }
   }, [meta.total, page, totalPages]);
 

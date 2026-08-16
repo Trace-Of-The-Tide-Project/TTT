@@ -58,7 +58,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
     coverImage,
     scheduleModalOpen, setScheduleModalOpen,
     busy, error,
-    loadKey, setLoadKey,
+    setLoadKey,
     portalReady,
     mediaUploading,
     successToast, toastEntered,

@@ -49,8 +49,10 @@ export function SubmitNoteModal({ open, onClose, onSubmitted }: Props) {
   // Reset transient state + autofocus the first field on open.
   useEffect(() => {
     if (!open) return;
-    setError(null);
-    setSubmitted(false);
+    queueMicrotask(() => {
+      setError(null);
+      setSubmitted(false);
+    });
     const id = window.setTimeout(() => titleRef.current?.focus(), 50);
     return () => window.clearTimeout(id);
   }, [open]);

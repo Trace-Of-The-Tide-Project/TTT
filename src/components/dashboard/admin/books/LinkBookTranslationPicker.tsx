@@ -38,10 +38,10 @@ export function LinkBookTranslationPicker({
     if (!open) return;
     const q = query.trim();
     if (q.length < 2) {
-      setResults([]);
+      queueMicrotask(() => setResults([]));
       return;
     }
-    setLoading(true);
+    queueMicrotask(() => setLoading(true));
     const handle = setTimeout(async () => {
       try {
         const list = await getBooks({ search: q, limit: 8 });

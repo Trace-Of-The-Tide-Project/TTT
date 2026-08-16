@@ -113,11 +113,11 @@ export function TrackFormContent({ trackId, createLanguage, translationOf }: Pro
 
   useEffect(() => {
     if (!loadId) {
-      setLoading(false);
+      queueMicrotask(() => setLoading(false));
       return;
     }
     let cancelled = false;
-    setLoading(true);
+    queueMicrotask(() => setLoading(true));
     getTrackByIdAdmin(loadId).then((track) => {
       if (cancelled) return;
       setLoadedSource(track);
@@ -130,6 +130,7 @@ export function TrackFormContent({ trackId, createLanguage, translationOf }: Pro
 
   useEffect(() => {
     if (seeded || !loadedSource) return;
+    queueMicrotask(() => {
     if (isEdit) {
       const lang = (loadedSource.language ?? "en").trim() || "en";
       setForms({ [lang]: seedFromTrack(loadedSource) });
@@ -141,6 +142,7 @@ export function TrackFormContent({ trackId, createLanguage, translationOf }: Pro
       });
     }
     setSeeded(true);
+    });
   }, [loadedSource, seeded, isEdit, isTranslation, initialLang]);
 
   const updateForm = useCallback(

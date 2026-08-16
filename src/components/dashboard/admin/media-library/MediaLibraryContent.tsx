@@ -61,7 +61,7 @@ export function MediaLibraryContent() {
   // Selecting across a folder/filter/page change is confusing (ids you can no
   // longer see) — start fresh whenever the visible set changes.
   useEffect(() => {
-    setSelectedIds(new Set());
+    queueMicrotask(() => setSelectedIds(new Set()));
   }, [selectedFolderId, search, scope, unusedOnly, imagesOnly, page]);
 
   const foldersQuery = useMediaFolders();

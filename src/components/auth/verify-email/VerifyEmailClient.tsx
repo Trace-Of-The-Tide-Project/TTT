@@ -28,15 +28,19 @@ export function VerifyEmailClient() {
   } | null>(null);
 
   useEffect(() => {
-    const e = searchParams.get("email");
-    if (e) setResendEmail(e);
+    queueMicrotask(() => {
+      const e = searchParams.get("email");
+      if (e) setResendEmail(e);
+    });
   }, [searchParams]);
 
   useEffect(() => {
     const token = searchParams.get("token");
     if (!token) {
-      setStatus("missing");
-      setMessage(t("missingToken"));
+      queueMicrotask(() => {
+        setStatus("missing");
+        setMessage(t("missingToken"));
+      });
       return;
     }
     if (ran.current) return;

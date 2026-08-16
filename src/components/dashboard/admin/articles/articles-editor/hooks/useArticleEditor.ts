@@ -200,12 +200,14 @@ export function useArticleEditor({
     [config.contentType, t],
   );
 
-  useEffect(() => { setPortalReady(true); }, []);
+  useEffect(() => { queueMicrotask(() => setPortalReady(true)); }, []);
 
   useEffect(() => {
     if (configFromProps && !articleId) {
-      setConfig(configFromProps);
-      setBlocks(configFromProps.defaultBlocks);
+      queueMicrotask(() => {
+        setConfig(configFromProps);
+        setBlocks(configFromProps.defaultBlocks);
+      });
     }
   }, [configFromProps, articleId]);
 
@@ -346,7 +348,7 @@ export function useArticleEditor({
     // which mutates blocks without any user input. Capture the baseline
     // after that settles so a freshly loaded article reads as pristine.
     // ponytail: fixed 1.5s settle window; edits made inside it are absorbed.
-    setDirtyBaseline(null);
+    queueMicrotask(() => setDirtyBaseline(null));
     const id = setTimeout(() => {
       setDirtyBaseline(fingerprintRef.current);
     }, 1500);
@@ -368,6 +370,7 @@ export function useArticleEditor({
   useEffect(() => {
     const a = articleQuery.data;
     if (!a) return;
+    queueMicrotask(() => {
     setConfig(contentFormConfigForType(a.content_type));
     setTitle(a.title ?? "");
     setCategory(a.category ?? "");
@@ -426,14 +429,17 @@ export function useArticleEditor({
       mapped.length ? mapped : [{ id: crypto.randomUUID(), type: "paragraph", content: "" }],
     );
     setRebaselineTick((n) => n + 1); // loaded values are the pristine state
+    });
   }, [articleQuery.data, loadKey, canAssign]);
 
   // Tracks are a polymorphic reverse relation (track_items), not a column on
   // the article response, so they're fetched separately from the main load.
   useEffect(() => {
     if (!articleId) {
-      setTrackIds([]);
-      initialTrackIdsRef.current = [];
+      queueMicrotask(() => {
+        setTrackIds([]);
+        initialTrackIdsRef.current = [];
+      });
       return;
     }
     let cancelled = false;
@@ -466,7 +472,7 @@ export function useArticleEditor({
   }, []);
 
   useEffect(() => {
-    if (!successToast) { setToastEntered(false); return; }
+    if (!successToast) { queueMicrotask(() => setToastEntered(false)); return; }
     const id = window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => setToastEntered(true));
     });

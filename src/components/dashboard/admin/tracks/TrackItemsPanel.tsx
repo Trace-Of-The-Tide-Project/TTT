@@ -49,8 +49,7 @@ export function TrackItemsPanel({ trackId }: { trackId: string }) {
     items.map((i) => ({ entity_type: i.entity_type, entity_id: i.id, title: i.title ?? i.id }));
 
   useEffect(() => {
-    setDraft(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    queueMicrotask(() => setDraft(null));
   }, [items.length]);
 
   const [entityType, setEntityType] = useState<TrackEntityType>("article");

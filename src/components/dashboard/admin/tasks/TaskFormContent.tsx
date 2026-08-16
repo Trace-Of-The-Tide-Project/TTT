@@ -68,19 +68,22 @@ export function TaskFormContent({ taskId }: Props) {
 
   useEffect(() => {
     if (!isEdit || seeded || !taskQuery.data) return;
-    setForm(seedFromTask(taskQuery.data));
-    const a = taskQuery.data.assignee;
-    if (a) {
-      setAssignee({
-        id: a.id,
-        full_name: a.full_name ?? "",
-        username: a.username ?? "",
-        email: "",
-        status: "active",
-        role: "user",
-      } as AdminUserListItem);
-    }
-    setSeeded(true);
+    const data = taskQuery.data;
+    queueMicrotask(() => {
+      setForm(seedFromTask(data));
+      const a = data.assignee;
+      if (a) {
+        setAssignee({
+          id: a.id,
+          full_name: a.full_name ?? "",
+          username: a.username ?? "",
+          email: "",
+          status: "active",
+          role: "user",
+        } as AdminUserListItem);
+      }
+      setSeeded(true);
+    });
   }, [isEdit, seeded, taskQuery.data]);
 
   const set = useCallback(

@@ -579,7 +579,9 @@ export function OpenCallEditorLayout({
   );
 
   useEffect(() => {
-    if (workflowStatus !== "scheduled") setScheduledAt(null);
+    queueMicrotask(() => {
+      if (workflowStatus !== "scheduled") setScheduledAt(null);
+    });
   }, [workflowStatus]);
 
   const isRtl = activeLang === "ar";

@@ -208,10 +208,12 @@ export function WriterFormContent({
     if (!isEdit || seeded || !writerQuery.data) return;
     const w = writerQuery.data;
     const lang = (w.language ?? "en").trim() || "en";
-    setForms({ [lang]: seedFromWriter(w) });
-    setActiveLang(lang);
-    setPrimaryLang(lang);
-    setSeeded(true);
+    queueMicrotask(() => {
+      setForms({ [lang]: seedFromWriter(w) });
+      setActiveLang(lang);
+      setPrimaryLang(lang);
+      setSeeded(true);
+    });
   }, [isEdit, seeded, writerQuery.data]);
 
   // ── Translation-create seeding ──
@@ -221,10 +223,13 @@ export function WriterFormContent({
   useEffect(() => {
     if (!isTranslation || translationSeeded || !sourceQuery.data) return;
     // keep the target language from ?language= — override the source's.
-    setForms({
-      [initialLang]: { ...seedFromWriter(sourceQuery.data), language: initialLang },
+    const source = sourceQuery.data;
+    queueMicrotask(() => {
+      setForms({
+        [initialLang]: { ...seedFromWriter(source), language: initialLang },
+      });
+      setTranslationSeeded(true);
     });
-    setTranslationSeeded(true);
   }, [isTranslation, translationSeeded, sourceQuery.data, initialLang]);
 
   // All setForm-style writes go through here so dirty-tracking can't be missed.

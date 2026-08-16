@@ -1,4 +1,3 @@
-import { cache } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { callBackend } from "@/lib/auth/proxy-backend";

@@ -148,7 +148,7 @@ export default function AdminSubscriptionsPage() {
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { load(); }, [statusFilter, planFilter]);
+  useEffect(() => { queueMicrotask(() => load()); }, [statusFilter, planFilter]);
 
   async function handleRevoke() {
     if (!revokeTarget) return;

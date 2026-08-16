@@ -44,7 +44,7 @@ export function PeopleManagementContent() {
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [actionError, setActionError] = useState<string | null>(null);
+  const [actionError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<PersonProfile | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 

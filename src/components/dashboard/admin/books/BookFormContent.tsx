@@ -410,20 +410,25 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
     if (seeded || !bookQuery.data) return;
     const b = bookQuery.data;
     const lang = (b.language ?? "en").trim() || "en";
-    setForms({ [lang]: seedFromBook(b) });
-    setActiveLang(lang);
-    setPrimaryLang(lang);
-    setSeeded(true);
+    queueMicrotask(() => {
+      setForms({ [lang]: seedFromBook(b) });
+      setActiveLang(lang);
+      setPrimaryLang(lang);
+      setSeeded(true);
+    });
   }, [bookQuery.data, seeded]);
 
   // Clone the source book's fields when adding a translation; keep the target
   // language already set from `?language=`.
   useEffect(() => {
     if (!isTranslation || translationSeeded || !sourceQuery.data) return;
-    setForms({
-      [initialLang]: { ...seedFromBook(sourceQuery.data), language: initialLanguage },
+    const source = sourceQuery.data;
+    queueMicrotask(() => {
+      setForms({
+        [initialLang]: { ...seedFromBook(source), language: initialLanguage },
+      });
+      setTranslationSeeded(true);
     });
-    setTranslationSeeded(true);
   }, [isTranslation, translationSeeded, sourceQuery.data, initialLang, initialLanguage]);
 
   const updateForm = useCallback(
