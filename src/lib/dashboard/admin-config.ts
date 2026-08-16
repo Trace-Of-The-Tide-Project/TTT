@@ -37,7 +37,6 @@ import {
   PersonPlusIcon,
   ClockIcon,
   CompassIcon,
-  CalendarIcon,
   ImageInsertIcon,
   SquareCheckIcon,
 } from "@/components/ui/icons";
