@@ -27,6 +27,7 @@ import {
   type ArticleProduct,
 } from "@/services/articles.service";
 import { useArticle } from "@/hooks/queries/articles";
+import { getTracksForEntity, setTracksForEntity } from "@/services/tracks.service";
 import { useAuthUser } from "@/components/providers/AuthProvider";
 import type { AdminUserListItem } from "@/services/users.service";
 import type { WriterProfile } from "@/services/writers.service";
@@ -167,6 +168,8 @@ export function useArticleEditor({
   const [metaDescription, setMetaDescription] = useState("");
   const [collectionId, setCollectionId] = useState("");
   const [tagIds, setTagIds] = useState<string[]>([]);
+  const [trackIds, setTrackIds] = useState<string[]>([]);
+  const initialTrackIdsRef = useRef<string[]>([]);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
@@ -425,6 +428,26 @@ export function useArticleEditor({
     setRebaselineTick((n) => n + 1); // loaded values are the pristine state
   }, [articleQuery.data, loadKey, canAssign]);
 
+  // Tracks are a polymorphic reverse relation (track_items), not a column on
+  // the article response, so they're fetched separately from the main load.
+  useEffect(() => {
+    if (!articleId) {
+      setTrackIds([]);
+      initialTrackIdsRef.current = [];
+      return;
+    }
+    let cancelled = false;
+    getTracksForEntity("article", articleId).then((tracks) => {
+      if (cancelled) return;
+      const ids = tracks.map((tr) => tr.id);
+      setTrackIds(ids);
+      initialTrackIdsRef.current = ids;
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [articleId, loadKey]);
+
   useEffect(() => {
     if (!translationOf || articleId) return;
     getArticleById(translationOf).then((a) => {
@@ -614,6 +637,25 @@ export function useArticleEditor({
     [language, isLangDirty, versionIds, languageBuffers],
   );
 
+  // Fire-and-forget: track tagging failures shouldn't block the article save
+  // that already succeeded. Skipped when nothing changed from load.
+  const persistTracksIfChanged = useCallback(
+    async (id: string | null | undefined) => {
+      if (!id) return;
+      const initial = initialTrackIdsRef.current;
+      const changed =
+        initial.length !== trackIds.length || initial.some((tId) => !trackIds.includes(tId));
+      if (!changed) return;
+      try {
+        await setTracksForEntity("article", id, trackIds);
+        initialTrackIdsRef.current = trackIds;
+      } catch {
+        // surfaced nowhere specific — track tagging is best-effort here
+      }
+    },
+    [trackIds],
+  );
+
   const handleSaveDraft = useCallback(async () => {
     const pf = getPrimaryForm();
     if (!pf.title.trim()) { failField(tLayout("validationTitle"), "article-title-input"); return; }
@@ -630,12 +672,14 @@ export function useArticleEditor({
           : "scheduled";
         await updateArticle(articleId, { ...editPatchFromPayload(payload), status });
         await saveDirtySiblings(payload, articleId);
+        await persistTracksIfChanged(articleId);
         notifySuccessAndLeave(tLayout("successChangesSaved"), destinationAfterSave());
         return;
       }
       const res = await createArticle(payload);
       const id = getArticleIdFromCreateResponse(res);
       await saveDirtySiblings(payload, translationOf ?? id);
+      await persistTracksIfChanged(translationOf ?? id);
       notifySuccessAndLeave(tLayout("successDraftSaved"), destinationAfterSave());
     } catch (e) {
       setError(translateErr(e));
@@ -645,7 +689,7 @@ export function useArticleEditor({
   }, [
     getPrimaryForm, category, buildPayload, notifySuccessAndLeave, destinationAfterSave,
     isEditMode, articleId, workflowStatus, tLayout, translateErr,
-    saveDirtySiblings, translationOf, failField,
+    saveDirtySiblings, translationOf, failField, persistTracksIfChanged,
   ]);
 
   const handlePublish = useCallback(async () => {
@@ -665,6 +709,7 @@ export function useArticleEditor({
           initialWasDraftRef.current = false;
         }
         await saveDirtySiblings(payload, articleId);
+        await persistTracksIfChanged(articleId);
         notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave());
         return;
       }
@@ -675,6 +720,7 @@ export function useArticleEditor({
       // Siblings stay drafts even when the original publishes — they still
       // need translating before going live.
       await saveDirtySiblings(payload, translationOf ?? id);
+      await persistTracksIfChanged(translationOf ?? id);
       notifySuccessAndLeave(tLayout("successArticleSubmitted"), destinationAfterSave());
     } catch (e) {
       setError(translateErr(e));
@@ -684,7 +730,7 @@ export function useArticleEditor({
   }, [
     workflowStatus, getPrimaryForm, category, buildPayload, notifySuccessAndLeave,
     destinationAfterSave, isEditMode, articleId, tLayout, translateErr,
-    saveDirtySiblings, translationOf, failField,
+    saveDirtySiblings, translationOf, failField, persistTracksIfChanged,
   ]);
 
   const handleScheduleConfirm = useCallback(
@@ -777,6 +823,7 @@ export function useArticleEditor({
     metaDescription, setMetaDescription,
     collectionId, setCollectionId,
     tagIds, setTagIds,
+    trackIds, setTrackIds,
     coverImage,
     coverFile,
     scheduleModalOpen, setScheduleModalOpen,

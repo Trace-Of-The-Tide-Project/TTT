@@ -15,6 +15,7 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/people.json`),
     import(`../../messages/features/${locale}/dashboard/collections-admin.json`),
     import(`../../messages/features/${locale}/dashboard/tags-admin.json`),
+    import(`../../messages/features/${locale}/dashboard/tracks-admin.json`),
     import(`../../messages/features/${locale}/dashboard/subscriptions.json`),
     import(`../../messages/features/${locale}/dashboard/analytics.json`),
     import(`../../messages/features/${locale}/dashboard/trips.json`),
@@ -71,7 +72,7 @@ async function loadDashboardMessages(locale: AppLocale): Promise<Record<string, 
  */
 export async function loadMessages(locale: AppLocale) {
 
-  const [core, navbar, home, homeNext, magazineNext, magazine, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, collections, subscribe, community, legal, writingRoomSessions, waqamh, dashboardMerged] = await Promise.all([
+  const [core, navbar, home, homeNext, magazineNext, magazine, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, collections, subscribe, community, legal, writingRoomSessions, waqamh, tracks, dashboardMerged] = await Promise.all([
     import(`../../messages/${locale}.json`),
     import(`../../messages/features/${locale}/navbar.json`),
     import(`../../messages/features/${locale}/home.json`),
@@ -92,6 +93,7 @@ export async function loadMessages(locale: AppLocale) {
     import(`../../messages/features/${locale}/legal.json`),
     import(`../../messages/features/${locale}/writing-room-sessions.json`),
     import(`../../messages/features/${locale}/waqamh.json`),
+    import(`../../messages/features/${locale}/tracks.json`),
     loadDashboardMessages(locale),
   ]);
 
@@ -116,6 +118,7 @@ export async function loadMessages(locale: AppLocale) {
     ...legal.default,
     ...writingRoomSessions.default,
     ...waqamh.default,
+    ...tracks.default,
     Dashboard: dashboardMerged,
   } as Record<string, unknown>;
 }

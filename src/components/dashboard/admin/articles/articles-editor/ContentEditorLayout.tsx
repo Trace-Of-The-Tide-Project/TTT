@@ -54,6 +54,7 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
     metaDescription, setMetaDescription,
     collectionId, setCollectionId,
     tagIds, setTagIds,
+    trackIds, setTrackIds,
     coverImage,
     scheduleModalOpen, setScheduleModalOpen,
     busy, error,
@@ -403,6 +404,8 @@ export function ContentEditorLayout(props: ContentEditorLayoutProps) {
               onCollectionIdChange={setCollectionId}
               tagIds={tagIds}
               onTagIdsChange={setTagIds}
+              trackIds={trackIds}
+              onTrackIdsChange={setTrackIds}
               coverImage={coverImage}
               onCoverFileSelect={(file) => {
                 setCoverFile(file);

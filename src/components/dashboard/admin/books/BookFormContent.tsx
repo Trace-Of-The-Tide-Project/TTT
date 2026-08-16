@@ -23,6 +23,7 @@ import { routing } from "@/i18n/routing";
 import { usePrimaryLanguage } from "@/i18n/use-primary-language";
 import { formatApiError } from "@/lib/api/error-message";
 import { BookChaptersPanel } from "./BookChaptersPanel";
+import { BookTracksPanel } from "./BookTracksPanel";
 import { LinkBookTranslationPicker } from "./LinkBookTranslationPicker";
 import { EditionsPanel } from "./EditionsPanel";
 import { getBookById, type Book, type BookPayload } from "@/services/books.service";
@@ -914,6 +915,15 @@ export function BookFormContent({ bookId, createLanguage, translationOf }: Props
             {t("sections.chapters")}
           </p>
           <BookChaptersPanel bookId={bookId} />
+        </div>
+      ) : null}
+
+      {isEdit && bookId ? (
+        <div className={sectionClass}>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--tott-dash-gold-label)]">
+            {t("sections.tracks")}
+          </p>
+          <BookTracksPanel bookId={bookId} />
         </div>
       ) : null}
 
