@@ -90,7 +90,8 @@ function DraftThread({ sessionId, draft }: { sessionId: string; draft: WorkshopD
 
 export function SessionWorkspaceContent({ session: initial }: { session: SessionDetail }) {
   const t = useTranslations("WritingRoomSessions");
-  const { data: session = initial } = useSession(initial.id);
+  const { data } = useSession(initial.id);
+  const session = data ?? initial;
   const { data: drafts = [], isLoading } = useSessionDrafts(initial.id);
   const createDraft = useCreateDraft(initial.id);
   const [title, setTitle] = useState("");

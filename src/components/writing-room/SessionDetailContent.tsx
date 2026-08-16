@@ -18,7 +18,8 @@ function formatDate(iso: string | null | undefined, locale: string): string | nu
 export function SessionDetailContent({ session: initial }: { session: SessionDetail }) {
   const t = useTranslations("WritingRoomSessions");
   const locale = useLocale();
-  const { data: session = initial } = useSession(initial.id);
+  const { data } = useSession(initial.id);
+  const session = data ?? initial;
   const register = useRegisterSession(initial.id);
 
   const startsAt = formatDate(session.starts_at, locale);
