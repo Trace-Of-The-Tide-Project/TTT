@@ -17,7 +17,7 @@ function formatStartsAt(iso: string | null | undefined, locale: string): string 
 export function SalonLandingContent({ sessions }: { sessions: SessionListItem[] }) {
   const t = useTranslations("Waqamh");
   const locale = useLocale();
-  const now = Date.now();
+  const [now] = useState(() => Date.now());
 
   const [upcoming, past] = useMemo(() => {
     const up: SessionListItem[] = [];
