@@ -3,6 +3,7 @@
 import { createElement, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import HexBackground from "@/components/ui/HexBackground";
+import { Link } from "@/i18n/navigation";
 import { ContributionForm } from "@/components/contribute/ContributionForm";
 import { PenLineIcon } from "@/components/ui/icons";
 import {
@@ -176,6 +177,21 @@ export default function ContributePage() {
               }}
             >
               {tPage("heroSubtitle")}
+            </p>
+            <p
+              style={{
+                fontFamily: "'Inter', var(--font-sans, sans-serif)",
+                fontWeight: 400,
+                fontSize: "13px",
+                lineHeight: "18px",
+                color: HELPER_COLOR,
+                margin: 0,
+              }}
+            >
+              {tPage("opinionNudgePrefix")}{" "}
+              <Link href="/opinion/submit" style={{ color: ACCENT, textDecoration: "underline" }}>
+                {tPage("opinionNudgeLink")}
+              </Link>
             </p>
           </div>
         </header>

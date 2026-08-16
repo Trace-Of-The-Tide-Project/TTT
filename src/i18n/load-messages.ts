@@ -47,6 +47,7 @@ function dashboardImports(locale: AppLocale) {
     import(`../../messages/features/${locale}/dashboard/help.json`),
     import(`../../messages/features/${locale}/dashboard/messages.json`),
     import(`../../messages/features/${locale}/dashboard/gifts.json`),
+    import(`../../messages/features/${locale}/dashboard/opinion-submissions.json`),
     /**
      * Shell merged last so `Dashboard.sidebar` (system settings, profile, etc.),
      * layout, topbar, and shared placeholders are never overwritten by other slices.
@@ -72,7 +73,7 @@ async function loadDashboardMessages(locale: AppLocale): Promise<Record<string, 
  */
 export async function loadMessages(locale: AppLocale) {
 
-  const [core, navbar, home, homeNext, magazineNext, magazine, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, collections, subscribe, community, legal, writingRoomSessions, waqamh, tracks, booksWork, dashboardMerged] = await Promise.all([
+  const [core, navbar, home, homeNext, magazineNext, magazine, auth, notFound, contribute, content, startAnIssue, openIssues, publicDetail, comingSoon, collections, subscribe, community, legal, writingRoomSessions, waqamh, tracks, booksWork, giftATrace, opinionSubmit, dashboardMerged] = await Promise.all([
     import(`../../messages/${locale}.json`),
     import(`../../messages/features/${locale}/navbar.json`),
     import(`../../messages/features/${locale}/home.json`),
@@ -95,6 +96,8 @@ export async function loadMessages(locale: AppLocale) {
     import(`../../messages/features/${locale}/waqamh.json`),
     import(`../../messages/features/${locale}/tracks.json`),
     import(`../../messages/features/${locale}/books-work.json`),
+    import(`../../messages/features/${locale}/giftATrace.json`),
+    import(`../../messages/features/${locale}/opinionSubmit.json`),
     loadDashboardMessages(locale),
   ]);
 
@@ -121,6 +124,8 @@ export async function loadMessages(locale: AppLocale) {
     ...waqamh.default,
     ...tracks.default,
     ...booksWork.default,
+    ...giftATrace.default,
+    ...opinionSubmit.default,
     Dashboard: dashboardMerged,
   } as Record<string, unknown>;
 }

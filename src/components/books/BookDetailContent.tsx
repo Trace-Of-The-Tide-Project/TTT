@@ -70,7 +70,7 @@ export function BookDetailContent({ book, reviews }: { book: BookDetail; reviews
         <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-[260px_minmax(0,1fr)] min-[1600px]:gap-12 min-[1600px]:md:grid-cols-[340px_minmax(0,1fr)]">
           <div className="mx-auto flex w-full flex-col md:mx-0" style={{ maxWidth: "360px", gap: "12px" }}>
             <BookHexCover src={book.coverImage} alt={book.title} />
-            {!book.isOwned && book.denyReason === "GIFT_WINDOW_ACTIVE" && book.commonsAt ? (
+            {!book.isOwned && book.denyReason === "GIFT_WINDOW_ACTIVE" ? (
               <GiftWindowPanel
                 scopeType="book"
                 scopeId={book.id}

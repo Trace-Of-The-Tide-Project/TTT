@@ -149,6 +149,12 @@ export const adminConfig: DashboardConfig = {
               href: "/admin/editor",
               icon: CodeIcon,
             },
+            {
+              kind: "item",
+              labelKey: "sidebar.opinionSubmissions",
+              href: "/admin/opinion-submissions",
+              icon: MessageSquareIcon,
+            },
           ],
         },
         {

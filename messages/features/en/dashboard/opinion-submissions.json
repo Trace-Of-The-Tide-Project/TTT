@@ -1,0 +1,40 @@
+{
+  "Dashboard": {
+    "opinionSubmissions": {
+      "heading": "Opinion submissions",
+      "subheading": "Pieces submitted through the public Opinion Commons form, waiting for editorial review.",
+      "loading": "Loading…",
+      "empty": "Nothing here.",
+      "tabs": {
+        "new": "New",
+        "reviewing": "In review",
+        "accepted": "Accepted",
+        "rejected": "Rejected"
+      },
+      "table": {
+        "title": "Title",
+        "author": "Author",
+        "language": "Lang",
+        "submitted": "Submitted",
+        "accept": "Accept",
+        "reject": "Reject"
+      },
+      "acceptDialog": {
+        "title": "Accept this piece?",
+        "description": "\"{title}\" moves to accepted. Create the Article from it in the article editor.",
+        "confirm": "Accept"
+      },
+      "rejectDialog": {
+        "title": "Reject this piece?",
+        "description": "\"{title}\" will be marked rejected. This cannot be undone.",
+        "confirm": "Reject"
+      },
+      "confirmBusy": "Saving…",
+      "toasts": {
+        "accepted": "Submission accepted.",
+        "rejected": "Submission rejected.",
+        "failed": "Could not update this submission."
+      }
+    }
+  }
+}

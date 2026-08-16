@@ -1,13 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { SupportPageLayout } from "@/components/layout/SupportPageLayout";
-import { GiftATraceForm } from "@/components/giftATrace/GiftATraceForm";
+import { OpinionSubmitForm } from "@/components/opinionSubmit/OpinionSubmitForm";
 
-export default async function GiftATracePage() {
-  const t = await getTranslations("GiftATrace");
+export default async function OpinionSubmitPage() {
+  const t = await getTranslations("OpinionSubmit");
 
   return (
     <SupportPageLayout title={t("title")} subtitle={t("subtitle")}>
-      <GiftATraceForm />
+      <OpinionSubmitForm />
     </SupportPageLayout>
   );
 }

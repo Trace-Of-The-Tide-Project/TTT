@@ -1,0 +1,22 @@
+{
+  "OpinionSubmit": {
+    "title": "Write for Opinion Commons",
+    "subtitle": "Opinion pieces are open to everyone the moment they publish — no gift window, no wait. Submit yours below; an editor will review it before it goes live.",
+    "titleLabel": "Title",
+    "titlePlaceholder": "On the Weight of Return",
+    "bodyLabel": "Your piece",
+    "bodyPlaceholder": "Write the piece in full — up to 20,000 characters.",
+    "authorNameLabel": "Your name",
+    "authorNamePlaceholder": "Full name",
+    "authorEmailLabel": "Your email",
+    "authorEmailPlaceholder": "you@example.com",
+    "bioLabel": "Short bio",
+    "bioOptional": "(Optional)",
+    "bioPlaceholder": "A line or two about you.",
+    "submit": "Submit for review",
+    "sending": "Sending…",
+    "sent": "Received — an editor will review it soon.",
+    "sendFailed": "Couldn't submit your piece. Try again in a moment.",
+    "rateLimited": "You've submitted a few pieces recently — try again in an hour."
+  }
+}

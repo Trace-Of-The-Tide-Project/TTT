@@ -1,0 +1,22 @@
+{
+  "OpinionSubmit": {
+    "title": "Écrire pour le Commun d'opinion",
+    "subtitle": "Les articles d'opinion sont ouverts à tous dès leur publication — pas de fenêtre de don, pas d'attente. Soumettez le vôtre ci-dessous ; un éditeur le relira avant publication.",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "Du poids du retour",
+    "bodyLabel": "Votre texte",
+    "bodyPlaceholder": "Écrivez le texte en entier — jusqu'à 20 000 caractères.",
+    "authorNameLabel": "Votre nom",
+    "authorNamePlaceholder": "Nom complet",
+    "authorEmailLabel": "Votre e-mail",
+    "authorEmailPlaceholder": "vous@exemple.com",
+    "bioLabel": "Courte biographie",
+    "bioOptional": "(Facultatif)",
+    "bioPlaceholder": "Une ou deux lignes à votre sujet.",
+    "submit": "Soumettre pour examen",
+    "sending": "Envoi…",
+    "sent": "Reçu — un éditeur le relira bientôt.",
+    "sendFailed": "Impossible d'envoyer votre texte. Réessayez dans un instant.",
+    "rateLimited": "Vous avez soumis plusieurs textes récemment — réessayez dans une heure."
+  }
+}

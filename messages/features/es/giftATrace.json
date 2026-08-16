@@ -1,0 +1,21 @@
+{
+  "GiftATrace": {
+    "title": "Regala un rastro",
+    "subtitle": "El precio es un regalo, no una tarifa — todo lo que se publica aquí termina perteneciendo a todos. Un regalo ahora te da acceso anticipado y ayuda a sostener el trabajo.",
+    "amountLabel": "Cantidad",
+    "amountPlaceholder": "Cualquier cantidad",
+    "monetaryCta": "Regalar {amount}",
+    "monetaryCtaEmpty": "Continuar para regalar",
+    "orInKind": "¿Prefieres ofrecer tu tiempo o habilidad en su lugar?",
+    "inKindToggle": "Ofrecer un regalo en especie",
+    "inKindLabel": "Describe lo que ofreces",
+    "inKindPlaceholder": "Traducción, ilustración, corrección, organizar una lectura, distribución…",
+    "inKindCta": "Enviar para revisión",
+    "inKindNote": "Un editor revisa los regalos en especie antes de confirmarlos.",
+    "sending": "Enviando tu regalo…",
+    "sent": "Gracias — tu regalo ayuda a mantener esto abierto para todos.",
+    "inKindSent": "Enviado. Un editor lo revisará pronto.",
+    "giftFailed": "No se pudo enviar el regalo.",
+    "backHome": "Volver al inicio"
+  }
+}

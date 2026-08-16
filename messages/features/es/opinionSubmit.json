@@ -1,0 +1,22 @@
+{
+  "OpinionSubmit": {
+    "title": "Escribe para el Mashaa de Opinión",
+    "subtitle": "Los artículos de opinión están abiertos a todos desde el momento en que se publican — sin ventana de regalo, sin espera. Envía el tuyo abajo; un editor lo revisará antes de publicarlo.",
+    "titleLabel": "Título",
+    "titlePlaceholder": "Sobre el peso del regreso",
+    "bodyLabel": "Tu texto",
+    "bodyPlaceholder": "Escribe el texto completo — hasta 20,000 caracteres.",
+    "authorNameLabel": "Tu nombre",
+    "authorNamePlaceholder": "Nombre completo",
+    "authorEmailLabel": "Tu correo electrónico",
+    "authorEmailPlaceholder": "tucorreo@ejemplo.com",
+    "bioLabel": "Biografía breve",
+    "bioOptional": "(Opcional)",
+    "bioPlaceholder": "Una o dos líneas sobre ti.",
+    "submit": "Enviar para revisión",
+    "sending": "Enviando…",
+    "sent": "Recibido — un editor lo revisará pronto.",
+    "sendFailed": "No se pudo enviar tu texto. Inténtalo de nuevo en un momento.",
+    "rateLimited": "Has enviado varios textos recientemente — inténtalo de nuevo en una hora."
+  }
+}

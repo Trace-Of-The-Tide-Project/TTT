@@ -249,7 +249,7 @@ export function ContentPageLayout({
               // Subscriber/paid: the backend ships zero blocks, so there is
               // nothing real to blur — render a ghost skeleton body instead
               // of blurring an empty <div>, then wrap it in the paywall.
-              gate.denyReason === "GIFT_WINDOW_ACTIVE" && gate.giftCommonsAt ? (
+              gate.denyReason === "GIFT_WINDOW_ACTIVE" ? (
                 // Still within the gift window — no lock icon (SRS §6.2):
                 // one unified panel with countdown, progress, and the gift CTA.
                 <GiftWindowPanel

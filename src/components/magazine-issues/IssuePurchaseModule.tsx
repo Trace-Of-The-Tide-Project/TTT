@@ -52,7 +52,7 @@ export function IssuePurchaseModule({
 }) {
   const t = useTranslations("MagazineIssueDetail");
   const label = priceLabel(price, currency);
-  const showGiftWindow = !isOwned && denyReason === "GIFT_WINDOW_ACTIVE" && commonsAt;
+  const showGiftWindow = !isOwned && denyReason === "GIFT_WINDOW_ACTIVE";
 
   if (showGiftWindow) {
     return (
