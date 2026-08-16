@@ -1,28 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  checkIsFollowing,
-  getFollowingFeed,
-} from "@/services/follows.service";
+import { checkIsFollowing, type FollowableType } from "@/services/follows.service";
 
 export const followsKeys = {
   all: ["follows"] as const,
-  isFollowing: (followingId: string) =>
-    ["follows", "isFollowing", followingId] as const,
-  feed: (params?: { page?: number; limit?: number }) =>
-    ["follows", "feed", params ?? {}] as const,
+  isFollowing: (followingType: FollowableType, followingId: string) =>
+    ["follows", "isFollowing", followingType, followingId] as const,
 };
 
-export function useIsFollowing(followingId: string | null | undefined) {
+export function useIsFollowing(
+  followingId: string | null | undefined,
+  followingType: FollowableType = "user",
+) {
   return useQuery({
-    queryKey: followsKeys.isFollowing(followingId ?? ""),
-    queryFn: () => checkIsFollowing(followingId as string),
+    queryKey: followsKeys.isFollowing(followingType, followingId ?? ""),
+    queryFn: () => checkIsFollowing(followingId as string, followingType),
     enabled: Boolean(followingId),
-  });
-}
-
-export function useFollowingFeed(params?: { page?: number; limit?: number }) {
-  return useQuery({
-    queryKey: followsKeys.feed(params),
-    queryFn: () => getFollowingFeed(params),
   });
 }

@@ -77,9 +77,14 @@
     "subtitle": "أحدث أعمال الكُتّاب الذين تتابعهم",
     "loading": "جارٍ تحميل موجزك…",
     "error": "تعذّر تحميل موجزك. حاول مرة أخرى.",
+    "retry": "أعد المحاولة",
     "emptyTitle": "موجزك فارغ",
     "emptyBody": "تابع الكُتّاب لترى أحدث أعمالهم المنشورة هنا.",
-    "emptyCta": "اكتشف الكُتّاب"
+    "emptyCta": "اكتشف الكُتّاب",
+    "emptyCtaMagazine": "استكشف المجلة",
+    "newIssue": "عدد جديد",
+    "edition": "العدد {number}",
+    "newBook": "كتاب جديد"
   },
   "AuthPrompt": {
     "title": "سجّل الدخول للمتابعة",
@@ -87,5 +92,27 @@
     "login": "تسجيل الدخول",
     "signUp": "إنشاء حساب",
     "close": "إغلاق"
+  },
+  "Social": {
+    "loginRequired": "سجّل الدخول للانضمام إلى النقاش",
+    "loginRequiredHint": "أنشئ حساباً أو سجّل الدخول للتفاعل والتعليق.",
+    "logIn": "تسجيل الدخول",
+    "reactionCount": "{count, plural, one {# تفاعل} other {# تفاعلات}}",
+    "commentCount": "{count, plural, one {# تعليق} other {# تعليقات}}",
+    "comment": "تعليق",
+    "reply": "رد",
+    "post": "نشر",
+    "writeComment": "اكتب تعليقاً…",
+    "writeReply": "اكتب رداً…",
+    "noComments": "لا توجد تعليقات بعد — كن أول من يعلّق.",
+    "commentsError": "تعذّر تحميل التعليقات.",
+    "reactions": {
+      "react": "تفاعل",
+      "like": "إعجاب",
+      "love": "حب",
+      "wow": "إعجاب شديد",
+      "sad": "حزين",
+      "angry": "غاضب"
+    }
   }
 }

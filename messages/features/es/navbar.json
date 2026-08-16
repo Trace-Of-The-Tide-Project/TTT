@@ -77,9 +77,14 @@
     "subtitle": "Lo último de los escritores que sigues",
     "loading": "Cargando tu feed…",
     "error": "No se pudo cargar tu feed. Inténtalo de nuevo.",
+    "retry": "Reintentar",
     "emptyTitle": "Tu feed está vacío",
     "emptyBody": "Sigue a escritores para ver aquí sus últimas publicaciones.",
-    "emptyCta": "Descubrir escritores"
+    "emptyCta": "Descubrir escritores",
+    "emptyCtaMagazine": "Explorar la revista",
+    "newIssue": "Nuevo número",
+    "edition": "Edición {number}",
+    "newBook": "Nuevo libro"
   },
   "AuthPrompt": {
     "title": "Inicia sesión para seguir",
@@ -87,5 +92,27 @@
     "login": "Iniciar sesión",
     "signUp": "Registrarse",
     "close": "Cerrar"
+  },
+  "Social": {
+    "loginRequired": "Inicia sesión para unirte a la conversación",
+    "loginRequiredHint": "Crea una cuenta o inicia sesión para reaccionar y comentar.",
+    "logIn": "Iniciar sesión",
+    "reactionCount": "{count, plural, one {# reacción} other {# reacciones}}",
+    "commentCount": "{count, plural, one {# comentario} other {# comentarios}}",
+    "comment": "Comentar",
+    "reply": "Responder",
+    "post": "Publicar",
+    "writeComment": "Escribe un comentario…",
+    "writeReply": "Escribe una respuesta…",
+    "noComments": "Aún no hay comentarios — sé el primero.",
+    "commentsError": "No se pudieron cargar los comentarios.",
+    "reactions": {
+      "react": "Reaccionar",
+      "like": "Me gusta",
+      "love": "Me encanta",
+      "wow": "Wow",
+      "sad": "Triste",
+      "angry": "Enfadado"
+    }
   }
 }

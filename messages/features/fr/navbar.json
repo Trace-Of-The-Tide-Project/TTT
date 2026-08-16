@@ -77,9 +77,14 @@
     "subtitle": "Les dernières œuvres des auteurs que vous suivez",
     "loading": "Chargement de votre fil…",
     "error": "Impossible de charger votre fil. Réessayez.",
+    "retry": "Réessayer",
     "emptyTitle": "Votre fil est vide",
     "emptyBody": "Suivez des auteurs pour voir ici leurs dernières publications.",
-    "emptyCta": "Découvrir des auteurs"
+    "emptyCta": "Découvrir des auteurs",
+    "emptyCtaMagazine": "Explorer le magazine",
+    "newIssue": "Nouveau numéro",
+    "edition": "Édition {number}",
+    "newBook": "Nouveau livre"
   },
   "AuthPrompt": {
     "title": "Connectez-vous pour suivre",
@@ -87,5 +92,27 @@
     "login": "Connexion",
     "signUp": "S'inscrire",
     "close": "Fermer"
+  },
+  "Social": {
+    "loginRequired": "Connectez-vous pour rejoindre la conversation",
+    "loginRequiredHint": "Créez un compte ou connectez-vous pour réagir et commenter.",
+    "logIn": "Se connecter",
+    "reactionCount": "{count, plural, one {# réaction} other {# réactions}}",
+    "commentCount": "{count, plural, one {# commentaire} other {# commentaires}}",
+    "comment": "Commenter",
+    "reply": "Répondre",
+    "post": "Publier",
+    "writeComment": "Écrire un commentaire…",
+    "writeReply": "Écrire une réponse…",
+    "noComments": "Aucun commentaire pour l'instant — soyez le premier.",
+    "commentsError": "Impossible de charger les commentaires.",
+    "reactions": {
+      "react": "Réagir",
+      "like": "J'aime",
+      "love": "J'adore",
+      "wow": "Wow",
+      "sad": "Triste",
+      "angry": "En colère"
+    }
   }
 }

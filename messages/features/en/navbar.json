@@ -77,9 +77,14 @@
     "subtitle": "Latest from the writers you follow",
     "loading": "Loading your feed…",
     "error": "Couldn't load your feed. Please try again.",
+    "retry": "Try again",
     "emptyTitle": "Your feed is empty",
     "emptyBody": "Follow writers to see their latest published work here.",
-    "emptyCta": "Discover writers"
+    "emptyCta": "Discover writers",
+    "emptyCtaMagazine": "Explore the magazine",
+    "newIssue": "New issue",
+    "edition": "Edition {number}",
+    "newBook": "New book"
   },
   "AuthPrompt": {
     "title": "Sign in to follow",
@@ -87,5 +92,27 @@
     "login": "Login",
     "signUp": "Sign up",
     "close": "Close"
+  },
+  "Social": {
+    "loginRequired": "Sign in to join the conversation",
+    "loginRequiredHint": "Create an account or log in to react and comment.",
+    "logIn": "Log in",
+    "reactionCount": "{count, plural, one {# reaction} other {# reactions}}",
+    "commentCount": "{count, plural, one {# comment} other {# comments}}",
+    "comment": "Comment",
+    "reply": "Reply",
+    "post": "Post",
+    "writeComment": "Write a comment…",
+    "writeReply": "Write a reply…",
+    "noComments": "No comments yet — be the first.",
+    "commentsError": "Couldn't load comments.",
+    "reactions": {
+      "react": "React",
+      "like": "Like",
+      "love": "Love",
+      "wow": "Wow",
+      "sad": "Sad",
+      "angry": "Angry"
+    }
   }
 }
