@@ -62,7 +62,8 @@
         "sections": {
           "basics": "Informations générales",
           "scheduling": "Planification",
-          "seatsAccess": "Places et accès"
+          "seatsAccess": "Places et accès",
+          "salon": "Salon Waqamh"
         },
         "fields": {
           "space": "Espace",
@@ -85,12 +86,24 @@
           "requiredTierRankPlaceholder": "Laisser vide pour aucun palier requis",
           "price": "Prix",
           "pricePlaceholder": "0 pour gratuit",
-          "currency": "Devise"
+          "currency": "Devise",
+          "voices": "Voix",
+          "voicesPlaceholder": "Noms séparés par des virgules",
+          "onlineJoinUrl": "Lien de connexion",
+          "onlineJoinUrlPlaceholder": "https://…",
+          "relatedIssueId": "ID du numéro lié",
+          "relatedBookId": "ID du livre lié"
         },
         "formatOptions": {
           "online": "En ligne",
           "inPerson": "En personne",
           "hybrid": "Hybride"
+        },
+        "salonTypeOptions": {
+          "reading": "Lecture",
+          "listening": "Écoute",
+          "conversation": "Conversation",
+          "launch": "Lancement"
         },
         "accessRuleOptions": {
           "free": "Gratuit",

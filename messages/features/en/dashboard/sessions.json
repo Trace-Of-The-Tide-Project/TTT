@@ -62,7 +62,8 @@
         "sections": {
           "basics": "Basics",
           "scheduling": "Scheduling",
-          "seatsAccess": "Seats & Access"
+          "seatsAccess": "Seats & Access",
+          "salon": "Waqamh Salon"
         },
         "fields": {
           "space": "Space",
@@ -85,12 +86,24 @@
           "requiredTierRankPlaceholder": "Leave blank for no tier gate",
           "price": "Price",
           "pricePlaceholder": "0 for free",
-          "currency": "Currency"
+          "currency": "Currency",
+          "voices": "Voices",
+          "voicesPlaceholder": "Comma-separated names",
+          "onlineJoinUrl": "Join link",
+          "onlineJoinUrlPlaceholder": "https://…",
+          "relatedIssueId": "Related issue ID",
+          "relatedBookId": "Related book ID"
         },
         "formatOptions": {
           "online": "Online",
           "inPerson": "In person",
           "hybrid": "Hybrid"
+        },
+        "salonTypeOptions": {
+          "reading": "Reading",
+          "listening": "Listening",
+          "conversation": "Conversation",
+          "launch": "Launch"
         },
         "accessRuleOptions": {
           "free": "Free",

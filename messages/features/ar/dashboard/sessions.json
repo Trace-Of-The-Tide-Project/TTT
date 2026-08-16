@@ -62,7 +62,8 @@
         "sections": {
           "basics": "الأساسيات",
           "scheduling": "الجدولة",
-          "seatsAccess": "المقاعد والوصول"
+          "seatsAccess": "المقاعد والوصول",
+          "salon": "صالون وقامة"
         },
         "fields": {
           "space": "المساحة",
@@ -85,12 +86,24 @@
           "requiredTierRankPlaceholder": "اتركه فارغًا لعدم اشتراط رتبة",
           "price": "السعر",
           "pricePlaceholder": "0 للمجاني",
-          "currency": "العملة"
+          "currency": "العملة",
+          "voices": "الأصوات",
+          "voicesPlaceholder": "أسماء مفصولة بفواصل",
+          "onlineJoinUrl": "رابط الانضمام",
+          "onlineJoinUrlPlaceholder": "https://…",
+          "relatedIssueId": "معرّف العدد المرتبط",
+          "relatedBookId": "معرّف الكتاب المرتبط"
         },
         "formatOptions": {
           "online": "عبر الإنترنت",
           "inPerson": "حضوري",
           "hybrid": "مختلط"
+        },
+        "salonTypeOptions": {
+          "reading": "قراءة",
+          "listening": "استماع",
+          "conversation": "حوار",
+          "launch": "إطلاق"
         },
         "accessRuleOptions": {
           "free": "مجاني",

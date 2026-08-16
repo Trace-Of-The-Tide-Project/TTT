@@ -5,7 +5,11 @@ import {
   listMyCertificates,
   listMyTickets,
   listSessionDrafts,
+  listSessionContributions,
   listSessions,
+  listSessionsAdmin,
+  getSessionStats,
+  listSessionTickets,
 } from "@/services/sessions.service";
 
 export const sessionsKeys = {
@@ -17,6 +21,14 @@ export const sessionsKeys = {
   comments: (draftId: string) => ["sessions", "comments", draftId] as const,
   myTickets: () => ["sessions", "tickets", "mine"] as const,
   myCertificates: () => ["sessions", "certificates", "mine"] as const,
+  audioLibrary: (params?: Record<string, unknown>) =>
+    ["sessions", "audioLibrary", params ?? {}] as const,
+  contributions: (sessionId: string) =>
+    ["sessions", "contributions", sessionId] as const,
+  admin: (params?: Record<string, unknown>) =>
+    ["sessions", "admin", params ?? {}] as const,
+  stats: (sessionId: string) => ["sessions", "stats", sessionId] as const,
+  tickets: (sessionId: string) => ["sessions", "sessionTickets", sessionId] as const,
 };
 
 export function useSessions(params?: {
@@ -69,5 +81,41 @@ export function useMyCertificates() {
   return useQuery({
     queryKey: sessionsKeys.myCertificates(),
     queryFn: () => listMyCertificates(),
+  });
+}
+
+export function useSessionsAdmin(params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  space?: string;
+}) {
+  return useQuery({
+    queryKey: sessionsKeys.admin(params),
+    queryFn: () => listSessionsAdmin(params),
+  });
+}
+
+export function useSessionStats(sessionId: string | null | undefined) {
+  return useQuery({
+    queryKey: sessionsKeys.stats(sessionId ?? ""),
+    queryFn: () => getSessionStats(sessionId as string),
+    enabled: Boolean(sessionId),
+  });
+}
+
+export function useSessionTickets(sessionId: string | null | undefined) {
+  return useQuery({
+    queryKey: sessionsKeys.tickets(sessionId ?? ""),
+    queryFn: () => listSessionTickets(sessionId as string),
+    enabled: Boolean(sessionId),
+  });
+}
+
+export function useSessionContributions(sessionId: string | null | undefined) {
+  return useQuery({
+    queryKey: sessionsKeys.contributions(sessionId ?? ""),
+    queryFn: () => listSessionContributions(sessionId as string),
+    enabled: Boolean(sessionId),
   });
 }

@@ -62,7 +62,8 @@
         "sections": {
           "basics": "Datos básicos",
           "scheduling": "Programación",
-          "seatsAccess": "Asientos y acceso"
+          "seatsAccess": "Asientos y acceso",
+          "salon": "Salón Waqamh"
         },
         "fields": {
           "space": "Espacio",
@@ -85,12 +86,24 @@
           "requiredTierRankPlaceholder": "Dejar en blanco para no exigir nivel",
           "price": "Precio",
           "pricePlaceholder": "0 para gratis",
-          "currency": "Moneda"
+          "currency": "Moneda",
+          "voices": "Voces",
+          "voicesPlaceholder": "Nombres separados por comas",
+          "onlineJoinUrl": "Enlace para unirse",
+          "onlineJoinUrlPlaceholder": "https://…",
+          "relatedIssueId": "ID del número relacionado",
+          "relatedBookId": "ID del libro relacionado"
         },
         "formatOptions": {
           "online": "En línea",
           "inPerson": "Presencial",
           "hybrid": "Híbrido"
+        },
+        "salonTypeOptions": {
+          "reading": "Lectura",
+          "listening": "Escucha",
+          "conversation": "Conversación",
+          "launch": "Lanzamiento"
         },
         "accessRuleOptions": {
           "free": "Gratis",

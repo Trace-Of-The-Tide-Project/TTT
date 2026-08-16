@@ -26,7 +26,13 @@ type FormState = {
   currency: string;
   required_tier_rank: string;
   status: string;
+  voices: string; // comma-separated in the form, split into an array on submit
+  online_join_url: string;
+  related_issue_id: string;
+  related_book_id: string;
 };
+
+const SALON_TYPES = ["reading", "listening", "conversation", "launch"];
 
 const EMPTY: FormState = {
   space: "writing_room",
@@ -44,6 +50,10 @@ const EMPTY: FormState = {
   currency: "USD",
   required_tier_rank: "",
   status: "draft",
+  voices: "",
+  online_join_url: "",
+  related_issue_id: "",
+  related_book_id: "",
 };
 
 function seedFromSession(s: EventSession): FormState {
@@ -63,6 +73,10 @@ function seedFromSession(s: EventSession): FormState {
     currency: s.currency ?? "USD",
     required_tier_rank: s.required_tier_rank != null ? String(s.required_tier_rank) : "",
     status: s.status,
+    voices: (s.voices ?? []).join(", "),
+    online_join_url: s.online_join_url ?? "",
+    related_issue_id: s.related_issue_id ?? "",
+    related_book_id: s.related_book_id ?? "",
   };
 }
 
@@ -118,6 +132,17 @@ export function SessionFormContent({ sessionId }: Props) {
     currency: form.currency.trim() || null,
     required_tier_rank: form.required_tier_rank ? Number(form.required_tier_rank) : null,
     status: form.status,
+    ...(form.space === "waqamh"
+      ? {
+          voices: form.voices
+            .split(",")
+            .map((v) => v.trim())
+            .filter(Boolean),
+          online_join_url: form.online_join_url.trim() || null,
+          related_issue_id: form.related_issue_id.trim() || null,
+          related_book_id: form.related_book_id.trim() || null,
+        }
+      : {}),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -183,13 +208,31 @@ export function SessionFormContent({ sessionId }: Props) {
               </div>
               <div>
                 <label className={labelClass}>{t("form.fields.type")}</label>
-                <input
-                  className={inputClass}
-                  value={form.type}
-                  onChange={(e) => set("type", e.target.value)}
-                  placeholder={t("form.fields.typePlaceholder")}
-                  disabled={busy}
-                />
+                {form.space === "waqamh" ? (
+                  <select
+                    className={inputClass}
+                    value={SALON_TYPES.includes(form.type) ? form.type : ""}
+                    onChange={(e) => set("type", e.target.value)}
+                    disabled={busy}
+                  >
+                    <option value="" disabled>
+                      {t("form.fields.typePlaceholder")}
+                    </option>
+                    {SALON_TYPES.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {t(`form.salonTypeOptions.${opt}`)}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    className={inputClass}
+                    value={form.type}
+                    onChange={(e) => set("type", e.target.value)}
+                    placeholder={t("form.fields.typePlaceholder")}
+                    disabled={busy}
+                  />
+                )}
               </div>
             </div>
 
@@ -368,6 +411,55 @@ export function SessionFormContent({ sessionId }: Props) {
               </div>
             </div>
           </div>
+
+          {form.space === "waqamh" && (
+            <div className={sectionClass}>
+              <p className={sectionHeadingClass}>{t("form.sections.salon")}</p>
+
+              <div>
+                <label className={labelClass}>{t("form.fields.voices")}</label>
+                <input
+                  className={inputClass}
+                  value={form.voices}
+                  onChange={(e) => set("voices", e.target.value)}
+                  placeholder={t("form.fields.voicesPlaceholder")}
+                  disabled={busy}
+                />
+              </div>
+
+              <div>
+                <label className={labelClass}>{t("form.fields.onlineJoinUrl")}</label>
+                <input
+                  className={inputClass}
+                  value={form.online_join_url}
+                  onChange={(e) => set("online_join_url", e.target.value)}
+                  placeholder={t("form.fields.onlineJoinUrlPlaceholder")}
+                  disabled={busy}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>{t("form.fields.relatedIssueId")}</label>
+                  <input
+                    className={inputClass}
+                    value={form.related_issue_id}
+                    onChange={(e) => set("related_issue_id", e.target.value)}
+                    disabled={busy}
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>{t("form.fields.relatedBookId")}</label>
+                  <input
+                    className={inputClass}
+                    value={form.related_book_id}
+                    onChange={(e) => set("related_book_id", e.target.value)}
+                    disabled={busy}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {formError && (
             <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-3 text-sm text-red-400">
