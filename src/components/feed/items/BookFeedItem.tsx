@@ -1,15 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
+import { useRelativeTime } from "@/hooks/useRelativeTime";
 import type { FeedBookItem } from "@/services/feed.service";
 import { ShareButton } from "@/components/ui/ShareButton";
 
 export function BookFeedItem({ item }: { item: FeedBookItem }) {
   const t = useTranslations("Feed");
-  const format = useFormatter();
+  const relativeTime = useRelativeTime();
   const { book } = item;
   const cover = book.cover_image ? resolveArticleMediaSrc(book.cover_image) : null;
   const href = `/books/${encodeURIComponent(book.id)}`;
@@ -61,7 +62,7 @@ export function BookFeedItem({ item }: { item: FeedBookItem }) {
           ) : null}
           {item.published_at ? (
             <span className="text-[11px]" style={{ color: "var(--tott-home-text-muted)" }}>
-              {format.relativeTime(new Date(item.published_at))}
+              {relativeTime(item.published_at)}
             </span>
           ) : null}
         </div>

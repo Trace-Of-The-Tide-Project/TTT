@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useLocale, useFormatter } from "next-intl";
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { resolveArticleMediaSrc } from "@/lib/content/article-media-url";
 import { ContentLanguageChip } from "@/components/content/ContentLanguageChip";
 import { dirFor } from "@/i18n/dir";
+import { useRelativeTime } from "@/hooks/useRelativeTime";
 import type { FeedArticleItem } from "@/services/feed.service";
 import { SocialBar } from "../social/SocialBar";
 
@@ -25,7 +26,7 @@ function authorName(author: FeedArticleItem["article"]["author"]): string {
 
 export function ArticleFeedItem({ item }: { item: FeedArticleItem }) {
   const uiLocale = useLocale();
-  const format = useFormatter();
+  const relativeTime = useRelativeTime();
   const { article, social } = item;
   const cover = article.cover_image ? resolveArticleMediaSrc(article.cover_image) : null;
   const badge = formatCategory(article.category);
@@ -49,7 +50,7 @@ export function ArticleFeedItem({ item }: { item: FeedArticleItem }) {
             {author}
           </span>
           <span className="text-[11px]" style={{ color: "var(--tott-home-text-muted)" }}>
-            {date ? format.relativeTime(new Date(date)) : ""}
+            {date ? relativeTime(date) : ""}
           </span>
         </div>
       </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations, useFormatter } from "next-intl";
+import { useTranslations } from "next-intl";
+import { useRelativeTime } from "@/hooks/useRelativeTime";
 import type { CommentItem as CommentItemType } from "@/services/comments.service";
 import { CommentComposer } from "./CommentComposer";
 
@@ -19,7 +20,7 @@ export function CommentItem({
   isReplyPending?: boolean;
 }) {
   const t = useTranslations("Social");
-  const format = useFormatter();
+  const relativeTime = useRelativeTime();
   const [replying, setReplying] = useState(false);
 
   return (
@@ -38,7 +39,7 @@ export function CommentItem({
               {authorName(comment.user)}
             </span>
             <span className="text-[11px]" style={{ color: "var(--tott-home-text-muted)" }}>
-              {format.relativeTime(new Date(comment.createdAt))}
+              {relativeTime(comment.createdAt)}
             </span>
           </div>
           <p className="text-sm leading-relaxed" style={{ color: "var(--tott-home-text-strong)" }}>
