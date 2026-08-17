@@ -121,6 +121,7 @@ export type SessionCertificate = {
   id: string;
   user_id: string;
   program_id: string;
+  program_title?: string | null;
   file_path: string;
   file_url?: string | null;
   issued_at: string;
