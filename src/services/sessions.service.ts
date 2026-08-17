@@ -107,6 +107,11 @@ export type WorkshopDraft = {
   createdAt?: string;
 };
 
+export type DraftsList<T = WorkshopDraft | DraftComment> = {
+  rows: T[];
+  meta: { total: number; page: number; limit: number; totalPages: number };
+};
+
 export type DraftComment = {
   id: string;
   draft_id: string;
@@ -294,11 +299,19 @@ export async function cancelTicket(id: string): Promise<void> {
 
 // ─── Workspace (FR-WRM-05) ───────────────────────────────────
 
-export async function listSessionDrafts(sessionId: string): Promise<WorkshopDraft[]> {
+export async function listSessionDrafts(
+  sessionId: string,
+  params?: { page?: number; limit?: number },
+): Promise<DraftsList<WorkshopDraft>> {
   const { data } = await api.get<unknown>(
     `/sessions/${encodeURIComponent(sessionId)}/drafts`,
+    { params },
   );
-  return unwrapList<WorkshopDraft>(data);
+  const o = (data ?? {}) as Record<string, unknown>;
+  const inner = (o.data ?? o) as Record<string, unknown>;
+  const rows = Array.isArray(inner.rows) ? (inner.rows as WorkshopDraft[]) : [];
+  const meta = (inner.meta ?? {}) as DraftsList["meta"];
+  return { rows, meta };
 }
 
 export async function createSessionDraft(
@@ -315,11 +328,17 @@ export async function createSessionDraft(
 export async function listDraftComments(
   sessionId: string,
   draftId: string,
-): Promise<DraftComment[]> {
+  params?: { page?: number; limit?: number },
+): Promise<DraftsList<DraftComment>> {
   const { data } = await api.get<unknown>(
     `/sessions/${encodeURIComponent(sessionId)}/drafts/${encodeURIComponent(draftId)}/comments`,
+    { params },
   );
-  return unwrapList<DraftComment>(data);
+  const o = (data ?? {}) as Record<string, unknown>;
+  const inner = (o.data ?? o) as Record<string, unknown>;
+  const rows = Array.isArray(inner.rows) ? (inner.rows as DraftComment[]) : [];
+  const meta = (inner.meta ?? {}) as DraftsList["meta"];
+  return { rows, meta };
 }
 
 export async function createDraftComment(

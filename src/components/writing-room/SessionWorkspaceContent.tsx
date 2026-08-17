@@ -112,7 +112,12 @@ function CommentNode({
 
 function DraftThread({ sessionId, draft }: { sessionId: string; draft: WorkshopDraft }) {
   const t = useTranslations("WritingRoomSessions");
-  const { data: comments = [], isLoading } = useDraftComments(sessionId, draft.id);
+  const { data: commentsData, isLoading } = useDraftComments(
+    sessionId,
+    draft.id,
+    { limit: 100 },
+  );
+  const comments = commentsData?.rows ?? [];
   const createComment = useCreateComment(sessionId, draft.id);
   const [body, setBody] = useState("");
 
@@ -184,7 +189,10 @@ export function SessionWorkspaceContent({ session: initial }: { session: Session
   const t = useTranslations("WritingRoomSessions");
   const { data } = useSession(initial.id);
   const session = data ?? initial;
-  const { data: drafts = [], isLoading } = useSessionDrafts(initial.id);
+  const { data: draftsData, isLoading } = useSessionDrafts(initial.id, {
+    limit: 100,
+  });
+  const drafts = draftsData?.rows ?? [];
   const createDraft = useCreateDraft(initial.id);
   const [title, setTitle] = useState("");
   const [uploading, setUploading] = useState(false);
