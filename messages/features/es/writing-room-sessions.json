@@ -35,6 +35,13 @@
     "commentFailed": "No se pudo publicar el comentario.",
     "reply": "Responder",
     "replies": "Respuestas",
-    "you": "Tú"
+    "you": "Tú",
+    "myCertificates": "Tus certificados de finalización",
+    "noCertificates": "Aún no has completado ningún programa. Asiste a todas las sesiones de un programa para obtener un certificado.",
+    "certificateIssued": "Emitido el {date}",
+    "certificateView": "Ver certificado",
+    "waitlisted": "Estás en la lista de espera de esta sesión.",
+    "waitlistPosition": "Posición en la lista de espera: {position}",
+    "openWorkspaceDisabled": "Tu espacio de trabajo se abre cuando se confirme un asiento."
   }
 }

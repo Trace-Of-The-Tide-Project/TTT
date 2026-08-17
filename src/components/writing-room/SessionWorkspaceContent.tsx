@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { uploadArticleAssetPath } from "@/services/uploads.service";
-import { useSession, useSessionDrafts, useDraftComments } from "@/hooks/queries/sessions";
+import { useSession, useSessionDrafts, useDraftComments, useMyCertificates } from "@/hooks/queries/sessions";
 import { useCreateComment, useCreateDraft } from "@/hooks/mutations/sessions";
 import type { SessionDetail, WorkshopDraft, DraftComment } from "@/services/sessions.service";
 
@@ -185,6 +185,56 @@ function DraftThread({ sessionId, draft }: { sessionId: string; draft: WorkshopD
   );
 }
 
+function CertificatesSection() {
+  const t = useTranslations("WritingRoomSessions");
+  const { data = [], isLoading } = useMyCertificates();
+
+  if (isLoading) return <Skeleton className="h-24 w-full" />;
+  if (data.length === 0) return null;
+
+  const fmt = (iso: string) =>
+    new Date(iso).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+  return (
+    <ChamferedPanel className="mt-8 p-6">
+      <h2 className="text-start text-sm font-semibold text-[var(--tott-home-text-warm)]">
+        {t("myCertificates")}
+      </h2>
+      <ul className="mt-3 space-y-2">
+        {data.map((c) => (
+          <li
+            key={c.id}
+            className="flex items-center justify-between rounded-md bg-[var(--tott-panel-bg)] p-3 text-start text-sm"
+          >
+            <div>
+              <p className="font-medium text-[var(--tott-home-text-warm)]">
+                {c.program_title || c.program_id}
+              </p>
+              <p className="text-xs text-[var(--tott-salt)]">
+                {t("certificateIssued", { date: fmt(c.issued_at) })}
+              </p>
+            </div>
+            {c.file_url && (
+              <a
+                href={c.file_url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm text-[var(--tott-accent-gold)]"
+              >
+                {t("certificateView")}
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+    </ChamferedPanel>
+  );
+}
+
 export function SessionWorkspaceContent({ session: initial }: { session: SessionDetail }) {
   const t = useTranslations("WritingRoomSessions");
   const { data } = useSession(initial.id);
@@ -268,6 +318,8 @@ export function SessionWorkspaceContent({ session: initial }: { session: Session
           drafts.map((d) => <DraftThread key={d.id} sessionId={initial.id} draft={d} />)
         )}
       </div>
+
+      <CertificatesSection />
     </section>
   );
 }

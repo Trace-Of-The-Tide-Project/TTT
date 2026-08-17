@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ChamferedPanel } from "@/components/ui/ChamferedPanel";
@@ -21,10 +22,22 @@ export function SessionDetailContent({ session: initial }: { session: SessionDet
   const { data } = useSession(initial.id);
   const session = data ?? initial;
   const register = useRegisterSession(initial.id);
+  const [waitlist, setWaitlist] = useState<number | null>(null);
 
   const startsAt = formatDate(session.starts_at, locale);
   const allowed = session.access?.allowed ?? false;
   const hasTicket = session.access?.matched_step === "ticket";
+  const isResolved = hasTicket || waitlist !== null;
+
+  const handleRegister = () => {
+    register.mutate(undefined, {
+      onSuccess: (res) => {
+        if (res && "waitlisted" in res && res.waitlisted) {
+          setWaitlist(res.position ?? null);
+        }
+      },
+    });
+  };
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
@@ -41,17 +54,24 @@ export function SessionDetailContent({ session: initial }: { session: SessionDet
       )}
 
       <ChamferedPanel className="mt-8 p-6">
-        {hasTicket ? (
+        {isResolved ? (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-start text-sm text-[var(--tott-status-emerald)]">
-              {t("youAreRegistered")}
+              {hasTicket ? t("youAreRegistered") : t("waitlisted")}
+              {waitlist != null && ` ${t("waitlistPosition", { position: waitlist })}`}
             </p>
-            <Link
-              href={`/writing-room/sessions/${session.id}/workspace`}
-              className="rounded-md bg-[var(--tott-accent-gold)] px-4 py-2 text-sm font-medium text-black"
-            >
-              {t("openWorkspace")}
-            </Link>
+            {hasTicket ? (
+              <Link
+                href={`/writing-room/sessions/${session.id}/workspace`}
+                className="rounded-md bg-[var(--tott-accent-gold)] px-4 py-2 text-sm font-medium text-black"
+              >
+                {t("openWorkspace")}
+              </Link>
+            ) : (
+              <span className="text-start text-sm text-[var(--tott-salt)]">
+                {t("openWorkspaceDisabled")}
+              </span>
+            )}
           </div>
         ) : (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -61,7 +81,7 @@ export function SessionDetailContent({ session: initial }: { session: SessionDet
             <button
               type="button"
               disabled={register.isPending}
-              onClick={() => register.mutate(undefined)}
+              onClick={handleRegister}
               className="rounded-md bg-[var(--tott-accent-gold)] px-4 py-2 text-sm font-medium text-black disabled:opacity-60"
             >
               {t("register")}

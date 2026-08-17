@@ -35,6 +35,13 @@
     "commentFailed": "Couldn't post the comment.",
     "reply": "Reply",
     "replies": "Replies",
-    "you": "You"
+    "you": "You",
+    "myCertificates": "Your completion certificates",
+    "noCertificates": "You haven't completed a program yet. Attend every session in a program to earn a certificate.",
+    "certificateIssued": "Issued {date}",
+    "certificateView": "View certificate",
+    "waitlisted": "You're on the waitlist for this session.",
+    "waitlistPosition": "Position on the waitlist: {position}",
+    "openWorkspaceDisabled": "Your workspace opens once a seat is confirmed."
   }
 }

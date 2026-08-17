@@ -35,6 +35,13 @@
     "commentFailed": "Impossible de publier le commentaire.",
     "reply": "Répondre",
     "replies": "Réponses",
-    "you": "Vous"
+    "you": "Vous",
+    "myCertificates": "Vos certificats de fin de programme",
+    "noCertificates": "Vous n'avez pas encore terminé de programme. Assistez à toutes les sessions d'un programme pour obtenir un certificat.",
+    "certificateIssued": "Délivré le {date}",
+    "certificateView": "Voir le certificat",
+    "waitlisted": "Vous êtes sur la liste d'attente de cette session.",
+    "waitlistPosition": "Position sur la liste d'attente : {position}",
+    "openWorkspaceDisabled": "Votre espace de travail s'ouvre une fois la place confirmée."
   }
 }
