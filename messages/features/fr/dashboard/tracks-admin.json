@@ -1,0 +1,91 @@
+{
+  "Dashboard": {
+    "tracks": {
+      "list": {
+        "pageTitle": "Séries",
+        "addNew": "Ajouter une série",
+        "searchPlaceholder": "Rechercher des séries…",
+        "loading": "Chargement…",
+        "unpublished": "Non publié",
+        "empty": {
+          "none": "Aucune série pour le moment.",
+          "noMatch": "Aucune série ne correspond à votre recherche."
+        },
+        "edit": "Modifier",
+        "delete": "Supprimer"
+      },
+      "form": {
+        "backToList": "Séries",
+        "createTitle": "Ajouter une série",
+        "editTitle": "Modifier la série",
+        "loading": "Chargement…",
+        "cancel": "Annuler",
+        "saving": "Enregistrement…",
+        "save": "Enregistrer les modifications",
+        "create": "Créer",
+        "fields": {
+          "title": "Titre",
+          "titlePlaceholder": "p. ex. Archives",
+          "slug": "Slug",
+          "slugPlaceholder": "p. ex. archive",
+          "description": "Description",
+          "descriptionPlaceholder": "Une brève description de ce fil éditorial",
+          "color": "Couleur",
+          "icon": "Icône",
+          "iconPlaceholder": "Nom d'icône ou URL",
+          "isPublished": "Publié"
+        },
+        "translation": {
+          "banner": "Ajout de la version {language}",
+          "ofOriginal": "Traduction de : {name}"
+        },
+        "items": {
+          "label": "Éléments",
+          "hint": "Articles, livres et numéros de cette série, dans l'ordre d'affichage.",
+          "loading": "Chargement…",
+          "empty": "Aucun élément dans cette série pour le moment.",
+          "moveUp": "Monter",
+          "moveDown": "Descendre",
+          "remove": "Retirer",
+          "add": "Ajouter",
+          "searchPlaceholder": "Rechercher à ajouter…",
+          "searching": "Recherche…",
+          "noResults": "Aucun résultat.",
+          "type": {
+            "article": "Article",
+            "book": "Livre",
+            "magazine_issue": "Numéro"
+          }
+        }
+      },
+      "errors": {
+        "titleSlugRequired": "Le titre et le slug sont obligatoires.",
+        "createFailed": "Impossible de créer la série.",
+        "updateFailed": "Impossible de mettre à jour la série.",
+        "deleteFailed": "Impossible de supprimer la série."
+      },
+      "toasts": {
+        "created": "Série créée",
+        "updated": "Série mise à jour",
+        "deleted": "Série supprimée"
+      },
+      "deleteModal": {
+        "title": "Supprimer la série",
+        "description": "Supprimer « {name} » ? Cette action est irréversible.",
+        "cancel": "Annuler",
+        "confirm": "Supprimer",
+        "confirmBusy": "Suppression…"
+      },
+      "picker": {
+        "label": "Séries",
+        "addPlaceholder": "Rechercher des séries à ajouter…",
+        "loading": "Chargement des séries…",
+        "noResults": "Aucune série correspondante.",
+        "allSelected": "Toutes les séries sont déjà sélectionnées.",
+        "removeAria": "Retirer {name}",
+        "unknownName": "{prefix}",
+        "hint": "Associez cette œuvre à un ou plusieurs fils éditoriaux."
+      }
+    }
+  }
+}

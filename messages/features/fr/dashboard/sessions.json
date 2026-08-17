@@ -1,0 +1,167 @@
+{
+  "Dashboard": {
+    "sessions": {
+      "list": {
+        "pageTitle": "Sessions",
+        "addNew": "Ajouter une session",
+        "searchPlaceholder": "Rechercher des sessions…",
+        "loading": "Chargement des sessions…",
+        "tryAgain": "Réessayer",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "unlimited": "Illimité",
+        "headers": {
+          "title": "Session",
+          "startsAt": "Début",
+          "capacity": "Capacité",
+          "status": "Statut"
+        },
+        "space": {
+          "all": "Tous les espaces",
+          "writingRoom": "Salle d'écriture",
+          "waqamh": "Salon Waqamh"
+        },
+        "status": {
+          "draft": "Brouillon",
+          "published": "Publiée",
+          "cancelled": "Annulée",
+          "completed": "Terminée"
+        },
+        "empty": {
+          "none": "Aucune session pour le moment.",
+          "noMatch": "Aucune session ne correspond à votre recherche."
+        },
+        "errors": {
+          "loadFailed": "Impossible de charger les sessions.",
+          "deleteFailed": "Impossible de supprimer cette session."
+        },
+        "toasts": {
+          "deleted": "Session supprimée."
+        },
+        "pagination": {
+          "previous": "Précédent",
+          "next": "Suivant"
+        },
+        "deleteModal": {
+          "title": "Supprimer la session ?",
+          "description": "Cela supprimera définitivement « {title} » et ses billets.",
+          "confirm": "Supprimer",
+          "confirmBusy": "Suppression…",
+          "cancel": "Annuler"
+        }
+      },
+      "form": {
+        "backToList": "Retour aux sessions",
+        "createTitle": "Nouvelle session",
+        "editTitle": "Modifier la session",
+        "loading": "Chargement de la session…",
+        "cancel": "Annuler",
+        "save": "Enregistrer les modifications",
+        "create": "Créer la session",
+        "saving": "Enregistrement…",
+        "sections": {
+          "basics": "Informations générales",
+          "scheduling": "Planification",
+          "seatsAccess": "Places et accès",
+          "salon": "Salon Waqamh"
+        },
+        "fields": {
+          "space": "Espace",
+          "type": "Type",
+          "typePlaceholder": "p. ex. atelier, lecture, écoute",
+          "title": "Titre",
+          "titlePlaceholder": "Titre de la session",
+          "description": "Description",
+          "facilitatorId": "ID de l'animateur",
+          "facilitatorIdPlaceholder": "ID utilisateur de l'animateur",
+          "startsAt": "Débute le",
+          "durationMinutes": "Durée (minutes)",
+          "format": "Format",
+          "status": "Statut",
+          "capacity": "Capacité",
+          "capacityPlaceholder": "Laisser vide pour illimité",
+          "awnaSeats": "Places offertes (awna)",
+          "accessRule": "Règle d'accès",
+          "requiredTierRank": "Palier d'abonnement requis",
+          "requiredTierRankPlaceholder": "Laisser vide pour aucun palier requis",
+          "price": "Prix",
+          "pricePlaceholder": "0 pour gratuit",
+          "currency": "Devise",
+          "voices": "Voix",
+          "voicesPlaceholder": "Noms séparés par des virgules",
+          "onlineJoinUrl": "Lien de connexion",
+          "onlineJoinUrlPlaceholder": "https://…",
+          "relatedIssueId": "ID du numéro lié",
+          "relatedBookId": "ID du livre lié"
+        },
+        "formatOptions": {
+          "online": "En ligne",
+          "inPerson": "En personne",
+          "hybrid": "Hybride"
+        },
+        "salonTypeOptions": {
+          "reading": "Lecture",
+          "listening": "Écoute",
+          "conversation": "Conversation",
+          "launch": "Lancement"
+        },
+        "accessRuleOptions": {
+          "free": "Gratuit",
+          "paid": "Payant",
+          "memberIncluded": "Inclus dans l'abonnement",
+          "mixed": "Mixte"
+        },
+        "errors": {
+          "titleRequired": "Le titre est requis.",
+          "awnaSeatsRequired": "Chaque session doit réserver au moins 1 place offerte (awna).",
+          "createFailed": "Impossible de créer cette session.",
+          "updateFailed": "Impossible de mettre à jour cette session."
+        },
+        "toasts": {
+          "created": "Session créée.",
+          "updated": "Session mise à jour."
+        }
+      },
+      "attendance": {
+        "statsHeading": "Présence",
+        "loading": "Chargement des billets…",
+        "empty": "Aucun billet pour le moment.",
+        "markAttended": "Marquer présent",
+        "attended": "Présent",
+        "headers": {
+          "user": "Utilisateur",
+          "type": "Type",
+          "status": "Statut"
+        },
+        "stats": {
+          "registered": "Inscrits",
+          "confirmed": "Confirmés",
+          "attended": "Présents",
+          "waitlisted": "Liste d'attente",
+          "awnaSeats": "Places offertes utilisées",
+          "seatsRemaining": "Places restantes"
+        },
+        "ticketType": {
+          "free": "Gratuit",
+          "paid": "Payant",
+          "member_included": "Inclus dans l'abonnement",
+          "gift_value": "Don",
+          "awna_seat": "Place offerte (awna)"
+        },
+        "ticketStatus": {
+          "reserved": "Réservé",
+          "confirmed": "Confirmé",
+          "attended": "Présent",
+          "canceled": "Annulé",
+          "waitlisted": "Liste d'attente"
+        },
+        "errors": {
+          "markFailed": "Impossible de marquer ce billet comme présent."
+        },
+        "toasts": {
+          "marked": "Présence enregistrée."
+        }
+      }
+    }
+  }
+}

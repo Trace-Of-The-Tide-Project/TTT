@@ -119,7 +119,34 @@
             "material_only": "دعم عيني فقط (بلا انتقال تلقائي للملكية العامة)"
           },
           "giftValueInitial": "قيمة الهدية المقترحة",
-          "giftWindowDays": "نافذة الهدية (بالأيام)"
+          "giftWindowDays": "نافذة الهدية (بالأيام)",
+          "isbn": "الرقم الدولي المعياري للكتاب (ISBN)",
+          "isbnPlaceholder": "978-1-234-56789-7",
+          "edition": "الطبعة",
+          "editionPlaceholder": "مثال: الطبعة الأولى",
+          "imprint": "بصمة الناشر",
+          "imprintPlaceholder": "اسم بصمة الناشر",
+          "format": "الشكل",
+          "release_mode": "طريقة النشر",
+          "legal_deposit_status": "حالة الإيداع القانوني",
+          "cip_status": "حالة الفهرسة أثناء النشر (CIP)",
+          "compiled_from_issues": "مُجمَّع من أعداد",
+          "compiled_from_issuesPlaceholder": "معرّفات الأعداد، مفصولة بفواصل"
+        },
+        "formats": {
+          "digital": "رقمي",
+          "print": "مطبوع",
+          "both": "مطبوع ورقمي"
+        },
+        "releaseModes": {
+          "integrated": "متكامل (يُنشر ككتاب واحد)",
+          "serialized": "مسلسل (تُنشر الفصول وفق جدول)"
+        },
+        "bibStatus": {
+          "not_required": "غير مطلوب",
+          "pending": "قيد الانتظار",
+          "submitted": "تم الإرسال",
+          "confirmed": "مؤكَّد"
         },
         "languages": {
           "en": "الإنجليزية",
@@ -130,8 +157,10 @@
         },
         "sections": {
           "details": "تفاصيل الكتاب",
+          "bibliographic": "البيانات الببليوغرافية",
           "pricing": "التسعير",
           "chapters": "الفصول",
+          "tracks": "المسارات",
           "media": "الوسائط",
           "editions": "الإصدارات"
         },
@@ -166,7 +195,8 @@
           "coverUrl": "أو الصق رابط صورة مباشرةً",
           "pdfUrl": "أو الصق رابط PDF مباشرةً",
           "languageLocked": "اللغة مقفلة بعد الإنشاء. استخدم علامات التبويب أعلاه لإضافة نسخة بلغة أخرى.",
-          "sharedFieldLocked": "مشترك بين جميع نسخ اللغات — عدّله من علامة تبويب اللغة الأصلية."
+          "sharedFieldLocked": "مشترك بين جميع نسخ اللغات — عدّله من علامة تبويب اللغة الأصلية.",
+          "compiledFromIssues": "معرّفات أعداد المجلة التي جُمع منها محتوى هذا الكتاب (مرجع للقراءة فقط، FR-BOK-05)."
         },
         "upload": {
           "coverUpload": "رفع صورة الغلاف",

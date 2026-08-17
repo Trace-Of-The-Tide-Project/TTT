@@ -45,11 +45,13 @@ export function JoinWorkshopModal({
   // the modal is opened (closing keeps prior values discarded).
   useEffect(() => {
     if (!open) return;
-    setName("");
-    setEmail("");
-    setExperience("");
-    setBusy(false);
-    setError(null);
+    queueMicrotask(() => {
+      setName("");
+      setEmail("");
+      setExperience("");
+      setBusy(false);
+      setError(null);
+    });
     const id = window.setTimeout(() => nameRef.current?.focus(), 50);
     return () => window.clearTimeout(id);
   }, [open]);

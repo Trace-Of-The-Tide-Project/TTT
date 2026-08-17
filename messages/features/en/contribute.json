@@ -5,7 +5,9 @@
       "subtitle": "What would you like to contribute?",
       "typesLoadError": "Failed to load contribution types",
       "heroTitle": "Leave a Trace",
-      "heroSubtitle": "Share your story, document, artwork, or music. Each contribution helps us build a living archive of voices and memories."
+      "heroSubtitle": "Share your story, document, artwork, or music. Each contribution helps us build a living archive of voices and memories.",
+      "opinionNudgePrefix": "Writing an opinion piece instead?",
+      "opinionNudgeLink": "Submit it here — no wait, published open to everyone."
     },
     "types": {
       "personal_story": "Life Story",

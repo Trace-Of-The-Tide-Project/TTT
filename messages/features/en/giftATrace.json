@@ -1,0 +1,21 @@
+{
+  "GiftATrace": {
+    "title": "Gift a trace",
+    "subtitle": "The price is a gift, not a fee — everything published here eventually belongs to everyone. A gift now gives you early access and helps carry the work.",
+    "amountLabel": "Amount",
+    "amountPlaceholder": "Any amount",
+    "monetaryCta": "Gift {amount}",
+    "monetaryCtaEmpty": "Continue to gift",
+    "orInKind": "Prefer to give your time or skill instead?",
+    "inKindToggle": "Offer an in-kind gift",
+    "inKindLabel": "Describe what you're offering",
+    "inKindPlaceholder": "Translation, illustration, proofreading, hosting a reading, distribution…",
+    "inKindCta": "Submit for review",
+    "inKindNote": "An editor reviews in-kind gifts before they're confirmed.",
+    "sending": "Sending your gift…",
+    "sent": "Thank you — your gift helps keep this open for everyone.",
+    "inKindSent": "Submitted. An editor will review it shortly.",
+    "giftFailed": "Couldn't send the gift.",
+    "backHome": "Back to home"
+  }
+}

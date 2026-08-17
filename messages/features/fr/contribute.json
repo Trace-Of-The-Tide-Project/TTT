@@ -5,7 +5,9 @@
       "subtitle": "Que souhaitez-vous contribuer ?",
       "typesLoadError": "Impossible de charger les types de contribution",
       "heroTitle": "Laissez une trace",
-      "heroSubtitle": "Partagez votre histoire, document, œuvre ou musique. Chaque contribution aide à construire une archive vivante de voix et de mémoires."
+      "heroSubtitle": "Partagez votre histoire, document, œuvre ou musique. Chaque contribution aide à construire une archive vivante de voix et de mémoires.",
+      "opinionNudgePrefix": "Vous écrivez plutôt un article d'opinion ?",
+      "opinionNudgeLink": "Soumettez-le ici — sans attente, publié ouvert à tous."
     },
     "types": {
       "personal_story": "Récit de vie",

@@ -68,8 +68,7 @@ export function BookChaptersPanel({ bookId }: { bookId: string }) {
 
   // Reset local draft whenever the server list changes underneath us.
   useEffect(() => {
-    setDraft(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    queueMicrotask(() => setDraft(null));
   }, [chapters.length]);
 
   const [search, setSearch] = useState("");

@@ -1,0 +1,40 @@
+{
+  "Dashboard": {
+    "opinionSubmissions": {
+      "heading": "مقالات الرأي المقدَّمة",
+      "subheading": "مقالات مقدَّمة عبر نموذج مشاع الرأي العام، بانتظار المراجعة التحريرية.",
+      "loading": "جارٍ التحميل…",
+      "empty": "لا يوجد شيء هنا.",
+      "tabs": {
+        "new": "جديد",
+        "reviewing": "قيد المراجعة",
+        "accepted": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "table": {
+        "title": "العنوان",
+        "author": "الكاتب",
+        "language": "اللغة",
+        "submitted": "تاريخ التقديم",
+        "accept": "قبول",
+        "reject": "رفض"
+      },
+      "acceptDialog": {
+        "title": "قبول هذا المقال؟",
+        "description": "سينتقل \"{title}\" إلى المقبول. أنشئ المقالة منه في محرر المقالات.",
+        "confirm": "قبول"
+      },
+      "rejectDialog": {
+        "title": "رفض هذا المقال؟",
+        "description": "سيُعلَّم \"{title}\" كمرفوض. لا يمكن التراجع عن هذا.",
+        "confirm": "رفض"
+      },
+      "confirmBusy": "جارٍ الحفظ…",
+      "toasts": {
+        "accepted": "تم قبول المقال.",
+        "rejected": "تم رفض المقال.",
+        "failed": "تعذّر تحديث هذا المقال."
+      }
+    }
+  }
+}

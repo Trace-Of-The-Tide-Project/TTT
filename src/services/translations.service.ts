@@ -18,6 +18,7 @@ export const TRANSLATABLE_TYPES = {
   book: "knowledge/books",
   person: "people",
   contribution: "contributions",
+  track: "tracks",
 } as const;
 
 export type TranslatableType = keyof typeof TRANSLATABLE_TYPES;

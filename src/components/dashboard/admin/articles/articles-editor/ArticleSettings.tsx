@@ -21,6 +21,7 @@ import { ARTICLE_COVER_FRAMING } from "@/lib/framing-placements";
 import { AdjustImageButton } from "@/components/dashboard/admin/media-library/AdjustImageButton";
 import { TranslationOfPicker } from "./TranslationOfPicker";
 import { WriterPicker } from "@/components/dashboard/admin/writers/WriterPicker";
+import { TracksPicker } from "./TracksPicker";
 import { UserPicker } from "@/components/dashboard/admin/writers/UserPicker";
 import type { AdminUserListItem } from "@/services/users.service";
 import type { WriterProfile } from "@/services/writers.service";
@@ -154,6 +155,10 @@ type ContentSettingsProps = {
   onCollectionIdChange: (v: string) => void;
   tagIds: string[];
   onTagIdsChange: (ids: string[]) => void;
+  /** Omitted entirely by flows that don't yet support track tagging (e.g.
+   *  open calls) — the picker simply doesn't render. */
+  trackIds?: string[];
+  onTrackIdsChange?: (ids: string[]) => void;
   /** Current cover image URL (existing remote URL or a local object-URL preview). */
   coverImage?: string | null;
   /** Called with a freshly-picked file; upload is deferred until save. */
@@ -218,6 +223,8 @@ export function ContentSettings({
   collectionId,
   tagIds,
   onTagIdsChange,
+  trackIds,
+  onTrackIdsChange,
   coverImage,
   onCoverFileSelect,
   onCoverRemove,
@@ -516,6 +523,10 @@ export function ContentSettings({
             <p className="mt-1.5 text-xs text-[var(--tott-muted)]">{t("tags.hint")}</p>
           )}
         </div>
+
+        {trackIds && onTrackIdsChange ? (
+          <TracksPicker trackIds={trackIds} onTrackIdsChange={onTrackIdsChange} />
+        ) : null}
 
         <div>
           <SectionLabel icon={<GlobeIcon />}>{t("language.label")}</SectionLabel>

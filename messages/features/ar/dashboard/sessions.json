@@ -1,0 +1,167 @@
+{
+  "Dashboard": {
+    "sessions": {
+      "list": {
+        "pageTitle": "الجلسات",
+        "addNew": "إضافة جلسة",
+        "searchPlaceholder": "ابحث في الجلسات…",
+        "loading": "جارٍ تحميل الجلسات…",
+        "tryAgain": "أعد المحاولة",
+        "edit": "تعديل",
+        "delete": "حذف",
+        "unlimited": "غير محدود",
+        "headers": {
+          "title": "الجلسة",
+          "startsAt": "تبدأ في",
+          "capacity": "السعة",
+          "status": "الحالة"
+        },
+        "space": {
+          "all": "كل المساحات",
+          "writingRoom": "غرفة الكتابة",
+          "waqamh": "صالون وقامة"
+        },
+        "status": {
+          "draft": "مسودة",
+          "published": "منشورة",
+          "cancelled": "ملغاة",
+          "completed": "مكتملة"
+        },
+        "empty": {
+          "none": "لا توجد جلسات بعد.",
+          "noMatch": "لا توجد جلسات مطابقة لبحثك."
+        },
+        "errors": {
+          "loadFailed": "تعذّر تحميل الجلسات.",
+          "deleteFailed": "تعذّر حذف هذه الجلسة."
+        },
+        "toasts": {
+          "deleted": "تم حذف الجلسة."
+        },
+        "pagination": {
+          "previous": "السابق",
+          "next": "التالي"
+        },
+        "deleteModal": {
+          "title": "حذف الجلسة؟",
+          "description": "سيؤدي هذا إلى حذف \"{title}\" وتذاكرها نهائيًا.",
+          "confirm": "حذف",
+          "confirmBusy": "جارٍ الحذف…",
+          "cancel": "إلغاء"
+        }
+      },
+      "form": {
+        "backToList": "العودة إلى الجلسات",
+        "createTitle": "جلسة جديدة",
+        "editTitle": "تعديل الجلسة",
+        "loading": "جارٍ تحميل الجلسة…",
+        "cancel": "إلغاء",
+        "save": "حفظ التغييرات",
+        "create": "إنشاء الجلسة",
+        "saving": "جارٍ الحفظ…",
+        "sections": {
+          "basics": "الأساسيات",
+          "scheduling": "الجدولة",
+          "seatsAccess": "المقاعد والوصول",
+          "salon": "صالون وقامة"
+        },
+        "fields": {
+          "space": "المساحة",
+          "type": "النوع",
+          "typePlaceholder": "مثال: ورشة، قراءة، استماع",
+          "title": "العنوان",
+          "titlePlaceholder": "عنوان الجلسة",
+          "description": "الوصف",
+          "facilitatorId": "معرّف الميسّر",
+          "facilitatorIdPlaceholder": "معرّف مستخدم الميسّر",
+          "startsAt": "تبدأ في",
+          "durationMinutes": "المدة (دقائق)",
+          "format": "الصيغة",
+          "status": "الحالة",
+          "capacity": "السعة",
+          "capacityPlaceholder": "اتركه فارغًا لعدم التحديد",
+          "awnaSeats": "مقاعد الهبة (عونة)",
+          "accessRule": "قاعدة الوصول",
+          "requiredTierRank": "رتبة الاشتراك المطلوبة",
+          "requiredTierRankPlaceholder": "اتركه فارغًا لعدم اشتراط رتبة",
+          "price": "السعر",
+          "pricePlaceholder": "0 للمجاني",
+          "currency": "العملة",
+          "voices": "الأصوات",
+          "voicesPlaceholder": "أسماء مفصولة بفواصل",
+          "onlineJoinUrl": "رابط الانضمام",
+          "onlineJoinUrlPlaceholder": "https://…",
+          "relatedIssueId": "معرّف العدد المرتبط",
+          "relatedBookId": "معرّف الكتاب المرتبط"
+        },
+        "formatOptions": {
+          "online": "عبر الإنترنت",
+          "inPerson": "حضوري",
+          "hybrid": "مختلط"
+        },
+        "salonTypeOptions": {
+          "reading": "قراءة",
+          "listening": "استماع",
+          "conversation": "حوار",
+          "launch": "إطلاق"
+        },
+        "accessRuleOptions": {
+          "free": "مجاني",
+          "paid": "مدفوع",
+          "memberIncluded": "ضمن العضوية",
+          "mixed": "مختلط"
+        },
+        "errors": {
+          "titleRequired": "العنوان مطلوب.",
+          "awnaSeatsRequired": "يجب أن تخصص كل جلسة مقعد هبة (عونة) واحدًا على الأقل.",
+          "createFailed": "تعذّر إنشاء هذه الجلسة.",
+          "updateFailed": "تعذّر تحديث هذه الجلسة."
+        },
+        "toasts": {
+          "created": "تم إنشاء الجلسة.",
+          "updated": "تم تحديث الجلسة."
+        }
+      },
+      "attendance": {
+        "statsHeading": "الحضور",
+        "loading": "جارٍ تحميل التذاكر…",
+        "empty": "لا توجد تذاكر بعد.",
+        "markAttended": "تسجيل الحضور",
+        "attended": "حاضر",
+        "headers": {
+          "user": "المستخدم",
+          "type": "النوع",
+          "status": "الحالة"
+        },
+        "stats": {
+          "registered": "المسجّلون",
+          "confirmed": "المؤكَّدون",
+          "attended": "الحاضرون",
+          "waitlisted": "قائمة الانتظار",
+          "awnaSeats": "مقاعد الهبة المستخدمة",
+          "seatsRemaining": "المقاعد المتبقية"
+        },
+        "ticketType": {
+          "free": "مجاني",
+          "paid": "مدفوع",
+          "member_included": "ضمن العضوية",
+          "gift_value": "هبة",
+          "awna_seat": "مقعد هبة (عونة)"
+        },
+        "ticketStatus": {
+          "reserved": "محجوز",
+          "confirmed": "مؤكَّد",
+          "attended": "حاضر",
+          "canceled": "ملغى",
+          "waitlisted": "قائمة الانتظار"
+        },
+        "errors": {
+          "markFailed": "تعذّر تسجيل حضور هذه التذكرة."
+        },
+        "toasts": {
+          "marked": "تم تسجيل حضور التذكرة."
+        }
+      }
+    }
+  }
+}

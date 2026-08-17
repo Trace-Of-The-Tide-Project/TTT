@@ -38,13 +38,15 @@ export function ApplyResidencyModal({ open, onClose, onSubmitted }: Props) {
 
   useEffect(() => {
     if (!open) return;
-    setName("");
-    setEmail("");
-    setWhy("");
-    setWorking("");
-    setSubmitted(false);
-    setBusy(false);
-    setError(null);
+    queueMicrotask(() => {
+      setName("");
+      setEmail("");
+      setWhy("");
+      setWorking("");
+      setSubmitted(false);
+      setBusy(false);
+      setError(null);
+    });
     const id = window.setTimeout(() => nameRef.current?.focus(), 50);
     return () => window.clearTimeout(id);
   }, [open]);

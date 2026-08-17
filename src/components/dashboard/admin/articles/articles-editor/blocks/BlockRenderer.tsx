@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { RichTextEditor } from "../RichTextEditor";
 import { CloudUploadIcon } from "@/components/ui/icons";
-import type { ContentFormConfig, MainMediaEditorCopy } from "../content-form-config";
+import type { MainMediaEditorCopy } from "../content-form-config";
 import { theme } from "@/lib/theme";
 import type { ContentBlock } from "../ContentBlocks";
 import type { BlockType } from "../AvailableBlocks";

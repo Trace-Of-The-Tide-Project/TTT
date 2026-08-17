@@ -20,6 +20,7 @@ import type { RelatedContentCardData } from "@/components/content/related/Relate
 import { useOptionalArticleReadingHeader } from "@/components/layout/ArticleReadingHeaderContext";
 import { previewHrefForContentType } from "@/lib/content/public-article-preview-href";
 import { ArticleBookChapterNav } from "@/components/content/article/ArticleBookChapterNav";
+import { TrackBadges } from "@/components/tracks/TrackBadges";
 
 const FALLBACK_IMAGE = "/images/image.png";
 
@@ -246,8 +247,14 @@ function ArticleByIdLoader({
           previewTruncated={article.preview_truncated}
           totalBlockCount={article.total_block_count}
           commonsAt={!article.locked ? article.commons_at : undefined}
+          opinionDisclaimer={article.opinion_disclaimer}
         />
         {!article.locked ? <ArticleBookChapterNav articleId={article.id} /> : null}
+        {!article.locked ? (
+          <div className="mx-auto max-w-3xl px-4 py-4 sm:px-6">
+            <TrackBadges entityType="article" entityId={article.id} />
+          </div>
+        ) : null}
       </>
     );
   }

@@ -32,11 +32,11 @@ export function useObjectUrl(file: File | null): string | null {
 
   useEffect(() => {
     if (!file) {
-      setUrl(null);
+      queueMicrotask(() => setUrl(null));
       return;
     }
     const objectUrl = URL.createObjectURL(file);
-    setUrl(objectUrl);
+    queueMicrotask(() => setUrl(objectUrl));
     return () => URL.revokeObjectURL(objectUrl);
   }, [file]);
 

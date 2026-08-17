@@ -187,11 +187,11 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
 
   useEffect(() => {
     if (!loadId) {
-      setLoading(false);
+      queueMicrotask(() => setLoading(false));
       return;
     }
     let cancelled = false;
-    setLoading(true);
+    queueMicrotask(() => setLoading(true));
     getCollectionByIdAdmin(loadId).then((c) => {
       if (cancelled) return;
       setLoadedSource(c);
@@ -204,6 +204,7 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
 
   useEffect(() => {
     if (seeded || !loadedSource) return;
+    queueMicrotask(() => {
     if (isEdit) {
       const lang = (loadedSource.language ?? "en").trim() || "en";
       setForms({ [lang]: seedFromCollection(loadedSource) });
@@ -215,6 +216,7 @@ export function CollectionFormContent({ collectionId, createLanguage, translatio
       });
     }
     setSeeded(true);
+    });
   }, [loadedSource, seeded, isEdit, isTranslation, initialLang]);
 
   const updateForm = useCallback(

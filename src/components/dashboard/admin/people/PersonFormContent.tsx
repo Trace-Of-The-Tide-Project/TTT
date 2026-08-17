@@ -121,20 +121,25 @@ export function PersonFormContent({ personId, createLanguage, translationOf }: P
     if (!isEdit || seeded || !personQuery.data) return;
     const p = personQuery.data;
     const lang = (p.language ?? "en").trim() || "en";
-    setForms({ [lang]: seedFromPerson(p) });
-    setActiveLang(lang);
-    setPrimaryLang(lang);
-    setSeeded(true);
+    queueMicrotask(() => {
+      setForms({ [lang]: seedFromPerson(p) });
+      setActiveLang(lang);
+      setPrimaryLang(lang);
+      setSeeded(true);
+    });
   }, [isEdit, seeded, personQuery.data]);
 
   // Clone the source person when adding a translation; keep the target
   // language already set from `?language=`.
   useEffect(() => {
     if (!isTranslation || translationSeeded || !sourceQuery.data) return;
-    setForms({
-      [initialLang]: { ...seedFromPerson(sourceQuery.data), language: initialLang },
+    const source = sourceQuery.data;
+    queueMicrotask(() => {
+      setForms({
+        [initialLang]: { ...seedFromPerson(source), language: initialLang },
+      });
+      setTranslationSeeded(true);
     });
-    setTranslationSeeded(true);
   }, [isTranslation, translationSeeded, sourceQuery.data, initialLang]);
 
   const updateForm = useCallback(

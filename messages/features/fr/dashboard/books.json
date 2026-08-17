@@ -119,7 +119,34 @@
             "material_only": "Soutien matériel uniquement (pas de transition automatique en bien commun)"
           },
           "giftValueInitial": "Montant de don suggéré",
-          "giftWindowDays": "Période de don (jours)"
+          "giftWindowDays": "Période de don (jours)",
+          "isbn": "ISBN",
+          "isbnPlaceholder": "978-1-234-56789-7",
+          "edition": "Édition",
+          "editionPlaceholder": "p. ex. 1re édition",
+          "imprint": "Label éditorial",
+          "imprintPlaceholder": "Nom du label",
+          "format": "Format",
+          "release_mode": "Mode de publication",
+          "legal_deposit_status": "Statut du dépôt légal",
+          "cip_status": "Statut CIP",
+          "compiled_from_issues": "Compilé à partir de numéros",
+          "compiled_from_issuesPlaceholder": "IDs de numéros, séparés par des virgules"
+        },
+        "formats": {
+          "digital": "Numérique",
+          "print": "Imprimé",
+          "both": "Imprimé et numérique"
+        },
+        "releaseModes": {
+          "integrated": "Intégré (publié comme un seul livre)",
+          "serialized": "Feuilleton (chapitres publiés selon un calendrier)"
+        },
+        "bibStatus": {
+          "not_required": "Non requis",
+          "pending": "En attente",
+          "submitted": "Soumis",
+          "confirmed": "Confirmé"
         },
         "languages": {
           "en": "Anglais",
@@ -130,8 +157,10 @@
         },
         "sections": {
           "details": "Détails du livre",
+          "bibliographic": "Données bibliographiques",
           "pricing": "Tarification",
           "chapters": "Chapitres",
+          "tracks": "Séries",
           "media": "Médias",
           "editions": "Éditions"
         },
@@ -166,7 +195,8 @@
           "coverUrl": "Ou collez directement l'URL d'une image",
           "pdfUrl": "Ou collez directement l'URL d'un PDF",
           "languageLocked": "La langue est verrouillée après création. Utilisez les onglets ci-dessus pour ajouter une autre version linguistique.",
-          "sharedFieldLocked": "Partagé entre toutes les éditions linguistiques — modifiez-le depuis l'onglet de la langue d'origine."
+          "sharedFieldLocked": "Partagé entre toutes les éditions linguistiques — modifiez-le depuis l'onglet de la langue d'origine.",
+          "compiledFromIssues": "IDs des numéros du magazine dont ce livre a été compilé (référence en lecture seule, FR-BOK-05)."
         },
         "upload": {
           "coverUpload": "Télécharger l'image de couverture",

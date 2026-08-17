@@ -32,17 +32,19 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    Promise.all([
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      api.get("/analytics/overview", { params: { period } }).then((r: { data: any }) => { if (!cancelled) setOverview(r.data); }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      api.get("/analytics/content-performance", { params: { period } }).then((r: { data: any }) => { if (!cancelled) setContentPerf(r.data); }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      api.get("/analytics/top-creators", { params: { period, limit: 10 } }).then((r: { data: any }) => { if (!cancelled) setTopCreatorsData(r.data); }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      api.get("/analytics/conversion-funnel").then((r: { data: any }) => { if (!cancelled) setFunnel(r.data); }),
-    ]).finally(() => { if (!cancelled) setLoading(false); });
+    queueMicrotask(() => {
+      setLoading(true);
+      Promise.all([
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        api.get("/analytics/overview", { params: { period } }).then((r: { data: any }) => { if (!cancelled) setOverview(r.data); }),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        api.get("/analytics/content-performance", { params: { period } }).then((r: { data: any }) => { if (!cancelled) setContentPerf(r.data); }),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        api.get("/analytics/top-creators", { params: { period, limit: 10 } }).then((r: { data: any }) => { if (!cancelled) setTopCreatorsData(r.data); }),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        api.get("/analytics/conversion-funnel").then((r: { data: any }) => { if (!cancelled) setFunnel(r.data); }),
+      ]).finally(() => { if (!cancelled) setLoading(false); });
+    });
     return () => { cancelled = true; };
   }, [period]);
 

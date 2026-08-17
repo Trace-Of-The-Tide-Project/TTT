@@ -1,0 +1,18 @@
+{
+  "Tracks": {
+    "indexTitle": "Séries",
+    "indexEmpty": "Aucune série pour le moment. Revenez bientôt.",
+    "empty": "Rien dans cette série pour le moment.",
+    "type": {
+      "article": "Article",
+      "book": "Livre",
+      "magazine_issue": "Numéro"
+    },
+    "notFound": {
+      "badge": "Série",
+      "title": "Série introuvable",
+      "description": "Cette série n'existe pas ou n'est pas encore publiée.",
+      "cta": "Parcourir toutes les séries"
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "Dashboard": {
+    "tracks": {
+      "list": {
+        "pageTitle": "المسارات",
+        "addNew": "إضافة مسار",
+        "searchPlaceholder": "ابحث عن مسارات…",
+        "loading": "جارٍ التحميل…",
+        "unpublished": "غير منشور",
+        "empty": {
+          "none": "لا توجد مسارات بعد.",
+          "noMatch": "لا توجد مسارات مطابقة لبحثك."
+        },
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "form": {
+        "backToList": "المسارات",
+        "createTitle": "إضافة مسار",
+        "editTitle": "تعديل المسار",
+        "loading": "جارٍ التحميل…",
+        "cancel": "إلغاء",
+        "saving": "جارٍ الحفظ…",
+        "save": "حفظ التغييرات",
+        "create": "إنشاء",
+        "fields": {
+          "title": "العنوان",
+          "titlePlaceholder": "مثال: الأرشيف",
+          "slug": "الرابط المختصر",
+          "slugPlaceholder": "مثال: archive",
+          "description": "الوصف",
+          "descriptionPlaceholder": "وصف مختصر لهذا الخط التحريري",
+          "color": "اللون",
+          "icon": "الأيقونة",
+          "iconPlaceholder": "اسم الأيقونة أو رابطها",
+          "isPublished": "منشور"
+        },
+        "translation": {
+          "banner": "إضافة نسخة {language}",
+          "ofOriginal": "ترجمة لـ: {name}"
+        },
+        "items": {
+          "label": "العناصر",
+          "hint": "المقالات والكتب والأعداد ضمن هذا المسار، بترتيب العرض.",
+          "loading": "جارٍ التحميل…",
+          "empty": "لا توجد عناصر في هذا المسار بعد.",
+          "moveUp": "تحريك لأعلى",
+          "moveDown": "تحريك لأسفل",
+          "remove": "إزالة",
+          "add": "إضافة",
+          "searchPlaceholder": "ابحث لتضيف…",
+          "searching": "جارٍ البحث…",
+          "noResults": "لا نتائج.",
+          "type": {
+            "article": "مقال",
+            "book": "كتاب",
+            "magazine_issue": "عدد"
+          }
+        }
+      },
+      "errors": {
+        "titleSlugRequired": "العنوان والرابط المختصر مطلوبان.",
+        "createFailed": "تعذّر إنشاء المسار.",
+        "updateFailed": "تعذّر تحديث المسار.",
+        "deleteFailed": "تعذّر حذف المسار."
+      },
+      "toasts": {
+        "created": "تم إنشاء المسار",
+        "updated": "تم تحديث المسار",
+        "deleted": "تم حذف المسار"
+      },
+      "deleteModal": {
+        "title": "حذف المسار",
+        "description": "حذف «{name}»؟ لا يمكن التراجع عن هذا الإجراء.",
+        "cancel": "إلغاء",
+        "confirm": "حذف",
+        "confirmBusy": "جارٍ الحذف…"
+      },
+      "picker": {
+        "label": "المسارات",
+        "addPlaceholder": "ابحث عن مسارات لإضافتها…",
+        "loading": "جارٍ تحميل المسارات…",
+        "noResults": "لا توجد مسارات مطابقة.",
+        "allSelected": "تم اختيار جميع المسارات بالفعل.",
+        "removeAria": "إزالة {name}",
+        "unknownName": "{prefix}",
+        "hint": "أضف هذا العمل إلى خط تحريري واحد أو أكثر."
+      }
+    }
+  }
+}

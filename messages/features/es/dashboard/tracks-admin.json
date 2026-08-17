@@ -1,0 +1,91 @@
+{
+  "Dashboard": {
+    "tracks": {
+      "list": {
+        "pageTitle": "Series",
+        "addNew": "Añadir serie",
+        "searchPlaceholder": "Buscar series…",
+        "loading": "Cargando…",
+        "unpublished": "Sin publicar",
+        "empty": {
+          "none": "Aún no hay series.",
+          "noMatch": "Ninguna serie coincide con tu búsqueda."
+        },
+        "edit": "Editar",
+        "delete": "Eliminar"
+      },
+      "form": {
+        "backToList": "Series",
+        "createTitle": "Añadir serie",
+        "editTitle": "Editar serie",
+        "loading": "Cargando…",
+        "cancel": "Cancelar",
+        "saving": "Guardando…",
+        "save": "Guardar cambios",
+        "create": "Crear",
+        "fields": {
+          "title": "Título",
+          "titlePlaceholder": "p. ej. Archivo",
+          "slug": "Slug",
+          "slugPlaceholder": "p. ej. archive",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Una breve descripción de esta línea editorial",
+          "color": "Color",
+          "icon": "Icono",
+          "iconPlaceholder": "Nombre de icono o URL",
+          "isPublished": "Publicado"
+        },
+        "translation": {
+          "banner": "Añadiendo la versión {language}",
+          "ofOriginal": "Traducción de: {name}"
+        },
+        "items": {
+          "label": "Elementos",
+          "hint": "Artículos, libros y números en esta serie, en orden de visualización.",
+          "loading": "Cargando…",
+          "empty": "Aún no hay elementos en esta serie.",
+          "moveUp": "Subir",
+          "moveDown": "Bajar",
+          "remove": "Quitar",
+          "add": "Añadir",
+          "searchPlaceholder": "Buscar para añadir…",
+          "searching": "Buscando…",
+          "noResults": "Sin resultados.",
+          "type": {
+            "article": "Artículo",
+            "book": "Libro",
+            "magazine_issue": "Número"
+          }
+        }
+      },
+      "errors": {
+        "titleSlugRequired": "El título y el slug son obligatorios.",
+        "createFailed": "No se pudo crear la serie.",
+        "updateFailed": "No se pudo actualizar la serie.",
+        "deleteFailed": "No se pudo eliminar la serie."
+      },
+      "toasts": {
+        "created": "Serie creada",
+        "updated": "Serie actualizada",
+        "deleted": "Serie eliminada"
+      },
+      "deleteModal": {
+        "title": "Eliminar serie",
+        "description": "¿Eliminar «{name}»? Esta acción no se puede deshacer.",
+        "cancel": "Cancelar",
+        "confirm": "Eliminar",
+        "confirmBusy": "Eliminando…"
+      },
+      "picker": {
+        "label": "Series",
+        "addPlaceholder": "Buscar series para añadir…",
+        "loading": "Cargando series…",
+        "noResults": "No hay series coincidentes.",
+        "allSelected": "Todas las series ya están seleccionadas.",
+        "removeAria": "Quitar {name}",
+        "unknownName": "{prefix}",
+        "hint": "Etiqueta esta obra con una o más líneas editoriales."
+      }
+    }
+  }
+}

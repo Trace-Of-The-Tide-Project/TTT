@@ -1,0 +1,18 @@
+{
+  "Tracks": {
+    "indexTitle": "Tracks",
+    "indexEmpty": "No tracks yet. Check back soon.",
+    "empty": "Nothing on this track yet.",
+    "type": {
+      "article": "Article",
+      "book": "Book",
+      "magazine_issue": "Issue"
+    },
+    "notFound": {
+      "badge": "Track",
+      "title": "Track not found",
+      "description": "This track doesn't exist or isn't published yet.",
+      "cta": "Browse all tracks"
+    }
+  }
+}

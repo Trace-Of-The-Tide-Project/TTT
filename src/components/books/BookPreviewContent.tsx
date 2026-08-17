@@ -132,7 +132,7 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
     showReader && previewReady && !readerImagesMode && !readerPdfMode;
 
   useEffect(() => {
-    fetchPreviewPage(currentPage);
+    queueMicrotask(() => { fetchPreviewPage(currentPage); });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book.id]);
 
@@ -148,9 +148,12 @@ export function BookPreviewContent({ book }: { book: BookPreviewBook }) {
   // state machine. React 19's set-state-in-effect rule doesn't fit.
   useEffect(() => {
     if (!flipping) return;
-    setFlipPhase("start");
-    const raf = requestAnimationFrame(() => {
-      requestAnimationFrame(() => setFlipPhase("end"));
+    let raf = 0;
+    queueMicrotask(() => {
+      setFlipPhase("start");
+      raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setFlipPhase("end"));
+      });
     });
     return () => cancelAnimationFrame(raf);
   }, [flipping]);

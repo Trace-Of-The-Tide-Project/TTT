@@ -75,9 +75,9 @@ export function AdminProfileInformation() {
   const [savedFlash, setSavedFlash] = useState(false);
   const objectUrlRef = useRef<string | null>(null);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (!profile) return;
+    queueMicrotask(() => {
     setFullName(profile.full_name);
     setEmail(profile.email);
     setRole(profile.job_title);
@@ -96,6 +96,7 @@ export function AdminProfileInformation() {
       profile.social_links.extra.map((url) => ({ id: crypto.randomUUID(), url }))
     );
     if (profile.avatar_url) setAvatarPreview(profile.avatar_url);
+    });
   }, [profile]);
 
   const saveMutation = useMutation({

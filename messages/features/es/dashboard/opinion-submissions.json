@@ -1,0 +1,40 @@
+{
+  "Dashboard": {
+    "opinionSubmissions": {
+      "heading": "Envíos de opinión",
+      "subheading": "Textos enviados a través del formulario público del Mashaa de Opinión, a la espera de revisión editorial.",
+      "loading": "Cargando…",
+      "empty": "No hay nada aquí.",
+      "tabs": {
+        "new": "Nuevos",
+        "reviewing": "En revisión",
+        "accepted": "Aceptados",
+        "rejected": "Rechazados"
+      },
+      "table": {
+        "title": "Título",
+        "author": "Autor",
+        "language": "Idioma",
+        "submitted": "Enviado",
+        "accept": "Aceptar",
+        "reject": "Rechazar"
+      },
+      "acceptDialog": {
+        "title": "¿Aceptar este texto?",
+        "description": "\"{title}\" pasará a aceptado. Crea el artículo desde el editor de artículos.",
+        "confirm": "Aceptar"
+      },
+      "rejectDialog": {
+        "title": "¿Rechazar este texto?",
+        "description": "\"{title}\" se marcará como rechazado. Esto no se puede deshacer.",
+        "confirm": "Rechazar"
+      },
+      "confirmBusy": "Guardando…",
+      "toasts": {
+        "accepted": "Envío aceptado.",
+        "rejected": "Envío rechazado.",
+        "failed": "No se pudo actualizar este envío."
+      }
+    }
+  }
+}

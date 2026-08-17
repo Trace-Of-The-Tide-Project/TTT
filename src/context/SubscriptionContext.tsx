@@ -36,7 +36,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     if (status === 'loading') return;
-    fetchData(status === 'authenticated');
+    queueMicrotask(() => fetchData(status === 'authenticated'));
   }, [status, fetchData]);
 
   return (

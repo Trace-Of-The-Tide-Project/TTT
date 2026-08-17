@@ -77,7 +77,7 @@ const EXPERIENCES: Experience[] = [
   {
     key: "exp1",
     iconSrc: "/images/writing-room/workshops-icon.svg",
-    href: "/writing-room/workshops",
+    href: "/writing-room/sessions",
   },
   {
     key: "exp2",
@@ -548,7 +548,7 @@ export function WritingRoomContent({
             </Link>
             {/* Secondary — dark pill "Join a Workshop". */}
             <Link
-              href="/writing-room/workshops"
+              href="/writing-room/sessions"
               className="inline-flex items-center justify-center transition-opacity hover:opacity-90"
               style={{
                 height: "40px",

@@ -119,7 +119,34 @@
             "material_only": "Solo apoyo material (sin transición automática a dominio público)"
           },
           "giftValueInitial": "Monto de regalo sugerido",
-          "giftWindowDays": "Ventana de regalo (días)"
+          "giftWindowDays": "Ventana de regalo (días)",
+          "isbn": "ISBN",
+          "isbnPlaceholder": "978-1-234-56789-7",
+          "edition": "Edición",
+          "editionPlaceholder": "p. ej. 1.ª edición",
+          "imprint": "Sello editorial",
+          "imprintPlaceholder": "Nombre del sello",
+          "format": "Formato",
+          "release_mode": "Modo de publicación",
+          "legal_deposit_status": "Estado del depósito legal",
+          "cip_status": "Estado de la CIP",
+          "compiled_from_issues": "Compilado de números",
+          "compiled_from_issuesPlaceholder": "IDs de números, separados por comas"
+        },
+        "formats": {
+          "digital": "Digital",
+          "print": "Impreso",
+          "both": "Impreso y digital"
+        },
+        "releaseModes": {
+          "integrated": "Integrado (publicado como un solo libro)",
+          "serialized": "Serializado (los capítulos se publican según calendario)"
+        },
+        "bibStatus": {
+          "not_required": "No requerido",
+          "pending": "Pendiente",
+          "submitted": "Enviado",
+          "confirmed": "Confirmado"
         },
         "languages": {
           "en": "Inglés",
@@ -130,8 +157,10 @@
         },
         "sections": {
           "details": "Detalles del libro",
+          "bibliographic": "Datos bibliográficos",
           "pricing": "Precio",
           "chapters": "Capítulos",
+          "tracks": "Series",
           "media": "Multimedia",
           "editions": "Ediciones"
         },
@@ -166,7 +195,8 @@
           "coverUrl": "O pega directamente la URL de una imagen",
           "pdfUrl": "O pega directamente la URL de un PDF",
           "languageLocked": "El idioma queda bloqueado tras la creación. Usa las pestañas de arriba para añadir otra versión de idioma.",
-          "sharedFieldLocked": "Compartido entre todas las ediciones de idioma — edítalo en la pestaña del idioma original."
+          "sharedFieldLocked": "Compartido entre todas las ediciones de idioma — edítalo en la pestaña del idioma original.",
+          "compiledFromIssues": "IDs de números de la revista de los que se compiló este libro (referencia de solo lectura, FR-BOK-05)."
         },
         "upload": {
           "coverUpload": "Subir imagen de portada",

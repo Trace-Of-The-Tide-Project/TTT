@@ -7,7 +7,6 @@ import { EyeIcon, FileTextIcon, PenLineIcon } from "@/components/ui/icons";
 import { HexIconOutlined } from "@/components/dashboard/admin/articles/articles-create/HexIconOutlined";
 import { useCmsPages } from "@/hooks/queries/cms";
 import { useRouter } from "@/i18n/navigation";
-import { isReservedPublicSlug } from "@/lib/cms/reserved-slugs";
 import type { CmsPage } from "@/services/cms.service";
 import { CmsPreviewFrame } from "@/components/dashboard/admin/editor/preview/CmsPreviewFrame";
 import { useVisualEditorTab } from "@/components/dashboard/admin/editor/VisualEditorTabContext";

@@ -1,16 +1,13 @@
 import { getTranslations } from "next-intl/server";
-import ComingSoon from "@/components/ui/ComingSoon";
+import { SupportPageLayout } from "@/components/layout/SupportPageLayout";
+import { GiftATraceForm } from "@/components/giftATrace/GiftATraceForm";
 
 export default async function GiftATracePage() {
-  const t = await getTranslations("ComingSoon");
+  const t = await getTranslations("GiftATrace");
 
   return (
-    <ComingSoon
-      badge={t("shared.badge")}
-      title={t("features.giftATrace.title")}
-      description={t("features.giftATrace.description")}
-      ctaLabel={t("shared.ctaLabel")}
-      homeLabel={t("shared.homeLabel")}
-    />
+    <SupportPageLayout title={t("title")} subtitle={t("subtitle")}>
+      <GiftATraceForm />
+    </SupportPageLayout>
   );
 }

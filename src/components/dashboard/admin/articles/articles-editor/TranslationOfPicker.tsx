@@ -47,15 +47,17 @@ export function TranslationOfPicker({
   // Resolve the linked article's title for display (edit mode seeds only the id).
   useEffect(() => {
     let alive = true;
-    if (!value) {
-      setSelectedTitle(null);
-      return;
-    }
-    getArticleById(value)
-      .then((a) => {
-        if (alive) setSelectedTitle(a?.title ?? null);
-      })
-      .catch(() => {});
+    queueMicrotask(() => {
+      if (!value) {
+        setSelectedTitle(null);
+        return;
+      }
+      getArticleById(value)
+        .then((a) => {
+          if (alive) setSelectedTitle(a?.title ?? null);
+        })
+        .catch(() => {});
+    });
     return () => {
       alive = false;
     };
@@ -67,10 +69,10 @@ export function TranslationOfPicker({
     if (!open || value) return;
     const q = query.trim();
     if (q.length < 2) {
-      setResults([]);
+      queueMicrotask(() => setResults([]));
       return;
     }
-    setLoading(true);
+    queueMicrotask(() => setLoading(true));
     const handle = setTimeout(async () => {
       try {
         // product=all: admin picker must find magazine articles too.

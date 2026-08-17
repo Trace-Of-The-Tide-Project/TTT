@@ -1,10 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import { getBooks, getBookById, type GetBooksParams } from "@/services/books.service";
+import {
+  getBooks,
+  getBookById,
+  getBookWork,
+  type GetBooksParams,
+} from "@/services/books.service";
 
 export const booksKeys = {
   all: ["books"] as const,
   list: (params?: GetBooksParams) => ["books", "list", params ?? {}] as const,
   byId: (id: string) => ["books", "byId", id] as const,
+  work: (groupId: string) => ["books", "work", groupId] as const,
 };
 
 export function useBooks(params?: GetBooksParams) {
@@ -21,5 +27,13 @@ export function useBook(bookId: string | null | undefined) {
     enabled: Boolean(bookId),
     refetchOnWindowFocus: false,
     staleTime: Infinity,
+  });
+}
+
+export function useBookWork(groupId: string | null | undefined) {
+  return useQuery({
+    queryKey: booksKeys.work(groupId ?? ""),
+    queryFn: () => getBookWork(groupId as string),
+    enabled: Boolean(groupId),
   });
 }

@@ -43,6 +43,7 @@ import type {
 import { IssueArticlesPanel } from "../IssueArticlesPanel";
 import { IssueContributorsPanel } from "../IssueContributorsPanel";
 import { IssueSectionsPanel } from "../IssueSectionsPanel";
+import { IssueTracksPanel } from "../IssueTracksPanel";
 
 const KINDS = ["editorial", "crowdfunded"] as const;
 const STATUSES = ["published", "draft", "archived"] as const;
@@ -938,6 +939,7 @@ export function IssueEditor({ issueId }: { issueId?: string }) {
               <IssueSectionsPanel issueId={item.id} />
               <IssueArticlesPanel issueId={item.id} magazineId={item.magazine_id ?? null} />
               <IssueContributorsPanel issueId={item.id} />
+              <IssueTracksPanel issueId={item.id} />
             </div>
           ) : (
             <p className="rounded-lg border border-dashed border-[var(--tott-card-border)] px-4 py-3 text-xs text-[var(--tott-muted)]">

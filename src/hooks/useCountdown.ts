@@ -27,7 +27,7 @@ export function useCountdown(commonsAt: string): CountdownState {
   const [time, setTime] = useState(() => remaining(commonsAt));
 
   useEffect(() => {
-    setTime(remaining(commonsAt));
+    queueMicrotask(() => setTime(remaining(commonsAt)));
     const id = setInterval(() => setTime(remaining(commonsAt)), 60_000);
     return () => clearInterval(id);
   }, [commonsAt]);

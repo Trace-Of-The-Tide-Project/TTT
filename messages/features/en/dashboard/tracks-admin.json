@@ -1,0 +1,91 @@
+{
+  "Dashboard": {
+    "tracks": {
+      "list": {
+        "pageTitle": "Tracks",
+        "addNew": "Add track",
+        "searchPlaceholder": "Search tracks…",
+        "loading": "Loading…",
+        "unpublished": "Unpublished",
+        "empty": {
+          "none": "No tracks yet.",
+          "noMatch": "No tracks match your search."
+        },
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "form": {
+        "backToList": "Tracks",
+        "createTitle": "Add track",
+        "editTitle": "Edit track",
+        "loading": "Loading…",
+        "cancel": "Cancel",
+        "saving": "Saving…",
+        "save": "Save changes",
+        "create": "Create",
+        "fields": {
+          "title": "Title",
+          "titlePlaceholder": "e.g. Archive",
+          "slug": "Slug",
+          "slugPlaceholder": "e.g. archive",
+          "description": "Description",
+          "descriptionPlaceholder": "A short description of this editorial throughline",
+          "color": "Color",
+          "icon": "Icon",
+          "iconPlaceholder": "Icon name or URL",
+          "isPublished": "Published"
+        },
+        "translation": {
+          "banner": "Adding the {language} version",
+          "ofOriginal": "Translation of: {name}"
+        },
+        "items": {
+          "label": "Items",
+          "hint": "Articles, books, and issues on this track, in display order.",
+          "loading": "Loading…",
+          "empty": "No items on this track yet.",
+          "moveUp": "Move up",
+          "moveDown": "Move down",
+          "remove": "Remove",
+          "add": "Add",
+          "searchPlaceholder": "Search to add…",
+          "searching": "Searching…",
+          "noResults": "No results.",
+          "type": {
+            "article": "Article",
+            "book": "Book",
+            "magazine_issue": "Issue"
+          }
+        }
+      },
+      "errors": {
+        "titleSlugRequired": "Title and slug are required.",
+        "createFailed": "Could not create the track.",
+        "updateFailed": "Could not update the track.",
+        "deleteFailed": "Could not delete the track."
+      },
+      "toasts": {
+        "created": "Track created",
+        "updated": "Track updated",
+        "deleted": "Track deleted"
+      },
+      "deleteModal": {
+        "title": "Delete track",
+        "description": "Delete “{name}”? This cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete",
+        "confirmBusy": "Deleting…"
+      },
+      "picker": {
+        "label": "Tracks",
+        "addPlaceholder": "Search tracks to add…",
+        "loading": "Loading tracks…",
+        "noResults": "No matching tracks.",
+        "allSelected": "All tracks are already selected.",
+        "removeAria": "Remove {name}",
+        "unknownName": "{prefix}",
+        "hint": "Tag this piece to one or more editorial throughlines."
+      }
+    }
+  }
+}

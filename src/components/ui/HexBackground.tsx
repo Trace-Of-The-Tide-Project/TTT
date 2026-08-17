@@ -101,7 +101,7 @@ export default function HexBackground({ twinkle = false }: { twinkle?: boolean }
   const id = useId();
   const isIdle = useIdle({ timeout: 2500 });
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { queueMicrotask(() => setMounted(true)); }, []);
 
   const patternId = `hexagons-${id.replace(/:/g, "")}`;
   const gradientId = `hex-fade-${id.replace(/:/g, "")}`;

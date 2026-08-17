@@ -1,0 +1,21 @@
+{
+  "GiftATrace": {
+    "title": "Offrir une trace",
+    "subtitle": "Le prix est un don, non un tarif — tout ce qui est publié ici finit par appartenir à tous. Un don maintenant vous donne un accès anticipé et aide à soutenir le travail.",
+    "amountLabel": "Montant",
+    "amountPlaceholder": "N'importe quel montant",
+    "monetaryCta": "Offrir {amount}",
+    "monetaryCtaEmpty": "Continuer pour offrir",
+    "orInKind": "Préférez-vous offrir votre temps ou une compétence à la place ?",
+    "inKindToggle": "Offrir un don en nature",
+    "inKindLabel": "Décrivez ce que vous proposez",
+    "inKindPlaceholder": "Traduction, illustration, relecture, organisation d'une lecture, distribution…",
+    "inKindCta": "Soumettre pour examen",
+    "inKindNote": "Un éditeur examine les dons en nature avant leur confirmation.",
+    "sending": "Envoi de votre don…",
+    "sent": "Merci — votre don aide à garder cela ouvert pour tous.",
+    "inKindSent": "Envoyé. Un éditeur l'examinera bientôt.",
+    "giftFailed": "Impossible d'envoyer le don.",
+    "backHome": "Retour à l'accueil"
+  }
+}

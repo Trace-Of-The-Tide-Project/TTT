@@ -80,11 +80,13 @@ export function ContentLanguageNotice({
   const storageKey = `tott:lang-notice:${contentId}`;
   const [dismissed, setDismissed] = useState(false);
   useEffect(() => {
-    try {
-      if (sessionStorage.getItem(storageKey) === "1") setDismissed(true);
-    } catch {
-      // Storage can throw in locked-down browser contexts — never block the read.
-    }
+    queueMicrotask(() => {
+      try {
+        if (sessionStorage.getItem(storageKey) === "1") setDismissed(true);
+      } catch {
+        // Storage can throw in locked-down browser contexts — never block the read.
+      }
+    });
   }, [storageKey]);
 
   if (!contentLanguage) return null;

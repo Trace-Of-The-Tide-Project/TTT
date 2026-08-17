@@ -18,11 +18,19 @@ const DEFAULT_SLIDER_MAX = 500;
 const TAB_CLIP = "polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)";
 
 function currencyLabel(locale: string, currency: string, amount: number): string {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(amount);
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  } catch {
+    // Some book records store a display-formatted currency string
+    // ("£ GBP") instead of a bare ISO 4217 code — degrade instead of
+    // crashing the whole page.
+    const rounded = Math.round(amount).toString();
+    return currency + " " + rounded;
+  }
 }
 
 /**
@@ -41,14 +49,17 @@ export function GiftWindowPanel({
 }: {
   scopeType: GiftScopeType;
   scopeId: string;
-  commonsAt: string;
+  /** Null when the editor set access_model=gift_window but hasn't set a
+   * gift_window_days/commons_at yet — the panel still renders (gift/in-kind/
+   * request actions), just without the countdown line. */
+  commonsAt?: string | null;
   giftValueInitial?: number | null;
   giftRaisedTotal?: number | null;
   giftCurrency?: string | null;
 }) {
   const t = useTranslations("Content.giftGate");
   const locale = useLocale();
-  const time = useCountdown(commonsAt);
+  const time = useCountdown(commonsAt ?? "");
 
   const currency = giftCurrency ?? "GBP";
   const raised = giftRaisedTotal ?? 0;
@@ -144,7 +155,7 @@ export function GiftWindowPanel({
         {t("giftWindowLabel")}
       </p>
 
-      {!time.done ? (
+      {!time.done && commonsAt ? (
         <time
           dateTime={commonsAt}
           className="mt-1 block text-center font-display text-lg text-foreground [font-variant-numeric:tabular-nums]"

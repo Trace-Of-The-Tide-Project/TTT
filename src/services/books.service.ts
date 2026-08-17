@@ -55,6 +55,16 @@ export type Book = {
   gift_window_days?: number | null;
   commons_at?: string | null;
   gift_raised_total?: number | string | null;
+  /** ISBN-13, hyphenated. Per language edition (not shared across translations). */
+  isbn?: string | null;
+  legal_deposit_status?: "not_required" | "pending" | "submitted" | "confirmed" | null;
+  cip_status?: "not_required" | "pending" | "submitted" | "confirmed" | null;
+  imprint?: string | null;
+  edition?: string | null;
+  format?: "print" | "digital" | "both" | null;
+  release_mode?: "integrated" | "serialized" | null;
+  /** MagazineIssue ids this book was compiled from. */
+  compiled_from_issues?: string[] | null;
 };
 
 export type BookReview = {
@@ -162,6 +172,21 @@ export async function getBookById(id: string): Promise<Book | null> {
   }
 }
 
+/** GET /knowledge/books/work/{groupId} — every language/format edition of a work. */
+export async function getBookWork(groupId: string): Promise<Book[]> {
+  const path = `/knowledge/books/work/${encodeURIComponent(groupId)}`;
+  if (typeof window === "undefined") {
+    const raw = await serverGet<unknown>(path);
+    return unwrapList<Book>(raw);
+  }
+  try {
+    const { data } = await api.get<unknown>(path);
+    return unwrapList<Book>(data);
+  } catch {
+    return [];
+  }
+}
+
 /**
  * GET /knowledge/books/{id}/download — owners/free/admin only.
  * Returns a fresh short-lived signed URL for the full PDF. Client-only
@@ -243,6 +268,14 @@ export type BookPayload = {
   gift_value_initial?: number | null;
   gift_currency?: string | null;
   gift_window_days?: number | null;
+  isbn?: string | null;
+  legal_deposit_status?: "not_required" | "pending" | "submitted" | "confirmed" | null;
+  cip_status?: "not_required" | "pending" | "submitted" | "confirmed" | null;
+  imprint?: string | null;
+  edition?: string | null;
+  format?: "print" | "digital" | "both" | null;
+  release_mode?: "integrated" | "serialized" | null;
+  compiled_from_issues?: string[] | null;
 };
 
 /** POST /knowledge/books — requires JWT + admin role. */

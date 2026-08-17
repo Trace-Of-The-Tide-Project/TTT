@@ -90,7 +90,7 @@ function ArrowIcon({ flip }: { flip?: boolean }) {
 }
 
 /** Translation key namespace (under "Content") for one listing page's copy. */
-export type ListingKeyPrefix = "allArticles" | "allAudio" | "allVideo" | "allGallery";
+export type ListingKeyPrefix = "allArticles" | "allAudio" | "allVideo" | "allGallery" | "allOpinion";
 
 export async function buildListingMetadata(keyPrefix: ListingKeyPrefix): Promise<Metadata> {
   const t = await getTranslations("Content");

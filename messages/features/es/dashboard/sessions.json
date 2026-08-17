@@ -1,0 +1,167 @@
+{
+  "Dashboard": {
+    "sessions": {
+      "list": {
+        "pageTitle": "Sesiones",
+        "addNew": "Añadir sesión",
+        "searchPlaceholder": "Buscar sesiones…",
+        "loading": "Cargando sesiones…",
+        "tryAgain": "Reintentar",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "unlimited": "Ilimitado",
+        "headers": {
+          "title": "Sesión",
+          "startsAt": "Comienza",
+          "capacity": "Capacidad",
+          "status": "Estado"
+        },
+        "space": {
+          "all": "Todos los espacios",
+          "writingRoom": "Sala de Escritura",
+          "waqamh": "Salón Waqamh"
+        },
+        "status": {
+          "draft": "Borrador",
+          "published": "Publicada",
+          "cancelled": "Cancelada",
+          "completed": "Completada"
+        },
+        "empty": {
+          "none": "Aún no hay sesiones.",
+          "noMatch": "Ninguna sesión coincide con tu búsqueda."
+        },
+        "errors": {
+          "loadFailed": "No se pudieron cargar las sesiones.",
+          "deleteFailed": "No se pudo eliminar esta sesión."
+        },
+        "toasts": {
+          "deleted": "Sesión eliminada."
+        },
+        "pagination": {
+          "previous": "Anterior",
+          "next": "Siguiente"
+        },
+        "deleteModal": {
+          "title": "¿Eliminar sesión?",
+          "description": "Esto eliminará permanentemente \"{title}\" y sus entradas.",
+          "confirm": "Eliminar",
+          "confirmBusy": "Eliminando…",
+          "cancel": "Cancelar"
+        }
+      },
+      "form": {
+        "backToList": "Volver a sesiones",
+        "createTitle": "Nueva sesión",
+        "editTitle": "Editar sesión",
+        "loading": "Cargando sesión…",
+        "cancel": "Cancelar",
+        "save": "Guardar cambios",
+        "create": "Crear sesión",
+        "saving": "Guardando…",
+        "sections": {
+          "basics": "Datos básicos",
+          "scheduling": "Programación",
+          "seatsAccess": "Asientos y acceso",
+          "salon": "Salón Waqamh"
+        },
+        "fields": {
+          "space": "Espacio",
+          "type": "Tipo",
+          "typePlaceholder": "p. ej. taller, lectura, escucha",
+          "title": "Título",
+          "titlePlaceholder": "Título de la sesión",
+          "description": "Descripción",
+          "facilitatorId": "ID del facilitador",
+          "facilitatorIdPlaceholder": "ID de usuario del facilitador",
+          "startsAt": "Comienza el",
+          "durationMinutes": "Duración (minutos)",
+          "format": "Formato",
+          "status": "Estado",
+          "capacity": "Capacidad",
+          "capacityPlaceholder": "Dejar en blanco para ilimitado",
+          "awnaSeats": "Asientos de regalo (awna)",
+          "accessRule": "Regla de acceso",
+          "requiredTierRank": "Nivel de suscripción requerido",
+          "requiredTierRankPlaceholder": "Dejar en blanco para no exigir nivel",
+          "price": "Precio",
+          "pricePlaceholder": "0 para gratis",
+          "currency": "Moneda",
+          "voices": "Voces",
+          "voicesPlaceholder": "Nombres separados por comas",
+          "onlineJoinUrl": "Enlace para unirse",
+          "onlineJoinUrlPlaceholder": "https://…",
+          "relatedIssueId": "ID del número relacionado",
+          "relatedBookId": "ID del libro relacionado"
+        },
+        "formatOptions": {
+          "online": "En línea",
+          "inPerson": "Presencial",
+          "hybrid": "Híbrido"
+        },
+        "salonTypeOptions": {
+          "reading": "Lectura",
+          "listening": "Escucha",
+          "conversation": "Conversación",
+          "launch": "Lanzamiento"
+        },
+        "accessRuleOptions": {
+          "free": "Gratis",
+          "paid": "De pago",
+          "memberIncluded": "Incluido en la membresía",
+          "mixed": "Mixto"
+        },
+        "errors": {
+          "titleRequired": "El título es obligatorio.",
+          "awnaSeatsRequired": "Cada sesión debe reservar al menos 1 asiento de regalo (awna).",
+          "createFailed": "No se pudo crear esta sesión.",
+          "updateFailed": "No se pudo actualizar esta sesión."
+        },
+        "toasts": {
+          "created": "Sesión creada.",
+          "updated": "Sesión actualizada."
+        }
+      },
+      "attendance": {
+        "statsHeading": "Asistencia",
+        "loading": "Cargando entradas…",
+        "empty": "Aún no hay entradas.",
+        "markAttended": "Marcar asistencia",
+        "attended": "Asistió",
+        "headers": {
+          "user": "Usuario",
+          "type": "Tipo",
+          "status": "Estado"
+        },
+        "stats": {
+          "registered": "Registrados",
+          "confirmed": "Confirmados",
+          "attended": "Asistieron",
+          "waitlisted": "En lista de espera",
+          "awnaSeats": "Asientos de regalo usados",
+          "seatsRemaining": "Asientos restantes"
+        },
+        "ticketType": {
+          "free": "Gratis",
+          "paid": "De pago",
+          "member_included": "Incluido en la membresía",
+          "gift_value": "Regalo",
+          "awna_seat": "Asiento de regalo (awna)"
+        },
+        "ticketStatus": {
+          "reserved": "Reservado",
+          "confirmed": "Confirmado",
+          "attended": "Asistió",
+          "canceled": "Cancelado",
+          "waitlisted": "En lista de espera"
+        },
+        "errors": {
+          "markFailed": "No se pudo marcar la asistencia de esta entrada."
+        },
+        "toasts": {
+          "marked": "Asistencia registrada."
+        }
+      }
+    }
+  }
+}

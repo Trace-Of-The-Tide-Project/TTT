@@ -162,7 +162,7 @@ export function Navbar({
   }, [isUserDropdownOpen]);
 
   useEffect(() => {
-    if (pathname) closeMobileMenu();
+    queueMicrotask(() => { if (pathname) closeMobileMenu(); });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- close menu on route change
   }, [pathname]);
 

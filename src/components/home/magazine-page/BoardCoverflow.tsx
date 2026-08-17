@@ -2,13 +2,11 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import { motion } from "motion/react";
 import { Link } from "@/i18n/navigation";
 import { dirFor } from "@/i18n/dir";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { HeroSlide } from "./Hero";
 
-const CARD_WIDTH = 264;
 const CARD_PITCH = 272; // Figma spacing between card left edges (264 + 8 gap)
 
 // Same silk-hex frame as FeaturedHexCard — home "Follow our Writers" /
@@ -76,7 +74,7 @@ export function BoardCoverflow({
 
   const maxIndex = Math.max(0, slides.length - visibleCount);
   useEffect(() => {
-    setActiveIndex((i) => Math.min(i, maxIndex));
+    queueMicrotask(() => setActiveIndex((i) => Math.min(i, maxIndex)));
   }, [maxIndex]);
 
   const goTo = (index: number) => setActiveIndex(Math.max(0, Math.min(maxIndex, index)));

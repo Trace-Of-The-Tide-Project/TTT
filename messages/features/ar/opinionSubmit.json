@@ -1,0 +1,22 @@
+{
+  "OpinionSubmit": {
+    "title": "اكتب لمشاع الرأي",
+    "subtitle": "مقالات الرأي مشاعة للجميع منذ لحظة نشرها — بلا نافذة تهادٍ ولا انتظار. قدّم مقالك أدناه، وسيراجعه محرر قبل نشره.",
+    "titleLabel": "العنوان",
+    "titlePlaceholder": "عن ثقل العودة",
+    "bodyLabel": "نص المقال",
+    "bodyPlaceholder": "اكتب المقال كاملاً — حتى 20,000 حرف.",
+    "authorNameLabel": "اسمك",
+    "authorNamePlaceholder": "الاسم الكامل",
+    "authorEmailLabel": "بريدك الإلكتروني",
+    "authorEmailPlaceholder": "you@example.com",
+    "bioLabel": "سيرة موجزة",
+    "bioOptional": "(اختياري)",
+    "bioPlaceholder": "سطر أو سطران عنك.",
+    "submit": "إرسال للمراجعة",
+    "sending": "جارٍ الإرسال…",
+    "sent": "تم الاستلام — سيراجعه محرر قريباً.",
+    "sendFailed": "تعذّر إرسال المقال. حاول مرة أخرى بعد قليل.",
+    "rateLimited": "قدّمت عدة مقالات مؤخراً — حاول مرة أخرى بعد ساعة."
+  }
+}

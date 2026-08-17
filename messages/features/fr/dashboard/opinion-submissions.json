@@ -1,0 +1,40 @@
+{
+  "Dashboard": {
+    "opinionSubmissions": {
+      "heading": "Soumissions d'opinion",
+      "subheading": "Textes soumis via le formulaire public du Commun d'opinion, en attente de relecture éditoriale.",
+      "loading": "Chargement…",
+      "empty": "Rien ici.",
+      "tabs": {
+        "new": "Nouveaux",
+        "reviewing": "En revue",
+        "accepted": "Acceptés",
+        "rejected": "Rejetés"
+      },
+      "table": {
+        "title": "Titre",
+        "author": "Auteur",
+        "language": "Langue",
+        "submitted": "Soumis",
+        "accept": "Accepter",
+        "reject": "Rejeter"
+      },
+      "acceptDialog": {
+        "title": "Accepter ce texte ?",
+        "description": "« {title} » passera à accepté. Créez l'article depuis l'éditeur d'articles.",
+        "confirm": "Accepter"
+      },
+      "rejectDialog": {
+        "title": "Rejeter ce texte ?",
+        "description": "« {title} » sera marqué comme rejeté. Cette action est irréversible.",
+        "confirm": "Rejeter"
+      },
+      "confirmBusy": "Enregistrement…",
+      "toasts": {
+        "accepted": "Soumission acceptée.",
+        "rejected": "Soumission rejetée.",
+        "failed": "Impossible de mettre à jour cette soumission."
+      }
+    }
+  }
+}

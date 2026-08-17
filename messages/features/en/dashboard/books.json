@@ -119,7 +119,34 @@
             "material_only": "Material support only (no automatic commons)"
           },
           "giftValueInitial": "Suggested gift amount",
-          "giftWindowDays": "Gift window (days)"
+          "giftWindowDays": "Gift window (days)",
+          "isbn": "ISBN",
+          "isbnPlaceholder": "978-1-234-56789-7",
+          "edition": "Edition",
+          "editionPlaceholder": "e.g. 1st edition",
+          "imprint": "Imprint",
+          "imprintPlaceholder": "Imprint name",
+          "format": "Format",
+          "release_mode": "Release mode",
+          "legal_deposit_status": "Legal deposit status",
+          "cip_status": "CIP status",
+          "compiled_from_issues": "Compiled from issues",
+          "compiled_from_issuesPlaceholder": "Issue IDs, comma-separated"
+        },
+        "formats": {
+          "digital": "Digital",
+          "print": "Print",
+          "both": "Print & digital"
+        },
+        "releaseModes": {
+          "integrated": "Integrated (published as one book)",
+          "serialized": "Serialized (chapters release on a schedule)"
+        },
+        "bibStatus": {
+          "not_required": "Not required",
+          "pending": "Pending",
+          "submitted": "Submitted",
+          "confirmed": "Confirmed"
         },
         "languages": {
           "en": "English",
@@ -130,8 +157,10 @@
         },
         "sections": {
           "details": "Book details",
+          "bibliographic": "Bibliographic",
           "pricing": "Pricing",
           "chapters": "Chapters",
+          "tracks": "Tracks",
           "media": "Media",
           "editions": "Editions"
         },
@@ -166,7 +195,8 @@
           "coverUrl": "Or paste an image URL directly",
           "pdfUrl": "Or paste a PDF URL directly",
           "languageLocked": "Language is locked after creation. Use the tabs above to add another language version.",
-          "sharedFieldLocked": "Shared across every language edition — edit it on the original language tab."
+          "sharedFieldLocked": "Shared across every language edition — edit it on the original language tab.",
+          "compiledFromIssues": "MagazineIssue IDs this book compiles content from (read-only reference, FR-BOK-05)."
         },
         "upload": {
           "coverUpload": "Upload cover image",
