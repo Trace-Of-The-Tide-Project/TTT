@@ -32,6 +32,9 @@
     "post": "Publicar",
     "postingComment": "Publicando…",
     "commentPosted": "Comentario publicado.",
-    "commentFailed": "No se pudo publicar el comentario."
+    "commentFailed": "No se pudo publicar el comentario.",
+    "reply": "Responder",
+    "replies": "Respuestas",
+    "you": "Tú"
   }
 }

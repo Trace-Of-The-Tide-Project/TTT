@@ -32,6 +32,9 @@
     "post": "Post",
     "postingComment": "Posting…",
     "commentPosted": "Comment posted.",
-    "commentFailed": "Couldn't post the comment."
+    "commentFailed": "Couldn't post the comment.",
+    "reply": "Reply",
+    "replies": "Replies",
+    "you": "You"
   }
 }

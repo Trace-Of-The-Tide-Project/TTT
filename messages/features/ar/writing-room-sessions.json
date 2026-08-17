@@ -32,6 +32,9 @@
     "post": "نشر",
     "postingComment": "جارٍ النشر…",
     "commentPosted": "تم نشر التعليق.",
-    "commentFailed": "تعذّر نشر التعليق."
+    "commentFailed": "تعذّر نشر التعليق.",
+    "reply": "رد",
+    "replies": "الردود",
+    "you": "أنت"
   }
 }

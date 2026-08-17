@@ -32,6 +32,9 @@
     "post": "Publier",
     "postingComment": "Publication…",
     "commentPosted": "Commentaire publié.",
-    "commentFailed": "Impossible de publier le commentaire."
+    "commentFailed": "Impossible de publier le commentaire.",
+    "reply": "Répondre",
+    "replies": "Réponses",
+    "you": "Vous"
   }
 }

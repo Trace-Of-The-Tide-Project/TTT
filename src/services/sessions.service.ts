@@ -111,6 +111,11 @@ export type DraftComment = {
   id: string;
   draft_id: string;
   author_id: string;
+  author?: {
+    id: string;
+    full_name?: string | null;
+    username?: string | null;
+  } | null;
   body: string;
   is_facilitator: boolean;
   parent_comment_id?: string | null;

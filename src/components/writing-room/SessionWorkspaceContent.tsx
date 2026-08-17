@@ -7,7 +7,108 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { uploadArticleAssetPath } from "@/services/uploads.service";
 import { useSession, useSessionDrafts, useDraftComments } from "@/hooks/queries/sessions";
 import { useCreateComment, useCreateDraft } from "@/hooks/mutations/sessions";
-import type { SessionDetail, WorkshopDraft } from "@/services/sessions.service";
+import type { SessionDetail, WorkshopDraft, DraftComment } from "@/services/sessions.service";
+
+type CommentNode = DraftComment & { children: CommentNode[] };
+
+function buildThread(comments: DraftComment[]): CommentNode[] {
+  const nodes: CommentNode[] = comments.map((c) => ({ ...c, children: [] }));
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  const roots: CommentNode[] = [];
+  for (const n of nodes) {
+    const parent = n.parent_comment_id ? byId.get(n.parent_comment_id) : undefined;
+    if (parent) parent.children.push(n);
+    else roots.push(n);
+  }
+  return roots;
+}
+
+function CommentNode({
+  comment,
+  depth,
+  sessionId,
+  draftId,
+}: {
+  comment: CommentNode;
+  depth: number;
+  sessionId: string;
+  draftId: string;
+}) {
+  const t = useTranslations("WritingRoomSessions");
+  const createComment = useCreateComment(sessionId, draftId);
+  const [replying, setReplying] = useState(false);
+  const [body, setBody] = useState("");
+  const name = comment.author?.full_name || comment.author?.username || "—";
+
+  const submit = () => {
+    const trimmed = body.trim();
+    if (!trimmed) return;
+    createComment.mutate(
+      { body: trimmed, parent_comment_id: comment.id },
+      { onSuccess: () => setBody("") },
+    );
+  };
+
+  return (
+    <div className="space-y-3" style={{ marginInlineStart: depth * 16 }}>
+      <div
+        className={`rounded-md p-3 text-start text-sm ${
+          comment.is_facilitator
+            ? "border border-[var(--tott-accent-gold)] bg-[var(--tott-elevated)]"
+            : "bg-[var(--tott-panel-bg)]"
+        }`}
+      >
+        <div className="mb-1 flex items-center gap-2 text-xs">
+          <span className="font-semibold text-[var(--tott-home-text-warm)]">{name}</span>
+          {comment.is_facilitator && (
+            <span className="uppercase tracking-wide text-[var(--tott-accent-gold)]">
+              {t("facilitator")}
+            </span>
+          )}
+        </div>
+        <p className="text-[var(--tott-home-text-warm)]">{comment.body}</p>
+        <button
+          type="button"
+          onClick={() => setReplying((v) => !v)}
+          className="mt-1 text-xs text-[var(--tott-accent-gold)]"
+        >
+          {t("reply")}
+        </button>
+        {replying && (
+          <div className="mt-2 flex gap-2">
+            <input
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder={t("commentPlaceholder")}
+              className="flex-1 rounded-md border border-[var(--tott-card-border)] bg-transparent px-3 py-2 text-sm text-[var(--tott-home-text-warm)]"
+            />
+            <button
+              type="button"
+              disabled={createComment.isPending || !body.trim()}
+              onClick={submit}
+              className="rounded-md bg-[var(--tott-accent-gold)] px-3 py-2 text-sm font-medium text-black disabled:opacity-60"
+            >
+              {t("post")}
+            </button>
+          </div>
+        )}
+      </div>
+      {comment.children.length > 0 && (
+        <div className="space-y-3">
+          {comment.children.map((c) => (
+            <CommentNode
+              key={c.id}
+              comment={c}
+              depth={depth + 1}
+              sessionId={sessionId}
+              draftId={draftId}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function DraftThread({ sessionId, draft }: { sessionId: string; draft: WorkshopDraft }) {
   const t = useTranslations("WritingRoomSessions");
@@ -15,13 +116,12 @@ function DraftThread({ sessionId, draft }: { sessionId: string; draft: WorkshopD
   const createComment = useCreateComment(sessionId, draft.id);
   const [body, setBody] = useState("");
 
+  const thread = buildThread(comments);
+
   const submit = () => {
     const trimmed = body.trim();
     if (!trimmed) return;
-    createComment.mutate(
-      { body: trimmed },
-      { onSuccess: () => setBody("") },
-    );
+    createComment.mutate({ body: trimmed }, { onSuccess: () => setBody("") });
   };
 
   return (
@@ -45,25 +145,17 @@ function DraftThread({ sessionId, draft }: { sessionId: string; draft: WorkshopD
       <div className="mt-4 space-y-3">
         {isLoading ? (
           <Skeleton className="h-16 w-full" />
-        ) : comments.length === 0 ? (
+        ) : thread.length === 0 ? (
           <p className="text-start text-sm text-[var(--tott-salt)]">{t("noComments")}</p>
         ) : (
-          comments.map((c) => (
-            <div
+          thread.map((c) => (
+            <CommentNode
               key={c.id}
-              className={`rounded-md p-3 text-start text-sm ${
-                c.is_facilitator
-                  ? "border border-[var(--tott-accent-gold)] bg-[var(--tott-elevated)]"
-                  : "bg-[var(--tott-panel-bg)]"
-              }`}
-            >
-              {c.is_facilitator && (
-                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-[var(--tott-accent-gold)]">
-                  {t("facilitator")}
-                </span>
-              )}
-              <p className="text-[var(--tott-home-text-warm)]">{c.body}</p>
-            </div>
+              comment={c}
+              depth={0}
+              sessionId={sessionId}
+              draftId={draft.id}
+            />
           ))
         )}
       </div>
