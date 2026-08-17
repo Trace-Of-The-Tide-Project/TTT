@@ -7,6 +7,9 @@
         "encounters": "اللقاءات",
         "bookings": "الحجوزات"
       },
+      "preview": {
+        "label": "معاينة"
+      },
       "list": {
         "pageTitle": "اللقاءات المفتوحة",
         "addNew": "لقاء جديد",
@@ -19,7 +22,8 @@
         "edit": "تعديل",
         "delete": "حذف",
         "draft": "مسودة",
-        "noDate": "لا يوجد تاريخ"
+        "noDate": "لا يوجد تاريخ",
+        "previewAria": "معاينة {title}"
       },
       "deleteModal": {
         "title": "حذف اللقاء",
@@ -58,6 +62,8 @@
           "durationPlaceholder": "مثال: 4 ساعات",
           "groupSize": "حجم المجموعة",
           "groupSizePlaceholder": "مثال: 6–12 شخصًا",
+          "maxCapacity": "الحد الأقصى للسعة",
+          "maxCapacityPlaceholder": "مثال: 12",
           "languages": "اللغات",
           "languagesPlaceholder": "مثال: الإنجليزية، العربية",
           "type": "النوع",
@@ -68,6 +74,9 @@
           "aboutPlaceholder": "وصف مختصر للقاء.",
           "heroImage": "رابط الصورة الرئيسية",
           "heroImagePlaceholder": "https://…",
+          "heroImagePick": "اختر أو ارفع صورة",
+          "heroImageChange": "تغيير الصورة",
+          "heroImageRemove": "إزالة الصورة",
           "chips": "العلامات (مفصولة بفواصل)",
           "chipsPlaceholder": "محاضرة، ورش عمل",
           "highlights": "أبرز النقاط (مفصولة بفواصل)",

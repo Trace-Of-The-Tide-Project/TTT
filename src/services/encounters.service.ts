@@ -158,6 +158,7 @@ export type EncounterInput = {
   date?: string | null;
   duration?: string | null;
   group_size?: string | null;
+  max_capacity?: number | null;
   languages?: string | null;
   about?: string | null;
   highlights?: string[] | null;
@@ -173,6 +174,7 @@ export type EncounterAdmin = EncounterListItem & {
   chips?: string[] | null;
   duration?: string | null;
   group_size?: string | null;
+  max_capacity?: number | null;
   languages?: string | null;
   highlights?: string[] | null;
   tip_price?: string | null;

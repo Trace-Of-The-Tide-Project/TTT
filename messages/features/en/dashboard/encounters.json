@@ -7,6 +7,9 @@
         "encounters": "Encounters",
         "bookings": "Bookings"
       },
+      "preview": {
+        "label": "Preview"
+      },
       "list": {
         "pageTitle": "Open Encounters",
         "addNew": "New encounter",
@@ -19,7 +22,8 @@
         "edit": "Edit",
         "delete": "Delete",
         "draft": "Draft",
-        "noDate": "No date set"
+        "noDate": "No date set",
+        "previewAria": "Preview {title}"
       },
       "deleteModal": {
         "title": "Delete encounter",
@@ -58,6 +62,8 @@
           "durationPlaceholder": "e.g. 4 Hours",
           "groupSize": "Group size",
           "groupSizePlaceholder": "e.g. 6–12 people",
+          "maxCapacity": "Max capacity",
+          "maxCapacityPlaceholder": "e.g. 12",
           "languages": "Languages",
           "languagesPlaceholder": "e.g. English, Arabic",
           "type": "Type",
@@ -68,6 +74,9 @@
           "aboutPlaceholder": "A short description of the encounter.",
           "heroImage": "Hero image URL",
           "heroImagePlaceholder": "https://…",
+          "heroImagePick": "Choose or upload an image",
+          "heroImageChange": "Change image",
+          "heroImageRemove": "Remove image",
           "chips": "Chips (comma separated)",
           "chipsPlaceholder": "Talk, Workshops",
           "highlights": "Highlights (comma separated)",

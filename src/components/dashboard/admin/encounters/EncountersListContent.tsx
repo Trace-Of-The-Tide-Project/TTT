@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { formatApiError } from "@/lib/api/error-message";
+import { EyeIcon } from "@/components/ui/icons";
 import { useEncountersAdmin } from "@/hooks/queries/encounters-admin";
 import { useDeleteEncounter } from "@/hooks/mutations/encounters-admin";
 import type { EncounterAdmin } from "@/services/encounters.service";
@@ -100,6 +101,13 @@ export function EncountersListContent() {
                     {e.type}
                   </span>
                 ) : null}
+                <Link
+                  href={`/admin/encounters/${e.id}/preview`}
+                  aria-label={t("list.previewAria", { title: e.title })}
+                  className="rounded-md p-1.5 text-[var(--tott-muted)] transition-colors hover:text-foreground"
+                >
+                  <EyeIcon />
+                </Link>
                 <Link
                   href={`/admin/encounters/${e.id}/edit`}
                   className="rounded-md px-3 py-1.5 text-sm text-[var(--tott-dash-gold-label)] hover:text-foreground"

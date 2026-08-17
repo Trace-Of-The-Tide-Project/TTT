@@ -7,6 +7,9 @@
         "encounters": "Encuentros",
         "bookings": "Reservas"
       },
+      "preview": {
+        "label": "Vista previa"
+      },
       "list": {
         "pageTitle": "Encuentros abiertos",
         "addNew": "Nuevo encuentro",
@@ -19,7 +22,8 @@
         "edit": "Editar",
         "delete": "Eliminar",
         "draft": "Borrador",
-        "noDate": "Sin fecha"
+        "noDate": "Sin fecha",
+        "previewAria": "Vista previa de {title}"
       },
       "deleteModal": {
         "title": "Eliminar encuentro",
@@ -58,6 +62,8 @@
           "durationPlaceholder": "p. ej. 4 horas",
           "groupSize": "Tamaño del grupo",
           "groupSizePlaceholder": "p. ej. 6–12 personas",
+          "maxCapacity": "Capacidad máxima",
+          "maxCapacityPlaceholder": "p. ej. 12",
           "languages": "Idiomas",
           "languagesPlaceholder": "p. ej. Inglés, Árabe",
           "type": "Tipo",
@@ -68,6 +74,9 @@
           "aboutPlaceholder": "Una breve descripción del encuentro.",
           "heroImage": "URL de la imagen principal",
           "heroImagePlaceholder": "https://…",
+          "heroImagePick": "Elegir o subir una imagen",
+          "heroImageChange": "Cambiar imagen",
+          "heroImageRemove": "Quitar imagen",
           "chips": "Etiquetas (separadas por comas)",
           "chipsPlaceholder": "Charla, Talleres",
           "highlights": "Destacados (separados por comas)",

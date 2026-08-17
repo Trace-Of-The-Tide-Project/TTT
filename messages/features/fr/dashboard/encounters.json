@@ -7,6 +7,9 @@
         "encounters": "Rencontres",
         "bookings": "Réservations"
       },
+      "preview": {
+        "label": "Aperçu"
+      },
       "list": {
         "pageTitle": "Rencontres ouvertes",
         "addNew": "Nouvelle rencontre",
@@ -19,7 +22,8 @@
         "edit": "Modifier",
         "delete": "Supprimer",
         "draft": "Brouillon",
-        "noDate": "Aucune date"
+        "noDate": "Aucune date",
+        "previewAria": "Aperçu de {title}"
       },
       "deleteModal": {
         "title": "Supprimer la rencontre",
@@ -58,6 +62,8 @@
           "durationPlaceholder": "p. ex. 4 heures",
           "groupSize": "Taille du groupe",
           "groupSizePlaceholder": "p. ex. 6–12 personnes",
+          "maxCapacity": "Capacité maximale",
+          "maxCapacityPlaceholder": "p. ex. 12",
           "languages": "Langues",
           "languagesPlaceholder": "p. ex. Anglais, Arabe",
           "type": "Type",
@@ -68,6 +74,9 @@
           "aboutPlaceholder": "Une brève description de la rencontre.",
           "heroImage": "URL de l'image principale",
           "heroImagePlaceholder": "https://…",
+          "heroImagePick": "Choisir ou téléverser une image",
+          "heroImageChange": "Changer l'image",
+          "heroImageRemove": "Retirer l'image",
           "chips": "Étiquettes (séparées par des virgules)",
           "chipsPlaceholder": "Conférence, Ateliers",
           "highlights": "Points forts (séparés par des virgules)",

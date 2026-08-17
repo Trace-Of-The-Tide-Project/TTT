@@ -8,6 +8,7 @@ import { formatApiError } from "@/lib/api/error-message";
 import { useEncounterAdmin } from "@/hooks/queries/encounters-admin";
 import { useCreateEncounter, useUpdateEncounter } from "@/hooks/mutations/encounters-admin";
 import type { EncounterScheduleItem, EncounterInput } from "@/services/encounters.service";
+import { HeroImageField } from "./HeroImageField";
 
 type StopDraft = {
   title: string;
@@ -37,6 +38,7 @@ type FormState = {
   date: string;
   duration: string;
   group_size: string;
+  max_capacity: string;
   languages: string;
   type: string;
   tip_price: string;
@@ -54,6 +56,7 @@ const EMPTY_FORM: FormState = {
   date: "",
   duration: "",
   group_size: "",
+  max_capacity: "",
   languages: "",
   type: "",
   tip_price: "",
@@ -81,6 +84,7 @@ export function EncounterFormContent({ encounterId }: { encounterId?: string }) 
   const update = useUpdateEncounter(encounterId ?? "");
 
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [heroPreview, setHeroPreview] = useState<string | null>(null);
   const [seeded, setSeeded] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -92,6 +96,8 @@ export function EncounterFormContent({ encounterId }: { encounterId?: string }) 
       date: encounter.date ? String(encounter.date).slice(0, 10) : "",
       duration: encounter.duration ?? "",
       group_size: encounter.group_size ?? "",
+      max_capacity:
+        encounter.max_capacity != null ? String(encounter.max_capacity) : "",
       languages: encounter.languages ?? "",
       type: encounter.type ?? "",
       tip_price: encounter.tip_price ?? "",
@@ -102,6 +108,8 @@ export function EncounterFormContent({ encounterId }: { encounterId?: string }) 
       highlights: (encounter.highlights ?? []).join(", "),
       schedule: (encounter.schedule ?? []).map(seedStop),
     });
+    const hero = encounter.hero_image ?? "";
+    setHeroPreview(/^https?:\/\//i.test(hero) ? hero : null);
     setSeeded(true);
   }, [isEdit, seeded, encounter]);
 
@@ -143,6 +151,7 @@ export function EncounterFormContent({ encounterId }: { encounterId?: string }) 
       date: form.date ? new Date(form.date).toISOString() : null,
       duration: form.duration.trim() || null,
       group_size: form.group_size.trim() || null,
+      max_capacity: form.max_capacity ? Number(form.max_capacity) : null,
       languages: form.languages.trim() || null,
       type: form.type.trim() || null,
       tip_price: form.tip_price.trim() || null,
@@ -248,7 +257,7 @@ export function EncounterFormContent({ encounterId }: { encounterId?: string }) 
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <div>
               <label className={labelClass}>{t("form.fields.duration")}</label>
               <input
@@ -266,6 +275,18 @@ export function EncounterFormContent({ encounterId }: { encounterId?: string }) 
                 value={form.group_size}
                 onChange={(e) => set("group_size", e.target.value)}
                 placeholder={t("form.fields.groupSizePlaceholder")}
+                disabled={busy}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>{t("form.fields.maxCapacity")}</label>
+              <input
+                className={inputClass}
+                type="number"
+                min={1}
+                value={form.max_capacity}
+                onChange={(e) => set("max_capacity", e.target.value)}
+                placeholder={t("form.fields.maxCapacityPlaceholder")}
                 disabled={busy}
               />
             </div>
@@ -292,28 +313,29 @@ export function EncounterFormContent({ encounterId }: { encounterId?: string }) 
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className={labelClass}>{t("form.fields.tipPrice")}</label>
-              <input
-                className={inputClass}
-                value={form.tip_price}
-                onChange={(e) => set("tip_price", e.target.value)}
-                placeholder={t("form.fields.tipPricePlaceholder")}
-                disabled={busy}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>{t("form.fields.heroImage")}</label>
-              <input
-                className={inputClass}
-                value={form.hero_image}
-                onChange={(e) => set("hero_image", e.target.value)}
-                placeholder={t("form.fields.heroImagePlaceholder")}
-                disabled={busy}
-              />
-            </div>
+          <div>
+            <label className={labelClass}>{t("form.fields.tipPrice")}</label>
+            <input
+              className={inputClass}
+              value={form.tip_price}
+              onChange={(e) => set("tip_price", e.target.value)}
+              placeholder={t("form.fields.tipPricePlaceholder")}
+              disabled={busy}
+            />
           </div>
+          <HeroImageField
+            value={form.hero_image || null}
+            previewUrl={heroPreview}
+            label={t("form.fields.heroImage")}
+            onChange={(key, url) => {
+              setForm((prev) => ({ ...prev, hero_image: key }));
+              setHeroPreview(url);
+            }}
+            onClear={() => {
+              setForm((prev) => ({ ...prev, hero_image: "" }));
+              setHeroPreview(null);
+            }}
+          />
           <div>
             <label className={labelClass}>{t("form.fields.chips")}</label>
             <input
