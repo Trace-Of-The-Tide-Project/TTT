@@ -26,8 +26,7 @@ export function SessionDetailContent({ session: initial }: { session: SessionDet
 
   const startsAt = formatDate(session.starts_at, locale);
   const allowed = session.access?.allowed ?? false;
-  const hasTicket = session.access?.matched_step === "ticket";
-  const isResolved = hasTicket || waitlist !== null;
+  const canAccessWorkspace = allowed || waitlist !== null;
 
   const handleRegister = () => {
     register.mutate(undefined, {
@@ -54,13 +53,13 @@ export function SessionDetailContent({ session: initial }: { session: SessionDet
       )}
 
       <ChamferedPanel className="mt-8 p-6">
-        {isResolved ? (
+        {canAccessWorkspace || waitlist !== null ? (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-start text-sm text-[var(--tott-status-emerald)]">
-              {hasTicket ? t("youAreRegistered") : t("waitlisted")}
+              {canAccessWorkspace ? t("youAreRegistered") : t("waitlisted")}
               {waitlist != null && ` ${t("waitlistPosition", { position: waitlist })}`}
             </p>
-            {hasTicket ? (
+            {canAccessWorkspace ? (
               <Link
                 href={`/writing-room/sessions/${session.id}/workspace`}
                 className="rounded-md bg-[var(--tott-accent-gold)] px-4 py-2 text-sm font-medium text-black"
@@ -76,7 +75,7 @@ export function SessionDetailContent({ session: initial }: { session: SessionDet
         ) : (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-start text-sm text-[var(--tott-salt)]">
-              {allowed ? t("readyToRegister") : t("registrationRequiresEntitlement")}
+              {t("registrationRequiresEntitlement")}
             </p>
             <button
               type="button"
