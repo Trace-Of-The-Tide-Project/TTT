@@ -1,0 +1,108 @@
+{
+  "Dashboard": {
+    "encounters": {
+      "title": "اللقاءات المفتوحة",
+      "subtitle": "أنشئ وعدّل وانشر اللقاءات المفتوحة.",
+      "tabs": {
+        "encounters": "اللقاءات",
+        "bookings": "الحجوزات"
+      },
+      "list": {
+        "pageTitle": "اللقاءات المفتوحة",
+        "addNew": "لقاء جديد",
+        "searchPlaceholder": "ابحث عن اللقاءات…",
+        "loading": "جارٍ تحميل اللقاءات…",
+        "empty": {
+          "none": "لا توجد لقاءات بعد. أنشئ أول لقاء.",
+          "noMatch": "لا توجد لقاءات تطابق هذا البحث."
+        },
+        "edit": "تعديل",
+        "delete": "حذف",
+        "draft": "مسودة",
+        "noDate": "لا يوجد تاريخ"
+      },
+      "deleteModal": {
+        "title": "حذف اللقاء",
+        "description": "هل أنت متأكد من حذف «{name}»؟ لا يمكن التراجع عن هذا.",
+        "cancel": "إلغاء",
+        "confirm": "حذف",
+        "confirmBusy": "جارٍ الحذف…"
+      },
+      "toasts": {
+        "deleted": "تم حذف اللقاء.",
+        "created": "تم إنشاء اللقاء.",
+        "updated": "تم تحديث اللقاء.",
+        "createFailed": "تعذّر إنشاء اللقاء",
+        "updateFailed": "تعذّر تحديث اللقاء",
+        "deleteFailed": "تعذّر حذف اللقاء",
+        "errorBody": "يرجى المحاولة مرة أخرى."
+      },
+      "form": {
+        "createTitle": "لقاء جديد",
+        "editTitle": "تعديل اللقاء",
+        "backToList": "العودة إلى اللقاءات",
+        "cancel": "إلغاء",
+        "save": "حفظ",
+        "create": "إنشاء",
+        "saving": "جارٍ الحفظ…",
+        "loading": "جارٍ تحميل اللقاء…",
+        "notFound": "اللقاء غير موجود.",
+        "fields": {
+          "title": "العنوان",
+          "titlePlaceholder": "مثال: في الصمت والكتابة",
+          "location": "الموقع",
+          "locationPlaceholder": "مثال: الولايات المتحدة",
+          "date": "التاريخ",
+          "datePlaceholder": "YYYY-MM-DD",
+          "duration": "المدة",
+          "durationPlaceholder": "مثال: 4 ساعات",
+          "groupSize": "حجم المجموعة",
+          "groupSizePlaceholder": "مثال: 6–12 شخصًا",
+          "languages": "اللغات",
+          "languagesPlaceholder": "مثال: الإنجليزية، العربية",
+          "type": "النوع",
+          "typePlaceholder": "مثال: لقاء",
+          "tipPrice": "سعر الإرشاد",
+          "tipPricePlaceholder": "مثال: مجاني",
+          "about": "حول اللقاء",
+          "aboutPlaceholder": "وصف مختصر للقاء.",
+          "heroImage": "رابط الصورة الرئيسية",
+          "heroImagePlaceholder": "https://…",
+          "chips": "العلامات (مفصولة بفواصل)",
+          "chipsPlaceholder": "محاضرة، ورش عمل",
+          "highlights": "أبرز النقاط (مفصولة بفواصل)",
+          "highlightsPlaceholder": "جلسة صباحية، حوار مع الكتّاب",
+          "status": "الحالة",
+          "statusDraft": "مسودة",
+          "statusPublished": "منشور",
+          "schedule": "الجدول"
+        },
+        "errors": {
+          "titleRequired": "العنوان مطلوب.",
+          "createFailed": "تعذّر إنشاء اللقاء",
+          "updateFailed": "تعذّر تحديث اللقاء",
+          "loadFailed": "تعذّر تحميل اللقاء"
+        }
+      },
+      "schedule": {
+        "heading": "الجدول",
+        "description": "أضف محطات اللقاء بالترتيب.",
+        "addStop": "إضافة محطة",
+        "empty": "لا توجد محطات بعد. أضف أول محطة.",
+        "remove": "إزالة",
+        "moveUp": "تحريك لأعلى",
+        "moveDown": "تحريك لأسفل",
+        "fields": {
+          "title": "العنوان",
+          "titlePlaceholder": "مثال: الجلسة الافتتاحية",
+          "startDate": "تاريخ البدء",
+          "startTime": "وقت البدء",
+          "body": "التفاصيل",
+          "bodyPlaceholder": "صف هذه المحطة.",
+          "lat": "خط العرض",
+          "lng": "خط الطول"
+        }
+      }
+    }
+  }
+}

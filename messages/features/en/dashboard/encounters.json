@@ -1,0 +1,108 @@
+{
+  "Dashboard": {
+    "encounters": {
+      "title": "Open Encounters",
+      "subtitle": "Create, edit and publish open encounters.",
+      "tabs": {
+        "encounters": "Encounters",
+        "bookings": "Bookings"
+      },
+      "list": {
+        "pageTitle": "Open Encounters",
+        "addNew": "New encounter",
+        "searchPlaceholder": "Search encounters…",
+        "loading": "Loading encounters…",
+        "empty": {
+          "none": "No encounters yet. Create your first one.",
+          "noMatch": "No encounters match this search."
+        },
+        "edit": "Edit",
+        "delete": "Delete",
+        "draft": "Draft",
+        "noDate": "No date set"
+      },
+      "deleteModal": {
+        "title": "Delete encounter",
+        "description": "Are you sure you want to delete “{name}”? This cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete",
+        "confirmBusy": "Deleting…"
+      },
+      "toasts": {
+        "deleted": "Encounter deleted.",
+        "created": "Encounter created.",
+        "updated": "Encounter updated.",
+        "createFailed": "Could not create the encounter",
+        "updateFailed": "Could not update the encounter",
+        "deleteFailed": "Could not delete the encounter",
+        "errorBody": "Please try again."
+      },
+      "form": {
+        "createTitle": "New encounter",
+        "editTitle": "Edit encounter",
+        "backToList": "Back to encounters",
+        "cancel": "Cancel",
+        "save": "Save",
+        "create": "Create",
+        "saving": "Saving…",
+        "loading": "Loading encounter…",
+        "notFound": "Encounter not found.",
+        "fields": {
+          "title": "Title",
+          "titlePlaceholder": "e.g. On Silence and Writing",
+          "location": "Location",
+          "locationPlaceholder": "e.g. USA",
+          "date": "Date",
+          "datePlaceholder": "YYYY-MM-DD",
+          "duration": "Duration",
+          "durationPlaceholder": "e.g. 4 Hours",
+          "groupSize": "Group size",
+          "groupSizePlaceholder": "e.g. 6–12 people",
+          "languages": "Languages",
+          "languagesPlaceholder": "e.g. English, Arabic",
+          "type": "Type",
+          "typePlaceholder": "e.g. Meetup",
+          "tipPrice": "Tip price",
+          "tipPricePlaceholder": "e.g. Free",
+          "about": "About",
+          "aboutPlaceholder": "A short description of the encounter.",
+          "heroImage": "Hero image URL",
+          "heroImagePlaceholder": "https://…",
+          "chips": "Chips (comma separated)",
+          "chipsPlaceholder": "Talk, Workshops",
+          "highlights": "Highlights (comma separated)",
+          "highlightsPlaceholder": "Morning session, Q&A with writers",
+          "status": "Status",
+          "statusDraft": "Draft",
+          "statusPublished": "Published",
+          "schedule": "Schedule"
+        },
+        "errors": {
+          "titleRequired": "Title is required.",
+          "createFailed": "Could not create the encounter",
+          "updateFailed": "Could not update the encounter",
+          "loadFailed": "Could not load the encounter"
+        }
+      },
+      "schedule": {
+        "heading": "Schedule",
+        "description": "Add the stops of the encounter in order.",
+        "addStop": "Add stop",
+        "empty": "No stops yet. Add the first one.",
+        "remove": "Remove",
+        "moveUp": "Move up",
+        "moveDown": "Move down",
+        "fields": {
+          "title": "Title",
+          "titlePlaceholder": "e.g. Opening session",
+          "startDate": "Start date",
+          "startTime": "Start time",
+          "body": "Details",
+          "bodyPlaceholder": "Describe this stop.",
+          "lat": "Latitude",
+          "lng": "Longitude"
+        }
+      }
+    }
+  }
+}

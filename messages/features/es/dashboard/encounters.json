@@ -1,0 +1,108 @@
+{
+  "Dashboard": {
+    "encounters": {
+      "title": "Encuentros abiertos",
+      "subtitle": "Crea, edita y publica encuentros abiertos.",
+      "tabs": {
+        "encounters": "Encuentros",
+        "bookings": "Reservas"
+      },
+      "list": {
+        "pageTitle": "Encuentros abiertos",
+        "addNew": "Nuevo encuentro",
+        "searchPlaceholder": "Buscar encuentros…",
+        "loading": "Cargando encuentros…",
+        "empty": {
+          "none": "Aún no hay encuentros. Crea el primero.",
+          "noMatch": "Ningún encuentro coincide con esta búsqueda."
+        },
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "draft": "Borrador",
+        "noDate": "Sin fecha"
+      },
+      "deleteModal": {
+        "title": "Eliminar encuentro",
+        "description": "¿Seguro que quieres eliminar «{name}»? Esto no se puede deshacer.",
+        "cancel": "Cancelar",
+        "confirm": "Eliminar",
+        "confirmBusy": "Eliminando…"
+      },
+      "toasts": {
+        "deleted": "Encuentro eliminado.",
+        "created": "Encuentro creado.",
+        "updated": "Encuentro actualizado.",
+        "createFailed": "No se pudo crear el encuentro",
+        "updateFailed": "No se pudo actualizar el encuentro",
+        "deleteFailed": "No se pudo eliminar el encuentro",
+        "errorBody": "Inténtalo de nuevo."
+      },
+      "form": {
+        "createTitle": "Nuevo encuentro",
+        "editTitle": "Editar encuentro",
+        "backToList": "Volver a encuentros",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "create": "Crear",
+        "saving": "Guardando…",
+        "loading": "Cargando encuentro…",
+        "notFound": "Encuentro no encontrado.",
+        "fields": {
+          "title": "Título",
+          "titlePlaceholder": "p. ej. Sobre el silencio y la escritura",
+          "location": "Ubicación",
+          "locationPlaceholder": "p. ej. EE. UU.",
+          "date": "Fecha",
+          "datePlaceholder": "YYYY-MM-DD",
+          "duration": "Duración",
+          "durationPlaceholder": "p. ej. 4 horas",
+          "groupSize": "Tamaño del grupo",
+          "groupSizePlaceholder": "p. ej. 6–12 personas",
+          "languages": "Idiomas",
+          "languagesPlaceholder": "p. ej. Inglés, Árabe",
+          "type": "Tipo",
+          "typePlaceholder": "p. ej. Encuentro",
+          "tipPrice": "Precio sugerido",
+          "tipPricePlaceholder": "p. ej. Gratis",
+          "about": "Acerca de",
+          "aboutPlaceholder": "Una breve descripción del encuentro.",
+          "heroImage": "URL de la imagen principal",
+          "heroImagePlaceholder": "https://…",
+          "chips": "Etiquetas (separadas por comas)",
+          "chipsPlaceholder": "Charla, Talleres",
+          "highlights": "Destacados (separados por comas)",
+          "highlightsPlaceholder": "Sesión matutina, Conversación con escritores",
+          "status": "Estado",
+          "statusDraft": "Borrador",
+          "statusPublished": "Publicado",
+          "schedule": "Programa"
+        },
+        "errors": {
+          "titleRequired": "El título es obligatorio.",
+          "createFailed": "No se pudo crear el encuentro",
+          "updateFailed": "No se pudo actualizar el encuentro",
+          "loadFailed": "No se pudo cargar el encuentro"
+        }
+      },
+      "schedule": {
+        "heading": "Programa",
+        "description": "Añade las paradas del encuentro en orden.",
+        "addStop": "Añadir parada",
+        "empty": "Aún no hay paradas. Añade la primera.",
+        "remove": "Quitar",
+        "moveUp": "Subir",
+        "moveDown": "Bajar",
+        "fields": {
+          "title": "Título",
+          "titlePlaceholder": "p. ej. Sesión de apertura",
+          "startDate": "Fecha de inicio",
+          "startTime": "Hora de inicio",
+          "body": "Detalles",
+          "bodyPlaceholder": "Describe esta parada.",
+          "lat": "Latitud",
+          "lng": "Longitud"
+        }
+      }
+    }
+  }
+}
