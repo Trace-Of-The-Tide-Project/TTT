@@ -52,7 +52,7 @@ function SmallNavArrows({
         type="button"
         aria-label={prevLabel}
         onClick={onPrev}
-        className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)]"
+        className="flex h-11 w-11 items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)]"
         style={{ border: "2px solid var(--tott-accent-gold)", color: "var(--tott-accent-gold)" }}
       >
         <span aria-hidden className="text-xl rtl:-scale-x-100">
@@ -63,7 +63,7 @@ function SmallNavArrows({
         type="button"
         aria-label={nextLabel}
         onClick={onNext}
-        className="flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)]"
+        className="flex h-11 w-11 items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--tott-accent-gold)]"
         style={{ border: "2px solid var(--tott-accent-gold)", color: "var(--tott-accent-gold)" }}
       >
         <span aria-hidden className="text-xl rtl:-scale-x-100">

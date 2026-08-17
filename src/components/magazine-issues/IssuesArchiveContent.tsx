@@ -39,7 +39,7 @@ export function IssuesArchiveContent({
 
   return (
     <main
-      className="min-h-screen px-6 pb-24 pt-24 sm:px-10 sm:pt-28 lg:px-[156px] lg:pt-32"
+      className="min-h-screen px-6 pb-24 pt-24 sm:px-10 sm:pt-28 md:px-16 lg:px-[156px] lg:pt-32"
       style={{ backgroundColor: "var(--tott-home-surface)" }}
     >
       <RevealOnScroll>
@@ -69,14 +69,14 @@ export function IssuesArchiveContent({
             innerFill="var(--tott-elevated)"
           >
             <div className="flex flex-col gap-6 p-6 sm:flex-row sm:gap-8 sm:p-8">
-              <div className="relative aspect-[4/5] w-full shrink-0 overflow-hidden sm:w-72">
+              <div className="relative aspect-[4/5] w-full shrink-0 overflow-hidden sm:w-72 lg:w-80 xl:w-96">
                 {current.coverImage ? (
                   <MagImage
                     src={current.coverImage}
                     alt={current.title}
                     framing={current.coverFraming}
                     fill
-                    sizes="(min-width: 640px) 288px, 100vw"
+                    sizes="(min-width: 1280px) 384px, (min-width: 1024px) 320px, (min-width: 640px) 288px, 100vw"
                     className="object-cover"
                   />
                 ) : null}

@@ -109,7 +109,7 @@ export function CollectionDetailContent({ collection }: { collection: Collection
         {/* Header row */}
         <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="text-2xl font-medium">
+            <h1 className="text-2xl font-medium break-words">
               <span className="text-foreground">{t("breadcrumbRoot")} </span>
               <span style={{ color: theme.accentGold }}>{collection.name}</span>
             </h1>

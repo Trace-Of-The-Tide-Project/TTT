@@ -81,7 +81,7 @@ export function CollectionsIndexContent({ collections }: { collections: Collecti
             </p>
           ) : (
             <motion.ul
-              className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4"
+              className="grid grid-cols-2 gap-3 sm:gap-5 sm:grid-cols-3 lg:grid-cols-4"
               variants={staggerParent}
               initial="hidden"
               whileInView="visible"

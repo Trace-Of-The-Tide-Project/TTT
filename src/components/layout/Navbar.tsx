@@ -453,8 +453,8 @@ export function Navbar({
 
         {/* Panel */}
         <div
-          className={`absolute right-0 top-0 flex h-full w-[min(280px,85vw)] flex-col border-l transition-transform duration-300 ease-out ${
-            isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          className={`absolute end-0 top-0 flex h-full w-[min(280px,85vw)] flex-col border-s transition-transform duration-300 ease-out ${
+            isMobileMenuOpen ? "translate-x-0" : "rtl:-translate-x-full ltr:translate-x-full"
           } ${isDark ? "border-[color:var(--tott-card-border)] bg-[color:var(--tott-home-surface)]" : "border-[var(--tott-card-border)] bg-[var(--background)]"}`}
         >
           <div
@@ -587,7 +587,7 @@ export function Navbar({
               scheme={scheme}
               onClick={toggleScheme}
               label={t(themeAriaKey)}
-              className={`flex w-full items-center gap-3 rounded-md px-4 py-3 text-left transition-colors ${navMuted} ${navRowHover}`}
+              className={`flex w-full items-center gap-3 rounded-md px-4 py-3 text-start transition-colors ${navMuted} ${navRowHover}`}
             >
               <span>{t(themeLabelKey)}</span>
             </ThemeToggleButton>

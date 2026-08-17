@@ -47,7 +47,7 @@ export function CollectionTimelineSection({
         className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
         aria-expanded={open}
       >
-        <span>
+        <span className="min-w-0">
           <span className="block text-base font-medium text-foreground">
             {t(TITLE_KEY[bucket.key])}
           </span>

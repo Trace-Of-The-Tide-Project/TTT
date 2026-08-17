@@ -159,7 +159,7 @@ export async function AllContentListingPage({
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-35 overflow-hidden"
+        className="pointer-events-none absolute inset-x-0 top-0 h-32 overflow-hidden"
         style={{
           opacity: "var(--tott-dash-hex-opacity, 1)",
           maskImage: "linear-gradient(to bottom, black, transparent)",

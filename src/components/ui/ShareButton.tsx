@@ -150,7 +150,7 @@ export function ShareButton({ title, author, url, shortLinkId }: ShareButtonProp
         aria-label={t("action")}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.96 }}
-        className="relative inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-full border px-4 text-xs font-medium transition-colors duration-150"
+        className="relative inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full border px-4 text-xs font-medium transition-colors duration-150"
         style={{
           backgroundColor: "var(--tott-panel-bg)",
           borderColor: "var(--tott-card-border)",

@@ -8,6 +8,9 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { HeroSlide } from "./Hero";
 
 const CARD_PITCH = 272; // Figma spacing between card left edges (264 + 8 gap)
+const CARD_PITCH_MOBILE = 228; // 220 card + 8 gap, for narrow viewports below `sm`
+const CARD_SIZE = { width: 264, height: 281 };
+const CARD_SIZE_MOBILE = { width: 220, height: 235 };
 
 // Same silk-hex frame as FeaturedHexCard — home "Follow our Writers" /
 // writing-room "Discover Featured Writing" rows use it too, so all writer
@@ -61,11 +64,19 @@ export function BoardCoverflow({
   // against on one side).
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [visibleCount, setVisibleCount] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
+  const cardPitch = isMobile ? CARD_PITCH_MOBILE : CARD_PITCH;
+  const cardSize = isMobile ? CARD_SIZE_MOBILE : CARD_SIZE;
 
   useLayoutEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
-    const measure = () => setVisibleCount(Math.max(1, Math.round(el.clientWidth / CARD_PITCH)));
+    const measure = () => {
+      const mobile = el.clientWidth < 640;
+      setIsMobile(mobile);
+      const pitch = mobile ? CARD_PITCH_MOBILE : CARD_PITCH;
+      setVisibleCount(Math.max(1, Math.round(el.clientWidth / pitch)));
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(el);
@@ -114,11 +125,15 @@ export function BoardCoverflow({
         <Chevron dir="start" />
       </button>
 
-      <div ref={viewportRef} className="relative h-[281px] flex-1 overflow-hidden">
+      <div
+        ref={viewportRef}
+        className="relative flex-1 overflow-hidden"
+        style={{ height: `${cardSize.height}px` }}
+      >
         <div
           className="absolute inset-y-0 start-0 flex items-center gap-2"
           style={{
-            transform: `translateX(${-activeIndex * CARD_PITCH * flip}px)`,
+            transform: `translateX(${-activeIndex * cardPitch * flip}px)`,
             transition: "transform 0.9s cubic-bezier(0.22, 1, 0.36, 1)",
           }}
         >
@@ -126,7 +141,8 @@ export function BoardCoverflow({
             <Link
               key={slide.id}
               href={slide.href}
-              className="group relative block h-[281px] w-[264px] shrink-0 outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--tott-accent-gold-focus)]"
+              className="group relative block shrink-0 outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--tott-accent-gold-focus)]"
+              style={{ width: `${cardSize.width}px`, height: `${cardSize.height}px` }}
               tabIndex={i === activeIndex ? 0 : -1}
             >
               {/* Silk hex frame — base fill so a real photo (layered on top
@@ -136,7 +152,7 @@ export function BoardCoverflow({
                 alt=""
                 fill
                 className="select-none object-contain"
-                sizes="264px"
+                sizes="(max-width: 640px) 220px, 264px"
                 draggable={false}
               />
               {slide.avatar ? (
@@ -144,7 +160,7 @@ export function BoardCoverflow({
                   src={slide.avatar}
                   alt=""
                   fill
-                  sizes="264px"
+                  sizes="(max-width: 640px) 220px, 264px"
                   className="absolute inset-0 select-none object-cover"
                   style={HEX_PHOTO_MASK}
                   draggable={false}
@@ -154,7 +170,11 @@ export function BoardCoverflow({
               <div
                 aria-hidden
                 className="absolute z-10"
-                style={{ width: "40px", height: "40px", left: "calc(50% - 20px)", top: "8px" }}
+                style={
+                  isMobile
+                    ? { width: "34px", height: "34px", left: "calc(50% - 17px)", top: "6px" }
+                    : { width: "40px", height: "40px", left: "calc(50% - 20px)", top: "8px" }
+                }
               >
                 <Image src={WRITER_TOP_ICON} alt="" fill sizes="40px" className="select-none" draggable={false} />
               </div>

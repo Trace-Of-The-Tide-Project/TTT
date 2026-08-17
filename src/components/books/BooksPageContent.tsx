@@ -99,7 +99,7 @@ export function BooksPageContent({ items }: { items: BookItem[] }) {
           </div>
           <Link
             href="/contribute"
-            className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
             style={{ backgroundColor: "var(--tott-magazine-btn-bg)", color: "var(--tott-auth-btn-text)" }}
           >
             <span aria-hidden>+</span>

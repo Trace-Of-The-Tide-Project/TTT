@@ -539,6 +539,15 @@ html[lang="ar"] {
   animation: tott-tide-drift 18s linear infinite;
 }
 
+/* Magazine plans grid (>3 plans): stay single-column below `md`, expand to
+   `--plans-cols` columns at `md+` — mirrors Tailwind's `md:` breakpoint so
+   an inline gridTemplateColumns can't force multi-column on mobile. */
+@media (min-width: 768px) {
+  .plans-grid-wide {
+    grid-template-columns: repeat(var(--plans-cols, 4), minmax(0, 1fr));
+  }
+}
+
 /* Homepage rebuild "tideDrift": slow x/y idle sway for background elements. */
 @keyframes tott-tide-sway {
   from { transform: translate(0, 0); }

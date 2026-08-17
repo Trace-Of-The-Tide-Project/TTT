@@ -126,7 +126,7 @@ export function ContentCollection({
           <button
             type="button"
             onClick={() => setShowAll(!showAll)}
-            className="font-medium hover:underline"
+            className="inline-flex min-h-11 items-center font-medium hover:underline"
             style={{ color: theme.accentGold }}
           >
             {showAll ? t("showLess") : t("showMore")}

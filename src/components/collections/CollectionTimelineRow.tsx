@@ -35,10 +35,10 @@ export function CollectionTimelineRow({
 
       <Link
         href={item.href}
-        className="group mb-4 flex min-w-0 flex-1 gap-4 rounded-lg p-1 transition-colors hover:bg-[var(--tott-dash-ghost-hover)]"
+        className="group mb-4 flex min-w-0 flex-1 gap-3 rounded-lg p-1 transition-colors sm:gap-4 hover:bg-[var(--tott-dash-ghost-hover)]"
       >
         <div
-          className="relative h-20 w-28 shrink-0 overflow-hidden rounded-lg border-2 bg-[var(--tott-well-bg)]"
+          className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg border-2 bg-[var(--tott-well-bg)] sm:h-20 sm:w-28"
           style={{ borderColor: theme.cardBorder }}
         >
           <Image
@@ -46,7 +46,7 @@ export function CollectionTimelineRow({
             alt={item.title}
             fill
             className="object-cover"
-            sizes="112px"
+            sizes="(min-width: 640px) 112px, 80px"
           />
           <div className="absolute left-1.5 top-1.5 text-white">
             <Grid2x2Icon />

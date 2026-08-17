@@ -68,7 +68,7 @@ export function Modal({
           <button
             type="button"
             onClick={() => !busy && onClose()}
-            className="shrink-0 rounded-lg p-1 text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground disabled:opacity-40"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-[var(--tott-muted)] transition-colors hover:bg-[var(--tott-dash-ghost-hover)] hover:text-foreground disabled:opacity-40"
             aria-label="Close"
             disabled={busy}
           >

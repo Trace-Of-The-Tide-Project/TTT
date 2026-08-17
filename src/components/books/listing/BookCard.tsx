@@ -84,7 +84,7 @@ export function BookCard({
           <Link
             href={`/books/${book.slug}`}
             className="inline-flex shrink-0 items-center justify-center transition-opacity hover:opacity-90"
-            style={{ height: "32px", padding: "4px", gap: "0", backgroundColor: "var(--tott-card-border)", boxShadow: "inset 0px 1px 1px rgba(255, 255, 255, 0.08)", borderRadius: "6px", border: "none", color: "var(--tott-home-text-strong)" }}
+            style={{ height: "40px", padding: "6px", gap: "0", backgroundColor: "var(--tott-card-border)", boxShadow: "inset 0px 1px 1px rgba(255, 255, 255, 0.08)", borderRadius: "6px", border: "none", color: "var(--tott-home-text-strong)" }}
           >
             <span aria-hidden className="relative flex h-6 shrink-0" style={{ width: "28px" }}>
               <Image src={VIEW_ICON} alt="" fill sizes="28px" className="select-none" draggable={false} />

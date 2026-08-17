@@ -23,11 +23,11 @@ export function SectionHeader({
   titleFontSize?: number;
 }) {
   return (
-    <div className="mx-auto flex max-w-6xl items-end justify-between gap-4 px-6 sm:px-10">
+    <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-10">
       <div id={id}>
         <h2
           className="font-['IBM_Plex_Sans'] text-2xl font-medium text-[var(--tott-home-text-warm)]"
-          style={{ fontSize: titleFontSize ? `${titleFontSize}px` : undefined }}
+          style={{ fontSize: titleFontSize ? `clamp(20px, 5vw, ${titleFontSize}px)` : undefined }}
         >
           {title}
         </h2>

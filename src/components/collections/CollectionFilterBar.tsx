@@ -73,7 +73,7 @@ export function CollectionFilterBar({
       </div>
 
       {/* Sort + Filters */}
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
         <label
           className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm"
           style={{ borderColor: theme.cardBorder, backgroundColor: "var(--tott-well-bg)" }}
