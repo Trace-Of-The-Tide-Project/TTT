@@ -94,7 +94,7 @@ export default function PremiumGate({ feature, children, upgradeMessage }: Props
         <p className="text-sm text-[var(--tott-home-text-muted)] text-center px-4">{body}</p>
         <Link
           href={actionHref}
-          className="bg-foreground text-background px-5 py-2 rounded-lg text-sm font-medium hover:bg-foreground/80 transition-colors"
+          className="inline-flex min-h-11 items-center bg-foreground text-background px-5 py-2 rounded-lg text-sm font-medium hover:bg-foreground/80 transition-colors"
         >
           {actionLabel}
         </Link>

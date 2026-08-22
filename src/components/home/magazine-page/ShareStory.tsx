@@ -54,7 +54,7 @@ export function ShareStory({
             style={{
               lineHeight: "var(--tott-display-leading)",
               letterSpacing: "var(--tott-display-tracking)",
-              fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
+              fontSize: titleFontSize ? `clamp(22px, 6vw, ${titleFontSize}px)` : undefined,
             }}
           >
             {heading}

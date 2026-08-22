@@ -32,6 +32,16 @@
     "post": "نشر",
     "postingComment": "جارٍ النشر…",
     "commentPosted": "تم نشر التعليق.",
-    "commentFailed": "تعذّر نشر التعليق."
+    "commentFailed": "تعذّر نشر التعليق.",
+    "reply": "رد",
+    "replies": "الردود",
+    "you": "أنت",
+    "myCertificates": "شهادات الإنجاز الخاصة بك",
+    "noCertificates": "لم تكمل أي برنامج بعد. احضر جميع جلسات البرنامج للحصول على شهادة.",
+    "certificateIssued": "صدرت في {date}",
+    "certificateView": "عرض الشهادة",
+    "waitlisted": "أنت في قائمة الانتظار لهذه الجلسة.",
+    "waitlistPosition": "الترتيب في قائمة الانتظار: {position}",
+    "openWorkspaceDisabled": "يُفتح مساحة العمل الخاصة بك بمجرد تأكيد المقعد."
   }
 }

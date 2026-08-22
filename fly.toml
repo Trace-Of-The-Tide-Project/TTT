@@ -7,6 +7,9 @@ app = 'trace-of-the-tide'
 primary_region = 'cdg'
 
 [build]
+  [build.args]
+    NEXT_PUBLIC_API_BASE_URL = 'https://ttt-api.fly.dev'
+    NEXT_PUBLIC_APP_URL = 'https://trace-of-the-tide.fly.dev'
 
 [http_service]
   internal_port = 3000

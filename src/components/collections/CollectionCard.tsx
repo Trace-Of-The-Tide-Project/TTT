@@ -34,7 +34,7 @@ export function CollectionCard({ data }: { data: CollectionCardData }) {
           unoptimized
         />
       </div>
-      <div className="flex flex-1 flex-col gap-2 p-4">
+      <div className="flex flex-1 flex-col gap-1.5 p-3 sm:gap-2 sm:p-4">
         <h3 className="truncate text-base font-medium text-foreground group-hover:text-[color:var(--tott-accent-gold)]">
           {data.name}
         </h3>

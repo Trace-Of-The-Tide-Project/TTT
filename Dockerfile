@@ -27,6 +27,13 @@ RUN npm ci --include=dev
 # Copy application code
 COPY . .
 
+# NEXT_PUBLIC_* vars are inlined into the client bundle at build time, so they
+# must arrive as build args (not just runtime secrets/env).
+ARG NEXT_PUBLIC_API_BASE_URL
+ARG NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+
 # Build application (full build incl. static generation, so machines boot straight into `next start`)
 RUN npx next build
 

@@ -1,0 +1,117 @@
+{
+  "Dashboard": {
+    "encounters": {
+      "title": "Rencontres ouvertes",
+      "subtitle": "Créez, modifiez et publiez des rencontres ouvertes.",
+      "tabs": {
+        "encounters": "Rencontres",
+        "bookings": "Réservations"
+      },
+      "preview": {
+        "label": "Aperçu"
+      },
+      "list": {
+        "pageTitle": "Rencontres ouvertes",
+        "addNew": "Nouvelle rencontre",
+        "searchPlaceholder": "Rechercher des rencontres…",
+        "loading": "Chargement des rencontres…",
+        "empty": {
+          "none": "Aucune rencontre pour l'instant. Créez la première.",
+          "noMatch": "Aucune rencontre ne correspond à cette recherche."
+        },
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "draft": "Brouillon",
+        "noDate": "Aucune date",
+        "previewAria": "Aperçu de {title}"
+      },
+      "deleteModal": {
+        "title": "Supprimer la rencontre",
+        "description": "Voulez-vous vraiment supprimer « {name} » ? Cette action est irréversible.",
+        "cancel": "Annuler",
+        "confirm": "Supprimer",
+        "confirmBusy": "Suppression…"
+      },
+      "toasts": {
+        "deleted": "Rencontre supprimée.",
+        "created": "Rencontre créée.",
+        "updated": "Rencontre mise à jour.",
+        "createFailed": "Impossible de créer la rencontre",
+        "updateFailed": "Impossible de mettre à jour la rencontre",
+        "deleteFailed": "Impossible de supprimer la rencontre",
+        "errorBody": "Veuillez réessayer."
+      },
+      "form": {
+        "createTitle": "Nouvelle rencontre",
+        "editTitle": "Modifier la rencontre",
+        "backToList": "Retour aux rencontres",
+        "cancel": "Annuler",
+        "save": "Enregistrer",
+        "create": "Créer",
+        "saving": "Enregistrement…",
+        "loading": "Chargement de la rencontre…",
+        "notFound": "Rencontre introuvable.",
+        "fields": {
+          "title": "Titre",
+          "titlePlaceholder": "p. ex. Sur le silence et l'écriture",
+          "location": "Lieu",
+          "locationPlaceholder": "p. ex. États-Unis",
+          "date": "Date",
+          "datePlaceholder": "AAAA-MM-JJ",
+          "duration": "Durée",
+          "durationPlaceholder": "p. ex. 4 heures",
+          "groupSize": "Taille du groupe",
+          "groupSizePlaceholder": "p. ex. 6–12 personnes",
+          "maxCapacity": "Capacité maximale",
+          "maxCapacityPlaceholder": "p. ex. 12",
+          "languages": "Langues",
+          "languagesPlaceholder": "p. ex. Anglais, Arabe",
+          "type": "Type",
+          "typePlaceholder": "p. ex. Rencontre",
+          "tipPrice": "Prix conseillé",
+          "tipPricePlaceholder": "p. ex. Gratuit",
+          "about": "À propos",
+          "aboutPlaceholder": "Une brève description de la rencontre.",
+          "heroImage": "URL de l'image principale",
+          "heroImagePlaceholder": "https://…",
+          "heroImagePick": "Choisir ou téléverser une image",
+          "heroImageChange": "Changer l'image",
+          "heroImageRemove": "Retirer l'image",
+          "chips": "Étiquettes (séparées par des virgules)",
+          "chipsPlaceholder": "Conférence, Ateliers",
+          "highlights": "Points forts (séparés par des virgules)",
+          "highlightsPlaceholder": "Session matinale, Discussion avec des écrivains",
+          "status": "Statut",
+          "statusDraft": "Brouillon",
+          "statusPublished": "Publié",
+          "schedule": "Programme"
+        },
+        "errors": {
+          "titleRequired": "Le titre est requis.",
+          "createFailed": "Impossible de créer la rencontre",
+          "updateFailed": "Impossible de mettre à jour la rencontre",
+          "loadFailed": "Impossible de charger la rencontre"
+        }
+      },
+      "schedule": {
+        "heading": "Programme",
+        "description": "Ajoutez les étapes de la rencontre dans l'ordre.",
+        "addStop": "Ajouter une étape",
+        "empty": "Aucune étape pour l'instant. Ajoutez la première.",
+        "remove": "Retirer",
+        "moveUp": "Monter",
+        "moveDown": "Descendre",
+        "fields": {
+          "title": "Titre",
+          "titlePlaceholder": "p. ex. Session d'ouverture",
+          "startDate": "Date de début",
+          "startTime": "Heure de début",
+          "body": "Détails",
+          "bodyPlaceholder": "Décrivez cette étape.",
+          "lat": "Latitude",
+          "lng": "Longitude"
+        }
+      }
+    }
+  }
+}

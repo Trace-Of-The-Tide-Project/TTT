@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { StaggerContainer } from "@/components/motion/StaggerContainer";
 import { StaggerItem } from "@/components/motion/StaggerItem";
 import { PlanCard } from "./PlanCard";
@@ -60,7 +61,7 @@ export function Plans({
           style={{
             lineHeight: "var(--tott-display-leading)",
             letterSpacing: "var(--tott-display-tracking)",
-            fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
+            fontSize: titleFontSize ? `clamp(24px, 6vw, ${titleFontSize}px)` : undefined,
           }}
         >
           {title}
@@ -72,12 +73,18 @@ export function Plans({
 
       <StaggerContainer
         className={`mx-auto mt-14 grid max-w-6xl grid-cols-1 gap-6 px-6 pt-4 sm:px-10 ${
-          plans.length >= 3 ? "md:grid-cols-3" : plans.length === 2 ? "md:grid-cols-2" : ""
+          plans.length > 3
+            ? "plans-grid-wide"
+            : plans.length >= 3
+              ? "md:grid-cols-3"
+              : plans.length === 2
+                ? "md:grid-cols-2"
+                : ""
         }`}
         style={{
           gridAutoRows: "1fr",
           ...(plans.length > 3
-            ? { gridTemplateColumns: `repeat(${Math.min(plans.length, 4)}, minmax(0, 1fr))` }
+            ? ({ "--plans-cols": Math.min(plans.length, 4) } as CSSProperties)
             : undefined),
         }}
       >

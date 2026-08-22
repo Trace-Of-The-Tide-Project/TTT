@@ -73,7 +73,7 @@ export function ContentArticleHeader({
   return (
     <div>
       <div className="flex items-start justify-between gap-4">
-        <h1 className="text-2xl font-medium leading-tight text-foreground sm:text-[2rem] sm:leading-10">
+        <h1 className="min-w-0 text-2xl font-medium leading-tight text-foreground sm:text-[2rem] sm:leading-10">
           {title}
         </h1>
         <div className="flex shrink-0 items-center gap-2">

@@ -52,7 +52,7 @@ export default function ArticleBuyGate({
           type="button"
           onClick={handleBuy}
           disabled={busy}
-          className="rounded-lg bg-foreground px-5 py-2 text-sm font-medium text-background transition-colors hover:bg-foreground/80 disabled:opacity-50"
+          className="min-h-11 rounded-lg bg-foreground px-5 py-2 text-sm font-medium text-background transition-colors hover:bg-foreground/80 disabled:opacity-50"
         >
           {busy ? t("redirecting") : t("buy")}
         </button>

@@ -51,10 +51,13 @@ export function useSession(id: string | null | undefined) {
   });
 }
 
-export function useSessionDrafts(sessionId: string | null | undefined) {
+export function useSessionDrafts(
+  sessionId: string | null | undefined,
+  params?: { page?: number; limit?: number },
+) {
   return useQuery({
     queryKey: sessionsKeys.drafts(sessionId ?? ""),
-    queryFn: () => listSessionDrafts(sessionId as string),
+    queryFn: () => listSessionDrafts(sessionId as string, params),
     enabled: Boolean(sessionId),
   });
 }
@@ -62,10 +65,12 @@ export function useSessionDrafts(sessionId: string | null | undefined) {
 export function useDraftComments(
   sessionId: string | null | undefined,
   draftId: string | null | undefined,
+  params?: { page?: number; limit?: number },
 ) {
   return useQuery({
     queryKey: sessionsKeys.comments(draftId ?? ""),
-    queryFn: () => listDraftComments(sessionId as string, draftId as string),
+    queryFn: () =>
+      listDraftComments(sessionId as string, draftId as string, params),
     enabled: Boolean(sessionId) && Boolean(draftId),
   });
 }

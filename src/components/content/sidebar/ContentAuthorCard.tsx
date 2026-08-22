@@ -58,7 +58,7 @@ export function ContentAuthorCard({
           <p className="min-w-0 flex-1 text-xl font-medium text-foreground wrap-break-word">{name}</p>
           <button
             type="button"
-            className="shrink-0 rounded-md p-1.5 text-[var(--tott-dash-control-fg)] shadow-[inset_0_1px_0_var(--tott-glass-highlight)] hover:opacity-90"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-[var(--tott-dash-control-fg)] shadow-[inset_0_1px_0_var(--tott-glass-highlight)] hover:opacity-90"
             style={{ backgroundColor: "var(--tott-dash-control-bg)" }}
           >
             <MoreDotsIcon />
@@ -67,7 +67,7 @@ export function ContentAuthorCard({
             type="button"
             onClick={handleFollow}
             disabled={toggling || !authorId}
-            className="shrink-0 rounded-md px-4 py-1.5 text-sm font-medium transition-colors hover:opacity-90 disabled:opacity-50"
+            className="inline-flex min-h-11 shrink-0 items-center rounded-md px-4 py-1.5 text-sm font-medium transition-colors hover:opacity-90 disabled:opacity-50"
             style={{
               backgroundColor: isFollowing ? "transparent" : "var(--tott-accent-gold)",
               color: isFollowing ? "var(--tott-accent-gold)" : "var(--tott-on-accent)",

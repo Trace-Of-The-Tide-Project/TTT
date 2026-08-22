@@ -72,7 +72,7 @@ export function Hero({
       <section
         id="magazine-hero"
         aria-labelledby="magazine-hero-heading"
-        className="relative h-[825px] w-full overflow-hidden bg-[var(--tott-well-bg)]"
+        className="relative h-[560px] w-full overflow-hidden bg-[var(--tott-well-bg)] sm:h-[650px] lg:h-[825px]"
       >
         <motion.div
           aria-hidden
@@ -148,8 +148,8 @@ export function Hero({
         />
 
         {/* Text block — Figma: x=156 y=200, 456px column, top-third. */}
-        <div className="relative px-6 pb-0 pt-[200px] sm:px-10 lg:px-[156px]">
-          <div className="max-w-[456px]">
+        <div className="relative px-6 pb-0 pt-[80px] sm:px-10 sm:pt-[120px] lg:px-[156px] lg:pt-[200px]">
+          <div className="max-w-[90vw] sm:max-w-[456px]">
             {eyebrow ? (
               <motion.p
                 variants={textVariant}
@@ -170,10 +170,10 @@ export function Hero({
                 initial="hidden"
                 animate="visible"
                 transition={at(0.15, 0.9)}
-                className="font-['IBM_Plex_Sans'] text-[40px] font-medium leading-[48px] text-[var(--tott-home-text-warm)]"
+                className="font-['IBM_Plex_Sans'] text-[28px] font-medium leading-[34px] text-[var(--tott-home-text-warm)] sm:text-[34px] sm:leading-[40px] lg:text-[40px] lg:leading-[48px]"
                 style={{
                   textShadow: "0 4px 32px color-mix(in srgb, var(--tott-well-bg) 70%, transparent)",
-                  fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
+                  fontSize: titleFontSize ? `clamp(24px, 6vw, ${titleFontSize}px)` : undefined,
                   lineHeight: titleFontSize ? 1.2 : undefined,
                 }}
               >

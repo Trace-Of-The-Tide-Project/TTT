@@ -56,7 +56,7 @@ export function BookDetailBanner() {
         </div>
         <Link
           href="/contribute"
-          className="mt-6 inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium transition-colors hover:opacity-90"
+          className="mt-6 inline-flex items-center justify-center rounded-lg px-5 py-3 text-sm font-medium transition-colors hover:opacity-90"
           style={{ backgroundColor: "var(--tott-magazine-btn-bg)", color: "var(--tott-auth-btn-text)" }}
         >
           {t("shareCta")}

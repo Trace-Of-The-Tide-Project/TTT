@@ -252,14 +252,21 @@ export function ContentVideoPlayer({ src, thumbnail }: ContentVideoPlayerProps) 
                 </div>
                 <button
                   type="button"
-                  onClick={toggleMute}
-                  className="relative z-10 hover:text-white"
+                  onClick={() => {
+                    toggleMute();
+                    setVolumeSliderOpen((open) => !open);
+                  }}
+                  className="relative z-10 flex h-11 w-11 items-center justify-center hover:text-white"
                   aria-label={muted ? "Unmute" : "Mute"}
                 >
                   {muted ? <VolumeMutedIcon /> : <VolumeIcon />}
                 </button>
               </div>
-              <button type="button" onClick={toggleFullscreen} className="hover:text-white">
+              <button
+                type="button"
+                onClick={toggleFullscreen}
+                className="flex h-11 w-11 items-center justify-center hover:text-white"
+              >
                 <FullscreenIcon />
               </button>
             </div>

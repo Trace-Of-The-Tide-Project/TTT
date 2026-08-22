@@ -58,7 +58,7 @@ export function BookmarkButton({ articleId }: { articleId: string }) {
       whileTap={{ scale: 0.96 }}
       aria-label={isBookmarked ? t("remove") : t("add")}
       aria-pressed={isBookmarked}
-      className="relative inline-flex h-9 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-full border px-4 text-xs font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50"
+      className="relative inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-full border px-4 text-xs font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50"
       style={{
         backgroundColor: isBookmarked ? "var(--tott-gold-chip-bg)" : "var(--tott-panel-bg)",
         borderColor: isBookmarked ? "var(--tott-accent-gold)" : "var(--tott-card-border)",

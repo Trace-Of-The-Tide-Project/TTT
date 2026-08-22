@@ -53,7 +53,7 @@ export function ActionCard({ icon, title, body, ctaLabel, ctaHref, titleFontSize
         <h3
           className="font-['IBM_Plex_Sans'] text-base font-medium leading-5 text-[var(--tott-accent-gold-focus)]"
           style={{
-            fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
+            fontSize: titleFontSize ? `clamp(14px, 4vw, ${titleFontSize}px)` : undefined,
             lineHeight: titleFontSize ? 1.25 : undefined,
           }}
         >

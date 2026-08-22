@@ -27,7 +27,7 @@ export function CollectionCard({
   return (
     <Link
       href={collection.href}
-      className="group relative block h-[448px] w-[276px] shrink-0 overflow-hidden outline-none transition-transform duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--tott-accent-gold-focus)]"
+      className="group relative block h-[356px] w-[220px] shrink-0 overflow-hidden outline-none transition-transform duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--tott-accent-gold-focus)] sm:h-[448px] sm:w-[276px]"
       style={{ clipPath: clipUrl }}
     >
       <svg aria-hidden width={0} height={0} className="absolute">
@@ -44,7 +44,7 @@ export function CollectionCard({
           src={collection.coverImage}
           alt={collection.name}
           fill
-          sizes="276px"
+          sizes="(max-width: 640px) 220px, 276px"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       ) : null}
@@ -54,14 +54,14 @@ export function CollectionCard({
           over a masked band taller than the visible content block below. */}
       <div
         aria-hidden
-        className="absolute inset-x-0 bottom-0 h-[280px] backdrop-blur-[4px]"
+        className="absolute inset-x-0 bottom-0 h-[224px] backdrop-blur-[4px] sm:h-[280px]"
         style={{
           maskImage: "linear-gradient(to top, black 0%, transparent 100%)",
           WebkitMaskImage: "linear-gradient(to top, black 0%, transparent 100%)",
         }}
       />
       <div
-        className="absolute inset-x-0 bottom-0 flex h-[210px] flex-col items-center justify-end gap-4 px-6 pb-10 pt-8"
+        className="absolute inset-x-0 bottom-0 flex h-[168px] flex-col items-center justify-end gap-3 px-4 pb-6 pt-6 sm:h-[210px] sm:gap-4 sm:px-6 sm:pb-10 sm:pt-8"
         style={{ background: "linear-gradient(to bottom, rgba(23,23,23,0) 0%, var(--tott-home-surface) 100%)" }}
       >
         <div className="flex w-full flex-col items-center gap-2">

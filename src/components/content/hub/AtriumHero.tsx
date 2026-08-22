@@ -76,7 +76,7 @@ function FeaturedHero({
           >
             <GatewayIcon
               type={item.type}
-              className="opacity-20 [&>svg]:h-32 [&>svg]:w-32 text-white"
+              className="opacity-20 [&>svg]:h-20 [&>svg]:w-20 text-white sm:[&>svg]:h-28 sm:[&>svg]:w-28 lg:[&>svg]:h-32 lg:[&>svg]:w-32"
             />
           </div>
         )}
@@ -99,7 +99,7 @@ function FeaturedHero({
         }}
       />
 
-      <div className="relative mx-auto flex min-h-[100svh] w-full max-w-[1392px] flex-col justify-end px-6 pb-36 pt-28 sm:px-10 sm:pb-40">
+      <div className="relative mx-auto flex min-h-[100svh] w-full max-w-[1392px] flex-col justify-end px-6 pb-36 pt-20 sm:px-10 sm:pb-40 sm:pt-28">
         <RevealOnScroll className="flex flex-col items-start text-start">
           <div className="flex flex-wrap items-center gap-3">
             <span
