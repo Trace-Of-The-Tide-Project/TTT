@@ -1,0 +1,14 @@
+"use client";
+
+import { CreateContentEditor } from "@/components/dashboard/admin/articles/articles-editor/CreateContentEditor";
+import { audioConfig } from "@/components/dashboard/admin/articles/articles-editor/content-form-config";
+
+export default function MagazineCreateAudioPage() {
+  return (
+    <CreateContentEditor
+      config={audioConfig}
+      forceProduct="magazine"
+      defaultReturn="/admin/magazine/articles"
+    />
+  );
+}

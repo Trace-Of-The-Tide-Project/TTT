@@ -126,3 +126,25 @@ export const createTemplates: CreateTemplateDef[] = [
     category: "articles",
   },
 ];
+
+/** Magazine create picker: same templates as the main flow, minus the three
+ * that don't route through CreateContentEditor there either (trip has its
+ * own admin section, open-call uses a dedicated layout, figma has no route
+ * yet) — hrefs point at the magazine-scoped create routes instead. */
+const MAGAZINE_TEMPLATE_KEYS: CreateTemplateKey[] = [
+  "article",
+  "video",
+  "audio",
+  "thread",
+  "artwork",
+  "interview",
+  "comic",
+  "literary",
+];
+
+export const magazineCreateTemplates: CreateTemplateDef[] = createTemplates
+  .filter((template) => MAGAZINE_TEMPLATE_KEYS.includes(template.templateKey))
+  .map((template) => ({
+    ...template,
+    href: `/admin/magazine/articles/create/${template.templateKey}`,
+  }));
