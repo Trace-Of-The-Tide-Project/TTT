@@ -20,8 +20,6 @@ import { staggerParent, staggerChild, springs } from "@/lib/motion";
 const HERO_ICON = "/images/writing-room/moon-icon.svg";
 const GALLERY_IMAGES: string[] = [
   "/images/workshops/gallery-thumbnail.svg",
-  "/images/home/hero-silk.png",
-  "/images/trip.png",
 ];
 const GALLERY_PEEK = "/images/workshops/gallery-peek.svg";
 
@@ -304,41 +302,43 @@ export function ResidencyContent() {
                 padding: "0 clamp(8px, 2vw, 24px)",
               }}
             >
-              <button
-                type="button"
-                onClick={goPrev}
-                aria-label={t("prev")}
-                className="z-10 flex shrink-0 items-center justify-center transition-opacity hover:opacity-70"
-                style={{
-                  width: "clamp(32px, 1.5vw + 0.5rem, 96px)",
-                  height: "clamp(32px, 1.5vw + 0.5rem, 96px)",
-                  color: "var(--tott-home-text-strong)",
-                  background: "none",
-                  border: "none",
-                  padding: 0,
-                  cursor: "pointer",
-                }}
-              >
-                <svg
-                  width="100%"
-                  height="100%"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              {gallery.length > 1 ? (
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  aria-label={t("prev")}
+                  className="z-10 flex shrink-0 items-center justify-center transition-opacity hover:opacity-70"
                   style={{
-                    maxWidth: "clamp(20px, 1vw + 0.3rem, 56px)",
-                    maxHeight: "clamp(20px, 1vw + 0.3rem, 56px)",
-                    filter:
-                      "drop-shadow(0px 1px 3px color-mix(in srgb, var(--tott-home-surface) 40%, transparent))",
+                    width: "clamp(32px, 1.5vw + 0.5rem, 96px)",
+                    height: "clamp(32px, 1.5vw + 0.5rem, 96px)",
+                    color: "var(--tott-home-text-strong)",
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
                   }}
                 >
-                  <line x1="19" y1="12" x2="5" y2="12" />
-                  <polyline points="11 6 5 12 11 18" />
-                </svg>
-              </button>
+                  <svg
+                    width="100%"
+                    height="100%"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{
+                      maxWidth: "clamp(20px, 1vw + 0.3rem, 56px)",
+                      maxHeight: "clamp(20px, 1vw + 0.3rem, 56px)",
+                      filter:
+                        "drop-shadow(0px 1px 3px color-mix(in srgb, var(--tott-home-surface) 40%, transparent))",
+                    }}
+                  >
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="11 6 5 12 11 18" />
+                  </svg>
+                </button>
+              ) : null}
 
               <div
                 className="relative w-full overflow-hidden"
@@ -372,41 +372,43 @@ export function ResidencyContent() {
                 ))}
               </div>
 
-              <button
-                type="button"
-                onClick={goNext}
-                aria-label={t("next")}
-                className="z-10 flex shrink-0 items-center justify-center transition-opacity hover:opacity-70"
-                style={{
-                  width: "clamp(32px, 1.5vw + 0.5rem, 96px)",
-                  height: "clamp(32px, 1.5vw + 0.5rem, 96px)",
-                  color: "var(--tott-home-text-strong)",
-                  background: "none",
-                  border: "none",
-                  padding: 0,
-                  cursor: "pointer",
-                }}
-              >
-                <svg
-                  width="100%"
-                  height="100%"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              {gallery.length > 1 ? (
+                <button
+                  type="button"
+                  onClick={goNext}
+                  aria-label={t("next")}
+                  className="z-10 flex shrink-0 items-center justify-center transition-opacity hover:opacity-70"
                   style={{
-                    maxWidth: "clamp(20px, 1vw + 0.3rem, 56px)",
-                    maxHeight: "clamp(20px, 1vw + 0.3rem, 56px)",
-                    filter:
-                      "drop-shadow(0px 1px 3px color-mix(in srgb, var(--tott-home-surface) 40%, transparent))",
+                    width: "clamp(32px, 1.5vw + 0.5rem, 96px)",
+                    height: "clamp(32px, 1.5vw + 0.5rem, 96px)",
+                    color: "var(--tott-home-text-strong)",
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
                   }}
                 >
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="13 6 19 12 13 18" />
-                </svg>
-              </button>
+                  <svg
+                    width="100%"
+                    height="100%"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{
+                      maxWidth: "clamp(20px, 1vw + 0.3rem, 56px)",
+                      maxHeight: "clamp(20px, 1vw + 0.3rem, 56px)",
+                      filter:
+                        "drop-shadow(0px 1px 3px color-mix(in srgb, var(--tott-home-surface) 40%, transparent))",
+                    }}
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="13 6 19 12 13 18" />
+                  </svg>
+                </button>
+              ) : null}
             </div>
 
             <span
@@ -512,9 +514,9 @@ function ChecklistCard({
     >
       <ChamferedFrame size={24} borderColor="var(--tott-card-border)" />
 
-      {/* Card thumbnail — Figma 437×181, ~2.41:1 aspect. We reuse
-          the workshops gallery thumbnail SVG so both pages share
-          imagery while a curated residency thumbnail is sourced. */}
+      {/* Card thumbnail — Figma 437×181, ~2.41:1 aspect. Shared with
+          the workshops gallery thumbnail SVG so both pages read as
+          one family. */}
       <div
         className="relative w-full overflow-hidden"
         style={{
